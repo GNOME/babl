@@ -23,7 +23,6 @@
 #include "babl-classes.h"
 
 void           babl_sampling_init       (void);
-void           babl_sampling_introspect (void);
 void           babl_sampling_each       (BablEachFunction  each_fun,
                                          void             *user_data);
 void           babl_sampling_destroy    (void);    

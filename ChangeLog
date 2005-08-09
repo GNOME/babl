@@ -1,5 +1,10 @@
 2005-08-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-sampling.h: removed reference to non existant function
+	babl_sampling_introspect ().
+
+2005-08-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/Makefile.am
 	* babl/babl-image.c
 	* babl/babl-image.h
