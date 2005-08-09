@@ -23,6 +23,7 @@ BABL_OBJECTS=					\
 	babl-component.o			\
 	babl-conversion.o			\
 	babl-fish.o				\
+	babl-image.o	    			\
 	babl-introspect.o			\
 	babl-memory.o				\
 	babl-model.o				\
