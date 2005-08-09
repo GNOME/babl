@@ -1,5 +1,13 @@
 2005-09-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* autogen.sh: make autogen also run make
+	* babl/babl-classes.h: added define macro usable for sampling and
+	fish.
+	* babl/babl-fish.[ch]: cleanup of stub class
+	* babl/babl-sampling.h: simplification of header using a define.
+
+2005-09-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-conversion.c: indentation cleanup.
 
 2005-09-09  Øyvind Kolås  <pippin@gimp.org>

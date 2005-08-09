@@ -27,86 +27,27 @@ static int
 each_babl_fish_destroy (Babl *babl,
                         void *data)
 {
-  babl_free (babl->instance.name);
   babl_free (babl);
   return 0;  /* continue iterating */
 }
 
-static BablFish *
-fish_new (const char              *name,
-                int                id,
-                Babl              *source,
-                Babl              *destination)
+BablFish *
+babl_fish_new (const char        *name,
+               Babl              *source,
+               Babl              *destination)
 {
   BablFish *self = NULL;
 
   self = babl_calloc (sizeof (BablFish), 1);
   self->instance.type = BABL_FISH;
 
-  self->instance.id   = id;
-  self->instance.name = babl_strdup (name);
+  self->instance.id   = 0;
+  self->instance.name = "Fishy";
   self->source        = (union Babl*)source;
   self->destination   = (union Babl*)destination;
 
   assert (BABL_IS_BABL (self->source));
   assert (BABL_IS_BABL (self->destination));
-
-/*  Might make sense to allow a precalculated shortcut to
- *  participate in later checks for optimal conversions
-  
-    babl_add_ptr_to_list ((void ***)&(source->type.from), self);
-    babl_add_ptr_to_list ((void ***)&(destination->type.to), self);
-  */
-  
-  return (BablFish*)self;
-}
-
-BablFish *
-babl_fish_new (const char *name,
-                     ...)
-{
-  va_list            varg;
-  BablFish    *self;
-
-  int                id          = 0;
-  Babl              *source      = NULL;
-  Babl              *destination = NULL;
-
-  const char        *arg         = name;
-
-  va_start (varg, name);
-  
-  while (1)
-    {
-      arg = va_arg (varg, char *);
-      if (!arg)
-        break;
-     
-      else if (!strcmp (arg, "id"))
-        {
-          id = va_arg (varg, int);
-        }
-
-      else if (!strcmp (arg, "source"))
-        {
-          source = va_arg (varg, Babl*);
-        }
-      else if (!strcmp (arg, "destination"))
-        {
-          destination = va_arg (varg, Babl*);
-        }
-      else
-        {
-          babl_log ("%s(): unhandled parameter '%s' for pixel_format '%s'",
-                    __FUNCTION__, arg, name);
-          exit (-1);
-        }
-    }
-    
-  va_end   (varg);
-
-  self = fish_new (name, id,
-                         source, destination);
 
   if ((BablFish*) db_insert ( (Babl*)self) == self)
     {
@@ -117,6 +58,17 @@ babl_fish_new (const char *name,
       each_babl_fish_destroy ( (Babl*)self, NULL);
       return NULL;
     }
+
+/*  Might make sense to allow a precalculated shortcut to
+ *  participate in later checks for optimal conversions, then we
+ *  should also have better generated names,.   model + datatype 
+ *  is a possibility , or even full single line serialization of
+ *  components with types.
+ *
+    babl_add_ptr_to_list ((void ***)&(source->type.from), self);
+    babl_add_ptr_to_list ((void ***)&(destination->type.to), self);
+  */
+  return (BablFish*)self;
 }
 
 BABL_CLASS_TEMPLATE(BablFish, babl_fish, "BablFish")

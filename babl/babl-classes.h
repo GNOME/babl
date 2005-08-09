@@ -223,16 +223,26 @@ typedef int  (*BablEachFunction) (Babl *entry,
 
 const char  *babl_class_name     (BablClassType klass);
 
+
+
 #define BABL_DEFINE_CLASS(TypeName, type_name)                   \
                                                                  \
 void       type_name##_init       (void);                        \
+void       type_name##_destroy    (void);                        \
 void       type_name##_each       (BablEachFunction  each_fun,   \
                                    void             *user_data); \
-void       type_name##_destroy    (void);                        \
 TypeName * type_name              (const char       *name);      \
 TypeName * type_name##_id         (int               id);        \
 TypeName * type_name##_new        (const char       *name,       \
                                    ...);
+
+
+#define BABL_DEFINE_CLASS_NO_NEW_NO_ID(TypeName, type_name)      \
+                                                                 \
+void       type_name##_init       (void);                        \
+void       type_name##_destroy    (void);                        \
+void       type_name##_each       (BablEachFunction  each_fun,   \
+                                   void             *user_data);
 
 #endif
 

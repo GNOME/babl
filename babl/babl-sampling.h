@@ -22,10 +22,7 @@
 
 #include "babl-classes.h"
 
-void           babl_sampling_init       (void);
-void           babl_sampling_each       (BablEachFunction  each_fun,
-                                         void             *user_data);
-void           babl_sampling_destroy    (void);    
+BABL_DEFINE_CLASS_NO_NEW_NO_ID(BablSampling, babl_sampling)
 BablSampling * babl_sampling            (int horizontal,
                                          int vertical);
 #endif

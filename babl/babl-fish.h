@@ -21,6 +21,27 @@
 #define BABL_FISH_H
 
 #include "babl-classes.h"
-BABL_DEFINE_CLASS(BablFish, babl_fish)
+
+BABL_DEFINE_CLASS_NO_NEW_NO_ID(BablFish, babl_fish)
+
+BablFish *
+babl_fish_new (Babl *source,
+               Babl *destination);
+  
+/* babl_fish_process will probably be a polymorph function
+ * accepting source and destination buffer pointers will be
+ * allowed as well as BablImage objects in their place
+ */
+int
+babl_fish_process        (BablFish *babl_fish,
+                          void     *source,
+                          void     *destination,
+                          int       n);
+
+/* whether the BablFish needs a BablImage to do the processing,
+ * or void * are sufficient.
+ */
+int
+babl_fish_needs_image (BablFish *babl_dish);
 
 #endif
