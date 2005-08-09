@@ -1,0 +1,5 @@
+babl-0.0.1:
+
+Initial public release of babl, minimal working configuration for
+RGB, CMYK and YCbCr for 8bit 16bit float and double. Emphasis is on
+precision and clarity of code not speed.

@@ -1,0 +1,94 @@
+/* babl - dynamically extendable universal pixel conversion library.
+ * Copyright (C) 2005, Øyvind Kolås.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General
+ * Public License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+#define HORIZONTAL_MIN 1
+#define HORIZONTAL_MAX 4
+#define VERTICAL_MIN   1
+#define VERTICAL_MAX   4
+
+#include "babl-internal.h"
+
+static BablSampling db[(HORIZONTAL_MAX-HORIZONTAL_MIN+1)*
+                       (VERTICAL_MAX-VERTICAL_MIN+1)];
+
+BablSampling *
+babl_sampling (int horizontal,
+               int vertical)
+{
+  if (vertical>=1 &&
+      vertical<=4 &&
+      horizontal>=1 &&
+      horizontal<=4)
+    return &db [ (vertical-1) * 4 + (horizontal-1)];
+  else
+    babl_log ("babl_samping(%i,%i): parameters out of bounds",
+              horizontal, vertical);
+  return NULL;
+}
+
+
+static int 
+each_babl_sampling_destroy (Babl *babl,
+                            void *data)
+{
+  babl_free (babl->sampling.from);
+  babl_free (babl->sampling.to);
+  return 0;  /* continue iterating */
+}
+
+void
+babl_sampling_each (BablEachFunction  each_fun,
+                    void             *user_data)
+{
+  int horizontal;
+  int vertical;
+
+  for (horizontal=HORIZONTAL_MIN; horizontal<=HORIZONTAL_MAX; horizontal++)
+    for (vertical=VERTICAL_MIN; vertical<=VERTICAL_MAX; vertical++)
+      {
+       int index= (vertical-VERTICAL_MIN) * VERTICAL_MAX + (horizontal - HORIZONTAL_MIN);
+       if (each_fun ((Babl*) &(db[index]), user_data))
+         return;
+      }
+}
+
+
+void
+babl_sampling_destroy (void)
+{
+  babl_sampling_each (each_babl_sampling_destroy, NULL);
+}
+
+void
+babl_sampling_init (void)
+{
+  int horizontal;
+  int vertical;
+
+  for (horizontal=HORIZONTAL_MIN; horizontal<=HORIZONTAL_MAX; horizontal++)
+    for (vertical=VERTICAL_MIN; vertical<=VERTICAL_MAX; vertical++)
+      {
+        int index= (vertical-VERTICAL_MIN) * VERTICAL_MAX + (horizontal - HORIZONTAL_MIN);
+        db[index].instance.type = BABL_SAMPLING;
+        db[index].instance.id = 0;
+        db[index].instance.name = "Samplings have no name";
+        db[index].horizontal = horizontal;
+        db[index].vertical   = vertical;
+      }
+}

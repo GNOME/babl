@@ -1,0 +1,21 @@
+
+Babl @BABL_VERSION@
+
+    Dynamic; any to any, pixel format conversion library.
+
+-----------------------------------------------------------------------
+
+Installation instructions:
+--------------------------
+
+From a released version the following is the expected method of
+installation (or a variation on this theme):
+
+     ------------------------------------------------------------
+     foo$ wget http://pippin.gimp.org/babl/files/old/babl-@BABL_VERSION@.tar.gz
+     foo$ tar xzf babl-@BABL_VERSION@.tar.gz
+     foo$ cd babl-@BABL_VERSION@
+     foo/babl-@BABL_VERSION@$ ./configure && make && sudo make install
+     ------------------------------------------------------------
+
+

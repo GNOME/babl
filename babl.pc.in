@@ -1,0 +1,11 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: babl
+Description: Dynamic; any to any, pixel format conversion library
+Version: @VERSION@
+Libs: -L${libdir} -lbabl
+Cflags: -I${includedir}/babl
+
