@@ -20,33 +20,6 @@
 #ifndef _BABL_CLASSES_H
 #define _BABL_CLASSES_H
 
-#ifdef BABL_SKETCHPAD
-
-BablClassType
-  BablInstance
-    BablType
-    BablSampling
-    BablComponent
-    BablModel
-    BablPixelFormat
-    BablConversion
-      BablConversionType
-      BablConversionTypePlanar
-      BablConversionModelPlanar
-      BablConversionPixelFormat
-      BablConversionPixelFormatPlanar
-
-maybe it could make sense to split model into the following, where
-the current model would live on in the component model,.
-    BablModelType
-    BablModelSampling
-    BablModelComponent
-
-    BablConversionModelType
-    BablConversionModelSampling
-    BablConversionModelComponent
-#endif
-
 /* Type and PixelFormat */
 typedef void (*BablFuncLinear)    (void  *src,
                                    void  *dst,
@@ -89,6 +62,7 @@ typedef enum {
   BABL_CONVERSION_PIXEL_FORMAT_PLANAR,
 
   BABL_FISH,
+  BABL_IMAGE,
 
   BABL_SKY
 } BablClassType;
@@ -199,9 +173,19 @@ typedef struct
 
 typedef struct
 {
-  BablInstance           instance;
-  union Babl            *source;
-  union Babl            *destination;
+  BablInstance    instance;
+  int             bands;
+  BablComponent **component;
+  void          **data;
+  int            *pitch;
+  int            *stride;
+} BablImage;
+
+typedef struct
+{
+  BablInstance     instance;
+  union Babl      *source;
+  union Babl      *destination;
 } BablFish;
 
 typedef union
@@ -215,6 +199,7 @@ typedef union
   BablPixelFormat pixel_format;
   BablConversion  conversion;
   BablFish        fish;
+  BablImage        image;
 } Babl;
 
 

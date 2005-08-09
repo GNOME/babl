@@ -95,6 +95,7 @@ babl_component_new (const char *name,
               case BABL_CONVERSION_PIXEL_FORMAT:
               case BABL_CONVERSION_PIXEL_FORMAT_PLANAR:
               case BABL_FISH:
+              case BABL_IMAGE:
                 babl_log ("%s(): %s unexpected",
                           __FUNCTION__, babl_class_name (babl->instance.type));
                 break;

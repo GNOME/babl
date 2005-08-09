@@ -8,6 +8,7 @@ c_sources =				\
 	babl-component.c		\
 	babl-conversion.c		\
 	babl-fish.c			\
+	babl-image.c			\
 	babl-introspect.c		\
 	babl-memory.c			\
 	babl-model.c			\
@@ -25,6 +26,7 @@ h_sources  =             		\
 	babl-ids.h			\
 	babl-internal.h			\
 	babl-introspect.h		\
+	babl-image.h			\
 	babl-fish.h			\
 	babl-memory.h			\
 	babl-model.h			\
@@ -42,6 +44,7 @@ library_include_HEADERS =		\
 	babl-component.h		\
 	babl-conversion.h		\
 	babl-fish.h			\
+	babl-image.h			\
 	babl-model.h			\
 	babl-pixel-format.h		\
 	babl-sampling.h			\

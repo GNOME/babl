@@ -1,5 +1,17 @@
 2005-08-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/Makefile.am
+	* babl/babl-image.c
+	* babl/babl-image.h
+	* babl/babl-classes.h: Added BablImage class.
+
+	* babl/babl-component.c
+	* babl/babl-conversion.c
+	* babl/babl-model.c: Handle BABL_IMAGE in switches.
+
+
+2005-08-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* .cvsignore: added INSTALL and README.
 
 2005-08-09  Øyvind Kolås  <pippin@gimp.org>

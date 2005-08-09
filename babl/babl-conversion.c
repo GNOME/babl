@@ -129,9 +129,6 @@ conversion_new (const char                      *name,
   self->time_cost     = time_cost;
   self->loss          = loss;
 
-  assert (BABL_IS_BABL (self->source));
-  assert (BABL_IS_BABL (self->destination));
-
   babl_add_ptr_to_list ((void ***)&(source->type.from), self);
   babl_add_ptr_to_list ((void ***)&(destination->type.to), self);
   
@@ -225,6 +222,9 @@ babl_conversion_new (const char *name,
     }
     
   va_end   (varg);
+
+  assert (source);
+  assert (destination);
 
   self = conversion_new (name, id,
                          source, destination, time_cost, loss, linear, planar, planar_bit);
