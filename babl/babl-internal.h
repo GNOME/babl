@@ -57,11 +57,19 @@ type_name##_id (int id)                                       \
 TypeName *                                                    \
 type_name (const char *name)                                  \
 {                                                             \
+  TypeName *ret;                                              \
+                                                              \
   if (babl_hmpf_on_name_lookups)                              \
     {                                                         \
       babl_log ("%s(\"%s\"): hmpf!", __FUNCTION__, name);     \
     }                                                         \
-  return (TypeName*) db_exist (0, name);                      \
+  ret = (TypeName*) db_exist (0, name);                       \
+                                                              \
+  if (!ret)                                                   \
+    {                                                         \
+      babl_log ("%s(\"%s\"): not found", __FUNCTION__, name); \
+    }                                                         \
+  return ret;                                                 \
 }
 
 #define BABL_DEFINE_INIT(type_name)                           \

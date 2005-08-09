@@ -43,5 +43,5 @@ babl_class_name (BablClassType klass)
   return class_names[klass-BABL_INSTANCE];
 }
 
-int babl_hmpf_on_name_lookups = 1;
+int babl_hmpf_on_name_lookups = 0;
 

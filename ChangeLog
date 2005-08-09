@@ -1,5 +1,13 @@
 2005-08-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-internal.h: issue a babl_log when the named object is not
+	found durin string based lookup.
+	* babl/babl-pixel-format.c: added BABL_IMAGE to var_args switch.
+	* babl/babl-classes.c: set babl_hmpf_on_name_lookups initial value to
+	0, to make it hmpf only in babl-base.
+
+2005-08-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/Makefile-mini: added babl-image.o.
 
 2005-08-09  Øyvind Kolås  <pippin@gimp.org>
