@@ -1,5 +1,11 @@
 2005-08-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* depcomp
+	* install-sh
+	* missing: erroniously included in first import.
+
+2005-08-09  Øyvind Kolås  <pippin@gimp.org>
+
 	Imported into GNOME CVS.
 
 2005-08-09  Øyvind Kolås  <pippin@gimp.org>
