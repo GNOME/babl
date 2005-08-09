@@ -16,4 +16,5 @@ ltmain.sh
 stamp-h
 stamp-h1
 stamp-h.in
-
+INSTALL
+README
