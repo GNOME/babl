@@ -25,7 +25,7 @@
 
 static int 
 each_babl_conversion_destroy (Babl *babl,
-                         void *data)
+                              void *data)
 {
   babl_free (babl->instance.name);
   babl_free (babl);
@@ -33,12 +33,12 @@ each_babl_conversion_destroy (Babl *babl,
 }
 
 static BablConversion *
-conversion_new (const char                      *name,
-                int                              id,
-                Babl                            *source,
-                Babl                            *destination,
-                int                              time_cost,
-                int                              loss,
+conversion_new (const char        *name,
+                int                id,
+                Babl              *source,
+                Babl              *destination,
+                int                time_cost,
+                int                loss,
                 BablFuncLinear     linear,
                 BablFuncPlanar     planar,
                 BablFuncPlanarBit  planar_bit)

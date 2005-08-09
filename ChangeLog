@@ -1,5 +1,9 @@
 2005-09-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-conversion.c: indentation cleanup.
+
+2005-09-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-ids: added BABL_LUMINANCE_GAMMA_2_2,
 	BABL_LUMINANCE_MUL_ALPHA, BABL_GRAYSCALE_GAMMA_2_2,
 	BABL_GRAYSCALE_ALPHA_PREMULTIPLIED.
