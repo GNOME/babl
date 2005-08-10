@@ -62,6 +62,7 @@ typedef enum {
   BABL_CONVERSION_PIXEL_FORMAT_PLANAR,
 
   BABL_FISH,
+  BABL_FISH_REFERENCE,
   BABL_IMAGE,
 
   BABL_SKY
@@ -73,7 +74,7 @@ typedef enum {
 /* common header for any item inserted into database */
 typedef struct
 {
-  BablClassType  type;
+  BablClassType  class_type;
   int            id;      /*< a numerical id, look at 'babl-ids.h' for the reserved
                               ones */
   char          *name;    /*< the name this type exists under         */
@@ -167,8 +168,6 @@ typedef struct
   BablComponent  **component;
   BablType       **type;
   BablSampling   **sampling;
-  BablConversion  *to_conversions;
-  BablConversion  *from_conversions;
 } BablPixelFormat;
 
 typedef struct
@@ -188,35 +187,33 @@ typedef struct
   union Babl      *destination;
 } BablFish;
 
+typedef struct
+{
+  BablFish         fish;
+  BablConversion  *type_to_double;
+  BablConversion  *model_to_rgba;
+  BablConversion  *rgba_to_model;
+  BablConversion  *double_to_type;
+} BablReferenceFish;
+
 typedef union
 {
-  BablClassType   kind;
-  BablInstance    instance;
-  BablType        type;
-  BablSampling    sampling;
-  BablComponent   component;
-  BablModel       model;
-  BablPixelFormat pixel_format;
-  BablConversion  conversion;
-  BablFish        fish;
-  BablImage        image;
+  BablClassType     class_type;
+  BablInstance      instance;
+  BablType          type;
+  BablSampling      sampling;
+  BablComponent     component;
+  BablModel         model;
+  BablPixelFormat   pixel_format;
+  BablConversion    conversion;
+  BablFish          fish;
+  BablReferenceFish reference_fish;
+  BablImage         image;
 } Babl;
 
 
-#define BABL_NAME(obj)          (((Babl*)(obj))->instance.name)
-#define BABL_INSTANCE_TYPE(obj) (((Babl*)(obj))->kind)
-
 #define BABL_IS_BABL(obj)\
-(NULL==(obj)?0:BABL_CLASS_TYPE_IS_VALID(BABL_INSTANCE_TYPE(obj)))
-
-#define BABL_IS_OF_KIND(obj,kind) \
-    (!BABL_IS_BABL(obj)?0:kind==BABL_INSTANCE_TYPE(obj)?1:0)
-
-#define BABL_IS_INSTANCE(obj)      BABL_IS_OF_KIND(obj,BABL_TYPE)
-#define BABL_IS_TYPE(obj)          BABL_IS_OF_KIND(obj,BABL_TYPE)
-#define BABL_IS_COMPONENT(obj)     BABL_IS_OF_KIND(obj,BABL_COMPONENT)
-#define BABL_IS_SAMPLING(obj)      BABL_IS_OF_KIND(obj,BABL_SAMPLING)
-#define BABL_IS_PIXEL_FORMAT(obj)  BABL_IS_OF_KIND(obj,BABL_PIXEL_FORMAT)
+(NULL==(obj)?0:BABL_CLASS_TYPE_IS_VALID(((Babl*)(obj))->class_type))
 
 typedef int  (*BablEachFunction) (Babl *entry,
                                   void *data);

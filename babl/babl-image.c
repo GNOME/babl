@@ -50,35 +50,35 @@ image_new (int             bands,
            int            *pitch,
            int            *stride)
 {
-  BablImage *self;
+  Babl *self;
   int        band;
 
   self                = babl_calloc (sizeof (BablImage), 1);
 
-  self->instance.type = BABL_IMAGE;
+  self->class_type    = BABL_IMAGE;
   self->instance.id   = 0;
   self->instance.name = "babl image";
 
-  self->bands         = bands;
+  self->image.bands         = bands;
 
-  self->component     = babl_malloc (sizeof (BablComponent*) * (bands+1));
-  self->data          = babl_malloc (sizeof (void*)          * (bands+1));
-  self->pitch         = babl_malloc (sizeof (int)            * (bands+1));
-  self->stride        = babl_malloc (sizeof (int)            * (bands+1));
+  self->image.component     = babl_malloc (sizeof (BablComponent*) * (bands+1));
+  self->image.data          = babl_malloc (sizeof (void*)          * (bands+1));
+  self->image.pitch         = babl_malloc (sizeof (int)            * (bands+1));
+  self->image.stride        = babl_malloc (sizeof (int)            * (bands+1));
 
   for (band=0; band < bands; band++)
     {
-      self->component[band] = component[band];
-      self->data[band]      = data[band];
-      self->pitch[band]     = pitch[band];
-      self->stride[band]    = stride[band];
+      self->image.component[band] = component[band];
+      self->image.data[band]      = data[band];
+      self->image.pitch[band]     = pitch[band];
+      self->image.stride[band]    = stride[band];
     }
-  self->component[band] = NULL;
-  self->data[band]      = NULL;
-  self->pitch[band]     = 0;
-  self->stride[band]    = 0;
+  self->image.component[band] = NULL;
+  self->image.data[band]      = NULL;
+  self->image.pitch[band]     = 0;
+  self->image.stride[band]    = 0;
 
-  return self;
+  return (BablImage*) self;
 }
 
 BablImage *
@@ -107,14 +107,14 @@ babl_image_new (void *first,
         {
           Babl *babl = (Babl*)arg;
 
-          if (babl->instance.type == BABL_COMPONENT)
+          if (babl->class_type == BABL_COMPONENT)
             {
               new_component = (BablComponent *)babl;
             }
           else
             {
                 babl_log ("%s(): %s unexpected",
-                          __FUNCTION__, babl_class_name (babl->instance.type));
+                          __FUNCTION__, babl_class_name (babl->class_type));
                 return NULL;
             }
         }

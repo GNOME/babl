@@ -1,13 +1,14 @@
 # This makeile is used for more rapid test compilations than
 # autofoo allows, it will not build a usable libray though.
 
-default: clean all
 
 TARGETS =				\
 	../tests/nop			\
 	../tests/introspect
 
-CFLAGS = -Wall -g -O1 -I./babl-base  -I. -I..
+default: $(TARGETS)
+
+CFLAGS = -Wall -Werror -g -O1 -I./babl-base  -I. -I..
 
 BABL_OBJECTS=					\
 	babl.o					\

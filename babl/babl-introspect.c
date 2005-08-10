@@ -113,7 +113,7 @@ model_introspect (Babl *babl)
   for (i=0; i< babl->model.components; i++)
     {
       babl_log ("\t\tindex[%i] = '%s'",
-                i, BABL_NAME (babl->model.component[i]));
+                i, ((Babl*)babl->model.component[i])->instance.name  );
     }
 }
 
@@ -144,8 +144,8 @@ pixel_format_introspect (Babl *babl)
   for (i=0; i< babl->pixel_format.bands; i++)
     {
       babl_log ("\t\tband[%i] type='%s' component='%s'",
-                i, BABL_NAME (babl->pixel_format.type[i]),
-                   BABL_NAME (babl->pixel_format.component[i]));
+                i,  ( (Babl*)(babl->pixel_format.type[i]     ))->instance.name,
+                    ( (Babl*)(babl->pixel_format.component[i]))->instance.name);
     }
 }
 
@@ -156,8 +156,8 @@ each_introspect (Babl *babl,
   babl_log ("\t'%s'\t%i\t%s",
    babl->instance.name,
    babl->instance.id,
-   babl_class_name (babl->instance.type));
-  switch (babl->instance.type)
+   babl_class_name (babl->class_type));
+  switch (babl->class_type)
     {
       case BABL_TYPE:
         type_introspect (babl);

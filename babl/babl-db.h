@@ -56,7 +56,7 @@ DB_DEF Babl * db_find    (const char *name)
       const char *sample_type = "unknwon";
 
       if (db[0])
-        sample_type = babl_class_name (db[0]->instance.type);
+        sample_type = babl_class_name (db[0]->class_type);
       babl_log ("%s(\"%s\"): failed (query performed on a %s database)",
        __FUNCTION__, name, sample_type);
     }

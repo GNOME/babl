@@ -36,26 +36,25 @@ babl_fish_new (const char        *name,
                Babl              *source,
                Babl              *destination)
 {
-  BablFish *self = NULL;
+  Babl *self = NULL;
 
-  self = babl_calloc (sizeof (BablFish), 1);
-  self->instance.type = BABL_FISH;
+  assert (BABL_IS_BABL (source));
+  assert (BABL_IS_BABL (destination));
 
-  self->instance.id   = 0;
-  self->instance.name = "Fishy";
-  self->source        = (union Babl*)source;
-  self->destination   = (union Babl*)destination;
+  self                   = babl_calloc (sizeof (BablFish), 1);
+  self->class_type             = BABL_FISH;
+  self->instance.id      = 0;
+  self->instance.name    = "Fishy";
+  self->fish.source      = (union Babl*)source;
+  self->fish.destination = (union Babl*)destination;
 
-  assert (BABL_IS_BABL (self->source));
-  assert (BABL_IS_BABL (self->destination));
-
-  if ((BablFish*) db_insert ( (Babl*)self) == self)
+  if (db_insert (self) == self)
     {
-      return self;
+      return (BablFish*)self;
     }
   else
     {
-      each_babl_fish_destroy ( (Babl*)self, NULL);
+      each_babl_fish_destroy (self, NULL);
       return NULL;
     }
 

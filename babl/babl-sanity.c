@@ -141,7 +141,7 @@ id_sanity (Babl *babl,
   if (0 == babl->instance.id)
     {
       babl_log ("%s\t'%s' has id==0",
-        babl_class_name (babl->instance.type), babl->instance.name);
+        babl_class_name (babl->class_type), babl->instance.name);
     }
   return 0;
 }

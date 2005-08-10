@@ -43,23 +43,23 @@ conversion_new (const char        *name,
                 BablFuncPlanar     planar,
                 BablFuncPlanarBit  planar_bit)
 {
-  BablConversion *self = NULL;
+  Babl *self = NULL;
 
   /* destination is of same type as source */ 
-  switch (BABL_INSTANCE_TYPE (source))
+  switch (source->class_type)
     {
       case BABL_TYPE:
         if (linear)
           {
             self = babl_calloc (sizeof (BablConversionType), 1);
-            self->instance.type = BABL_CONVERSION_TYPE;
-            self->function.linear = linear;
+            self->class_type      = BABL_CONVERSION_TYPE;
+            self->conversion.function.linear = linear;
           }
         else if (planar)
           {
             self = babl_calloc (sizeof (BablConversionTypePlanar), 1);
-            self->instance.type = BABL_CONVERSION_TYPE_PLANAR;
-            self->function.planar = planar;
+            self->class_type = BABL_CONVERSION_TYPE_PLANAR;
+            self->conversion.function.planar = planar;
           }
         else if (planar_bit)
           {
@@ -84,8 +84,8 @@ conversion_new (const char        *name,
         else if (planar)
           {
             self = babl_calloc (sizeof (BablConversionModelPlanar), 1);
-            self->instance.type = BABL_CONVERSION_MODEL_PLANAR;
-            self->function.planar = planar;
+            self->class_type = BABL_CONVERSION_MODEL_PLANAR;
+            self->conversion.function.planar = planar;
           }
         else if (planar_bit)
           {
@@ -98,14 +98,14 @@ conversion_new (const char        *name,
         if (linear)
           {
             self = babl_calloc (sizeof (BablConversionPixelFormat), 1);
-            self->instance.type = BABL_CONVERSION_PIXEL_FORMAT;
-            self->function.linear = linear;
+            self->class_type = BABL_CONVERSION_PIXEL_FORMAT;
+            self->conversion.function.linear = linear;
           }
         else if (planar)
           {
             self = babl_calloc (sizeof (BablConversionPixelFormatPlanar), 1);
-            self->instance.type = BABL_CONVERSION_PIXEL_FORMAT_PLANAR;
-            self->function.planar = planar;
+            self->class_type = BABL_CONVERSION_PIXEL_FORMAT_PLANAR;
+            self->conversion.function.planar = planar;
           }
         else if (planar_bit)
           {
@@ -122,12 +122,12 @@ conversion_new (const char        *name,
       return NULL;
     }
 
-  self->instance.id   = id;
-  self->instance.name = babl_strdup (name);
-  self->source        = (union Babl*)source;
-  self->destination   = (union Babl*)destination;
-  self->time_cost     = time_cost;
-  self->loss          = loss;
+  self->instance.id            = id;
+  self->instance.name          = babl_strdup (name);
+  self->conversion.source      = (union Babl*)source;
+  self->conversion.destination = (union Babl*)destination;
+  self->conversion.time_cost   = time_cost;
+  self->conversion.loss        = loss;
 
   babl_add_ptr_to_list ((void ***)&(source->type.from), self);
   babl_add_ptr_to_list ((void ***)&(destination->type.to), self);

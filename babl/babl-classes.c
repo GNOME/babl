@@ -34,6 +34,8 @@ static const char *class_names[] =
     "BablConversionPixelFormatPlanar",
     "BablConversionPixelFormatPlanar",
     "BablFish",
+    "BablReferenceFish",
+    "BablImage",
     "BablCeiling"
   };
 

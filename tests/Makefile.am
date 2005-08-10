@@ -14,3 +14,5 @@ nop_LDADD = $(top_builddir)/babl/libbabl.la
 
 EXTRA_DIST=		\
 	.cvsignore
+
+TESTS=nop introspect

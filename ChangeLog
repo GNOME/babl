@@ -1,4 +1,29 @@
-2005-09-09  Øyvind Kolås  <pippin@gimp.org>
+2005-08-09  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/Makefile-mini: CFLAGS = -Werror -Wall ....
+	* babl/babl-classes.[ch]: BablPixelFormat removed unused pointers
+	to lists of conversions. Added BablReferenceFish. Renamed kind/
+	instance.type to class_type/instance.class_type. Removed mostly
+	unused macro's and expanded them in source
+
+	* babl/babl-component.c
+	* babl/babl-conversion.c
+	* babl/babl-db.h
+	* babl/babl-fish.c
+	* babl/babl-image.c
+	* babl/babl-introspect.c
+	* babl/babl-model.c
+	* babl/babl-pixel-format.c
+	* babl/babl-sampling.c
+
+	* babl/babl-type.c: removed switch statement since all enums are
+	handled equally.
+
+	* babl/tests/Makefile.am: added nop and introspect to TESTS, not
+	actual tests yet, but at least a segfault will cause make check to
+	fail.
+	
+2005-08-09  Øyvind Kolås  <pippin@gimp.org>
 
 	* autogen.sh: make autogen also run make
 	* babl/babl-classes.h: added define macro usable for sampling and
@@ -6,11 +31,11 @@
 	* babl/babl-fish.[ch]: cleanup of stub class
 	* babl/babl-sampling.h: simplification of header using a define.
 
-2005-09-09  Øyvind Kolås  <pippin@gimp.org>
+2005-08-09  Øyvind Kolås  <pippin@gimp.org>
 
 	* babl/babl-conversion.c: indentation cleanup.
 
-2005-09-09  Øyvind Kolås  <pippin@gimp.org>
+2005-08-09  Øyvind Kolås  <pippin@gimp.org>
 
 	* babl/babl-ids: added BABL_LUMINANCE_GAMMA_2_2,
 	BABL_LUMINANCE_MUL_ALPHA, BABL_GRAYSCALE_GAMMA_2_2,

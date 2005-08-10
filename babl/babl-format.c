@@ -52,33 +52,33 @@ pixel_format_new (const char     *name,
                   BablSampling  **band_sampling,
                   BablType      **band_type)
 {
-  BablPixelFormat *self;
+  Babl *self;
   int              band;
 
   self                     = babl_calloc (sizeof (BablPixelFormat), 1);
 
-  self->instance.type = BABL_PIXEL_FORMAT;
+  self->class_type    = BABL_PIXEL_FORMAT;
   self->instance.id   = id;
   self->instance.name = babl_strdup (name);
 
-  self->bands         = bands;
-  self->planar        = planar;
+  self->pixel_format.bands    = bands;
+  self->pixel_format.planar   = planar;
 
-  self->component     = babl_malloc (sizeof (BablComponent*) * (bands+1));
-  self->type          = babl_malloc (sizeof (BablType*)      * (bands+1));
-  self->sampling      = babl_malloc (sizeof (BablSampling*)  * (bands+1));
+  self->pixel_format.component = babl_malloc (sizeof (BablComponent*) * (bands+1));
+  self->pixel_format.type     = babl_malloc (sizeof (BablType*)      * (bands+1));
+  self->pixel_format.sampling = babl_malloc (sizeof (BablSampling*)  * (bands+1));
 
   for (band=0; band < bands; band++)
     {
-      self->component[band] = band_component[band];
-      self->type[band] = band_type[band];
-      self->sampling[band] = band_sampling[band];
+      self->pixel_format.component[band] = band_component[band];
+      self->pixel_format.type[band] = band_type[band];
+      self->pixel_format.sampling[band] = band_sampling[band];
     }
-  self->component[band] = NULL;
-  self->type[band]      = NULL;
-  self->sampling[band]  = NULL;
+  self->pixel_format.component[band] = NULL;
+  self->pixel_format.type[band]      = NULL;
+  self->pixel_format.sampling[band]  = NULL;
 
-  return self;
+  return (BablPixelFormat*)self;
 }
 
 BablPixelFormat *
@@ -112,7 +112,7 @@ babl_pixel_format_new (const char *name,
         {
           Babl *babl = (Babl*)arg;
 
-          switch (BABL_INSTANCE_TYPE (arg))
+          switch (babl->class_type)
             {
               case BABL_TYPE:
                 current_type = (BablType*) babl;
@@ -135,7 +135,7 @@ babl_pixel_format_new (const char *name,
               case BABL_INSTANCE:
               case BABL_MODEL:
                 babl_log ("%s(): %s not handled in pixel format yet",
-                          __FUNCTION__, babl_class_name (babl->instance.type));
+                          __FUNCTION__, babl_class_name (babl->class_type));
                   break;
               case BABL_PIXEL_FORMAT:
 
@@ -146,9 +146,10 @@ babl_pixel_format_new (const char *name,
               case BABL_CONVERSION_PIXEL_FORMAT:
               case BABL_CONVERSION_PIXEL_FORMAT_PLANAR:
               case BABL_FISH:
+              case BABL_FISH_REFERENCE:
               case BABL_IMAGE:
                 babl_log ("%s(): %s unexpected",
-                          __FUNCTION__, babl_class_name (babl->instance.type));
+                          __FUNCTION__, babl_class_name (babl->class_type));
                 break;
               case BABL_SKY: /* shut up compiler */
                 break;

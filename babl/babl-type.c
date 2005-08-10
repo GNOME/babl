@@ -20,7 +20,6 @@
 #include "babl-internal.h"
 #include "babl-db.h"
 
-
 #include <string.h>
 #include <stdarg.h>
 
@@ -41,15 +40,15 @@ type_new (const char  *name,
           int          id,
           int          bits)
 {
-  BablType *self;
+  Babl *self;
 
   self                = babl_calloc (sizeof (BablType), 1);
-  self->instance.type = BABL_TYPE;
+  self->class_type    = BABL_TYPE;
   self->instance.id   = id;
   self->instance.name = babl_strdup (name);
-  self->bits          = bits;
+  self->type.bits     = bits;
 
-  return self;
+  return (BablType*)self;
 }
 
 BablType *
@@ -75,28 +74,8 @@ babl_type_new (const char *name,
         {
           Babl *babl = (Babl*)arg;
 
-          switch (BABL_INSTANCE_TYPE (arg))
-            {
-              case BABL_TYPE:
-              case BABL_INSTANCE:
-              case BABL_COMPONENT:
-              case BABL_MODEL:
-              case BABL_PIXEL_FORMAT:
-              case BABL_SAMPLING:
-
-              case BABL_CONVERSION:
-              case BABL_CONVERSION_TYPE:
-              case BABL_CONVERSION_TYPE_PLANAR:
-              case BABL_CONVERSION_MODEL_PLANAR:
-              case BABL_CONVERSION_PIXEL_FORMAT:
-              case BABL_CONVERSION_PIXEL_FORMAT_PLANAR:
-              case BABL_FISH:
-                babl_log ("%s(): %s unexpected",
-                          __FUNCTION__, babl_class_name (babl->instance.type));
-                break;
-              case BABL_SKY: /* shut up compiler */
-                break;
-            }
+          babl_log ("%s(): %s unexpected",
+                    __FUNCTION__, babl_class_name (babl->class_type));
         }
       /* if we didn't point to a babl, we assume arguments to be strings */
       else if (!strcmp (arg, "id"))

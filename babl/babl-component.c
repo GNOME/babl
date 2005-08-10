@@ -42,17 +42,17 @@ component_new (const char *name,
                int         chroma,
                int         alpha)
 {
-  BablComponent *self;
+  Babl *self;
 
-  self                = babl_calloc (sizeof (BablComponent), 1);
-  self->instance.type = BABL_COMPONENT;
-  self->instance.id   = id;
-  self->instance.name = babl_strdup (name);
-  self->luma       = luma;
-  self->chroma     = chroma;
-  self->alpha      = alpha;
+  self                   = babl_calloc (sizeof (BablComponent), 1);
+  self->class_type       = BABL_COMPONENT;
+  self->instance.id      = id;
+  self->instance.name    = babl_strdup (name);
+  self->component.luma   = luma;
+  self->component.chroma = chroma;
+  self->component.alpha  = alpha;
 
-  return self;
+  return (BablComponent*) self;
 }
 
 BablComponent *
@@ -79,7 +79,7 @@ babl_component_new (const char *name,
         {
           Babl *babl = (Babl*)arg;
 
-          switch (BABL_INSTANCE_TYPE (arg))
+          switch (babl->class_type)
             {
               case BABL_TYPE:
               case BABL_INSTANCE:
@@ -95,9 +95,10 @@ babl_component_new (const char *name,
               case BABL_CONVERSION_PIXEL_FORMAT:
               case BABL_CONVERSION_PIXEL_FORMAT_PLANAR:
               case BABL_FISH:
+              case BABL_FISH_REFERENCE:
               case BABL_IMAGE:
                 babl_log ("%s(): %s unexpected",
-                          __FUNCTION__, babl_class_name (babl->instance.type));
+                          __FUNCTION__, babl_class_name (babl->class_type));
                 break;
               case BABL_SKY: /* shut up compiler */
                 break;

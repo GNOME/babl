@@ -44,26 +44,24 @@ model_new (const char     *name,
            int             components,
            BablComponent **component)
 {
-  BablModel *self;
-  int        i; 
+  Babl *self;
+  int   i; 
 
   self                     = babl_calloc (sizeof (BablModel), 1);
 
-  self->instance.type = BABL_MODEL;
-  self->instance.id   = id;
-  self->instance.name = babl_strdup (name);
-
-  self->components    = components;
-
-  self->component     = babl_malloc (sizeof (BablComponent*) * (components+1));
+  self->class_type       = BABL_MODEL;
+  self->instance.id      = id;
+  self->instance.name    = babl_strdup (name);
+  self->model.components = components;
+  self->model.component  = babl_malloc (sizeof (BablComponent*) * (components+1));
 
   for (i=0; i < components; i++)
     {
-      self->component[i] = component[i];
+      self->model.component[i] = component[i];
     }
-  self->component[i] = NULL;
+  self->model.component[i] = NULL;
 
-  return self;
+  return (BablModel*)self;
 }
 
 BablModel *
@@ -91,7 +89,7 @@ babl_model_new (const char *name,
         {
           Babl *babl = (Babl*)arg;
 
-          switch (BABL_INSTANCE_TYPE (arg))
+          switch (babl->class_type)
             {
               case BABL_COMPONENT:
                 band_component [components] = (BablComponent*) babl;
@@ -119,9 +117,10 @@ babl_model_new (const char *name,
               case BABL_CONVERSION_PIXEL_FORMAT:
               case BABL_CONVERSION_PIXEL_FORMAT_PLANAR:
               case BABL_FISH:
+              case BABL_FISH_REFERENCE:
               case BABL_IMAGE:
                 babl_log ("%s(): %s unexpected",
-                          __FUNCTION__, babl_class_name (babl->instance.type));
+                          __FUNCTION__, babl_class_name (babl->class_type));
                 break;
               case BABL_SKY: /* shut up compiler */
                 break;
