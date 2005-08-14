@@ -23,6 +23,9 @@
 #include <string.h>
 #include <stdarg.h>
 
+#include "babl-type.h"
+#include "babl-model.h"
+
 static int 
 each_babl_fish_destroy (Babl *babl,
                         void *data)
@@ -32,29 +35,28 @@ each_babl_fish_destroy (Babl *babl,
 }
 
 BablFish *
-babl_fish_new (const char        *name,
-               Babl              *source,
-               Babl              *destination)
+babl_fish_new (Babl *source,
+               Babl *destination)
 {
-  Babl *self = NULL;
+  Babl *babl = NULL;
 
   assert (BABL_IS_BABL (source));
   assert (BABL_IS_BABL (destination));
 
-  self                   = babl_calloc (sizeof (BablFish), 1);
-  self->class_type             = BABL_FISH;
-  self->instance.id      = 0;
-  self->instance.name    = "Fishy";
-  self->fish.source      = (union Babl*)source;
-  self->fish.destination = (union Babl*)destination;
+  babl                   = babl_calloc (sizeof (BablFish), 1);
+  babl->class_type       = BABL_FISH;
+  babl->instance.id      = 0;
+  babl->instance.name    = "Fishy";
+  babl->fish.source      = (union Babl*)source;
+  babl->fish.destination = (union Babl*)destination;
 
-  if (db_insert (self) == self)
+  if (db_insert (babl) == babl)
     {
-      return (BablFish*)self;
+      return (BablFish*)babl;
     }
   else
     {
-      each_babl_fish_destroy (self, NULL);
+      each_babl_fish_destroy (babl, NULL);
       return NULL;
     }
 
@@ -64,10 +66,167 @@ babl_fish_new (const char        *name,
  *  is a possibility , or even full single line serialization of
  *  components with types.
  *
-    babl_add_ptr_to_list ((void ***)&(source->type.from), self);
-    babl_add_ptr_to_list ((void ***)&(destination->type.to), self);
+    babl_add_ptr_to_list ((void ***)&(source->type.from), babl);
+    babl_add_ptr_to_list ((void ***)&(destination->type.to), babl);
   */
-  return (BablFish*)self;
+  return (BablFish*)babl;
 }
 
-BABL_CLASS_TEMPLATE(BablFish, babl_fish, "BablFish")
+typedef struct SearchData
+{
+  Babl           *source;
+  Babl           *destination;
+  BablConversion *result;
+} SearchData;
+
+static int
+find_conversion (Babl *babl,
+                 void *user_data)
+{
+  SearchData *sd     = user_data;
+
+  if ((Babl*)babl->conversion.source      == sd->source &&
+      (Babl*)babl->conversion.destination == sd->destination)
+    {
+      sd->result = (BablConversion*)babl;
+      return 1;
+    }
+  return 0;
+}
+
+BablConversion *babl_conversion_find (Babl *source,
+                                      Babl *destination)
+{
+  SearchData data;
+  data.source       = source;
+  data.destination = destination;
+  data.result = NULL;
+  babl_conversion_each (find_conversion, &data);
+
+  if (!data.result)
+    {
+      babl_log ("%s('%s', '%s'): failed", __FUNCTION__,
+        source->instance.name, destination->instance.name);
+      return NULL;
+    }
+  return data.result;
+}
+
+BablFish *
+babl_fish_reference_new (Babl *source,
+                         Babl *destination)
+{
+  Babl *babl = NULL;
+
+  assert (BABL_IS_BABL (source));
+  assert (BABL_IS_BABL (destination));
+
+  babl                   = babl_calloc (sizeof (BablFishReference), 1);
+  babl->class_type       = BABL_FISH_REFERENCE;
+  babl->instance.id      = 0;
+  babl->instance.name    = "Fishy";
+  babl->fish.source      = (union Babl*)source;
+  babl->fish.destination = (union Babl*)destination;
+
+  babl->reference_fish.type_to_double =
+     babl_conversion_find (
+        (Babl*)source->pixel_format.type[0],
+        (Babl*)babl_type_id (BABL_DOUBLE)
+     );
+
+  babl->reference_fish.model_to_rgba =
+    babl_conversion_find (
+        (Babl*)source->pixel_format.model[0],
+        (Babl*)babl_model_id (BABL_RGBA)
+    );
+
+  babl->reference_fish.rgba_to_model =
+    babl_conversion_find (
+        (Babl*)babl_model_id (BABL_RGBA),
+        (Babl*)destination->pixel_format.model[0]
+    );
+
+  babl->reference_fish.double_to_type =
+    babl_conversion_find (
+        (Babl*)babl_type_id (BABL_DOUBLE),
+        (Babl*)destination->pixel_format.type[0]
+    );
+
+  if (db_insert (babl) == babl)
+    {
+      return (BablFish*)babl;
+    }
+  else
+    {
+      each_babl_fish_destroy (babl, NULL);
+      return NULL;
+    }
+
+/*  Might make sense to allow a precalculated shortcut to
+ *  participate in later checks for optimal conversions, then we
+ *  should also have better generated names,.   model + datatype 
+ *  is a possibility , or even full single line serialization of
+ *  components with types.
+    
+    babl_add_ptr_to_list ((void ***)&(source->type.from), babl);
+    babl_add_ptr_to_list ((void ***)&(destination->type.to), babl);
+  */
+  return (BablFish*) babl;
+}
+
+BablFish *
+babl_fish (Babl *source,
+           Babl *destination)
+{
+  return babl_fish_reference_new (source, destination);
+}
+
+void *fooA;
+void *fooB;
+void *fooC;
+
+int
+babl_fish_process (BablFish *babl_fish,
+                   void     *source,
+                   void     *destination,
+                   int       n)
+{
+  Babl *babl;
+
+  fooA = malloc(1000); 
+  fooB = malloc(1000); 
+  fooC = malloc(1000); 
+
+  assert (source);
+  assert (destination);
+
+  babl = (Babl *)babl_fish;
+  if (BABL_IS_BABL (source) ||
+      BABL_IS_BABL (destination))
+    {
+      babl_log ("%s(%p, %p, %p, %i): not handling BablImage yet",
+                __FUNCTION__, babl_fish, source, destination, n);
+      return -1;
+    }
+  
+  ((BablConversion*)(babl->reference_fish.type_to_double))->function.linear(
+          source,
+          fooA,
+          n*  ((BablPixelFormat*)(babl_fish->source))->bands
+          );
+  /* calculate planar representation of fooA, and fooB */
+  /* transform fooA into fooB fooB is rgba double */
+  /* calculate planar representation of fooC */
+  /* transform fooB into fooC fooC is ???? double */
+
+  ((BablConversion*)(babl->reference_fish.double_to_type))->function.linear(
+          fooA, destination, n * ((BablPixelFormat*)(babl_fish->destination))->bands
+          );
+
+  return 0;
+}
+
+/*BABL_CLASS_TEMPLATE(BablFish, babl_fish, "BablFish")*/
+BABL_DEFINE_INIT(babl_fish)
+BABL_DEFINE_DESTROY(babl_fish)
+BABL_DEFINE_EACH(babl_fish)

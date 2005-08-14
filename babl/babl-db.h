@@ -25,7 +25,7 @@
 #error  babl-internal.h must be included before babl-db.h, babl-db.h is strictly internal to babl core classes.
 #endif
 
-#include "babl-classes.h"
+#include "babl-instance.h"
 
 #include <string.h>
 

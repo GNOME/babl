@@ -1,4 +1,20 @@
 2005-08-14  Øyvind Kolås  <pippin@gimp.org>
+	
+	* babl/Makefile.am: added babl-instance.h, removed wilcard from
+	EXTRA_DIST
+	* babl/babl-classes.h: added BablModel **model to BablPixelFormat,
+	renamed BablReferenceFish to BablFishReference. Moved some logic out
+	to babl-instance.h.
+	* babl/babl-instance.h: new file.
+	* babl/babl-db.h: include babl-instance instead of babl-classes to
+	reduce amount of headers included by headers.
+	* babl/babl-fish.c: Added code to make it work for type conversions
+	* babl/babl-fish.h: Added babl_fish (source, destination) prototype
+	* babl/babl-internal.h: reindentation, include babl-conversion.h
+	* babl/babl-pixel-format.c: add model for each band
+	* babl/babl.c: destroy all fishes at finish
+
+2005-08-14  Øyvind Kolås  <pippin@gimp.org>
 
 	* babl/babl-base/Makefile.am: LDADD = -lm
 	* babl/babl-base/babl-base-conversions-model.c: reindentation, added

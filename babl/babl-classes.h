@@ -46,9 +46,15 @@ typedef void (*BablFuncPlanarBit) (int    src_bands,
                                    int    dst_bit_pitch[],
                                    int    n);
 
+/* magic number used at the start of all babl objects, used to do
+ * differentiation in polymorphic functions. (as well as manual
+ * type check assertions).
+ */
+#define BABL_MAGIC   0xbAb10000
+
 typedef enum {
-  BABL_INSTANCE = 0xBAB10000,
-  BABL_TYPE,
+  BABL_INSTANCE = BABL_MAGIC,
+  BABL_TYPE,                   
   BABL_SAMPLING,
   BABL_COMPONENT,
   BABL_MODEL,
@@ -165,6 +171,7 @@ typedef struct
   BablConversion **to;   /*< NULL terminated list of conversions to class   */
   int              planar;
   int              bands;
+  BablModel      **model;
   BablComponent  **component;
   BablType       **type;
   BablSampling   **sampling;
@@ -190,11 +197,14 @@ typedef struct
 typedef struct
 {
   BablFish         fish;
+  BablConversion **from; /*< these are here for a later stage, when calculated*/
+  BablConversion **to;   /*< reference conversions can be used for "segment"  */
+                         /*< conversions where no other conversions exist.    */
   BablConversion  *type_to_double;
   BablConversion  *model_to_rgba;
   BablConversion  *rgba_to_model;
   BablConversion  *double_to_type;
-} BablReferenceFish;
+} BablFishReference;
 
 typedef union
 {
@@ -207,39 +217,17 @@ typedef union
   BablPixelFormat   pixel_format;
   BablConversion    conversion;
   BablFish          fish;
-  BablReferenceFish reference_fish;
+  BablFishReference reference_fish;
   BablImage         image;
 } Babl;
 
 
-#define BABL_IS_BABL(obj)\
-(NULL==(obj)?0:BABL_CLASS_TYPE_IS_VALID(((Babl*)(obj))->class_type))
+#define BABL_IS_BABL(obj)                              \
+(NULL==(obj)?0:                                        \
+ BABL_CLASS_TYPE_IS_VALID(((Babl*)(obj))->class_type)  \
+)
 
-typedef int  (*BablEachFunction) (Babl *entry,
-                                  void *data);
-
-const char  *babl_class_name     (BablClassType klass);
-
-
-
-#define BABL_DEFINE_CLASS(TypeName, type_name)                   \
-                                                                 \
-void       type_name##_init       (void);                        \
-void       type_name##_destroy    (void);                        \
-void       type_name##_each       (BablEachFunction  each_fun,   \
-                                   void             *user_data); \
-TypeName * type_name              (const char       *name);      \
-TypeName * type_name##_id         (int               id);        \
-TypeName * type_name##_new        (const char       *name,       \
-                                   ...);
-
-
-#define BABL_DEFINE_CLASS_NO_NEW_NO_ID(TypeName, type_name)      \
-                                                                 \
-void       type_name##_init       (void);                        \
-void       type_name##_destroy    (void);                        \
-void       type_name##_each       (BablEachFunction  each_fun,   \
-                                   void             *user_data);
+#include "babl-instance.h"
 
 #endif
 

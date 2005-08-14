@@ -28,6 +28,7 @@
 #include "babl-util.h"
 #include "babl-memory.h"
 #include "babl-classes.h"
+#include "babl-conversion.h"
 
 #define babl_log(fmt, args...) do {      \
   fprintf (stdout, "babl: ");            \
@@ -41,7 +42,7 @@ extern int babl_hmpf_on_name_lookups;
 #define BABL_DEFINE_EACH(type_name)                           \
 void                                                          \
 type_name##_each (BablEachFunction  each_fun,                 \
-                     void          *user_data)                \
+                  void             *user_data)                \
 {                                                             \
   db_each (each_fun, user_data);                              \
 }                                                             \

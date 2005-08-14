@@ -21,6 +21,7 @@
 #define BABL_CONVERSION_H
 
 #include "babl-classes.h"
+
 BABL_DEFINE_CLASS(BablConversion, babl_conversion)
 
 #endif

@@ -27,7 +27,11 @@ BABL_DEFINE_CLASS_NO_NEW_NO_ID(BablFish, babl_fish)
 BablFish *
 babl_fish_new (Babl *source,
                Babl *destination);
-  
+
+BablFish *
+babl_fish (Babl *source,
+           Babl *destination);
+
 /* babl_fish_process will probably be a polymorph function
  * accepting source and destination buffer pointers will be
  * allowed as well as BablImage objects in their place

@@ -37,6 +37,7 @@ each_babl_pixel_format_destroy (Babl *babl,
   babl_free (babl->pixel_format.component);
   babl_free (babl->pixel_format.type);
   babl_free (babl->pixel_format.sampling);
+  babl_free (babl->pixel_format.model);
   babl_free (babl->instance.name);
   babl_free (babl);
 
@@ -48,9 +49,10 @@ pixel_format_new (const char     *name,
                   int             id,
                   int             planar,
                   int             bands,
-                  BablComponent **band_component,
-                  BablSampling  **band_sampling,
-                  BablType      **band_type)
+                  BablModel     **model,
+                  BablComponent **component,
+                  BablSampling  **sampling,
+                  BablType      **type)
 {
   Babl *self;
   int              band;
@@ -64,16 +66,19 @@ pixel_format_new (const char     *name,
   self->pixel_format.bands    = bands;
   self->pixel_format.planar   = planar;
 
+  self->pixel_format.model     = babl_malloc (sizeof (BablModel*)     * (bands+1));
   self->pixel_format.component = babl_malloc (sizeof (BablComponent*) * (bands+1));
-  self->pixel_format.type     = babl_malloc (sizeof (BablType*)      * (bands+1));
-  self->pixel_format.sampling = babl_malloc (sizeof (BablSampling*)  * (bands+1));
+  self->pixel_format.type      = babl_malloc (sizeof (BablType*)      * (bands+1));
+  self->pixel_format.sampling  = babl_malloc (sizeof (BablSampling*)  * (bands+1));
 
   for (band=0; band < bands; band++)
     {
-      self->pixel_format.component[band] = band_component[band];
-      self->pixel_format.type[band] = band_type[band];
-      self->pixel_format.sampling[band] = band_sampling[band];
+      self->pixel_format.model[band] = model[band];
+      self->pixel_format.component[band] = component[band];
+      self->pixel_format.type[band] = type[band];
+      self->pixel_format.sampling[band] = sampling[band];
     }
+  self->pixel_format.model[band] = NULL;
   self->pixel_format.component[band] = NULL;
   self->pixel_format.type[band]      = NULL;
   self->pixel_format.sampling[band]  = NULL;
@@ -90,13 +95,15 @@ babl_pixel_format_new (const char *name,
   int              id     = 0;
   int              planar = 0;
   int              bands  = 0;
-  BablComponent   *band_component [BABL_MAX_BANDS];
-  BablSampling    *band_sampling  [BABL_MAX_BANDS];
-  BablType        *band_type      [BABL_MAX_BANDS];
+  BablModel       *model     [BABL_MAX_BANDS];
+  BablComponent   *component [BABL_MAX_BANDS];
+  BablSampling    *sampling  [BABL_MAX_BANDS];
+  BablType        *type      [BABL_MAX_BANDS];
 
   BablSampling    *current_sampling = babl_sampling (1,1);
   BablType        *current_type     = babl_type_id (BABL_U8);
-  const char      *arg=name;
+  BablModel       *current_model    = NULL;
+  const char      *arg              = name;
 
   va_start (varg, name);
 
@@ -118,27 +125,31 @@ babl_pixel_format_new (const char *name,
                 current_type = (BablType*) babl;
                 break;
               case BABL_COMPONENT:
-                band_component [bands] = (BablComponent*) babl;
-                band_type      [bands] = current_type;
-                band_sampling  [bands] = current_sampling;
+                if (!current_model)
+                  {
+                    babl_log ("%s(): no model specified before component %s",
+                              __FUNCTION__, babl->instance.name);
+                  }
+                model     [bands] = current_model;
+                component [bands] = (BablComponent*) babl;
+                type      [bands] = current_type;
+                sampling  [bands] = current_sampling;
                 bands++;
 
                 if (bands>=BABL_MAX_BANDS)
                   {
-                    babl_log ("maximum number of bands (%i) exceeded for %s",
-                              BABL_MAX_BANDS, name);
+                    babl_log ("%s(): maximum number of bands (%i) exceeded for %s",
+                              __FUNCTION__, BABL_MAX_BANDS, name);
                   }
                 break;
               case BABL_SAMPLING:
                   current_sampling = (BablSampling*)arg;
                   break;
-              case BABL_INSTANCE:
               case BABL_MODEL:
-                babl_log ("%s(): %s not handled in pixel format yet",
-                          __FUNCTION__, babl_class_name (babl->class_type));
+                  current_model = (BablModel*)arg;
                   break;
+              case BABL_INSTANCE:
               case BABL_PIXEL_FORMAT:
-
               case BABL_CONVERSION:
               case BABL_CONVERSION_TYPE:
               case BABL_CONVERSION_TYPE_PLANAR:
@@ -182,9 +193,10 @@ babl_pixel_format_new (const char *name,
   va_end   (varg);
 
 
-  self =pixel_format_new (name, id,
-                          planar,
-                          bands, band_component, band_sampling, band_type);
+  self = pixel_format_new (name, id,
+                           planar,
+                           bands,
+                           model, component, sampling, type);
 
   
   if ((BablPixelFormat*) db_insert ((Babl*)self) == self)

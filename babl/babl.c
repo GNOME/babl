@@ -42,6 +42,7 @@ babl_destroy (void)
 {
   /* babl_base is destroy by the containing types */
 
+  babl_fish_destroy ();
   babl_conversion_destroy ();
   babl_pixel_format_destroy ();
   babl_model_destroy ();
