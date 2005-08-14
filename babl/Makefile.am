@@ -24,6 +24,7 @@ h_sources  =             		\
 	babl-conversion.h		\
 	babl-db.h			\
 	babl-ids.h			\
+	babl-instance.h			\
 	babl-internal.h			\
 	babl-introspect.h		\
 	babl-image.h			\
@@ -61,7 +62,7 @@ libbabl_la_LDFLAGS= \
 	-version-info $(BABL_LIBRARY_VERSION) \
 	-release $(BABL_RELEASE)
 
-EXTRA_DIST := $(wildcard *.h)	\
+EXTRA_DIST := 			\
 	.cvsignore		\
 	Makefile-mini
 
