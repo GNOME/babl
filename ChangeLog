@@ -1,5 +1,12 @@
 2005-08-14  Øyvind Kolås  <pippin@gimp.org>
 	
+	* tests/float_to_u8.c
+	* tests/u8_to_float.c
+	* tests/grayscale_to_rgb.c: new files
+	* tests/Makefile.am: including preceding tests
+
+2005-08-14  Øyvind Kolås  <pippin@gimp.org>
+	
 	* babl/Makefile.am: added babl-instance.h, removed wilcard from
 	EXTRA_DIST
 	* babl/babl-classes.h: added BablModel **model to BablPixelFormat,
