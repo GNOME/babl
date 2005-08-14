@@ -1,3 +1,15 @@
+2005-08-14  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/babl-base/Makefile.am: LDADD = -lm
+	* babl/babl-base/babl-base-conversions-model.c: reindentation, added
+	gamma functions.
+	* babl/babl-base/babl-base-conversions-type.c: corrected reference
+	versions of u8, u16 and float.
+	* babl/babl-base/babl-base-models.c: ifdef'ed out some of the more
+	arcane models.
+	* babl/babl-base/babl-base-pixel-formats.c: added the corresponding
+	model used to all pixel formats.
+
 2005-08-09  Øyvind Kolås  <pippin@gimp.org>
 
 	* babl/Makefile-mini: CFLAGS = -Werror -Wall ....
