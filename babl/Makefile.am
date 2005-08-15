@@ -1,6 +1,6 @@
 ## Source directory
 
-SUBDIRS = babl-base
+SUBDIRS = base
 
 c_sources =				\
         babl.c				\
@@ -51,12 +51,12 @@ library_include_HEADERS =		\
 	babl-sampling.h			\
 	babl-type.h
 
-INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/babl/babl-base
+INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/babl/base
 
 lib_LTLIBRARIES= libbabl.la
 libbabl_la_SOURCES= $(h_sources) $(c_sources)
 libbabl_la_LIBADD=\
-	babl-base/libbabl_base.la
+	base/libbase.la
 
 libbabl_la_LDFLAGS= \
 	-version-info $(BABL_LIBRARY_VERSION) \
