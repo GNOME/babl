@@ -53,7 +53,8 @@ test (void)
       babl_component ("green"),
       babl_component ("blue"),
       NULL
-    ));
+    )
+  );
 
   babl_fish_process (fish, 
      grayscale_buf, rgb_buf, 

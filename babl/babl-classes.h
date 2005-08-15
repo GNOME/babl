@@ -169,8 +169,8 @@ typedef struct
   BablInstance     instance;
   BablConversion **from; /*< NULL terminated list of conversions from class */
   BablConversion **to;   /*< NULL terminated list of conversions to class   */
-  int              planar;
   int              bands;
+  int              planar;
   BablModel      **model;
   BablComponent  **component;
   BablType       **type;
@@ -197,9 +197,6 @@ typedef struct
 typedef struct
 {
   BablFish         fish;
-  BablConversion **from; /*< these are here for a later stage, when calculated*/
-  BablConversion **to;   /*< reference conversions can be used for "segment"  */
-                         /*< conversions where no other conversions exist.    */
   BablConversion  *type_to_double;
   BablConversion  *model_to_rgba;
   BablConversion  *rgba_to_model;

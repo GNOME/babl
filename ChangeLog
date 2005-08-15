@@ -1,4 +1,19 @@
 2005-08-15  Øyvind Kolås  <pippin@gimp.org>
+	
+	* babl/babl-classes.h: BablPixelFormat: changed order of attributes to
+	match BablModel. BablFish: removed **from and **to lists, since they
+	were added at a wrong offset from the instance start anyways.
+	* babl/babl-fish.c: Made the reference fish work for linear buffers
+	with constant datatype
+	* babl/babl-ids.h: added BABL_RGBA_DOUBLE
+	* babl/babl-image.[ch]: made BablImage be allocated in a single chunk,
+	added babl_image_new_from_linear()
+	* babl/babl-type.c: added assertion about bits%8==0
+	* babl/babl-base/babl-base-conversions-model.c: made BABL_PLANAR_SANITY accept
+	single band buffers. added conversions for premultiplied grayscale.
+	* babl/babl-base/babl-base-pixel-formats.c: added "rgba-double"
+
+2005-08-15  Øyvind Kolås  <pippin@gimp.org>
 
 	* Makefile-mini: compile both the nop and introspect programs by
 	default.

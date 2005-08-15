@@ -17,11 +17,13 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <string.h>
+#include <stdarg.h>
+#include <assert.h>
+
 #include "babl-internal.h"
 #include "babl-db.h"
 
-#include <string.h>
-#include <stdarg.h>
 
 static int 
 each_babl_type_destroy (Babl *babl,
@@ -42,6 +44,9 @@ type_new (const char  *name,
 {
   Babl *self;
 
+  assert (bits != 0);
+  assert (bits % 8 == 0);
+  
   self                = babl_calloc (sizeof (BablType), 1);
   self->class_type    = BABL_TYPE;
   self->instance.id   = id;

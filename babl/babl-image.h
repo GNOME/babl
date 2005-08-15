@@ -29,4 +29,11 @@ void        babl_image_each       (BablEachFunction  each_fun,
 void        babl_image_destroy    (void);    
 BablImage * babl_image_new        (void *first_component,
                                    ...);
+
+/* create a new BablImage based on a packed BablPixelFormat (or BablModel assumed to
+ * use only doubles).
+ */
+BablImage *
+babl_image_new_from_linear (void *buffer,
+                            Babl *format);
 #endif

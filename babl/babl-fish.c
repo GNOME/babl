@@ -25,6 +25,8 @@
 
 #include "babl-type.h"
 #include "babl-model.h"
+#include "babl-image.h"
+#include "babl-pixel-format.h"
 
 static int 
 each_babl_fish_destroy (Babl *babl,
@@ -185,6 +187,8 @@ void *fooA;
 void *fooB;
 void *fooC;
 
+#define BABL_MAX_BANDS   32
+
 int
 babl_fish_process (BablFish *babl_fish,
                    void     *source,
@@ -192,10 +196,12 @@ babl_fish_process (BablFish *babl_fish,
                    int       n)
 {
   Babl *babl;
+  BablImage *imageA;
+  BablImage *imageB;
+  BablImage *imageC;
 
-  fooA = malloc(1000); 
-  fooB = malloc(1000); 
-  fooC = malloc(1000); 
+  fooA = babl_malloc(sizeof (double) * n * 4); 
+  fooB = babl_malloc(sizeof (double) * n * 4); 
 
   assert (source);
   assert (destination);
@@ -214,15 +220,50 @@ babl_fish_process (BablFish *babl_fish,
           fooA,
           n*  ((BablPixelFormat*)(babl_fish->source))->bands
           );
+
   /* calculate planar representation of fooA, and fooB */
+
+  imageA = babl_image_new_from_linear (fooA,
+      (Babl*) ((BablPixelFormat*) babl->fish.source)->model[0]);
+  imageB = babl_image_new_from_linear (fooB, (Babl*)babl_model_id (BABL_RGBA));
   /* transform fooA into fooB fooB is rgba double */
+
+  ((BablConversion*)(babl->reference_fish.model_to_rgba))->function.planar(
+          imageA->bands, 
+          imageA->data,
+          imageA->pitch,
+          imageB->bands, 
+          imageB->data,
+          imageB->pitch,
+          n);
+  babl_free (imageA);
+  babl_free (imageB);
+
   /* calculate planar representation of fooC */
   /* transform fooB into fooC fooC is ???? double */
+
+  imageB = babl_image_new_from_linear (fooB, (Babl*)babl_model_id (BABL_RGBA));
+  imageC = babl_image_new_from_linear (fooA, (Babl*)((BablPixelFormat*)babl->fish.destination)->model[0]);
+
+  ((BablConversion*)(babl->reference_fish.rgba_to_model))->function.planar(
+          imageB->bands, 
+          imageB->data,
+          imageB->pitch,
+          imageC->bands, 
+          imageC->data,
+          imageC->pitch,
+          n);
+
 
   ((BablConversion*)(babl->reference_fish.double_to_type))->function.linear(
           fooA, destination, n * ((BablPixelFormat*)(babl_fish->destination))->bands
           );
 
+  babl_free (imageB);
+  babl_free (imageC);
+
+  babl_free (fooA);
+  babl_free (fooB);
   return 0;
 }
 
