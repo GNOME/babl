@@ -1,4 +1,33 @@
 2005-08-15  Øyvind Kolås  <pippin@gimp.org>
+
+	* configure.ac: add rule to generate babl/base/Makefile
+	* babl/base: new directory
+	* babl/base/Makefile.am
+	* babl/base/babl-base.[ch]
+	* babl/base/type-double.c
+	* babl/base/type-float.c
+	* babl/base/type-u8.c
+	* babl/base/type-u16.c
+	* babl/base/model-rgb.c
+	* babl/base/model-grayscale.c
+	* babl/base/.cvsignore: added code removed in previous commit, in
+	a more oragnised manner.
+	
+
+2005-08-15  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/babl-base/babl-base.[ch]
+	* babl/babl-base/babl-base-components.c
+	* babl/babl-base/babl-base-conversions.c
+	* babl/babl-base/babl-base-conversions-model.c
+	* babl/babl-base/babl-base-conversions-type.c
+	* babl/babl-base/babl-base-models.c
+	* babl/babl-base/babl-base-pixel-formats.c
+	* babl/babl-base/babl-base-types.c
+	* babl/babl-base/Makefile.am
+	* babl/babl-base/: removed
+
+2005-08-15  Øyvind Kolås  <pippin@gimp.org>
 	
 	* babl/babl-classes.h: BablPixelFormat: changed order of attributes to
 	match BablModel. BablFish: removed **from and **to lists, since they

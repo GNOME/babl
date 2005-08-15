@@ -33,7 +33,7 @@ dnl ===========================================================================
 AC_OUTPUT(Makefile                            \
           babl.pc                             \
           babl/Makefile                       \
-          babl/babl-base/Makefile             \
+          babl/base/Makefile                  \
           tests/Makefile                      \
           INSTALL                             \
           README
