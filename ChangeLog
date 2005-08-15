@@ -1,3 +1,9 @@
+2005-08-15  Øyvind Kolås  <pippin@gimp.org>
+
+	* Makefile-mini: compile both the nop and introspect programs by
+	default.
+	* babl/Makefile-mini: link with standard math library
+
 2005-08-14  Øyvind Kolås  <pippin@gimp.org>
 	
 	* tests/float_to_u8.c

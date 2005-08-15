@@ -2,7 +2,7 @@
 # introspection/sanity tests, will not build an actual library
 
 all:
-	make -f Makefile-mini -C babl ../tests/nop
+	make -f Makefile-mini -C babl
 	tests/nop
 introspect:
 	make -f Makefile-mini -C babl ../tests/introspect

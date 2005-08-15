@@ -8,7 +8,8 @@ TARGETS =				\
 
 default: $(TARGETS)
 
-CFLAGS = -Wall -Werror -g -O1 -I./babl-base  -I. -I..
+CFLAGS = -Wall -Werror -g -O0 -I./babl-base  -I. -I..
+LDADD  = -lm
 
 BABL_OBJECTS=					\
 	babl.o					\
@@ -36,10 +37,10 @@ BABL_OBJECTS=					\
 
 
 ../tests/nop: ../tests/nop.c $(BABL_OBJECTS)
-	gcc -o $@ $< $(BABL_OBJECTS) -I../babl/
+	gcc -o $@ $< $(BABL_OBJECTS) -I../babl/ $(LDADD)
 
 ../tests/introspect: ../tests/introspect.c $(BABL_OBJECTS)
-	gcc -o $@ $< $(BABL_OBJECTS) -I../babl/
+	gcc -o $@ $< $(BABL_OBJECTS) -I../babl/ $(LDADD)
 
 clean:
 	rm -f $(TARGETS) $(BABL_OBJECTS) ../*~ ../*/*~ ../*/*~
