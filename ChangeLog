@@ -1,5 +1,10 @@
 2005-08-15  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/base/model-cmyk.c
+	* babl/base/model-ycbcr.c: added stubs
+
+2005-08-15  Øyvind Kolås  <pippin@gimp.org>
+
 	* configure.ac: add rule to generate babl/base/Makefile
 	* babl/base: new directory
 	* babl/base/Makefile.am
