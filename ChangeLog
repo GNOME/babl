@@ -1,5 +1,10 @@
 2005-08-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* tests/.cvsignore: added the test binaries.
+	* .cvsignore: added *.tar.gz and *.tar.bz2
+
+2005-08-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* AUTHORS: added Sven Neuman.
 
 2005-08-16  Sven Neumann  <sven@gimp.org>

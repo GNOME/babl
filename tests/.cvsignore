@@ -2,9 +2,9 @@ Makefile
 Makefile.in
 nop
 introspect
+u8_to_float
+rgb_to_ycbcr_to_rgb
+rgb_to_ycbcr
+rgb_to_lab_to_rgb
 float_to_u8
 grayscale_to_rgb
-rgb_to_lab_to_rgb
-rgb_to_ycbcr
-rgb_to_ycbcr_to_rgb
-u8_to_float
