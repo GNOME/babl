@@ -94,15 +94,16 @@ rgb_to_ycbcr (int    src_bands,
 
       double luminance, cb, cr;
 
-      luminance =   0.299   * red   +
-                    0.587   * green +
-                    0.114   * blue;
-      cb        = (-0.1687) * red   
-                   -0.3313  * green +
-                    0.5     * blue;
-      cr        =   0.5     * red   
-                   -0.4187  * green +
-                   -0.0813  * blue;
+      /* values taken from Charles Poynton's color FAQ 
+       * http://www.poynton.com/notes/colour_and_gamma/ColorFAQ.html#RTFToC28
+       *
+       * this is YPbPr not YCbCr to be exact, it uses the full range, maybe
+       * both should be included with babl under their proper name
+       * 
+       */
+      luminance =  0.299    * red  +0.587    * green  +0.114    * blue;
+      cb        = -0.168736 * red  -0.331264 * green  +0.5      * blue;
+      cr        =  0.5      * red  -0.418688 * green  -0.081312 * blue;
 
       *(double*)dst[0] = luminance;
       *(double*)dst[1] = cb;
@@ -134,10 +135,16 @@ ycbcr_to_rgb (int    src_bands,
 
       double red, green, blue;
 
-      red   = luminance + 1.40200 * cr;
-      green = luminance - 0.34414 * cb - 0.71414 *cr;
-      blue  = luminance + 1.77200 * cb;
-
+      /* values taken from Charles Poynton's color FAQ 
+       * http://www.poynton.com/notes/colour_and_gamma/ColorFAQ.html#RTFToC28
+       * 
+       * this is YPbPr not YCbCr to be exact, it uses the full range, maybe
+       * both should be included with babl under their proper name
+       * 
+       */
+      red   = 1.0 * luminance  + 0.0      * cb  + 1.40200    * cr;
+      green = 1.0 * luminance  - 0.344136 * cb  - 0.71414136 * cr;
+      blue  = 1.0 * luminance  + 1.772    * cb  + 0.0        * cr;
 
       *(double*)dst[0] = red;
       *(double*)dst[1] = green;

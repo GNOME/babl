@@ -1,5 +1,12 @@
 2005-08-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/base/mode-ycbcr.c: use coefficients from Charles Poyntes color
+	FAQ.
+	* tests/rgb_to_ycbcr_to_rgb.c: changed TOLERANCE to 0.00000000000001
+	* tests/rgb_to_ycbcr.c: changed TOLERANCE as well as reference values.
+
+2005-08-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-fish.c: reindentation, no naming of fishes.
 	* babl/babl-ids.h: reordering, added YCBCRA, LAB and LAB_ALPHA
 	* babl/base/Makefile.am: added cpercep.[ch] model-lab.c and

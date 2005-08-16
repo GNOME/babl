@@ -23,7 +23,7 @@
 #include "babl-internal.h"
 
 #define PIXELS 6
-#define TOLERANCE 0.001 
+#define TOLERANCE 0.00002
 
 float source_buf [PIXELS*3]=
   {0.0, 0.0, 0.0,
