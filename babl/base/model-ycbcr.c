@@ -41,14 +41,14 @@ babl_base_model_ycbcr (void)
 static void
 components (void)
 {
-    babl_component_new (
-   "Cb",
+  babl_component_new (
+   "cb",
    "id",    BABL_CB,
    "chroma",
    NULL);
 
   babl_component_new (
-   "Cr",
+   "cr",
    "id",    BABL_CR,
    "chroma",
    NULL);
@@ -57,11 +57,144 @@ components (void)
 static void
 models (void)
 {
+  babl_model_new (
+    "ycbcr",
+    "id", BABL_YCBCR,
+    babl_component_id (BABL_LUMINANCE),
+    babl_component_id (BABL_CB),
+    babl_component_id (BABL_CR),
+    NULL);
+
+  babl_model_new (
+    "ycbcra",
+    "id", BABL_YCBCRA,
+    babl_component_id (BABL_LUMINANCE),
+    babl_component_id (BABL_CB),
+    babl_component_id (BABL_CR),
+    babl_component_id (BABL_ALPHA),
+    NULL);
+}
+
+static void
+rgb_to_ycbcr (int    src_bands,
+              void **src,
+              int   *src_pitch,
+              int    dst_bands,
+              void **dst,
+              int   *dst_pitch,
+              int    n)
+{
+  BABL_PLANAR_SANITY
+
+  while (n--)
+    {
+      double red   = *(double*)src[0];
+      double green = *(double*)src[1];
+      double blue  = *(double*)src[2];
+
+      double luminance, cb, cr;
+
+      luminance =   0.299   * red   +
+                    0.587   * green +
+                    0.114   * blue;
+      cb        = (-0.1687) * red   
+                   -0.3313  * green +
+                    0.5     * blue;
+      cr        =   0.5     * red   
+                   -0.4187  * green +
+                   -0.0813  * blue;
+
+      *(double*)dst[0] = luminance;
+      *(double*)dst[1] = cb;
+      *(double*)dst[2] = cr;
+
+      if (dst_bands > 3)               /* alpha passthorugh */
+        *(double*)dst[3] = (src_bands>3)?*(double*)src[3]:1.0;
+
+      BABL_PLANAR_STEP
+    }
+}
+
+static void
+ycbcr_to_rgb (int    src_bands,
+              void **src,
+              int   *src_pitch,
+              int    dst_bands,
+              void **dst,
+              int   *dst_pitch,
+              int    n)
+{
+  BABL_PLANAR_SANITY
+
+  while (n--)
+    {
+      double luminance = *(double*)src[0];
+      double cb        = *(double*)src[1];
+      double cr        = *(double*)src[2];
+
+      double red, green, blue;
+
+      red   = luminance + 1.40200 * cr;
+      green = luminance - 0.34414 * cb - 0.71414 *cr;
+      blue  = luminance + 1.77200 * cb;
+
+
+      *(double*)dst[0] = red;
+      *(double*)dst[1] = green;
+      *(double*)dst[2] = blue;
+
+      if (dst_bands > 3)               /* alpha passthorugh */
+        *(double*)dst[3] = (src_bands>3)?*(double*)src[3]:1.0;
+
+      BABL_PLANAR_STEP
+    }
 }
 
 static void
 conversions (void)
 {
+  babl_conversion_new (
+    "babl-base: rgba to ycbcr",
+    "source",      babl_model_id (BABL_RGBA),
+    "destination", babl_model_id (BABL_YCBCR),
+    "planar",      rgb_to_ycbcr,
+    NULL
+  );
+  babl_conversion_new (
+    "babl-base: ycbcr to rgba",
+    "source",      babl_model_id (BABL_YCBCR),
+    "destination", babl_model_id (BABL_RGBA),
+    "planar",      ycbcr_to_rgb,
+    NULL
+  );
+  babl_conversion_new (
+    "babl-base: rgb to ycbcr",
+    "source",      babl_model_id (BABL_RGB),
+    "destination", babl_model_id (BABL_YCBCR),
+    "planar",      rgb_to_ycbcr,
+    NULL
+  );
+  babl_conversion_new (
+    "babl-base: ycbcr to rgb",
+    "source",      babl_model_id (BABL_YCBCR),
+    "destination", babl_model_id (BABL_RGB),
+    "planar",      ycbcr_to_rgb,
+    NULL
+  );
+  babl_conversion_new (
+    "babl-base: rgba to ycbcra",
+    "source",      babl_model_id (BABL_RGBA),
+    "destination", babl_model_id (BABL_YCBCRA),
+    "planar",      rgb_to_ycbcr,
+    NULL
+  );
+  babl_conversion_new (
+    "babl-base: ycbcra to rgba",
+    "source",      babl_model_id (BABL_YCBCRA),
+    "destination", babl_model_id (BABL_RGBA),
+    "planar",      ycbcr_to_rgb,
+    NULL
+  );
 }
 
 static void

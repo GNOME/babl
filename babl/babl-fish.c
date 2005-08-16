@@ -100,15 +100,16 @@ BablConversion *babl_conversion_find (Babl *source,
                                       Babl *destination)
 {
   SearchData data;
-  data.source       = source;
+  data.source      = source;
   data.destination = destination;
-  data.result = NULL;
+  data.result      = NULL;
   babl_conversion_each (find_conversion, &data);
 
   if (!data.result)
     {
-      babl_log ("%s('%s', '%s'): failed", __FUNCTION__,
+      babl_log ("%s('%s', '%s'): failed, aborting", __FUNCTION__,
         source->instance.name, destination->instance.name);
+      exit (-1);
       return NULL;
     }
   return data.result;
@@ -126,7 +127,7 @@ babl_fish_reference_new (Babl *source,
   babl                   = babl_calloc (sizeof (BablFishReference), 1);
   babl->class_type       = BABL_FISH_REFERENCE;
   babl->instance.id      = 0;
-  babl->instance.name    = "Fishy";
+  babl->instance.name    = NULL;
   babl->fish.source      = (union Babl*)source;
   babl->fish.destination = (union Babl*)destination;
 
@@ -203,6 +204,7 @@ babl_fish_process (BablFish *babl_fish,
   fooA = babl_malloc(sizeof (double) * n * 4); 
   fooB = babl_malloc(sizeof (double) * n * 4); 
 
+  assert (babl_fish);
   assert (source);
   assert (destination);
 

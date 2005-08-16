@@ -64,6 +64,8 @@ types (void)
 
 void babl_base_model_rgb       (void);
 void babl_base_model_grayscale (void);
+void babl_base_model_ycbcr     (void);
+void babl_base_model_lab       (void);
 
 static void
 models (void)
@@ -71,4 +73,7 @@ models (void)
   babl_base_model_rgb       (); /* must be registered first since it is the
                                    reference */
   babl_base_model_grayscale ();
+  babl_base_model_lab       ();
+  babl_base_model_ycbcr     ();
 }
+

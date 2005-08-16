@@ -420,7 +420,7 @@ pixel_formats (void)
     "rgba-double",
     "id",              BABL_RGBA_DOUBLE,
     babl_model_id     (BABL_RGBA),
-    babl_type_id      (BABL_FLOAT),
+    babl_type_id      (BABL_DOUBLE),
     babl_component_id (BABL_RED), 
     babl_component_id (BABL_GREEN), 
     babl_component_id (BABL_BLUE),

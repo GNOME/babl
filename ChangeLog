@@ -1,3 +1,27 @@
+2005-08-16  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/babl-fish.c: reindentation, no naming of fishes.
+	* babl/babl-ids.h: reordering, added YCBCRA, LAB and LAB_ALPHA
+	* babl/base/Makefile.am: added cpercep.[ch] model-lab.c and
+	model-ycbcr.c
+	* babl/base/cpercep.[ch]: *NEW*
+	* babl/base/model-lab.c: *NEW* CIE Lab color model, backed by a slightly
+	modified version of cpercep from gimp sources (no gamma correction and
+	normalized RGB values)
+	* babl/base/model-ycbcr: made ycbcr work, numbers still need to be
+	verified.
+	* babl/base/babl-base.c: initialize CIE Lab and YCbCr
+	* babl/base/model-cmyk.c: slight changes, it still doesn't pass
+	rgb->cmyk->rgb testing so not included yet.
+	* babl/base/model-rgb.c: make rgba-double use BABL_DOUBLE instead of
+	BABL_FLOAT
+	* babl/base/type-u16: fix conversion to double.
+	* tests/Makefile.am: added rgb_to_lab_to_rgb , rgb_to_ycbcr_to_rgb and
+	rgb_to_ycbcr
+	* tests/rgb_to_lab_to_rgb.c
+	* tests/rgb_to_ycbcr_to_rgb.c
+	* tests/rgb_to_ycbcr.c: *NEW* tests
+
 2005-08-15  Øyvind Kolås  <pippin@gimp.org>
 
 	* babl/base/model-cmyk.c

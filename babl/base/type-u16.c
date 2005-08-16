@@ -51,7 +51,7 @@ convert_u16_double (void *src,
 {
   while (n--)
     {
-      (*(double *) dst) = (*(unsigned short *) src*65535.0);
+      (*(double *) dst) = (*(unsigned short *) src / 65535.0);
       dst += 8;
       src += 2;
     }
