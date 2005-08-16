@@ -1,3 +1,7 @@
+2005-08-16  Øyvind Kolås  <pippin@gimp.org>
+
+	* AUTHORS: added Sven Neuman.
+
 2005-08-16  Sven Neumann  <sven@gimp.org>
 
 	* configure.ac: add -Wall to CFLAGS if gcc is being used. Use
@@ -5,7 +9,7 @@
 
 2005-08-16  Øyvind Kolås  <pippin@gimp.org>
 
-	* babl/base/mode-ycbcr.c: use coefficients from Charles Poyntes color
+	* babl/base/mode-ycbcr.c: use coefficients from Charles Poyntons color
 	FAQ.
 	* tests/rgb_to_ycbcr_to_rgb.c: changed TOLERANCE to 0.00000000000001
 	* tests/rgb_to_ycbcr.c: changed TOLERANCE as well as reference values.
