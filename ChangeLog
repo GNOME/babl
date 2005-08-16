@@ -1,3 +1,8 @@
+2005-08-16  Sven Neumann  <sven@gimp.org>
+
+	* configure.ac: add -Wall to CFLAGS if gcc is being used. Use
+	AC_CONFIG_FILES() to define the files that need to be generated.
+
 2005-08-16  Øyvind Kolås  <pippin@gimp.org>
 
 	* babl/base/mode-ycbcr.c: use coefficients from Charles Poyntes color

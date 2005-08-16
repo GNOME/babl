@@ -28,13 +28,22 @@ AM_PROG_LIBTOOL
 AC_STDC_HEADERS
 AM_SANITY_CHECK
 
+if eval "test x$GCC = xyes"; then
+  case " $CFLAGS " in
+  *[\ \	]-Wall[\ \	]*) ;;
+  *) CFLAGS="$CFLAGS -Wall" ;;
+  esac
+fi
+
 dnl ===========================================================================
 
-AC_OUTPUT(Makefile                            \
-          babl.pc                             \
-          babl/Makefile                       \
-          babl/base/Makefile                  \
-          tests/Makefile                      \
-          INSTALL                             \
-          README
+AC_CONFIG_FILES(
+Makefile
+babl.pc
+babl/base/Makefile
+tests/Makefile
+INSTALL
+README
 )
+
+AC_OUTPUT
