@@ -1,5 +1,24 @@
 2005-08-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-component.c: (component_new, each_babl_component_destroy) allocate
+	larger chunk, (babl_component_new) removed Babl* switch, 
+	* babl/babl-conversion.c: (conversion_new): removed superflous runtime
+	warnings.
+	* babl/babl-fish.c: (babl_fish_process): reindent, added assert for
+	instance.
+	* babl/babl-image.c: (image_new, babl_image_new): reindent,
+	, (babl_image_new_from_linear): added asserts for parameters.
+	* babl/babl-model.c: (each_babl_model_destroy, model_new): allocate
+	larger chunk.
+	* babl/babl-pixel-format.c: (each_babl_pixel_format_destroy,
+	pixel_format_new): allocate larger chunk.
+	* babl/babl-sanity.c: (babl_conversion_source): removed FIXME comment
+	used for helper function just used to make code more readable.
+	* babl/babl-type.c: (each_babl_type_destroy, type_new): allocate
+	larger chunk.
+
+2005-08-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-classes.h: (BablSampling) added static name.
 	* babl/babl-sampling.c: (babl_sampling_init): initialize names
 	* babl/babl-introspect.c: (pixel_format_introspect): display sampling

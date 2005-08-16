@@ -30,7 +30,6 @@ each_babl_component_destroy (Babl *babl,
 {
   babl_free (babl->component.from);
   babl_free (babl->component.to);
-  babl_free (babl->instance.name);
   babl_free (babl);
   return 0;  /* continue iterating */
 }
@@ -44,10 +43,13 @@ component_new (const char *name,
 {
   Babl *babl;
 
-  babl                   = babl_calloc (sizeof (BablComponent), 1);
+  babl                   = babl_calloc (sizeof (BablComponent) +
+                                        strlen (name) + 1, 1);
+  babl->instance.name    = (void *) babl + sizeof (BablComponent);
+  strcpy (babl->instance.name, name);
+
   babl->class_type       = BABL_COMPONENT;
   babl->instance.id      = id;
-  babl->instance.name    = babl_strdup (name);
   babl->component.luma   = luma;
   babl->component.chroma = chroma;
   babl->component.alpha  = alpha;
@@ -59,7 +61,7 @@ Babl *
 babl_component_new (const char *name,
                     ...)
 {
-  va_list varg;
+  va_list     varg;
   Babl       *babl;
   int         id         = 0;
   int         luma    = 0;
@@ -79,32 +81,11 @@ babl_component_new (const char *name,
         {
           Babl *babl = (Babl*)arg;
 
-          switch (babl->class_type)
-            {
-              case BABL_TYPE:
-              case BABL_INSTANCE:
-              case BABL_COMPONENT:
-              case BABL_PIXEL_FORMAT:
-              case BABL_MODEL:
-              case BABL_SAMPLING:
-
-              case BABL_CONVERSION:
-              case BABL_CONVERSION_TYPE:
-              case BABL_CONVERSION_TYPE_PLANAR:
-              case BABL_CONVERSION_MODEL_PLANAR:
-              case BABL_CONVERSION_PIXEL_FORMAT:
-              case BABL_CONVERSION_PIXEL_FORMAT_PLANAR:
-              case BABL_FISH:
-              case BABL_FISH_REFERENCE:
-              case BABL_IMAGE:
-                babl_log ("%s(): %s unexpected",
-                          __FUNCTION__, babl_class_name (babl->class_type));
-                break;
-              case BABL_SKY: /* shut up compiler */
-                break;
-            }
+          babl_log ("%s(): %s unexpected",
+                    __FUNCTION__, babl_class_name (babl->class_type));
         }
       /* if we didn't point to a babl, we assume arguments to be strings */
+
       else if (!strcmp (arg, "id"))
         {
           id = va_arg (varg, int);
@@ -119,7 +100,6 @@ babl_component_new (const char *name,
         {
           chroma = 1;
         }
-
 
       else if (!strcmp (arg, "alpha"))
         {

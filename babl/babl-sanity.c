@@ -165,11 +165,7 @@ babl_sanity (void)
 
 }
 
-
-
-/* FIXME: these should be moved to babl-conversion.c */
-
-static Babl *babl_conversion_source      (Babl *babl)
+static Babl *babl_conversion_source (Babl *babl)
 {
   return (Babl *)babl->conversion.source;
 }

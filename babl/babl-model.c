@@ -29,8 +29,6 @@ each_babl_model_destroy (Babl *babl,
 {
   babl_free (babl->model.from);
   babl_free (babl->model.to);
-  babl_free (babl->model.component);
-  babl_free (babl->instance.name);
   babl_free (babl);
   return 0;  /* continue iterating */
 }
@@ -47,13 +45,16 @@ model_new (const char     *name,
   Babl *babl;
   int   i; 
 
-  babl                     = babl_calloc (sizeof (BablModel), 1);
-
+  babl                   = babl_calloc (sizeof (BablModel) +
+                                        sizeof (BablComponent*) * (components+1) +
+                                        strlen (name) + 1, 1);
+  babl->instance.name   = ((void*)babl) + sizeof (BablModel);
+  babl->model.component = ((void*)babl->instance.name) + strlen (name) + 1;
+  
   babl->class_type       = BABL_MODEL;
   babl->instance.id      = id;
-  babl->instance.name    = babl_strdup (name);
   babl->model.components = components;
-  babl->model.component  = babl_malloc (sizeof (BablComponent*) * (components+1));
+  strcpy (babl->instance.name, name);
 
   for (i=0; i < components; i++)
     {

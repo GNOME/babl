@@ -67,14 +67,6 @@ conversion_new (const char        *name,
                       __FUNCTION__);
           }
         break;
-      case BABL_SAMPLING:
-        babl_log ("%s(): sampling conversions not implemented yet\n",
-                  __FUNCTION__);
-        break;
-      case BABL_COMPONENT:
-        babl_log ("%s(): component conversions do not make sense (except perhaps for gamma correction)\n",
-                  __FUNCTION__);
-        break;
       case BABL_MODEL:
         if (linear)
           {
@@ -93,7 +85,6 @@ conversion_new (const char        *name,
                       __FUNCTION__);
           }
         break;
-
       case BABL_PIXEL_FORMAT:
         if (linear)
           {
@@ -114,6 +105,8 @@ conversion_new (const char        *name,
           }
         break;
       default:
+          babl_log ("%s(): %s unexpected",
+                    __FUNCTION__, babl_class_name (babl->class_type));
         break;
     }
   if (!babl)

@@ -19,6 +19,7 @@
 
 #include <string.h>
 #include <stdarg.h>
+#include <assert.h>
 
 #include "babl-internal.h"
 #include "babl-image.h"
@@ -48,15 +49,14 @@ image_new (int             bands,
            int            *stride)
 {
   Babl *babl;
-  int        band;
+  int   band;
 
-  babl                = babl_calloc (
-                           sizeof (BablImage) +
-                           sizeof (BablComponent*) * (bands+1) +
-                           sizeof (void*)          * (bands+1) +
-                           sizeof (int)            * (bands+1) +
-                           sizeof (int)            * (bands+1),1);
-
+  /* allocate all memory in one chunk */
+  babl  = babl_calloc (sizeof (BablImage) +
+                       sizeof (BablComponent*) * (bands+1) +
+                       sizeof (void*)          * (bands+1) +
+                       sizeof (int)            * (bands+1) +
+                       sizeof (int)            * (bands+1),1);
   babl->image.component     = ((void *)babl)                  + sizeof (BablImage);
   babl->image.data          = ((void *)babl->image.component) + sizeof (BablComponent*) * (bands+1);
   babl->image.pitch         = ((void *)babl->image.data)      + sizeof (void*)          * (bands+1);
@@ -97,6 +97,10 @@ babl_image_new_from_linear (void  *buffer,
 
   int            offset=0;
   int            calc_pitch=0;
+
+  assert (format);
+  assert (format->class_type == BABL_PIXEL_FORMAT ||
+          format->class_type == BABL_MODEL);
  
   switch (format->class_type)
     {
@@ -136,7 +140,6 @@ babl_image_new_from_linear (void  *buffer,
           }
         break;
       default:
-        babl_log ("%s(): Eeek!", __FUNCTION__);
         break;
     }
 
@@ -149,7 +152,7 @@ babl_image_new (void *first,
                 ...)
 {
   va_list        varg;
-  Babl           *babl;
+  Babl          *babl;
   int            bands     = 0;
   BablComponent *component [BABL_MAX_BANDS];
   void          *data      [BABL_MAX_BANDS];

@@ -34,11 +34,6 @@ each_babl_pixel_format_destroy (Babl *babl,
 {
   babl_free (babl->pixel_format.from);
   babl_free (babl->pixel_format.to);
-  babl_free (babl->pixel_format.component);
-  babl_free (babl->pixel_format.type);
-  babl_free (babl->pixel_format.sampling);
-  babl_free (babl->pixel_format.model);
-  babl_free (babl->instance.name);
   babl_free (babl);
 
   return 0;  /* continue iterating */
@@ -57,19 +52,28 @@ pixel_format_new (const char     *name,
   Babl *babl;
   int              band;
 
-  babl                     = babl_calloc (sizeof (BablPixelFormat), 1);
+  /* allocate all memory in one chunk */
+  babl  = babl_calloc (sizeof (BablPixelFormat) +
+                       strlen (name) + 1 +
+                       sizeof (BablModel*)     * (bands+1) +
+                       sizeof (BablComponent*) * (bands+1) +
+                       sizeof (BablSampling*)  * (bands+1) +
+                       sizeof (BablType*)      * (bands+1) +
+                       sizeof (int)            * (bands+1) +
+                       sizeof (int)            * (bands+1),1);
 
+  babl->instance.name          = ((void *)babl)                         + sizeof (BablPixelFormat);
+  babl->pixel_format.model     = ((void *)babl->instance.name)          + strlen (name) + 1;
+  babl->pixel_format.component = ((void *)babl->pixel_format.model)     + sizeof (BablModel*) * (bands+1);
+  babl->pixel_format.type      = ((void *)babl->pixel_format.component) + sizeof (BablComponent*) * (bands+1);
+  babl->pixel_format.sampling  = ((void *)babl->pixel_format.type)      + sizeof (BablType*) * (bands+1);
+  
   babl->class_type    = BABL_PIXEL_FORMAT;
   babl->instance.id   = id;
-  babl->instance.name = babl_strdup (name);
+  strcpy (babl->instance.name, name);
 
   babl->pixel_format.bands    = bands;
   babl->pixel_format.planar   = planar;
-
-  babl->pixel_format.model     = babl_malloc (sizeof (BablModel*)     * (bands+1));
-  babl->pixel_format.component = babl_malloc (sizeof (BablComponent*) * (bands+1));
-  babl->pixel_format.type      = babl_malloc (sizeof (BablType*)      * (bands+1));
-  babl->pixel_format.sampling  = babl_malloc (sizeof (BablSampling*)  * (bands+1));
 
   for (band=0; band < bands; band++)
     {

@@ -191,24 +191,24 @@ void *fooC;
 #define BABL_MAX_BANDS   32
 
 int
-babl_fish_process (BablFish *babl_fish,
-                   void     *source,
-                   void     *destination,
-                   int       n)
+babl_fish_process (Babl *babl,
+                   void *source,
+                   void *destination,
+                   int   n)
 {
-  Babl *babl;
   Babl *imageA;
   Babl *imageB;
   Babl *imageC;
 
-  fooA = babl_malloc(sizeof (double) * n * 4); 
-  fooB = babl_malloc(sizeof (double) * n * 4); 
+  fooA = babl_malloc(sizeof (double) * n * 4);
+  fooB = babl_malloc(sizeof (double) * n * 4);
 
-  assert (babl_fish);
+  assert (babl);
   assert (source);
   assert (destination);
+  assert (babl->class_type == BABL_FISH ||
+          babl->class_type == BABL_FISH_REFERENCE);
 
-  babl = (Babl *)babl_fish;
   if (BABL_IS_BABL (source) ||
       BABL_IS_BABL (destination))
     {
@@ -217,10 +217,10 @@ babl_fish_process (BablFish *babl_fish,
       return -1;
     }
   
-  ((BablConversion*)(babl->reference_fish.type_to_double))->function.linear(
+  babl->reference_fish.type_to_double->function.linear(
           source,
           fooA,
-          n*  ((BablPixelFormat*)(babl_fish->source))->bands
+          n*  BABL(babl->fish.source)->pixel_format.bands
           );
 
   /* calculate planar representation of fooA, and fooB */
@@ -229,7 +229,7 @@ babl_fish_process (BablFish *babl_fish,
   imageB = babl_image_new_from_linear (fooB, babl_model_id (BABL_RGBA));
   /* transform fooA into fooB fooB is rgba double */
 
-  ((BablConversion*)(babl->reference_fish.model_to_rgba))->function.planar(
+  babl->reference_fish.model_to_rgba->function.planar(
           imageA->image.bands, 
           imageA->image.data,
           imageA->image.pitch,
@@ -246,7 +246,7 @@ babl_fish_process (BablFish *babl_fish,
   imageB = babl_image_new_from_linear (fooB, babl_model_id (BABL_RGBA));
   imageC = babl_image_new_from_linear (fooA, BABL(BABL((babl->fish.destination))->pixel_format.model[0]));
 
-  ((BablConversion*)(babl->reference_fish.rgba_to_model))->function.planar(
+  babl->reference_fish.rgba_to_model->function.planar(
           imageB->image.bands, 
           imageB->image.data,
           imageB->image.pitch,
@@ -256,9 +256,8 @@ babl_fish_process (BablFish *babl_fish,
           n);
 
 
-  ((BablConversion*)(babl->reference_fish.double_to_type))->function.linear(
-          fooA, destination, n * ((BablPixelFormat*)(babl_fish->destination))->bands
-          );
+  babl->reference_fish.double_to_type->function.linear(
+          fooA, destination, n * BABL(babl->fish.destination)->pixel_format.bands);
 
   babl_free (imageB);
   babl_free (imageC);
@@ -268,7 +267,6 @@ babl_fish_process (BablFish *babl_fish,
   return 0;
 }
 
-/*BABL_CLASS_TEMPLATE(BablFish, babl_fish, "BablFish")*/
-BABL_DEFINE_INIT(babl_fish)
-BABL_DEFINE_DESTROY(babl_fish)
-BABL_DEFINE_EACH(babl_fish)
+BABL_DEFINE_INIT    (babl_fish)
+BABL_DEFINE_DESTROY (babl_fish)
+BABL_DEFINE_EACH    (babl_fish)
