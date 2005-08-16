@@ -87,8 +87,12 @@ babl_sampling_init (void)
         int index= (vertical-VERTICAL_MIN) * VERTICAL_MAX + (horizontal - HORIZONTAL_MIN);
         db[index].instance.class_type = BABL_SAMPLING;
         db[index].instance.id = 0;
-        db[index].instance.name = "Samplings have no name";
         db[index].horizontal = horizontal;
         db[index].vertical   = vertical;
+        db[index].instance.name = db[index].name;
+        db[index].name[0]='0'+horizontal;
+        db[index].name[1]=':';
+        db[index].name[2]='0'+vertical;
+        db[index].name[3]='\0';
       }
 }

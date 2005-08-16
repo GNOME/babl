@@ -142,6 +142,7 @@ typedef struct
   BablConversion **to;   /*< NULL terminated list of conversions to class   */
   int          horizontal;
   int          vertical;
+  char         name[4];
 } BablSampling;
 
 typedef struct

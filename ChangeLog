@@ -1,5 +1,12 @@
 2005-08-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-classes.h: (BablSampling) added static name.
+	* babl/babl-sampling.c: (babl_sampling_init): initialize names
+	* babl/babl-introspect.c: (pixel_format_introspect): display sampling
+	name as well.
+
+2005-08-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-component.[ch]
 	* babl/babl-conversion.[ch]
 	* babl/babl-fish.[ch]

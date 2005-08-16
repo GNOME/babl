@@ -143,9 +143,10 @@ pixel_format_introspect (Babl *babl)
 
   for (i=0; i< babl->pixel_format.bands; i++)
     {
-      babl_log ("\t\tband[%i] type='%s' component='%s'",
-                i,  ( BABL(babl->pixel_format.type[i]     ))->instance.name,
-                    ( BABL(babl->pixel_format.component[i]))->instance.name);
+      babl_log ("\t\tband[%i] type='%s' component='%s' sampling='%s'",
+                i,   babl->pixel_format.type[i]->instance.name,
+                     babl->pixel_format.component[i]->instance.name,
+                     babl->pixel_format.sampling[i]->instance.name);
     }
 }
 
