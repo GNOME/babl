@@ -62,11 +62,11 @@ pixel_format_new (const char     *name,
                        sizeof (int)            * (bands+1) +
                        sizeof (int)            * (bands+1),1);
 
-  babl->instance.name          = ((void *)babl)                         + sizeof (BablPixelFormat);
-  babl->pixel_format.model     = ((void *)babl->instance.name)          + strlen (name) + 1;
+  babl->pixel_format.model     = ((void *)babl) + sizeof (BablPixelFormat);
   babl->pixel_format.component = ((void *)babl->pixel_format.model)     + sizeof (BablModel*) * (bands+1);
   babl->pixel_format.type      = ((void *)babl->pixel_format.component) + sizeof (BablComponent*) * (bands+1);
   babl->pixel_format.sampling  = ((void *)babl->pixel_format.type)      + sizeof (BablType*) * (bands+1);
+  babl->instance.name          = ((void *)babl->pixel_format.sampling)  + sizeof (BablSampling*) * (bands+1);
   
   babl->class_type    = BABL_PIXEL_FORMAT;
   babl->instance.id   = id;

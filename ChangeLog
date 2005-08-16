@@ -1,5 +1,11 @@
 2005-08-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-model.c: (model_new)
+	* babl/babl-pixel-format.c: (pixel_format_new): reordered allocation
+	to place string (to avoid placing pointers in non aligned adresses).
+
+2005-08-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-component.c: (component_new, each_babl_component_destroy) allocate
 	larger chunk, (babl_component_new) removed Babl* switch, 
 	* babl/babl-conversion.c: (conversion_new): removed superflous runtime
