@@ -21,6 +21,6 @@
 #define _BABL_TYPE_H
 
 #include "babl-classes.h"
-BABL_DEFINE_CLASS(BablType, babl_type)
+BABL_DEFINE_CLASS (babl_type)
 
 #endif

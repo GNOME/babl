@@ -47,30 +47,30 @@ type_name##_each (BablEachFunction  each_fun,                 \
   db_each (each_fun, user_data);                              \
 }                                                             \
 
-#define BABL_DEFINE_LOOKUP_BY_ID(TypeName, type_name)         \
-TypeName *                                                    \
+#define BABL_DEFINE_LOOKUP_BY_ID(type_name)                   \
+Babl *                                                        \
 type_name##_id (int id)                                       \
 {                                                             \
-  return (TypeName*) db_exist (id, NULL);                     \
+  return db_exist (id, NULL);                                 \
 }
 
-#define BABL_DEFINE_LOOKUP_BY_NAME(TypeName, type_name)       \
-TypeName *                                                    \
+#define BABL_DEFINE_LOOKUP_BY_NAME(type_name)                 \
+Babl *                                                        \
 type_name (const char *name)                                  \
 {                                                             \
-  TypeName *ret;                                              \
+  Babl *babl;                                                 \
                                                               \
   if (babl_hmpf_on_name_lookups)                              \
     {                                                         \
       babl_log ("%s(\"%s\"): hmpf!", __FUNCTION__, name);     \
     }                                                         \
-  ret = (TypeName*) db_exist (0, name);                       \
+  babl = db_exist (0, name);                                  \
                                                               \
-  if (!ret)                                                   \
+  if (!babl)                                                  \
     {                                                         \
       babl_log ("%s(\"%s\"): not found", __FUNCTION__, name); \
     }                                                         \
-  return ret;                                                 \
+  return babl;                                                \
 }
 
 #define BABL_DEFINE_INIT(type_name)                           \
@@ -88,12 +88,13 @@ type_name##_destroy (void)                                    \
   db_destroy ();                                              \
 }
 
-#define BABL_CLASS_TEMPLATE(TypeName, type_name, type_string) \
+#define BABL_CLASS_TEMPLATE(type_name)                        \
 BABL_DEFINE_INIT           (type_name)                        \
 BABL_DEFINE_DESTROY        (type_name)                        \
-BABL_DEFINE_LOOKUP_BY_NAME (TypeName, type_name)              \
+BABL_DEFINE_LOOKUP_BY_NAME (type_name)                        \
 BABL_DEFINE_EACH           (type_name)                        \
-BABL_DEFINE_LOOKUP_BY_ID   (TypeName, type_name)               
+BABL_DEFINE_LOOKUP_BY_ID   (type_name)               
 
+#define BABL(obj)  ((Babl*)(obj))
 
 #endif

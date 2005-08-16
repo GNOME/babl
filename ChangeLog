@@ -1,4 +1,27 @@
 2005-08-16  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/babl-component.[ch]
+	* babl/babl-conversion.[ch]
+	* babl/babl-fish.[ch]
+	* babl/babl-image.[ch]
+	* babl/babl-instance.h
+	* babl/babl-internal.h
+	* babl/babl-introspect.c
+	* babl/babl-model.[ch] 
+	* babl/babl-pixel-format.[ch]
+	* babl/babl-sampling.[ch] 
+	* babl/babl-sanity.c 
+	* babl/babl-type.[ch] 
+	* tests/float_to_u8.c 
+	* tests/grayscale_to_rgb.c
+	* tests/rgb_to_lab_to_rgb.c
+	* tests/rgb_to_ycbcr.c
+	* tests/rgb_to_ycbcr_to_rgb.c
+	* tests/u8_to_float.c: Changed to use polymorph Babl * union's instead
+	of class specific structs in most cases, and in all cases for the
+	public API.
+
+2005-08-16  Øyvind Kolås  <pippin@gimp.org>
 	
 	* AUTHORS: Fixed spelling of Sven Neumann.
 

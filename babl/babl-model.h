@@ -21,6 +21,6 @@
 #define _BABL_pixel_format_H
 
 #include "babl-classes.h"
-BABL_DEFINE_CLASS(BablModel, babl_model)
+BABL_DEFINE_CLASS (babl_model)
 
 #endif

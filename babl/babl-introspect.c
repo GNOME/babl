@@ -113,7 +113,7 @@ model_introspect (Babl *babl)
   for (i=0; i< babl->model.components; i++)
     {
       babl_log ("\t\tindex[%i] = '%s'",
-                i, ((Babl*)babl->model.component[i])->instance.name  );
+                i, BABL(babl->model.component[i])->instance.name  );
     }
 }
 
@@ -144,8 +144,8 @@ pixel_format_introspect (Babl *babl)
   for (i=0; i< babl->pixel_format.bands; i++)
     {
       babl_log ("\t\tband[%i] type='%s' component='%s'",
-                i,  ( (Babl*)(babl->pixel_format.type[i]     ))->instance.name,
-                    ( (Babl*)(babl->pixel_format.component[i]))->instance.name);
+                i,  ( BABL(babl->pixel_format.type[i]     ))->instance.name,
+                    ( BABL(babl->pixel_format.component[i]))->instance.name);
     }
 }
 

@@ -32,7 +32,7 @@ each_babl_conversion_destroy (Babl *babl,
   return 0;  /* continue iterating */
 }
 
-static BablConversion *
+static Babl *
 conversion_new (const char        *name,
                 int                id,
                 Babl              *source,
@@ -43,7 +43,7 @@ conversion_new (const char        *name,
                 BablFuncPlanar     planar,
                 BablFuncPlanarBit  planar_bit)
 {
-  Babl *self = NULL;
+  Babl *babl = NULL;
 
   /* destination is of same type as source */ 
   switch (source->class_type)
@@ -51,15 +51,15 @@ conversion_new (const char        *name,
       case BABL_TYPE:
         if (linear)
           {
-            self = babl_calloc (sizeof (BablConversionType), 1);
-            self->class_type      = BABL_CONVERSION_TYPE;
-            self->conversion.function.linear = linear;
+            babl = babl_calloc (sizeof (BablConversionType), 1);
+            babl->class_type      = BABL_CONVERSION_TYPE;
+            babl->conversion.function.linear = linear;
           }
         else if (planar)
           {
-            self = babl_calloc (sizeof (BablConversionTypePlanar), 1);
-            self->class_type = BABL_CONVERSION_TYPE_PLANAR;
-            self->conversion.function.planar = planar;
+            babl = babl_calloc (sizeof (BablConversionTypePlanar), 1);
+            babl->class_type = BABL_CONVERSION_TYPE_PLANAR;
+            babl->conversion.function.planar = planar;
           }
         else if (planar_bit)
           {
@@ -83,9 +83,9 @@ conversion_new (const char        *name,
           }
         else if (planar)
           {
-            self = babl_calloc (sizeof (BablConversionModelPlanar), 1);
-            self->class_type = BABL_CONVERSION_MODEL_PLANAR;
-            self->conversion.function.planar = planar;
+            babl = babl_calloc (sizeof (BablConversionModelPlanar), 1);
+            babl->class_type = BABL_CONVERSION_MODEL_PLANAR;
+            babl->conversion.function.planar = planar;
           }
         else if (planar_bit)
           {
@@ -97,15 +97,15 @@ conversion_new (const char        *name,
       case BABL_PIXEL_FORMAT:
         if (linear)
           {
-            self = babl_calloc (sizeof (BablConversionPixelFormat), 1);
-            self->class_type = BABL_CONVERSION_PIXEL_FORMAT;
-            self->conversion.function.linear = linear;
+            babl = babl_calloc (sizeof (BablConversionPixelFormat), 1);
+            babl->class_type = BABL_CONVERSION_PIXEL_FORMAT;
+            babl->conversion.function.linear = linear;
           }
         else if (planar)
           {
-            self = babl_calloc (sizeof (BablConversionPixelFormatPlanar), 1);
-            self->class_type = BABL_CONVERSION_PIXEL_FORMAT_PLANAR;
-            self->conversion.function.planar = planar;
+            babl = babl_calloc (sizeof (BablConversionPixelFormatPlanar), 1);
+            babl->class_type = BABL_CONVERSION_PIXEL_FORMAT_PLANAR;
+            babl->conversion.function.planar = planar;
           }
         else if (planar_bit)
           {
@@ -116,31 +116,31 @@ conversion_new (const char        *name,
       default:
         break;
     }
-  if (!self)
+  if (!babl)
     {
       babl_log ("%s(name='%s', ...): creation failed", __FUNCTION__, name);
       return NULL;
     }
 
-  self->instance.id            = id;
-  self->instance.name          = babl_strdup (name);
-  self->conversion.source      = (union Babl*)source;
-  self->conversion.destination = (union Babl*)destination;
-  self->conversion.time_cost   = time_cost;
-  self->conversion.loss        = loss;
+  babl->instance.id            = id;
+  babl->instance.name          = babl_strdup (name);
+  babl->conversion.source      = (union Babl*)source;
+  babl->conversion.destination = (union Babl*)destination;
+  babl->conversion.time_cost   = time_cost;
+  babl->conversion.loss        = loss;
 
-  babl_add_ptr_to_list ((void ***)&(source->type.from), self);
-  babl_add_ptr_to_list ((void ***)&(destination->type.to), self);
+  babl_add_ptr_to_list ((void ***)&(source->type.from), babl);
+  babl_add_ptr_to_list ((void ***)&(destination->type.to), babl);
   
-  return (BablConversion*)self;
+  return babl;
 }
 
-BablConversion *
+Babl *
 babl_conversion_new (const char *name,
                      ...)
 {
   va_list            varg;
-  BablConversion    *self;
+  Babl              *babl;
 
   int                id          = 0;
   Babl              *source      = NULL;
@@ -226,18 +226,18 @@ babl_conversion_new (const char *name,
   assert (source);
   assert (destination);
 
-  self = conversion_new (name, id,
-                         source, destination, time_cost, loss, linear, planar, planar_bit);
+  babl = conversion_new (name, id, source, destination, time_cost, loss, linear,
+                         planar, planar_bit);
 
-  if ((BablConversion*) db_insert ( (Babl*)self) == self)
+  if (db_insert (babl) == babl)
     {
-      return self;
+      return babl;
     }
   else
     {
-      each_babl_conversion_destroy ( (Babl*)self, NULL);
+      each_babl_conversion_destroy (babl, NULL);
       return NULL;
     }
 }
 
-BABL_CLASS_TEMPLATE(BablConversion, babl_conversion, "BablConversion")
+BABL_CLASS_TEMPLATE (babl_conversion)

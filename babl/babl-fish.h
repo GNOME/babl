@@ -22,13 +22,9 @@
 
 #include "babl-classes.h"
 
-BABL_DEFINE_CLASS_NO_NEW_NO_ID(BablFish, babl_fish)
+BABL_DEFINE_CLASS_NO_NEW_NO_ID(babl_fish)
 
-BablFish *
-babl_fish_new (Babl *source,
-               Babl *destination);
-
-BablFish *
+Babl *
 babl_fish (Babl *source,
            Babl *destination);
 
@@ -37,15 +33,15 @@ babl_fish (Babl *source,
  * allowed as well as BablImage objects in their place
  */
 int
-babl_fish_process        (BablFish *babl_fish,
-                          void     *source,
-                          void     *destination,
-                          int       n);
+babl_fish_process        (Babl *babl_fish,
+                          void *source,
+                          void *destination,
+                          int   n);
 
 /* whether the BablFish needs a BablImage to do the processing,
  * or void * are sufficient.
  */
 int
-babl_fish_needs_image (BablFish *babl_dish);
+babl_fish_needs_image (Babl *babl_fish);
 
 #endif

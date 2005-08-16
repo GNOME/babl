@@ -44,7 +44,7 @@ each_babl_pixel_format_destroy (Babl *babl,
   return 0;  /* continue iterating */
 }
 
-static BablPixelFormat *
+static Babl *
 pixel_format_new (const char     *name,
                   int             id,
                   int             planar,
@@ -54,44 +54,44 @@ pixel_format_new (const char     *name,
                   BablSampling  **sampling,
                   BablType      **type)
 {
-  Babl *self;
+  Babl *babl;
   int              band;
 
-  self                     = babl_calloc (sizeof (BablPixelFormat), 1);
+  babl                     = babl_calloc (sizeof (BablPixelFormat), 1);
 
-  self->class_type    = BABL_PIXEL_FORMAT;
-  self->instance.id   = id;
-  self->instance.name = babl_strdup (name);
+  babl->class_type    = BABL_PIXEL_FORMAT;
+  babl->instance.id   = id;
+  babl->instance.name = babl_strdup (name);
 
-  self->pixel_format.bands    = bands;
-  self->pixel_format.planar   = planar;
+  babl->pixel_format.bands    = bands;
+  babl->pixel_format.planar   = planar;
 
-  self->pixel_format.model     = babl_malloc (sizeof (BablModel*)     * (bands+1));
-  self->pixel_format.component = babl_malloc (sizeof (BablComponent*) * (bands+1));
-  self->pixel_format.type      = babl_malloc (sizeof (BablType*)      * (bands+1));
-  self->pixel_format.sampling  = babl_malloc (sizeof (BablSampling*)  * (bands+1));
+  babl->pixel_format.model     = babl_malloc (sizeof (BablModel*)     * (bands+1));
+  babl->pixel_format.component = babl_malloc (sizeof (BablComponent*) * (bands+1));
+  babl->pixel_format.type      = babl_malloc (sizeof (BablType*)      * (bands+1));
+  babl->pixel_format.sampling  = babl_malloc (sizeof (BablSampling*)  * (bands+1));
 
   for (band=0; band < bands; band++)
     {
-      self->pixel_format.model[band] = model[band];
-      self->pixel_format.component[band] = component[band];
-      self->pixel_format.type[band] = type[band];
-      self->pixel_format.sampling[band] = sampling[band];
+      babl->pixel_format.model[band] = model[band];
+      babl->pixel_format.component[band] = component[band];
+      babl->pixel_format.type[band] = type[band];
+      babl->pixel_format.sampling[band] = sampling[band];
     }
-  self->pixel_format.model[band] = NULL;
-  self->pixel_format.component[band] = NULL;
-  self->pixel_format.type[band]      = NULL;
-  self->pixel_format.sampling[band]  = NULL;
+  babl->pixel_format.model[band] = NULL;
+  babl->pixel_format.component[band] = NULL;
+  babl->pixel_format.type[band]      = NULL;
+  babl->pixel_format.sampling[band]  = NULL;
 
-  return (BablPixelFormat*)self;
+  return babl;
 }
 
-BablPixelFormat *
+Babl *
 babl_pixel_format_new (const char *name,
                        ...)
 {
   va_list varg;
-  BablPixelFormat *self;
+  Babl            *babl;
   int              id     = 0;
   int              planar = 0;
   int              bands  = 0;
@@ -100,8 +100,8 @@ babl_pixel_format_new (const char *name,
   BablSampling    *sampling  [BABL_MAX_BANDS];
   BablType        *type      [BABL_MAX_BANDS];
 
-  BablSampling    *current_sampling = babl_sampling (1,1);
-  BablType        *current_type     = babl_type_id (BABL_U8);
+  BablSampling    *current_sampling = (BablSampling*) babl_sampling (1,1);
+  BablType        *current_type     = (BablType*)     babl_type_id (BABL_U8);
   BablModel       *current_model    = NULL;
   const char      *arg              = name;
 
@@ -193,21 +193,21 @@ babl_pixel_format_new (const char *name,
   va_end   (varg);
 
 
-  self = pixel_format_new (name, id,
+  babl = pixel_format_new (name, id,
                            planar,
                            bands,
                            model, component, sampling, type);
 
   
-  if ((BablPixelFormat*) db_insert ((Babl*)self) == self)
+  if (db_insert (babl) == babl)
     {
-      return self;
+      return babl;
     }
   else
     {
-      each_babl_pixel_format_destroy ((Babl*)self, NULL);
+      each_babl_pixel_format_destroy (babl, NULL);
       return NULL;
     }
 }
 
-BABL_CLASS_TEMPLATE (BablPixelFormat, babl_pixel_format, "BablPixelFormat")
+BABL_CLASS_TEMPLATE (babl_pixel_format)

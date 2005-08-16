@@ -22,7 +22,7 @@
 
 #include "babl-classes.h"
 
-BABL_DEFINE_CLASS_NO_NEW_NO_ID(BablSampling, babl_sampling)
-BablSampling * babl_sampling            (int horizontal,
-                                         int vertical);
+BABL_DEFINE_CLASS_NO_NEW_NO_ID(babl_sampling)
+Babl * babl_sampling (int horizontal,
+                      int vertical);
 #endif

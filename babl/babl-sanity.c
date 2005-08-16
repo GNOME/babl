@@ -47,7 +47,7 @@ type_sanity (Babl *babl,
 
       while (ptr && NULL!=*ptr)
         {
-          if (babl_conversion_destination ((Babl *)(*ptr)) == (Babl*)babl_type_id (BABL_DOUBLE))
+          if (babl_conversion_destination ((Babl *)(*ptr)) == babl_type_id (BABL_DOUBLE))
             {
               ok = 1;
               break;
@@ -67,7 +67,7 @@ type_sanity (Babl *babl,
 
       while (ptr && NULL!=*ptr)
         {
-          if (babl_conversion_source ((Babl *)(*ptr)) == (Babl*)babl_type_id (BABL_DOUBLE))
+          if (babl_conversion_source ((Babl *)(*ptr)) == babl_type_id (BABL_DOUBLE))
             {
               ok = 1;
               break;
@@ -99,7 +99,7 @@ model_sanity (Babl *babl,
 
       while (ptr && NULL!=*ptr)
         {
-          if (babl_conversion_destination ((Babl *)(*ptr)) == (Babl*)babl_model_id (BABL_RGBA))
+          if (babl_conversion_destination ((Babl *)(*ptr)) == babl_model_id (BABL_RGBA))
             {
               ok = 1;
               break;
@@ -119,7 +119,7 @@ model_sanity (Babl *babl,
 
       while (ptr && NULL!=*ptr)
         {
-          if (babl_conversion_source ((Babl *)(*ptr)) == (Babl*)babl_model_id (BABL_RGBA))
+          if (babl_conversion_source ((Babl *)(*ptr)) == babl_model_id (BABL_RGBA))
             {
               ok = 1;
               break;

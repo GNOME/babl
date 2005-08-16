@@ -35,37 +35,37 @@ each_babl_component_destroy (Babl *babl,
   return 0;  /* continue iterating */
 }
 
-static BablComponent *
+static Babl *
 component_new (const char *name,
                int         id,
                int         luma,
                int         chroma,
                int         alpha)
 {
-  Babl *self;
+  Babl *babl;
 
-  self                   = babl_calloc (sizeof (BablComponent), 1);
-  self->class_type       = BABL_COMPONENT;
-  self->instance.id      = id;
-  self->instance.name    = babl_strdup (name);
-  self->component.luma   = luma;
-  self->component.chroma = chroma;
-  self->component.alpha  = alpha;
+  babl                   = babl_calloc (sizeof (BablComponent), 1);
+  babl->class_type       = BABL_COMPONENT;
+  babl->instance.id      = id;
+  babl->instance.name    = babl_strdup (name);
+  babl->component.luma   = luma;
+  babl->component.chroma = chroma;
+  babl->component.alpha  = alpha;
 
-  return (BablComponent*) self;
+  return babl;
 }
 
-BablComponent *
+Babl *
 babl_component_new (const char *name,
                     ...)
 {
   va_list varg;
-  BablComponent *self;
-  int            id         = 0;
-  int            luma    = 0;
-  int            chroma  = 0;
-  int            alpha   = 0;
-  const char    *arg=name;
+  Babl       *babl;
+  int         id         = 0;
+  int         luma    = 0;
+  int         chroma  = 0;
+  int         alpha   = 0;
+  const char *arg=name;
 
   va_start (varg, name);
   
@@ -136,17 +136,17 @@ babl_component_new (const char *name,
     
   va_end   (varg);
 
-  self = component_new (name, id, luma, chroma, alpha);
+  babl = component_new (name, id, luma, chroma, alpha);
 
-  if ((BablComponent*) db_insert ((Babl*)self) == self)
+  if (db_insert (babl) == babl)
     {
-      return self;
+      return babl;
     }
   else
     {
-      each_babl_component_destroy ((Babl*)self, NULL);
+      each_babl_component_destroy (babl, NULL);
       return NULL;
     }
 }
 
-BABL_CLASS_TEMPLATE(BablComponent, babl_component, "BablComponent")
+BABL_CLASS_TEMPLATE (babl_component)

@@ -47,13 +47,12 @@ float destination_buf [PIXELS*3];
 int
 test (void)
 {
-  BablFish *fish;
-  int       i;
-  int      OK=1;
-
+  Babl *fish;
+  int   i;
+  int   OK=1;
   
   fish = babl_fish (
-    (Babl*) babl_pixel_format_new (
+    babl_pixel_format_new (
       "foo",
       babl_model ("rgb"),
       babl_type ("float"),
@@ -62,7 +61,7 @@ test (void)
       babl_component ("blue"),
       NULL
     ),
-    (Babl*) babl_pixel_format_new (
+    babl_pixel_format_new (
       "bar",
       babl_model ("ycbcr"),
       babl_type ("float"),

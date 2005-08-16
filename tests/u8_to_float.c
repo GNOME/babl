@@ -31,20 +31,20 @@ float float_buf [BUFFER_LENGTH];
 int
 test (void)
 {
-  BablFish *fish;
-  int       i;
-  int      OK=1;
+  Babl *fish;
+  int   i;
+  int   OK=1;
 
   
   fish = babl_fish (
-    (Babl*) babl_pixel_format_new (
+    babl_pixel_format_new (
       "foo",
       babl_model ("grayscale"),
       babl_type ("u8"),
       babl_component ("luminance"),
       NULL
     ),
-    (Babl*) babl_pixel_format_new (
+    babl_pixel_format_new (
       "bar",
       babl_model ("grayscale"),
       babl_type ("float"),

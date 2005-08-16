@@ -38,42 +38,42 @@ each_babl_model_destroy (Babl *babl,
 
 #define BABL_MAX_COMPONENTS 32
 
-static BablModel *
+static Babl *
 model_new (const char     *name,
            int             id,
            int             components,
            BablComponent **component)
 {
-  Babl *self;
+  Babl *babl;
   int   i; 
 
-  self                     = babl_calloc (sizeof (BablModel), 1);
+  babl                     = babl_calloc (sizeof (BablModel), 1);
 
-  self->class_type       = BABL_MODEL;
-  self->instance.id      = id;
-  self->instance.name    = babl_strdup (name);
-  self->model.components = components;
-  self->model.component  = babl_malloc (sizeof (BablComponent*) * (components+1));
+  babl->class_type       = BABL_MODEL;
+  babl->instance.id      = id;
+  babl->instance.name    = babl_strdup (name);
+  babl->model.components = components;
+  babl->model.component  = babl_malloc (sizeof (BablComponent*) * (components+1));
 
   for (i=0; i < components; i++)
     {
-      self->model.component[i] = component[i];
+      babl->model.component[i] = component[i];
     }
-  self->model.component[i] = NULL;
+  babl->model.component[i] = NULL;
 
-  return (BablModel*)self;
+  return babl;
 }
 
-BablModel *
+Babl *
 babl_model_new (const char *name,
                        ...)
 {
-  va_list varg;
-  BablModel *self;
-  int              id     = 0;
-  int              components  = 0;
-  BablComponent   *band_component [BABL_MAX_COMPONENTS];
-  const char      *arg=name;
+  va_list        varg;
+  Babl          *babl;
+  int            id     = 0;
+  int            components  = 0;
+  BablComponent *band_component [BABL_MAX_COMPONENTS];
+  const char    *arg=name;
 
   va_start (varg, name);
 
@@ -142,17 +142,17 @@ babl_model_new (const char *name,
     
   va_end   (varg);
 
-  self = model_new (name, id, components, band_component);
+  babl = model_new (name, id, components, band_component);
   
-  if ((BablModel*) db_insert ((Babl*)self) == self)
+  if (db_insert (babl) == babl)
     {
-      return self;
+      return babl;
     }
   else
     {
-      each_babl_model_destroy ((Babl*)self, NULL);
+      each_babl_model_destroy (babl, NULL);
       return NULL;
     }
 }
 
-BABL_CLASS_TEMPLATE (BablModel, babl_model, "BablModel")
+BABL_CLASS_TEMPLATE (babl_model)

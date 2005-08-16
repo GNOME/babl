@@ -63,7 +63,7 @@ babl_sampling_each (BablEachFunction  each_fun,
     for (vertical=VERTICAL_MIN; vertical<=VERTICAL_MAX; vertical++)
       {
        int index= (vertical-VERTICAL_MIN) * VERTICAL_MAX + (horizontal - HORIZONTAL_MIN);
-       if (each_fun ((Babl*) &(db[index]), user_data))
+       if (each_fun (BABL (&db[index]), user_data))
          return;
       }
 }

@@ -22,18 +22,19 @@
 
 #include "babl-classes.h"
 
-void        babl_image_init       (void);
-void        babl_image_introspect (void);
-void        babl_image_each       (BablEachFunction  each_fun,
-                                   void             *user_data);
-void        babl_image_destroy    (void);    
-BablImage * babl_image_new        (void *first_component,
+void   babl_image_init       (void);
+void   babl_image_introspect (void);
+void   babl_image_each       (BablEachFunction  each_fun,
+                              void             *user_data);
+void   babl_image_destroy    (void);    
+Babl * babl_image_new        (void *first_component,
                                    ...);
 
-/* create a new BablImage based on a packed BablPixelFormat (or BablModel assumed to
- * use only doubles).
+/* create a new BablImage based on a packed BablPixelFormat (or BablModel which
+ * is a virtual pixelformat based on the BablModel using only doubles in the
+ * order they are listed in the model.
  */
-BablImage *
+Babl *
 babl_image_new_from_linear (void *buffer,
                             Babl *format);
 #endif

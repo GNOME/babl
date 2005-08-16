@@ -46,20 +46,20 @@ unsigned char u8_ref_buf [BUFFER_LENGTH]=
 int
 test_float_to_rgb_u8 (void)
 {
-  BablFish *fish;
-  int       i;
-  int      OK=1;
+  Babl *fish;
+  int   i;
+  int   OK=1;
 
   
   fish = babl_fish (
-    (Babl*) babl_pixel_format_new (
+    babl_pixel_format_new (
       "foo",
       babl_model ("grayscale"),
       babl_type ("float"),
       babl_component ("luminance"),
       NULL
     ),
-    (Babl*) babl_pixel_format_new (
+    babl_pixel_format_new (
       "bar",
       babl_model ("grayscale"),
       babl_type ("u8"),

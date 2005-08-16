@@ -37,33 +37,33 @@ each_babl_type_destroy (Babl *babl,
 }
 
 
-static BablType *
+static Babl *
 type_new (const char  *name,
           int          id,
           int          bits)
 {
-  Babl *self;
+  Babl *babl;
 
   assert (bits != 0);
   assert (bits % 8 == 0);
   
-  self                = babl_calloc (sizeof (BablType), 1);
-  self->class_type    = BABL_TYPE;
-  self->instance.id   = id;
-  self->instance.name = babl_strdup (name);
-  self->type.bits     = bits;
+  babl                = babl_calloc (sizeof (BablType), 1);
+  babl->class_type    = BABL_TYPE;
+  babl->instance.id   = id;
+  babl->instance.name = babl_strdup (name);
+  babl->type.bits     = bits;
 
-  return (BablType*)self;
+  return babl;
 }
 
-BablType *
+Babl *
 babl_type_new (const char *name,
                ...)
 {
-  va_list      varg;
-  BablType    *self;
-  int          id          = 0;
-  int          bits        = 0;
+  va_list  varg;
+  Babl    *babl;
+  int      id    = 0;
+  int      bits  = 0;
 
   const char *arg=name;
 
@@ -103,17 +103,17 @@ babl_type_new (const char *name,
     
   va_end   (varg);
 
-  self = type_new (name, id, bits);
+  babl = type_new (name, id, bits);
 
-  if ((BablType*) db_insert ((Babl*)self) == self)
+  if (db_insert (babl) == babl)
     {
-      return self;
+      return babl;
     }
   else
     {
-      each_babl_type_destroy ((Babl*)self, NULL);
+      each_babl_type_destroy (babl, NULL);
       return NULL;
     }
 }
 
-BABL_CLASS_TEMPLATE (BablType, babl_type, "BablType")
+BABL_CLASS_TEMPLATE (babl_type)

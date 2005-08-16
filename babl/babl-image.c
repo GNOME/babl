@@ -40,55 +40,55 @@ each_babl_image_destroy (Babl *babl,
 }
 #endif
 
-static BablImage *
+static Babl *
 image_new (int             bands,
            BablComponent **component,
            void          **data,
            int            *pitch,
            int            *stride)
 {
-  Babl *self;
+  Babl *babl;
   int        band;
 
-  self                = babl_calloc (
+  babl                = babl_calloc (
                            sizeof (BablImage) +
                            sizeof (BablComponent*) * (bands+1) +
                            sizeof (void*)          * (bands+1) +
                            sizeof (int)            * (bands+1) +
                            sizeof (int)            * (bands+1),1);
 
-  self->image.component     = ((void *)self)                  + sizeof (BablImage);
-  self->image.data          = ((void *)self->image.component) + sizeof (BablComponent*) * (bands+1);
-  self->image.pitch         = ((void *)self->image.data)      + sizeof (void*)          * (bands+1);
-  self->image.stride        = ((void *)self->image.pitch)     + sizeof (int)            * (bands+1);
-/*self->image.foo           = ((void *)self->image.stride)    + sizeof (int)            * (bands+1);*/
+  babl->image.component     = ((void *)babl)                  + sizeof (BablImage);
+  babl->image.data          = ((void *)babl->image.component) + sizeof (BablComponent*) * (bands+1);
+  babl->image.pitch         = ((void *)babl->image.data)      + sizeof (void*)          * (bands+1);
+  babl->image.stride        = ((void *)babl->image.pitch)     + sizeof (int)            * (bands+1);
+/*babl->image.foo           = ((void *)babl->image.stride)    + sizeof (int)            * (bands+1);*/
 
-  self->class_type    = BABL_IMAGE;
-  self->instance.id   = 0;
-  self->instance.name = "babl image";
+  babl->class_type    = BABL_IMAGE;
+  babl->instance.id   = 0;
+  babl->instance.name = "babl image";
 
-  self->image.bands         = bands;
+  babl->image.bands         = bands;
 
   for (band=0; band < bands; band++)
     {
-      self->image.component[band] = component[band];
-      self->image.data[band]      = data[band];
-      self->image.pitch[band]     = pitch[band];
-      self->image.stride[band]    = stride[band];
+      babl->image.component[band] = component[band];
+      babl->image.data[band]      = data[band];
+      babl->image.pitch[band]     = pitch[band];
+      babl->image.stride[band]    = stride[band];
     }
-  self->image.component[band] = NULL;
-  self->image.data[band]      = NULL;
-  self->image.pitch[band]     = 0;
-  self->image.stride[band]    = 0;
+  babl->image.component[band] = NULL;
+  babl->image.data[band]      = NULL;
+  babl->image.pitch[band]     = 0;
+  babl->image.stride[band]    = 0;
 
-  return (BablImage*) self;
+  return babl;
 }
 
-BablImage *
+Babl *
 babl_image_new_from_linear (void  *buffer,
-                            Babl  *babl)
+                            Babl  *format)
 {
-  BablImage     *self;
+  Babl          *babl;
   int            band;
   BablComponent *component [BABL_MAX_BANDS];
   void          *data      [BABL_MAX_BANDS];
@@ -98,20 +98,20 @@ babl_image_new_from_linear (void  *buffer,
   int            offset=0;
   int            calc_pitch=0;
  
-  switch (babl->class_type)
+  switch (format->class_type)
     {
       case BABL_PIXEL_FORMAT:
-        for (band=0; band < babl->pixel_format.bands; band++)
+        for (band=0; band < format->pixel_format.bands; band++)
           {
-            BablType *type = babl->pixel_format.type[band];
+            BablType *type = format->pixel_format.type[band];
             calc_pitch += (type->bits / 8);
           }
 
-        for (band=0; band < babl->pixel_format.bands; band++)
+        for (band=0; band < format->pixel_format.bands; band++)
           {
-            BablType *type = babl->pixel_format.type[band];
+            BablType *type = format->pixel_format.type[band];
 
-            component[band] = babl->pixel_format.component[band];
+            component[band] = format->pixel_format.component[band];
             data[band]      = buffer + offset;
             pitch[band]     = calc_pitch;
             stride[band]    = 0;
@@ -120,14 +120,14 @@ babl_image_new_from_linear (void  *buffer,
           }
         break;
       case BABL_MODEL:
-        for (band=0; band < babl->model.components; band++)
+        for (band=0; band < format->model.components; band++)
           {
             calc_pitch += (64 / 8);
           }
 
-        for (band=0; band < babl->model.components; band++)
+        for (band=0; band < format->model.components; band++)
           {
-            component[band] = babl->model.component[band];
+            component[band] = format->model.component[band];
             data[band]      = buffer + offset;
             pitch[band]     = calc_pitch;
             stride[band]    = 0;
@@ -140,16 +140,16 @@ babl_image_new_from_linear (void  *buffer,
         break;
     }
 
-  self = image_new (babl->model.components, component, data, pitch, stride);
-  return self;
+  babl = image_new (format->model.components, component, data, pitch, stride);
+  return babl;
 }
 
-BablImage *
+Babl *
 babl_image_new (void *first,
                 ...)
 {
   va_list        varg;
-  BablImage      *self;
+  Babl           *babl;
   int            bands     = 0;
   BablComponent *component [BABL_MAX_BANDS];
   void          *data      [BABL_MAX_BANDS];
@@ -183,7 +183,7 @@ babl_image_new (void *first,
         }
       else
         {
-          new_component = babl_component (arg);
+          new_component = (BablComponent*)babl_component (arg);
         }
 
       component [bands] = new_component;
@@ -204,9 +204,9 @@ babl_image_new (void *first,
   va_end   (varg);
 
 
-  self = image_new (bands, component, data, pitch, stride);
+  babl = image_new (bands, component, data, pitch, stride);
 
-  return self;
+  return babl;
 }
 
 void
