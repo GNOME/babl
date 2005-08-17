@@ -40,6 +40,7 @@ dnl ===========================================================================
 AC_CONFIG_FILES(
 Makefile
 babl.pc
+babl/Makefile
 babl/base/Makefile
 tests/Makefile
 INSTALL
