@@ -1,7 +1,7 @@
 
 Babl @BABL_VERSION@
 
-    Dynamic; any to any, pixel format conversion library.
+    Dynamic, any to any, pixel format conversion library.
 
 -----------------------------------------------------------------------
 
@@ -10,7 +10,7 @@ General Information
 ===================
 
 This is babl version @BABL_VERSION@, babl is a pixel format conversion
-library the provides conversions to and from any formats.
+library that provides conversions to and from any formats.
 
 The official web site is:
     http://pippin.gimp.org/babl/
@@ -101,7 +101,7 @@ Pixel Formats:
 Introspection
 =============
 
-Dumpig of the babl's internal state for debugging purposes.
+Dump of babl's internal state for debugging purposes.
 
 
 Sanity checking
@@ -126,5 +126,4 @@ Planned features
 - Conversion auto builder (BablFish) capable of finding the fastest path
   through the set of registered conversions to perform a specified
   conversion without precision loss.
-
 
