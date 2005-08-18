@@ -51,7 +51,13 @@ type_name##_each (BablEachFunction  each_fun,                 \
 Babl *                                                        \
 type_name##_id (int id)                                       \
 {                                                             \
-  return db_exist (id, NULL);                                 \
+  Babl *babl;                                                 \
+  babl = db_exist (id, NULL);                                 \
+  if (!babl)                                                  \
+    {                                                         \
+      babl_log ("%s(\"%i\"): not found", __FUNCTION__, id);   \
+    }                                                         \
+  return babl;                                                \
 }
 
 #define BABL_DEFINE_LOOKUP_BY_NAME(type_name)                 \
