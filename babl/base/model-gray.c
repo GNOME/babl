@@ -41,6 +41,12 @@ components (void)
    "id",    BABL_LUMINANCE,
    "luma",
    NULL);
+
+  babl_component_new (
+   "luminance-gamma2.2", 
+   "id",    BABL_LUMINANCE_GAMMA_2_2,
+   "luma",
+   NULL);
 }
 
 static void
@@ -137,7 +143,7 @@ rgb_to_grayscale_2_2 (int    src_bands,
       luminance  = red   * RGB_LUMINANCE_RED +
                    green * RGB_LUMINANCE_GREEN +
                    blue  * RGB_LUMINANCE_BLUE;
-      *(double*)dst[0] = pow (luminance, 2.2);
+      *(double*)dst[0] = linear_to_gamma_2_2 (luminance);
 
       if (dst_bands==2)
         *(double*)dst[1] = alpha;
@@ -163,7 +169,7 @@ grayscale_2_2_to_rgb (int    src_bands,
       double red, green, blue;
       double alpha;
 
-      luminance = pow (*(double *)src[0], (1.0F/2.2F));
+      luminance = gamma_2_2_to_linear (*(double *)src[0]);
       red       = luminance;
       green     = luminance;
       blue      = luminance;

@@ -1,3 +1,23 @@
+2005-08-18  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/base/util.h: added new and hopefully correct gamma correction
+	and uncorrection functions.
+	* babl/base/model-grayscale.c: (components),
+	(rgb_to_grayscale_2_2), (grayscale_2_2_to_rgb): register
+	"luminance-gamma2.2" component, and use new gamma functions.
+	* babl/base/model-rgb.c: (g3_gamma_2_2), (g3_inv_gamma_2_2): use new
+	gamma functions.
+	* babl/base/model-ycbcr.c: (components), (models), (rgb_to_ycbcr),
+	(ycbcr_to_rgb): use gamma corrected luminance, and correct gamma. (pixel_formats):
+	uncomment until a new data type exist with headroom/footrom in 8bit
+	for proper rescaling of 0..255 to 16..235 for luma and  +/-112 range
+	with offset of 128 for chroma (16 thorugh 240 inclusive).
+	* babl/base/rgb-constants.h: more digits as well as some #if 0' dead
+	code for reference.
+	* tests/rgb_to_lab_to_rgb.c: add more colors to the test buffer.
+	* tests/rgb_to_ycbcr.c: set TOLERANCE to a more meaningful value,
+	updated the ycbcr version of 50% gray.
+
 2005-08-17  Øyvind Kolås  <pippin@gimp.org>
 
 	* babl/babl-internal.h: (type_name##_id) babl_log upon failed

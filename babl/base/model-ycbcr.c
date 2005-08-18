@@ -43,13 +43,13 @@ components (void)
 {
   babl_component_new (
    "cb",
-   "id",    BABL_CB,
+   "id", BABL_CB,
    "chroma",
    NULL);
 
   babl_component_new (
    "cr",
-   "id",    BABL_CR,
+   "id", BABL_CR,
    "chroma",
    NULL);
 }
@@ -60,7 +60,7 @@ models (void)
   babl_model_new (
     "ycbcr",
     "id", BABL_YCBCR,
-    babl_component_id (BABL_LUMINANCE),
+    babl_component_id (BABL_LUMINANCE_GAMMA_2_2),
     babl_component_id (BABL_CB),
     babl_component_id (BABL_CR),
     NULL);
@@ -68,7 +68,7 @@ models (void)
   babl_model_new (
     "ycbcra",
     "id", BABL_YCBCRA,
-    babl_component_id (BABL_LUMINANCE),
+    babl_component_id (BABL_LUMINANCE_GAMMA_2_2),
     babl_component_id (BABL_CB),
     babl_component_id (BABL_CR),
     babl_component_id (BABL_ALPHA),
@@ -94,13 +94,10 @@ rgb_to_ycbcr (int    src_bands,
 
       double luminance, cb, cr;
 
-      /* values taken from Charles Poynton's color FAQ 
-       * http://www.poynton.com/notes/colour_and_gamma/ColorFAQ.html#RTFToC28
-       *
-       * this is YPbPr not YCbCr to be exact, it uses the full range, maybe
-       * both should be included with babl under their proper name
-       * 
-       */
+      red   = linear_to_gamma_2_2 (red);
+      green = linear_to_gamma_2_2 (green);
+      blue  = linear_to_gamma_2_2 (blue);
+      
       luminance =  0.299    * red  +0.587    * green  +0.114    * blue;
       cb        = -0.168736 * red  -0.331264 * green  +0.5      * blue;
       cr        =  0.5      * red  -0.418688 * green  -0.081312 * blue;
@@ -135,16 +132,13 @@ ycbcr_to_rgb (int    src_bands,
 
       double red, green, blue;
 
-      /* values taken from Charles Poynton's color FAQ 
-       * http://www.poynton.com/notes/colour_and_gamma/ColorFAQ.html#RTFToC28
-       * 
-       * this is YPbPr not YCbCr to be exact, it uses the full range, maybe
-       * both should be included with babl under their proper name
-       * 
-       */
       red   = 1.0 * luminance  + 0.0      * cb  + 1.40200    * cr;
       green = 1.0 * luminance  - 0.344136 * cb  - 0.71414136 * cr;
       blue  = 1.0 * luminance  + 1.772    * cb  + 0.0        * cr;
+
+      red   = gamma_2_2_to_linear (red);
+      green = gamma_2_2_to_linear (green);
+      blue  = gamma_2_2_to_linear (blue);
 
       *(double*)dst[0] = red;
       *(double*)dst[1] = green;
@@ -207,6 +201,7 @@ conversions (void)
 static void
 pixel_formats (void)
 {
+#if 0
   babl_pixel_format_new (
     "yuv420",
     "id",          BABL_YUV420,
@@ -218,7 +213,6 @@ pixel_formats (void)
     babl_sampling  (2, 2), babl_component_id (BABL_CR),
     NULL);
   
-#if 0
   babl_pixel_format_new (
     "yuv411",
     "id",          BABL_YUV411,

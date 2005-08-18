@@ -17,6 +17,19 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#define RGB_LUMINANCE_RED   (0.2126)
-#define RGB_LUMINANCE_GREEN (0.7152)
-#define RGB_LUMINANCE_BLUE  (0.0722)
+//#define CONTEMPORARY_MONITOR
+
+#ifdef CONTEMPORARY_MONITOR
+  /* source: http://www.poynton.com/ColorFAQ.html */
+  #define RGB_LUMINANCE_RED    (0.212671)
+  #define RGB_LUMINANCE_GREEN  (0.715160)
+  #define RGB_LUMINANCE_BLUE   (0.072169)
+#else
+  /* this is not correct, but the constants are kept around */
+  #define RGB_LUMA_RED         (0.299)
+  #define RGB_LUMA_GREEN       (0.587)
+  #define RGB_LUMA_BLUE        (0.114)
+  #define RGB_LUMINANCE_RED    RGB_LUMA_RED   
+  #define RGB_LUMINANCE_GREEN  RGB_LUMA_GREEN 
+  #define RGB_LUMINANCE_BLUE   RGB_LUMA_BLUE
+#endif

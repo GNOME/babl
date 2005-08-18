@@ -206,7 +206,7 @@ g3_gamma_2_2 (int    src_bands,
     {
       int band;
       for (band=0;band<3;band++)
-        *(double*)dst[band] = pow (*(double*) src[band], 2.2);
+        *(double*)dst[band] = linear_to_gamma_2_2 (*(double*) src[band]);
       for (;band<dst_bands;band++)
         *(double*)dst[band] = *(double*) src[band];
 
@@ -231,7 +231,7 @@ g3_inv_gamma_2_2 (int    src_bands,
       int band;
       for (band=0;band<3;band++)
         {
-          *(double*)dst[band] = pow (*(double*) src[band], (1.0F/2.2F));
+          *(double*)dst[band] = gamma_2_2_to_linear (*(double*) src[band]);
         }
       for (;band<dst_bands;band++)
         {
