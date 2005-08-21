@@ -1,5 +1,28 @@
 2005-08-21  Øyvind Kolås  <pippin@gimp.org>
 
+	* Makefile.am,
+	* NEWS,
+	* autogen.sh,
+	* babl/Makefile.am,
+	* configure.ac,
+	* docs/.cvsignore,
+	* docs/Makefile.am,
+	* docs/babl.css,
+	* docs/graphics/.cvsignore,
+	* docs/graphics/Makefile.am,
+	* docs/graphics/babl-16x16.svg,
+	* docs/graphics/babl-48x48.svg,
+	* docs/graphics/babl-a4poster.svg,
+	* docs/graphics/index.html,
+	* README.in,
+	* docs/index-static.html.in,
+	* docs/tools/xml_insert.sh,
+	* tests/babl-html-dump.c, 
+	* tests/Makefile.am: Added HTML based documentation as part of build
+	process.
+
+2005-08-21  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-classes.h: reindent, some documentation.
 	* babl/babl-fish.c: (babl_fish_reference_new): assertions for
 	arguments.

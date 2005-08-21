@@ -1,5 +1,27 @@
-babl-0.0.1:
+                                                                 <dl><dt><!--
+The NEWS file in the babl source tree is the source location for
+the news section both in the README and the webpage.
 
-Initial public release of babl, minimal working configuration for
+
+                                                                          -->
+xxxx-xx-xx babl-0.0.2 <em>Green fish release</em>                   </dt><dd>
+
+<p><b>DRAFT</b></p>
+<ul>
+   <li>Complete RGB and Grayscale models, with 2.2 gamma correction, alpha,
+       and premultiplied alpha.
+   </li>
+   <li>Model and component names in compact normalized form.</li>
+   <li>The babl mascot surfaces.</li>
+   <li>Website integrated into build process.</li>
+</ul>
+
+                                                                    </dd><dt>
+2005-08-xx babl-0.0.1                                               </dt><dd>
+
+Development release of babl, minimal working configuration for
 RGB, CMYK and YCbCr for 8bit 16bit float and double. Emphasis is on
 precision and clarity of code not speed.
+
+                                                                   </dd></dl>
+

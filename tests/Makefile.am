@@ -20,11 +20,13 @@ LDADD = $(top_builddir)/babl/libbabl.la -lm
 
 noinst_PROGRAMS =	\
 	introspect	\
+	babl_html_dump	\
 	nop		\
 	$(TESTS)
 
-introspect_SOURCES  =  introspect.c
-nop_SOURCES         =  nop.c
+introspect_SOURCES     = introspect.c
+babl_html_dump_SOURCES = babl-html-dump.c
+nop_SOURCES            = nop.c
 
 
 EXTRA_DIST = .cvsignore

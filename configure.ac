@@ -42,9 +42,12 @@ Makefile
 babl.pc
 babl/Makefile
 babl/base/Makefile
+docs/Makefile
+docs/index-static.html
+docs/source-local.html
+docs/graphics/Makefile
 tests/Makefile
 INSTALL
-README
 )
 
 AC_OUTPUT

@@ -42,9 +42,9 @@ autoheader			&& \
 echo "- automake."		&& \
 automake --add-missing --gnu	&& \
 echo				&& \
-./configure "$@"		&& \
-echo				&& \
-make                            && exit 0
+./configure "$@"		&& exit 0
+#echo				&& \
+#make                            && exit 0
 
 exit 1
 

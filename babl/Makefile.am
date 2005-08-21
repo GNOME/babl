@@ -63,6 +63,5 @@ libbabl_la_LDFLAGS= \
 	-release $(BABL_RELEASE)
 
 EXTRA_DIST := 			\
-	.cvsignore		\
-	Makefile-mini
+	.cvsignore
 
