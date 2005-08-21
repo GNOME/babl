@@ -79,18 +79,18 @@ test (void)
       "foo",
       babl_model ("rgb"),
       babl_type ("float"),
-      babl_component ("red"),
-      babl_component ("green"),
-      babl_component ("blue"),
+      babl_component ("R"),
+      babl_component ("G"),
+      babl_component ("B"),
       NULL
     ),
     babl_pixel_format_new (
       "bar",
       babl_model ("CIE Lab"),
       babl_type ("float"), 
-      babl_component ("L"),
-      babl_component ("a"),
-      babl_component ("b"),
+      babl_component ("CIE L"),
+      babl_component ("CIE a"),
+      babl_component ("CIE b"),
       NULL
     )
   );

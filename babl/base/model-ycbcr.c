@@ -42,13 +42,13 @@ static void
 components (void)
 {
   babl_component_new (
-   "cb",
+   "Cb",
    "id", BABL_CB,
    "chroma",
    NULL);
 
   babl_component_new (
-   "cr",
+   "Cr",
    "id", BABL_CR,
    "chroma",
    NULL);
@@ -67,7 +67,7 @@ models (void)
 
   babl_model_new (
     "ycbcra",
-    "id", BABL_YCBCRA,
+    "id", BABL_YCBCR_ALPHA,
     babl_component_id (BABL_LUMINANCE_GAMMA_2_2),
     babl_component_id (BABL_CB),
     babl_component_id (BABL_CR),
@@ -185,13 +185,13 @@ conversions (void)
   babl_conversion_new (
     "babl-base: rgba to ycbcra",
     "source",      babl_model_id (BABL_RGBA),
-    "destination", babl_model_id (BABL_YCBCRA),
+    "destination", babl_model_id (BABL_YCBCR_ALPHA),
     "planar",      rgb_to_ycbcr,
     NULL
   );
   babl_conversion_new (
     "babl-base: ycbcra to rgba",
-    "source",      babl_model_id (BABL_YCBCRA),
+    "source",      babl_model_id (BABL_YCBCR_ALPHA),
     "destination", babl_model_id (BABL_RGBA),
     "planar",      ycbcr_to_rgb,
     NULL

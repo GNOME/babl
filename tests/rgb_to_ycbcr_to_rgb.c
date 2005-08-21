@@ -48,18 +48,18 @@ test (void)
       "foo",
       babl_model ("rgb"),
       babl_type ("float"),
-      babl_component ("red"),
-      babl_component ("green"),
-      babl_component ("blue"),
+      babl_component ("R"),
+      babl_component ("G"),
+      babl_component ("B"),
       NULL
     ),
     babl_pixel_format_new (
       "bar",
       babl_model ("ycbcr"),
       babl_type ("float"), 
-      babl_component ("luminance"),
-      babl_component ("cb"),
-      babl_component ("cr"),
+      babl_component ("Y"),
+      babl_component ("Cb"),
+      babl_component ("Cr"),
       NULL
     )
   );

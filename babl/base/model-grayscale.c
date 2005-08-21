@@ -17,6 +17,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/* FIXME: this file should be renamed model-gray.c */
+
 #include "babl.h"
 #include "util.h"
 #include "rgb-constants.h"
@@ -26,7 +28,7 @@ static void components  (void);
 static void models      (void);
 static void conversions (void);
 
-void babl_base_model_grayscale (void)
+void babl_base_model_gray (void)
 {
   components  ();
   models      ();
@@ -37,13 +39,19 @@ static void
 components (void)
 {
   babl_component_new (
-   "luminance", 
+   "Y", 
    "id",    BABL_LUMINANCE,
    "luma",
    NULL);
 
   babl_component_new (
-   "luminance-gamma2.2", 
+   "Y*A",
+   "id",    BABL_LUMINANCE_MUL_ALPHA,
+   "luma",
+   NULL);
+
+  babl_component_new (
+   "Y-g2.2", 
    "id",    BABL_LUMINANCE_GAMMA_2_2,
    "luma",
    NULL);
@@ -53,27 +61,34 @@ static void
 models (void)
 {
   babl_model_new (
-    "grayscale",
-    "id", BABL_GRAYSCALE,
+    "gray",
+    "id", BABL_GRAY,
     babl_component_id (BABL_LUMINANCE),
     NULL);
 
   babl_model_new (
-    "grayscale-gamma2.2",
-    "id", BABL_GRAYSCALE_GAMMA_2_2,
-    babl_component_id (BABL_LUMINANCE),
+    "gray-g2.2",
+    "id", BABL_GRAY_GAMMA_2_2,
+    babl_component_id (BABL_LUMINANCE_GAMMA_2_2),
     NULL);
 
   babl_model_new (
-    "grayscale-alpha",
-    "id", BABL_GRAYSCALE_ALPHA,
+    "graya-g2.2",
+    "id", BABL_GRAY_GAMMA_2_2_ALPHA,
+    babl_component_id (BABL_LUMINANCE_GAMMA_2_2),
+    babl_component_id (BABL_ALPHA),
+    NULL);
+
+  babl_model_new (
+    "graya",
+    "id", BABL_GRAY_ALPHA,
     babl_component_id (BABL_LUMINANCE),
     babl_component_id (BABL_ALPHA),
     NULL);
 
   babl_model_new (
-    "grayscale-alpha-premultiplied",
-    "id", BABL_GRAYSCALE_ALPHA_PREMULTIPLIED,
+    "grayA",
+    "id", BABL_GRAY_ALPHA_PREMULTIPLIED,
     babl_component_id (BABL_LUMINANCE_MUL_ALPHA),
     babl_component_id (BABL_ALPHA),
     NULL);
@@ -82,13 +97,13 @@ models (void)
 
 
 static void
-rgb_to_grayscale (int    src_bands,
-                  void **src,
-                  int   *src_pitch,
-                  int    dst_bands,
-                  void **dst,
-                  int   *dst_pitch,
-                  int    n)
+rgb_to_gray (int    src_bands,
+             void **src,
+             int   *src_pitch,
+             int    dst_bands,
+             void **dst,
+             int   *dst_pitch,
+             int    n)
 {
   BABL_PLANAR_SANITY
   while (n--)
@@ -118,13 +133,13 @@ rgb_to_grayscale (int    src_bands,
 
 
 static void
-rgb_to_grayscale_2_2 (int    src_bands,
-                      void **src,
-                      int   *src_pitch,
-                      int    dst_bands,
-                      void **dst,
-                      int   *dst_pitch,
-                      int    n)
+rgb_to_gray_2_2 (int    src_bands,
+                 void **src,
+                 int   *src_pitch,
+                 int    dst_bands,
+                 void **dst,
+                 int   *dst_pitch,
+                 int    n)
 {
   BABL_PLANAR_SANITY
   while (n--)
@@ -154,13 +169,13 @@ rgb_to_grayscale_2_2 (int    src_bands,
 
 
 static void
-grayscale_2_2_to_rgb (int    src_bands,
-                      void **src,
-                      int   *src_pitch,
-                      int    dst_bands,
-                      void **dst,
-                      int   *dst_pitch,
-                      int    n)
+gray_2_2_to_rgb (int    src_bands,
+                 void **src,
+                 int   *src_pitch,
+                 int    dst_bands,
+                 void **dst,
+                 int   *dst_pitch,
+                 int    n)
 {
   BABL_PLANAR_SANITY
   while (n--)
@@ -192,13 +207,13 @@ grayscale_2_2_to_rgb (int    src_bands,
 
 
 static void
-grayscale_to_rgb (int    src_bands,
-                  void **src,
-                  int   *src_pitch,
-                  int    dst_bands,
-                  void **dst,
-                  int   *dst_pitch,
-                  int    n)
+gray_to_rgb (int    src_bands,
+             void **src,
+             int   *src_pitch,
+             int    dst_bands,
+             void **dst,
+             int   *dst_pitch,
+             int    n)
 {
   BABL_PLANAR_SANITY
   while (n--)
@@ -228,13 +243,13 @@ grayscale_to_rgb (int    src_bands,
 }
 
 static void
-grayscale_alpha_premultiplied_to_rgba (int    src_bands,
-                                       void **src,
-                                       int   *src_pitch,
-                                       int    dst_bands,
-                                       void **dst,
-                                       int   *dst_pitch,
-                                       int    n)
+gray_alpha_premultiplied_to_rgba (int    src_bands,
+                                  void **src,
+                                  int   *src_pitch,
+                                  int    dst_bands,
+                                  void **dst,
+                                  int   *dst_pitch,
+                                  int    n)
 {
   BABL_PLANAR_SANITY
   assert (src_bands == 2);
@@ -264,13 +279,13 @@ grayscale_alpha_premultiplied_to_rgba (int    src_bands,
 
 
 static void
-rgba_to_grayscale_alpha_premultiplied (int    src_bands,
-                                       void **src,
-                                       int   *src_pitch,
-                                       int    dst_bands,
-                                       void **dst,
-                                       int   *dst_pitch,
-                                       int    n)
+rgba_to_gray_alpha_premultiplied (int    src_bands,
+                                  void **src,
+                                  int   *src_pitch,
+                                  int    dst_bands,
+                                  void **dst,
+                                  int   *dst_pitch,
+                                  int    n)
 {
   BABL_PLANAR_SANITY;
   assert (src_bands == 4);
@@ -361,114 +376,131 @@ static void
 conversions (void)
 {
   babl_conversion_new (
-    "babl-base: grayscale-gamma2.2 to rgba",
-    "source",      babl_model_id (BABL_GRAYSCALE_GAMMA_2_2),
+    "babl-base: gray-g2.2 to rgba",
+    "source",      babl_model_id (BABL_GRAY_GAMMA_2_2),
     "destination", babl_model_id (BABL_RGBA),
-    "planar",      grayscale_2_2_to_rgb,
+    "planar",      gray_2_2_to_rgb,
     NULL
   );
 
+
   babl_conversion_new (
-    "babl-base: rgba to grayscale-gamma2.2",
+    "babl-base: rgba to gray-g2.2",
     "source",      babl_model_id (BABL_RGBA),
-    "destination", babl_model_id (BABL_GRAYSCALE_GAMMA_2_2),
-    "planar",      rgb_to_grayscale_2_2,
+    "destination", babl_model_id (BABL_GRAY_GAMMA_2_2),
+    "planar",      rgb_to_gray_2_2,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: grayscale to rgba",
-    "source",      babl_model_id (BABL_GRAYSCALE),
+    "babl-base: graya-g2.2 to rgba",
+    "source",      babl_model_id (BABL_GRAY_GAMMA_2_2_ALPHA),
     "destination", babl_model_id (BABL_RGBA),
-    "planar",      grayscale_to_rgb,
+    "planar",      gray_2_2_to_rgb,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: grayscale to rgb",
-    "source",      babl_model_id (BABL_GRAYSCALE),
+    "babl-base: rgba to graya-g2.2",
+    "source",      babl_model_id (BABL_RGBA),
+    "destination", babl_model_id (BABL_GRAY_GAMMA_2_2_ALPHA),
+    "planar",      rgb_to_gray_2_2,
+    NULL
+  );
+
+  babl_conversion_new (
+    "babl-base: gray to rgba",
+    "source",      babl_model_id (BABL_GRAY),
+    "destination", babl_model_id (BABL_RGBA),
+    "planar",      gray_to_rgb,
+    NULL
+  );
+
+  babl_conversion_new (
+    "babl-base: gray to rgb",
+    "source",      babl_model_id (BABL_GRAY),
     "destination", babl_model_id (BABL_RGB),
-    "planar",      grayscale_to_rgb,
+    "planar",      gray_to_rgb,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: grayscale-alpha to rgba",
-    "source",      babl_model_id (BABL_GRAYSCALE_ALPHA),
+    "babl-base: gray-alpha to rgba",
+    "source",      babl_model_id (BABL_GRAY_ALPHA),
     "destination", babl_model_id (BABL_RGBA),
-    "planar",      grayscale_to_rgb,
+    "planar",      gray_to_rgb,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: grayscale-alpha to rgb",
-    "source",      babl_model_id (BABL_GRAYSCALE_ALPHA),
+    "babl-base: gray-alpha to rgb",
+    "source",      babl_model_id (BABL_GRAY_ALPHA),
     "destination", babl_model_id (BABL_RGB),
-    "planar",      grayscale_to_rgb,
+    "planar",      gray_to_rgb,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: rgba to grayscale-alpha",
+    "babl-base: rgba to gray-alpha",
     "source",      babl_model_id (BABL_RGBA),
-    "destination", babl_model_id (BABL_GRAYSCALE_ALPHA),
-    "planar",      rgb_to_grayscale,
+    "destination", babl_model_id (BABL_GRAY_ALPHA),
+    "planar",      rgb_to_gray,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: rgba to grayscale",
+    "babl-base: rgba to gray",
     "source",      babl_model_id (BABL_RGBA),
-    "destination", babl_model_id (BABL_GRAYSCALE),
-    "planar",      rgb_to_grayscale,
+    "destination", babl_model_id (BABL_GRAY),
+    "planar",      rgb_to_gray,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: rgb to grayscale-alpha",
+    "babl-base: rgb to gray-alpha",
     "source",      babl_model_id (BABL_RGB),
-    "destination", babl_model_id (BABL_GRAYSCALE_ALPHA),
-    "planar",      rgb_to_grayscale,
+    "destination", babl_model_id (BABL_GRAY_ALPHA),
+    "planar",      rgb_to_gray,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: rgb to grayscale",
+    "babl-base: rgb to gray",
     "source",      babl_model_id (BABL_RGB),
-    "destination", babl_model_id (BABL_GRAYSCALE),
-    "planar",      rgb_to_grayscale,
+    "destination", babl_model_id (BABL_GRAY),
+    "planar",      rgb_to_gray,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: grayscale-alpha to grayscale-alpha-premultiplied",
-    "source",      babl_model_id (BABL_GRAYSCALE_ALPHA),
-    "destination", babl_model_id (BABL_GRAYSCALE_ALPHA_PREMULTIPLIED),
+    "babl-base: gray-alpha to gray-alpha-premultiplied",
+    "source",      babl_model_id (BABL_GRAY_ALPHA),
+    "destination", babl_model_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
     "planar",      non_premultiplied_to_premultiplied,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: grayscale-alpha-premultuplied to grayscale-alpha",
-    "source",      babl_model_id (BABL_GRAYSCALE_ALPHA_PREMULTIPLIED),
-    "destination", babl_model_id (BABL_GRAYSCALE_ALPHA),
+    "babl-base: gray-alpha-premultuplied to gray-alpha",
+    "source",      babl_model_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
+    "destination", babl_model_id (BABL_GRAY_ALPHA),
     "planar",      premultiplied_to_non_premultiplied,
     NULL
   );
 
     babl_conversion_new (
-    "babl-base: grayscale-alpha-premultiplied to rgba",
-    "source",      babl_model_id (BABL_GRAYSCALE_ALPHA_PREMULTIPLIED),
+    "babl-base: gray-alpha-premultiplied to rgba",
+    "source",      babl_model_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
     "destination", babl_model_id (BABL_RGBA),
-    "planar",      grayscale_alpha_premultiplied_to_rgba,
+    "planar",      gray_alpha_premultiplied_to_rgba,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: rgba to grayscale-alpha-premultiplied",
+    "babl-base: rgba to gray-alpha-premultiplied",
     "source",      babl_model_id (BABL_RGBA),
-    "destination", babl_model_id (BABL_GRAYSCALE_ALPHA_PREMULTIPLIED),
-    "planar",      rgba_to_grayscale_alpha_premultiplied,
+    "destination", babl_model_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
+    "planar",      rgba_to_gray_alpha_premultiplied,
     NULL
   );
 }

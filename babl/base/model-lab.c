@@ -41,19 +41,19 @@ static void
 components (void)
 {
   babl_component_new (
-   "L",
+   "CIE L",
    "id",    BABL_LAB_L,
    "luma",
    NULL);
 
   babl_component_new (
-   "a",
+   "CIE a",
    "id",    BABL_LAB_A,
    "chroma",
    NULL);
 
   babl_component_new (
-   "b",
+   "CIE b",
    "id",    BABL_LAB_B,
    "chroma",
    NULL);
@@ -194,4 +194,13 @@ conversions (void)
 static void
 pixel_formats (void)
 {
+  babl_pixel_format_new (
+    "lab-float",
+    "id", BABL_LAB_FLOAT,
+    babl_model_id     (BABL_LAB),
+    babl_type_id      (BABL_FLOAT),
+    babl_component_id (BABL_LAB_L), 
+    babl_component_id (BABL_LAB_A), 
+    babl_component_id (BABL_LAB_B),
+    NULL);
 }

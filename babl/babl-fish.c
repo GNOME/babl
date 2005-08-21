@@ -124,36 +124,67 @@ babl_fish_reference_new (Babl *source,
   assert (BABL_IS_BABL (source));
   assert (BABL_IS_BABL (destination));
 
+  assert (source->class_type == BABL_PIXEL_FORMAT ||
+          source->class_type == BABL_MODEL);
+  assert (destination->class_type == BABL_PIXEL_FORMAT ||
+          destination->class_type == BABL_MODEL);
+
   babl                   = babl_calloc (sizeof (BablFishReference), 1);
   babl->class_type       = BABL_FISH_REFERENCE;
   babl->instance.id      = 0;
   babl->instance.name    = NULL;
   babl->fish.source      = (union Babl*)source;
   babl->fish.destination = (union Babl*)destination;
+ 
+  if (source->class_type == BABL_PIXEL_FORMAT)
+    {
+      babl->reference_fish.type_to_double =
+         babl_conversion_find (
+            source->pixel_format.type[0],
+            babl_type_id (BABL_DOUBLE)
+         );
 
-  babl->reference_fish.type_to_double =
-     babl_conversion_find (
-        source->pixel_format.type[0],
-        babl_type_id (BABL_DOUBLE)
-     );
+      babl->reference_fish.model_to_rgba =
+        babl_conversion_find (
+            source->pixel_format.model[0],
+            babl_model_id (BABL_RGBA)
+        );
 
-  babl->reference_fish.model_to_rgba =
-    babl_conversion_find (
-        source->pixel_format.model[0],
-        babl_model_id (BABL_RGBA)
-    );
+      babl->reference_fish.rgba_to_model =
+        babl_conversion_find (
+            babl_model_id (BABL_RGBA),
+            destination->pixel_format.model[0]
+        );
 
-  babl->reference_fish.rgba_to_model =
-    babl_conversion_find (
-        babl_model_id (BABL_RGBA),
-        destination->pixel_format.model[0]
-    );
+      babl->reference_fish.double_to_type =
+        babl_conversion_find (
+            babl_type_id (BABL_DOUBLE),
+            destination->pixel_format.type[0]
+        );
+    }
+  else if (source->class_type == BABL_MODEL)
+    { 
+      babl->reference_fish.type_to_double = NULL;
 
-  babl->reference_fish.double_to_type =
-    babl_conversion_find (
-        babl_type_id (BABL_DOUBLE),
-        destination->pixel_format.type[0]
-    );
+
+      babl->reference_fish.model_to_rgba =
+        babl_conversion_find (
+            source->pixel_format.model[0],
+            babl_model_id (BABL_RGBA)
+        );
+
+      babl->reference_fish.rgba_to_model =
+        babl_conversion_find (
+            babl_model_id (BABL_RGBA),
+            destination->pixel_format.model[0]
+        );
+
+      babl->reference_fish.double_to_type =
+        babl_conversion_find (
+            babl_type_id (BABL_DOUBLE),
+            destination->pixel_format.type[0]
+        );
+    }
 
   if (db_insert (babl) == babl)
     {

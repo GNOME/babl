@@ -87,7 +87,7 @@ typedef struct
 } BablInstance;
 
 typedef struct
-{
+BablConversion {
   BablInstance           instance;
   union Babl            *source;
   union Babl            *destination;
@@ -101,9 +101,10 @@ typedef struct
     } function;
 } BablConversion;
 
-typedef struct
-{
-  BablConversion conversion;
+typedef struct {
+  BablConversion       conversion;
+  BablConversion      *from_double;
+  BablConversion      *to_double;
 } BablConversionType;
 
 typedef struct
@@ -195,9 +196,25 @@ typedef struct
   union Babl      *destination;
 } BablFish;
 
+
+/* a BablFish which is a reference babl fish relies on the double
+ * versions that are required to exist for maximum sanity.
+ *
+ * A BablFishReference is not intended to be fast, thus the algorithm
+ * encoded can use a multi stage approach, where some of the stages could
+ * be completely removed for optimization reasons.
+ *
+ * This is not the intention of the "BablFishReference factory", it's
+ * implementation is meant to be kept as small as possible wrt logic.
+ *
+ * One of the contributions that would be welcome are new fish factories.
+ */
+
+
 typedef struct
 {
   BablFish         fish;
+
   BablConversion  *type_to_double;
   BablConversion  *model_to_rgba;
   BablConversion  *rgba_to_model;

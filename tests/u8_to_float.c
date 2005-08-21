@@ -39,16 +39,16 @@ test (void)
   fish = babl_fish (
     babl_pixel_format_new (
       "foo",
-      babl_model ("grayscale"),
+      babl_model ("gray"),
       babl_type ("u8"),
-      babl_component ("luminance"),
+      babl_component ("Y"),
       NULL
     ),
     babl_pixel_format_new (
       "bar",
-      babl_model ("grayscale"),
+      babl_model ("gray"),
       babl_type ("float"),
-      babl_component ("luminance"),
+      babl_component ("Y"),
       NULL
     ));
 

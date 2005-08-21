@@ -1,3 +1,26 @@
+2005-08-21  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/babl-classes.h: reindent, some documentation.
+	* babl/babl-fish.c: (babl_fish_reference_new): assertions for
+	arguments.
+	* babl/babl-ids.h: cleanup.
+	* babl/base/babl-base.c: (models): grayscale->gray
+	* babl/base/model-grayscale.c: (babl_base_model_gray),
+	(components), (models), (rgb_to_gray), (rgb_to_gray_2_2),
+	(gray_2_2_to_rgb), (gray_to_rgb),
+	(gray_alpha_premultiplied_to_rgba),
+	(rgba_to_gray_alpha_premultiplied), (conversions): grayscale->gray,
+	added gamma-2.2 with alpha.
+	* babl/base/model-lab.c: 
+	* babl/base/model-rgb.c: 
+	* babl/base/model-ycbcr.c: Name normalizations
+	* tests/float_to_u8.c: (test_float_to_rgb_u8):
+	* tests/grayscale_to_rgb.c: (test):
+	* tests/rgb_to_lab_to_rgb.c: (test):
+	* tests/rgb_to_ycbcr.c: (test):
+	* tests/rgb_to_ycbcr_to_rgb.c: (test):
+	* tests/u8_to_float.c: (test): Name synchronization.
+
 2005-08-18  Øyvind Kolås  <pippin@gimp.org>
 
 	* babl/base/util.h: added new and hopefully correct gamma correction

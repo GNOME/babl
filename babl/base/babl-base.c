@@ -62,18 +62,18 @@ types (void)
  * models
  */
 
-void babl_base_model_rgb       (void);
-void babl_base_model_grayscale (void);
-void babl_base_model_ycbcr     (void);
-void babl_base_model_lab       (void);
+void babl_base_model_rgb   (void);
+void babl_base_model_gray  (void);
+void babl_base_model_ycbcr (void);
+void babl_base_model_lab   (void);
 
 static void
 models (void)
 {
-  babl_base_model_rgb       (); /* must be registered first since it is the
-                                   reference */
-  babl_base_model_grayscale ();
-  babl_base_model_lab       ();
-  babl_base_model_ycbcr     ();
+  babl_base_model_rgb   (); /* must be registered first since it is the
+                               reference, (and contains the alpha definition) */
+  babl_base_model_gray  ();
+  babl_base_model_lab   ();
+  babl_base_model_ycbcr ();
 }
 

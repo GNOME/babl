@@ -39,42 +39,42 @@ static void
 components (void)
 {
   babl_component_new (
-    "red",
+    "R",
     "id", BABL_RED,
     "luma",
     "chroma",
     NULL);
 
   babl_component_new (
-   "green",
+   "G",
     "id",   BABL_GREEN,
    "luma", 
    "chroma",
    NULL);
   
   babl_component_new (
-   "blue",
+   "B",
     "id",   BABL_BLUE,
    "luma",
    "chroma",
    NULL);
 
   babl_component_new (
-    "red-gamma2.2",
+    "R-g2.2",
    "id",    BABL_RED_GAMMA_2_2,
     "luma",
     "chroma",
     NULL);
 
   babl_component_new (
-    "green-gamma2.2",
+    "G-g2.2",
    "id",    BABL_GREEN_GAMMA_2_2,
    "luma", 
    "chroma",
    NULL);
   
   babl_component_new (
-    "blue-gamma2.2",
+    "B-g2.2",
    "id",    BABL_BLUE_GAMMA_2_2,
    "luma",
    "chroma",
@@ -82,38 +82,33 @@ components (void)
 
 
   babl_component_new (
-   "alpha",
+   "A",
    "id",    BABL_ALPHA,
    "alpha",
    NULL);
 
   babl_component_new (
-    "red*alpha",
+    "R*A",
     "id",    BABL_RED_MUL_ALPHA,
     "luma",
     "chroma",
     "alpha",
     NULL);
   babl_component_new (
-    "green*alpha",
+    "G*A",
     "id",    BABL_GREEN_MUL_ALPHA,
     "luma",
     "chroma",
     "alpha",
     NULL);
   babl_component_new (
-    "blue*alpha",
+    "B*A",
     "id",    BABL_BLUE_MUL_ALPHA,
     "luma",
     "chroma",
     "alpha",
     NULL);
 
-  babl_component_new (
-   "luminance*alpha", 
-   "id",    BABL_LUMINANCE_MUL_ALPHA,
-   "luma",
-   NULL);
 }
 
 static void
@@ -146,7 +141,7 @@ models (void)
     NULL);
 
   babl_model_new (
-    "rgb-gamma2.2",
+    "rgb-g2.2",
     "id", BABL_RGB_GAMMA_2_2,
     babl_component_id (BABL_RED_GAMMA_2_2),
     babl_component_id (BABL_GREEN_GAMMA_2_2),
@@ -154,7 +149,7 @@ models (void)
     NULL);
 
   babl_model_new (
-    "rgba-gamma2.2",
+    "rgba-g2.2",
     "id", BABL_RGBA_GAMMA_2_2,
     babl_component_id (BABL_RED_GAMMA_2_2),
     babl_component_id (BABL_GREEN_GAMMA_2_2),
@@ -317,7 +312,7 @@ conversions (void)
   );
 
   babl_conversion_new (
-    "babl-base: rgba to rgb-gamma2.2",
+    "babl-base: rgba to rgb-g2.2",
     "source",      babl_model_id (BABL_RGBA),
     "destination", babl_model_id (BABL_RGB_GAMMA_2_2),
     "planar",      g3_gamma_2_2,
@@ -325,7 +320,7 @@ conversions (void)
   );
 
   babl_conversion_new (
-    "babl-base: rgba to rgba-gamma2.2",
+    "babl-base: rgba to rgba-g2.2",
     "source",      babl_model_id (BABL_RGBA),
     "destination", babl_model_id (BABL_RGBA_GAMMA_2_2),
     "planar",      g3_gamma_2_2,
@@ -333,7 +328,7 @@ conversions (void)
   );
 
   babl_conversion_new (
-    "babl-base: rgb-gamma2.2 to rgba",
+    "babl-base: rgb-g2.2 to rgba",
     "source",      babl_model_id (BABL_RGB_GAMMA_2_2),
     "destination", babl_model_id (BABL_RGBA),
     "planar",      g3_inv_gamma_2_2,
@@ -341,7 +336,7 @@ conversions (void)
   );
 
   babl_conversion_new (
-    "babl-base: rgba-gamma2.2 to rgba",
+    "babl-base: rgba-g2.2 to rgba",
     "source",      babl_model_id (BABL_RGBA_GAMMA_2_2),
     "destination", babl_model_id (BABL_RGBA),
     "planar",      g3_inv_gamma_2_2,
