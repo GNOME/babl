@@ -10,7 +10,7 @@ c_sources =			\
 	type-u8.c		\
 	type-u16.c		\
 	model-rgb.c		\
-	model-grayscale.c	\
+	model-grays.c		\
 	model-lab.c		\
 	model-ycbcr.c
 

@@ -1,4 +1,11 @@
 2005-08-21  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/base/model-grayscale.c: removed
+	* babl/base/model-gray.c: added
+	* babl/base/Makefile.am:
+	* docs/graphics/index.html: fixed spelling.
+
+2005-08-21  Øyvind Kolås  <pippin@gimp.org>
 	
 	* docs/LGPL: added (hopefully as a link to ../COPYING)
 
