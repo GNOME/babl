@@ -1,4 +1,8 @@
 2005-08-21  Øyvind Kolås  <pippin@gimp.org>
+	
+	* docs/LGPL: added (hopefully as a link to ../COPYING)
+
+2005-08-21  Øyvind Kolås  <pippin@gimp.org>
 
 	* Makefile.am,
 	* NEWS,
