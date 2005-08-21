@@ -1,5 +1,10 @@
 2005-08-21  Øyvind Kolås  <pippin@gimp.org>
 
+	* docs/Makefile.am: Changed which html file is piped through w3m to
+	generate README.
+
+2005-08-21  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/base/model-grayscale.c: removed
 	* babl/base/model-gray.c: added
 	* babl/base/Makefile.am:
