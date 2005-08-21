@@ -3,3 +3,5 @@ index-static.html
 index-tmp.html
 source-local.html
 README
+Makefile
+Makefile.in

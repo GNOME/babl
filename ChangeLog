@@ -1,5 +1,11 @@
 2005-08-21  Øyvind Kolås  <pippin@gimp.org>
 
+	* docs/.cvsignore: added Makefile and Makefile.in
+	* docs/graphics/.cvsignore: added Makefile and Makefile.in
+	* tests/.cvsignore: added babl_html_dump
+
+2005-08-21  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/base/Makefile.am: Typo, s/babl-grays/babl-gray/
 
 2005-08-21  Øyvind Kolås  <pippin@gimp.org>
