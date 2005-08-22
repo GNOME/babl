@@ -110,7 +110,7 @@ pixel_format_html (Babl *babl)
     }
   printf ("</td>");
   printf ("<td valign='top'>");
-  printf ("<span class='name'>%s</span>", BABL(babl->pixel_format.model[0])->instance.name  );
+  printf ("<span class='name'>%s</span>", BABL(babl->pixel_format.model)->instance.name  );
   printf ("</td>");
   printf ("<td>");
   for (i=0; i< babl->pixel_format.bands; i++)

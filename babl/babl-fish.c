@@ -146,14 +146,14 @@ babl_fish_reference_new (Babl *source,
 
       babl->reference_fish.model_to_rgba =
         babl_conversion_find (
-            source->pixel_format.model[0],
+            source->pixel_format.model,
             babl_model_id (BABL_RGBA)
         );
 
       babl->reference_fish.rgba_to_model =
         babl_conversion_find (
             babl_model_id (BABL_RGBA),
-            destination->pixel_format.model[0]
+            destination->pixel_format.model
         );
 
       babl->reference_fish.double_to_type =
@@ -169,14 +169,14 @@ babl_fish_reference_new (Babl *source,
 
       babl->reference_fish.model_to_rgba =
         babl_conversion_find (
-            source->pixel_format.model[0],
+            source->pixel_format.model,
             babl_model_id (BABL_RGBA)
         );
 
       babl->reference_fish.rgba_to_model =
         babl_conversion_find (
             babl_model_id (BABL_RGBA),
-            destination->pixel_format.model[0]
+            destination->pixel_format.model
         );
 
       babl->reference_fish.double_to_type =
@@ -256,7 +256,7 @@ babl_fish_process (Babl *babl,
 
   /* calculate planar representation of fooA, and fooB */
 
-  imageA = babl_image_new_from_linear (fooA, BABL(BABL((babl->fish.source)) -> pixel_format.model[0]));
+  imageA = babl_image_new_from_linear (fooA, BABL(BABL((babl->fish.source)) -> pixel_format.model));
   imageB = babl_image_new_from_linear (fooB, babl_model_id (BABL_RGBA));
   /* transform fooA into fooB fooB is rgba double */
 
@@ -275,7 +275,7 @@ babl_fish_process (Babl *babl,
   /* transform fooB into fooC fooC is ???? double */
 
   imageB = babl_image_new_from_linear (fooB, babl_model_id (BABL_RGBA));
-  imageC = babl_image_new_from_linear (fooA, BABL(BABL((babl->fish.destination))->pixel_format.model[0]));
+  imageC = babl_image_new_from_linear (fooA, BABL(BABL((babl->fish.destination))->pixel_format.model));
 
   babl->reference_fish.rgba_to_model->function.planar(
           imageB->image.bands, 

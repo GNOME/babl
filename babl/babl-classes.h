@@ -173,7 +173,7 @@ typedef struct
   BablConversion **to;   /*< NULL terminated list of conversions to class   */
   int              bands;
   int              planar;
-  BablModel      **model;
+  BablModel       *model;
   BablComponent  **component;
   BablType       **type;
   BablSampling   **sampling;

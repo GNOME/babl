@@ -44,7 +44,7 @@ pixel_format_new (const char     *name,
                   int             id,
                   int             planar,
                   int             bands,
-                  BablModel     **model,
+                  BablModel      *model,
                   BablComponent **component,
                   BablSampling  **sampling,
                   BablType      **type)
@@ -55,15 +55,13 @@ pixel_format_new (const char     *name,
   /* allocate all memory in one chunk */
   babl  = babl_calloc (sizeof (BablPixelFormat) +
                        strlen (name) + 1 +
-                       sizeof (BablModel*)     * (bands+1) +
                        sizeof (BablComponent*) * (bands+1) +
                        sizeof (BablSampling*)  * (bands+1) +
                        sizeof (BablType*)      * (bands+1) +
                        sizeof (int)            * (bands+1) +
                        sizeof (int)            * (bands+1),1);
 
-  babl->pixel_format.model     = ((void *)babl) + sizeof (BablPixelFormat);
-  babl->pixel_format.component = ((void *)babl->pixel_format.model)     + sizeof (BablModel*) * (bands+1);
+  babl->pixel_format.component = ((void *)babl) + sizeof (BablPixelFormat);
   babl->pixel_format.type      = ((void *)babl->pixel_format.component) + sizeof (BablComponent*) * (bands+1);
   babl->pixel_format.sampling  = ((void *)babl->pixel_format.type)      + sizeof (BablType*) * (bands+1);
   babl->instance.name          = ((void *)babl->pixel_format.sampling)  + sizeof (BablSampling*) * (bands+1);
@@ -72,17 +70,16 @@ pixel_format_new (const char     *name,
   babl->instance.id   = id;
   strcpy (babl->instance.name, name);
 
-  babl->pixel_format.bands    = bands;
-  babl->pixel_format.planar   = planar;
+  babl->pixel_format.model  = model;
+  babl->pixel_format.bands  = bands;
+  babl->pixel_format.planar = planar;
 
   for (band=0; band < bands; band++)
     {
-      babl->pixel_format.model[band] = model[band];
       babl->pixel_format.component[band] = component[band];
       babl->pixel_format.type[band] = type[band];
       babl->pixel_format.sampling[band] = sampling[band];
     }
-  babl->pixel_format.model[band] = NULL;
   babl->pixel_format.component[band] = NULL;
   babl->pixel_format.type[band]      = NULL;
   babl->pixel_format.sampling[band]  = NULL;
@@ -99,14 +96,13 @@ babl_pixel_format_new (const char *name,
   int              id     = 0;
   int              planar = 0;
   int              bands  = 0;
-  BablModel       *model     [BABL_MAX_BANDS];
+  BablModel       *model  = NULL;
   BablComponent   *component [BABL_MAX_BANDS];
   BablSampling    *sampling  [BABL_MAX_BANDS];
   BablType        *type      [BABL_MAX_BANDS];
 
   BablSampling    *current_sampling = (BablSampling*) babl_sampling (1,1);
   BablType        *current_type     = (BablType*)     babl_type_id (BABL_U8);
-  BablModel       *current_model    = NULL;
   const char      *arg              = name;
 
   va_start (varg, name);
@@ -129,12 +125,11 @@ babl_pixel_format_new (const char *name,
                 current_type = (BablType*) babl;
                 break;
               case BABL_COMPONENT:
-                if (!current_model)
+                if (!model)
                   {
                     babl_log ("%s(): no model specified before component %s",
                               __FUNCTION__, babl->instance.name);
                   }
-                model     [bands] = current_model;
                 component [bands] = (BablComponent*) babl;
                 type      [bands] = current_type;
                 sampling  [bands] = current_sampling;
@@ -150,7 +145,12 @@ babl_pixel_format_new (const char *name,
                   current_sampling = (BablSampling*)arg;
                   break;
               case BABL_MODEL:
-                  current_model = (BablModel*)arg;
+                  if (model)
+                    {
+                    babl_log ("%s(%s): model %s already requested",
+                     __FUNCTION__, babl->instance.name, model->instance.name);
+                    }
+                  model = (BablModel*)arg;
                   break;
               case BABL_INSTANCE:
               case BABL_PIXEL_FORMAT:
@@ -198,9 +198,8 @@ babl_pixel_format_new (const char *name,
 
 
   babl = pixel_format_new (name, id,
-                           planar,
-                           bands,
-                           model, component, sampling, type);
+                           planar, bands, model,
+                           component, sampling, type);
 
   
   if (db_insert (babl) == babl)
