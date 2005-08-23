@@ -30,8 +30,13 @@
 #include <string.h>
 
 #define DB_DEF             static inline
-#define DB_INITIAL_SIZE    0
+
+#ifndef DB_INITIAL_SIZE
+#define DB_INITIAL_SIZE    16 
+#endif
+#ifndef DB_INCREMENT_SIZE
 #define DB_INCREMENT_SIZE  16
+#endif
 
 
 /* file scope variables, for this .c file's database */
@@ -70,8 +75,11 @@ db_init(void)
   if (0==db_size)
     {
       db_size = DB_INITIAL_SIZE;
-      db = babl_malloc (db_size * sizeof (BablInstance*));
-      memset (db, 0, db_size * sizeof (BablInstance*));
+      db = NULL;
+      if (db_size)
+        {
+          db = babl_calloc (sizeof (BablInstance*), db_size);
+        }
     }
 }
 

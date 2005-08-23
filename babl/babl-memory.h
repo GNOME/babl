@@ -29,6 +29,7 @@ void * babl_realloc         (void         *ptr,
 void * babl_calloc          (size_t        nmemb,
                              size_t        size);
 char * babl_strdup          (const char   *s);
+void * babl_dup             (void         *ptr);
 void   babl_memory_sanity   (void);
 
 #endif

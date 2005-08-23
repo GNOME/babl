@@ -23,6 +23,8 @@ static const char *class_names[] =
   {
     "BablInstance",
     "BablType",
+    "BablTypeInteger",
+    "BablTypeFloat",
     "BablSampling",
     "BablComponent",
     "BablModel",
@@ -31,12 +33,12 @@ static const char *class_names[] =
     "BablConversionType",
     "BablConversionTypePlanar",
     "BablConversionModelPlanar",
-    "BablConversionPixelFormatPlanar",
+    "BablConversionPixelFormat",
     "BablConversionPixelFormatPlanar",
     "BablFish",
-    "BablReferenceFish",
+    "BablFishReference",
     "BablImage",
-    "BablCeiling"
+    "BablSky"
   };
 
 const char *

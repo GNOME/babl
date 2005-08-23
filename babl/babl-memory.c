@@ -17,23 +17,38 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include "babl-internal.h"
 
-static int mallocs=0;
-static int frees=0;
-static int strdups=0;
-static int reallocs=0;
-static int callocs=0;
+static char *signature = "So long and thanks for all the fish.";
+
+typedef struct
+{
+  char   *signature;
+  size_t  size;
+} BablAllocInfo;
+
+#define OFFSET   (sizeof(BablAllocInfo))
+
+#define BAI(ptr)    ((BablAllocInfo*)(((void*)ptr)-OFFSET))
+#define IS_BAI(ptr) (BAI(ptr)->signature == signature)
+
+static int mallocs  = 0;
+static int frees    = 0;
+static int strdups  = 0;
+static int reallocs = 0;
+static int callocs  = 0;
+static int dups     = 0;
 
 static const char *
 mem_stats (void)
 {
   static char buf[128];
-  sprintf (buf, "mallocs:%i callocs:%i strdups:%i allocs:%i frees:%i reallocs:%i\t|",
-    mallocs, callocs, strdups, mallocs+callocs+strdups, frees, reallocs);
+  sprintf (buf, "mallocs:%i callocs:%i strdups:%i dups:%i allocs:%i frees:%i reallocs:%i\t|",
+    mallocs, callocs, strdups, dups, mallocs+callocs+strdups+dups, frees, reallocs);
   return buf;
 }
 
@@ -41,24 +56,46 @@ void *
 babl_malloc (size_t size)
 {
   void *ret;
- 
-  ret = malloc (size);
+
+  assert (size); 
+  ret = malloc (size + OFFSET);
   if (!ret)
     babl_log ("%s(%i): failed", __FUNCTION__, size);
+
+  BAI(ret + OFFSET)->signature = signature;
+  BAI(ret + OFFSET)->size      = size;
   mallocs++;
-  return ret;
+  return ret + OFFSET;
 }
 
 char *
 babl_strdup (const char *s)
 {
   char *ret;
- 
-  ret = strdup (s);
+
+  ret = babl_malloc (strlen (s)+1);
   if (!ret)
     babl_log ("%s(%s): failed", __FUNCTION__, s);
+  strcpy (ret, s); 
+
   strdups++;
+  mallocs--;
   return ret;
+}
+
+void *
+babl_dup (void *ptr)
+{
+  void *ret;
+ 
+  assert (IS_BAI (ptr));
+
+  ret = babl_malloc (BAI(ptr)->size);
+  memcpy (ret, ptr, BAI(ptr)->size);
+
+  dups++;
+  mallocs--;
+  return NULL;
 }
 
 void
@@ -66,7 +103,8 @@ babl_free (void *ptr)
 {
   if (!ptr)
     return;
-  free (ptr);
+  assert(IS_BAI(ptr));
+  free (BAI(ptr));
   frees++;
 }
 
@@ -75,30 +113,38 @@ babl_realloc (void   *ptr,
               size_t  size)
 {
   void *ret;
- 
-  ret = realloc (ptr, size);
+
+  if (!ptr)
+    {
+      return babl_malloc (size);
+    }
+
+  assert (IS_BAI (ptr));
+  ret = realloc (BAI(ptr), size + OFFSET);
 
   if (!ret)
     babl_log ("%s(%p, %i): failed", __FUNCTION__, ptr, size);
   
+  BAI(ret+OFFSET)->signature = signature;
+  BAI(ret+OFFSET)->size      = size;
+
   reallocs++;
-
-  if (!ptr)     /* to make the statistics work out */
-    mallocs++;
-
-  return ret;
+  return ret + OFFSET;
 }
 
 void *
 babl_calloc (size_t nmemb,
              size_t size)
 {
-  void *ret = calloc (nmemb, size);
+  void *ret = babl_malloc (nmemb*size);
 
   if (!ret)
     babl_log ("%s(%i, %i): failed", __FUNCTION__, nmemb, size);
 
+  memset (ret, 0, nmemb*size);
+
   callocs++;
+  mallocs--;
   return ret;
 }
 
