@@ -54,7 +54,9 @@ typedef void (*BablFuncPlanarBit) (int    src_bands,
 
 typedef enum {
   BABL_INSTANCE = BABL_MAGIC,
-  BABL_TYPE,                   
+  BABL_TYPE,
+  BABL_TYPE_INTEGER,
+  BABL_TYPE_FLOAT,
   BABL_SAMPLING,
   BABL_COMPONENT,
   BABL_MODEL,
@@ -76,6 +78,8 @@ typedef enum {
 
 #define BABL_CLASS_TYPE_IS_VALID(klass_type) \
     (  ((klass_type)>=BABL_INSTANCE ) && ((klass_type)<=BABL_SKY) ?1:0 )
+
+const char  *babl_class_name     (BablClassType klass);
 
 /* common header for any item inserted into database */
 typedef struct
@@ -134,7 +138,25 @@ typedef struct
   BablConversion **to;    /*< NULL terminated list of conversions to class   */
   int              bits;  /*< number of bits used to represent the data type
                             (initially restricted to a multiple of 8) */
+  double           min_val;
+  double           max_val;
 } BablType;
+
+typedef struct
+{
+  BablType          type;
+  int               is_signed;
+  long              max;
+  long              min;
+} BablTypeInteger;
+
+typedef struct
+{
+  BablType type;
+  /* sign
+   * biased_exponent
+   * mantissa */
+} BablTypeFloat;
 
 typedef struct
 {

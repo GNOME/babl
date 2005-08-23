@@ -231,6 +231,9 @@ babl_fish_process (Babl *babl,
   Babl *imageB;
   Babl *imageC;
 
+  /* FIXME: assumptions made about memory requirements that 
+   * are not good
+   */
   fooA = babl_malloc(sizeof (double) * n * 4);
   fooB = babl_malloc(sizeof (double) * n * 4);
 
@@ -247,12 +250,10 @@ babl_fish_process (Babl *babl,
                 __FUNCTION__, babl_fish, source, destination, n);
       return -1;
     }
-  
-  babl->reference_fish.type_to_double->function.linear(
-          source,
-          fooA,
-          n*  BABL(babl->fish.source)->pixel_format.bands
-          );
+ 
+  babl_conversion_process (babl->reference_fish.type_to_double,
+                           source, fooA,
+                           n * BABL(babl->fish.source)->pixel_format.bands);
 
   /* calculate planar representation of fooA, and fooB */
 
@@ -260,35 +261,29 @@ babl_fish_process (Babl *babl,
   imageB = babl_image_new_from_linear (fooB, babl_model_id (BABL_RGBA));
   /* transform fooA into fooB fooB is rgba double */
 
-  babl->reference_fish.model_to_rgba->function.planar(
-          imageA->image.bands, 
-          imageA->image.data,
-          imageA->image.pitch,
-          imageB->image.bands, 
-          imageB->image.data,
-          imageB->image.pitch,
-          n);
+  babl_conversion_process (babl->reference_fish.model_to_rgba,
+                           imageA, imageB,
+                           n);
+  
   babl_free (imageA);
   babl_free (imageB);
 
   /* calculate planar representation of fooC */
   /* transform fooB into fooC fooC is ???? double */
 
-  imageB = babl_image_new_from_linear (fooB, babl_model_id (BABL_RGBA));
-  imageC = babl_image_new_from_linear (fooA, BABL(BABL((babl->fish.destination))->pixel_format.model));
+  imageB = babl_image_new_from_linear (
+              fooB, babl_model_id (BABL_RGBA));
+  imageC = babl_image_new_from_linear (
+              fooA, BABL(BABL((babl->fish.destination))->pixel_format.model));
 
-  babl->reference_fish.rgba_to_model->function.planar(
-          imageB->image.bands, 
-          imageB->image.data,
-          imageB->image.pitch,
-          imageC->image.bands, 
-          imageC->image.data,
-          imageC->image.pitch,
-          n);
+  babl_conversion_process (babl->reference_fish.rgba_to_model,
+                           imageB, imageC,
+                           n);
 
-
-  babl->reference_fish.double_to_type->function.linear(
-          fooA, destination, n * BABL(babl->fish.destination)->pixel_format.bands);
+  /* working directly on linear buffers */
+  babl_conversion_process (babl->reference_fish.double_to_type,
+                           fooA, destination,
+                           n * BABL(babl->fish.destination)->pixel_format.bands);
 
   babl_free (imageB);
   babl_free (imageC);
