@@ -1,5 +1,9 @@
 2005-08-23  Øyvind Kolås  <pippin@gimp.org>
 
+	* docs/index-static.html.in: update webdocs.
+
+2005-08-23  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-instance.h: babl_class_name is moved to babl-classes.h
 	* babl/babl-conversion.h: add a method to the conversion class for the
 	processing with registered functions.

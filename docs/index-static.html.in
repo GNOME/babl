@@ -72,6 +72,7 @@
           to specify and convert between <em>linear</em> and <em>planar</em>
           buffers as provided for by registered data types and color
           models.</li>
+          <li>Thread safety for processing.</li>
           <li>Horizontal an vertical subsampling (for implementing 4:2:2 4:2:0
           4:1:1 etc. chroma subsampling)</li>
           <li>Accurate (hopefully) reference data types and color models implemented using
@@ -189,6 +190,8 @@ babl_destroy (); /* deinitialize babl library */
           <li>Subsampling support</li>
           <li>Mixed BablTypes in BablPixelFormats</li>
           <li>Support for datatypes that are not a multiple of 8bit.</li>
+          <li>Ref-counting for BablImages</li>
+          <li>Thread safety for mutations of the type system.</li>
           <!--<li>Relative error is the difference between the two vaues
           divided by the actual value, for instance, if the actual result of a
           calculation should be 3.13159, but the result obtained was 3.14x10^0,
