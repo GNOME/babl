@@ -24,24 +24,24 @@
 
 BABL_DEFINE_CLASS_NO_NEW_NO_ID(babl_fish)
 
-Babl *
-babl_fish (Babl *source,
-           Babl *destination);
-
-/* babl_fish_process will probably be a polymorph function
- * accepting source and destination buffer pointers will be
- * allowed as well as BablImage objects in their place
+/** create a new BablFish capable of translating between the pixel
+ *  formats given in source and destination. (use babl_pixel_format (string))
  */
-int
-babl_fish_process        (Babl *babl_fish,
-                          void *source,
-                          void *destination,
-                          int   n);
+Babl * babl_fish              (Babl *source,
+                               Babl *destination);
+
+/* Transform n pixels from source into destination,
+ * source and destination can be pointers to linear buffers
+ * (or at a later stage of babl development BablImages)
+ */
+int    babl_fish_process      (Babl *babl_fish,
+                               void *source,
+                               void *destination,
+                               int   n);
 
 /* whether the BablFish needs a BablImage to do the processing,
- * or void * are sufficient.
+ * or a void pointer to a linear buffer is sufficient.
  */
-int
-babl_fish_needs_image (Babl *babl_fish);
+int    babl_fish_needs_image  (Babl *babl_fish);
 
 #endif

@@ -28,19 +28,6 @@
 
 #define BABL_MAX_BANDS 32
 
-static BablImage *db[100]={NULL,};
-
-#if 0
-static int 
-each_babl_image_destroy (Babl *babl,
-                         void *data)
-{
-  babl_free (babl);
-
-  return 0;  /* continue iterating */
-}
-#endif
-
 static Babl *
 image_new (int             bands,
            BablComponent **component,
@@ -61,7 +48,6 @@ image_new (int             bands,
   babl->image.data          = ((void *)babl->image.component) + sizeof (BablComponent*) * (bands+1);
   babl->image.pitch         = ((void *)babl->image.data)      + sizeof (void*)          * (bands+1);
   babl->image.stride        = ((void *)babl->image.pitch)     + sizeof (int)            * (bands+1);
-/*babl->image.foo           = ((void *)babl->image.stride)    + sizeof (int)            * (bands+1);*/
 
   babl->class_type    = BABL_IMAGE;
   babl->instance.id   = 0;
@@ -213,32 +199,13 @@ babl_image_new (void *first,
 }
 
 void
-babl_image_each (BablEachFunction  each_fun,
-                 void             *user_data)
-{
-  int i;
-  return;
-
-  while (db[i])
-    {
-      if (each_fun ((Babl *) (db[i]), user_data))
-        {
-          return;
-        }
-      else
-        {
-          i++;
-        }
-    }
-}
-
-
-void
 babl_image_destroy (void)
 {
+  /* nothing to do */
 }
 
 void
 babl_image_init (void)
 {
+  /* nothing to do */
 }

@@ -22,19 +22,19 @@
 
 #include "babl-classes.h"
 
-void   babl_image_init       (void);
-void   babl_image_introspect (void);
-void   babl_image_each       (BablEachFunction  each_fun,
-                              void             *user_data);
-void   babl_image_destroy    (void);    
-Babl * babl_image_new        (void *first_component,
+/* babl images are allocated as a single chunk of memory, and
+ * thus can be duplicated using  duplicate = babl_dup (original);
+ *
+ * NB: babl_fish_process () frees the images passed in by itself.
+ */
+Babl * babl_image_new             (void *first_component,
                                    ...);
 
 /* create a new BablImage based on a packed BablPixelFormat (or BablModel which
  * is a virtual pixelformat based on the BablModel using only doubles in the
  * order they are listed in the model.
  */
-Babl *
-babl_image_new_from_linear (void *buffer,
-                            Babl *format);
+Babl * babl_image_new_from_linear (void *buffer,
+                                   Babl *format);
+
 #endif

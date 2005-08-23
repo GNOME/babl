@@ -47,5 +47,9 @@ babl_class_name (BablClassType klass)
   return class_names[klass-BABL_INSTANCE];
 }
 
+/* global variable, indicating whether name lookups
+ * are frowned upon or not (they are frowned upon within BablBase,
+ * since that leads to more strings than neccesary in the library.)
+ */
 int babl_hmpf_on_name_lookups = 0;
 

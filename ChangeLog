@@ -1,5 +1,15 @@
 2005-08-23  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-classes.c,
+	* babl/babl-classes.h,
+	* babl/babl-conversion.c,
+	* babl/babl-fish.h,
+	* babl/babl-image.c,
+	* babl/babl-image.h,
+	* babl/babl-instance.h: Indentation, comments and other cleanup.
+
+2005-08-23  Øyvind Kolås  <pippin@gimp.org>
+
 	* docs/index-static.html.in: update webdocs.
 
 2005-08-23  Øyvind Kolås  <pippin@gimp.org>

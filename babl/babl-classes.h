@@ -160,22 +160,22 @@ typedef struct
 
 typedef struct
 {
-  BablInstance instance;
+  BablInstance     instance;
   BablConversion **from; /*< NULL terminated list of conversions from class */
   BablConversion **to;   /*< NULL terminated list of conversions to class   */
-  int          horizontal;
-  int          vertical;
-  char         name[4];
+  int              horizontal;
+  int              vertical;
+  char             name[4];
 } BablSampling;
 
 typedef struct
 {
-  BablInstance instance;
+  BablInstance     instance;
   BablConversion **from; /*< NULL terminated list of conversions from class */
   BablConversion **to;   /*< NULL terminated list of conversions to class   */
-  int          luma;
-  int          chroma;
-  int          alpha;
+  int              luma;
+  int              chroma;
+  int              alpha;
 } BablComponent;
 
 
@@ -213,9 +213,9 @@ typedef struct
 
 typedef struct
 {
-  BablInstance     instance;
-  union Babl      *source;
-  union Babl      *destination;
+  BablInstance    instance;
+  union Babl     *source;
+  union Babl     *destination;
 } BablFish;
 
 

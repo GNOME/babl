@@ -264,6 +264,7 @@ babl_conversion_process (BablConversion *conversion,
                          void           *destination,
                          long            n)
 {
+  /*TODO: build planar formats if needed when linear pointers are passed in */
   assert (BABL_IS_BABL (conversion));
 
   switch (BABL(conversion)->class_type)
