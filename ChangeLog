@@ -1,5 +1,12 @@
 2005-08-23  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-instance.h: babl_class_name is moved to babl-classes.h
+	* babl/babl-conversion.h: add a method to the conversion class for the
+	processing with registered functions.
+	* babl/babl-fish.c: Use above functions.
+
+2005-08-23  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-memory.[ch]: added additonal sanity checking (only
 	handling babl-memory allocated memory in free and realloc.) And added
 	new function babl_dup (void*), which duplicates an allocation.
@@ -24,7 +31,6 @@
 2005-08-22  Øyvind Kolås  <pippin@gimp.org>
 
 	* babl/babl-classes.h: (BabPixelFormat): only a single BablModel.
-	* babl/babl-fish.h,
 	* babl/babl-pixel-format.h,
 	* tests/babl-html-dump.c: accomodate change.
 

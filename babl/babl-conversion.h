@@ -24,4 +24,9 @@
 
 BABL_DEFINE_CLASS (babl_conversion)
 
+void babl_conversion_process (BablConversion *conversion,
+                              void           *source,
+                              void           *destination,
+                              long           n);
+
 #endif

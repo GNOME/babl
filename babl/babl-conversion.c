@@ -233,4 +233,63 @@ babl_conversion_new (const char *name,
     }
 }
 
+static void
+babl_conversion_linear_process (BablConversion *conversion,
+                                void           *source,
+                                void           *destination,
+                                long            n)
+{
+  conversion->function.linear (source, destination, n);
+}
+
+static void
+babl_conversion_planar_process (BablConversion *conversion,
+                                BablImage      *source,
+                                BablImage      *destination,
+                                long            n)
+{
+  conversion->function.planar (source->bands,
+                               source->data,
+                               source->pitch,
+                               destination->bands,
+                               destination->data,
+                               destination->pitch,
+                               n);
+}
+
+/* this is the place to insert usage instrumentation into babl */
+void
+babl_conversion_process (BablConversion *conversion,
+                         void           *source,
+                         void           *destination,
+                         long            n)
+{
+  assert (BABL_IS_BABL (conversion));
+
+  switch (BABL(conversion)->class_type)
+  {
+    case BABL_CONVERSION_TYPE:
+      babl_conversion_linear_process (conversion,
+                                      source,
+                                      destination,
+                                      n);
+      break;
+    case BABL_CONVERSION_MODEL_PLANAR:
+      assert (BABL_IS_BABL (source));
+      assert (BABL_IS_BABL (destination));
+
+      babl_conversion_planar_process (                  conversion,
+                                      (BablImage*)      source, 
+                                      (BablImage*)      destination,
+                                                        n);
+      break;
+    default:
+      babl_log ("%s(%s, %p, %p, %li) unhandled conversion type: %s",
+          __FUNCTION__, conversion->instance.name, source, destination, n,
+          babl_class_name (conversion->instance.class_type));
+      break;
+  }
+          
+}
+
 BABL_CLASS_TEMPLATE (babl_conversion)

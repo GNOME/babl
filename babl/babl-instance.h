@@ -5,7 +5,6 @@
 typedef int  (*BablEachFunction) (Babl *entry,
                                   void *data);
 
-const char  *babl_class_name     (BablClassType klass);
 
 /* these defines are kept here to keep the typing needed in class
  * headers to a minimum, only the ones overriding the basic api with
