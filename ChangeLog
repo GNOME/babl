@@ -1,4 +1,9 @@
-2005-08-22  Øyvind Kolås  <pippin@gimp.org>
+2005-08-23  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/babl-classes.c: Update class names to be in sync with enum in
+	babl-classes.h
+
+2005-08-23  Øyvind Kolås  <pippin@gimp.org>
 
 	* babl/babl.c: implement ref counting to avoid unneccesary destruction
 	of static data when multiple instances of babl is used in an
