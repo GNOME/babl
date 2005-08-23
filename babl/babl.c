@@ -23,32 +23,38 @@
 #include "babl-sanity.h"
 #include "babl-introspect.h"
 
+static int ref_count=0;
+
 void
 babl_init (void)
 {
-  babl_type_init ();
-  babl_sampling_init ();
-  babl_component_init ();
-  babl_model_init ();
-  babl_pixel_format_init ();
-  babl_conversion_init ();
-  babl_base_init ();
-
-  babl_sanity ();
+  if (ref_count++==0)
+    {
+      babl_type_init ();
+      babl_sampling_init ();
+      babl_component_init ();
+      babl_model_init ();
+      babl_pixel_format_init ();
+      babl_conversion_init ();
+      babl_base_init ();
+      babl_sanity ();
+    }
 }
 
 void
 babl_destroy (void)
 {
-  /* babl_base is destroy by the containing types */
+  /* babl_base is destroyed by the containing types */
 
-  babl_fish_destroy ();
-  babl_conversion_destroy ();
-  babl_pixel_format_destroy ();
-  babl_model_destroy ();
-  babl_component_destroy ();
-  babl_sampling_destroy ();
-  babl_type_destroy ();
-
-  babl_memory_sanity ();
+  if (!--ref_count)
+    {
+      babl_fish_destroy ();
+      babl_conversion_destroy ();
+      babl_pixel_format_destroy ();
+      babl_model_destroy ();
+      babl_component_destroy ();
+      babl_sampling_destroy ();
+      babl_type_destroy ();
+      babl_memory_sanity ();
+    }
 }
