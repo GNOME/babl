@@ -22,6 +22,63 @@
 
 #include "babl.h"
 
+
+static inline void
+convert_double_u16_scaled (double         min_val,
+                           double         max_val,
+                           unsigned short min,
+                           unsigned short max,
+                           void          *src,
+                           void          *dst,
+                           int            n)
+{
+  while (n--)
+    {
+      double         dval = *(double *) src;
+      unsigned short u16val;
+
+      if (dval < min_val)
+        u16val = min;
+      else if (dval > max_val)
+        u16val = max;
+      else
+        u16val = (dval-min_val) / (max_val-min_val) * (max-min) + min;
+
+      *(unsigned short *) dst = u16val;
+      dst += 2;
+      src += 8;
+    }
+}
+
+static inline void
+convert_u16_double_scaled (double         min_val,
+                           double         max_val,
+                           unsigned short min,
+                           unsigned short max,
+                           void          *src,
+                           void          *dst,
+                           int            n)
+{
+  while (n--)
+    {
+      int    u16val = *(unsigned short*) src;
+      double dval;
+
+      if (u16val < min)
+        dval = min_val;
+      else if (u16val > max)
+        dval = max_val;
+      else
+        dval  = (u16val-min) / (double)(max-min) * (max_val-min_val) + min_val;
+
+      (*(double *) dst) = dval;
+      dst += 8;
+      src += 1;
+    }
+}
+
+
+
 static void
 convert_double_u16 (void *src,
                     void *dst,
@@ -57,6 +114,24 @@ convert_u16_double (void *src,
     }
 }
 
+
+/* source ICC.1:2004-10 */
+
+static void convert_double_u16_l (void *src, void *dst, int n){
+  convert_double_u16_scaled (0.0, 100.0, 0x00, 0xffff, src, dst, n);
+}
+static void convert_u16_l_double (void *src, void *dst, int n){
+  convert_u16_double_scaled (0.0, 100.0, 0x00, 0xffff, src, dst, n);
+}
+
+static void convert_double_u16_ab (void *src, void *dst, int n){
+  convert_double_u16_scaled (-128.0, 127.0, 0x00, 0xffff, src, dst, n);
+}
+static void convert_u16_ab_double (void *src, void *dst, int n){
+  convert_u16_double_scaled (-128.0, 127.0, 0x00, 0xffff, src, dst, n);
+}
+
+
 void
 babl_base_type_u16 (void)
 {
@@ -65,6 +140,29 @@ babl_base_type_u16 (void)
     "id",   BABL_U16,
     "bits", 16,
     NULL);
+
+  babl_type_new (
+    "u16-CIE-L",
+    "id",       BABL_U16_CIE_L,
+    "integer",
+    "unsigned",
+    "bits",        16,
+    "min_val",    0.0,
+    "max_val",  100.0,
+    NULL
+  );
+
+  babl_type_new (
+    "u16-CIE-ab",
+    "id",       BABL_U16_CIE_AB,
+    "integer",
+    "unsigned",
+    "bits",        16,
+    "min_val",  -50.0,
+    "max_val",   50.0,
+    NULL
+  );
+
 
   babl_conversion_new (
     "babl-base: u16 to double",
@@ -79,6 +177,37 @@ babl_base_type_u16 (void)
     "source",      babl_type_id (BABL_DOUBLE),
     "destination", babl_type_id (BABL_U16),
     "linear", convert_double_u16,
+    NULL
+  );
+
+
+  babl_conversion_new (
+    "babl-base: u16-CIE-L to double",
+    "source",      babl_type_id (BABL_U16_CIE_L),
+    "destination", babl_type_id (BABL_DOUBLE),
+    "linear",      convert_u16_l_double,
+    NULL
+  );
+  babl_conversion_new (
+    "babl-base: double to u16-CIE-L",
+    "source",      babl_type_id (BABL_DOUBLE),
+    "destination", babl_type_id (BABL_U16_CIE_L),
+    "linear",      convert_double_u16_l,
+    NULL
+  );
+
+  babl_conversion_new (
+    "babl-base: u16-CIE-ab to double",
+    "source",      babl_type_id (BABL_U16_CIE_AB),
+    "destination", babl_type_id (BABL_DOUBLE),
+    "linear",      convert_u16_ab_double,
+    NULL
+  );
+  babl_conversion_new (
+    "babl-base: double to u16-CIE-ab",
+    "source",      babl_type_id (BABL_DOUBLE),
+    "destination", babl_type_id (BABL_U16_CIE_AB),
+    "linear",      convert_double_u16_ab,
     NULL
   );
 }

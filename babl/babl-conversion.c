@@ -85,17 +85,17 @@ conversion_new (const char        *name,
                       __FUNCTION__);
           }
         break;
-      case BABL_PIXEL_FORMAT:
+      case BABL_FORMAT:
         if (linear)
           {
-            babl = babl_calloc (sizeof (BablConversionPixelFormat), 1);
-            babl->class_type = BABL_CONVERSION_PIXEL_FORMAT;
+            babl = babl_calloc (sizeof (BablConversionFormat), 1);
+            babl->class_type = BABL_CONVERSION_FORMAT;
             babl->conversion.function.linear = linear;
           }
         else if (planar)
           {
-            babl = babl_calloc (sizeof (BablConversionPixelFormatPlanar), 1);
-            babl->class_type = BABL_CONVERSION_PIXEL_FORMAT_PLANAR;
+            babl = babl_calloc (sizeof (BablConversionFormatPlanar), 1);
+            babl->class_type = BABL_CONVERSION_FORMAT_PLANAR;
             babl->conversion.function.planar = planar;
           }
         else if (planar_bit)
@@ -208,7 +208,7 @@ babl_conversion_new (const char *name,
         }
       else
         {
-          babl_log ("%s(): unhandled parameter '%s' for pixel_format '%s'",
+          babl_log ("%s(): unhandled parameter '%s' for format '%s'",
                     __FUNCTION__, arg, name);
           exit (-1);
         }

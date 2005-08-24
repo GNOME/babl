@@ -25,16 +25,16 @@
 BABL_DEFINE_CLASS_NO_NEW_NO_ID(babl_fish)
 
 /** create a new BablFish capable of translating between the pixel
- *  formats given in source and destination. (use babl_pixel_format (string))
+ *  formats given in source and destination. (use babl_format (string))
  */
-Babl * babl_fish              (Babl *source,
-                               Babl *destination);
+Babl * babl_fish              (void *source,
+                               void *destination);
 
 /* Transform n pixels from source into destination,
  * source and destination can be pointers to linear buffers
  * (or at a later stage of babl development BablImages)
  */
-int    babl_fish_process      (Babl *babl_fish,
+int    babl_process           (Babl *babl_fish,
                                void *source,
                                void *destination,
                                int   n);

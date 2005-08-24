@@ -51,7 +51,7 @@ components (void)
    NULL);
 
   babl_component_new (
-   "Y-g2.2", 
+   "Y'", 
    "id",    BABL_LUMINANCE_GAMMA_2_2,
    "luma",
    NULL);
@@ -67,13 +67,13 @@ models (void)
     NULL);
 
   babl_model_new (
-    "gray-g2.2",
+    "gray'",
     "id", BABL_GRAY_GAMMA_2_2,
     babl_component_id (BABL_LUMINANCE_GAMMA_2_2),
     NULL);
 
   babl_model_new (
-    "graya-g2.2",
+    "gray'a",
     "id", BABL_GRAY_GAMMA_2_2_ALPHA,
     babl_component_id (BABL_LUMINANCE_GAMMA_2_2),
     babl_component_id (BABL_ALPHA),
@@ -376,7 +376,7 @@ static void
 conversions (void)
 {
   babl_conversion_new (
-    "babl-base: gray-g2.2 to rgba",
+    "babl-base: gray' to rgba",
     "source",      babl_model_id (BABL_GRAY_GAMMA_2_2),
     "destination", babl_model_id (BABL_RGBA),
     "planar",      gray_2_2_to_rgb,
@@ -385,7 +385,7 @@ conversions (void)
 
 
   babl_conversion_new (
-    "babl-base: rgba to gray-g2.2",
+    "babl-base: rgba to gray'",
     "source",      babl_model_id (BABL_RGBA),
     "destination", babl_model_id (BABL_GRAY_GAMMA_2_2),
     "planar",      rgb_to_gray_2_2,
@@ -393,7 +393,7 @@ conversions (void)
   );
 
   babl_conversion_new (
-    "babl-base: graya-g2.2 to rgba",
+    "babl-base: gray'a to rgba",
     "source",      babl_model_id (BABL_GRAY_GAMMA_2_2_ALPHA),
     "destination", babl_model_id (BABL_RGBA),
     "planar",      gray_2_2_to_rgb,
@@ -401,7 +401,7 @@ conversions (void)
   );
 
   babl_conversion_new (
-    "babl-base: rgba to graya-g2.2",
+    "babl-base: rgba to gray'a",
     "source",      babl_model_id (BABL_RGBA),
     "destination", babl_model_id (BABL_GRAY_GAMMA_2_2_ALPHA),
     "planar",      rgb_to_gray_2_2,

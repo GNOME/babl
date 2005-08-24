@@ -85,23 +85,23 @@ babl_image_new_from_linear (void  *buffer,
   int            calc_pitch=0;
 
   assert (format);
-  assert (format->class_type == BABL_PIXEL_FORMAT ||
+  assert (format->class_type == BABL_FORMAT ||
           format->class_type == BABL_MODEL);
  
   switch (format->class_type)
     {
-      case BABL_PIXEL_FORMAT:
-        for (band=0; band < format->pixel_format.bands; band++)
+      case BABL_FORMAT:
+        for (band=0; band < format->format.bands; band++)
           {
-            BablType *type = format->pixel_format.type[band];
+            BablType *type = format->format.type[band];
             calc_pitch += (type->bits / 8);
           }
 
-        for (band=0; band < format->pixel_format.bands; band++)
+        for (band=0; band < format->format.bands; band++)
           {
-            BablType *type = format->pixel_format.type[band];
+            BablType *type = format->format.type[band];
 
-            component[band] = format->pixel_format.component[band];
+            component[band] = format->format.component[band];
             data[band]      = buffer + offset;
             pitch[band]     = calc_pitch;
             stride[band]    = 0;
@@ -172,9 +172,10 @@ babl_image_new (void *first,
         }
       else
         {
-          new_component = (BablComponent*)babl_component (arg);
+          new_component = (BablComponent*) babl_component (arg);
         }
 
+      /* FIXME: add error checking */
       component [bands] = new_component;
       data      [bands] = va_arg (varg, void*);
       pitch     [bands] = va_arg (varg, int);
@@ -183,7 +184,7 @@ babl_image_new (void *first,
                 
       if (bands>=BABL_MAX_BANDS)
         {
-          babl_log ("%s(): maximum number of bands (%i) exceeded for BablImage",
+          babl_log ("%s(): maximum number of bands (%i) exceeded",
                     __FUNCTION__, BABL_MAX_BANDS);
         }
 

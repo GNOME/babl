@@ -17,8 +17,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef _BABL_pixel_format_H
-#define _BABL_pixel_format_H
+#ifndef _BABL_format_H
+#define _BABL_format_H
 
 #include "babl-classes.h"
 BABL_DEFINE_CLASS (babl_model)

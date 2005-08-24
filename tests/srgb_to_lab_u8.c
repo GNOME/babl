@@ -17,64 +17,49 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <math.h>
 #include "babl.h"
 #include "babl-internal.h"
 
-#define BUFFER_LENGTH  6
+#define PIXELS    6
+#define TOLERANCE 0
 
-float float_buf[BUFFER_LENGTH]=
-{
-   0.0,  
-   1.0,
-  -1.0, 
-   2.0, 
-   0.5, 
-   0.25,
-};
+unsigned char source_buf [PIXELS*3]=
+  {  0,   0,   0,
+   127, 127, 127,
+   255, 255, 255,
+   255, 0.0, 0.0,
+   0.0, 255, 0.0,
+   0.0, 0.0, 255};
 
-unsigned char u8_buf     [BUFFER_LENGTH];
-unsigned char u8_ref_buf [BUFFER_LENGTH]=
-{
-    0,
-  255,
-    0,
-  255,
-  127,
-   63,
-};
+unsigned char reference_buf [PIXELS*3]=
+  {  0,   0,   0,
+   127,   0,   0,
+   255, 255, 255,
+     0,   0,   0,
+     0,   0,   0,
+     0,   0,   0};
+
+unsigned char destination_buf [PIXELS*3];
 
 int
-test_float_to_rgb_u8 (void)
+test (void)
 {
-  Babl *fish;
   int   i;
   int   OK=1;
-
+ 
+  babl_process (babl_fish ("srgb", "cie-lab-u8"),
+                source_buf, destination_buf,
+                PIXELS);
   
-  fish = babl_fish (
-    babl_format_new (
-      "foo",
-      babl_model ("gray"),
-      babl_type ("float"),
-      babl_component ("Y"),
-      NULL
-    ),
-    babl_format_new (
-      "bar",
-      babl_model ("gray"),
-      babl_type ("u8"),
-      babl_component ("Y"),
-      NULL
-    ));
-
-  babl_process (fish, 
-     float_buf, u8_buf, 
-     BUFFER_LENGTH);
-  
-  for (i=0; i<BUFFER_LENGTH; i++)
+  for (i=0; i<PIXELS * 3; i++)
     {
-      if (u8_buf[i] != u8_ref_buf[i])
+      if ((destination_buf[i] - reference_buf[i]) > TOLERANCE)
+        {
+          babl_log ("%2i (%2i%%3=%i, %2i/3=%i) is %i should be %i",
+                      i, i,i%3,    i,i/3,  destination_buf[i], reference_buf[i]);
           OK=0;
+        }
     }
   if (!OK)
     return -1;
@@ -86,11 +71,8 @@ main (int    argc,
       char **argv)
 {
   babl_init ();
-  if (test_float_to_rgb_u8 ())
+  if (test())
     return -1;
   babl_destroy ();
   return 0;
 }
-
-
-

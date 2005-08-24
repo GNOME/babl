@@ -34,7 +34,7 @@ babl_init (void)
       babl_sampling_init ();
       babl_component_init ();
       babl_model_init ();
-      babl_pixel_format_init ();
+      babl_format_init ();
       babl_conversion_init ();
       babl_base_init ();
       babl_sanity ();
@@ -50,7 +50,7 @@ babl_destroy (void)
     {
       babl_fish_destroy ();
       babl_conversion_destroy ();
-      babl_pixel_format_destroy ();
+      babl_format_destroy ();
       babl_model_destroy ();
       babl_component_destroy ();
       babl_sampling_destroy ();

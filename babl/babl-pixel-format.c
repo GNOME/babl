@@ -29,18 +29,18 @@
 #define BABL_MAX_BANDS 32
 
 static int 
-each_babl_pixel_format_destroy (Babl *babl,
+each_babl_format_destroy (Babl *babl,
                                 void *data)
 {
-  babl_free (babl->pixel_format.from);
-  babl_free (babl->pixel_format.to);
+  babl_free (babl->format.from);
+  babl_free (babl->format.to);
   babl_free (babl);
 
   return 0;  /* continue iterating */
 }
 
 static Babl *
-pixel_format_new (const char     *name,
+format_new (const char     *name,
                   int             id,
                   int             planar,
                   int             bands,
@@ -53,7 +53,7 @@ pixel_format_new (const char     *name,
   int              band;
 
   /* allocate all memory in one chunk */
-  babl  = babl_calloc (sizeof (BablPixelFormat) +
+  babl  = babl_calloc (sizeof (BablFormat) +
                        strlen (name) + 1 +
                        sizeof (BablComponent*) * (bands+1) +
                        sizeof (BablSampling*)  * (bands+1) +
@@ -61,34 +61,34 @@ pixel_format_new (const char     *name,
                        sizeof (int)            * (bands+1) +
                        sizeof (int)            * (bands+1),1);
 
-  babl->pixel_format.component = ((void *)babl) + sizeof (BablPixelFormat);
-  babl->pixel_format.type      = ((void *)babl->pixel_format.component) + sizeof (BablComponent*) * (bands+1);
-  babl->pixel_format.sampling  = ((void *)babl->pixel_format.type)      + sizeof (BablType*) * (bands+1);
-  babl->instance.name          = ((void *)babl->pixel_format.sampling)  + sizeof (BablSampling*) * (bands+1);
+  babl->format.component = ((void *)babl) + sizeof (BablFormat);
+  babl->format.type      = ((void *)babl->format.component) + sizeof (BablComponent*) * (bands+1);
+  babl->format.sampling  = ((void *)babl->format.type)      + sizeof (BablType*) * (bands+1);
+  babl->instance.name          = ((void *)babl->format.sampling)  + sizeof (BablSampling*) * (bands+1);
   
-  babl->class_type    = BABL_PIXEL_FORMAT;
+  babl->class_type    = BABL_FORMAT;
   babl->instance.id   = id;
   strcpy (babl->instance.name, name);
 
-  babl->pixel_format.model  = model;
-  babl->pixel_format.bands  = bands;
-  babl->pixel_format.planar = planar;
+  babl->format.model  = model;
+  babl->format.bands  = bands;
+  babl->format.planar = planar;
 
   for (band=0; band < bands; band++)
     {
-      babl->pixel_format.component[band] = component[band];
-      babl->pixel_format.type[band] = type[band];
-      babl->pixel_format.sampling[band] = sampling[band];
+      babl->format.component[band] = component[band];
+      babl->format.type[band] = type[band];
+      babl->format.sampling[band] = sampling[band];
     }
-  babl->pixel_format.component[band] = NULL;
-  babl->pixel_format.type[band]      = NULL;
-  babl->pixel_format.sampling[band]  = NULL;
+  babl->format.component[band] = NULL;
+  babl->format.type[band]      = NULL;
+  babl->format.sampling[band]  = NULL;
 
   return babl;
 }
 
 Babl *
-babl_pixel_format_new (const char *name,
+babl_format_new (const char *name,
                        ...)
 {
   va_list varg;
@@ -153,13 +153,13 @@ babl_pixel_format_new (const char *name,
                   model = (BablModel*)arg;
                   break;
               case BABL_INSTANCE:
-              case BABL_PIXEL_FORMAT:
+              case BABL_FORMAT:
               case BABL_CONVERSION:
               case BABL_CONVERSION_TYPE:
               case BABL_CONVERSION_TYPE_PLANAR:
               case BABL_CONVERSION_MODEL_PLANAR:
-              case BABL_CONVERSION_PIXEL_FORMAT:
-              case BABL_CONVERSION_PIXEL_FORMAT_PLANAR:
+              case BABL_CONVERSION_FORMAT:
+              case BABL_CONVERSION_FORMAT_PLANAR:
               case BABL_FISH:
               case BABL_FISH_REFERENCE:
               case BABL_IMAGE:
@@ -188,7 +188,7 @@ babl_pixel_format_new (const char *name,
       
       else
         {
-          babl_log ("%s: unhandled parameter '%s' for pixel_format '%s'",
+          babl_log ("%s: unhandled parameter '%s' for format '%s'",
                     __FUNCTION__, arg, name);
           exit (-1);
         }
@@ -197,7 +197,7 @@ babl_pixel_format_new (const char *name,
   va_end   (varg);
 
 
-  babl = pixel_format_new (name, id,
+  babl = format_new (name, id,
                            planar, bands, model,
                            component, sampling, type);
 
@@ -208,9 +208,9 @@ babl_pixel_format_new (const char *name,
     }
   else
     {
-      each_babl_pixel_format_destroy (babl, NULL);
+      each_babl_format_destroy (babl, NULL);
       return NULL;
     }
 }
 
-BABL_CLASS_TEMPLATE (babl_pixel_format)
+BABL_CLASS_TEMPLATE (babl_format)

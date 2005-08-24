@@ -38,6 +38,15 @@
 #define DB_INCREMENT_SIZE  16
 #endif
 
+static inline int hash (char *str)
+{
+  int ret = 0;
+  int i   = 1;
+
+  while (*str)
+    ret = (ret + ( i++ * (*str ++ & 31 ))) % 199;
+  return ret;
+}
 
 /* file scope variables, for this .c file's database */
 static int    db_size     = 0;

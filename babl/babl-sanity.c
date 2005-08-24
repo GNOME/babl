@@ -19,6 +19,8 @@
 
 #include "babl.h"
 #include "babl-internal.h"
+
+static int OK;
  
 static int
 foo (Babl *babl,
@@ -56,8 +58,11 @@ type_sanity (Babl *babl,
         }
     }
   if (!ok)
-    babl_log ("lack of sanity! type '%s' has no conversion to double",
-      babl->instance.name);
+    {
+      OK = 0;
+      babl_log ("lack of sanity! type '%s' has no conversion to double",
+                babl->instance.name);
+    }
 
 
   ok = 0;
@@ -76,8 +81,11 @@ type_sanity (Babl *babl,
         }
     }
   if (!ok)
-    babl_log ("lack of sanity! type '%s' has no conversion from double",
-      babl->instance.name);
+    {
+      OK=0;
+      babl_log ("lack of sanity! type '%s' has no conversion from double",
+                babl->instance.name);
+    }
 
   return 0;
 }
@@ -108,8 +116,11 @@ model_sanity (Babl *babl,
         }
     }
   if (!ok)
-    babl_log ("lack of sanity! model '%s' has no conversion to 'rgba'",
-      babl->instance.name);
+    {
+      OK=0;
+      babl_log ("lack of sanity! model '%s' has no conversion to 'rgba'",
+                babl->instance.name);
+    }
 
 
   ok = 0;
@@ -128,8 +139,11 @@ model_sanity (Babl *babl,
         }
     }
   if (!ok)
-    babl_log ("lack of sanity! model '%s' has no conversion from 'rgba'",
-      babl->instance.name);
+    {
+      babl_log ("lack of sanity! model '%s' has no conversion from 'rgba'",
+                babl->instance.name);
+      OK=0;
+    }
 
   return 0;
 }
@@ -140,29 +154,31 @@ id_sanity (Babl *babl,
 {
   if (0 == babl->instance.id)
     {
+      OK=0;
       babl_log ("%s\t'%s' has id==0",
         babl_class_name (babl->class_type), babl->instance.name);
     }
   return 0;
 }
 
-void
+int
 babl_sanity (void)
 {
+  OK=1;
+  
   babl_type_each         (id_sanity, NULL);
   babl_component_each    (id_sanity, NULL);
   babl_model_each        (id_sanity, NULL);
-  babl_pixel_format_each (id_sanity, NULL);
+  babl_format_each       (id_sanity, NULL);
 
   babl_type_each         (type_sanity, NULL);
   babl_sampling_each     (foo, NULL);
   babl_component_each    (foo, NULL);
   babl_model_each        (model_sanity, NULL);
-  babl_pixel_format_each (foo, NULL);
+  babl_format_each       (foo, NULL);
   babl_conversion_each   (foo, NULL);
 
-
-
+  return OK;
 }
 
 static Babl *babl_conversion_source (Babl *babl)

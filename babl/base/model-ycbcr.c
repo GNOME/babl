@@ -27,7 +27,7 @@
 static void components    (void);
 static void models        (void);
 static void conversions   (void);
-static void pixel_formats (void);
+static void formats (void);
 
 void
 babl_base_model_ycbcr (void)
@@ -35,7 +35,7 @@ babl_base_model_ycbcr (void)
   components    ();
   models        ();
   conversions   ();
-  pixel_formats ();
+  formats       ();
 }
 
 static void
@@ -58,7 +58,7 @@ static void
 models (void)
 {
   babl_model_new (
-    "ycbcr",
+    "y'cbcr",
     "id", BABL_YCBCR,
     babl_component_id (BABL_LUMINANCE_GAMMA_2_2),
     babl_component_id (BABL_CB),
@@ -66,7 +66,7 @@ models (void)
     NULL);
 
   babl_model_new (
-    "ycbcra",
+    "y'cbcra",
     "id", BABL_YCBCR_ALPHA,
     babl_component_id (BABL_LUMINANCE_GAMMA_2_2),
     babl_component_id (BABL_CB),
@@ -155,42 +155,42 @@ static void
 conversions (void)
 {
   babl_conversion_new (
-    "babl-base: rgba to ycbcr",
+    "babl-base: rgba to y'cbcr",
     "source",      babl_model_id (BABL_RGBA),
     "destination", babl_model_id (BABL_YCBCR),
     "planar",      rgb_to_ycbcr,
     NULL
   );
   babl_conversion_new (
-    "babl-base: ycbcr to rgba",
+    "babl-base: y'cbcr to rgba",
     "source",      babl_model_id (BABL_YCBCR),
     "destination", babl_model_id (BABL_RGBA),
     "planar",      ycbcr_to_rgb,
     NULL
   );
   babl_conversion_new (
-    "babl-base: rgb to ycbcr",
+    "babl-base: rgb to y'cbcr",
     "source",      babl_model_id (BABL_RGB),
     "destination", babl_model_id (BABL_YCBCR),
     "planar",      rgb_to_ycbcr,
     NULL
   );
   babl_conversion_new (
-    "babl-base: ycbcr to rgb",
+    "babl-base: y'cbcr to rgb",
     "source",      babl_model_id (BABL_YCBCR),
     "destination", babl_model_id (BABL_RGB),
     "planar",      ycbcr_to_rgb,
     NULL
   );
   babl_conversion_new (
-    "babl-base: rgba to ycbcra",
+    "babl-base: rgba to y'cbcra",
     "source",      babl_model_id (BABL_RGBA),
     "destination", babl_model_id (BABL_YCBCR_ALPHA),
     "planar",      rgb_to_ycbcr,
     NULL
   );
   babl_conversion_new (
-    "babl-base: ycbcra to rgba",
+    "babl-base: y'cbcra to rgba",
     "source",      babl_model_id (BABL_YCBCR_ALPHA),
     "destination", babl_model_id (BABL_RGBA),
     "planar",      ycbcr_to_rgb,
@@ -199,44 +199,51 @@ conversions (void)
 }
 
 static void
-pixel_formats (void)
+formats (void)
 {
-#if 0
-  babl_pixel_format_new (
-    "yuv420",
-    "id",          BABL_YUV420,
+  babl_format_new (
+    "y'cbcr420",
+    "id",          BABL_YCBCR420,
     "planar",
     babl_model_id  (BABL_YCBCR),
-    babl_type_id   (BABL_U8),
-    babl_sampling  (1, 1), babl_component_id (BABL_LUMINANCE),
-    babl_sampling  (2, 2), babl_component_id (BABL_CB), 
-    babl_sampling  (2, 2), babl_component_id (BABL_CR),
+    babl_type_id   (BABL_U8_LUMA),
+    babl_sampling  (1, 1),
+    babl_component_id (BABL_LUMINANCE_GAMMA_2_2),
+    babl_type_id   (BABL_U8_CHROMA),
+    babl_sampling  (2, 2),
+    babl_component_id (BABL_CB), 
+    babl_sampling  (2, 2),
+    babl_component_id (BABL_CR),
     NULL);
   
-  babl_pixel_format_new (
-    "yuv411",
-    "id",          BABL_YUV411,
+
+  babl_format_new (
+    "y'cbcr422",
+    "id",          BABL_YCBCR422,
     "planar",
-    babl_type      ("u8"),
+    babl_model_id  (BABL_YCBCR),
+    babl_type_id   (BABL_U8_LUMA),
     babl_sampling  (1, 1),
-    babl_component ("Y"), 
-    babl_sampling  (4, 1),
+    babl_component_id (BABL_LUMINANCE_GAMMA_2_2),
+    babl_type_id   (BABL_U8_CHROMA),
+    babl_sampling  (2, 1),
     babl_component_id (BABL_CB), 
-    babl_sampling  (4, 1),
+    babl_sampling  (2, 1),
     babl_component_id (BABL_CR),
     NULL);
 
-  babl_pixel_format_new (
-    "yuv422",
-    "id",          BABL_YUV422,
+  babl_format_new (
+    "y'cbcr411",
+    "id",          BABL_YCBCR411,
     "planar",
-    babl_type      ("u8"),
+    babl_model_id  (BABL_YCBCR),
+    babl_type_id   (BABL_U8_LUMA),
     babl_sampling  (1, 1),
-    babl_component ("Y"), 
-    babl_sampling  (2, 1),
+    babl_component_id (BABL_LUMINANCE_GAMMA_2_2),
+    babl_type_id   (BABL_U8_CHROMA),
+    babl_sampling  (4, 1),
     babl_component_id (BABL_CB), 
-    babl_sampling  (2, 1),
+    babl_sampling  (4, 1),
     babl_component_id (BABL_CR),
     NULL);
-#endif
 }

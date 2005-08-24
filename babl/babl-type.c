@@ -62,8 +62,13 @@ babl_type_new (const char *name,
 {
   va_list  varg;
   Babl    *babl;
-  int      id    = 0;
-  int      bits  = 0;
+  int      id         = 0;
+  int      is_integer = 0;
+  int      bits       = 0;
+  long     min        = 0;
+  long     max        = 255;
+  double   min_val    = 0.0;
+  double   max_val    = 0.0;
 
   const char *arg=name;
 
@@ -91,11 +96,33 @@ babl_type_new (const char *name,
       else if (!strcmp (arg, "bits"))
         {
           bits = va_arg (varg, int);
+          min = 0;
+          max = 1<<bits;
+        }
+      else if (!strcmp (arg, "integer"))
+        {
+          is_integer = va_arg (varg, int);
+        }
+      else if (!strcmp (arg, "min"))
+        {
+          min = va_arg (varg, long);
+        }
+      else if (!strcmp (arg, "max"))
+        {
+          max = va_arg (varg, long);
+        }
+      else if (!strcmp (arg, "min_val"))
+        {
+          min_val = va_arg (varg, double);
+        }
+      else if (!strcmp (arg, "max_val"))
+        {
+          max_val = va_arg (varg, double);
         }
       
       else
         {
-          babl_log ("%s(): unhandled parameter '%s' for pixel_format '%s'",
+          babl_log ("%s(): unhandled parameter '%s' for format '%s'",
                     __FUNCTION__, arg, name);
           exit (-1);
         }

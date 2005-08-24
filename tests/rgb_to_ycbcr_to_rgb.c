@@ -44,7 +44,7 @@ test (void)
   int   OK=1;
   
   fish = babl_fish (
-    babl_pixel_format_new (
+    babl_format_new (
       "foo",
       babl_model ("rgb"),
       babl_type ("float"),
@@ -53,9 +53,9 @@ test (void)
       babl_component ("B"),
       NULL
     ),
-    babl_pixel_format_new (
+    babl_format_new (
       "bar",
-      babl_model ("ycbcr"),
+      babl_model ("y'cbcr"),
       babl_type ("float"), 
       babl_component ("Y"),
       babl_component ("Cb"),
@@ -64,12 +64,12 @@ test (void)
     )
   );
 
-  babl_fish_process (fish, source_buf, temp_buf, PIXELS);
+  babl_process (fish, source_buf, temp_buf, PIXELS);
 
-  fish = babl_fish (babl_pixel_format ("bar"),
-                    babl_pixel_format ("foo"));
+  fish = babl_fish (babl_format ("bar"),
+                    babl_format ("foo"));
   
-  babl_fish_process (fish, temp_buf, destination_buf, PIXELS);
+  babl_process (fish, temp_buf, destination_buf, PIXELS);
 
   for (i=0; i<PIXELS * 3; i++)
     {

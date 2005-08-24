@@ -39,7 +39,6 @@
 
 
 void babl_init       (void);
-void babl_sanity     (void);
 void babl_introspect (void);
 void babl_destroy    (void);
 

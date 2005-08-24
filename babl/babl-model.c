@@ -108,15 +108,15 @@ babl_model_new (const char *name,
               case BABL_TYPE:
               case BABL_SAMPLING:
               case BABL_INSTANCE:
-              case BABL_PIXEL_FORMAT:
+              case BABL_FORMAT:
 
 
               case BABL_CONVERSION:
               case BABL_CONVERSION_TYPE:
               case BABL_CONVERSION_TYPE_PLANAR:
               case BABL_CONVERSION_MODEL_PLANAR:
-              case BABL_CONVERSION_PIXEL_FORMAT:
-              case BABL_CONVERSION_PIXEL_FORMAT_PLANAR:
+              case BABL_CONVERSION_FORMAT:
+              case BABL_CONVERSION_FORMAT_PLANAR:
               case BABL_FISH:
               case BABL_FISH_REFERENCE:
               case BABL_IMAGE:

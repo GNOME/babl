@@ -22,7 +22,7 @@
 
 static void model_html              (Babl *babl);
 static void type_html               (Babl *babl);
-static void pixel_format_html       (Babl *babl);
+static void format_html             (Babl *babl);
 
 static int  each_item               (Babl *babl,
                                      void *user_data);
@@ -41,7 +41,7 @@ main (void)
   babl_model_each (each_item, NULL);
   printf ("<tr><td><a name='Pixel-formats'></a>&nbsp;</td></tr>\n");
   printf ("<tr><th>Pixel format</th><th>bytes/pixel</th><th>color model</th><th>bands</th> </tr>\n");
-  babl_pixel_format_each (each_item, NULL);
+  babl_format_each (each_item, NULL);
   printf ("</table>\n");
 
   babl_destroy ();
@@ -63,8 +63,8 @@ each_item (Babl *babl,
       case BABL_MODEL:
         model_html (babl);
         break;
-      case BABL_PIXEL_FORMAT:
-        pixel_format_html (babl);
+      case BABL_FORMAT:
+        format_html (babl);
         break;
       default:
         break;
@@ -95,42 +95,42 @@ type_html (Babl *babl)
 }
 
 static void
-pixel_format_html (Babl *babl)
+format_html (Babl *babl)
 {
   int i;
 
   printf ("<td valign='top'>");
     {
       int bytes=0;
-      for (i=0; i< babl->pixel_format.bands; i++)
+      for (i=0; i< babl->format.bands; i++)
       {
-        bytes += BABL(babl->pixel_format.type[i])->type.bits/8;
+        bytes += BABL(babl->format.type[i])->type.bits/8;
       }
       printf ("<span class='name'>%i</span>", bytes);
     }
   printf ("</td>");
   printf ("<td valign='top'>");
-  printf ("<span class='name'>%s</span>", BABL(babl->pixel_format.model)->instance.name  );
+  printf ("<span class='name'>%s</span>", BABL(babl->format.model)->instance.name  );
   printf ("</td>");
   printf ("<td>");
-  for (i=0; i< babl->pixel_format.bands; i++)
+  for (i=0; i< babl->format.bands; i++)
     {
       printf ("<span class='type'>%s </span><span class='component'>%s</span><span class='spacer'>&nbsp;</span><br/>",
-       BABL(babl->pixel_format.type[i])->instance.name,
-       BABL(babl->pixel_format.component[i])->instance.name  );
+       BABL(babl->format.type[i])->instance.name,
+       BABL(babl->format.component[i])->instance.name  );
     }
   printf ("</td>");
 #if 0
   int i;
-  babl_log ("\t\tplanar=%i", babl->pixel_format.planar);
-  babl_log ("\t\tbands=%i",  babl->pixel_format.bands);
+  babl_log ("\t\tplanar=%i", babl->format.planar);
+  babl_log ("\t\tbands=%i",  babl->format.bands);
 
-  for (i=0; i< babl->pixel_format.bands; i++)
+  for (i=0; i< babl->format.bands; i++)
     {
       babl_log ("\t\tband[%i] type='%s' component='%s' sampling='%s'",
-                i,   babl->pixel_format.type[i]->instance.name,
-                     babl->pixel_format.component[i]->instance.name,
-                     babl->pixel_format.sampling[i]->instance.name);
+                i,   babl->format.type[i]->instance.name,
+                     babl->format.component[i]->instance.name,
+                     babl->format.sampling[i]->instance.name);
     }
 #endif
 }

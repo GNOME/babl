@@ -27,7 +27,7 @@
 static void components    (void);
 static void models        (void);
 static void conversions   (void);
-static void pixel_formats (void);
+static void formats       (void);
 
 void
 babl_base_model_cmyk (void)
@@ -35,7 +35,7 @@ babl_base_model_cmyk (void)
   components    ();
   models        ();
   conversions   ();
-  pixel_formats ();
+  formats       ();
 }
 
 static void
@@ -252,7 +252,7 @@ conversions (void)
 }
 
 static void
-pixel_formats (void)
+formats (void)
 {
 }
 

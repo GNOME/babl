@@ -108,7 +108,7 @@ babl_component_new (const char *name,
       
       else
         {
-          babl_log ("%s(): unhandled parameter '%s' for pixel_format '%s'",
+          babl_log ("%s(): unhandled parameter '%s' for format '%s'",
                     __FUNCTION__, arg, name);
           exit (-1);
         }

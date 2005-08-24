@@ -20,12 +20,12 @@
 #ifndef _BABL_CLASSES_H
 #define _BABL_CLASSES_H
 
-/* Type and PixelFormat */
+/* Type and Format */
 typedef void (*BablFuncLinear)    (void  *src,
                                    void  *dst,
                                    int    n);
 
-/* TypePlanar, ModelPlanar and PixelFormatPlanar */
+/* TypePlanar, ModelPlanar and FormatPlanar */
 typedef void (*BablFuncPlanar)    (int    src_bands,
                                    void  *src[],
                                    int    src_pitch[],
@@ -60,14 +60,14 @@ typedef enum {
   BABL_SAMPLING,
   BABL_COMPONENT,
   BABL_MODEL,
-  BABL_PIXEL_FORMAT,
+  BABL_FORMAT,
 
   BABL_CONVERSION,
   BABL_CONVERSION_TYPE,
   BABL_CONVERSION_TYPE_PLANAR,
   BABL_CONVERSION_MODEL_PLANAR,
-  BABL_CONVERSION_PIXEL_FORMAT,
-  BABL_CONVERSION_PIXEL_FORMAT_PLANAR,
+  BABL_CONVERSION_FORMAT,
+  BABL_CONVERSION_FORMAT_PLANAR,
 
   BABL_FISH,
   BABL_FISH_REFERENCE,
@@ -124,12 +124,12 @@ typedef struct
 typedef struct
 {
   BablConversion conversion;
-} BablConversionPixelFormat;
+} BablConversionFormat;
 
 typedef struct
 {
   BablConversion conversion;
-} BablConversionPixelFormatPlanar;
+} BablConversionFormatPlanar;
 
 typedef struct
 {
@@ -199,7 +199,7 @@ typedef struct
   BablComponent  **component;
   BablType       **type;
   BablSampling   **sampling;
-} BablPixelFormat;
+} BablFormat;
 
 typedef struct
 {
@@ -251,7 +251,7 @@ typedef union
   BablSampling      sampling;
   BablComponent     component;
   BablModel         model;
-  BablPixelFormat   pixel_format;
+  BablFormat        format;
   BablConversion    conversion;
   BablFish          fish;
   BablFishReference reference_fish;

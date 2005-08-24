@@ -24,7 +24,7 @@
 static void models        (void);
 static void components    (void);
 static void conversions   (void);
-static void pixel_formats (void);
+static void formats       (void);
 
 void
 babl_base_model_rgb (void)
@@ -32,7 +32,7 @@ babl_base_model_rgb (void)
   components    ();
   models        ();
   conversions   ();
-  pixel_formats ();
+  formats       ();
 }
 
 static void
@@ -60,21 +60,21 @@ components (void)
    NULL);
 
   babl_component_new (
-    "R-g2.2",
+    "R'",
    "id",    BABL_RED_GAMMA_2_2,
     "luma",
     "chroma",
     NULL);
 
   babl_component_new (
-    "G-g2.2",
+    "G'",
    "id",    BABL_GREEN_GAMMA_2_2,
    "luma", 
    "chroma",
    NULL);
   
   babl_component_new (
-    "B-g2.2",
+    "B'",
    "id",    BABL_BLUE_GAMMA_2_2,
    "luma",
    "chroma",
@@ -141,7 +141,7 @@ models (void)
     NULL);
 
   babl_model_new (
-    "rgb-g2.2",
+    "rgb'",
     "id", BABL_RGB_GAMMA_2_2,
     babl_component_id (BABL_RED_GAMMA_2_2),
     babl_component_id (BABL_GREEN_GAMMA_2_2),
@@ -149,7 +149,7 @@ models (void)
     NULL);
 
   babl_model_new (
-    "rgba-g2.2",
+    "rgb'a",
     "id", BABL_RGBA_GAMMA_2_2,
     babl_component_id (BABL_RED_GAMMA_2_2),
     babl_component_id (BABL_GREEN_GAMMA_2_2),
@@ -230,7 +230,10 @@ g3_inv_gamma_2_2 (int    src_bands,
         }
       for (;band<dst_bands;band++)
         {
-          *(double*)dst[band] = *(double*) src[band];
+          if (band<src_bands)
+            *(double*)dst[band] = *(double*) src[band];
+          else
+            *(double*)dst[band] = 1.0;
         }
       BABL_PLANAR_STEP
     }
@@ -377,9 +380,9 @@ conversions (void)
 }
 
 static void
-pixel_formats (void)
+formats (void)
 {
-    babl_pixel_format_new (
+    babl_format_new (
     "srgb",
     "id", BABL_SRGB,
     babl_model_id     (BABL_RGB_GAMMA_2_2),
@@ -389,7 +392,7 @@ pixel_formats (void)
     babl_component_id (BABL_BLUE_GAMMA_2_2),
     NULL);
 
-  babl_pixel_format_new (
+  babl_format_new (
     "srgba",
     "id", BABL_SRGBA,
     babl_model_id     (BABL_RGBA_GAMMA_2_2),
@@ -400,7 +403,7 @@ pixel_formats (void)
     babl_component_id (BABL_ALPHA),
     NULL);
 
-  babl_pixel_format_new (
+  babl_format_new (
     "rgba-float",
     "id",              BABL_RGBA_FLOAT,
     babl_model_id     (BABL_RGBA),
@@ -411,7 +414,7 @@ pixel_formats (void)
     babl_component_id (BABL_ALPHA),
     NULL);
 
-  babl_pixel_format_new (
+  babl_format_new (
     "rgba-double",
     "id",              BABL_RGBA_DOUBLE,
     babl_model_id     (BABL_RGBA),
@@ -422,7 +425,7 @@ pixel_formats (void)
     babl_component_id (BABL_ALPHA),
     NULL);
 
-  babl_pixel_format_new (
+  babl_format_new (
     "rgb-float",
     "id", BABL_RGB_FLOAT,
     babl_model_id     (BABL_RGB),

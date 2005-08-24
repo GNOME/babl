@@ -55,7 +55,7 @@ type_name##_id (int id)                                       \
   babl = db_exist (id, NULL);                                 \
   if (!babl)                                                  \
     {                                                         \
-      babl_log ("%s(\"%i\"): not found", __FUNCTION__, id);   \
+      babl_log ("%s(%i): not found", __FUNCTION__, id);   \
     }                                                         \
   return babl;                                                \
 }

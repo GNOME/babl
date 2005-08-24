@@ -124,9 +124,9 @@ babl_fish_reference_new (Babl *source,
   assert (BABL_IS_BABL (source));
   assert (BABL_IS_BABL (destination));
 
-  assert (source->class_type == BABL_PIXEL_FORMAT ||
+  assert (source->class_type == BABL_FORMAT ||
           source->class_type == BABL_MODEL);
-  assert (destination->class_type == BABL_PIXEL_FORMAT ||
+  assert (destination->class_type == BABL_FORMAT ||
           destination->class_type == BABL_MODEL);
 
   babl                   = babl_calloc (sizeof (BablFishReference), 1);
@@ -136,53 +136,54 @@ babl_fish_reference_new (Babl *source,
   babl->fish.source      = (union Babl*)source;
   babl->fish.destination = (union Babl*)destination;
  
-  if (source->class_type == BABL_PIXEL_FORMAT)
+  if (source->class_type == BABL_FORMAT)
     {
       babl->reference_fish.type_to_double =
          babl_conversion_find (
-            source->pixel_format.type[0],
+            source->format.type[0],
             babl_type_id (BABL_DOUBLE)
          );
 
       babl->reference_fish.model_to_rgba =
         babl_conversion_find (
-            source->pixel_format.model,
+            source->format.model,
             babl_model_id (BABL_RGBA)
         );
 
       babl->reference_fish.rgba_to_model =
         babl_conversion_find (
             babl_model_id (BABL_RGBA),
-            destination->pixel_format.model
+            destination->format.model
         );
 
       babl->reference_fish.double_to_type =
         babl_conversion_find (
             babl_type_id (BABL_DOUBLE),
-            destination->pixel_format.type[0]
+            destination->format.type[0]
         );
     }
   else if (source->class_type == BABL_MODEL)
     { 
       babl->reference_fish.type_to_double = NULL;
 
+      babl_log ("EEEEEEEEEEEEEEEEEEEEK!%s","!!!!");
 
       babl->reference_fish.model_to_rgba =
         babl_conversion_find (
-            source->pixel_format.model,
+            source->format.model,
             babl_model_id (BABL_RGBA)
         );
 
       babl->reference_fish.rgba_to_model =
         babl_conversion_find (
             babl_model_id (BABL_RGBA),
-            destination->pixel_format.model
+            destination->format.model
         );
 
       babl->reference_fish.double_to_type =
         babl_conversion_find (
             babl_type_id (BABL_DOUBLE),
-            destination->pixel_format.type[0]
+            destination->format.type[0]
         );
     }
 
@@ -209,10 +210,48 @@ babl_fish_reference_new (Babl *source,
 }
 
 Babl *
-babl_fish (Babl *source,
-           Babl *destination)
+babl_fish (void *source,
+           void *destination)
 {
-  return babl_fish_reference_new (source, destination);
+  Babl *source_format = NULL;
+  Babl *destination_format = NULL;
+
+  assert (source);
+  assert (destination);
+
+  if (BABL_IS_BABL (source))
+    {
+      source_format = source;
+    }
+
+  if (!source_format)
+    {
+      source_format = babl_format ((char*)source);
+    }
+
+  if (!source_format)
+    {
+      babl_log ("%s(%p, %p) source format invalid", 
+         __FUNCTION__, source, destination);
+    }
+
+  if (BABL_IS_BABL (destination))
+    {
+      destination_format = destination;
+    }
+
+  if (!destination_format)
+    {
+      destination_format = babl_format ((char*)destination);
+    }
+
+  if (!destination_format)
+    {
+      babl_log ("%s(%p, %p) destination format invalid",
+         __FUNCTION__, source, destination);
+    }
+  
+  return babl_fish_reference_new (source_format, destination_format);
 }
 
 void *fooA;
@@ -221,11 +260,14 @@ void *fooC;
 
 #define BABL_MAX_BANDS   32
 
+/* should perhaps have been babl_fish_process, but the public api
+ * is shorther and makes sense for the API
+ */
 int
-babl_fish_process (Babl *babl,
-                   void *source,
-                   void *destination,
-                   int   n)
+babl_process (Babl *babl,
+              void *source,
+              void *destination,
+              int   n)
 {
   Babl *imageA;
   Babl *imageB;
@@ -253,11 +295,11 @@ babl_fish_process (Babl *babl,
  
   babl_conversion_process (babl->reference_fish.type_to_double,
                            source, fooA,
-                           n * BABL(babl->fish.source)->pixel_format.bands);
+                           n * BABL(babl->fish.source)->format.bands);
 
   /* calculate planar representation of fooA, and fooB */
 
-  imageA = babl_image_new_from_linear (fooA, BABL(BABL((babl->fish.source)) -> pixel_format.model));
+  imageA = babl_image_new_from_linear (fooA, BABL(BABL((babl->fish.source)) -> format.model));
   imageB = babl_image_new_from_linear (fooB, babl_model_id (BABL_RGBA));
   /* transform fooA into fooB fooB is rgba double */
 
@@ -274,7 +316,7 @@ babl_fish_process (Babl *babl,
   imageB = babl_image_new_from_linear (
               fooB, babl_model_id (BABL_RGBA));
   imageC = babl_image_new_from_linear (
-              fooA, BABL(BABL((babl->fish.destination))->pixel_format.model));
+              fooA, BABL(BABL((babl->fish.destination))->format.model));
 
   babl_conversion_process (babl->reference_fish.rgba_to_model,
                            imageB, imageC,
@@ -283,7 +325,7 @@ babl_fish_process (Babl *babl,
   /* working directly on linear buffers */
   babl_conversion_process (babl->reference_fish.double_to_type,
                            fooA, destination,
-                           n * BABL(babl->fish.destination)->pixel_format.bands);
+                           n * BABL(babl->fish.destination)->format.bands);
 
   babl_free (imageB);
   babl_free (imageC);

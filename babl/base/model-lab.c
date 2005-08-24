@@ -25,7 +25,7 @@
 static void components    (void);
 static void models        (void);
 static void conversions   (void);
-static void pixel_formats (void);
+static void formats       (void);
 
 void
 babl_base_model_lab (void)
@@ -34,7 +34,7 @@ babl_base_model_lab (void)
   components    ();
   models        ();
   conversions   ();
-  pixel_formats ();
+  formats       ();
 }
 
 static void
@@ -42,19 +42,18 @@ components (void)
 {
   babl_component_new (
    "CIE L",
-   "id",    BABL_LAB_L,
-   "luma",
+   "id",    BABL_CIE_L,
    NULL);
 
   babl_component_new (
    "CIE a",
-   "id",    BABL_LAB_A,
+   "id",    BABL_CIE_A,
    "chroma",
    NULL);
 
   babl_component_new (
    "CIE b",
-   "id",    BABL_LAB_B,
+   "id",    BABL_CIE_B,
    "chroma",
    NULL);
 }
@@ -64,18 +63,18 @@ models (void)
 {
   babl_model_new (
     "CIE Lab",
-    "id", BABL_LAB,
-    babl_component_id (BABL_LAB_L),
-    babl_component_id (BABL_LAB_A),
-    babl_component_id (BABL_LAB_B),
+    "id", BABL_CIE_LAB,
+    babl_component_id (BABL_CIE_L),
+    babl_component_id (BABL_CIE_A),
+    babl_component_id (BABL_CIE_B),
     NULL);
 
   babl_model_new (
     "CIE Lab alpha",
-    "id", BABL_LAB_ALPHA,
-    babl_component_id (BABL_LAB_L),
-    babl_component_id (BABL_LAB_A),
-    babl_component_id (BABL_LAB_B),
+    "id", BABL_CIE_LAB_ALPHA,
+    babl_component_id (BABL_CIE_L),
+    babl_component_id (BABL_CIE_A),
+    babl_component_id (BABL_CIE_B),
     babl_component_id (BABL_ALPHA),
     NULL);
 }
@@ -148,43 +147,43 @@ static void
 conversions (void)
 {
   babl_conversion_new (
-    "babl-base: rgba to lab",
+    "babl-base: rgba to cie-lab",
     "source",      babl_model_id (BABL_RGBA),
-    "destination", babl_model_id (BABL_LAB),
+    "destination", babl_model_id (BABL_CIE_LAB),
     "planar",      rgb_to_lab,
     NULL
   );
   babl_conversion_new (
-    "babl-base: lab to rgba",
-    "source",      babl_model_id (BABL_LAB),
+    "babl-base: cie-lab to rgba",
+    "source",      babl_model_id (BABL_CIE_LAB),
     "destination", babl_model_id (BABL_RGBA),
     "planar",      lab_to_rgb,
     NULL
   );
   babl_conversion_new (
-    "babl-base: rgb to lab",
+    "babl-base: rgb to cie-lab",
     "source",      babl_model_id (BABL_RGB),
-    "destination", babl_model_id (BABL_LAB),
+    "destination", babl_model_id (BABL_CIE_LAB),
     "planar",      rgb_to_lab,
     NULL
   );
   babl_conversion_new (
-    "babl-base: lab to rgb",
-    "source",      babl_model_id (BABL_LAB),
+    "babl-base: cie-lab to rgb",
+    "source",      babl_model_id (BABL_CIE_LAB),
     "destination", babl_model_id (BABL_RGB),
     "planar",      lab_to_rgb,
     NULL
   );
   babl_conversion_new (
-    "babl-base: rgba to laba",
+    "babl-base: rgba to cie-lab-float",
     "source",      babl_model_id (BABL_RGBA),
-    "destination", babl_model_id (BABL_LAB_ALPHA),
+    "destination", babl_model_id (BABL_CIE_LAB_ALPHA),
     "planar",      rgb_to_lab,
     NULL
   );
   babl_conversion_new (
-    "babl-base: laba to rgba",
-    "source",      babl_model_id (BABL_LAB_ALPHA),
+    "babl-base: cie-lab-float to rgba",
+    "source",      babl_model_id (BABL_CIE_LAB_ALPHA),
     "destination", babl_model_id (BABL_RGBA),
     "planar",      lab_to_rgb,
     NULL
@@ -192,15 +191,39 @@ conversions (void)
 }
 
 static void
-pixel_formats (void)
+formats (void)
 {
-  babl_pixel_format_new (
-    "lab-float",
+  babl_format_new (
+    "cie-lab-float",
     "id", BABL_LAB_FLOAT,
-    babl_model_id     (BABL_LAB),
+    babl_model_id     (BABL_CIE_LAB),
     babl_type_id      (BABL_FLOAT),
-    babl_component_id (BABL_LAB_L), 
-    babl_component_id (BABL_LAB_A), 
-    babl_component_id (BABL_LAB_B),
+    babl_component_id (BABL_CIE_L), 
+    babl_component_id (BABL_CIE_A), 
+    babl_component_id (BABL_CIE_B),
+    NULL);
+
+  babl_format_new (
+    "cie-lab-u8",
+    "id", BABL_LAB_U8,
+    babl_model_id     (BABL_CIE_LAB),
+    babl_type_id      (BABL_U8_CIE_L),
+    babl_component_id (BABL_CIE_L),
+    babl_type_id      (BABL_U8_CIE_AB),
+    babl_component_id (BABL_CIE_A), 
+    babl_type_id      (BABL_U8_CIE_AB),
+    babl_component_id (BABL_CIE_B),
+    NULL);
+
+  babl_format_new (
+    "cie-lab-u16",
+    "id", BABL_LAB_U16,
+    babl_model_id     (BABL_CIE_LAB),
+    babl_type_id      (BABL_U16_CIE_L),
+    babl_component_id (BABL_CIE_L),
+    babl_type_id      (BABL_U16_CIE_AB),
+    babl_component_id (BABL_CIE_A), 
+    babl_type_id      (BABL_U16_CIE_AB),
+    babl_component_id (BABL_CIE_B),
     NULL);
 }

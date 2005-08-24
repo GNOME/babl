@@ -17,10 +17,10 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef _BABL_PIXEL_FORMAT_H
-#define _BABL_PIXEL_FORMAT_H
+#ifndef _BABL_FORMAT_H
+#define _BABL_FORMAT_H
 
 #include "babl-classes.h"
-BABL_DEFINE_CLASS (babl_pixel_format)
+BABL_DEFINE_CLASS (babl_format)
 
 #endif

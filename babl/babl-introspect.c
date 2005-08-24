@@ -23,7 +23,7 @@
 static void sampling_introspect     (Babl *babl);
 static void model_introspect        (Babl *babl);
 static void type_introspect         (Babl *babl);
-static void pixel_format_introspect (Babl *babl);
+static void format_introspect       (Babl *babl);
 static int  each_introspect         (Babl *babl,
                                      void *user_data);
 
@@ -47,7 +47,7 @@ babl_introspect (void)
   babl_model_each        (each_introspect, NULL);
   babl_log ("%s","");
   babl_log ("Pixel formats:%s", "");
-  babl_pixel_format_each (each_introspect, NULL);
+  babl_format_each (each_introspect, NULL);
   babl_log ("%s","");
   babl_log ("conversions:%s", "");
   babl_conversion_each   (each_introspect, NULL);
@@ -135,18 +135,18 @@ sampling_introspect (Babl *babl)
 
 
 static void
-pixel_format_introspect (Babl *babl)
+format_introspect (Babl *babl)
 {
   int i;
-  babl_log ("\t\tplanar=%i", babl->pixel_format.planar);
-  babl_log ("\t\tbands=%i",  babl->pixel_format.bands);
+  babl_log ("\t\tplanar=%i", babl->format.planar);
+  babl_log ("\t\tbands=%i",  babl->format.bands);
 
-  for (i=0; i< babl->pixel_format.bands; i++)
+  for (i=0; i< babl->format.bands; i++)
     {
       babl_log ("\t\tband[%i] type='%s' component='%s' sampling='%s'",
-                i,   babl->pixel_format.type[i]->instance.name,
-                     babl->pixel_format.component[i]->instance.name,
-                     babl->pixel_format.sampling[i]->instance.name);
+                i,   babl->format.type[i]->instance.name,
+                     babl->format.component[i]->instance.name,
+                     babl->format.sampling[i]->instance.name);
     }
 }
 
@@ -171,8 +171,8 @@ each_introspect (Babl *babl,
         model_introspect (babl);
         item_conversions_introspect (babl);
         break;
-      case BABL_PIXEL_FORMAT:
-        pixel_format_introspect (babl);
+      case BABL_FORMAT:
+        format_introspect (babl);
         item_conversions_introspect (babl);
         break;
       case BABL_SAMPLING:

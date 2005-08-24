@@ -1,5 +1,52 @@
 2005-08-24  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-classes.c,
+	* babl/babl-classes.h,
+	* babl/babl-component.c,
+	* babl/babl-conversion.c,
+	* babl/babl-db.h,
+	* babl/babl-fish.c,
+	* babl/babl-fish.h,
+	* babl/babl-image.c,
+	* babl/babl-image.h,
+	* babl/babl-internal.h,
+	* babl/babl-introspect.c,
+	* babl/babl-model.c,
+	* babl/babl-model.h,
+	* babl/babl-pixel-format.c,
+	* babl/babl-pixel-format.h,
+	* babl/babl-sanity.c,
+	* babl/babl-sanity.h,
+	* babl/babl-type.c,
+	* babl/babl.c,
+	* babl/babl.h,
+	* babl/base/model-cmyk.c,
+	* babl/base/model-gray.c,
+	* babl/base/model-lab.c,
+	* babl/base/model-rgb.c,
+	* babl/base/model-ycbcr.c,
+	* tests/Makefile.am,
+	* tests/babl-html-dump.c,
+	* tests/babl_class_name.c,
+	* tests/float_to_u8.c,
+	* tests/grayscale_to_rgb.c,
+	* tests/rgb_to_lab_to_rgb.c,
+	* tests/rgb_to_ycbcr.c,
+	* tests/rgb_to_ycbcr_to_rgb.c,
+	* tests/u8_to_float.c: s/PixelFormat/Format/ (etc in other cases),
+	Made BablFish be more polymorphic (accept
+	format names as well as BablFormats).
+	* babl/babl-ids.h: reorganized, some renames. 
+
+	* tests/srgb_to_lab_u8.c: new test for 8bit CIE Lab format (reference
+	data not correct yet).
+
+	* babl/base/type-u16.c,
+	* babl/base/type-u8.c: Added CIE fixed point data types.
+
+
+2005-08-24  Øyvind Kolås  <pippin@gimp.org>
+
 	* docs/babl.css: Added code highlighting classes.
 
 2005-08-24  Øyvind Kolås  <pippin@gimp.org>

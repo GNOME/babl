@@ -20,6 +20,6 @@
 #ifndef _BABL_SANITY_H
 #define _BABL_SANITY_H
 
-void babl_sanity (void);
+int babl_sanity (void);
 
 #endif
