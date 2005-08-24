@@ -1,3 +1,8 @@
+2005-08-24  Øyvind Kolås  <pippin@gimp.org>
+
+	* NEWS: remove draft for news release, at initial release everything
+	will be new.
+
 2005-08-23  Øyvind Kolås  <pippin@gimp.org>
 
 	* docs/Makefile.am: use `tempfile` to create name of temporary file

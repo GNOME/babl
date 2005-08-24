@@ -6,15 +6,10 @@ the news section both in the README and the webpage.
                                                                           -->
 xxxx-xx-xx babl-0.0.2 <em>Green fish release</em>                   </dt><dd>
 
-<p><b>DRAFT</b></p>
-<ul>
-   <li>Complete RGB and Grayscale models, with 2.2 gamma correction, alpha,
-       and premultiplied alpha.
-   </li>
-   <li>Model and component names in compact normalized form.</li>
-   <li>The babl mascot surfaces.</li>
-   <li>Website integrated into build process.</li>
-</ul>
+<p><em>DRAFT</em>
+
+Initial release.
+</p>
 
                                                                     </dd><dt>
 2005-08-xx babl-0.0.1                                               </dt><dd>
