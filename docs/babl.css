@@ -101,6 +101,18 @@
         overflow: hidden;
         border-top: 1px solid #ccc;
       }
+      span.string {
+        color: #060;
+      }
+      span.function {
+        color: #006;
+      }
+      span.paren {
+        color: #555;
+      }
+      span.NULL {
+        color: #555;
+      }
       pre.authors {
         font-size: 100%;
         font-family: FreeSans, Verdana, sans-serif;

@@ -1,5 +1,9 @@
 2005-08-24  Øyvind Kolås  <pippin@gimp.org>
 
+	* docs/babl.css: Added code highlighting classes.
+
+2005-08-24  Øyvind Kolås  <pippin@gimp.org>
+
 	* NEWS: remove draft for news release, at initial release everything
 	will be new.
 
