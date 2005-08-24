@@ -1,5 +1,11 @@
 2005-08-23  Øyvind Kolås  <pippin@gimp.org>
 
+	* docs/Makefile.am: use `tempfile` to create name of temporary file
+	* docs/tools/xml_insert.sh: use `tempfile` to create name of temporary
+	file.
+
+2005-08-23  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-classes.c,
 	* babl/babl-classes.h,
 	* babl/babl-conversion.c,

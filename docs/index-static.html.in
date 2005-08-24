@@ -38,7 +38,7 @@
         <li><a href='#Dependencies-Core'>&nbsp;&nbsp;Core</a></li>
         <li><a href='#Dependencies-Extensions'>&nbsp;&nbsp;Extensions</a></li>
         <li><a href='#Source'>Source</a></li>
-        <li><a href='#Basic-usage'>Basic Usage</a></li>
+        <li><a href='#Usage'>Usage</a></li>
         <li><a href='#Extending'>Extending</a></li>
         <li><a href='#TODO'>TODO</a></li>
         <li><a href='#TODO-Core'>&nbsp;&nbsp;Core</a></li>
@@ -68,15 +68,24 @@
 
         <h3>Core</h3>
         <ul>
-          <li>Small polymorphic API requiring minimal manual memory management
-          to specify and convert between <em>linear</em> and <em>planar</em>
-          buffers as provided for by registered data types and color
-          models.</li>
-          <li>Thread safety for processing.</li>
-          <li>Horizontal an vertical subsampling (for implementing 4:2:2 4:2:0
-          4:1:1 etc. chroma subsampling)</li>
-          <li>Accurate (hopefully) reference data types and color models implemented using
-          64bit floating point.
+          <li class='frozen'>Small API for simple use cases</li>
+          <li class='stable'>Specification of new formats</li>
+          <li class='stable'>Planar and linear buffers</li>
+          <li class='stable'>Thread safety for processing.</li>
+
+          <li class='unstable'>Extension and introspection of formats,
+          color models, components and datatypes</li>
+          <li class='unstable'>Horizontal an vertical subsampling (for
+          implementing 4:2:2 4:2:0 4:1:1 etc. chroma subsampling)</li>
+          <li class='unstable'>Reference 64bit floating point conversions for data types and color models.
+          
+          <p><em>Note:</em> This portion of babl has still not received rigorous
+          testing, the main development of babl is still focused on internal
+          infrastructure work. As the development of babl allows, initial tests
+          and usage of babl is welcome; as it would help kill of random
+          mystypes in constants and such earlier, and make it a more valid
+          actual regression suite.
+          </p>
 <!--BablBase-->
           </li>
         </ul>
@@ -86,7 +95,7 @@
         At compile, load and runtime; babl is extendable with:
         </p>
         <ul>
-          <li>data types.</li>
+          <li>data  types.</li>
           <li>color models.</li>
           <li>pixel formats.</li>
           <li>optimized conversion functions:
@@ -135,46 +144,56 @@
         </div>
         -->
 
-        <a name='Basic-usage'></a>
-        <h2>Basic usage</h2>
+        <a name='Usage'></a>
+        <h2>Usage</h2>
 
         <p>The simplest scenario for using babl is converting between linear
         buffers represented by an existing BablPixelFormat.
         </p>
-        <pre>
-#include &lt;babl.h&gt;
+        <pre
+><span class='function'>babl_process</span> <span class='paren'>(</span><span class='function'>babl_fish</span> <span class='paren'>(</span><span class='string'>"srgb"</span>, <span class='string'>"lab-float"</span><span class='paren'>)</span>,
+              srgb_buffer, lab_buffer,
+              pixel_count<span class='paren'>);</span></pre>
+        
+        <p>If the existing pixel formats are not sufficient for your conversion
+        needs, new ones can be created and named on the fly. The constructor
+        will provide the prior created one if duplicates are registered. </p>
+        <pre
+><span class='function'>babl_format_new</span> <span class='paren'>(</span><span class='string'>"bgr-u8"</span>,
+                 <span class='function'>babl_model</span> <span class='paren'>(</span><span class='string'>"rgb"</span><span class='paren'>)</span>,
+                 <span class='function'>babl_type</span> <span class='paren'>(</span><span class='string'>"u8"</span><span class='paren'>)</span>,
+                 <span class='function'>babl_component</span> <span class='paren'>(</span><span class='string'>"B"</span><span class='paren'>)</span>,
+                 <span class='function'>babl_component</span> <span class='paren'>(</span><span class='string'>"G"</span><span class='paren'>)</span>,
+                 <span class='function'>babl_component</span> <span class='paren'>(</span><span class='string'>"R"</span><span class='paren'>)</span>,
+                 <span class='NULL'>NULL</span><span class='paren'>);</span></pre>
 
-unsigned char srgb_buf[WIDTH*HEIGHT*3];
-float         lab_buf[WIDTH*HEIGHT*3];
-...
+        <p>Instead of a linear buffer you can an image descriptor which desribes the start of the memory segment, the pitch in bytes between samples, and the rowstride (optionally 0 for unlimited).
+        </p>
+        <pre
+><span class='function'>babl_process</span> <span class='paren'>(</span><span class='function'>babl_fish</span> <span class='paren'>(</span><span class='string'>"srgb"</span>, <span class='string'>"y'cbcr420p"</span><span class='paren'>)</span>,
+              srgb_buffer,
+              <span class='function'>babl_image</span> <span class='paren'>(</span><span class='function'><span class='string'>"Y'"</span>, luma_buffer, 1, 0,
+                          <span class='string'>"Cb"</span>, cb_buffer,   1, 0,
+                          <span class='string'>"Cr"</span>, cr_buffer,   1, 0,
+                          <span class='NULL'>NULL</span><span class='paren'>);</span>
+</pre>
 
-babl_init (); /* initialize babl library */
-
-...
-
-Babl *babl_fish = babl_fish (babl_pixel_format ("srgb"),
-                             babl_pixel_format ("lab-float"));
-
-babl_fish_process (fish, srgb_buf, lab_buf, WIDTH * HEIGHT);
-
-...
-
-babl_destroy (); /* deinitialize babl library */
-        </pre>
         <p>For more code samples look in the tests directory.</p>
         
         <a name='Extending'></a>
         <h2>Extending</h2>
         
         <p>For samples of how the current internal api of specification of
-           data types, color models, pixel formats and their conversions look
-           in the babl/base/ directory. The tables in this HTML file is directly generated
-           based on the data registered by BablBase.
+        data types, color models, and conversions look in the babl/base/
+        directory. The tables in this HTML file is directly generated
+        based on the data registered by BablBase. The API's used are very
+        similar in style to the API's described under the <a href='#Usage'>Usage section</a>.
         </p>
 
-        <p>For now, the only way to extend babl is from the application using the library,
-           by structuring your code in a similar fashion to BablBase it should be easier
-           to later turn it into a loadable module.
+        <p>For now, the only way to extend babl is from the application
+        using the library, by structuring your code in a similar fashion
+        to BablBase it should be easier to later turn it into a loadable
+        module.
         </p>
         
         <a name='TODO'></a>
@@ -210,7 +229,7 @@ babl_destroy (); /* deinitialize babl library */
           </pre>
           NB: the modules will be loaded from the directories pointed to by
           the path in reverse order, this should allow the user to override
-          system wide installed types, models and pixel formats.
+          system wide definitions for types, models and formats.
           </li>
         </ul>
 

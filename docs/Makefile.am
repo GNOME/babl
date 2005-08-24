@@ -27,8 +27,11 @@ all: $(HTML_FILES)
 
 index.html: index-static.html $(top_builddir)/tests/babl_html_dump ../AUTHORS ../NEWS
 	cp $< $@ 
-	$(top_builddir)/tests/babl_html_dump > /tmp/BablBase.html
-	$(top_srcdir)/docs/tools/xml_insert.sh $@ BablBase /tmp/BablBase.html
+	(TMPFILE=`tempfile`;\
+	$(top_builddir)/tests/babl_html_dump > $$TMPFILE;\
+	$(top_srcdir)/docs/tools/xml_insert.sh $@ BablBase $$TMPFILE;\
+	rm -f $$TMPFILE )
+
 	$(top_srcdir)/docs/tools/xml_insert.sh $@ AUTHORS $(top_srcdir)/AUTHORS
 	$(top_srcdir)/docs/tools/xml_insert.sh $@ NEWS $(top_srcdir)/NEWS
 	

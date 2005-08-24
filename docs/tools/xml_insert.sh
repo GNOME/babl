@@ -11,7 +11,7 @@
 #
 # FIXME: add argument checking / error handling
 
-TMP_FILE=index-tmp.html
+TMP_FILE=`tempfile`
 
 cp $1 $TMP_FILE
 
