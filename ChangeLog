@@ -1,5 +1,10 @@
 2005-08-24  Øyvind Kolås  <pippin@gimp.org>
 
+	* tests/sanity.c: Added a test that fails if the internal sanity
+	checks are failing.
+
+2005-08-24  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-classes.c,
 	* babl/babl-classes.h,
 	* babl/babl-component.c,
