@@ -173,8 +173,8 @@
 ><span class='function'>babl_process</span> <span class='paren'>(</span><span class='function'>babl_fish</span> <span class='paren'>(</span><span class='string'>"srgb"</span>, <span class='string'>"y'cbcr420p"</span><span class='paren'>)</span>,
               srgb_buffer,
               <span class='function'>babl_image</span> <span class='paren'>(</span><span class='function'><span class='string'>"Y'"</span>, luma_buffer, 1, 0,
-                          <span class='string'>"Cb"</span>, cb_buffer,   1, 0,
-                          <span class='string'>"Cr"</span>, cr_buffer,   1, 0,
+                          <span class='string'>"Cb"</span>, cb_buffer,  1, 0,
+                          <span class='string'>"Cr"</span>, cr_buffer,  1, 0,
                           <span class='NULL'>NULL</span><span class='paren'>);</span>
 </pre>
 

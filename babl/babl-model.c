@@ -33,9 +33,6 @@ each_babl_model_destroy (Babl *babl,
   return 0;  /* continue iterating */
 }
 
-
-#define BABL_MAX_COMPONENTS 32
-
 static Babl *
 model_new (const char     *name,
            int             id,
@@ -43,25 +40,21 @@ model_new (const char     *name,
            BablComponent **component)
 {
   Babl *babl;
-  int   i; 
 
-  babl                   = babl_calloc (sizeof (BablModel) +
-                                        sizeof (BablComponent*) * (components+1) +
-                                        strlen (name) + 1, 1);
+  babl                   = babl_malloc (sizeof (BablModel) +
+                                        sizeof (BablComponent*) * (components) +
+                                        strlen (name) + 1);
   babl->model.component = ((void*)babl) + sizeof (BablModel);
-  babl->instance.name   = ((void*)babl->model.component) + sizeof (BablComponent*) * (components + 1);
+  babl->instance.name   = ((void*)babl->model.component) + sizeof (BablComponent*) * (components);
   
   babl->class_type       = BABL_MODEL;
   babl->instance.id      = id;
   babl->model.components = components;
   strcpy (babl->instance.name, name);
+  memcpy (babl->model.component, component, sizeof (BablComponent*)*components);
 
-  for (i=0; i < components; i++)
-    {
-      babl->model.component[i] = component[i];
-    }
-  babl->model.component[i] = NULL;
-
+  babl->model.from         = NULL;
+  babl->model.to           = NULL;
   return babl;
 }
 
@@ -73,7 +66,7 @@ babl_model_new (const char *name,
   Babl          *babl;
   int            id     = 0;
   int            components  = 0;
-  BablComponent *band_component [BABL_MAX_COMPONENTS];
+  BablComponent *component [BABL_MAX_COMPONENTS];
   const char    *arg=name;
 
   va_start (varg, name);
@@ -93,7 +86,7 @@ babl_model_new (const char *name,
           switch (babl->class_type)
             {
               case BABL_COMPONENT:
-                band_component [components] = (BablComponent*) babl;
+                component [components] = (BablComponent*) babl;
                 components++;
 
                 if (components>=BABL_MAX_COMPONENTS)
@@ -143,7 +136,7 @@ babl_model_new (const char *name,
     
   va_end   (varg);
 
-  babl = model_new (name, id, components, band_component);
+  babl = model_new (name, id, components, component);
   
   if (db_insert (babl) == babl)
     {

@@ -24,62 +24,68 @@
 #include "babl-internal.h"
 #include "babl-image.h"
 #include "babl-type.h"
+#include "babl-sampling.h"
 #include "babl-component.h"
 
-#define BABL_MAX_BANDS 32
 
 static Babl *
-image_new (int             bands,
+image_new (BablFormat     *format,
+           BablModel      *model,
+           int             bands,
            BablComponent **component,
+           BablSampling  **sampling,
+           BablType      **type,
            void          **data,
            int            *pitch,
            int            *stride)
 {
   Babl *babl;
-  int   band;
 
   /* allocate all memory in one chunk */
-  babl  = babl_calloc (sizeof (BablImage) +
-                       sizeof (BablComponent*) * (bands+1) +
-                       sizeof (void*)          * (bands+1) +
-                       sizeof (int)            * (bands+1) +
-                       sizeof (int)            * (bands+1),1);
+  babl  = babl_malloc (sizeof (BablImage) +
+                       sizeof (BablComponent*) * (bands) +
+                       sizeof (BablSampling*)  * (bands) +
+                       sizeof (BablType*)      * (bands) +
+                       sizeof (void*)          * (bands) +
+                       sizeof (int)            * (bands) +
+                       sizeof (int)            * (bands));
   babl->image.component     = ((void *)babl)                  + sizeof (BablImage);
-  babl->image.data          = ((void *)babl->image.component) + sizeof (BablComponent*) * (bands+1);
-  babl->image.pitch         = ((void *)babl->image.data)      + sizeof (void*)          * (bands+1);
-  babl->image.stride        = ((void *)babl->image.pitch)     + sizeof (int)            * (bands+1);
+  babl->image.sampling      = ((void *)babl->image.component) + sizeof (BablComponent*) * (bands);
+  babl->image.type          = ((void *)babl->image.sampling)  + sizeof (BablSampling*)  * (bands);
+  babl->image.data          = ((void *)babl->image.type)      + sizeof (BablType*)      * (bands);
+  babl->image.pitch         = ((void *)babl->image.data)      + sizeof (void*)          * (bands);
+  babl->image.stride        = ((void *)babl->image.pitch)     + sizeof (int)            * (bands);
 
   babl->class_type    = BABL_IMAGE;
   babl->instance.id   = 0;
-  babl->instance.name = "babl image";
+  babl->instance.name = "slaritbartfast";
 
+  babl->image.format        = format;
+  babl->image.model         = model;
   babl->image.bands         = bands;
-
-  for (band=0; band < bands; band++)
-    {
-      babl->image.component[band] = component[band];
-      babl->image.data[band]      = data[band];
-      babl->image.pitch[band]     = pitch[band];
-      babl->image.stride[band]    = stride[band];
-    }
-  babl->image.component[band] = NULL;
-  babl->image.data[band]      = NULL;
-  babl->image.pitch[band]     = 0;
-  babl->image.stride[band]    = 0;
+  memcpy (babl->image.component, component, bands * sizeof(void*));
+  memcpy (babl->image.type,      type,      bands * sizeof(void*));
+  memcpy (babl->image.data,      data,      bands * sizeof(void*));
+  memcpy (babl->image.pitch,     pitch,     bands * sizeof(int));
+  memcpy (babl->image.stride,    stride,    bands * sizeof(int));
 
   return babl;
 }
 
 Babl *
-babl_image_new_from_linear (void  *buffer,
+babl_image_from_linear (void  *buffer,
                             Babl  *format)
 {
   Babl          *babl;
-  int            band;
-  BablComponent *component [BABL_MAX_BANDS];
-  void          *data      [BABL_MAX_BANDS];
-  int            pitch     [BABL_MAX_BANDS];
-  int            stride    [BABL_MAX_BANDS];
+  BablModel     *model;
+  int            components;
+  int            i;
+  BablComponent *component [BABL_MAX_COMPONENTS];
+  BablSampling  *sampling  [BABL_MAX_COMPONENTS];
+  BablType      *type      [BABL_MAX_COMPONENTS];
+  void          *data      [BABL_MAX_COMPONENTS];
+  int            pitch     [BABL_MAX_COMPONENTS];
+  int            stride    [BABL_MAX_COMPONENTS];
 
   int            offset=0;
   int            calc_pitch=0;
@@ -91,59 +97,70 @@ babl_image_new_from_linear (void  *buffer,
   switch (format->class_type)
     {
       case BABL_FORMAT:
-        for (band=0; band < format->format.bands; band++)
+        model = (BablModel*) format->format.model;
+        components = format->format.components;
+
+        memcpy(component, format->format.component, sizeof (Babl*) * components);
+        memcpy(sampling,  format->format.sampling,  sizeof (Babl*) * components);
+        memcpy(type    ,  format->format.type,      sizeof (Babl*) * components);
+
+        for (i=0; i < components; i++)
           {
-            BablType *type = format->format.type[band];
-            calc_pitch += (type->bits / 8);
+            calc_pitch += (type[i]->bits / 8);
           }
-
-        for (band=0; band < format->format.bands; band++)
+        for (i=0; i < components; i++)
           {
-            BablType *type = format->format.type[band];
-
-            component[band] = format->format.component[band];
-            data[band]      = buffer + offset;
-            pitch[band]     = calc_pitch;
-            stride[band]    = 0;
-            
-            offset += (type->bits / 8);
+            pitch[i]   = calc_pitch;
+            stride[i]  = 0;
+            data[i]    = buffer + offset;
+            offset       += (type[i]->bits / 8);
           }
         break;
       case BABL_MODEL:
-        for (band=0; band < format->model.components; band++)
+        model = (BablModel*) format;
+        components = format->format.components;
+        for (i=0; i < components; i++)
           {
-            calc_pitch += (64 / 8);
+            calc_pitch += (64 / 8);   /*< known to be double when we create from model */
           }
-
-        for (band=0; band < format->model.components; band++)
+        memcpy(component, model->component, sizeof (Babl*) * components);
+        for (i=0; i < components; i++)
           {
-            component[band] = format->model.component[band];
-            data[band]      = buffer + offset;
-            pitch[band]     = calc_pitch;
-            stride[band]    = 0;
-            
-            offset += (64 / 8);
+            sampling[i]  = (BablSampling*)babl_sampling (1,1);
+            type[i]      = (BablType*)babl_type_id (BABL_DOUBLE);
+            pitch[i]     = calc_pitch;
+            stride[i]    = 0;
+            data[i]      = buffer + offset;
+            offset         += (type[i]->bits / 8);
           }
         break;
       default:
+        babl_log ("%s(): Eeeek!", __FUNCTION__);
         break;
     }
 
-  babl = image_new (format->model.components, component, data, pitch, stride);
+  babl = image_new (
+         (BablFormat*)format,
+        model, components,
+        component, sampling, type, data, pitch, stride);
   return babl;
 }
 
 Babl *
-babl_image_new (void *first,
-                ...)
+babl_image (void *first,
+            ...)
 {
   va_list        varg;
   Babl          *babl;
-  int            bands     = 0;
-  BablComponent *component [BABL_MAX_BANDS];
-  void          *data      [BABL_MAX_BANDS];
-  int            pitch     [BABL_MAX_BANDS];
-  int            stride    [BABL_MAX_BANDS];
+  int            components     = 0;
+  BablFormat    *format    = NULL;
+  BablModel     *model     = NULL;
+  BablComponent *component [BABL_MAX_COMPONENTS];
+  BablSampling  *sampling  [BABL_MAX_COMPONENTS];
+  BablType      *type      [BABL_MAX_COMPONENTS];
+  void          *data      [BABL_MAX_COMPONENTS];
+  int            pitch     [BABL_MAX_COMPONENTS];
+  int            stride    [BABL_MAX_COMPONENTS];
 
   const char      *arg = first;
 
@@ -176,16 +193,18 @@ babl_image_new (void *first,
         }
 
       /* FIXME: add error checking */
-      component [bands] = new_component;
-      data      [bands] = va_arg (varg, void*);
-      pitch     [bands] = va_arg (varg, int);
-      stride    [bands] = va_arg (varg, int);
-      bands++;
+      component [components] = new_component;
+      sampling  [components] = NULL;
+      type      [components] = NULL;
+      data      [components] = va_arg (varg, void*);
+      pitch     [components] = va_arg (varg, int);
+      stride    [components] = va_arg (varg, int);
+      components++;
                 
-      if (bands>=BABL_MAX_BANDS)
+      if (components>=BABL_MAX_COMPONENTS)
         {
-          babl_log ("%s(): maximum number of bands (%i) exceeded",
-                    __FUNCTION__, BABL_MAX_BANDS);
+          babl_log ("%s(): maximum number of components (%i) exceeded",
+                    __FUNCTION__, BABL_MAX_COMPONENTS);
         }
 
       arg = va_arg (varg, char *);
@@ -194,8 +213,7 @@ babl_image_new (void *first,
   va_end   (varg);
 
 
-  babl = image_new (bands, component, data, pitch, stride);
-
+  babl = image_new (format, model, components, component, sampling, type, data, pitch, stride);
   return babl;
 }
 

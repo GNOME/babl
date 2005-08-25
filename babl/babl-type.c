@@ -46,12 +46,14 @@ type_new (const char  *name,
   assert (bits != 0);
   assert (bits % 8 == 0);
   
-  babl                = babl_calloc (sizeof (BablType) + strlen (name) + 1, 1);
+  babl                = babl_malloc (sizeof (BablType) + strlen (name) + 1);
   babl->instance.name = (void*) babl + sizeof (BablType);
   babl->class_type    = BABL_TYPE;
   babl->instance.id   = id;
   strcpy (babl->instance.name, name);
   babl->type.bits     = bits;
+  babl->type.from     = NULL;
+  babl->type.to       = NULL;
 
   return babl;
 }

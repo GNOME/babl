@@ -23,6 +23,8 @@
 /* Type and Format */
 typedef void (*BablFuncLinear)    (void  *src,
                                    void  *dst,
+                                   int    src_pitch,
+                                   int    dst_pitch,
                                    int    n);
 
 /* TypePlanar, ModelPlanar and FormatPlanar */
@@ -186,6 +188,7 @@ typedef struct
   BablConversion **to;   /*< NULL terminated list of conversions to class   */
   int              components;
   BablComponent  **component;
+  BablType       **type; /*< must be doubles, used here for convenience in code */
 } BablModel;
 
 typedef struct
@@ -193,19 +196,23 @@ typedef struct
   BablInstance     instance;
   BablConversion **from; /*< NULL terminated list of conversions from class */
   BablConversion **to;   /*< NULL terminated list of conversions to class   */
-  int              bands;
-  int              planar;
-  BablModel       *model;
+  int              components;
   BablComponent  **component;
   BablType       **type;
   BablSampling   **sampling;
+  BablModel       *model;
+  int              planar;
 } BablFormat;
 
 typedef struct
 {
   BablInstance    instance;
+  BablFormat     *format;    /*< (if known) */
+  BablModel      *model;     /*< (always known) */
   int             bands;
   BablComponent **component;
+  BablSampling  **sampling;
+  BablType      **type;
   void          **data;
   int            *pitch;
   int            *stride;
@@ -219,8 +226,8 @@ typedef struct
 } BablFish;
 
 
-/* a BablFish which is a reference babl fish relies on the double
- * versions that are required to exist for maximum sanity.
+/* BablFishReference on the double versions of conversions
+ * that are required to exist for maximum sanity.
  *
  * A BablFishReference is not intended to be fast, thus the algorithm
  * encoded can use a multi stage approach, where some of the stages could
@@ -231,16 +238,9 @@ typedef struct
  *
  * One of the contributions that would be welcome are new fish factories.
  */
-
-
 typedef struct
 {
   BablFish         fish;
-
-  BablConversion  *type_to_double;
-  BablConversion  *model_to_rgba;
-  BablConversion  *rgba_to_model;
-  BablConversion  *double_to_type;
 } BablFishReference;
 
 typedef union

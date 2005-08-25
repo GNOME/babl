@@ -25,9 +25,22 @@
 static void
 convert_double_double (void *src,
                        void *dst,
+                       int   src_pitch,
+                       int   dst_pitch,
                        int   n)
 {
-  memcpy (dst, src, n/8);
+  if (src_pitch == 64 &&
+      dst_pitch == 64)
+    {
+      memcpy (dst, src, n/8);
+      return;
+    }
+  while (n--)
+    {
+      (*(double *) dst) = (*(double *) src);
+      dst += dst_pitch;
+      src += src_pitch;
+    }
 }
 
 void

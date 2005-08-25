@@ -25,26 +25,30 @@
 static void
 convert_double_float (void *src,
                       void *dst,
+                      int   src_pitch,
+                      int   dst_pitch,
                       int   n)
 {
   while (n--)
     {
       (*(float *) dst) = (*(double *) src);
-      dst += 4;
-      src += 8;
+      dst += dst_pitch;
+      src += src_pitch;
     }
 }
 
 static void
 convert_float_double (void *src,
                       void *dst,
+                      int   src_pitch,
+                      int   dst_pitch,
                       int   n)
 {
   while (n--)
     {
       (*(double *) dst) = (*(float *) src);
-      dst += 8;
-      src += 4;
+      dst += dst_pitch;
+      src += src_pitch;
     }
 }
 

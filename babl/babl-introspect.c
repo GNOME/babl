@@ -139,9 +139,9 @@ format_introspect (Babl *babl)
 {
   int i;
   babl_log ("\t\tplanar=%i", babl->format.planar);
-  babl_log ("\t\tbands=%i",  babl->format.bands);
+  babl_log ("\t\tcomponents=%i",  babl->format.components);
 
-  for (i=0; i< babl->format.bands; i++)
+  for (i=0; i< babl->format.components; i++)
     {
       babl_log ("\t\tband[%i] type='%s' component='%s' sampling='%s'",
                 i,   babl->format.type[i]->instance.name,

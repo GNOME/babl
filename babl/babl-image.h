@@ -34,7 +34,12 @@ Babl * babl_image_new             (void *first_component,
  * is a virtual pixelformat based on the BablModel using only doubles in the
  * order they are listed in the model.
  */
-Babl * babl_image_new_from_linear (void *buffer,
-                                   Babl *format);
+Babl * babl_image_from_linear (void *buffer,
+                               Babl *format);
+
+/* create a new babl image similar to the provided babl-image, but where all data
+ * is in doubles,.. 
+ */
+Babl * babl_image_double_from_image (Babl *source);
 
 #endif

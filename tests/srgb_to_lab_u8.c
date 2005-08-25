@@ -33,9 +33,9 @@ unsigned char source_buf [PIXELS*3]=
    0.0, 0.0, 255};
 
 unsigned char reference_buf [PIXELS*3]=
-  {  0,   0,   0,
-   127,   0,   0,
-   255, 255, 255,
+  {  0, 128, 128,
+   135, 128, 128,
+   255, 128, 128,
      0,   0,   0,
      0,   0,   0,
      0,   0,   0};
@@ -54,7 +54,7 @@ test (void)
   
   for (i=0; i<PIXELS * 3; i++)
     {
-      if ((destination_buf[i] - reference_buf[i]) > TOLERANCE)
+      if (abs(destination_buf[i] - reference_buf[i]) > TOLERANCE)
         {
           babl_log ("%2i (%2i%%3=%i, %2i/3=%i) is %i should be %i",
                       i, i,i%3,    i,i/3,  destination_buf[i], reference_buf[i]);

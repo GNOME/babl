@@ -152,7 +152,7 @@ db_insert (Babl *babl)
 
 DB_DEF void
 db_each (BablEachFunction  each_fun,
-         void      *user_data)
+         void             *user_data)
 {
   int i;
 

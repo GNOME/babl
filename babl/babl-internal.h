@@ -20,6 +20,8 @@
 #ifndef _BABL_INTERNAL_H
 #define _BABL_INTERNAL_H
 
+#define BABL_MAX_COMPONENTS 32
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

@@ -29,6 +29,8 @@ convert_double_u8_scaled (double        min_val,
                           unsigned char max,
                           void         *src,
                           void         *dst,
+                          int           src_pitch,
+                          int           dst_pitch,
                           int           n)
 {
   while (n--)
@@ -44,8 +46,8 @@ convert_double_u8_scaled (double        min_val,
         u8val = (dval-min_val) / (max_val-min_val) * (max-min) + min;
 
       *(unsigned char *) dst = u8val;
-      dst += 1;
-      src += 8;
+      src += src_pitch;
+      dst += dst_pitch;
     }
 }
 
@@ -56,6 +58,8 @@ convert_u8_double_scaled (double        min_val,
                           unsigned char max,
                           void         *src,
                           void         *dst,
+                          int           src_pitch,
+                          int           dst_pitch,
                           int           n)
 {
   while (n--)
@@ -71,49 +75,41 @@ convert_u8_double_scaled (double        min_val,
         dval  = (u8val-min) / (double)(max-min) * (max_val-min_val) + min_val;
 
       (*(double *) dst) = dval;
-      dst += 8;
-      src += 1;
+
+      dst += dst_pitch;
+      src += src_pitch;
     }
 }
 
+#define MAKE_CONVERSIONS(name, min_val, max_val, min, max)      \
+static void                                                     \
+convert_##name##_double (void *src,                             \
+                         void *dst,                             \
+                         int   src_pitch,                       \
+                         int   dst_pitch,                       \
+                         int   n)                               \
+{                                                               \
+  convert_u8_double_scaled (min_val, max_val, min, max,         \
+                            src, dst, src_pitch, dst_pitch, n); \
+}                                                               \
+static void                                                     \
+convert_double_##name (void *src,                               \
+                       void *dst,                               \
+                       int   src_pitch,                         \
+                       int   dst_pitch,                         \
+                       int   n)                                 \
+{                                                               \
+  convert_double_u8_scaled (min_val, max_val, min, max,         \
+                            src, dst, src_pitch, dst_pitch, n); \
+}
 
-static void convert_u8_double (void *src, void *dst, int n){
-  convert_u8_double_scaled (0.0, 1.0, 0, 255, src, dst, n);
-}
-static void convert_double_u8 (void *src, void *dst, int n){
-  convert_double_u8_scaled (0.0, 1.0, 0, 255, src, dst, n);
-}
-
-static void convert_double_u8_luma (void *src, void *dst, int n){
-  convert_double_u8_scaled (0.0, 1.0, 16, 235, src, dst, n);
-}
-static void convert_u8_luma_double (void *src, void *dst, int n){
-  convert_u8_double_scaled (0.0, 1.0, 16, 235, src, dst, n);
-}
-
-static void convert_double_u8_chroma (void *src, void *dst, int n){
-  convert_double_u8_scaled (-0.5, 0.5, 16, 240, src, dst, n);
-}
-static void convert_u8_chroma_double (void *src, void *dst, int n){
-  convert_u8_double_scaled (-0.5, 0.5, 16, 240, src, dst, n);
-}
+MAKE_CONVERSIONS (u8,        0.0, 1.0, 0x00, 0xff);
+MAKE_CONVERSIONS (u8_luma,   0.0, 1.0, 16, 235);
+MAKE_CONVERSIONS (u8_chroma, 0.0, 1.0, 16, 240);
 
 /* source ICC.1:2004-10 */
-
-static void convert_double_u8_l (void *src, void *dst, int n){
-  convert_double_u8_scaled (0.0, 100.0, 0x00, 0xff, src, dst, n);
-}
-static void convert_u8_l_double (void *src, void *dst, int n){
-  convert_u8_double_scaled (0.0, 100.0, 0x00, 0xff, src, dst, n);
-}
-
-static void convert_double_u8_ab (void *src, void *dst, int n){
-  convert_double_u8_scaled (-128.0, 127.0, 0x00, 0xff, src, dst, n);
-}
-static void convert_u8_ab_double (void *src, void *dst, int n){
-  convert_u8_double_scaled (-128.0, 127.0, 0x00, 0xff, src, dst, n);
-}
-
+MAKE_CONVERSIONS (u8_l,  0.0, 100.0,    0x00, 0xff);
+MAKE_CONVERSIONS (u8_ab, -128.0, 127.0, 0x00, 0xff);
 
 void
 babl_base_type_u8 (void)

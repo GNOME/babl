@@ -26,8 +26,6 @@
 #include "babl-component.h"
 #include "babl-db.h"
 
-#define BABL_MAX_BANDS 32
-
 static int 
 each_babl_format_destroy (Babl *babl,
                                 void *data)
@@ -43,46 +41,42 @@ static Babl *
 format_new (const char     *name,
                   int             id,
                   int             planar,
-                  int             bands,
+                  int             components,
                   BablModel      *model,
                   BablComponent **component,
                   BablSampling  **sampling,
                   BablType      **type)
 {
   Babl *babl;
-  int              band;
 
   /* allocate all memory in one chunk */
-  babl  = babl_calloc (sizeof (BablFormat) +
+  babl  = babl_malloc (sizeof (BablFormat) +
                        strlen (name) + 1 +
-                       sizeof (BablComponent*) * (bands+1) +
-                       sizeof (BablSampling*)  * (bands+1) +
-                       sizeof (BablType*)      * (bands+1) +
-                       sizeof (int)            * (bands+1) +
-                       sizeof (int)            * (bands+1),1);
+                       sizeof (BablComponent*) * (components) +
+                       sizeof (BablSampling*)  * (components) +
+                       sizeof (BablType*)      * (components) +
+                       sizeof (int)            * (components) +
+                       sizeof (int)            * (components));
 
   babl->format.component = ((void *)babl) + sizeof (BablFormat);
-  babl->format.type      = ((void *)babl->format.component) + sizeof (BablComponent*) * (bands+1);
-  babl->format.sampling  = ((void *)babl->format.type)      + sizeof (BablType*) * (bands+1);
-  babl->instance.name          = ((void *)babl->format.sampling)  + sizeof (BablSampling*) * (bands+1);
+  babl->format.type      = ((void *)babl->format.component) + sizeof (BablComponent*) * (components);
+  babl->format.sampling  = ((void *)babl->format.type)      + sizeof (BablType*) * (components);
+  babl->instance.name          = ((void *)babl->format.sampling)  + sizeof (BablSampling*) * (components);
   
   babl->class_type    = BABL_FORMAT;
   babl->instance.id   = id;
+
   strcpy (babl->instance.name, name);
+  babl->format.model      = model;
+  babl->format.components = components;
+  babl->format.planar     = planar;
 
-  babl->format.model  = model;
-  babl->format.bands  = bands;
-  babl->format.planar = planar;
+  memcpy (babl->format.component, component, sizeof (BablComponent*) * components);
+  memcpy (babl->format.type     , type     , sizeof (BablType*)      * components);
+  memcpy (babl->format.sampling , sampling , sizeof (BablSampling*)  * components);
 
-  for (band=0; band < bands; band++)
-    {
-      babl->format.component[band] = component[band];
-      babl->format.type[band] = type[band];
-      babl->format.sampling[band] = sampling[band];
-    }
-  babl->format.component[band] = NULL;
-  babl->format.type[band]      = NULL;
-  babl->format.sampling[band]  = NULL;
+  babl->format.from = NULL;
+  babl->format.to   = NULL;
 
   return babl;
 }
@@ -95,11 +89,11 @@ babl_format_new (const char *name,
   Babl            *babl;
   int              id     = 0;
   int              planar = 0;
-  int              bands  = 0;
+  int              components  = 0;
   BablModel       *model  = NULL;
-  BablComponent   *component [BABL_MAX_BANDS];
-  BablSampling    *sampling  [BABL_MAX_BANDS];
-  BablType        *type      [BABL_MAX_BANDS];
+  BablComponent   *component [BABL_MAX_COMPONENTS];
+  BablSampling    *sampling  [BABL_MAX_COMPONENTS];
+  BablType        *type      [BABL_MAX_COMPONENTS];
 
   BablSampling    *current_sampling = (BablSampling*) babl_sampling (1,1);
   BablType        *current_type     = (BablType*)     babl_type_id (BABL_U8);
@@ -130,15 +124,15 @@ babl_format_new (const char *name,
                     babl_log ("%s(): no model specified before component %s",
                               __FUNCTION__, babl->instance.name);
                   }
-                component [bands] = (BablComponent*) babl;
-                type      [bands] = current_type;
-                sampling  [bands] = current_sampling;
-                bands++;
+                component [components] = (BablComponent*) babl;
+                type      [components] = current_type;
+                sampling  [components] = current_sampling;
+                components++;
 
-                if (bands>=BABL_MAX_BANDS)
+                if (components>=BABL_MAX_COMPONENTS)
                   {
-                    babl_log ("%s(): maximum number of bands (%i) exceeded for %s",
-                              __FUNCTION__, BABL_MAX_BANDS, name);
+                    babl_log ("%s(): maximum number of components (%i) exceeded for %s",
+                              __FUNCTION__, BABL_MAX_COMPONENTS, name);
                   }
                 break;
               case BABL_SAMPLING:
@@ -198,7 +192,7 @@ babl_format_new (const char *name,
 
 
   babl = format_new (name, id,
-                           planar, bands, model,
+                           planar, components, model,
                            component, sampling, type);
 
   

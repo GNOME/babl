@@ -30,6 +30,8 @@ convert_double_u16_scaled (double         min_val,
                            unsigned short max,
                            void          *src,
                            void          *dst,
+                           int            src_pitch,
+                           int            dst_pitch,
                            int            n)
 {
   while (n--)
@@ -45,8 +47,8 @@ convert_double_u16_scaled (double         min_val,
         u16val = (dval-min_val) / (max_val-min_val) * (max-min) + min;
 
       *(unsigned short *) dst = u16val;
-      dst += 2;
-      src += 8;
+      dst += dst_pitch;
+      src += src_pitch;
     }
 }
 
@@ -57,6 +59,8 @@ convert_u16_double_scaled (double         min_val,
                            unsigned short max,
                            void          *src,
                            void          *dst,
+                           int            src_pitch,
+                           int            dst_pitch,
                            int            n)
 {
   while (n--)
@@ -72,65 +76,38 @@ convert_u16_double_scaled (double         min_val,
         dval  = (u16val-min) / (double)(max-min) * (max_val-min_val) + min_val;
 
       (*(double *) dst) = dval;
-      dst += 8;
-      src += 1;
+      dst += dst_pitch;
+      src += src_pitch;
     }
 }
 
-
-
-static void
-convert_double_u16 (void *src,
-                    void *dst,
-                    int   n)
-{
-  while (n--)
-    {
-      double         dval = *(double *) src;
-      unsigned short u16val;
-
-      if (dval < 0)
-        u16val = 0;
-      else if (dval > 1)
-        u16val = 65535;
-      else
-        u16val = dval*65535.0;
-      *(unsigned short *) dst = u16val;
-      dst += 2;
-      src += 8;
-    }
+#define MAKE_CONVERSIONS(name, min_val, max_val, min, max)      \
+static void                                                     \
+convert_##name##_double (void *src,                             \
+                         void *dst,                             \
+                         int   src_pitch,                       \
+                         int   dst_pitch,                       \
+                         int   n)                               \
+{                                                               \
+  convert_u16_double_scaled (min_val, max_val, min, max,        \
+                             src, dst, src_pitch, dst_pitch, n);\
+}                                                               \
+static void                                                     \
+convert_double_##name (void *src,                               \
+                       void *dst,                               \
+                       int   src_pitch,                         \
+                       int   dst_pitch,                         \
+                       int   n)                                 \
+{                                                               \
+  convert_double_u16_scaled (min_val, max_val, min, max,        \
+                             src, dst, src_pitch, dst_pitch, n);\
 }
 
-static void
-convert_u16_double (void *src,
-                    void *dst,
-                    int   n)
-{
-  while (n--)
-    {
-      (*(double *) dst) = (*(unsigned short *) src / 65535.0);
-      dst += 8;
-      src += 2;
-    }
-}
-
+MAKE_CONVERSIONS(u16,0.0,1.0,0,0xffff);
 
 /* source ICC.1:2004-10 */
-
-static void convert_double_u16_l (void *src, void *dst, int n){
-  convert_double_u16_scaled (0.0, 100.0, 0x00, 0xffff, src, dst, n);
-}
-static void convert_u16_l_double (void *src, void *dst, int n){
-  convert_u16_double_scaled (0.0, 100.0, 0x00, 0xffff, src, dst, n);
-}
-
-static void convert_double_u16_ab (void *src, void *dst, int n){
-  convert_double_u16_scaled (-128.0, 127.0, 0x00, 0xffff, src, dst, n);
-}
-static void convert_u16_ab_double (void *src, void *dst, int n){
-  convert_u16_double_scaled (-128.0, 127.0, 0x00, 0xffff, src, dst, n);
-}
-
+MAKE_CONVERSIONS (u16_l,    0.0,  100.0, 0x00, 0xffff);
+MAKE_CONVERSIONS (u16_ab, -128.0, 127.0, 0x00, 0xffff);
 
 void
 babl_base_type_u16 (void)

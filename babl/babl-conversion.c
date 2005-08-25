@@ -51,13 +51,13 @@ conversion_new (const char        *name,
       case BABL_TYPE:
         if (linear)
           {
-            babl = babl_calloc (sizeof (BablConversionType), 1);
+            babl = babl_malloc (sizeof (BablConversionType));
             babl->class_type      = BABL_CONVERSION_TYPE;
             babl->conversion.function.linear = linear;
           }
         else if (planar)
           {
-            babl = babl_calloc (sizeof (BablConversionTypePlanar), 1);
+            babl = babl_malloc (sizeof (BablConversionTypePlanar));
             babl->class_type = BABL_CONVERSION_TYPE_PLANAR;
             babl->conversion.function.planar = planar;
           }
@@ -75,7 +75,7 @@ conversion_new (const char        *name,
           }
         else if (planar)
           {
-            babl = babl_calloc (sizeof (BablConversionModelPlanar), 1);
+            babl = babl_malloc (sizeof (BablConversionModelPlanar));
             babl->class_type = BABL_CONVERSION_MODEL_PLANAR;
             babl->conversion.function.planar = planar;
           }
@@ -88,13 +88,13 @@ conversion_new (const char        *name,
       case BABL_FORMAT:
         if (linear)
           {
-            babl = babl_calloc (sizeof (BablConversionFormat), 1);
+            babl = babl_malloc (sizeof (BablConversionFormat));
             babl->class_type = BABL_CONVERSION_FORMAT;
             babl->conversion.function.linear = linear;
           }
         else if (planar)
           {
-            babl = babl_calloc (sizeof (BablConversionFormatPlanar), 1);
+            babl = babl_malloc (sizeof (BablConversionFormatPlanar));
             babl->class_type = BABL_CONVERSION_FORMAT_PLANAR;
             babl->conversion.function.planar = planar;
           }
@@ -237,9 +237,11 @@ static void
 babl_conversion_linear_process (BablConversion *conversion,
                                 void           *source,
                                 void           *destination,
+                                int             src_pitch,
+                                int             dst_pitch,
                                 long            n)
 {
-  conversion->function.linear (source, destination, n);
+  conversion->function.linear (source, destination, src_pitch, dst_pitch, n);
 }
 
 static void
@@ -248,11 +250,22 @@ babl_conversion_planar_process (BablConversion *conversion,
                                 BablImage      *destination,
                                 long            n)
 {
+#ifdef USE_ALLOCA
+  void **src_data = alloca (sizeof (void*) * source->bands);
+  void **dst_data = alloca (sizeof (void*) * destination->bands);
+#else 
+  void *src_data[BABL_MAX_COMPONENTS];
+  void *dst_data[BABL_MAX_COMPONENTS];
+#endif
+
+  memcpy (src_data, source->data, sizeof (void*) * source->bands);
+  memcpy (dst_data, destination->data, sizeof (void*) * destination->bands);
+  
   conversion->function.planar (source->bands,
-                               source->data,
+                               src_data,
                                source->pitch,
                                destination->bands,
-                               destination->data,
+                               dst_data,
                                destination->pitch,
                                n);
 }
@@ -270,10 +283,44 @@ babl_conversion_process (BablConversion *conversion,
   switch (BABL(conversion)->class_type)
   {
     case BABL_CONVERSION_TYPE:
-      babl_conversion_linear_process (conversion,
-                                      source,
-                                      destination,
-                                      n);
+      {
+        void *src_data = NULL;
+        void *dst_data = NULL;
+        int   src_pitch = 0;
+        int   dst_pitch = 0;
+
+        if (BABL_IS_BABL(source))
+          {
+            BablImage *img;
+           
+            img       = (BablImage*)source;
+            src_data  = img->data[0];
+            src_pitch = img->pitch[0];
+          }
+        if (!src_data)
+          src_data=source;
+        if (!src_pitch)
+          src_pitch=BABL(conversion->source)->type.bits/8;
+
+
+        if (BABL_IS_BABL(destination))
+          {
+            BablImage *img;
+           
+            img       = (BablImage*)destination;
+            dst_data  = img->data[0];
+            dst_pitch = img->pitch[0];
+          }
+        if (!dst_data)
+          dst_data=destination;
+        if (!dst_pitch)
+          dst_pitch=BABL(conversion->destination)->type.bits/8;
+
+        babl_conversion_linear_process (conversion,
+                                        src_data,  dst_data,
+                                        src_pitch, dst_pitch,
+                                        n);
+      }
       break;
     case BABL_CONVERSION_MODEL_PLANAR:
       assert (BABL_IS_BABL (source));

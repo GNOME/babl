@@ -43,8 +43,7 @@ component_new (const char *name,
 {
   Babl *babl;
 
-  babl                   = babl_calloc (sizeof (BablComponent) +
-                                        strlen (name) + 1, 1);
+  babl                   = babl_malloc (sizeof (BablComponent) + strlen (name) + 1);
   babl->instance.name    = (void *) babl + sizeof (BablComponent);
   strcpy (babl->instance.name, name);
 
@@ -53,7 +52,8 @@ component_new (const char *name,
   babl->component.luma   = luma;
   babl->component.chroma = chroma;
   babl->component.alpha  = alpha;
-
+  babl->component.from   = NULL;
+  babl->component.to     = NULL;
   return babl;
 }
 

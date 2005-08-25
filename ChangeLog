@@ -1,3 +1,52 @@
+2005-08-25  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/babl-classes.h:
+		BablModel: added .type
+		BablFormat: reordered
+		BablImage: added .format, .model, .sampling and .type
+		BablFishReference: removed implementation details
+	* babl/babl-component.c: (component_new): use malloc instead of calloc
+	* babl/babl-conversion.c:
+		(conversion_new): use malloc instead of calloc
+		(babl_conversion_linear_process)
+		(babl_conversion_process):  pass pitch to functions.
+		(babl_conversion_planar_process): duplicate data pointers in
+		image before passing them on.
+	* babl/babl-db.h:
+		(db_each): indentation fix.
+	* babl/babl-fish.c:
+		(babl_fish_reference_new),
+		(babl_fish_reference_process),
+		(babl_fish_process), (babl_process): restructuring of the
+		reference bablfish, approaching data and component shuffling
+		functionality.
+	* babl/babl-image.c:
+		(image_new): use malloc instead of calloc
+		(babl_image_from_linear), (babl_image): Added more information
+		to structure.
+	* babl/babl-image.h: s/_new//
+	* babl/babl-internal.h: #define BABL_MAX_COMPONENTS 32
+	* babl/babl-introspect.c:
+		(format_introspect): s/bands/components/
+	* babl/babl-model.c:
+		(model_new): use malloc instead of calloc
+	* babl/babl-pixel-format.c:
+		(format_new): use malloc instead of calloc
+		(babl_format_new): s/bands/components/
+	* babl/babl-type.c:
+		(type_new): use malloc instead of calloc
+
+
+	* babl/base/type-double.c,
+	* babl/base/type-float.c,
+	* babl/base/type-u16.c,
+	* babl/base/type-u8.c: more parameters to conversion functions, added
+	a codewriting macro for different scale / min/max factors.
+
+	* docs/index-static.html.in: reindent.
+	* tests/babl-html-dump.c: (format_html): s/bands/components/
+	* tests/srgb_to_lab_u8.c: (test): use absolute error in check.
+
 2005-08-24  Øyvind Kolås  <pippin@gimp.org>
 
 	* tests/sanity.c: Added a test that fails if the internal sanity

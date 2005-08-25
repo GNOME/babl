@@ -102,7 +102,7 @@ format_html (Babl *babl)
   printf ("<td valign='top'>");
     {
       int bytes=0;
-      for (i=0; i< babl->format.bands; i++)
+      for (i=0; i< babl->format.components; i++)
       {
         bytes += BABL(babl->format.type[i])->type.bits/8;
       }
@@ -113,7 +113,7 @@ format_html (Babl *babl)
   printf ("<span class='name'>%s</span>", BABL(babl->format.model)->instance.name  );
   printf ("</td>");
   printf ("<td>");
-  for (i=0; i< babl->format.bands; i++)
+  for (i=0; i< babl->format.components; i++)
     {
       printf ("<span class='type'>%s </span><span class='component'>%s</span><span class='spacer'>&nbsp;</span><br/>",
        BABL(babl->format.type[i])->instance.name,
