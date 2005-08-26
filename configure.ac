@@ -35,6 +35,12 @@ if eval "test x$GCC = xyes"; then
   esac
 fi
 
+AC_PATH_PROG(INKSCAPE, inkscape, no)
+AM_CONDITIONAL(HAVE_INKSCAPE, test "x$INKSCAPE" != "xno")
+
+AC_PATH_PROG(W3M, w3m, no)
+AM_CONDITIONAL(HAVE_W3M, test "x$W3M" != "xno")
+
 dnl ===========================================================================
 
 AC_CONFIG_FILES(

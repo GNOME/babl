@@ -1,3 +1,12 @@
+2005-08-27  Sven Neumann  <sven@gimp.org>
+
+	* configure.ac
+	* Makefile.am
+	* docs/Makefile.am
+	* docs/graphics/Makefile.am: check for inkscape and w3m which are
+	needed to build the documentation. Compile without them but bail
+	out on 'make dist'.
+
 2005-08-26  Øyvind Kolås  <pippin@gimp.org>
 
 	* tests/rgb_to_bgr.c: added component shuffling test

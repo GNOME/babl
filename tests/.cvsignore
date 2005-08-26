@@ -6,6 +6,7 @@ float_to_u8
 grayscale_to_rgb
 introspect
 nop
+rgb_to_bgr
 rgb_to_lab_to_rgb
 rgb_to_ycbcr
 rgb_to_ycbcr_to_rgb

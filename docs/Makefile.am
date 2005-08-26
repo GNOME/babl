@@ -25,7 +25,7 @@ MAINTAINERCLEANFILES = index.html
 
 all: $(HTML_FILES)
 
-index.html: index-static.html $(top_builddir)/tests/babl_html_dump ../AUTHORS ../NEWS
+index.html: index-static.html $(top_builddir)/tests/babl_html_dump $(top_srcdir)/AUTHORS  $(top_srcdir)/NEWS
 	cp $< $@ 
 	(TMPFILE=`tempfile`;\
 	$(top_builddir)/tests/babl_html_dump > $$TMPFILE;\
@@ -34,8 +34,6 @@ index.html: index-static.html $(top_builddir)/tests/babl_html_dump ../AUTHORS ..
 
 	$(top_srcdir)/docs/tools/xml_insert.sh $@ AUTHORS $(top_srcdir)/AUTHORS
 	$(top_srcdir)/docs/tools/xml_insert.sh $@ NEWS $(top_srcdir)/NEWS
-	
-	w3m -cols 72 -dump $@ > ../README
 
 distclean-local:
 	if test $(srcdir) = .; then :; else 	\
