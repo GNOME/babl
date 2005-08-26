@@ -251,20 +251,20 @@ babl_conversion_planar_process (BablConversion *conversion,
                                 long            n)
 {
 #ifdef USE_ALLOCA
-  void **src_data = alloca (sizeof (void*) * source->bands);
-  void **dst_data = alloca (sizeof (void*) * destination->bands);
+  void **src_data = alloca (sizeof (void*) * source->components);
+  void **dst_data = alloca (sizeof (void*) * destination->components);
 #else 
   void *src_data[BABL_MAX_COMPONENTS];
   void *dst_data[BABL_MAX_COMPONENTS];
 #endif
 
-  memcpy (src_data, source->data, sizeof (void*) * source->bands);
-  memcpy (dst_data, destination->data, sizeof (void*) * destination->bands);
+  memcpy (src_data, source->data, sizeof (void*) * source->components);
+  memcpy (dst_data, destination->data, sizeof (void*) * destination->components);
   
-  conversion->function.planar (source->bands,
+  conversion->function.planar (source->components,
                                src_data,
                                source->pitch,
-                               destination->bands,
+                               destination->components,
                                dst_data,
                                destination->pitch,
                                n);

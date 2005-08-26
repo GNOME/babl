@@ -27,8 +27,8 @@
  *
  * NB: babl_fish_process () frees the images passed in by itself.
  */
-Babl * babl_image_new             (void *first_component,
-                                   ...);
+Babl * babl_image             (void *first_component,
+                               ...);
 
 /* create a new BablImage based on a packed BablFormat (or BablModel which
  * is a virtual pixelformat based on the BablModel using only doubles in the
