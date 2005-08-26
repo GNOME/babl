@@ -207,9 +207,7 @@
             is bound to 'wobble', according to architecture, compiler flags,
             concurrently running processes and phase of moon.)</em></li>
           <li>Subsampling support</li>
-          <li>Mixed BablTypes in BablPixelFormats</li>
           <li>Support for datatypes that are not a multiple of 8bit.</li>
-          <li>Ref-counting for BablImages</li>
           <li>Thread safety for mutations of the type system.</li>
           <!--<li>Relative error is the difference between the two vaues
           divided by the actual value, for instance, if the actual result of a

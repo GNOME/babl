@@ -1,5 +1,9 @@
 2005-08-25  Øyvind Kolås  <pippin@gimp.org>
 
+	* docs/index-static.html.in: removed done things from TODO list.
+
+2005-08-25  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-fish.c:
 		(babl_to_double),(babl_from_double): new functions.
 		(babl_fish_reference_process): made type a component
