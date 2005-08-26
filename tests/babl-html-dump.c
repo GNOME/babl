@@ -100,14 +100,7 @@ format_html (Babl *babl)
   int i;
 
   printf ("<td valign='top'>");
-    {
-      int bytes=0;
-      for (i=0; i< babl->format.components; i++)
-      {
-        bytes += BABL(babl->format.type[i])->type.bits/8;
-      }
-      printf ("<span class='name'>%i</span>", bytes);
-    }
+  printf ("<span class='name'>%i</span>", babl->format.bytes_per_pixel);
   printf ("</td>");
   printf ("<td valign='top'>");
   printf ("<span class='name'>%s</span>", BABL(babl->format.model)->instance.name  );
