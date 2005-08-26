@@ -65,7 +65,7 @@ test (void)
       "bar",
       babl_model ("y'cbcr"),
       babl_type ("float"),
-      babl_component ("Y"),
+      babl_component ("Y'"),
       babl_component ("Cb"),
       babl_component ("Cr"),
       NULL

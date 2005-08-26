@@ -1,5 +1,10 @@
 2005-08-25  Øyvind Kolås  <pippin@gimp.org>
 
+	* tests/rgb_to_ycbcr.c,
+	* tests/rgb_to_ycbcr_to_rgb.c: fix Y' component name
+
+2005-08-25  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-classes.h:
 		BablFormat: added .bytes_per_pixel
 		BablImage: s/bands/components/
@@ -7,6 +12,7 @@
 	* babl/babl-image.c: s/bands/components/
 	* babl/babl-pixel-format.c: (format_new) check if provided pixel
 	format matches model. Calculate .bytes_per_pixel.
+	* tests/babl-html-dump.c: use format.bytes_per_pixel
 
 2005-08-25  Øyvind Kolås  <pippin@gimp.org>
 
