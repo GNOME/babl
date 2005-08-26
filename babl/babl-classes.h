@@ -201,6 +201,7 @@ typedef struct
   BablType       **type;
   BablSampling   **sampling;
   BablModel       *model;
+  int              bytes_per_pixel;
   int              planar;
 } BablFormat;
 
@@ -209,7 +210,7 @@ typedef struct
   BablInstance    instance;
   BablFormat     *format;    /*< (if known) */
   BablModel      *model;     /*< (always known) */
-  int             bands;
+  int             components;
   BablComponent **component;
   BablSampling  **sampling;
   BablType      **type;

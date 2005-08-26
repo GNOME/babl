@@ -31,7 +31,7 @@
 static Babl *
 image_new (BablFormat     *format,
            BablModel      *model,
-           int             bands,
+           int             components,
            BablComponent **component,
            BablSampling  **sampling,
            BablType      **type,
@@ -43,31 +43,31 @@ image_new (BablFormat     *format,
 
   /* allocate all memory in one chunk */
   babl  = babl_malloc (sizeof (BablImage) +
-                       sizeof (BablComponent*) * (bands) +
-                       sizeof (BablSampling*)  * (bands) +
-                       sizeof (BablType*)      * (bands) +
-                       sizeof (void*)          * (bands) +
-                       sizeof (int)            * (bands) +
-                       sizeof (int)            * (bands));
+                       sizeof (BablComponent*) * (components) +
+                       sizeof (BablSampling*)  * (components) +
+                       sizeof (BablType*)      * (components) +
+                       sizeof (void*)          * (components) +
+                       sizeof (int)            * (components) +
+                       sizeof (int)            * (components));
   babl->image.component     = ((void *)babl)                  + sizeof (BablImage);
-  babl->image.sampling      = ((void *)babl->image.component) + sizeof (BablComponent*) * (bands);
-  babl->image.type          = ((void *)babl->image.sampling)  + sizeof (BablSampling*)  * (bands);
-  babl->image.data          = ((void *)babl->image.type)      + sizeof (BablType*)      * (bands);
-  babl->image.pitch         = ((void *)babl->image.data)      + sizeof (void*)          * (bands);
-  babl->image.stride        = ((void *)babl->image.pitch)     + sizeof (int)            * (bands);
+  babl->image.sampling      = ((void *)babl->image.component) + sizeof (BablComponent*) * (components);
+  babl->image.type          = ((void *)babl->image.sampling)  + sizeof (BablSampling*)  * (components);
+  babl->image.data          = ((void *)babl->image.type)      + sizeof (BablType*)      * (components);
+  babl->image.pitch         = ((void *)babl->image.data)      + sizeof (void*)          * (components);
+  babl->image.stride        = ((void *)babl->image.pitch)     + sizeof (int)            * (components);
 
-  babl->class_type    = BABL_IMAGE;
-  babl->instance.id   = 0;
-  babl->instance.name = "slaritbartfast";
+  babl->class_type       = BABL_IMAGE;
+  babl->instance.id      = 0;
+  babl->instance.name    = "slaritbartfast";
+  babl->image.format     = format;
+  babl->image.model      = model;
+  babl->image.components = components;
 
-  babl->image.format        = format;
-  babl->image.model         = model;
-  babl->image.bands         = bands;
-  memcpy (babl->image.component, component, bands * sizeof(void*));
-  memcpy (babl->image.type,      type,      bands * sizeof(void*));
-  memcpy (babl->image.data,      data,      bands * sizeof(void*));
-  memcpy (babl->image.pitch,     pitch,     bands * sizeof(int));
-  memcpy (babl->image.stride,    stride,    bands * sizeof(int));
+  memcpy (babl->image.component, component, components * sizeof(void*));
+  memcpy (babl->image.type,      type,      components * sizeof(void*));
+  memcpy (babl->image.data,      data,      components * sizeof(void*));
+  memcpy (babl->image.pitch,     pitch,     components * sizeof(int));
+  memcpy (babl->image.stride,    stride,    components * sizeof(int));
 
   return babl;
 }
@@ -152,7 +152,7 @@ babl_image (void *first,
 {
   va_list        varg;
   Babl          *babl;
-  int            components     = 0;
+  int            components= 0;
   BablFormat    *format    = NULL;
   BablModel     *model     = NULL;
   BablComponent *component [BABL_MAX_COMPONENTS];

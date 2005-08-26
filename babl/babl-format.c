@@ -49,6 +49,27 @@ format_new (const char     *name,
 {
   Babl *babl;
 
+  {
+    int i;
+    /* i is desintation position */
+    for (i=0 ; i<model->components; i++)
+      {
+        int j;
+
+        for (j=0;j<components;j++)
+          {
+            if (component[j] == model->component[i])
+              goto component_found;
+          }
+        babl_log ("%s(): matching source component for %s in model %s not found",
+           __FUNCTION__, 
+           model->component[i]->instance.name, model->instance.name);
+        exit (-1);
+        component_found:
+        ;
+      }
+  }
+
   /* allocate all memory in one chunk */
   babl  = babl_malloc (sizeof (BablFormat) +
                        strlen (name) + 1 +
@@ -58,25 +79,33 @@ format_new (const char     *name,
                        sizeof (int)            * (components) +
                        sizeof (int)            * (components));
 
+  babl->format.from      = NULL;
+  babl->format.to        = NULL;
   babl->format.component = ((void *)babl) + sizeof (BablFormat);
   babl->format.type      = ((void *)babl->format.component) + sizeof (BablComponent*) * (components);
   babl->format.sampling  = ((void *)babl->format.type)      + sizeof (BablType*) * (components);
-  babl->instance.name          = ((void *)babl->format.sampling)  + sizeof (BablSampling*) * (components);
+  babl->instance.name    = ((void *)babl->format.sampling)  + sizeof (BablSampling*) * (components);
   
   babl->class_type    = BABL_FORMAT;
   babl->instance.id   = id;
 
   strcpy (babl->instance.name, name);
+
   babl->format.model      = model;
   babl->format.components = components;
-  babl->format.planar     = planar;
 
   memcpy (babl->format.component, component, sizeof (BablComponent*) * components);
   memcpy (babl->format.type     , type     , sizeof (BablType*)      * components);
   memcpy (babl->format.sampling , sampling , sizeof (BablSampling*)  * components);
 
-  babl->format.from = NULL;
-  babl->format.to   = NULL;
+  babl->format.planar     = planar;
+
+  babl->format.bytes_per_pixel = 0;
+  {
+    int i;
+    for (i=0;i<components;i++)
+      babl->format.bytes_per_pixel += type[i]->bits/8;
+  }
 
   return babl;
 }
