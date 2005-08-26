@@ -1,5 +1,13 @@
 2005-08-25  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-fish.c:
+		(babl_to_double),(babl_from_double): new functions.
+		(babl_fish_reference_process): made type a component
+		shuffling work for linear buffers
+	* tests/rgb_to_lab_u8.c: filled in calculated values.
+
+2005-08-25  Øyvind Kolås  <pippin@gimp.org>
+
 	* tests/rgb_to_ycbcr.c,
 	* tests/rgb_to_ycbcr_to_rgb.c: fix Y' component name
 

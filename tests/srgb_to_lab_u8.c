@@ -36,9 +36,9 @@ unsigned char reference_buf [PIXELS*3]=
   {  0, 128, 128,
    135, 128, 128,
    255, 128, 128,
-     0,   0,   0,
-     0,   0,   0,
-     0,   0,   0};
+   135, 208, 195,
+   223,  41, 211,
+    82, 207,  20};
 
 unsigned char destination_buf [PIXELS*3];
 
