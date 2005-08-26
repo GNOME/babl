@@ -1,3 +1,8 @@
+2005-08-26  Øyvind Kolås  <pippin@gimp.org>
+
+	* tests/rgb_to_bgr.c: added component shuffling test
+	* tests/Makefile.am: added rgb_to_bgr to TESTS
+
 2005-08-25  Øyvind Kolås  <pippin@gimp.org>
 
 	* docs/index-static.html.in: removed done things from TODO list.
