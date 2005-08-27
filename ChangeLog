@@ -1,3 +1,58 @@
+2005-08-28  Øyvind Kolås  <pippin@gimp.org>
+
+	* configure.ac,
+	* Makefile.am: added extensions subdir
+	* extensions/Makefile.in: NB: hard-coded installpath to
+	/home/pippin/.babl/
+	* extensions/CIE-Lab.c: moved here from BablBase, contains cpercep.c
+	and cpercep.h
+	* extensions/naive-CMYK.c: moved here from BablBase.
+
+	* babl/babl-component.c: (babl_component_new): s/parameter/argument/
+
+
+	* babl/babl-model.c: (create_name), (babl_model_new): generate
+	automatic name, allow override with key/value pair.
+	s/parameter/argument/
+	* babl/babl-pixel-format.c: (babl_format_new): s/parameter/argument/
+	* babl/babl-sampling.c: (babl_sampling): s/parameter/argument/
+	* babl/babl-type.c: (babl_type_new): s/paramter/argument/
+	* babl/babl-conversion.c, (create_name), (babl_conversion_new):
+	* babl/babl-conversion.h: Changed API, first two parameters are now
+	source and destination.
+	* babl/babl-instance.h: Added _NO_NEW variation of declarative name.
+	* babl/babl-internal.h: exit (-1) when a name lookup fails.
+
+	* babl/babl.h: do not export babl-ids.h 
+
+	* babl/base/Makefile.am: Files removed
+	* babl/base/babl-base.c: (models): removed model-lab
+	* babl/base/cpercep.[ch],
+	* babl/base/models.c,
+	* babl/base/model-lab.c,
+	* babl/base/types.c: removed
+
+	* babl/base/model-gray.c,
+	* babl/base/model-rgb.c,
+	* babl/base/model-ycbcr.c:
+		(models), (conversions): changed to new model_new and
+		conversion_new api.
+
+	* babl/base/type-float.c, 
+	* babl/base/type-u16.c, 
+	* babl/base/type-u8.c: new conversion API
+
+	* docs/index-static.html.in: updated TODO list.
+
+	* tests/float_to_u8.c, 
+	* tests/grayscale_to_rgb.c, 
+	* tests/rgb_to_bgr.c, 
+	* tests/rgb_to_lab_to_rgb.c, 
+	* tests/rgb_to_ycbcr.c,
+	* tests/rgb_to_ycbcr_to_rgb.c, 
+	* tests/srgb_to_lab_u8.c, 
+	* tests/u8_to_float.c: follow naming changed.
+
 2005-08-27  Øyvind Kolås  <pippin@gimp.org>
 
 	* Makefile.am:
