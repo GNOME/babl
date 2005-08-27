@@ -1,3 +1,7 @@
+2005-08-27  Øyvind Kolås  <pippin@gimp.org>
+
+	* docs/graphics/Makefile.am: s/INSCAPE/INKSCAPE/
+
 2005-08-27  Sven Neumann  <sven@gimp.org>
 
 	* configure.ac
