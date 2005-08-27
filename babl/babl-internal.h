@@ -30,14 +30,17 @@
 #include "babl-util.h"
 #include "babl-memory.h"
 #include "babl-classes.h"
-#include "babl-conversion.h"
 
-#define babl_log(fmt, args...) do {      \
-  fprintf (stdout, "babl: ");            \
-  fprintf (stdout, fmt, args);           \
+/* internal classes */
+#include "babl-conversion.h"
+/* */
+
+#define babl_log(args...) do {      \
+  fprintf (stdout, "%s:%i %s() ", \
+      __FILE__, __LINE__, __FUNCTION__); \
+  fprintf (stdout, args);           \
   fprintf (stdout, "\n");                \
 } while (0)
-
 
 extern int babl_hmpf_on_name_lookups;
 
@@ -81,19 +84,36 @@ type_name (const char *name)                                  \
   return babl;                                                \
 }
 
+#ifndef BABL_INIT_HOOK
+#define BABL_INIT_HOOK
+#endif
+#ifndef BABL_PRE_INIT_HOOK
+#define BABL_PRE_INIT_HOOK
+#endif
+#ifndef BABL_DESTROY_HOOK
+#define BABL_DESTROY_HOOK
+#endif
+#ifndef BABL_DESTROY_PRE_HOOK
+#define BABL_DESTROY_PRE_HOOK
+#endif
+
 #define BABL_DEFINE_INIT(type_name)                           \
 void                                                          \
 type_name##_init (void)                                       \
 {                                                             \
+  BABL_PRE_INIT_HOOK;                                         \
   db_init ();                                                 \
+  BABL_INIT_HOOK;                                             \
 }
 
 #define BABL_DEFINE_DESTROY(type_name)                        \
 void                                                          \
 type_name##_destroy (void)                                    \
 {                                                             \
+  BABL_DESTROY_PRE_HOOK;                                      \
   db_each (each_##type_name##_destroy, NULL);                 \
   db_destroy ();                                              \
+  BABL_DESTROY_HOOK;                                          \
 }
 
 #define BABL_CLASS_TEMPLATE(type_name)                        \

@@ -20,16 +20,20 @@
 #include "babl.h"
 #include "babl-internal.h"    /* for babl_log */
 
+#ifdef BABL_LOG
+
 static void sampling_introspect     (Babl *babl);
 static void model_introspect        (Babl *babl);
 static void type_introspect         (Babl *babl);
 static void format_introspect       (Babl *babl);
 static int  each_introspect         (Babl *babl,
                                      void *user_data);
+#endif
 
 void
 babl_introspect (void)
 {
+#ifdef BABL_LOG
   babl_log ("Introspection report%s","");  
   babl_log ("====================================================%s" ,"");  
 
@@ -56,8 +60,10 @@ babl_introspect (void)
   babl_fish_each         (each_introspect, NULL);
 
   babl_log ("%s", "");
+#endif
 }
 
+#ifdef BABL_LOG
 static int list_length (void **list)
 {
   void **ptr;
@@ -112,8 +118,8 @@ model_introspect (Babl *babl)
 
   for (i=0; i< babl->model.components; i++)
     {
-      babl_log ("\t\tindex[%i] = '%s'",
-                i, BABL(babl->model.component[i])->instance.name  );
+      babl_log ("\t\tindex[%i] = '%s'", i,
+         BABL(babl->model.component[i])->instance.name  );
     }
 }
 
@@ -187,3 +193,4 @@ each_introspect (Babl *babl,
     }
   return 0;
 }
+#endif

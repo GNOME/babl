@@ -61,8 +61,7 @@ format_new (const char     *name,
             if (component[j] == model->component[i])
               goto component_found;
           }
-        babl_log ("%s(): matching source component for %s in model %s not found",
-           __FUNCTION__, 
+        babl_log ("matching source component for %s in model %s not found",
            model->component[i]->instance.name, model->instance.name);
         exit (-1);
         component_found:
@@ -150,8 +149,8 @@ babl_format_new (const char *name,
               case BABL_COMPONENT:
                 if (!model)
                   {
-                    babl_log ("%s(): no model specified before component %s",
-                              __FUNCTION__, babl->instance.name);
+                    babl_log ("no model specified before component %s",
+                               babl->instance.name);
                   }
                 component [components] = (BablComponent*) babl;
                 type      [components] = current_type;
@@ -160,8 +159,8 @@ babl_format_new (const char *name,
 
                 if (components>=BABL_MAX_COMPONENTS)
                   {
-                    babl_log ("%s(): maximum number of components (%i) exceeded for %s",
-                              __FUNCTION__, BABL_MAX_COMPONENTS, name);
+                    babl_log ("maximum number of components (%i) exceeded for %s",
+                               BABL_MAX_COMPONENTS, name);
                   }
                 break;
               case BABL_SAMPLING:
@@ -170,8 +169,8 @@ babl_format_new (const char *name,
               case BABL_MODEL:
                   if (model)
                     {
-                    babl_log ("%s(%s): model %s already requested",
-                     __FUNCTION__, babl->instance.name, model->instance.name);
+                    babl_log ("args=(%s): model %s already requested",
+                      babl->instance.name, model->instance.name);
                     }
                   model = (BablModel*)arg;
                   break;
@@ -186,8 +185,8 @@ babl_format_new (const char *name,
               case BABL_FISH:
               case BABL_FISH_REFERENCE:
               case BABL_IMAGE:
-                babl_log ("%s(): %s unexpected",
-                          __FUNCTION__, babl_class_name (babl->class_type));
+                babl_log ("%s unexpected",
+                           babl_class_name (babl->class_type));
                 break;
               case BABL_SKY: /* shut up compiler */
                 break;
@@ -211,8 +210,7 @@ babl_format_new (const char *name,
       
       else
         {
-          babl_log ("%s: unhandled parameter '%s' for format '%s'",
-                    __FUNCTION__, arg, name);
+          babl_log ("unhandled parameter '%s' for format '%s'", arg, name);
           exit (-1);
         }
     }

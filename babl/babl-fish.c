@@ -108,7 +108,7 @@ BablConversion *babl_conversion_find (void *source,
 
   if (!data.result)
     {
-      babl_log ("%s('%s', '%s'): failed, aborting", __FUNCTION__,
+      babl_log ("args=('%s', '%s'): failed, aborting", 
         data.source->instance.name, data.destination->instance.name);
       exit (-1);
       return NULL;
@@ -170,8 +170,7 @@ babl_fish (void *source,
 
   if (!source_format)
     {
-      babl_log ("%s(%p, %p) source format invalid", 
-         __FUNCTION__, source, destination);
+      babl_log ("args=(%p, %p) source format invalid", source, destination);
     }
 
   if (BABL_IS_BABL (destination))
@@ -186,8 +185,7 @@ babl_fish (void *source,
 
   if (!destination_format)
     {
-      babl_log ("%s(%p, %p) destination format invalid",
-         __FUNCTION__, source, destination);
+      babl_log ("args=(%p, %p) destination format invalid", source, destination);
     }
   
   return babl_fish_reference_new (source_format, destination_format);
@@ -338,8 +336,8 @@ babl_fish_reference_process (Babl      *babl,
   if (BABL_IS_BABL (source) ||
       BABL_IS_BABL (destination))
     {
-      babl_log ("%s(%p, %p, %p, %li): trying to handle BablImage (unconfirmed code)",
-                __FUNCTION__, babl_fish, source, destination, n);
+      babl_log ("args=(%p, %p, %p, %li): trying to handle BablImage (unconfirmed code)",
+                 babl_fish, source, destination, n);
     }
 
   convert_to_double (
@@ -390,7 +388,7 @@ babl_fish_process (Babl *babl,
                    void *destination,
                    long  n)
 {
-  babl_log ("%s(): NYI", __FUNCTION__);
+  babl_log ("NYI");
   return -1;
 }
 
@@ -434,7 +432,7 @@ babl_process (Babl *babl,
        return 0;
     }
 
-  babl_log ("%s(): eek", __FUNCTION__);
+  babl_log ("eek");
   return -1;
 }
 

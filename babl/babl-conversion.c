@@ -63,15 +63,13 @@ conversion_new (const char        *name,
           }
         else if (planar_bit)
           {
-            babl_log ("%s(): planar_bit support not implemented yet",
-                      __FUNCTION__);
+            babl_log ("planar_bit support not implemented yet");
           }
         break;
       case BABL_MODEL:
         if (linear)
           {
-            babl_log ("%s(): linear support for model conversion not supported",
-                      __FUNCTION__);
+            babl_log ("linear support for model conversion not supported");
           }
         else if (planar)
           {
@@ -81,8 +79,7 @@ conversion_new (const char        *name,
           }
         else if (planar_bit)
           {
-            babl_log ("%s(): planar_bit support for model conversion not supported",
-                      __FUNCTION__);
+            babl_log ("planar_bit support for model conversion not supported");
           }
         break;
       case BABL_FORMAT:
@@ -100,18 +97,16 @@ conversion_new (const char        *name,
           }
         else if (planar_bit)
           {
-            babl_log ("%s(): planar_bit support for pixelformat conversion not supported",
-                      __FUNCTION__);
+            babl_log ("planar_bit support for pixelformat conversion not supported");
           }
         break;
       default:
-          babl_log ("%s(): %s unexpected",
-                    __FUNCTION__, babl_class_name (babl->class_type));
+          babl_log ("%s unexpected", babl_class_name (babl->class_type));
         break;
     }
   if (!babl)
     {
-      babl_log ("%s(name='%s', ...): creation failed", __FUNCTION__, name);
+      babl_log ("args=(name='%s', ...): creation failed",  name);
       return NULL;
     }
 
@@ -164,8 +159,7 @@ babl_conversion_new (const char *name,
         {
           if (got_func++)
             {
-              babl_log ("%s(): already got a conversion func, registration of multiple might be possible later\n",
-              __FUNCTION__); 
+              babl_log ("already got a conversion func, registration of multiple might be possible later\n"); 
             }
           linear = va_arg (varg, BablFuncLinear);
         }
@@ -174,8 +168,7 @@ babl_conversion_new (const char *name,
         {
           if (got_func++)
             {
-              babl_log ("%s(): already got a conversion func, registration of multiple might be possible later\n",
-              __FUNCTION__); 
+              babl_log ("already got a conversion func, registration of multiple might be possible later\n"); 
             }
           planar = va_arg (varg, BablFuncPlanar);
         }
@@ -184,8 +177,7 @@ babl_conversion_new (const char *name,
         {
           if (got_func++)
             {
-              babl_log ("%s(): already got a conversion func, registration of multiple might be possible later\n",
-              __FUNCTION__); 
+              babl_log ("already got a conversion func, registration of multiple might be possible later\n"); 
             }
           planar_bit = va_arg (varg, BablFuncPlanarBit);
         }
@@ -208,8 +200,7 @@ babl_conversion_new (const char *name,
         }
       else
         {
-          babl_log ("%s(): unhandled parameter '%s' for format '%s'",
-                    __FUNCTION__, arg, name);
+          babl_log ("unhandled parameter '%s' for format '%s'", arg, name);
           exit (-1);
         }
     }
@@ -332,8 +323,8 @@ babl_conversion_process (BablConversion *conversion,
                                                         n);
       break;
     default:
-      babl_log ("%s(%s, %p, %p, %li) unhandled conversion type: %s",
-          __FUNCTION__, conversion->instance.name, source, destination, n,
+      babl_log ("args=(%s, %p, %p, %li) unhandled conversion type: %s",
+           conversion->instance.name, source, destination, n,
           babl_class_name (conversion->instance.class_type));
       break;
   }

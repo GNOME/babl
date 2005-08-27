@@ -1,5 +1,27 @@
 2005-08-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-component.c: (babl_component_new):
+	* babl/babl-conversion.c: (conversion_new), (babl_conversion_new),
+	(babl_conversion_process):
+	* babl/babl-db.h:
+	* babl/babl-fish.c: (babl_conversion_find), (babl_fish),
+	(babl_fish_reference_process), (babl_fish_process), (babl_process):
+	* babl/babl-image.c: (babl_image_from_linear), (babl_image):
+	* babl/babl-internal.h:
+	* babl/babl-introspect.c: (babl_introspect), (model_introspect):
+	* babl/babl-memory.c: (babl_malloc), (babl_strdup), (babl_realloc),
+	(babl_calloc):
+	* babl/babl-model.c: (babl_model_new):
+	* babl/babl-pixel-format.c: (format_new), (babl_format_new):
+	* babl/babl-type.c: (babl_type_new):
+	* babl/babl-util.c: (babl_add_ptr_to_list):
+	* babl/base/type-u8.c:
+	* tests/babl_class_name.c: (test): 
+
+	Made babl_log(...) print the file, line and function by itself.
+
+2005-08-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* docs/graphics/Makefile.am: s/INSCAPE/INKSCAPE/
 
 2005-08-27  Sven Neumann  <sven@gimp.org>

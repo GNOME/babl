@@ -60,7 +60,7 @@ babl_malloc (size_t size)
   assert (size); 
   ret = malloc (size + OFFSET);
   if (!ret)
-    babl_log ("%s(%i): failed", __FUNCTION__, size);
+    babl_log ("args=(%i): failed",  size);
 
   BAI(ret + OFFSET)->signature = signature;
   BAI(ret + OFFSET)->size      = size;
@@ -75,7 +75,7 @@ babl_strdup (const char *s)
 
   ret = babl_malloc (strlen (s)+1);
   if (!ret)
-    babl_log ("%s(%s): failed", __FUNCTION__, s);
+    babl_log ("args=(%s): failed",  s);
   strcpy (ret, s); 
 
   strdups++;
@@ -123,7 +123,7 @@ babl_realloc (void   *ptr,
   ret = realloc (BAI(ptr), size + OFFSET);
 
   if (!ret)
-    babl_log ("%s(%p, %i): failed", __FUNCTION__, ptr, size);
+    babl_log ("args=(%p, %i): failed",  ptr, size);
   
   BAI(ret+OFFSET)->signature = signature;
   BAI(ret+OFFSET)->size      = size;
@@ -139,7 +139,7 @@ babl_calloc (size_t nmemb,
   void *ret = babl_malloc (nmemb*size);
 
   if (!ret)
-    babl_log ("%s(%i, %i): failed", __FUNCTION__, nmemb, size);
+    babl_log ("args=(%i, %i): failed",  nmemb, size);
 
   memset (ret, 0, nmemb*size);
 

@@ -103,7 +103,7 @@ convert_double_##name (void *src,                               \
                             src, dst, src_pitch, dst_pitch, n); \
 }
 
-MAKE_CONVERSIONS (u8,        0.0, 1.0, 0x00, 0xff);
+MAKE_CONVERSIONS (u8,        0.0, (255.0F/256.0F)*1.0, 0x00, 0xff);
 MAKE_CONVERSIONS (u8_luma,   0.0, 1.0, 16, 235);
 MAKE_CONVERSIONS (u8_chroma, 0.0, 1.0, 16, 240);
 

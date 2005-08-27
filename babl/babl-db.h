@@ -71,8 +71,7 @@ DB_DEF Babl * db_find    (const char *name)
 
       if (db[0])
         sample_type = babl_class_name (db[0]->class_type);
-      babl_log ("%s(\"%s\"): failed (query performed on a %s database)",
-       __FUNCTION__, name, sample_type);
+      babl_log ("failed (query performed on a %s database)", sample_type);
     }
   return ret;
 }
@@ -118,13 +117,13 @@ db_insert (Babl *babl)
 
   if (collision)
     {
-      if (collision->instance.id == babl->instance.id)
-        babl_log ("%s: conflicting id: existing(%i:'%s') - new(%i:'%s')",
-                __FUNCTION__, collision->instance.id, collision->instance.name,
+      if (!strcmp (collision->instance.name, babl->instance.name))
+        babl_log ("conflicting name: existing(%i:'%s') - new(%i:'%s')",
+                collision->instance.id, collision->instance.name,
                 babl->instance.id, babl->instance.name);
-      else if (!strcmp (collision->instance.name, babl->instance.name))
-        babl_log ("%s: conflicting name: existing(%i:'%s') - new(%i:'%s')",
-                __FUNCTION__, collision->instance.id, collision->instance.name,
+      else if (collision->instance.id == babl->instance.id)
+        babl_log ("conflicting id: existing(%i:'%s') - new(%i:'%s')",
+                collision->instance.id, collision->instance.name,
                 babl->instance.id, babl->instance.name);
       return collision;
     }
@@ -136,7 +135,8 @@ db_insert (Babl *babl)
       new_db = babl_realloc (db, (db_size + DB_INCREMENT_SIZE) * sizeof (BablInstance*));
       if (!new_db)
         {
-          babl_log ("db_insert: unable to reallocate memory, element (%i:'%s') not inserted", babl->instance.id, babl->instance.name);
+          babl_log ("unable to reallocate memory, element (%i:'%s') not inserted",
+                    babl->instance.id, babl->instance.name);
           return NULL;
         }
       db = new_db;

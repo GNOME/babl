@@ -84,10 +84,11 @@ babl_type_new (const char *name,
      
       if (BABL_IS_BABL (arg))
         {
+#ifdef BABL_LOG
           Babl *babl = (Babl*)arg;
 
-          babl_log ("%s(): %s unexpected",
-                    __FUNCTION__, babl_class_name (babl->class_type));
+          babl_log ("%s unexpected", babl_class_name (babl->class_type));
+#endif
         }
       /* if we didn't point to a babl, we assume arguments to be strings */
       else if (!strcmp (arg, "id"))
@@ -124,8 +125,8 @@ babl_type_new (const char *name,
       
       else
         {
-          babl_log ("%s(): unhandled parameter '%s' for format '%s'",
-                    __FUNCTION__, arg, name);
+          babl_log ("unhandled parameter '%s' for format '%s'",
+                     arg, name);
           exit (-1);
         }
     }

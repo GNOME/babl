@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "babl-memory.h"
+#include "babl-internal.h"
 
 static int list_length (void **list)
 {
@@ -52,7 +53,7 @@ babl_add_ptr_to_list (void ***list,
 
   if (!(*list))
     {
-      fprintf (stderr, "%s(): eeek! failed to realloc", __FUNCTION__);
+       babl_log ("failed to realloc");
     }
 
   (*list)[orig_len]=new;

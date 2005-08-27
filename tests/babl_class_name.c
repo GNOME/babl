@@ -20,6 +20,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "babl.h"
+#include "babl-internal.h"
 
 struct
   {
@@ -56,7 +57,7 @@ test (void)
       if (strcmp (reference[i].name, babl_class_name (reference[i].klass)))
         {
           OK=0;
-          printf ("'%s'!='%s'\n", reference[i].name, babl_class_name (reference[i].klass));
+          babl_log ("'%s'!='%s'\n", reference[i].name, babl_class_name (reference[i].klass));
         }
       i++;
     }

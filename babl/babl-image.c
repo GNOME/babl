@@ -135,7 +135,7 @@ babl_image_from_linear (void  *buffer,
           }
         break;
       default:
-        babl_log ("%s(): Eeeek!", __FUNCTION__);
+        babl_log ("Eeeek!");
         break;
     }
 
@@ -182,8 +182,7 @@ babl_image (void *first,
             }
           else
             {
-                babl_log ("%s(): %s unexpected",
-                          __FUNCTION__, babl_class_name (babl->class_type));
+                babl_log ("%s unexpected", babl_class_name (babl->class_type));
                 return NULL;
             }
         }
@@ -203,8 +202,7 @@ babl_image (void *first,
                 
       if (components>=BABL_MAX_COMPONENTS)
         {
-          babl_log ("%s(): maximum number of components (%i) exceeded",
-                    __FUNCTION__, BABL_MAX_COMPONENTS);
+          babl_log ("maximum number of components (%i) exceeded", BABL_MAX_COMPONENTS);
         }
 
       arg = va_arg (varg, char *);
