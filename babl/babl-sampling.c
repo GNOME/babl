@@ -37,7 +37,7 @@ babl_sampling (int horizontal,
       horizontal<=4)
     return &db [ (vertical-1) * 4 + (horizontal-1)];
   else
-    babl_log ("babl_samping(%i,%i): parameters out of bounds",
+    babl_log ("babl_samping(%i,%i): arguments out of bounds",
               horizontal, vertical);
   return NULL;
 }

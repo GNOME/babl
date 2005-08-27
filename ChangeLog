@@ -1,16 +1,9 @@
 2005-08-28  Øyvind Kolås  <pippin@gimp.org>
 
-	* configure.ac,
-	* Makefile.am: added extensions subdir
-	* extensions/Makefile.in: NB: hard-coded installpath to
-	/home/pippin/.babl/
-	* extensions/CIE-Lab.c: moved here from BablBase, contains cpercep.c
-	and cpercep.h
-	* extensions/naive-CMYK.c: moved here from BablBase.
 
 	* babl/babl-component.c: (babl_component_new): s/parameter/argument/
 
-
+	* babl/babl-extension.[ch]: the extension class.
 	* babl/babl-model.c: (create_name), (babl_model_new): generate
 	automatic name, allow override with key/value pair.
 	s/parameter/argument/
@@ -41,6 +34,17 @@
 	* babl/base/type-float.c, 
 	* babl/base/type-u16.c, 
 	* babl/base/type-u8.c: new conversion API
+
+
+	* configure.ac,
+	* Makefile.am: added extensions subdir
+	* extensions/Makefile.in: NB: hard-coded installpath to
+	/home/pippin/.babl/
+	* extensions/CIE-Lab.c: moved here from BablBase, contains cpercep.c
+	and cpercep.h
+	* extensions/naive-CMYK.c: moved here from BablBase.
+
+	* babl/babl-core.[ch]: double and RGBA originating from BablBase.
 
 	* docs/index-static.html.in: updated TODO list.
 

@@ -1,0 +1,57 @@
+# General minimalistic compile file for self contained single
+# file babl_extensions
+
+CFILES  = $(wildcard *.c)
+SOBJS   = $(CFILES:.c=.so)
+all: $(SOBJS)
+
+
+
+%.so: %.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<
+
+# if extension needing external libraries are to be # compiled with this make
+# file, each of them can be added according to the this pattern:
+# extra.so: extra.c
+#	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<  [own compile and link flags]
+
+CIE-Lab.so: CIE-Lab.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<  -lm
+
+
+
+
+
+#############################################################################
+#############################################################################
+CFLAGS  = -O2 -Wall
+LDFLAGS = -shared -lc
+
+CFLAGS  += `pkg-config babl --cflags`
+#LDFLAGS += `pkg-config babl --libs`
+
+
+clean:
+	rm -f *.so
+distclean:
+	rm -f *.so Makefile
+maintainerclean: distclean
+mostlyclean:
+
+subdir       = extensions
+srcdir       = @srcdir@
+top_builddir = ..
+INSTALL      = @INSTALL@
+SHELL        = @SHELL@
+
+install: user-install
+	#FIXME: need a proper install target as well
+
+user-install: all
+	$(INSTALL) -d /home/pippin/.babl
+	$(INSTALL) $(SOBJS)  /home/pippin/.babl
+
+.PRECIOUS: Makefile
+Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
+	cd $(top_builddir) &&\
+	$(SHELL) ./config.status $(subdir)/Makefile

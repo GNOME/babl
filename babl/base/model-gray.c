@@ -20,6 +20,7 @@
 /* FIXME: this file should be renamed model-gray.c */
 
 #include "babl.h"
+#include "babl-ids.h"
 #include "util.h"
 #include "rgb-constants.h"
 #include "math.h"
@@ -45,7 +46,7 @@ components (void)
    NULL);
 
   babl_component_new (
-   "Y*A",
+   "Ya",
    "id",    BABL_LUMINANCE_MUL_ALPHA,
    "luma",
    NULL);
@@ -61,38 +62,32 @@ static void
 models (void)
 {
   babl_model_new (
-    "gray",
     "id", BABL_GRAY,
     babl_component_id (BABL_LUMINANCE),
     NULL);
 
   babl_model_new (
-    "gray'",
     "id", BABL_GRAY_GAMMA_2_2,
     babl_component_id (BABL_LUMINANCE_GAMMA_2_2),
     NULL);
 
   babl_model_new (
-    "gray'a",
     "id", BABL_GRAY_GAMMA_2_2_ALPHA,
     babl_component_id (BABL_LUMINANCE_GAMMA_2_2),
     babl_component_id (BABL_ALPHA),
     NULL);
 
   babl_model_new (
-    "graya",
     "id", BABL_GRAY_ALPHA,
     babl_component_id (BABL_LUMINANCE),
     babl_component_id (BABL_ALPHA),
     NULL);
 
   babl_model_new (
-    "grayA",
     "id", BABL_GRAY_ALPHA_PREMULTIPLIED,
     babl_component_id (BABL_LUMINANCE_MUL_ALPHA),
     babl_component_id (BABL_ALPHA),
     NULL);
-
 }
 
 
@@ -376,130 +371,113 @@ static void
 conversions (void)
 {
   babl_conversion_new (
-    "babl-base: gray' to rgba",
-    "source",      babl_model_id (BABL_GRAY_GAMMA_2_2),
-    "destination", babl_model_id (BABL_RGBA),
-    "planar",      gray_2_2_to_rgb,
-    NULL
-  );
-
-
-  babl_conversion_new (
-    "babl-base: rgba to gray'",
-    "source",      babl_model_id (BABL_RGBA),
-    "destination", babl_model_id (BABL_GRAY_GAMMA_2_2),
-    "planar",      rgb_to_gray_2_2,
-    NULL
-  );
-
-  babl_conversion_new (
-    "babl-base: gray'a to rgba",
-    "source",      babl_model_id (BABL_GRAY_GAMMA_2_2_ALPHA),
-    "destination", babl_model_id (BABL_RGBA),
+    babl_model_id (BABL_GRAY_GAMMA_2_2),
+    babl_model_id (BABL_RGBA),
     "planar",      gray_2_2_to_rgb,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: rgba to gray'a",
-    "source",      babl_model_id (BABL_RGBA),
-    "destination", babl_model_id (BABL_GRAY_GAMMA_2_2_ALPHA),
+    babl_model_id (BABL_RGBA),
+    babl_model_id (BABL_GRAY_GAMMA_2_2),
     "planar",      rgb_to_gray_2_2,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: gray to rgba",
-    "source",      babl_model_id (BABL_GRAY),
-    "destination", babl_model_id (BABL_RGBA),
+    babl_model_id (BABL_GRAY_GAMMA_2_2_ALPHA),
+    babl_model_id (BABL_RGBA),
+    "planar",      gray_2_2_to_rgb,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_model_id (BABL_RGBA),
+    babl_model_id (BABL_GRAY_GAMMA_2_2_ALPHA),
+    "planar",      rgb_to_gray_2_2,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_model_id (BABL_GRAY),
+    babl_model_id (BABL_RGBA),
     "planar",      gray_to_rgb,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: gray to rgb",
-    "source",      babl_model_id (BABL_GRAY),
-    "destination", babl_model_id (BABL_RGB),
+    babl_model_id (BABL_GRAY),
+    babl_model_id (BABL_RGB),
     "planar",      gray_to_rgb,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: gray-alpha to rgba",
-    "source",      babl_model_id (BABL_GRAY_ALPHA),
-    "destination", babl_model_id (BABL_RGBA),
+    babl_model_id (BABL_GRAY_ALPHA),
+    babl_model_id (BABL_RGBA),
     "planar",      gray_to_rgb,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: gray-alpha to rgb",
-    "source",      babl_model_id (BABL_GRAY_ALPHA),
-    "destination", babl_model_id (BABL_RGB),
+    babl_model_id (BABL_GRAY_ALPHA),
+    babl_model_id (BABL_RGB),
     "planar",      gray_to_rgb,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: rgba to gray-alpha",
-    "source",      babl_model_id (BABL_RGBA),
-    "destination", babl_model_id (BABL_GRAY_ALPHA),
+    babl_model_id (BABL_RGBA),
+    babl_model_id (BABL_GRAY_ALPHA),
     "planar",      rgb_to_gray,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: rgba to gray",
-    "source",      babl_model_id (BABL_RGBA),
-    "destination", babl_model_id (BABL_GRAY),
+    babl_model_id (BABL_RGBA),
+    babl_model_id (BABL_GRAY),
     "planar",      rgb_to_gray,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: rgb to gray-alpha",
-    "source",      babl_model_id (BABL_RGB),
-    "destination", babl_model_id (BABL_GRAY_ALPHA),
+    babl_model_id (BABL_RGB),
+    babl_model_id (BABL_GRAY_ALPHA),
     "planar",      rgb_to_gray,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: rgb to gray",
-    "source",      babl_model_id (BABL_RGB),
-    "destination", babl_model_id (BABL_GRAY),
+    babl_model_id (BABL_RGB),
+    babl_model_id (BABL_GRAY),
     "planar",      rgb_to_gray,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: gray-alpha to gray-alpha-premultiplied",
-    "source",      babl_model_id (BABL_GRAY_ALPHA),
-    "destination", babl_model_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
+    babl_model_id (BABL_GRAY_ALPHA),
+    babl_model_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
     "planar",      non_premultiplied_to_premultiplied,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: gray-alpha-premultuplied to gray-alpha",
-    "source",      babl_model_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
-    "destination", babl_model_id (BABL_GRAY_ALPHA),
+    babl_model_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
+    babl_model_id (BABL_GRAY_ALPHA),
     "planar",      premultiplied_to_non_premultiplied,
     NULL
   );
 
-    babl_conversion_new (
-    "babl-base: gray-alpha-premultiplied to rgba",
-    "source",      babl_model_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
-    "destination", babl_model_id (BABL_RGBA),
+  babl_conversion_new (
+    babl_model_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
+    babl_model_id (BABL_RGBA),
     "planar",      gray_alpha_premultiplied_to_rgba,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: rgba to gray-alpha-premultiplied",
-    "source",      babl_model_id (BABL_RGBA),
-    "destination", babl_model_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
+    babl_model_id (BABL_RGBA),
+    babl_model_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
     "planar",      rgba_to_gray_alpha_premultiplied,
     NULL
   );

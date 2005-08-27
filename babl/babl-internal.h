@@ -32,11 +32,9 @@
 #include "babl-ids.h"
 #include "babl-util.h"
 #include "babl-memory.h"
-#include "babl-introspect.h"
-
-#include "babl-classes.h"
 
 /* internal classes */
+#include "babl-introspect.h"
 #include "babl-conversion.h"
 #include "babl-extension.h"
 /* */
@@ -87,7 +85,6 @@ const char  *babl_class_name     (BablClassType klass);
 void         babl_internal_init    (void);
 void         babl_internal_destroy (void);
 
-extern int babl_hmpf_on_name_lookups;
 
 #define BABL_DEFINE_EACH(type_name)                           \
 void                                                          \
@@ -125,6 +122,7 @@ type_name (const char *name)                                  \
   if (!babl)                                                  \
     {                                                         \
       babl_log ("%s(\"%s\"): not found", __FUNCTION__, name); \
+      exit (-1);                                              \
     }                                                         \
   return babl;                                                \
 }

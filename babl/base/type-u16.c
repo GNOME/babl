@@ -21,6 +21,7 @@
 #include <assert.h>
 
 #include "babl.h"
+#include "babl-ids.h"
 
 
 static inline void
@@ -105,10 +106,6 @@ convert_double_##name (void *src,                               \
 
 MAKE_CONVERSIONS(u16,0.0,1.0,0,0xffff);
 
-/* source ICC.1:2004-10 */
-MAKE_CONVERSIONS (u16_l,    0.0,  100.0, 0x00, 0xffff);
-MAKE_CONVERSIONS (u16_ab, -128.0, 127.0, 0x00, 0xffff);
-
 void
 babl_base_type_u16 (void)
 {
@@ -118,73 +115,17 @@ babl_base_type_u16 (void)
     "bits", 16,
     NULL);
 
-  babl_type_new (
-    "u16-CIE-L",
-    "id",       BABL_U16_CIE_L,
-    "integer",
-    "unsigned",
-    "bits",        16,
-    "min_val",    0.0,
-    "max_val",  100.0,
-    NULL
-  );
-
-  babl_type_new (
-    "u16-CIE-ab",
-    "id",       BABL_U16_CIE_AB,
-    "integer",
-    "unsigned",
-    "bits",        16,
-    "min_val",  -50.0,
-    "max_val",   50.0,
-    NULL
-  );
-
-
   babl_conversion_new (
-    "babl-base: u16 to double",
-    "source",      babl_type_id (BABL_U16),
-    "destination", babl_type_id (BABL_DOUBLE),
+    babl_type_id (BABL_U16),
+    babl_type_id (BABL_DOUBLE),
     "linear", convert_u16_double,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: double to u16",
-    "source",      babl_type_id (BABL_DOUBLE),
-    "destination", babl_type_id (BABL_U16),
+    babl_type_id (BABL_DOUBLE),
+    babl_type_id (BABL_U16),
     "linear", convert_double_u16,
-    NULL
-  );
-
-
-  babl_conversion_new (
-    "babl-base: u16-CIE-L to double",
-    "source",      babl_type_id (BABL_U16_CIE_L),
-    "destination", babl_type_id (BABL_DOUBLE),
-    "linear",      convert_u16_l_double,
-    NULL
-  );
-  babl_conversion_new (
-    "babl-base: double to u16-CIE-L",
-    "source",      babl_type_id (BABL_DOUBLE),
-    "destination", babl_type_id (BABL_U16_CIE_L),
-    "linear",      convert_double_u16_l,
-    NULL
-  );
-
-  babl_conversion_new (
-    "babl-base: u16-CIE-ab to double",
-    "source",      babl_type_id (BABL_U16_CIE_AB),
-    "destination", babl_type_id (BABL_DOUBLE),
-    "linear",      convert_u16_ab_double,
-    NULL
-  );
-  babl_conversion_new (
-    "babl-base: double to u16-CIE-ab",
-    "source",      babl_type_id (BABL_DOUBLE),
-    "destination", babl_type_id (BABL_U16_CIE_AB),
-    "linear",      convert_double_u16_ab,
     NULL
   );
 }

@@ -2,7 +2,8 @@ AUTOMAKE_OPTIONS = foreign
 
 SUBDIRS = babl	\
 	  tests	\
-	  docs
+	  docs	\
+	  extensions
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = babl.pc

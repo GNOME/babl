@@ -62,14 +62,11 @@ types (void)
 void babl_base_model_rgb   (void);
 void babl_base_model_gray  (void);
 void babl_base_model_ycbcr (void);
-void babl_base_model_lab   (void);
 
 static void
 models (void)
 {
   babl_base_model_rgb   ();
   babl_base_model_gray  ();
-  babl_base_model_lab   ();
   babl_base_model_ycbcr ();
 }
-

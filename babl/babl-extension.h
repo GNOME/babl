@@ -17,5 +17,15 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "babl.h"
+#ifndef _BABL_EXTENSION_H
+#define _BABL_EXTENSION_H
 
+#include "babl-classes.h"
+#include "babl-instance.h"
+
+Babl       * babl_extension_base      (void);
+Babl       * babl_extender            (void);
+Babl       * babl_extension_quiet_log (void);
+
+BABL_DEFINE_CLASS (babl_extension)
+#endif

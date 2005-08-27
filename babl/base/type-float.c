@@ -21,6 +21,7 @@
 #include <assert.h>
 
 #include "babl.h"
+#include "babl-ids.h"
 
 static void
 convert_double_float (void *src,
@@ -62,17 +63,15 @@ babl_base_type_float (void)
     NULL);
 
   babl_conversion_new (
-    "babl-base: float to double",
-    "source",      babl_type_id (BABL_FLOAT),
-    "destination", babl_type_id (BABL_DOUBLE),
+    babl_type_id (BABL_FLOAT),
+    babl_type_id (BABL_DOUBLE),
     "linear", convert_float_double,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: double to float",
-    "source",      babl_type_id (BABL_DOUBLE),
-    "destination", babl_type_id (BABL_FLOAT),
+    babl_type_id (BABL_DOUBLE),
+    babl_type_id (BABL_FLOAT),
     "linear", convert_double_float,
     NULL
   );

@@ -52,6 +52,7 @@ docs/Makefile
 docs/index-static.html
 docs/graphics/Makefile
 tests/Makefile
+extensions/Makefile
 INSTALL
 )
 

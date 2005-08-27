@@ -28,14 +28,14 @@
 
 #include <stdlib.h>
 #include "babl-classes.h"
+#include "babl-component.h"
 #include "babl-conversion.h"
 #include "babl-fish.h"
+#include "babl-image.h"
 #include "babl-model.h"
-#include "babl-ids.h"
-#include "babl-type.h"
-#include "babl-component.h"
-#include "babl-sampling.h"
 #include "babl-pixel-format.h"
+#include "babl-type.h"
+#include "babl-sampling.h"
 
 void babl_init       (void);
 void babl_destroy    (void);

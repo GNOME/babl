@@ -19,6 +19,7 @@
 
 #include <math.h>
 #include "babl.h"
+#include "babl-ids.h"
 #include "util.h"
 
 static void models        (void);
@@ -62,21 +63,21 @@ components (void)
 
 
   babl_component_new (
-    "R*A",
+    "Ra",
     "id",    BABL_RED_MUL_ALPHA,
     "luma",
     "chroma",
     "alpha",
     NULL);
   babl_component_new (
-    "G*A",
+    "Ga",
     "id",    BABL_GREEN_MUL_ALPHA,
     "luma",
     "chroma",
     "alpha",
     NULL);
   babl_component_new (
-    "B*A",
+    "Ba",
     "id",    BABL_BLUE_MUL_ALPHA,
     "luma",
     "chroma",
@@ -90,7 +91,6 @@ models (void)
 {
 
   babl_model_new (
-    "rgb",
     "id", BABL_RGB,
     babl_component_id (BABL_RED),
     babl_component_id (BABL_GREEN),
@@ -98,7 +98,6 @@ models (void)
     NULL);
 
     babl_model_new (
-    "rgbA",
     "id", BABL_RGBA_PREMULTIPLIED,
     babl_component_id (BABL_RED_MUL_ALPHA),
     babl_component_id (BABL_GREEN_MUL_ALPHA),
@@ -107,7 +106,6 @@ models (void)
     NULL);
 
   babl_model_new (
-    "rgb'",
     "id", BABL_RGB_GAMMA_2_2,
     babl_component_id (BABL_RED_GAMMA_2_2),
     babl_component_id (BABL_GREEN_GAMMA_2_2),
@@ -115,7 +113,6 @@ models (void)
     NULL);
 
   babl_model_new (
-    "rgb'a",
     "id", BABL_RGBA_GAMMA_2_2,
     babl_component_id (BABL_RED_GAMMA_2_2),
     babl_component_id (BABL_GREEN_GAMMA_2_2),
@@ -270,73 +267,64 @@ static void
 conversions (void)
 {
   babl_conversion_new (
-    "babl-base: rgba to rgba",
-    "source",      babl_model_id (BABL_RGBA),
-    "destination", babl_model_id (BABL_RGBA),
+    babl_model_id (BABL_RGBA),
+    babl_model_id (BABL_RGBA),
     "planar",      copy_strip_1,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: rgba to rgb-g2.2",
-    "source",      babl_model_id (BABL_RGBA),
-    "destination", babl_model_id (BABL_RGB_GAMMA_2_2),
+    babl_model_id (BABL_RGBA),
+    babl_model_id (BABL_RGB_GAMMA_2_2),
     "planar",      g3_gamma_2_2,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: rgba to rgba-g2.2",
-    "source",      babl_model_id (BABL_RGBA),
-    "destination", babl_model_id (BABL_RGBA_GAMMA_2_2),
+    babl_model_id (BABL_RGBA),
+    babl_model_id (BABL_RGBA_GAMMA_2_2),
     "planar",      g3_gamma_2_2,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: rgb-g2.2 to rgba",
-    "source",      babl_model_id (BABL_RGB_GAMMA_2_2),
-    "destination", babl_model_id (BABL_RGBA),
+    babl_model_id (BABL_RGB_GAMMA_2_2),
+    babl_model_id (BABL_RGBA),
     "planar",      g3_inv_gamma_2_2,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: rgba-g2.2 to rgba",
-    "source",      babl_model_id (BABL_RGBA_GAMMA_2_2),
-    "destination", babl_model_id (BABL_RGBA),
+    babl_model_id (BABL_RGBA_GAMMA_2_2),
+    babl_model_id (BABL_RGBA),
     "planar",      g3_inv_gamma_2_2,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: rgb to rgba",
-    "source",      babl_model_id (BABL_RGB),
-    "destination", babl_model_id (BABL_RGBA),
+    babl_model_id (BABL_RGB),
+    babl_model_id (BABL_RGBA),
     "planar",      copy_strip_1,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: rgba to rgb",
-    "source",      babl_model_id (BABL_RGBA),
-    "destination", babl_model_id (BABL_RGB),
+    babl_model_id (BABL_RGBA),
+    babl_model_id (BABL_RGB),
     "planar",      copy_strip_1,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: rgba to rgbA",
-    "source",      babl_model_id (BABL_RGBA),
-    "destination", babl_model_id (BABL_RGBA_PREMULTIPLIED),
+    babl_model_id (BABL_RGBA),
+    babl_model_id (BABL_RGBA_PREMULTIPLIED),
     "planar",      non_premultiplied_to_premultiplied,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: rgbA to rgba",
-    "source",      babl_model_id (BABL_RGBA_PREMULTIPLIED),
-    "destination", babl_model_id (BABL_RGBA),
+    babl_model_id (BABL_RGBA_PREMULTIPLIED),
+    babl_model_id (BABL_RGBA),
     "planar",      premultiplied_to_non_premultiplied,
     NULL
   );

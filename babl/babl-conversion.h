@@ -23,10 +23,15 @@
 #include "babl-classes.h"
 #include "babl-instance.h"
 
-void babl_conversion_process (BablConversion *conversion,
-                              void           *source,
-                              void           *destination,
-                              long           n);
+void   babl_conversion_process (BablConversion *conversion,
+                                void           *source,
+                                void           *destination,
+                                long           n);
 
-BABL_DEFINE_CLASS (babl_conversion)
+Babl * babl_conversion_new     (Babl           *source,
+                                Babl           *destination,
+                                void           *first_argument,
+                                ...);
+
+BABL_DEFINE_CLASS_NO_NEW (babl_conversion);
 #endif

@@ -222,7 +222,6 @@ cvs:
 cp babl/babl-pixel-format.c babl/babl-format.c
 cp babl/babl-pixel-format.h babl/babl-format.h
 cp babl/babl-classes.c      babl/babl-internal.c
-cp babl/base/model-cmyk.c   extenstions/cmyk.c
 
 
 -->
@@ -240,7 +239,15 @@ cp babl/base/model-cmyk.c   extenstions/cmyk.c
           NB: the modules will be loaded from the directories pointed to by
           the path in reverse order, this should allow the user to override
           system wide definitions for types, models and formats.
+          
+          <p><b>currently the extensions are hardcoded to be installed in /home/pippin/.babl/
+          and the only extensions looked for are naive-CMYK.so and CIE-Lab.so this will change
+          shortly. Look in babl/babl-extension.c (bottom)   and  extensions/Makefile.in  to
+          change it if you so desire.</b></p>
+          
+          
           </li>
+          
         </ul>
 
 

@@ -48,7 +48,7 @@ test (void)
   int   i;
   int   OK=1;
  
-  babl_process (babl_fish ("srgb", "cie-lab-u8"),
+  babl_process (babl_fish ("srgb", "CIE Lab u8"),
                 source_buf, destination_buf,
                 PIXELS);
   

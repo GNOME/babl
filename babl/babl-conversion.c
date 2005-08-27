@@ -131,7 +131,7 @@ create_name (Babl *source, Babl *destination)
 
   if (babl_extender ())
     {
-      snprintf (buf, 512-1, "%s::%s to %s", BABL(babl_extender())->instance.name, source->instance.name, destination->instance.name);
+      snprintf (buf, 512-1, "%s : %s to %s", BABL(babl_extender())->instance.name, source->instance.name, destination->instance.name);
       buf[511]='\0';
     }
   else
@@ -143,15 +143,15 @@ create_name (Babl *source, Babl *destination)
 }
 
 Babl *
-babl_conversion_new (const char *name,
+babl_conversion_new (Babl *source,
+                     Babl *destination,
+                     void *first_arg,
                      ...)
 {
   va_list            varg;
   Babl              *babl;
 
   int                id          = 0;
-  Babl              *source      = NULL;
-  Babl              *destination = NULL;
   int                time_cost   = 0;
   int                loss        = 0;
   BablFuncLinear     linear      = NULL;
@@ -159,17 +159,17 @@ babl_conversion_new (const char *name,
   BablFuncPlanarBit  planar_bit  = NULL;
 
   int                got_func    = 0;
-  const char        *arg         = name;
+  const char        *arg         = first_arg;
 
-  va_start (varg, name);
+  assert (BABL_IS_BABL(source));
+  assert (BABL_IS_BABL(destination));
+  
+  va_start (varg, first_arg);
   
   while (1)
     {
-      arg = va_arg (varg, char *);
-      if (!arg)
-        break;
      
-      else if (!strcmp (arg, "id"))
+      if (!strcmp (arg, "id"))
         {
           id = va_arg (varg, int);
         }
@@ -209,19 +209,15 @@ babl_conversion_new (const char *name,
         {
           loss = va_arg (varg, int);
         }
-      else if (!strcmp (arg, "source"))
-        {
-          source = va_arg (varg, Babl*);
-        }
-      else if (!strcmp (arg, "destination"))
-        {
-          destination = va_arg (varg, Babl*);
-        }
       else
         {
-          babl_log ("unhandled parameter '%s' for format '%s'", arg, name);
+          babl_log ("unhandled argument '%s'", arg);
           exit (-1);
         }
+
+      arg = va_arg (varg, char *);
+      if (!arg)
+        break;
     }
     
   va_end   (varg);

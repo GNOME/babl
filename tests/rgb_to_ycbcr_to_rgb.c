@@ -46,7 +46,7 @@ test (void)
   fish = babl_fish (
     babl_format_new (
       "foo",
-      babl_model ("rgb"),
+      babl_model ("RGB"),
       babl_type ("float"),
       babl_component ("R"),
       babl_component ("G"),
@@ -55,7 +55,7 @@ test (void)
     ),
     babl_format_new (
       "bar",
-      babl_model ("y'cbcr"),
+      babl_model ("Y'CbCr"),
       babl_type ("float"), 
       babl_component ("Y'"),
       babl_component ("Cb"),

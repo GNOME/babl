@@ -21,6 +21,7 @@
 #include <assert.h>
 
 #include "babl.h"
+#include "babl-ids.h"
 
 static inline void
 convert_double_u8_scaled (double        min_val,
@@ -107,10 +108,6 @@ MAKE_CONVERSIONS (u8,        0.0, (255.0F/256.0F)*1.0, 0x00, 0xff);
 MAKE_CONVERSIONS (u8_luma,   0.0, 1.0, 16, 235);
 MAKE_CONVERSIONS (u8_chroma, 0.0, 1.0, 16, 240);
 
-/* source ICC.1:2004-10 */
-MAKE_CONVERSIONS (u8_l,  0.0, 100.0,    0x00, 0xff);
-MAKE_CONVERSIONS (u8_ab, -128.0, 127.0, 0x00, 0xff);
-
 void
 babl_base_type_u8 (void)
 {
@@ -140,101 +137,43 @@ babl_base_type_u8 (void)
     NULL
   );
 
-  babl_type_new (
-    "u8-CIE-L",
-    "id",       BABL_U8_CIE_L,
-    "integer",
-    "unsigned",
-    "bits",         8,
-    "min_val",    0.0,
-    "max_val",  100.0,
-    NULL
-  );
-
-  babl_type_new (
-    "u8-CIE-ab",
-    "id",       BABL_U8_CIE_AB,
-    "integer",
-    "unsigned",
-    "bits",         8,
-    "min_val",  -50.0,
-    "max_val",   50.0,
-    NULL
-  );
-
   babl_conversion_new (
-    "babl-base: u8 to double",
-    "source",      babl_type_id (BABL_U8),
-    "destination", babl_type_id (BABL_DOUBLE),
+    babl_type_id (BABL_U8),
+    babl_type_id (BABL_DOUBLE),
     "linear",      convert_u8_double,
     NULL
   );
   babl_conversion_new (
-    "babl-base: double to u8",
-    "source",      babl_type_id (BABL_DOUBLE),
-    "destination", babl_type_id (BABL_U8),
+    babl_type_id (BABL_DOUBLE),
+    babl_type_id (BABL_U8),
     "linear",      convert_double_u8,
     NULL
   );
 
 
   babl_conversion_new (
-    "babl-base: u8-luma to double",
-    "source",      babl_type_id (BABL_U8_LUMA),
-    "destination", babl_type_id (BABL_DOUBLE),
+    babl_type_id (BABL_U8_LUMA),
+    babl_type_id (BABL_DOUBLE),
     "linear",      convert_u8_luma_double,
     NULL
   );
   babl_conversion_new (
-    "babl-base: double to u8-luma",
-    "source",      babl_type_id (BABL_DOUBLE),
-    "destination", babl_type_id (BABL_U8_LUMA),
+    babl_type_id (BABL_DOUBLE),
+    babl_type_id (BABL_U8_LUMA),
     "linear",      convert_double_u8_luma,
     NULL
   );
 
   babl_conversion_new (
-    "babl-base: u8-chroma to double",
-    "source",      babl_type_id (BABL_U8_CHROMA),
-    "destination", babl_type_id (BABL_DOUBLE),
+    babl_type_id (BABL_U8_CHROMA),
+    babl_type_id (BABL_DOUBLE),
     "linear",      convert_u8_chroma_double,
     NULL
   );
   babl_conversion_new (
-    "babl-base: double to u8-chroma",
-    "source",      babl_type_id (BABL_DOUBLE),
-    "destination", babl_type_id (BABL_U8_CHROMA),
+    babl_type_id (BABL_DOUBLE),
+    babl_type_id (BABL_U8_CHROMA),
     "linear",      convert_double_u8_chroma,
-    NULL
-  );
-
-  babl_conversion_new (
-    "babl-base: u8-CIE-L to double",
-    "source",      babl_type_id (BABL_U8_CIE_L),
-    "destination", babl_type_id (BABL_DOUBLE),
-    "linear",      convert_u8_l_double,
-    NULL
-  );
-  babl_conversion_new (
-    "babl-base: double to u8-CIE-L",
-    "source",      babl_type_id (BABL_DOUBLE),
-    "destination", babl_type_id (BABL_U8_CIE_L),
-    "linear",      convert_double_u8_l,
-    NULL
-  );
-
-  babl_conversion_new (
-    "babl-base: u8-CIE-ab to double",
-    "source",      babl_type_id (BABL_U8_CIE_AB),
-    "destination", babl_type_id (BABL_DOUBLE),
-    "linear",      convert_u8_ab_double,
-    NULL
-  );
-  babl_conversion_new (
-    "babl-base: double to u8-CIE-ab",
-    "source",      babl_type_id (BABL_DOUBLE),
-    "destination", babl_type_id (BABL_U8_CIE_AB),
-    "linear",      convert_double_u8_ab,
     NULL
   );
 }

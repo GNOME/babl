@@ -21,6 +21,7 @@
 #include <math.h>
 #include <assert.h>
 #include "babl.h"
+#include "babl-ids.h"
 
 #include "util.h"
 
@@ -58,7 +59,6 @@ static void
 models (void)
 {
   babl_model_new (
-    "y'cbcr",
     "id", BABL_YCBCR,
     babl_component_id (BABL_LUMINANCE_GAMMA_2_2),
     babl_component_id (BABL_CB),
@@ -66,7 +66,6 @@ models (void)
     NULL);
 
   babl_model_new (
-    "y'cbcra",
     "id", BABL_YCBCR_ALPHA,
     babl_component_id (BABL_LUMINANCE_GAMMA_2_2),
     babl_component_id (BABL_CB),
@@ -155,44 +154,38 @@ static void
 conversions (void)
 {
   babl_conversion_new (
-    "babl-base: rgba to y'cbcr",
-    "source",      babl_model_id (BABL_RGBA),
-    "destination", babl_model_id (BABL_YCBCR),
+    babl_model_id (BABL_RGBA),
+    babl_model_id (BABL_YCBCR),
     "planar",      rgb_to_ycbcr,
     NULL
   );
   babl_conversion_new (
-    "babl-base: y'cbcr to rgba",
-    "source",      babl_model_id (BABL_YCBCR),
-    "destination", babl_model_id (BABL_RGBA),
+    babl_model_id (BABL_YCBCR),
+    babl_model_id (BABL_RGBA),
     "planar",      ycbcr_to_rgb,
     NULL
   );
   babl_conversion_new (
-    "babl-base: rgb to y'cbcr",
-    "source",      babl_model_id (BABL_RGB),
-    "destination", babl_model_id (BABL_YCBCR),
+    babl_model_id (BABL_RGB),
+    babl_model_id (BABL_YCBCR),
     "planar",      rgb_to_ycbcr,
     NULL
   );
   babl_conversion_new (
-    "babl-base: y'cbcr to rgb",
-    "source",      babl_model_id (BABL_YCBCR),
-    "destination", babl_model_id (BABL_RGB),
+    babl_model_id (BABL_YCBCR),
+    babl_model_id (BABL_RGB),
     "planar",      ycbcr_to_rgb,
     NULL
   );
   babl_conversion_new (
-    "babl-base: rgba to y'cbcra",
-    "source",      babl_model_id (BABL_RGBA),
-    "destination", babl_model_id (BABL_YCBCR_ALPHA),
+    babl_model_id (BABL_RGBA),
+    babl_model_id (BABL_YCBCR_ALPHA),
     "planar",      rgb_to_ycbcr,
     NULL
   );
   babl_conversion_new (
-    "babl-base: y'cbcra to rgba",
-    "source",      babl_model_id (BABL_YCBCR_ALPHA),
-    "destination", babl_model_id (BABL_RGBA),
+    babl_model_id (BABL_YCBCR_ALPHA),
+    babl_model_id (BABL_RGBA),
     "planar",      ycbcr_to_rgb,
     NULL
   );

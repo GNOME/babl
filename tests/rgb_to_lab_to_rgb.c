@@ -77,7 +77,7 @@ test (void)
   fish = babl_fish (
     babl_format_new (
       "foo",
-      babl_model ("rgb"),
+      babl_model ("RGB"),
       babl_type ("float"),
       babl_component ("R"),
       babl_component ("G"),
