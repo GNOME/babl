@@ -5,8 +5,10 @@ SUBDIRS = base
 c_sources =				\
         babl.c				\
 	babl-classes.c			\
+	babl-core.c   			\
 	babl-component.c		\
 	babl-conversion.c		\
+	babl-extension.c		\
 	babl-fish.c			\
 	babl-image.c			\
 	babl-introspect.c		\
@@ -21,8 +23,10 @@ c_sources =				\
 h_sources  =             		\
 	babl-classes.h			\
 	babl-component.h		\
+	babl-core.h   			\
 	babl-conversion.h		\
 	babl-db.h			\
+	babl-extension.h		\
 	babl-ids.h			\
 	babl-instance.h			\
 	babl-internal.h			\
@@ -44,8 +48,11 @@ library_include_HEADERS =		\
 	babl-classes.h			\
 	babl-component.h		\
 	babl-conversion.h		\
+	babl-extension.h		\
 	babl-fish.h			\
+	babl-ids.h			\
 	babl-image.h			\
+	babl-instance.h			\
 	babl-model.h			\
 	babl-pixel-format.h		\
 	babl-sampling.h			\
@@ -64,4 +71,3 @@ libbabl_la_LDFLAGS= \
 
 EXTRA_DIST := 			\
 	.cvsignore
-

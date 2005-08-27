@@ -152,7 +152,9 @@ static int
 id_sanity (Babl *babl,
            void *user_data)
 {
-  if (0 == babl->instance.id)
+  if (0 == babl->instance.id &&
+      babl->instance.creator &&
+      !strcmp(BABL(babl->instance.creator)->instance.name, "BablBase"))
     {
       OK=0;
       babl_log ("%s\t'%s' has id==0",

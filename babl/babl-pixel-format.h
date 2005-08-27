@@ -21,6 +21,8 @@
 #define _BABL_FORMAT_H
 
 #include "babl-classes.h"
+#include "babl-instance.h"
+
 BABL_DEFINE_CLASS (babl_format)
 
 #endif

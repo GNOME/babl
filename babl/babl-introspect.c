@@ -20,46 +20,63 @@
 #include "babl.h"
 #include "babl-internal.h"    /* for babl_log */
 
+#define BABL_LOG
+
 #ifdef BABL_LOG
 
 static void sampling_introspect     (Babl *babl);
 static void model_introspect        (Babl *babl);
 static void type_introspect         (Babl *babl);
 static void format_introspect       (Babl *babl);
+
 static int  each_introspect         (Babl *babl,
                                      void *user_data);
 #endif
 
+extern Babl *babl_extension_current_extender;
 void
-babl_introspect (void)
+babl_introspect (Babl *babl)
 {
 #ifdef BABL_LOG
-  babl_log ("Introspection report%s","");  
-  babl_log ("====================================================%s" ,"");  
+  Babl *extender_backup = babl_extension_current_extender;
+  
+  babl_extension_current_extender = babl_extension_quiet_log();
 
-  babl_log ("%s","");
-  babl_log ("Data Types:%s", "");
+  if (babl)
+    {
+      each_introspect (babl, NULL);
+      return;
+    }
+  babl_log ("Introspection report");  
+  babl_log ("====================================================");  
+
+  babl_log ("");
+  babl_log ("Data Types:");
   babl_type_each         (each_introspect, NULL);
-  babl_log ("%s","");
-  babl_log ("Sampling (chroma subsampling) factors:%s", "");
+  babl_log ("");
+  babl_log ("Sampling (chroma subsampling) factors:");
   babl_sampling_each     (each_introspect, NULL);
-  babl_log ("%s","");
-  babl_log ("Components:%s", "");
+  babl_log ("");
+  babl_log ("Components:");
   babl_component_each    (each_introspect, NULL);
-  babl_log ("%s","");
-  babl_log ("Models (of components):%s", "");
+  babl_log ("");
+  babl_log ("Models (of components):");
   babl_model_each        (each_introspect, NULL);
-  babl_log ("%s","");
-  babl_log ("Pixel formats:%s", "");
+  babl_log ("");
+  babl_log ("Pixel formats:");
   babl_format_each (each_introspect, NULL);
-  babl_log ("%s","");
-  babl_log ("conversions:%s", "");
+  babl_log ("");
+  babl_log ("conversions:");
   babl_conversion_each   (each_introspect, NULL);
-  babl_log ("%s","");
-  babl_log ("fishes:%s", "");
+  babl_log ("");
+  babl_log ("extensions:");
+  babl_extension_each    (each_introspect, NULL);
+  babl_log ("");
+  babl_log ("fishes");
   babl_fish_each         (each_introspect, NULL);
+  babl_log ("");
 
-  babl_log ("%s", "");
+  babl_extension_current_extender = extender_backup;
 #endif
 }
 

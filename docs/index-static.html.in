@@ -202,6 +202,8 @@
         
         <h3>Core</h3>
         <ul>
+          <li>Speed up name resolution in babl-db.h (using a hash table, and
+              probably also a id table)</li>
           <li>Meta level optimizations.</li>
           <li>Compile and/or runtime profiling. <em>(The speed of conversions
             is bound to 'wobble', according to architecture, compiler flags,
@@ -214,6 +216,16 @@
           calculation should be 3.13159, but the result obtained was 3.14x10^0,
           the relative error is 0.00159/3.14159 => 0.0005 (source: 'A new book
           on c (cook1_0a.pdf)')</li>-->
+<!--
+cvs:
+
+cp babl/babl-pixel-format.c babl/babl-format.c
+cp babl/babl-pixel-format.h babl/babl-format.h
+cp babl/babl-classes.c      babl/babl-internal.c
+cp babl/base/model-cmyk.c   extenstions/cmyk.c
+
+
+-->
         </ul>
 
         <a name='TODO-Extensions'></a>

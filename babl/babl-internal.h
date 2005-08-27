@@ -26,21 +26,66 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "babl-classes.h"
+#include "babl-instance.h"
+
 #include "babl-ids.h"
 #include "babl-util.h"
 #include "babl-memory.h"
+#include "babl-introspect.h"
+
 #include "babl-classes.h"
 
 /* internal classes */
 #include "babl-conversion.h"
+#include "babl-extension.h"
 /* */
 
-#define babl_log(args...) do {      \
-  fprintf (stdout, "%s:%i %s() ", \
-      __FILE__, __LINE__, __FUNCTION__); \
-  fprintf (stdout, args);           \
-  fprintf (stdout, "\n");                \
-} while (0)
+/**** LOGGER ****/
+#include <stdarg.h>
+
+static inline void
+real_babl_log (const char *file,
+               int         line,
+               const char *function,
+               const char *fmt, ...)
+{
+  Babl *extender = babl_extender();
+  va_list  varg;
+  
+
+  if (extender != babl_extension_quiet_log())
+    {
+      if (babl_extender())
+        fprintf (stdout, "When loading %s:\n\t", babl_extender()->instance.name);
+
+      fprintf (stdout, "%s:%i %s()\n\t", file, line, function);
+    }
+
+  va_start (varg, fmt);
+  vfprintf (stdout, fmt, varg);
+  va_end (varg);
+
+  fprintf (stdout, "\n");
+}
+
+#define babl_log(args...)  real_babl_log(__FILE__, __LINE__, __FUNCTION__, args)
+
+/********************/
+
+#define BABL_CLASS_TYPE_IS_VALID(klass_type) \
+    (  ((klass_type)>=BABL_INSTANCE ) && ((klass_type)<=BABL_SKY) ?1:0 )
+
+#define BABL_IS_BABL(obj)                              \
+(NULL==(obj)?0:                                        \
+ BABL_CLASS_TYPE_IS_VALID(((Babl*)(obj))->class_type)  \
+)
+
+extern int   babl_hmpf_on_name_lookups;
+
+const char  *babl_class_name     (BablClassType klass);
+void         babl_internal_init    (void);
+void         babl_internal_destroy (void);
 
 extern int babl_hmpf_on_name_lookups;
 

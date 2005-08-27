@@ -21,8 +21,7 @@
 #define BABL_FISH_H
 
 #include "babl-classes.h"
-
-BABL_DEFINE_CLASS_NO_NEW_NO_ID(babl_fish)
+#include "babl-instance.h"
 
 /** create a new BablFish capable of translating between the pixel
  *  formats given in source and destination. (use babl_format (string))
@@ -44,4 +43,7 @@ int    babl_process           (Babl *babl_fish,
  */
 int    babl_fish_needs_image  (Babl *babl_fish);
 
+
+
+BABL_DEFINE_CLASS_NO_NEW_NO_ID(babl_fish)
 #endif

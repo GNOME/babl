@@ -75,13 +75,12 @@ typedef enum {
   BABL_FISH_REFERENCE,
   BABL_IMAGE,
 
+  BABL_EXTENSION,
+
   BABL_SKY
 } BablClassType;
 
-#define BABL_CLASS_TYPE_IS_VALID(klass_type) \
-    (  ((klass_type)>=BABL_INSTANCE ) && ((klass_type)<=BABL_SKY) ?1:0 )
 
-const char  *babl_class_name     (BablClassType klass);
 
 /* common header for any item inserted into database */
 typedef struct
@@ -89,8 +88,10 @@ typedef struct
   BablClassType  class_type;
   int            id;      /*< a numerical id, look at 'babl-ids.h' for the reserved
                               ones */
+  void          *creator;
   char          *name;    /*< the name this type exists under         */
 } BablInstance;
+
 
 typedef struct
 BablConversion {
@@ -160,6 +161,7 @@ typedef struct
    * mantissa */
 } BablTypeFloat;
 
+
 typedef struct
 {
   BablInstance     instance;
@@ -226,7 +228,6 @@ typedef struct
   union Babl     *destination;
 } BablFish;
 
-
 /* BablFishReference on the double versions of conversions
  * that are required to exist for maximum sanity.
  *
@@ -244,6 +245,13 @@ typedef struct
   BablFish         fish;
 } BablFishReference;
 
+typedef struct
+{
+  BablInstance   instance;               /* path to .so / .dll is stored in instance name */
+  void          *dl_handle;
+  void         (*destroy) (void); 
+} BablExtension;
+
 typedef union
 {
   BablClassType     class_type;
@@ -254,18 +262,11 @@ typedef union
   BablModel         model;
   BablFormat        format;
   BablConversion    conversion;
+  BablImage         image;
   BablFish          fish;
   BablFishReference reference_fish;
-  BablImage         image;
+  BablExtension     extension;
 } Babl;
-
-
-#define BABL_IS_BABL(obj)                              \
-(NULL==(obj)?0:                                        \
- BABL_CLASS_TYPE_IS_VALID(((Babl*)(obj))->class_type)  \
-)
-
-#include "babl-instance.h"
 
 #endif
 

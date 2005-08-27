@@ -26,6 +26,7 @@
 #endif
 
 #include "babl-instance.h"
+#include "babl-extension.h"
 
 #include <string.h>
 
@@ -101,7 +102,6 @@ db_destroy (void)
   db         = NULL;
 }
 
-
 DB_DEF Babl *
 db_insert (Babl *babl)
 {
@@ -117,14 +117,14 @@ db_insert (Babl *babl)
 
   if (collision)
     {
-      if (!strcmp (collision->instance.name, babl->instance.name))
-        babl_log ("conflicting name: existing(%i:'%s') - new(%i:'%s')",
-                collision->instance.id, collision->instance.name,
-                babl->instance.id, babl->instance.name);
+      if (!strcmp (collision->instance.name, babl->instance.name)    )
+        babl_log ("conflicting name:\n\t\tnew: '%s'\n\t\texisting '%s' from %s",
+                babl->instance.name, collision->instance.name,
+                BABL(collision->instance.creator)->instance.name);
       else if (collision->instance.id == babl->instance.id)
-        babl_log ("conflicting id: existing(%i:'%s') - new(%i:'%s')",
-                collision->instance.id, collision->instance.name,
-                babl->instance.id, babl->instance.name);
+        babl_log ("conflicting id:\n\t\tnew: '%s' (id=%i)\n\t\texisting '%s' from %s",
+                babl->instance.name, babl->instance.id, collision->instance.name,
+                BABL(collision->instance.creator)->instance.name);
       return collision;
     }
 
@@ -145,6 +145,7 @@ db_insert (Babl *babl)
       memset (db + db_size, 0, DB_INCREMENT_SIZE * sizeof (Babl*));
       db_size += DB_INCREMENT_SIZE;
     }
+  babl->instance.creator = babl_extender ();
   db[db_entries++]=babl;
   return babl;
 }

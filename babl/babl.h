@@ -37,9 +37,7 @@
 #include "babl-sampling.h"
 #include "babl-pixel-format.h"
 
-
 void babl_init       (void);
-void babl_introspect (void);
 void babl_destroy    (void);
 
 #endif

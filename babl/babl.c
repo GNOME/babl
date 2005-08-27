@@ -19,9 +19,9 @@
 
 #include "babl.h"
 #include "babl-internal.h"
-#include "babl-base.h"
 #include "babl-sanity.h"
 #include "babl-introspect.h"
+#include "babl-core.h"
 
 static int ref_count=0;
 
@@ -36,7 +36,11 @@ babl_init (void)
       babl_model_init ();
       babl_format_init ();
       babl_conversion_init ();
-      babl_base_init ();
+      babl_core_init ();
+      babl_sanity ();
+      babl_extension_base ();
+      babl_sanity ();
+      babl_extension_init ();
       babl_sanity ();
     }
 }
@@ -44,10 +48,9 @@ babl_init (void)
 void
 babl_destroy (void)
 {
-  /* babl_base is destroyed by the containing types */
-
   if (!--ref_count)
     {
+      babl_extension_destroy ();
       babl_fish_destroy ();
       babl_conversion_destroy ();
       babl_format_destroy ();

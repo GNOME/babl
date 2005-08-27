@@ -20,7 +20,9 @@
 #ifndef _BABL_INTROSPECT_H
 #define _BABL_INTROSPECT_H
 
+#include "babl-classes.h"
+
 void
-babl_introspect (void);
+babl_introspect (Babl *babl);
 
 #endif

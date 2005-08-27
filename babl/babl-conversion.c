@@ -19,6 +19,7 @@
 
 #include "babl-internal.h"
 #include "babl-db.h"
+#include "babl-extension.h"
 #include "assert.h"
 #include <string.h>
 #include <stdarg.h>
@@ -123,6 +124,24 @@ conversion_new (const char        *name,
   return babl;
 }
 
+static char buf[512]="";
+static char *
+create_name (Babl *source, Babl *destination)
+{
+
+  if (babl_extender ())
+    {
+      snprintf (buf, 512-1, "%s::%s to %s", BABL(babl_extender())->instance.name, source->instance.name, destination->instance.name);
+      buf[511]='\0';
+    }
+  else
+    {
+      snprintf (buf, 512-1, "%s to %s", source->instance.name, destination->instance.name);
+      buf[511]='\0';
+    }
+  return buf;
+}
+
 Babl *
 babl_conversion_new (const char *name,
                      ...)
@@ -210,7 +229,7 @@ babl_conversion_new (const char *name,
   assert (source);
   assert (destination);
 
-  babl = conversion_new (name, id, source, destination, time_cost, loss, linear,
+  babl = conversion_new (create_name (source, destination), id, source, destination, time_cost, loss, linear,
                          planar, planar_bit);
 
   if (db_insert (babl) == babl)

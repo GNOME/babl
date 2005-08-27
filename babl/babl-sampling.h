@@ -21,8 +21,10 @@
 #define _BABL_SAMPLING_H
 
 #include "babl-classes.h"
+#include "babl-instance.h"
 
-BABL_DEFINE_CLASS_NO_NEW_NO_ID(babl_sampling)
 Babl * babl_sampling (int horizontal,
                       int vertical);
+
+BABL_DEFINE_CLASS_NO_NEW_NO_ID(babl_sampling)
 #endif

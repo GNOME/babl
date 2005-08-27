@@ -23,8 +23,7 @@ sanity_SOURCES              = sanity.c
 
 
 AM_CFLAGS = -I$(top_srcdir) -I$(top_srcdir)/babl
-LDADD = $(top_builddir)/babl/libbabl.la -lm
-
+LDADD = $(top_builddir)/babl/libbabl.la -lm -ldl
 
 noinst_PROGRAMS =	\
 	introspect	\

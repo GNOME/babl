@@ -25,7 +25,7 @@ main (int    argc,
       char **argv)
 {
   babl_init ();
-  babl_introspect ();
+  babl_introspect (NULL);
   babl_destroy ();
   return 0;
 }

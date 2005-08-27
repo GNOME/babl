@@ -153,10 +153,9 @@ babl_memory_sanity (void)
 {
   if (frees != mallocs + strdups + callocs)
     {
-      fprintf (stderr,
-"babl_memory usage does not add up!!!!!!!!\n"
+      babl_log ("memory usage does not add up!\n"
 "%s\n"
-"balance: %i-%i=%i\n",
+"\tbalance: %i-%i=%i\n",
   mem_stats(), (strdups+mallocs+callocs),frees, (strdups+mallocs+callocs)-frees);
     }
 }

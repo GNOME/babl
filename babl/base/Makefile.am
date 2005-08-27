@@ -5,7 +5,6 @@ h_sources =  			\
 c_sources =			\
 	babl-base.c		\
 	cpercep.c		\
-	type-double.c		\
 	type-float.c		\
 	type-u8.c		\
 	type-u16.c		\

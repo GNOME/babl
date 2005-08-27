@@ -43,7 +43,6 @@ babl_base_destroy (void)
  * types
  */
 
-void babl_base_type_double (void);
 void babl_base_type_float  (void);
 void babl_base_type_u8     (void);
 void babl_base_type_u16    (void);
@@ -51,8 +50,6 @@ void babl_base_type_u16    (void);
 static void
 types (void)
 {
-  babl_base_type_double ();  /* must be registered first since it is the
-                                reference */
   babl_base_type_float  ();
   babl_base_type_u8     ();
   babl_base_type_u16    ();
@@ -70,8 +67,7 @@ void babl_base_model_lab   (void);
 static void
 models (void)
 {
-  babl_base_model_rgb   (); /* must be registered first since it is the
-                               reference, (and contains the alpha definition) */
+  babl_base_model_rgb   ();
   babl_base_model_gray  ();
   babl_base_model_lab   ();
   babl_base_model_ycbcr ();

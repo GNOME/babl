@@ -17,7 +17,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "babl-classes.h"
+#include "babl-internal.h"
 
 static const char *class_names[] =
   {
@@ -38,6 +38,7 @@ static const char *class_names[] =
     "BablFish",
     "BablFishReference",
     "BablImage",
+    "BablExtenstion",
     "BablSky"
   };
 
@@ -52,4 +53,14 @@ babl_class_name (BablClassType klass)
  * since that leads to more strings than neccesary in the library.)
  */
 int babl_hmpf_on_name_lookups = 0;
+
+void
+babl_internal_init (void)
+{
+}
+
+void
+babl_internal_destroy (void)
+{
+}
 

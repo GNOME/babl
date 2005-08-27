@@ -1,5 +1,51 @@
 2005-08-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* Makefile.am:
+	* babl.pc.in: added -dl
+	* babl/babl-classes.c: Added BablExtension to string list of types.
+	* babl/babl-classes.h: Added BablExtension, some reordering in union.
+	* babl/babl-conversion.c:
+		(create_name), (babl_conversion_new): compute the name of the
+		conversion instead of explicitly having to provide it.
+	* babl/babl-core.c:
+		(convert_double_double), (copy_strip_1),
+		(babl_core_init): Moved double datatype and RGBA model from
+		base into core.
+	* babl/babl-core.h: new file
+	* babl/babl-db.h: improved logging, print current extender as well.
+	* babl/babl-ids.h: removed some non central ids.
+	* babl/babl-internal.h: new varargs based logger.
+	* babl/babl-introspect.c: (babl_introspect): use quiet "fake"
+	extender. Allow introspection of single objects.
+	* babl/babl-introspect.h: Allow introspection of single objects.
+	* babl/babl-memory.c: (babl_memory_sanity): use babl_log instead of
+	fprintf.
+	* babl/babl-sanity.c: (id_sanity): only complain about id==0 in
+	BablBase / BablCore.
+	* babl/babl.c: (babl_init), (babl_destroy): added core and extension
+	to build up/tear down lists.
+	* babl/babl.h: removed babl_introspect which doesn't belong here
+	anymore.
+	* babl/base/Makefile.am: Removed type-double.c
+	* babl/base/babl-base.c: (types), (models): removed
+	babl_base_type_double ()
+	* babl/base/model-rgb.c: (components), (models): removed RGBA model.
+	* babl/base/type-double.c: removed
+	
+	* docs/index-static.html.in:
+	* tests/Makefile.am: LDADD += -ldl 
+	* tests/introspect.c: (main): pass NULL as argument to
+	babl_introspect () to do full objectspace traversal.
+
+	* babl/babl-fish.h:
+	* babl/babl-model.h:
+	* babl/babl-pixel-format.h:
+	* babl/babl-sampling.h:
+	* babl/babl-conversion.h:
+	* babl/babl-component.h: cosmetic rearrangement of lines.
+
+2005-08-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-component.c: (babl_component_new):
 	* babl/babl-conversion.c: (conversion_new), (babl_conversion_new),
 	(babl_conversion_process):

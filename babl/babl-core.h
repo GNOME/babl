@@ -17,46 +17,9 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <string.h>
-#include <assert.h>
+#ifndef BABL_CORE_H
+#define BABL_CORE_H
 
-#include "babl.h"
+void babl_core_init (void);
 
-static void
-convert_double_double (void *src,
-                       void *dst,
-                       int   src_pitch,
-                       int   dst_pitch,
-                       int   n)
-{
-  if (src_pitch == 64 &&
-      dst_pitch == 64)
-    {
-      memcpy (dst, src, n/8);
-      return;
-    }
-  while (n--)
-    {
-      (*(double *) dst) = (*(double *) src);
-      dst += dst_pitch;
-      src += src_pitch;
-    }
-}
-
-void
-babl_base_type_double (void)
-{
-  babl_type_new (
-    "double",
-    "id",          BABL_DOUBLE,
-    "bits",        64,
-    NULL);
-
-  babl_conversion_new (
-    "babl-base: double to double",
-    "source",      babl_type_id (BABL_DOUBLE),
-    "destination", babl_type_id (BABL_DOUBLE),
-    "linear", convert_double_double,
-    NULL
-  );
-}
+#endif

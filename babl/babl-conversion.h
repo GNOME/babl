@@ -21,12 +21,12 @@
 #define BABL_CONVERSION_H
 
 #include "babl-classes.h"
-
-BABL_DEFINE_CLASS (babl_conversion)
+#include "babl-instance.h"
 
 void babl_conversion_process (BablConversion *conversion,
                               void           *source,
                               void           *destination,
                               long           n);
 
+BABL_DEFINE_CLASS (babl_conversion)
 #endif

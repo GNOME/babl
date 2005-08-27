@@ -38,26 +38,6 @@ babl_base_model_rgb (void)
 static void
 components (void)
 {
-  babl_component_new (
-    "R",
-    "id", BABL_RED,
-    "luma",
-    "chroma",
-    NULL);
-
-  babl_component_new (
-   "G",
-    "id",   BABL_GREEN,
-   "luma", 
-   "chroma",
-   NULL);
-  
-  babl_component_new (
-   "B",
-    "id",   BABL_BLUE,
-   "luma",
-   "chroma",
-   NULL);
 
   babl_component_new (
     "R'",
@@ -80,12 +60,6 @@ components (void)
    "chroma",
    NULL);
 
-
-  babl_component_new (
-   "A",
-   "id",    BABL_ALPHA,
-   "alpha",
-   NULL);
 
   babl_component_new (
     "R*A",
@@ -114,14 +88,6 @@ components (void)
 static void
 models (void)
 {
-  babl_model_new (
-    "rgba",
-    "id", BABL_RGBA,
-    babl_component_id (BABL_RED),
-    babl_component_id (BABL_GREEN),
-    babl_component_id (BABL_BLUE),
-    babl_component_id (BABL_ALPHA),
-    NULL);
 
   babl_model_new (
     "rgb",
@@ -299,9 +265,6 @@ premultiplied_to_non_premultiplied (int    src_bands,
       BABL_PLANAR_STEP
     }
 }
-
-
-
 
 static void
 conversions (void)

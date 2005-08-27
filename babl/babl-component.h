@@ -21,6 +21,8 @@
 #define _BABL_COMPONENT_H
 
 #include "babl-classes.h"
-BABL_DEFINE_CLASS (babl_component)
+#include "babl-instance.h"
 
+
+BABL_DEFINE_CLASS (babl_component)
 #endif
