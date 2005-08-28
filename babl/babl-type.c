@@ -125,8 +125,7 @@ babl_type_new (const char *name,
       
       else
         {
-          babl_log ("unhandled argument '%s' for format '%s'", arg, name);
-          exit (-1);
+          babl_fatal ("unhandled argument '%s' for format '%s'", arg, name);
         }
     }
     

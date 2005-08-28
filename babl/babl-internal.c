@@ -54,6 +54,20 @@ babl_class_name (BablClassType klass)
  */
 int babl_hmpf_on_name_lookups = 0;
 
+#include <sys/types.h>
+#include <unistd.h>
+
+void
+babl_die (void)
+{
+  char buf[512];
+
+  sprintf (buf,"echo bt>/tmp/babl.gdb;"
+               "gdb -q --batch -x /tmp/babl.gdb --pid=%i 2>/dev/null", getpid());
+  system (buf);
+  exit (-1);
+}
+
 void
 babl_internal_init (void)
 {

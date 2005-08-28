@@ -39,6 +39,8 @@
 #include "babl-extension.h"
 /* */
 
+void babl_die (void);
+
 /**** LOGGER ****/
 #include <stdarg.h>
 
@@ -68,6 +70,13 @@ real_babl_log (const char *file,
 }
 
 #define babl_log(args...)  real_babl_log(__FILE__, __LINE__, __FUNCTION__, args)
+
+#define babl_fatal(args...)  \
+  do{ \
+    real_babl_log(__FILE__, __LINE__, __FUNCTION__, args);\
+    babl_die();} \
+  while(0);
+
 
 /********************/
 
@@ -107,24 +116,23 @@ type_name##_id (int id)                                       \
   return babl;                                                \
 }
 
-#define BABL_DEFINE_LOOKUP_BY_NAME(type_name)                 \
-Babl *                                                        \
-type_name (const char *name)                                  \
-{                                                             \
-  Babl *babl;                                                 \
-                                                              \
-  if (babl_hmpf_on_name_lookups)                              \
-    {                                                         \
-      babl_log ("%s(\"%s\"): hmpf!", __FUNCTION__, name);     \
-    }                                                         \
-  babl = db_exist (0, name);                                  \
-                                                              \
-  if (!babl)                                                  \
-    {                                                         \
-      babl_log ("%s(\"%s\"): not found", __FUNCTION__, name); \
-      exit (-1);                                              \
-    }                                                         \
-  return babl;                                                \
+#define BABL_DEFINE_LOOKUP_BY_NAME(type_name)                   \
+Babl *                                                          \
+type_name (const char *name)                                    \
+{                                                               \
+  Babl *babl;                                                   \
+                                                                \
+  if (babl_hmpf_on_name_lookups)                                \
+    {                                                           \
+      babl_log ("%s(\"%s\"): hmpf!", __FUNCTION__, name);       \
+    }                                                           \
+  babl = db_exist (0, name);                                    \
+                                                                \
+  if (!babl)                                                    \
+    {                                                           \
+      babl_fatal ("%s(\"%s\"): not found", __FUNCTION__, name); \
+    }                                                           \
+  return babl;                                                  \
 }
 
 #ifndef BABL_INIT_HOOK

@@ -1,5 +1,18 @@
 2005-08-28  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-internal.[ch]: (babl_die): A function to call from
+	babl_fatal (...), invokes commands resulting in a backtrace, thus
+	giving context to where things broke.
+	* babl/babl-component.c: (babl_component_new):
+	* babl/babl-conversion.c: (babl_conversion_new):
+	* babl/babl-fish.c: (babl_conversion_find):
+	* babl/babl-format.c: (format_new), (babl_format_new):
+	* babl/babl-model.c: (babl_model_new):
+	* babl/babl-type.c: (babl_type_new): use babl_fatal() instead of
+	babl_log () on API mistakes.
+
+2005-08-28  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-pixel-format.c: removed
 	* babl/babl-format.c: readded under new name.
 

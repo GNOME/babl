@@ -211,8 +211,7 @@ babl_conversion_new (Babl *source,
         }
       else
         {
-          babl_log ("unhandled argument '%s'", arg);
-          exit (-1);
+          babl_fatal ("unhandled argument '%s'", arg);
         }
 
       arg = va_arg (varg, char *);

@@ -148,8 +148,7 @@ babl_model_new (void *first_argument,
       
       else
         {
-          babl_log ("unhandled argument '%s' for babl_model '%s'", arg, name);
-          exit (-1);
+          babl_fatal ("unhandled argument '%s' for babl_model '%s'", arg, name);
         }
 
       arg = va_arg (varg, char *);

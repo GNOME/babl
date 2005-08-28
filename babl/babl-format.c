@@ -61,9 +61,8 @@ format_new (const char     *name,
             if (component[j] == model->component[i])
               goto component_found;
           }
-        babl_log ("matching source component for %s in model %s not found",
-           model->component[i]->instance.name, model->instance.name);
-        exit (-1);
+        babl_fatal ("matching source component for %s in model %s not found",
+                    model->component[i]->instance.name, model->instance.name);
         component_found:
         ;
       }
@@ -210,8 +209,7 @@ babl_format_new (const char *name,
       
       else
         {
-          babl_log ("unhandled argument '%s' for format '%s'", arg, name);
-          exit (-1);
+          babl_fatal ("unhandled argument '%s' for format '%s'", arg, name);
         }
     }
     

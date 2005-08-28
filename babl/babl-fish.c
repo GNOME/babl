@@ -108,10 +108,9 @@ BablConversion *babl_conversion_find (void *source,
 
   if (!data.result)
     {
-      babl_log ("args=('%s', '%s'): failed, aborting", 
-        data.source->instance.name, data.destination->instance.name);
-      exit (-1);
-      return NULL;
+      babl_fatal ("args=('%s', '%s'): failed, aborting", 
+          data.source->instance.name,
+          data.destination->instance.name);
     }
   return data.result;
 }
