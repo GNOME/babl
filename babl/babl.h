@@ -33,7 +33,7 @@
 #include "babl-fish.h"
 #include "babl-image.h"
 #include "babl-model.h"
-#include "babl-pixel-format.h"
+#include "babl-format.h"
 #include "babl-type.h"
 #include "babl-sampling.h"
 

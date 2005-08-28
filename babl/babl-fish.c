@@ -27,7 +27,7 @@
 #include "babl-model.h"
 #include "babl-image.h"
 #include "babl-component.h"
-#include "babl-pixel-format.h"
+#include "babl-format.h"
 
 static int 
 each_babl_fish_destroy (Babl *babl,

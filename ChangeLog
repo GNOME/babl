@@ -1,5 +1,20 @@
 2005-08-28  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-pixel-format.c: removed
+	* babl/babl-format.c: readded under new name.
+
+	* babl/babl-pixel-format.h: removed
+	* babl/babl-format.h: readded under new name.
+
+	* babl/babl-classes.c: removed
+	* babl/babl-internal.c: readded under new name.
+
+	* babl/babl.h,
+	* babl/Makefile.am,
+	* babl/babl-fish.c: Accomodate changes.
+
+2005-08-28  Øyvind Kolås  <pippin@gimp.org>
+
 
 	* babl/babl-component.c: (babl_component_new): s/parameter/argument/
 

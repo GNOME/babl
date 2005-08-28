@@ -4,17 +4,17 @@ SUBDIRS = base
 
 c_sources =				\
         babl.c				\
-	babl-classes.c			\
 	babl-core.c   			\
 	babl-component.c		\
 	babl-conversion.c		\
 	babl-extension.c		\
 	babl-fish.c			\
+	babl-format.c			\
 	babl-image.c			\
+	babl-internal.c			\
 	babl-introspect.c		\
 	babl-memory.c			\
 	babl-model.c			\
-	babl-pixel-format.c		\
 	babl-sampling.c			\
 	babl-sanity.c			\
 	babl-type.c			\
@@ -27,6 +27,7 @@ h_sources  =             		\
 	babl-conversion.h		\
 	babl-db.h			\
 	babl-extension.h		\
+	babl-format.h			\
 	babl-ids.h			\
 	babl-instance.h			\
 	babl-internal.h			\
@@ -35,7 +36,6 @@ h_sources  =             		\
 	babl-fish.h			\
 	babl-memory.h			\
 	babl-model.h			\
-	babl-pixel-format.h		\
 	babl-sampling.h			\
 	babl-sanity.h			\
 	babl-type.h			\
@@ -54,7 +54,7 @@ library_include_HEADERS =		\
 	babl-image.h			\
 	babl-instance.h			\
 	babl-model.h			\
-	babl-pixel-format.h		\
+	babl-format.h			\
 	babl-sampling.h			\
 	babl-type.h
 
