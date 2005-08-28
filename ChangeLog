@@ -43,6 +43,7 @@
 	* extensions/CIE-Lab.c: moved here from BablBase, contains cpercep.c
 	and cpercep.h
 	* extensions/naive-CMYK.c: moved here from BablBase.
+	* extensions/util.h: convenience functions for babl extensions.
 
 	* babl/babl-core.[ch]: double and RGBA originating from BablBase.
 
