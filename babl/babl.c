@@ -30,6 +30,7 @@ babl_init (void)
 {
   if (ref_count++==0)
     {
+      babl_internal_init ();
       babl_type_init ();
       babl_sampling_init ();
       babl_component_init ();
@@ -58,6 +59,7 @@ babl_destroy (void)
       babl_component_destroy ();
       babl_sampling_destroy ();
       babl_type_destroy ();
+      babl_internal_destroy ();
       babl_memory_sanity ();
     }
 }

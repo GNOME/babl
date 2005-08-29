@@ -1,3 +1,15 @@
+2005-08-29  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/babl-internal.c: (babl_internal_init): set memory functions.
+	* babl/babl-memory.c: (babl_set_malloc), (babl_set_free),
+	(functions_sanity), (babl_malloc), (babl_free), (babl_realloc),
+	(babl_calloc), (babl_sizeof), (babl_strdup), (babl_strcat),
+	(babl_memory_sanity),
+	* babl/babl-memory.h: Added babl_str* functions, that behave slightly
+	different from the standard ones.
+	* babl/babl-util.c: (babl_add_ptr_to_list): made error fatal.
+	* babl/babl.c: (babl_init), (babl_destroy): added babl_internal
+
 2005-08-28  Øyvind Kolås  <pippin@gimp.org>
 
 	* babl/babl-internal.[ch]: (babl_die): A function to call from

@@ -71,6 +71,8 @@ babl_die (void)
 void
 babl_internal_init (void)
 {
+  babl_set_malloc (malloc);
+  babl_set_free (free);
 }
 
 void

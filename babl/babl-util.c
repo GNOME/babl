@@ -53,7 +53,7 @@ babl_add_ptr_to_list (void ***list,
 
   if (!(*list))
     {
-       babl_log ("failed to realloc");
+       babl_fatal ("failed to realloc");
     }
 
   (*list)[orig_len]=new;
