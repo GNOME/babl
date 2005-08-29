@@ -8,6 +8,7 @@ TESTS =				\
 	rgb_to_ycbcr_to_rgb	\
 	srgb_to_lab_u8		\
 	sanity			\
+	types			\
 	babl_class_name
 
 float_to_u8_SOURCES         = float_to_u8.c
@@ -20,6 +21,7 @@ rgb_to_ycbcr_SOURCES        = rgb_to_ycbcr.c
 rgb_to_ycbcr_to_rgb_SOURCES = rgb_to_ycbcr_to_rgb.c
 babl_class_name_SOURCES     = babl_class_name.c
 sanity_SOURCES              = sanity.c
+types_SOURCES               = types.c
 
 
 AM_CFLAGS = -I$(top_srcdir) -I$(top_srcdir)/babl

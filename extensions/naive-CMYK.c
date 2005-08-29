@@ -186,9 +186,10 @@ conversions (void)
 static void
 formats (void)
 {
-  babl_format_new ("CMYK float",
-      babl_model ("CMYK"),
-      babl_type ("float"),
+  babl_format_new (
+      "name",        "CMYK float",
+      babl_model     ("CMYK"),
+      babl_type      ("float"),
       babl_component ("cyan"),
       babl_component ("yellow"),
       babl_component ("magenta"),

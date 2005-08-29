@@ -39,14 +39,12 @@ test (void)
   
   fish = babl_fish (
     babl_format_new (
-      "foo",
       babl_model ("Y"),
       babl_type ("float"),
       babl_component ("Y"),
       NULL
     ),
     babl_format_new (
-      "bar",
       babl_model ("RGB"),
       babl_type ("float"),
       babl_component ("R"),

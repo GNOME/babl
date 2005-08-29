@@ -254,7 +254,7 @@ static void
 formats (void)
 {
   babl_format_new (
-    "CIE Lab float",
+    "name",        "CIE Lab float",
     babl_model     ("CIE Lab"),
 
     babl_type      ("float"),
@@ -264,7 +264,7 @@ formats (void)
     NULL);
 
   babl_format_new (
-    "CIE Lab u8",
+    "name",        "CIE Lab u8",
     babl_model     ("CIE Lab"),
 
     babl_type      ("CIE u8 L"),
@@ -276,7 +276,7 @@ formats (void)
     NULL);
 
   babl_format_new (
-    "cie-lab-u16",
+    "name",        "cie-lab-u16",
     babl_model     ("CIE Lab"),
 
     babl_type      ("CIE u16 L"),

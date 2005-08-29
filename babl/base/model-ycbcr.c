@@ -195,7 +195,7 @@ static void
 formats (void)
 {
   babl_format_new (
-    "y'cbcr420",
+    "name",        "y'cbcr420",
     "id",          BABL_YCBCR420,
     "planar",
     babl_model_id  (BABL_YCBCR),
@@ -211,7 +211,7 @@ formats (void)
   
 
   babl_format_new (
-    "y'cbcr422",
+    "name",        "y'cbcr422",
     "id",          BABL_YCBCR422,
     "planar",
     babl_model_id  (BABL_YCBCR),
@@ -226,7 +226,7 @@ formats (void)
     NULL);
 
   babl_format_new (
-    "y'cbcr411",
+    "name",        "y'cbcr411",
     "id",          BABL_YCBCR411,
     "planar",
     babl_model_id  (BABL_YCBCR),

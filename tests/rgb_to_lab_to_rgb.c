@@ -76,7 +76,7 @@ test (void)
   
   fish = babl_fish (
     babl_format_new (
-      "foo",
+      "name", "foo",
       babl_model ("RGB"),
       babl_type ("float"),
       babl_component ("R"),
@@ -85,7 +85,7 @@ test (void)
       NULL
     ),
     babl_format_new (
-      "bar",
+      "name", "bar",
       babl_model ("CIE Lab"),
       babl_type ("float"), 
       babl_component ("CIE L"),

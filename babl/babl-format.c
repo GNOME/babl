@@ -28,7 +28,7 @@
 
 static int 
 each_babl_format_destroy (Babl *babl,
-                                void *data)
+                          void *data)
 {
   babl_free (babl->format.from);
   babl_free (babl->format.to);
@@ -39,13 +39,13 @@ each_babl_format_destroy (Babl *babl,
 
 static Babl *
 format_new (const char     *name,
-                  int             id,
-                  int             planar,
-                  int             components,
-                  BablModel      *model,
-                  BablComponent **component,
-                  BablSampling  **sampling,
-                  BablType      **type)
+            int             id,
+            int             planar,
+            int             components,
+            BablModel      *model,
+            BablComponent **component,
+            BablSampling  **sampling,
+            BablType      **type)
 {
   Babl *babl;
 
@@ -108,9 +108,36 @@ format_new (const char     *name,
   return babl;
 }
 
+
+static char buf[512]="";
+
+static const char *
+create_name (BablModel      *model,
+             int             components,
+             BablComponent **component,
+             BablType      **type)
+{
+  char *p = &buf[0];
+
+  sprintf (p, "%s ", model->instance.name);
+  p+=strlen (model->instance.name) + 1;
+
+  while (components--)
+    {
+      sprintf (p, "(%s as %s) ", 
+         (*component)->instance.name,
+         (*type)->instance.name);
+      p+=strlen ((*component)->instance.name) +
+         strlen ((*type)->instance.name     ) + strlen("( as ) ");
+      component++;
+      type++;
+    }
+  return buf;
+}
+
 Babl *
-babl_format_new (const char *name,
-                       ...)
+babl_format_new (void *first_arg,
+                 ...)
 {
   va_list varg;
   Babl            *babl;
@@ -124,18 +151,13 @@ babl_format_new (const char *name,
 
   BablSampling    *current_sampling = (BablSampling*) babl_sampling (1,1);
   BablType        *current_type     = (BablType*)     babl_type_id (BABL_U8);
-  const char      *arg              = name;
+  char            *name             = NULL;
+  void            *arg              = first_arg;
 
-  va_start (varg, name);
-
+  va_start (varg, first_arg);
   
   while (1)
     {
-      arg = va_arg (varg, char *);
-      if (!arg)
-        break;
-
-
       if (BABL_IS_BABL (arg))
         {
           Babl *babl = (Babl*)arg;
@@ -196,6 +218,11 @@ babl_format_new (const char *name,
         {
           id = va_arg (varg, int);
         }
+
+      else if (!strcmp (arg, "name"))
+        {
+          name = va_arg (varg, char *);
+        }
       
       else if (!strcmp (arg, "packed"))
         {
@@ -211,25 +238,34 @@ babl_format_new (const char *name,
         {
           babl_fatal ("unhandled argument '%s' for format '%s'", arg, name);
         }
+
+      arg = va_arg (varg, char *);
+      if (!arg)
+        break;
     }
     
   va_end   (varg);
 
+  babl = format_new (name?name:create_name (model, components, component, type),
+                     id,
+                     planar, components, model,
+                     component, sampling, type);
+ 
+  { 
+    Babl *ret;
+    ret = db_insert (babl);
 
-  babl = format_new (name, id,
-                           planar, components, model,
-                           component, sampling, type);
+    if (ret==babl)
+      {
+        return babl;
+      }
+    else
+      {
+        each_babl_format_destroy (babl, NULL);
+        return ret;
+      }
+  }
 
-  
-  if (db_insert (babl) == babl)
-    {
-      return babl;
-    }
-  else
-    {
-      each_babl_format_destroy (babl, NULL);
-      return NULL;
-    }
 }
 
 BABL_CLASS_TEMPLATE (babl_format)

@@ -334,7 +334,7 @@ static void
 formats (void)
 {
     babl_format_new (
-    "srgb",
+    "name", "srgb",
     "id", BABL_SRGB,
     babl_model_id     (BABL_RGB_GAMMA_2_2),
     babl_type_id      (BABL_U8),
@@ -344,7 +344,7 @@ formats (void)
     NULL);
 
   babl_format_new (
-    "srgba",
+    "name", "srgba",
     "id", BABL_SRGBA,
     babl_model_id     (BABL_RGBA_GAMMA_2_2),
     babl_type_id      (BABL_U8),
@@ -355,7 +355,7 @@ formats (void)
     NULL);
 
   babl_format_new (
-    "rgba-float",
+    "name", "rgba-float",
     "id",              BABL_RGBA_FLOAT,
     babl_model_id     (BABL_RGBA),
     babl_type_id      (BABL_FLOAT),
@@ -366,7 +366,7 @@ formats (void)
     NULL);
 
   babl_format_new (
-    "rgba-double",
+    "name", "rgba-double",
     "id",              BABL_RGBA_DOUBLE,
     babl_model_id     (BABL_RGBA),
     babl_type_id      (BABL_DOUBLE),
@@ -377,7 +377,7 @@ formats (void)
     NULL);
 
   babl_format_new (
-    "rgb-float",
+    "name", "rgb-float",
     "id", BABL_RGB_FLOAT,
     babl_model_id     (BABL_RGB),
     babl_type_id      (BABL_FLOAT),
