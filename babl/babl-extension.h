@@ -24,7 +24,10 @@
 #include "babl-instance.h"
 
 Babl       * babl_extension_base      (void);
+
 Babl       * babl_extender            (void);
+void         babl_set_extender        (Babl *new_extender);
+
 Babl       * babl_extension_quiet_log (void);
 
 BABL_DEFINE_CLASS (babl_extension)

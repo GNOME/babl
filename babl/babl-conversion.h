@@ -26,7 +26,7 @@
 void   babl_conversion_process (BablConversion *conversion,
                                 void           *source,
                                 void           *destination,
-                                long           n);
+                                long            n);
 
 Babl * babl_conversion_new     (Babl           *source,
                                 Babl           *destination,

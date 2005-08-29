@@ -18,7 +18,7 @@ void   type_name##_each    (BablEachFunction  each_fun,   \
                             void             *user_data); \
 Babl * type_name           (const char       *name);      \
 Babl * type_name##_id      (int               id);        \
-Babl * type_name##_new     (const char       *name,       \
+Babl * type_name##_new     (void             *first_arg,  \
                             ...);
 
 

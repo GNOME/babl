@@ -1,5 +1,13 @@
 2005-08-29  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-db.h: Do nor warn about collision during db_insert
+	* babl/babl-extension.[ch]: Implemented fs traversal based on BABL_PATH.
+	added babl_set_extender to API.
+	* babl/babl-instance.h: Changed signature of type_name##_new.
+	* babl/babl-introspect.c: (babl_introspect): use new babl_extender
+
+2005-08-29  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-internal.c: (babl_internal_init): set memory functions.
 	* babl/babl-memory.c: (babl_set_malloc), (babl_set_free),
 	(functions_sanity), (babl_malloc), (babl_free), (babl_realloc),

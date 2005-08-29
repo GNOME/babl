@@ -117,14 +117,16 @@ db_insert (Babl *babl)
 
   if (collision)
     {
+#if 0
       if (!strcmp (collision->instance.name, babl->instance.name)    )
         babl_log ("conflicting name:\n\t\tnew: '%s'\n\t\texisting '%s' from %s",
                 babl->instance.name, collision->instance.name,
-                BABL(collision->instance.creator)->instance.name);
+                collision->instance.creator?BABL(collision->instance.creator)->instance.name:"core");
       else if (collision->instance.id == babl->instance.id)
         babl_log ("conflicting id:\n\t\tnew: '%s' (id=%i)\n\t\texisting '%s' from %s",
                 babl->instance.name, babl->instance.id, collision->instance.name,
-                BABL(collision->instance.creator)->instance.name);
+                collision->instance.creator?BABL(collision->instance.creator)->instance.name:"core");
+#endif
       return collision;
     }
 

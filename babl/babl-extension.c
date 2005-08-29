@@ -17,6 +17,11 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#define BABL_PATH           "/usr/lib/babl:/usr/local/lib/babl:~/.babl";
+#define BABL_PATH_SEPERATOR "/"
+#define BABL_LIST_SEPERATOR ':'
+
+
 #define BABL_DYNAMIC_EXTENSIONS
 
 #define BABL_INIT_HOOK     init_hook();
@@ -37,7 +42,7 @@
 
 static int   each_babl_extension_destroy (Babl *babl, void *data);
 
-Babl *babl_extension_current_extender = NULL;
+static Babl *babl_extension_current_extender = NULL;
 
 Babl *
 babl_extender (void)
@@ -47,7 +52,7 @@ babl_extender (void)
   return NULL;
 }
 
-static void
+void
 babl_set_extender (Babl *new_extender)
 {
   babl_extension_current_extender = new_extender;
@@ -135,7 +140,6 @@ destroy_hook (void)
 #define RTLD_NOW 0
 #endif
 
-
 static Babl *
 load_failed (Babl *babl)
 {
@@ -157,7 +161,6 @@ babl_extension_load (const char *path)
   int  (*init)    (void) = NULL;
   void (*destroy) (void) = NULL;
  
-
   dl_handle = dlopen (path, RTLD_NOW);
   if (!dl_handle)
     {
@@ -183,7 +186,6 @@ babl_extension_load (const char *path)
       return load_failed (babl);
     }
 
-
   if (db_insert (babl) == babl)
     {
       babl_set_extender (NULL);
@@ -196,10 +198,127 @@ babl_extension_load (const char *path)
 }
 
 static void
+babl_extension_load_dir (const char *base_path)
+{
+  DIR            *dir;
+
+  if ((dir = opendir (base_path)))
+   {
+     struct  dirent *dentry;
+
+     while ((dentry = readdir (dir)) != NULL)
+       {
+         if (dentry->d_name[0] != '.' &&
+             dentry->d_ino > 0)
+           {
+             char   *path = NULL;
+             struct  stat st;
+             char   *extension;
+
+             path = babl_strcat (path, base_path);
+             path = babl_strcat (path, BABL_PATH_SEPERATOR);
+             path = babl_strcat (path, dentry->d_name);
+
+             stat (path, &st);
+
+             if ((extension = strrchr (dentry->d_name, '.')) !=NULL &&
+                 !strcmp (extension, ".so"))
+               {
+                  babl_extension_load (path);
+               }
+
+             babl_free (path);
+           }
+
+       }
+   }
+}
+
+static const char *
+babl_dir_list (void)
+{
+  const char *ret;
+  
+  ret = getenv ("BABL_PATH");
+  if (!ret)
+    ret = BABL_PATH;
+  return ret;
+}
+
+
+static char *
+expand_path (char *path)
+{
+  char *src;
+  char *dst;
+
+  dst = NULL;
+
+  src=path;
+
+  while(*src)
+    {
+      switch (*src)
+        {
+          case '~':
+            dst = babl_strcat (dst, getenv ("HOME"));
+            break;
+          default:
+            {
+              char tmp[2]="?";
+              tmp[0]=*src;
+              dst = babl_strcat (dst, tmp);
+            }
+        }
+      src++;
+    }
+  return dst;
+}
+
+
+/*  parse the provided colon seperated list of paths to search
+ */
+static void
+babl_extension_load_dir_list (const char *dir_list)
+{
+  int eos = 0;
+  const char *src;
+  char       *path, *dst;
+
+
+  path = babl_strdup (dir_list);
+  src = dir_list;
+  dst = path;
+
+  while (!eos)
+    {
+      switch (*src)
+        {
+        case '\0':
+          eos=1;
+        case BABL_LIST_SEPERATOR:
+            {
+              char *expanded_path = expand_path (path);
+              babl_extension_load_dir (expanded_path);
+              babl_free (expanded_path);
+            }
+          dst=path;
+          src++;
+          *dst = '\0';
+          break;
+        default:
+          *(dst++) = *(src++);
+          *dst = '\0';
+          break;
+        }
+    }
+  babl_free (path);
+}
+
+static void
 dynamic_init_hook (void)
 {
-  babl_extension_load ("/home/pippin/.babl/naive-CMYK.so");
-  babl_extension_load ("/home/pippin/.babl/CIE-Lab.so");
+  babl_extension_load_dir_list (babl_dir_list ());
 }
 
 #endif
@@ -218,6 +337,5 @@ each_babl_extension_destroy (Babl *babl,
   babl_free (babl);
   return 0;  /* continue iterating */
 }
-
 
 BABL_CLASS_TEMPLATE (babl_extension)

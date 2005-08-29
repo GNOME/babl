@@ -33,14 +33,13 @@ static int  each_introspect         (Babl *babl,
                                      void *user_data);
 #endif
 
-extern Babl *babl_extension_current_extender;
 void
 babl_introspect (Babl *babl)
 {
 #ifdef BABL_LOG
-  Babl *extender_backup = babl_extension_current_extender;
+  Babl *extender_backup = babl_extender ();
   
-  babl_extension_current_extender = babl_extension_quiet_log();
+  babl_set_extender (babl_extension_quiet_log());
 
   if (babl)
     {
@@ -76,7 +75,7 @@ babl_introspect (Babl *babl)
   babl_fish_each         (each_introspect, NULL);
   babl_log ("");
 
-  babl_extension_current_extender = extender_backup;
+  babl_set_extender (extender_backup);
 #endif
 }
 
