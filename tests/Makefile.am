@@ -1,27 +1,21 @@
 TESTS =				\
-	float_to_u8		\
 	grayscale_to_rgb	\
-	u8_to_float		\
 	rgb_to_bgr       	\
-	rgb_to_lab_to_rgb	\
 	rgb_to_ycbcr		\
-	rgb_to_ycbcr_to_rgb	\
 	srgb_to_lab_u8		\
 	sanity			\
 	types			\
+	models			\
 	babl_class_name
 
-float_to_u8_SOURCES         = float_to_u8.c
-u8_to_float_SOURCES         = u8_to_float.c
 grayscale_to_rgb_SOURCES    = grayscale_to_rgb.c
 rgb_to_bgr_SOURCES          = rgb_to_bgr.c
-rgb_to_lab_to_rgb_SOURCES   = rgb_to_lab_to_rgb.c
 srgb_to_lab_u8_SOURCES      = srgb_to_lab_u8.c
 rgb_to_ycbcr_SOURCES        = rgb_to_ycbcr.c
-rgb_to_ycbcr_to_rgb_SOURCES = rgb_to_ycbcr_to_rgb.c
 babl_class_name_SOURCES     = babl_class_name.c
 sanity_SOURCES              = sanity.c
 types_SOURCES               = types.c
+models_SOURCES              = models.c
 
 
 AM_CFLAGS = -I$(top_srcdir) -I$(top_srcdir)/babl

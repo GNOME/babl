@@ -1,5 +1,17 @@
 2005-08-30  Øyvind Kolås  <pippin@gimp.org>
 
+	* tests/srgb_to_lab_u8.c: updated values.
+	* tests/types.c: rewritten.
+	* tests/models.c: added, a test to test that reference conversions
+	registered for a BablModel are symmetrical.
+	* tests/float_to_u8.c,
+	* tests/u8_to_float.c,
+	* tests/rgb_to_lab_to_rgb.c,
+	* tests/rgb_to_ycbcr_to_rgb.c: removed.
+	* tests/Makefile.am: updated.
+
+2005-08-30  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-introspect.c:
 		(model_introspect), 
 		(format_introspect),
