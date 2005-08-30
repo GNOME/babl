@@ -104,7 +104,6 @@ int main (void)
   babl_set_extender (babl_extension_quiet_log ());
   babl_type_each (type_check, NULL);
 
-  babl_introspect (NULL);
   babl_destroy ();
 
   return !OK;
