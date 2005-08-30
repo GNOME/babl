@@ -37,42 +37,50 @@ each_babl_fish_destroy (Babl *babl,
   return 0;  /* continue iterating */
 }
 
-BablFish *
+static char buf[1024];
+static char *
+create_name (Babl *source,
+             Babl *destination,
+             int   is_reference)
+{
+  /* fish names are intentionally kept short */
+  snprintf (buf, 1024, "%s %p %p",
+                 is_reference?"ref "
+                             :"",
+                 source, destination);
+  return buf;
+}
+
+Babl *
 babl_fish_new (Babl *source,
                Babl *destination)
 {
   Babl *babl = NULL;
+  const char *name;
 
   assert (BABL_IS_BABL (source));
   assert (BABL_IS_BABL (destination));
+  
+  name = create_name (source, destination, 0);
 
-  babl                   = babl_calloc (sizeof (BablFish), 1);
+  babl                   = babl_malloc (sizeof (BablFishReference) +
+                                        strlen (name) + 1);
   babl->class_type       = BABL_FISH;
   babl->instance.id      = 0;
-  babl->instance.name    = "Fishy";
+  babl->instance.name    = ((void *)babl) + sizeof(BablFishReference);
+  strcpy (babl->instance.name, name);
   babl->fish.source      = (union Babl*)source;
   babl->fish.destination = (union Babl*)destination;
 
-  if (db_insert (babl) == babl)
-    {
-      return (BablFish*)babl;
-    }
-  else
-    {
-      each_babl_fish_destroy (babl, NULL);
-      return NULL;
-    }
+  babl->fish.processings = 0;
+  babl->fish.pixels      = 0;
 
-/*  Might make sense to allow a precalculated shortcut to
- *  participate in later checks for optimal conversions, then we
- *  should also have better generated names,.   model + datatype 
- *  is a possibility , or even full single line serialization of
- *  components with types.
- *
-    babl_add_ptr_to_list ((void ***)&(source->type.from), babl);
-    babl_add_ptr_to_list ((void ***)&(destination->type.to), babl);
-  */
-  return (BablFish*)babl;
+  { 
+    Babl *ret = db_insert (babl);
+    if (ret!=babl)
+        babl_free (babl);
+    return ret;
+  }
 }
 
 typedef struct SearchData
@@ -82,44 +90,30 @@ typedef struct SearchData
   BablConversion *result;
 } SearchData;
 
-static int
-find_conversion (Babl *babl,
-                 void *user_data)
-{
-  SearchData *sd     = user_data;
-
-  if (BABL(babl->conversion.source)      == sd->source &&
-      BABL(babl->conversion.destination) == sd->destination)
-    {
-      sd->result = (BablConversion*)babl;
-      return 1;
-    }
-  return 0;
-}
-
 BablConversion *babl_conversion_find (void *source,
                                       void *destination)
 {
-  SearchData data;
-  data.source      = BABL(source);
-  data.destination = BABL(destination);
-  data.result      = NULL;
-  babl_conversion_each (find_conversion, &data);
+  int i=0;
+  Babl **conversion;
 
-  if (!data.result)
+  conversion = (void*)BABL(source)->type.from;
+  while (conversion[i])
     {
-      babl_fatal ("args=('%s', '%s'): failed, aborting", 
-          data.source->instance.name,
-          data.destination->instance.name);
+      if (conversion[i]->conversion.destination == destination)
+        return (BablConversion*)conversion[i];
+      i++;
     }
-  return data.result;
+  babl_fatal ("failed, aborting");
+  return NULL;
 }
+
 
 Babl *
 babl_fish_reference_new (Babl *source,
                          Babl *destination)
 {
   Babl *babl = NULL;
+  char *name = create_name (source, destination, 1);
 
   assert (BABL_IS_BABL (source));
   assert (BABL_IS_BABL (destination));
@@ -127,31 +121,31 @@ babl_fish_reference_new (Babl *source,
   assert (source->class_type == BABL_FORMAT);
   assert (destination->class_type == BABL_FORMAT);
 
-  babl                   = babl_calloc (sizeof (BablFishReference), 1);
+  babl                   = babl_malloc (sizeof (BablFishReference) +
+                                        strlen (name) + 1);
   babl->class_type       = BABL_FISH_REFERENCE;
   babl->instance.id      = 0;
-  babl->instance.name    = NULL;
+  babl->instance.name    = ((void *)babl) + sizeof(BablFishReference);
+  strcpy (babl->instance.name, name);
   babl->fish.source      = (union Babl*)source;
   babl->fish.destination = (union Babl*)destination;
- 
-  if (db_insert (babl) == babl)
-    {
-      return babl;
-    }
-  else
-    {
-      each_babl_fish_destroy (babl, NULL);
-      return NULL;
-    }
 
-  return babl;
+  babl->fish.processings = 0;
+  babl->fish.pixels      = 0;
+
+  { 
+    Babl *ret = db_insert (babl);
+    if (ret!=babl)
+        babl_free (babl);
+    return ret;
+  }
 }
 
 Babl *
 babl_fish (void *source,
            void *destination)
 {
-  Babl *source_format = NULL;
+  Babl *source_format      = NULL;
   Babl *destination_format = NULL;
 
   assert (source);
@@ -170,6 +164,7 @@ babl_fish (void *source,
   if (!source_format)
     {
       babl_log ("args=(%p, %p) source format invalid", source, destination);
+      return NULL;
     }
 
   if (BABL_IS_BABL (destination))
@@ -185,6 +180,7 @@ babl_fish (void *source,
   if (!destination_format)
     {
       babl_log ("args=(%p, %p) destination format invalid", source, destination);
+      return NULL;
     }
   
   return babl_fish_reference_new (source_format, destination_format);
@@ -302,6 +298,45 @@ convert_from_double (BablFormat *destination_fmt,
   babl_free (dst_img);
 }
 
+
+static int
+process_same_model (Babl      *babl,
+                    BablImage *source,
+                    BablImage *destination,
+                    long n)
+{
+  void *double_buf;
+
+  if (BABL_IS_BABL (source) ||
+      BABL_IS_BABL (destination))
+    {
+      babl_log ("args=(%p, %p, %p, %li): trying to handle BablImage (unconfirmed code)",
+                 babl_fish, source, destination, n);
+    }
+
+  double_buf      = babl_malloc(sizeof (double) * n * 
+                              BABL(babl->fish.source)->format.model->components);
+
+  convert_to_double (
+     (BablFormat*) BABL(babl->fish.source),
+     BABL_IS_BABL(source)?source:NULL,
+     BABL_IS_BABL(source)?NULL:source,
+     double_buf,
+     n
+   );
+
+  convert_from_double (
+     (BablFormat*) BABL(babl->fish.destination),
+     double_buf,
+     BABL_IS_BABL(destination)?destination:NULL,
+     BABL_IS_BABL(destination)?NULL:destination,
+     n
+   );
+
+  babl_free (double_buf);
+  return 0;
+}
+
 static int
 babl_fish_reference_process (Babl      *babl,
                              BablImage *source,
@@ -315,29 +350,29 @@ babl_fish_reference_process (Babl      *babl,
   Babl *rgba_image;
   Babl *destination_image;
 
-  /* FIXME: assumptions made about memory requirements that 
-   * are not good
-   */
-  source_double_buf      = babl_malloc(sizeof (double) * n * 4);
-  rgba_double_buf        = babl_malloc(sizeof (double) * n * 4);
-  destination_double_buf = babl_malloc(sizeof (double) * n * 4);
+  if (BABL(babl->fish.source)->format.model ==
+      BABL(babl->fish.destination)->format.model)
+        return process_same_model (babl, source, destination, n); 
   
-  source_image      = babl_image_from_linear (
-                         source_double_buf,
-                         BABL(BABL((babl->fish.source)) -> format.model));
-  rgba_image        = babl_image_from_linear (
-                         rgba_double_buf,
-                         babl_model_id (BABL_RGBA));
-  destination_image = babl_image_from_linear (
-                         destination_double_buf,
-                         BABL(BABL((babl->fish.destination))->format.model));
-
   if (BABL_IS_BABL (source) ||
       BABL_IS_BABL (destination))
     {
       babl_log ("args=(%p, %p, %p, %li): trying to handle BablImage (unconfirmed code)",
                  babl_fish, source, destination, n);
     }
+
+  source_double_buf      = babl_malloc(sizeof (double) * n * 
+                              BABL(babl->fish.source)->format.model->components);
+  rgba_double_buf        = babl_malloc(sizeof (double) * n * 4);
+  destination_double_buf = babl_malloc(sizeof (double) * n *
+                              BABL(babl->fish.destination)->format.model->components);
+
+  source_image      = babl_image_from_linear (
+      source_double_buf,BABL(BABL((babl->fish.source)) -> format.model));
+  rgba_image        = babl_image_from_linear (
+      rgba_double_buf, babl_model_id (BABL_RGBA));
+  destination_image = babl_image_from_linear (
+      destination_double_buf, BABL(BABL((babl->fish.destination))->format.model));
 
   convert_to_double (
      (BablFormat*) BABL(babl->fish.source),
@@ -404,6 +439,9 @@ babl_process (Babl *babl,
   assert (BABL_IS_BABL (babl));
   assert (n>0);
 
+  babl->fish.processings++;
+  babl->fish.pixels += n;
+  
   if (babl->class_type == BABL_FISH)
     return babl_fish_process (babl, source, destination, n);
   

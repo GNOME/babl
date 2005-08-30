@@ -160,15 +160,12 @@ babl_model_new (void *first_argument,
 
   babl = model_new (create_name (name, components, component), id, components, component);
   
-  if (db_insert (babl) == babl)
-    {
-      return babl;
-    }
-  else
-    {
-      each_babl_model_destroy (babl, NULL);
-      return NULL;
-    }
+  { 
+    Babl *ret = db_insert (babl);
+    if (ret!=babl)
+        babl_free (babl);
+    return ret;
+  }
 }
 
 BABL_CLASS_TEMPLATE (babl_model)

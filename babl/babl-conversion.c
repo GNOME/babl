@@ -118,6 +118,9 @@ conversion_new (const char        *name,
   babl->conversion.time_cost   = time_cost;
   babl->conversion.loss        = loss;
 
+  babl->conversion.pixels      = 0;
+  babl->conversion.processings = 0;
+
   babl_add_ptr_to_list ((void ***)&(source->type.from), babl);
   babl_add_ptr_to_list ((void ***)&(destination->type.to), babl);
   
@@ -227,15 +230,12 @@ babl_conversion_new (Babl *source,
   babl = conversion_new (create_name (source, destination), id, source, destination, time_cost, loss, linear,
                          planar, planar_bit);
 
-  if (db_insert (babl) == babl)
-    {
-      return babl;
-    }
-  else
-    {
-      each_babl_conversion_destroy (babl, NULL);
-      return NULL;
-    }
+  { 
+    Babl *ret = db_insert (babl);
+    if (ret!=babl)
+        babl_free (babl);
+    return ret;
+  }
 }
 
 static void
@@ -284,6 +284,9 @@ babl_conversion_process (BablConversion *conversion,
 {
   /*TODO: build planar formats if needed when linear pointers are passed in */
   assert (BABL_IS_BABL (conversion));
+
+  conversion->processings++;
+  conversion->pixels += n;
 
   switch (BABL(conversion)->class_type)
   {

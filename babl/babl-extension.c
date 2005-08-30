@@ -17,12 +17,12 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#define BABL_DYNAMIC_EXTENSIONS
 #define BABL_PATH           "/usr/lib/babl:/usr/local/lib/babl:~/.babl";
 #define BABL_PATH_SEPERATOR "/"
 #define BABL_LIST_SEPERATOR ':'
 
 
-#define BABL_DYNAMIC_EXTENSIONS
 
 #define BABL_INIT_HOOK     init_hook();
 #define BABL_DESTROY_HOOK  destroy_hook();
@@ -99,19 +99,17 @@ babl_extension_base (void)
                         dl_handle,
                         destroy);
   babl_set_extender (babl);
-  babl_base_init ();
 
-  if (db_insert (babl) == babl)
-    {
-      babl_set_extender (NULL);
-      return babl;
-    }
-  else
-    {
-      each_babl_extension_destroy (babl, NULL);
-      babl_set_extender (NULL);
-      return NULL;
-    }
+  { 
+    Babl *ret = db_insert (babl);
+    if (ret!=babl)
+        babl_free (babl);
+    else
+        babl_base_init ();
+    babl = ret;
+  }
+  babl_set_extender (NULL);
+  return babl;
 }
 
 static void
@@ -231,6 +229,7 @@ babl_extension_load_dir (const char *base_path)
            }
 
        }
+     closedir (dir);
    }
 }
 
@@ -244,7 +243,6 @@ babl_dir_list (void)
     ret = BABL_PATH;
   return ret;
 }
-
 
 static char *
 expand_path (char *path)

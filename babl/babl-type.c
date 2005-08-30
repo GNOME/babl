@@ -133,15 +133,12 @@ babl_type_new (const char *name,
 
   babl = type_new (name, id, bits);
 
-  if (db_insert (babl) == babl)
-    {
-      return babl;
-    }
-  else
-    {
-      each_babl_type_destroy (babl, NULL);
-      return NULL;
-    }
+  { 
+    Babl *ret = db_insert (babl);
+    if (ret!=babl)
+        babl_free (babl);
+    return ret;
+  }
 }
 
 BABL_CLASS_TEMPLATE (babl_type)

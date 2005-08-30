@@ -252,20 +252,11 @@ babl_format_new (void *first_arg,
                      component, sampling, type);
  
   { 
-    Babl *ret;
-    ret = db_insert (babl);
-
-    if (ret==babl)
-      {
-        return babl;
-      }
-    else
-      {
-        each_babl_format_destroy (babl, NULL);
-        return ret;
-      }
+    Babl *ret = db_insert (babl);
+    if (ret!=babl)
+        babl_free (babl);
+    return ret;
   }
-
 }
 
 BABL_CLASS_TEMPLATE (babl_format)

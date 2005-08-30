@@ -106,6 +106,8 @@ BablConversion {
       BablFuncPlanar     planar;
       BablFuncPlanarBit  planar_bit;
     } function;
+  int                    processings;
+  long                   pixels;
 } BablConversion;
 
 typedef struct {
@@ -226,6 +228,8 @@ typedef struct
   BablInstance    instance;
   union Babl     *source;
   union Babl     *destination;
+  int   processings;
+  long  pixels;
 } BablFish;
 
 /* BablFishReference on the double versions of conversions

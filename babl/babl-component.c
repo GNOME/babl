@@ -116,15 +116,12 @@ babl_component_new (const char *name,
 
   babl = component_new (name, id, luma, chroma, alpha);
 
-  if (db_insert (babl) == babl)
-    {
-      return babl;
-    }
-  else
-    {
-      each_babl_component_destroy (babl, NULL);
-      return NULL;
-    }
+  { 
+    Babl *ret = db_insert (babl);
+    if (ret!=babl)
+        babl_free (babl);
+    return ret;
+  }
 }
 
 BABL_CLASS_TEMPLATE (babl_component)
