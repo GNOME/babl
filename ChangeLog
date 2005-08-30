@@ -1,5 +1,14 @@
 2005-08-30  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-introspect.c:
+		(model_introspect), 
+		(format_introspect),
+		(each_introspect): use double quotes for strings.
+		(conversion_introspect): new, show instrumentation data.
+		(fish_introspect): new, show instrumentation data.
+
+2005-08-30  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-classes.h: Added instrumentation variables to
 	BablConversion and BablFish.
 	* babl/babl-conversion.c:

@@ -134,7 +134,7 @@ model_introspect (Babl *babl)
 
   for (i=0; i< babl->model.components; i++)
     {
-      babl_log ("\t\tindex[%i] = '%s'", i,
+      babl_log ("\t\tindex[%i] = \"%s\"", i,
          BABL(babl->model.component[i])->instance.name  );
     }
 }
@@ -160,23 +160,38 @@ static void
 format_introspect (Babl *babl)
 {
   int i;
+  babl_log ("\t\tmodel=\"%s\"", babl->format.model->instance.name);
   babl_log ("\t\tplanar=%i", babl->format.planar);
   babl_log ("\t\tcomponents=%i",  babl->format.components);
 
   for (i=0; i< babl->format.components; i++)
     {
-      babl_log ("\t\tband[%i] type='%s' component='%s' sampling='%s'",
+      babl_log ("\t\tband[%i] type=\"%s\" sampling=\"%s\" component=\"%s\"",
                 i,   babl->format.type[i]->instance.name,
-                     babl->format.component[i]->instance.name,
-                     babl->format.sampling[i]->instance.name);
+                     babl->format.sampling[i]->instance.name,
+                     babl->format.component[i]->instance.name);
     }
+}
+
+static void
+conversion_introspect (Babl *babl)
+{
+  babl_log ("\t\tprocessings:%i pixels:%li",
+            babl->conversion.processings, babl->conversion.pixels);
+}
+
+static void
+fish_introspect (Babl *babl)
+{
+  babl_log ("\t\tprocessings:%i pixels:%li",
+            babl->fish.processings, babl->fish.pixels);
 }
 
 static int
 each_introspect (Babl *babl,
                  void *user_data)
 {
-  babl_log ("\t'%s'\t%i\t%s",
+  babl_log ("\t\"%s\"\t%i\t%s",
    babl->instance.name,
    babl->instance.id,
    babl_class_name (babl->class_type));
@@ -201,8 +216,19 @@ each_introspect (Babl *babl,
         sampling_introspect (babl);
         item_conversions_introspect (babl);
         break;
+      case BABL_CONVERSION:
+      case BABL_CONVERSION_TYPE:
+      case BABL_CONVERSION_TYPE_PLANAR:
+      case BABL_CONVERSION_MODEL_PLANAR:
+      case BABL_CONVERSION_FORMAT:
+      case BABL_CONVERSION_FORMAT_PLANAR:
+        conversion_introspect (babl);
+        break;
       case BABL_FISH:
-        babl_log ("\t\tneed more data here%s", "");
+        fish_introspect (babl);
+        break;
+      case BABL_FISH_REFERENCE:
+        fish_introspect (babl);
         break;
       default:
         break;
