@@ -1,5 +1,14 @@
 2005-08-30  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/base/model-gray.c: 
+		(rgba_to_gray_alpha_premultiplied): fixed array index error.
+	* extensions/Makefile.in: Added -I../babl to include path.
+	* extensions/naive-CMYK.c: (init), (rgb_to_cmyk), (cmyk_to_rgb):
+		reordered the code, fixed a component swapping issue
+		discovered by tests/model.c
+
+2005-08-30  Øyvind Kolås  <pippin@gimp.org>
+
 	* tests/srgb_to_lab_u8.c: updated values.
 	* tests/types.c: rewritten.
 	* tests/models.c: added, a test to test that reference conversions

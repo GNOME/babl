@@ -23,34 +23,29 @@
 #include "babl.h"
 #include "util.h"
 
-static void components    (void);
-static void models        (void);
-static void conversions   (void);
-static void formats       (void);
-
+static void rgb_to_cmyk (int    src_bands,
+                         void **src,
+                         int   *src_pitch,
+                         int    dst_bands,
+                         void **dst,
+                         int   *dst_pitch,
+                         int    n);
+static void cmyk_to_rgb (int    src_bands,
+                         void **src,
+                         int   *src_pitch,
+                         int    dst_bands,
+                         void **dst,
+                         int   *dst_pitch,
+                         int    n);
 int
 init (void)
 {
-  components    ();
-  models        ();
-  conversions   ();
-  formats       ();
 
-  return 0;
-}
-
-static void
-components (void)
-{
   babl_component_new ("cyan",    NULL);
   babl_component_new ("yellow",  NULL);
   babl_component_new ("magenta", NULL);
   babl_component_new ("key",     NULL);
-}
 
-static void
-models (void)
-{
   babl_model_new (
     "name", "CMYK",
     babl_component ("cyan"),
@@ -59,6 +54,58 @@ models (void)
     babl_component ("key"),
     NULL
   );
+
+  babl_model_new (
+    "name", "CMYKA",
+    babl_component ("cyan"),
+    babl_component ("magenta"),
+    babl_component ("yellow"),
+    babl_component ("key"),
+    babl_component ("A"),
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_model ("RGBA"),
+    babl_model ("CMYK"),
+    "planar",      rgb_to_cmyk,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_model ("CMYK"),
+    babl_model ("RGBA"),
+    "planar",      cmyk_to_rgb,
+    NULL
+  );
+
+
+  babl_conversion_new (
+    babl_model ("RGBA"),
+    babl_model ("CMYKA"),
+    "planar",      rgb_to_cmyk,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_model ("CMYKA"),
+    babl_model ("RGBA"),
+    "planar",      cmyk_to_rgb,
+    NULL
+  );
+
+  babl_format_new (
+      "name",        "CMYK float",
+      babl_model     ("CMYK"),
+      babl_type      ("float"),
+      babl_component ("cyan"),
+      babl_component ("yellow"),
+      babl_component ("magenta"),
+      babl_component ("key"),
+      NULL
+  );
+
+  return 0;
 }
 
 static void
@@ -80,7 +127,7 @@ rgb_to_cmyk (int    src_bands,
 
       double cyan, magenta, yellow, key;
 
-      double pullout = 1.0;
+      double pullout = 0.8;
 
       cyan    = 1.0 - red;
       magenta = 1.0 - green;
@@ -132,8 +179,8 @@ cmyk_to_rgb (int    src_bands,
   while (n--)
     {
       double cyan    = *(double*)src[0];
-      double yellow  = *(double*)src[1];
-      double magenta = *(double*)src[2];
+      double magenta = *(double*)src[1];
+      double yellow  = *(double*)src[2];
       double key     = *(double*)src[3];
 
       double red, green, blue;
@@ -164,36 +211,3 @@ cmyk_to_rgb (int    src_bands,
     }
 }
 
-static void
-conversions (void)
-{
-  babl_conversion_new (
-    babl_model ("RGBA"),
-    babl_model ("CMYK"),
-    "planar",      rgb_to_cmyk,
-    NULL
-  );
-
-
-  babl_conversion_new (
-    babl_model ("CMYK"),
-    babl_model ("RGBA"),
-    "planar",      cmyk_to_rgb,
-    NULL
-  );
-}
-
-static void
-formats (void)
-{
-  babl_format_new (
-      "name",        "CMYK float",
-      babl_model     ("CMYK"),
-      babl_type      ("float"),
-      babl_component ("cyan"),
-      babl_component ("yellow"),
-      babl_component ("magenta"),
-      babl_component ("key"),
-      NULL
-  );
-}

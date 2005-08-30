@@ -6,7 +6,6 @@ SOBJS   = $(CFILES:.c=.so)
 all: $(SOBJS)
 
 
-
 %.so: %.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<
 
@@ -21,13 +20,13 @@ CIE-Lab.so: CIE-Lab.c
 
 
 
-
 #############################################################################
 #############################################################################
 CFLAGS  = -O2 -Wall
 LDFLAGS = -shared -lc
 
-CFLAGS  += `pkg-config babl --cflags`
+CFLAGS  += -I../babl
+#`pkg-config babl --cflags`
 #LDFLAGS += `pkg-config babl --libs`
 
 

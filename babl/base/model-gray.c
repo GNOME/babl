@@ -255,7 +255,7 @@ gray_alpha_premultiplied_to_rgba (int    src_bands,
       double luminance = *(double *)src[0];
       double alpha     = *(double *)src[1];
 
-      if (alpha > 0.001)
+      if (alpha > 0.00001)
         {
           luminance = luminance / alpha;
         }
@@ -301,7 +301,7 @@ rgba_to_gray_alpha_premultiplied (int    src_bands,
       luminance *= alpha;
       
       *(double*)dst[0] = luminance;
-      *(double*)dst[2] = alpha;
+      *(double*)dst[1] = alpha;
       BABL_PLANAR_STEP
     }
 }
