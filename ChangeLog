@@ -1,3 +1,8 @@
+2005-08-30  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/babl-memory.c: (babl_free): freeing of non babl allocated
+	memory is fatal.
+
 2005-08-29  Øyvind Kolås  <pippin@gimp.org>
 
 	* tests/types.c: added test that tests the symmetry of reference

@@ -138,7 +138,8 @@ babl_free (void *ptr)
 {
   if (!ptr)
     return;
-  assert(IS_BAI(ptr));
+  if(!IS_BAI(ptr))
+    babl_fatal ("memory not allocated by babl allocator");
   functions_sanity ();
   free_f (BAI(ptr));
   frees++;
