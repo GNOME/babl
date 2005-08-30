@@ -133,7 +133,8 @@ int model_check (Babl *babl,
         for (j=0;j<4;j++)
            if (fabs (clipped[i*4+j] - transformed[i*4+j])>TOLERANCE)
              {
-                log=1;
+                if (!log)
+                  log=1;
                 OK=0;
              }
         if (log && log < 5)
@@ -152,7 +153,7 @@ int model_check (Babl *babl,
                                                              transformed [i*4+2],
                                                              transformed [i*4+3]);
             log++;
-          OK=0;
+            OK=0;
           }
       }
   }
