@@ -1,10 +1,14 @@
 # General minimalistic compile file for self contained single
 # file babl_extensions
 
+CC = @CC@
+
 CFILES  = $(wildcard *.c)
+CFLAGS  = @CFLAGS@
 SOBJS   = $(CFILES:.c=.so)
 all: $(SOBJS)
 
+CFLAGS  += -Wall
 
 %.so: %.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<
@@ -19,22 +23,16 @@ CIE-Lab.so: CIE-Lab.c
 
 
 
-
 #############################################################################
-#############################################################################
-CFLAGS  = -O2 -Wall
 LDFLAGS = -shared -lc
 
 CFLAGS  += -I../babl
-#`pkg-config babl --cflags`
-#LDFLAGS += `pkg-config babl --libs`
-
 
 clean:
-	rm -f *.so
+	rm -f $(SOBJS)
 distclean:
-	rm -f *.so Makefile
-maintainerclean: distclean
+	rm -f $(SOBJS) Makefile
+maintainer-clean: distclean
 mostlyclean:
 
 subdir       = extensions
@@ -42,13 +40,18 @@ srcdir       = @srcdir@
 top_builddir = ..
 INSTALL      = @INSTALL@
 SHELL        = @SHELL@
+ext_dir      = @prefix@@libdir@/babl-@BABL_API_VERSION@
 
 install: user-install
-	#FIXME: need a proper install target as well
 
 user-install: all
-	$(INSTALL) -d /home/pippin/.babl
-	$(INSTALL) $(SOBJS)  /home/pippin/.babl
+	$(INSTALL) -d $(ext_dir)
+	$(INSTALL) $(SOBJS)  $(ext_dir)
+distdir:
+	cp $(CFILES) $(Makefile.in) $$distdir
+
+dvi:
+	#playing along with automake
 
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status

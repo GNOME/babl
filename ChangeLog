@@ -2,7 +2,9 @@
 
 	* Makefile.am,
 	* babl.pc.in,
-	* extensions/Makefile.in: Fixed build of extensions.
+	* configure.ac,
+	* extensions/Makefile.in: Fixed build of extensions. (awaiting
+	fix of babl/babl-extension.c to use new #defines)
 
 2005-08-30  Øyvind Kolås  <pippin@gimp.org>
 

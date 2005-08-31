@@ -1,4 +1,4 @@
-AUTOMAKE_OPTIONS = foreign
+AUTOMAKE_OPTIONS = foreign dist-bzip2
 
 SUBDIRS = babl	\
 	  tests	\
