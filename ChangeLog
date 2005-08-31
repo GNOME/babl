@@ -1,5 +1,9 @@
 2005-08-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* docs/index-static.html.in: Changed ChangeLog link in NEWS section.
+
+2005-08-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-component.h,
 	* babl/babl-core.h,
 	* babl/babl-conversion.h,

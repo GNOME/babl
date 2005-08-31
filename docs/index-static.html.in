@@ -62,7 +62,7 @@
         <a name='NEWS'></a>
         <h2>News</h2>
 <!--NEWS-->
-        <p>Also see the <a href='http://cvs.gnome.org/viewcvs/babl/ChangeLog'>ChangeLog in CVS</a>.</p>
+        <p>Also see the <a href='http://cvs.gnome.org/viewcvs/*checkout*/babl/ChangeLog'>ChangeLog in CVS</a>.</p>
 
         <a name='Features'></a>
         <h2>Features</h2>
