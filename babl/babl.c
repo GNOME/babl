@@ -17,11 +17,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "babl.h"
 #include "babl-internal.h"
-#include "babl-sanity.h"
-#include "babl-introspect.h"
-#include "babl-core.h"
 
 static int ref_count=0;
 

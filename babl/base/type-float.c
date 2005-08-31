@@ -23,12 +23,12 @@
 #include "babl.h"
 #include "babl-ids.h"
 
-static void
+static long
 convert_double_float (void *src,
                       void *dst,
                       int   src_pitch,
                       int   dst_pitch,
-                      int   n)
+                      long  n)
 {
   while (n--)
     {
@@ -36,14 +36,15 @@ convert_double_float (void *src,
       dst += dst_pitch;
       src += src_pitch;
     }
+  return n;
 }
 
-static void
+static long
 convert_float_double (void *src,
                       void *dst,
                       int   src_pitch,
                       int   dst_pitch,
-                      int   n)
+                      long  n)
 {
   while (n--)
     {
@@ -51,6 +52,7 @@ convert_float_double (void *src,
       dst += dst_pitch;
       src += src_pitch;
     }
+  return n;
 }
 
 void

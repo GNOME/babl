@@ -20,26 +20,49 @@
 #ifndef _BABL_INTERNAL_H
 #define _BABL_INTERNAL_H
 
+#ifdef _BABL_H
+#error babl-internal.h included after babl.h
+#endif
+
 #define BABL_MAX_COMPONENTS 32
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "assert.h"
 
 #include "babl-classes.h"
-#include "babl-instance.h"
+#undef  _BABL_INTERNAL_H
+#include "babl.h"
+#define _BABL_INTERNAL_H
+
 
 #include "babl-ids.h"
 #include "babl-util.h"
 #include "babl-memory.h"
 
-/* internal classes */
-#include "babl-introspect.h"
-#include "babl-conversion.h"
-#include "babl-extension.h"
-/* */
 
-void babl_die (void);
+int    babl_fish_process            (Babl      *babl,
+                                     void      *source,
+                                     void      *destination,
+                                     long       n);
+int    babl_fish_reference_process  (Babl      *babl,
+                                     BablImage *source,
+                                     BablImage *destination,
+                                     long       n);
+Babl * babl_image_from_linear       (void      *buffer,
+                                     Babl      *format);
+Babl * babl_image_double_from_image (Babl      *source);
+void   babl_die                     (void);
+int    babl_sanity                  (void);
+Babl * babl_extension_base          (void);
+
+Babl * babl_extender                (void);
+void   babl_set_extender            (Babl *new_extender);
+
+Babl * babl_extension_quiet_log     (void);
+
+void   babl_core_init               (void);
 
 /**** LOGGER ****/
 #include <stdarg.h>
@@ -69,24 +92,32 @@ real_babl_log (const char *file,
   fprintf (stdout, "\n");
 }
 
-#define babl_log(args...)  real_babl_log(__FILE__, __LINE__, __FUNCTION__, args)
+#define babl_log(args...)                               \
+  real_babl_log(__FILE__, __LINE__, __FUNCTION__, args)
 
-#define babl_fatal(args...)  \
-  do{ \
-    real_babl_log(__FILE__, __LINE__, __FUNCTION__, args);\
-    babl_die();} \
-  while(0);
+#define babl_fatal(args...) do{                         \
+  real_babl_log(__FILE__, __LINE__, __FUNCTION__, args);\
+  babl_die();}                                          \
+while(0)
 
 
-/********************/
+#define babl_assert(expr) do{ \
+  if(!(expr))                 \
+    {                         \
+      babl_fatal("Eeeeek");   \
+      assert(expr);           \
+    }                         \
+}while(0)
+/***** LOGGER (end)**/
 
-#define BABL_CLASS_TYPE_IS_VALID(klass_type) \
+#define BABL_CLASS_TYPE_IS_VALID(klass_type)                            \
     (  ((klass_type)>=BABL_INSTANCE ) && ((klass_type)<=BABL_SKY) ?1:0 )
 
-#define BABL_IS_BABL(obj)                              \
-(NULL==(obj)?0:                                        \
- BABL_CLASS_TYPE_IS_VALID(((Babl*)(obj))->class_type)  \
+#define BABL_IS_BABL(obj)                                          \
+(NULL==(obj)?0                                                     \
+            :BABL_CLASS_TYPE_IS_VALID(((Babl*)(obj))->class_type)  \
 )
+
 
 extern int   babl_hmpf_on_name_lookups;
 
@@ -97,7 +128,7 @@ void         babl_internal_destroy (void);
 
 #define BABL_DEFINE_EACH(type_name)                           \
 void                                                          \
-type_name##_each (BablEachFunction  each_fun,                 \
+babl_##type_name##_each (BablEachFunction  each_fun,          \
                   void             *user_data)                \
 {                                                             \
   db_each (each_fun, user_data);                              \
@@ -105,7 +136,7 @@ type_name##_each (BablEachFunction  each_fun,                 \
 
 #define BABL_DEFINE_LOOKUP_BY_ID(type_name)                   \
 Babl *                                                        \
-type_name##_id (int id)                                       \
+babl_##type_name##_id (int id)                                \
 {                                                             \
   Babl *babl;                                                 \
   babl = db_exist (id, NULL);                                 \
@@ -118,7 +149,7 @@ type_name##_id (int id)                                       \
 
 #define BABL_DEFINE_LOOKUP_BY_NAME(type_name)                   \
 Babl *                                                          \
-type_name (const char *name)                                    \
+babl_##type_name (const char *name)                             \
 {                                                               \
   Babl *babl;                                                   \
                                                                 \
@@ -150,7 +181,7 @@ type_name (const char *name)                                    \
 
 #define BABL_DEFINE_INIT(type_name)                           \
 void                                                          \
-type_name##_init (void)                                       \
+babl_##type_name##_init (void)                                \
 {                                                             \
   BABL_PRE_INIT_HOOK;                                         \
   db_init ();                                                 \
@@ -159,10 +190,10 @@ type_name##_init (void)                                       \
 
 #define BABL_DEFINE_DESTROY(type_name)                        \
 void                                                          \
-type_name##_destroy (void)                                    \
+babl_##type_name##_destroy (void)                             \
 {                                                             \
   BABL_DESTROY_PRE_HOOK;                                      \
-  db_each (each_##type_name##_destroy, NULL);                 \
+  db_each (each_babl_##type_name##_destroy, NULL);            \
   db_destroy ();                                              \
   BABL_DESTROY_HOOK;                                          \
 }

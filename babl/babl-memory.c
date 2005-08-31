@@ -17,7 +17,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -98,12 +97,12 @@ babl_malloc (size_t size)
 {
   void *ret;
 
-  assert (size);
+  babl_assert (size);
 
   functions_sanity ();
   ret = malloc_f (size + OFFSET);
   if (!ret)
-    babl_log ("args=(%i): failed",  size);
+    babl_fatal ("args=(%i): failed",  size);
 
   BAI(ret + OFFSET)->signature = signature;
   BAI(ret + OFFSET)->size      = size;
@@ -120,7 +119,7 @@ babl_dup (void *ptr)
 {
   void *ret;
  
-  assert (IS_BAI (ptr));
+  babl_assert (IS_BAI (ptr));
 
   ret = babl_malloc (BAI(ptr)->size);
   memcpy (ret, ptr, BAI(ptr)->size);
@@ -159,7 +158,7 @@ babl_realloc (void   *ptr,
       return babl_malloc (size);
     }
 
-  assert (IS_BAI (ptr));
+  babl_assert (IS_BAI (ptr));
 
   if (size==0)
     {
@@ -207,7 +206,7 @@ babl_calloc (size_t nmemb,
 size_t
 babl_sizeof (void *ptr)
 {
-  assert (IS_BAI (ptr));
+  babl_assert (IS_BAI (ptr));
   return BAI(ptr)->size;
 }
 
@@ -250,7 +249,7 @@ babl_strcat (char       *dest,
       strcpy (ret, src);
       return ret;
     }
-  assert (IS_BAI (dest));
+  babl_assert (IS_BAI (dest));
   dst_len = strlen (dest);
   
   ret = dest;

@@ -22,11 +22,8 @@
 #define _DB_H
 
 #ifndef _BABL_INTERNAL_H
-#error  babl-internal.h must be included before babl-db.h, babl-db.h is strictly internal to babl core classes.
+#error  babl-db.h is only to be included after babl-internal.h
 #endif
-
-#include "babl-instance.h"
-#include "babl-extension.h"
 
 #include <string.h>
 
@@ -116,19 +113,7 @@ db_insert (Babl *babl)
   collision = db_exist (babl->instance.id, babl->instance.name);
 
   if (collision)
-    {
-#if 0
-      if (!strcmp (collision->instance.name, babl->instance.name)    )
-        babl_log ("conflicting name:\n\t\tnew: '%s'\n\t\texisting '%s' from %s",
-                babl->instance.name, collision->instance.name,
-                collision->instance.creator?BABL(collision->instance.creator)->instance.name:"core");
-      else if (collision->instance.id == babl->instance.id)
-        babl_log ("conflicting id:\n\t\tnew: '%s' (id=%i)\n\t\texisting '%s' from %s",
-                babl->instance.name, babl->instance.id, collision->instance.name,
-                collision->instance.creator?BABL(collision->instance.creator)->instance.name:"core");
-#endif
-      return collision;
-    }
+     return collision;
 
   if (db_entries + 1 > db_size)     /* must reallocate storage */
     {
@@ -169,31 +154,29 @@ db_each (BablEachFunction  each_fun,
     }
 }
 
-typedef struct DbExistData
+typedef struct BablDbExistData
 {
   unsigned int  type;
   int           id;
   const char   *name;
   Babl         *ret;
-} DbExistData;
+} BablDbExistData;
 
 DB_DEF int 
 db_each_exist (Babl *babl,
                void *void_data)
 {
-  DbExistData *data = void_data;
+  BablDbExistData *data = void_data;
 
-  if (data->id &&
-      data->id == babl->instance.id)
+  if (data->id && data->id == babl->instance.id)
     {
-      data->ret = babl;
-      return 1;
+          data->ret = babl;
+          return 1; /* stop iterating */
     }
-  if (data->name &&
-      !strcmp (babl->instance.name, data->name))
+  else if (data->name && !strcmp (babl->instance.name, data->name))
     {
       data->ret = babl;
-      return 1;
+      return 1; /* stop iterating */
     }
   return 0;  /* continue iterating */
 }
@@ -202,7 +185,7 @@ DB_DEF Babl *
 db_exist (int         id,
           const char *name)
 {
-  DbExistData data;
+  BablDbExistData data;
 
   data.id = id;
   data.name = name;

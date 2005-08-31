@@ -18,7 +18,6 @@
  */
 
 #include "babl.h"
-#include "babl-internal.h"
 
 int
 main (int    argc,

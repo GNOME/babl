@@ -68,6 +68,62 @@ babl_die (void)
   exit (-1);
 }
 
+long   babl_conversion_process (Babl *conversion,
+                                void *source,
+                                void *destination,
+                                long  n);
+long
+babl_process (Babl *babl,
+              void *source,
+              void *destination,
+              long  n)
+{
+  babl_assert (babl);
+  babl_assert (source);
+  babl_assert (destination);
+  babl_assert (BABL_IS_BABL (babl));
+  babl_assert (n>0);
+
+  /* these fields are common between conversions and fishes */
+  babl->fish.processings++;
+  babl->fish.pixels += n;
+
+  /* matches all conversion classes */
+  if (babl->class_type >= BABL_CONVERSION &&
+      babl->class_type <= BABL_CONVERSION_FORMAT_PLANAR)
+    return babl_conversion_process (babl, source, destination, n);
+  
+  if (babl->class_type == BABL_FISH)
+    return babl_fish_process (babl, source, destination, n);
+  
+  if (babl->class_type == BABL_FISH_REFERENCE)
+    {
+       BablImage *source_image      = NULL;
+       BablImage *destination_image = NULL;
+
+       if (BABL_IS_BABL (source))
+         source_image = source;
+       if (!source_image)
+         source_image = (BablImage*) babl_image_from_linear (
+                                        source, (Babl*)babl->fish.source);
+       if (BABL_IS_BABL (destination))
+         destination_image = destination;
+       if (!destination_image)
+         destination_image = (BablImage*) babl_image_from_linear (
+                        destination, (Babl*)babl->fish.destination);
+
+       babl_fish_reference_process (babl, source, destination, n);
+
+       babl_free (source_image);
+       babl_free (destination_image);
+
+       return 0;
+    }
+
+  babl_log ("eek");
+  return -1;
+}
+
 void
 babl_internal_init (void)
 {
@@ -80,3 +136,10 @@ babl_internal_destroy (void)
 {
 }
 
+
+const char *
+babl_name (Babl *babl)
+{
+  babl_assert (BABL_IS_BABL (babl));
+  return babl->instance.name;
+}

@@ -95,14 +95,14 @@ models (void)
   );
 }
 
-static void
+static long
 rgb_to_cmyk (int    src_bands,
              void **src,
              int   *src_pitch,
              int    dst_bands,
              void **dst,
              int   *dst_pitch,
-             int    n)
+             long   n)
 {
   BABL_PLANAR_SANITY
 
@@ -150,16 +150,17 @@ rgb_to_cmyk (int    src_bands,
 
       BABL_PLANAR_STEP
     }
+  return n;
 }
 
-static void
+static long 
 cmyk_to_rgb (int    src_bands,
              void **src,
              int   *src_pitch,
              int    dst_bands,
              void **dst,
              int   *dst_pitch,
-             int    n)
+             long   n)
 {
   BABL_PLANAR_SANITY
 
@@ -196,17 +197,18 @@ cmyk_to_rgb (int    src_bands,
 
       BABL_PLANAR_STEP
     }
+  return n;
 }
 
 #if 0
-static void
+static long
 rgb_to_and_from_cmy (int    src_bands,
                      void **src,
                      int   *src_pitch,
                      int    dst_bands,
                      void **dst,
                      int   *dst_pitch,
-                     int    n)
+                     long   n)
 {
   BABL_PLANAR_SANITY
 

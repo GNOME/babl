@@ -1,5 +1,67 @@
 2005-08-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-component.h,
+	* babl/babl-core.h,
+	* babl/babl-conversion.h,
+	* babl/babl-extension.h,
+	* babl/babl-format.h,
+	* babl/babl-instance.h,
+	* babl/babl-introspect.h,
+	* babl/babl-image.h,
+	* babl/babl-fish.h,
+	* babl/babl-model.h,
+	* babl/babl-sampling.h,
+	* babl/babl-sanity.h,
+	* babl/babl-type.h: DELETED
+	* babl/babl.h: defines moved from deleted headers. Added
+	documentation.
+	* babl/babl-internal.h: defines moved from deleted headers.
+
+	* babl/Makefile.am: Reflect above changes.
+	* babl/babl-classes.h: redefined conversion functions to return long,
+	and take number of pixels as long.
+	* babl/babl-component.c, 
+	* babl/babl-conversion.c,
+	* babl/babl-core.c,
+	* babl/babl-db.h,
+	* babl/babl-extension.c,
+	* babl/babl-fish.c, 
+	* babl/babl-format.c,
+	* babl/babl-image.c, 
+	* babl/babl-instance.h,
+	* babl/babl-internal.c,
+	* babl/babl-internal.h,
+	* babl/babl-introspect.c,
+	* babl/babl-memory.c, 
+	* babl/babl-model.c,
+	* babl/babl-sampling.c,
+	* babl/babl-sanity.c,
+	* babl/babl-type.c, 
+	* babl/babl.c,
+	* babl/base/model-cmyk.c,
+	* babl/base/model-gray.c, 
+	* babl/base/model-rgb.c, 
+	* babl/base/model-ycbcr.c,
+	* babl/base/type-float.c,
+	* babl/base/type-u16.c,
+	* babl/base/type-u8.c, 
+	* docs/index-static.html.in,
+	* extensions/CIE-Lab.c,
+	* extensions/naive-CMYK.c, 
+	* tests/babl-html-dump.c,
+	* tests/babl_class_name.c,
+	* tests/grayscale_to_rgb.c,
+	* tests/introspect.c,
+	* tests/models.c,
+	* tests/nop.c,
+	* tests/rgb_to_bgr.c,
+	* tests/rgb_to_ycbcr.c,
+	* tests/sanity.c,
+	* tests/srgb_to_lab_u8.c,
+	* tests/types.c: reflect changes in headers.
+
+2005-08-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* Makefile.am,
 	* babl.pc.in,
 	* configure.ac,

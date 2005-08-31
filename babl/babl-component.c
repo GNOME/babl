@@ -58,7 +58,7 @@ component_new (const char *name,
 }
 
 Babl *
-babl_component_new (const char *name,
+babl_component_new (void *first_arg,
                     ...)
 {
   va_list     varg;
@@ -67,9 +67,9 @@ babl_component_new (const char *name,
   int         luma    = 0;
   int         chroma  = 0;
   int         alpha   = 0;
-  const char *arg=name;
+  const char *arg=(char*)first_arg;
 
-  va_start (varg, name);
+  va_start (varg, first_arg);
   
   while (1)
     {
@@ -108,13 +108,13 @@ babl_component_new (const char *name,
       
       else
         {
-          babl_fatal ("unhandled argument '%s' for format '%s'", arg, name);
+          babl_fatal ("unhandled argument '%s' for format '%s'", arg, first_arg);
         }
     }
     
   va_end   (varg);
 
-  babl = component_new (name, id, luma, chroma, alpha);
+  babl = component_new (first_arg, id, luma, chroma, alpha);
 
   { 
     Babl *ret = db_insert (babl);
@@ -124,4 +124,4 @@ babl_component_new (const char *name,
   }
 }
 
-BABL_CLASS_TEMPLATE (babl_component)
+BABL_CLASS_TEMPLATE (component)

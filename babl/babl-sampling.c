@@ -27,7 +27,7 @@
 static BablSampling db[(HORIZONTAL_MAX-HORIZONTAL_MIN+1)*
                        (VERTICAL_MAX-VERTICAL_MIN+1)];
 
-BablSampling *
+Babl *
 babl_sampling (int horizontal,
                int vertical)
 {
@@ -35,7 +35,7 @@ babl_sampling (int horizontal,
       vertical<=4 &&
       horizontal>=1 &&
       horizontal<=4)
-    return &db [ (vertical-1) * 4 + (horizontal-1)];
+    return (Babl*)&db [ (vertical-1) * 4 + (horizontal-1)];
   else
     babl_log ("babl_samping(%i,%i): arguments out of bounds",
               horizontal, vertical);

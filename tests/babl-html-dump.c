@@ -17,8 +17,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "babl.h"
-#include "babl-internal.h"    /* for babl_log */
+#include "babl-internal.h"    /* needed for babl_log */
 
 static void model_html              (Babl *babl);
 static void type_html               (Babl *babl);

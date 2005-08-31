@@ -17,7 +17,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "babl.h"
 #include "babl-internal.h"
 
 #define PIXELS 5

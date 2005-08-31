@@ -19,7 +19,6 @@
 
 #include <string.h>
 #include <stdarg.h>
-#include <assert.h>
 
 #include "babl-internal.h"
 #include "babl-db.h"
@@ -43,8 +42,8 @@ type_new (const char  *name,
 {
   Babl *babl;
 
-  assert (bits != 0);
-  assert (bits % 8 == 0);
+  babl_assert (bits != 0);
+  babl_assert (bits % 8 == 0);
   
   babl                = babl_malloc (sizeof (BablType) + strlen (name) + 1);
   babl->instance.name = (void*) babl + sizeof (BablType);
@@ -59,7 +58,7 @@ type_new (const char  *name,
 }
 
 Babl *
-babl_type_new (const char *name,
+babl_type_new (void *first_arg,
                ...)
 {
   va_list  varg;
@@ -72,9 +71,9 @@ babl_type_new (const char *name,
   double   min_val    = 0.0;
   double   max_val    = 0.0;
 
-  const char *arg=name;
+  const char *arg=first_arg;
 
-  va_start (varg, name);
+  va_start (varg, first_arg);
   
   while (1)
     {
@@ -125,13 +124,13 @@ babl_type_new (const char *name,
       
       else
         {
-          babl_fatal ("unhandled argument '%s' for format '%s'", arg, name);
+          babl_fatal ("unhandled argument '%s' for format '%s'", arg, first_arg);
         }
     }
     
   va_end   (varg);
 
-  babl = type_new (name, id, bits);
+  babl = type_new (first_arg, id, bits);
 
   { 
     Babl *ret = db_insert (babl);
@@ -141,4 +140,4 @@ babl_type_new (const char *name,
   }
 }
 
-BABL_CLASS_TEMPLATE (babl_type)
+BABL_CLASS_TEMPLATE (type)

@@ -19,7 +19,6 @@
 
 
 #include <math.h>
-#include "babl.h"
 #include "babl-internal.h"
 
 #define PIXELS    3

@@ -19,15 +19,14 @@
 
 #include "babl-internal.h"
 #include "babl-db.h"
-#include "assert.h"
 #include <string.h>
 #include <stdarg.h>
 
-#include "babl-type.h"
+/*#include "babl-type.h"
 #include "babl-model.h"
 #include "babl-image.h"
 #include "babl-component.h"
-#include "babl-format.h"
+#include "babl-format.h"*/
 
 static int 
 each_babl_fish_destroy (Babl *babl,
@@ -51,38 +50,6 @@ create_name (Babl *source,
   return buf;
 }
 
-Babl *
-babl_fish_new (Babl *source,
-               Babl *destination)
-{
-  Babl *babl = NULL;
-  const char *name;
-
-  assert (BABL_IS_BABL (source));
-  assert (BABL_IS_BABL (destination));
-  
-  name = create_name (source, destination, 0);
-
-  babl                   = babl_malloc (sizeof (BablFishReference) +
-                                        strlen (name) + 1);
-  babl->class_type       = BABL_FISH;
-  babl->instance.id      = 0;
-  babl->instance.name    = ((void *)babl) + sizeof(BablFishReference);
-  strcpy (babl->instance.name, name);
-  babl->fish.source      = (union Babl*)source;
-  babl->fish.destination = (union Babl*)destination;
-
-  babl->fish.processings = 0;
-  babl->fish.pixels      = 0;
-
-  { 
-    Babl *ret = db_insert (babl);
-    if (ret!=babl)
-        babl_free (babl);
-    return ret;
-  }
-}
-
 typedef struct SearchData
 {
   Babl           *source;
@@ -90,8 +57,8 @@ typedef struct SearchData
   BablConversion *result;
 } SearchData;
 
-BablConversion *babl_conversion_find (void *source,
-                                      void *destination)
+Babl *babl_conversion_find (void *source,
+                            void *destination)
 {
   int i=0;
   Babl **conversion;
@@ -100,7 +67,7 @@ BablConversion *babl_conversion_find (void *source,
   while (conversion[i])
     {
       if (conversion[i]->conversion.destination == destination)
-        return (BablConversion*)conversion[i];
+        return (Babl*)conversion[i];
       i++;
     }
   babl_fatal ("failed, aborting");
@@ -115,11 +82,11 @@ babl_fish_reference_new (Babl *source,
   Babl *babl = NULL;
   char *name = create_name (source, destination, 1);
 
-  assert (BABL_IS_BABL (source));
-  assert (BABL_IS_BABL (destination));
+  babl_assert (BABL_IS_BABL (source));
+  babl_assert (BABL_IS_BABL (destination));
 
-  assert (source->class_type == BABL_FORMAT);
-  assert (destination->class_type == BABL_FORMAT);
+  babl_assert (source->class_type == BABL_FORMAT);
+  babl_assert (destination->class_type == BABL_FORMAT);
 
   babl                   = babl_malloc (sizeof (BablFishReference) +
                                         strlen (name) + 1);
@@ -148,8 +115,8 @@ babl_fish (void *source,
   Babl *source_format      = NULL;
   Babl *destination_format = NULL;
 
-  assert (source);
-  assert (destination);
+  babl_assert (source);
+  babl_assert (destination);
 
   if (BABL_IS_BABL (source))
     {
@@ -233,7 +200,7 @@ convert_to_double (BablFormat *source_fmt,
             }
         }
 
-      babl_conversion_process (
+      babl_process (
            babl_conversion_find (src_img->type[0], dst_img->type[0]),
            src_img, dst_img,
            n);
@@ -288,7 +255,7 @@ convert_from_double (BablFormat *destination_fmt,
             }
         }
 
-      babl_conversion_process (
+      babl_process (
            babl_conversion_find (src_img->type[0], dst_img->type[0]),
            src_img, dst_img,
            n);
@@ -337,7 +304,7 @@ process_same_model (Babl      *babl,
   return 0;
 }
 
-static int
+int
 babl_fish_reference_process (Babl      *babl,
                              BablImage *source,
                              BablImage *destination,
@@ -382,7 +349,7 @@ babl_fish_reference_process (Babl      *babl,
      n
    );
 
-  babl_conversion_process (
+  babl_process (
     babl_conversion_find (
         BABL(babl->fish.source)->format.model,
         babl_model_id (BABL_RGBA)
@@ -390,7 +357,7 @@ babl_fish_reference_process (Babl      *babl,
     source_image, rgba_image,
     n);
 
-  babl_conversion_process (
+  babl_process (
     babl_conversion_find (
         babl_model_id (BABL_RGBA),
         BABL(babl->fish.destination)->format.model
@@ -416,7 +383,7 @@ babl_fish_reference_process (Babl      *babl,
   return 0;
 }
 
-static int
+int
 babl_fish_process (Babl *babl,
                    void *source,
                    void *destination,
@@ -427,52 +394,7 @@ babl_fish_process (Babl *babl,
 }
 
 
-int
-babl_process (Babl *babl,
-              void *source,
-              void *destination,
-              long  n)
-{
-  assert (babl);
-  assert (source);
-  assert (destination);
-  assert (BABL_IS_BABL (babl));
-  assert (n>0);
 
-  babl->fish.processings++;
-  babl->fish.pixels += n;
-  
-  if (babl->class_type == BABL_FISH)
-    return babl_fish_process (babl, source, destination, n);
-  
-  if (babl->class_type == BABL_FISH_REFERENCE)
-    {
-       BablImage *source_image      = NULL;
-       BablImage *destination_image = NULL;
-
-       if (BABL_IS_BABL (source))
-         source_image = source;
-       if (!source_image)
-         source_image = (BablImage*) babl_image_from_linear (
-                                        source, (Babl*)babl->fish.source);
-       if (BABL_IS_BABL (destination))
-         destination_image = destination;
-       if (!destination_image)
-         destination_image = (BablImage*) babl_image_from_linear (
-                        destination, (Babl*)babl->fish.destination);
-
-       babl_fish_reference_process (babl, source, destination, n);
-
-       babl_free (source_image);
-       babl_free (destination_image);
-
-       return 0;
-    }
-
-  babl_log ("eek");
-  return -1;
-}
-
-BABL_DEFINE_INIT    (babl_fish)
-BABL_DEFINE_DESTROY (babl_fish)
-BABL_DEFINE_EACH    (babl_fish)
+BABL_DEFINE_INIT    (fish)
+BABL_DEFINE_DESTROY (fish)
+BABL_DEFINE_EACH    (fish)

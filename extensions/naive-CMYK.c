@@ -23,20 +23,20 @@
 #include "babl.h"
 #include "util.h"
 
-static void rgb_to_cmyk (int    src_bands,
+static long rgb_to_cmyk (int    src_bands,
                          void **src,
                          int   *src_pitch,
                          int    dst_bands,
                          void **dst,
                          int   *dst_pitch,
-                         int    n);
-static void cmyk_to_rgb (int    src_bands,
+                         long   n);
+static long cmyk_to_rgb (int    src_bands,
                          void **src,
                          int   *src_pitch,
                          int    dst_bands,
                          void **dst,
                          int   *dst_pitch,
-                         int    n);
+                         long   n);
 int
 init (void)
 {
@@ -108,14 +108,14 @@ init (void)
   return 0;
 }
 
-static void
+static long
 rgb_to_cmyk (int    src_bands,
              void **src,
              int   *src_pitch,
              int    dst_bands,
              void **dst,
              int   *dst_pitch,
-             int    n)
+             long   n)
 {
   BABL_PLANAR_SANITY
 
@@ -163,16 +163,17 @@ rgb_to_cmyk (int    src_bands,
 
       BABL_PLANAR_STEP
     }
+  return n;
 }
 
-static void
+static long
 cmyk_to_rgb (int    src_bands,
              void **src,
              int   *src_pitch,
              int    dst_bands,
              void **dst,
              int   *dst_pitch,
-             int    n)
+             long   n)
 {
   BABL_PLANAR_SANITY
 
@@ -209,5 +210,6 @@ cmyk_to_rgb (int    src_bands,
 
       BABL_PLANAR_STEP
     }
+  return n;
 }
 

@@ -19,8 +19,6 @@
 
 #include "babl-internal.h"
 #include "babl-db.h"
-#include "babl-extension.h"
-#include "assert.h"
 #include <string.h>
 #include <stdarg.h>
 
@@ -146,9 +144,7 @@ create_name (Babl *source, Babl *destination)
 }
 
 Babl *
-babl_conversion_new (Babl *source,
-                     Babl *destination,
-                     void *first_arg,
+babl_conversion_new (void *first_arg,
                      ...)
 {
   va_list            varg;
@@ -164,12 +160,18 @@ babl_conversion_new (Babl *source,
   int                got_func    = 0;
   const char        *arg         = first_arg;
 
+  Babl *source;
+  Babl *destination;
+
+  va_start (varg, first_arg);
+  source = (Babl*) arg;
+  destination = va_arg (varg, Babl*);
+  arg = va_arg (varg, char *);
+
   assert (BABL_IS_BABL(source));
   assert (BABL_IS_BABL(destination));
   
-  va_start (varg, first_arg);
-  
-  while (1)
+  while (arg)
     {
      
       if (!strcmp (arg, "id"))
@@ -218,8 +220,6 @@ babl_conversion_new (Babl *source,
         }
 
       arg = va_arg (varg, char *);
-      if (!arg)
-        break;
     }
     
   va_end   (varg);
@@ -238,7 +238,7 @@ babl_conversion_new (Babl *source,
   }
 }
 
-static void
+static long
 babl_conversion_linear_process (BablConversion *conversion,
                                 void           *source,
                                 void           *destination,
@@ -247,9 +247,10 @@ babl_conversion_linear_process (BablConversion *conversion,
                                 long            n)
 {
   conversion->function.linear (source, destination, src_pitch, dst_pitch, n);
+  return n;
 }
 
-static void
+static long
 babl_conversion_planar_process (BablConversion *conversion,
                                 BablImage      *source,
                                 BablImage      *destination,
@@ -273,20 +274,16 @@ babl_conversion_planar_process (BablConversion *conversion,
                                dst_data,
                                destination->pitch,
                                n);
+  return n;
 }
 
-/* this is the place to insert usage instrumentation into babl */
-void
+long
 babl_conversion_process (BablConversion *conversion,
                          void           *source,
                          void           *destination,
                          long            n)
 {
-  /*TODO: build planar formats if needed when linear pointers are passed in */
-  assert (BABL_IS_BABL (conversion));
-
-  conversion->processings++;
-  conversion->pixels += n;
+  babl_assert (BABL_IS_BABL (conversion));
 
   switch (BABL(conversion)->class_type)
   {
@@ -331,8 +328,8 @@ babl_conversion_process (BablConversion *conversion,
       }
       break;
     case BABL_CONVERSION_MODEL_PLANAR:
-      assert (BABL_IS_BABL (source));
-      assert (BABL_IS_BABL (destination));
+      babl_assert (BABL_IS_BABL (source));
+      babl_assert (BABL_IS_BABL (destination));
 
       babl_conversion_planar_process (                  conversion,
                                       (BablImage*)      source, 
@@ -343,9 +340,10 @@ babl_conversion_process (BablConversion *conversion,
       babl_log ("args=(%s, %p, %p, %li) unhandled conversion type: %s",
            conversion->instance.name, source, destination, n,
           babl_class_name (conversion->instance.class_type));
+      return 0;
       break;
   }
-          
+  return n;
 }
 
-BABL_CLASS_TEMPLATE (babl_conversion)
+BABL_CLASS_TEMPLATE (conversion)

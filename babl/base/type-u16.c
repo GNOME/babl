@@ -24,7 +24,7 @@
 #include "babl-ids.h"
 
 
-static inline void
+static inline long
 convert_double_u16_scaled (double         min_val,
                            double         max_val,
                            unsigned short min,
@@ -33,7 +33,7 @@ convert_double_u16_scaled (double         min_val,
                            void          *dst,
                            int            src_pitch,
                            int            dst_pitch,
-                           int            n)
+                           long           n)
 {
   while (n--)
     {
@@ -51,9 +51,10 @@ convert_double_u16_scaled (double         min_val,
       dst += dst_pitch;
       src += src_pitch;
     }
+  return n;
 }
 
-static inline void
+static inline long
 convert_u16_double_scaled (double         min_val,
                            double         max_val,
                            unsigned short min,
@@ -62,7 +63,7 @@ convert_u16_double_scaled (double         min_val,
                            void          *dst,
                            int            src_pitch,
                            int            dst_pitch,
-                           int            n)
+                           long           n)
 {
   while (n--)
     {
@@ -80,27 +81,28 @@ convert_u16_double_scaled (double         min_val,
       dst += dst_pitch;
       src += src_pitch;
     }
+  return n;
 }
 
 #define MAKE_CONVERSIONS(name, min_val, max_val, min, max)      \
-static void                                                     \
+static long                                                     \
 convert_##name##_double (void *src,                             \
                          void *dst,                             \
                          int   src_pitch,                       \
                          int   dst_pitch,                       \
-                         int   n)                               \
+                         long  n)                               \
 {                                                               \
-  convert_u16_double_scaled (min_val, max_val, min, max,        \
+  return convert_u16_double_scaled (min_val, max_val, min, max, \
                              src, dst, src_pitch, dst_pitch, n);\
 }                                                               \
-static void                                                     \
+static long                                                     \
 convert_double_##name (void *src,                               \
                        void *dst,                               \
                        int   src_pitch,                         \
                        int   dst_pitch,                         \
-                       int   n)                                 \
+                       long  n)                                 \
 {                                                               \
-  convert_double_u16_scaled (min_val, max_val, min, max,        \
+  return convert_double_u16_scaled (min_val, max_val, min, max, \
                              src, dst, src_pitch, dst_pitch, n);\
 }
 

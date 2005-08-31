@@ -21,22 +21,22 @@
 #define _BABL_CLASSES_H
 
 /* Type and Format */
-typedef void (*BablFuncLinear)    (void  *src,
+typedef long (*BablFuncLinear)    (void  *src,
                                    void  *dst,
                                    int    src_pitch,
                                    int    dst_pitch,
-                                   int    n);
+                                   long   n);
 
 /* TypePlanar, ModelPlanar and FormatPlanar */
-typedef void (*BablFuncPlanar)    (int    src_bands,
+typedef long (*BablFuncPlanar)    (int    src_bands,
                                    void  *src[],
                                    int    src_pitch[],
                                    int    dst_bands,
                                    void  *dst[],
                                    int    dst_pitch[],
-                                   int    n);
+                                   long   n);
 
-typedef void (*BablFuncPlanarBit) (int    src_bands,
+typedef long (*BablFuncPlanarBit) (int    src_bands,
                                    void  *src[],
                                    int    src_bit[],
                                    int    src_pitch[],
@@ -46,7 +46,7 @@ typedef void (*BablFuncPlanarBit) (int    src_bands,
                                    int    dst_bit[],
                                    int    dst_pitch[],
                                    int    dst_bit_pitch[],
-                                   int    n);
+                                   long   n);
 
 /* magic number used at the start of all babl objects, used to do
  * differentiation in polymorphic functions. (as well as manual

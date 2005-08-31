@@ -121,14 +121,14 @@ models (void)
     NULL);
 }
 
-static void
+static long
 copy_strip_1 (int    src_bands,
               void **src,
               int   *src_pitch,
               int    dst_bands,
               void **dst,
               int   *dst_pitch,
-              int    n)
+              long   n)
 {
   BABL_PLANAR_SANITY
   while (n--)
@@ -147,16 +147,17 @@ copy_strip_1 (int    src_bands,
 
       BABL_PLANAR_STEP
     }
+  return n;
 }
 
-static void
+static long
 g3_gamma_2_2 (int    src_bands,
               void **src,
               int   *src_pitch,
               int    dst_bands,
               void **dst,
               int   *dst_pitch,
-              int    n)
+              long   n)
 {
   BABL_PLANAR_SANITY
 
@@ -170,17 +171,18 @@ g3_gamma_2_2 (int    src_bands,
 
       BABL_PLANAR_STEP
     }
+  return n;
 }
 
 
-static void
+static long
 g3_inv_gamma_2_2 (int    src_bands,
                   void **src,
                   int   *src_pitch,
                   int    dst_bands,
                   void **dst,
                   int   *dst_pitch,
-                  int    n)
+                  long   n)
 {
   BABL_PLANAR_SANITY
 
@@ -200,16 +202,17 @@ g3_inv_gamma_2_2 (int    src_bands,
         }
       BABL_PLANAR_STEP
     }
+  return n;
 }
 
-static void
+static long
 non_premultiplied_to_premultiplied (int    src_bands,
                                     void **src,
                                     int   *src_pitch,
                                     int    dst_bands,
                                     void **dst,
                                     int   *dst_pitch,
-                                    int    n)
+                                    long   n)
 {
   BABL_PLANAR_SANITY
 
@@ -227,16 +230,17 @@ non_premultiplied_to_premultiplied (int    src_bands,
 
       BABL_PLANAR_STEP
     }
+  return n;
 }
 
-static void
+static long
 premultiplied_to_non_premultiplied (int    src_bands,
                                     void **src,
                                     int   *src_pitch,
                                     int    dst_bands,
                                     void **dst,
                                     int   *dst_pitch,
-                                    int    n)
+                                    long   n)
 {
   BABL_PLANAR_SANITY
 
@@ -261,6 +265,7 @@ premultiplied_to_non_premultiplied (int    src_bands,
 
       BABL_PLANAR_STEP
     }
+  return n;
 }
 
 static void

@@ -1,5 +1,4 @@
-#include "babl.h"
-#include "math.h"
+#include <math.h>
 #include "babl-internal.h"
 
 int OK=1;

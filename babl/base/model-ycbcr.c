@@ -74,14 +74,14 @@ models (void)
     NULL);
 }
 
-static void
+static long
 rgb_to_ycbcr (int    src_bands,
               void **src,
               int   *src_pitch,
               int    dst_bands,
               void **dst,
               int   *dst_pitch,
-              int    n)
+              long   n)
 {
   BABL_PLANAR_SANITY
 
@@ -110,16 +110,17 @@ rgb_to_ycbcr (int    src_bands,
 
       BABL_PLANAR_STEP
     }
+  return n;
 }
 
-static void
+static long
 ycbcr_to_rgb (int    src_bands,
               void **src,
               int   *src_pitch,
               int    dst_bands,
               void **dst,
               int   *dst_pitch,
-              int    n)
+              long   n)
 {
   BABL_PLANAR_SANITY
 
@@ -148,6 +149,7 @@ ycbcr_to_rgb (int    src_bands,
 
       BABL_PLANAR_STEP
     }
+  return n;
 }
 
 static void

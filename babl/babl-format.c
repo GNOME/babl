@@ -21,9 +21,6 @@
 #include <stdarg.h>
 
 #include "babl-internal.h"
-#include "babl-sampling.h"
-#include "babl-type.h"
-#include "babl-component.h"
 #include "babl-db.h"
 
 static int 
@@ -259,4 +256,4 @@ babl_format_new (void *first_arg,
   }
 }
 
-BABL_CLASS_TEMPLATE (babl_format)
+BABL_CLASS_TEMPLATE (format)

@@ -19,7 +19,6 @@
 
 #include <string.h>
 #include <stdio.h>
-#include "babl.h"
 #include "babl-internal.h"
 
 struct

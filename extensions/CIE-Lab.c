@@ -142,14 +142,14 @@ cpercep_distance_space (const double L1, const double a1, const double b1,
 
 
 
-static void
+static long
 rgb_to_lab (int    src_bands,
             void **src,
             int   *src_pitch,
             int    dst_bands,
             void **dst,
             int   *dst_pitch,
-            int    n)
+            long   n)
 {
   BABL_PLANAR_SANITY
 
@@ -172,16 +172,17 @@ rgb_to_lab (int    src_bands,
 
       BABL_PLANAR_STEP
     }
+  return n;
 }
 
-static void
+static long
 lab_to_rgb (int    src_bands,
             void **src,
             int   *src_pitch,
             int    dst_bands,
             void **dst,
             int   *dst_pitch,
-            int    n)
+            long   n)
 {
   BABL_PLANAR_SANITY
 
@@ -204,6 +205,7 @@ lab_to_rgb (int    src_bands,
 
       BABL_PLANAR_STEP
     }
+  return n;
 }
 
 static void
@@ -289,7 +291,7 @@ formats (void)
 }
 
 
-static inline void
+static inline long
 convert_double_u8_scaled (double        min_val,
                           double        max_val,
                           unsigned char min,
@@ -298,7 +300,7 @@ convert_double_u8_scaled (double        min_val,
                           void         *dst,
                           int           src_pitch,
                           int           dst_pitch,
-                          int           n)
+                          long          n)
 {
   while (n--)
     {
@@ -316,9 +318,10 @@ convert_double_u8_scaled (double        min_val,
       src += src_pitch;
       dst += dst_pitch;
     }
+  return n;
 }
 
-static inline void
+static inline long
 convert_u8_double_scaled (double        min_val,
                           double        max_val,
                           unsigned char min,
@@ -327,7 +330,7 @@ convert_u8_double_scaled (double        min_val,
                           void         *dst,
                           int           src_pitch,
                           int           dst_pitch,
-                          int           n)
+                          long          n)
 {
   while (n--)
     {
@@ -346,27 +349,28 @@ convert_u8_double_scaled (double        min_val,
       dst += dst_pitch;
       src += src_pitch;
     }
+  return n;
 }
 
 #define MAKE_CONVERSIONS(name, min_val, max_val, min, max)      \
-static void                                                     \
+static long                                                     \
 convert_##name##_double (void *src,                             \
                          void *dst,                             \
                          int   src_pitch,                       \
                          int   dst_pitch,                       \
-                         int   n)                               \
+                         long  n)                               \
 {                                                               \
-  convert_u8_double_scaled (min_val, max_val, min, max,         \
+  return convert_u8_double_scaled (min_val, max_val, min, max,  \
                             src, dst, src_pitch, dst_pitch, n); \
 }                                                               \
-static void                                                     \
+static long                                                     \
 convert_double_##name (void *src,                               \
                        void *dst,                               \
                        int   src_pitch,                         \
                        int   dst_pitch,                         \
-                       int   n)                                 \
+                       long  n)                                 \
 {                                                               \
-  convert_double_u8_scaled (min_val, max_val, min, max,         \
+  return convert_double_u8_scaled (min_val, max_val, min, max,  \
                             src, dst, src_pitch, dst_pitch, n); \
 }
 
@@ -427,7 +431,7 @@ types_u8 (void)
   );
 }
 
-static inline void
+static inline long
 convert_double_u16_scaled (double         min_val,
                            double         max_val,
                            unsigned short min,
@@ -436,7 +440,7 @@ convert_double_u16_scaled (double         min_val,
                            void          *dst,
                            int            src_pitch,
                            int            dst_pitch,
-                           int            n)
+                           long           n)
 {
   while (n--)
     {
@@ -454,9 +458,10 @@ convert_double_u16_scaled (double         min_val,
       dst += dst_pitch;
       src += src_pitch;
     }
+  return n;
 }
 
-static inline void
+static inline long
 convert_u16_double_scaled (double         min_val,
                            double         max_val,
                            unsigned short min,
@@ -465,7 +470,7 @@ convert_u16_double_scaled (double         min_val,
                            void          *dst,
                            int            src_pitch,
                            int            dst_pitch,
-                           int            n)
+                           long           n)
 {
   while (n--)
     {
@@ -483,27 +488,28 @@ convert_u16_double_scaled (double         min_val,
       dst += dst_pitch;
       src += src_pitch;
     }
+  return n;
 }
 
 #define MAKE_CONVERSIONS(name, min_val, max_val, min, max)      \
-static void                                                     \
+static long                                                     \
 convert_##name##_double (void *src,                             \
                          void *dst,                             \
                          int   src_pitch,                       \
                          int   dst_pitch,                       \
-                         int   n)                               \
+                         long  n)                               \
 {                                                               \
-  convert_u16_double_scaled (min_val, max_val, min, max,        \
+  return convert_u16_double_scaled (min_val, max_val, min, max, \
                              src, dst, src_pitch, dst_pitch, n);\
 }                                                               \
-static void                                                     \
+static long                                                     \
 convert_double_##name (void *src,                               \
                        void *dst,                               \
                        int   src_pitch,                         \
                        int   dst_pitch,                         \
-                       int   n)                                 \
+                       long  n)                                 \
 {                                                               \
-  convert_double_u16_scaled (min_val, max_val, min, max,        \
+  return convert_double_u16_scaled (min_val, max_val, min, max, \
                              src, dst, src_pitch, dst_pitch, n);\
 }
 

@@ -19,14 +19,8 @@
 
 #include <string.h>
 #include <stdarg.h>
-#include <assert.h>
 
 #include "babl-internal.h"
-#include "babl-image.h"
-#include "babl-type.h"
-#include "babl-sampling.h"
-#include "babl-component.h"
-
 
 static Babl *
 image_new (BablFormat     *format,
@@ -90,9 +84,9 @@ babl_image_from_linear (void  *buffer,
   int            offset=0;
   int            calc_pitch=0;
 
-  assert (format);
-  assert (format->class_type == BABL_FORMAT ||
-          format->class_type == BABL_MODEL);
+  babl_assert (format);
+  babl_assert (format->class_type == BABL_FORMAT ||
+               format->class_type == BABL_MODEL);
  
   switch (format->class_type)
     {

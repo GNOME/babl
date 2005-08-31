@@ -168,4 +168,4 @@ babl_model_new (void *first_argument,
   }
 }
 
-BABL_CLASS_TEMPLATE (babl_model)
+BABL_CLASS_TEMPLATE (model)

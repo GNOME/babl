@@ -18,9 +18,14 @@
  */
 
 #define BABL_DYNAMIC_EXTENSIONS
-#define BABL_PATH           "/usr/lib/babl:/usr/local/lib/babl:~/.babl";
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#else
+#define BABL_PATH           "~/.babl-0.0:/usr/local/lib/babl-0.0:/usr/lib/babl-0.0";
 #define BABL_PATH_SEPERATOR "/"
 #define BABL_LIST_SEPERATOR ':'
+#endif
 
 
 
@@ -131,7 +136,6 @@ destroy_hook (void)
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <assert.h>
 
 #include <dlfcn.h>
 #ifndef RTLD_NOW
@@ -336,4 +340,4 @@ each_babl_extension_destroy (Babl *babl,
   return 0;  /* continue iterating */
 }
 
-BABL_CLASS_TEMPLATE (babl_extension)
+BABL_CLASS_TEMPLATE (extension)

@@ -22,41 +22,16 @@ c_sources =				\
 
 h_sources  =             		\
 	babl-classes.h			\
-	babl-component.h		\
-	babl-core.h   			\
-	babl-conversion.h		\
 	babl-db.h			\
-	babl-extension.h		\
-	babl-format.h			\
 	babl-ids.h			\
-	babl-instance.h			\
 	babl-internal.h			\
-	babl-introspect.h		\
-	babl-image.h			\
-	babl-fish.h			\
 	babl-memory.h			\
-	babl-model.h			\
-	babl-sampling.h			\
-	babl-sanity.h			\
-	babl-type.h			\
 	babl-util.h			\
 	babl.h
 
 library_includedir=$(includedir)/babl-$(BABL_API_VERSION)/babl
 library_include_HEADERS =		\
-	babl.h  			\
-	babl-classes.h			\
-	babl-component.h		\
-	babl-conversion.h		\
-	babl-extension.h		\
-	babl-fish.h			\
-	babl-ids.h			\
-	babl-image.h			\
-	babl-instance.h			\
-	babl-model.h			\
-	babl-format.h			\
-	babl-sampling.h			\
-	babl-type.h
+	babl.h
 
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/babl/base
 
