@@ -1,3 +1,9 @@
+2005-08-31  Øyvind Kolås  <pippin@gimp.org>
+
+	* Makefile.am,
+	* babl.pc.in,
+	* extensions/Makefile.in: Fixed build of extensions.
+
 2005-08-30  Øyvind Kolås  <pippin@gimp.org>
 
 	* babl/base/model-gray.c: 
