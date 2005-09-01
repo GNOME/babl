@@ -1,5 +1,10 @@
 2005-09-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-internal.h: HACK statically define BablDb *db,
+	for all internal translation units.
+
+2005-09-01  Øyvind Kolås  <pippin@gimp.org>
+
 	Added a 128 item hashtable to each object list.
 
 	* babl/Makefile.am: added new file 'babl-db.c'

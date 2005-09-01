@@ -65,6 +65,16 @@ Babl * babl_extension_quiet_log     (void);
 
 void   babl_core_init               (void);
 
+/* FIXME: nasty,. including the symbol even in files where it is
+ * not needed,. and a dummy function to use it in those cases
+ */
+static BablDb *db=NULL;
+static void hack_hack (void)
+{
+  if (db==NULL)
+    db=NULL;
+}
+
 /**** LOGGER ****/
 #include <stdarg.h>
 
@@ -93,6 +103,8 @@ real_babl_log (const char *file,
   va_end (varg);
 
   fprintf (stdout, "\n");
+  return;
+  hack_hack ();
 }
 
 #define babl_log(args...)                               \
@@ -121,14 +133,11 @@ while(0)
             :BABL_CLASS_TYPE_IS_VALID(((Babl*)(obj))->class_type)  \
 )
 
-
 extern int   babl_hmpf_on_name_lookups;
 
 const char  *babl_class_name     (BablClassType klass);
 void         babl_internal_init    (void);
 void         babl_internal_destroy (void);
-
-extern BablDb *db;
 
 #define BABL_DEFINE_EACH(type_name)                           \
 void                                                          \
@@ -185,7 +194,6 @@ babl_##type_name (const char *name)                             \
 
 #define BABL_DEFINE_INIT(type_name)                           \
                                                               \
-static BablDb *db=NULL;                                       \
                                                               \
 void                                                          \
 babl_##type_name##_init (void)                                \
