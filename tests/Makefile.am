@@ -8,6 +8,8 @@ TESTS =				\
 	models			\
 	babl_class_name
 
+TESTS_ENVIRONMENT = BABL_PATH=$(top_builddir)/extensions
+
 grayscale_to_rgb_SOURCES    = grayscale_to_rgb.c
 rgb_to_bgr_SOURCES          = rgb_to_bgr.c
 srgb_to_lab_u8_SOURCES      = srgb_to_lab_u8.c
