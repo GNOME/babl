@@ -44,7 +44,6 @@
 #include <string.h>
 #include <stdarg.h>
 
-
 static int   each_babl_extension_destroy (Babl *babl, void *data);
 
 static Babl *babl_extension_current_extender = NULL;
@@ -139,7 +138,15 @@ destroy_hook (void)
 #include <sys/stat.h>
 #include <unistd.h>
 
+#ifndef OS_WIN32
 #include <dlfcn.h>
+#else
+void  *dlopen(const char *, int);
+void  *dlsym(void *, const char *);
+int    dlclose(void *);
+char  *dlerror(void);
+#endif
+
 #ifndef RTLD_NOW
 #define RTLD_NOW 0
 #endif

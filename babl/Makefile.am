@@ -1,5 +1,10 @@
 ## Source directory
 
+if OS_WIN32
+win32_libs = -lgw32c -lole32 -luuid -lwsock32
+no_undefined = -no-undefined
+endif
+
 SUBDIRS = base
 
 c_sources =				\
@@ -39,11 +44,13 @@ INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/babl/base
 lib_LTLIBRARIES= libbabl.la
 libbabl_la_SOURCES= $(h_sources) $(c_sources)
 libbabl_la_LIBADD=\
-	base/libbase.la
+	base/libbase.la \
+	${win32_libs}
 
 libbabl_la_LDFLAGS= \
 	-version-info $(BABL_LIBRARY_VERSION) \
-	-release $(BABL_RELEASE)
+	-release $(BABL_RELEASE) \
+	${no_undefined}
 
 EXTRA_DIST := 			\
 	.cvsignore

@@ -52,6 +52,78 @@ AM_CONDITIONAL(HAVE_INKSCAPE, test "x$INKSCAPE" != "xno")
 AC_PATH_PROG(W3M, w3m, no)
 AM_CONDITIONAL(HAVE_W3M, test "x$W3M" != "xno")
 
+###########################
+# Check target architecture
+###########################
+
+AC_MSG_CHECKING([for target architecture])
+case x"$target" in
+  xNONE | x)
+    target_or_host="$host" ;;
+  *)
+    target_or_host="$target" ;;
+esac
+AC_MSG_RESULT([$target_or_host])
+
+case "$target_or_host" in
+  i*86-*-*)
+    have_x86=yes
+    AC_DEFINE(ARCH_X86, 1, [Define to 1 if you are compiling for ix86.])
+    ;;
+  x86_64-*-*)
+    have_x86=yes
+    AC_DEFINE(ARCH_X86, 1, [Define to 1 if you are compiling for ix86.])
+    AC_DEFINE(ARCH_X86_64, 1, [Define to 1 if you are compiling for amd64.])
+    ;;
+  ppc-*-* | powerpc-*)
+    have_ppc=yes
+    AC_DEFINE(ARCH_PPC, 1, [Define to 1 if you are compiling for PowerPC.])
+    ;;
+  ppc64-*-* | powerpc64-*)
+    have_ppc=yes
+    AC_DEFINE(ARCH_PPC, 1, [Define to 1 if you are compiling for PowerPC.])
+    AC_DEFINE(ARCH_PPC64, 1, [Define to 1 if you are compiling for PowerPC64.])
+    ;;
+  *)
+    ;;
+esac
+
+
+#################
+# Check for Win32
+#################
+
+AC_MSG_CHECKING([for some Win32 platform])
+case "$target_or_host" in
+  *-*-mingw* | *-*-cygwin*)
+    platform_win32=yes
+    ;;
+  *)
+    platform_win32=no
+    ;;
+esac
+AC_MSG_RESULT([$platform_win32])
+AM_CONDITIONAL(PLATFORM_WIN32, test "$platform_win32" = "yes")
+
+AC_MSG_CHECKING([for native Win32])
+case "$target_or_host" in
+  *-*-mingw*)
+    os_win32=yes
+    PATHSEP=';'
+    ;;
+  *)
+    os_win32=no
+    PATHSEP=':'
+    ;;
+esac
+AC_MSG_RESULT([$os_win32])
+AC_SUBST(PATHSEP)
+
+AM_CONDITIONAL(OS_WIN32, test "$os_win32" = "yes")
+AC_DEFINE(OS_WIN32, 1, "Define to 1 if you are compiling for Microsoft Windows.")
+
+AM_CONDITIONAL(OS_UNIX, test "$os_win32" != "yes")
+
 dnl ===========================================================================
 
 AC_DEFINE_UNQUOTED(BABL_PATH, "~/.babl-$BABL_API_VERSION:/usr/local/lib/babl-$BABL_API_VERSION:/usr/lib/babl-$BABL_API_VERSION", [search path for babl extensions (default value of enviroment variable)])

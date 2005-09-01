@@ -1,3 +1,8 @@
+if OS_WIN32
+else
+dl = -ldl
+endif
+
 TESTS =				\
 	grayscale_to_rgb	\
 	rgb_to_bgr       	\
@@ -21,7 +26,8 @@ models_SOURCES              = models.c
 
 
 AM_CFLAGS = -I$(top_srcdir) -I$(top_srcdir)/babl
-LDADD = $(top_builddir)/babl/libbabl.la -lm -ldl
+
+LDADD = $(top_builddir)/babl/libbabl.la -lm ${dl}
 
 noinst_PROGRAMS =	\
 	introspect	\

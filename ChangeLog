@@ -1,3 +1,11 @@
+2005-09-01  Michael Schumacher  <schumaml@cvs.gnome.org>
+
+	* configure.ac: added a check for OS_WIN32
+	* babl/Makefile.am: link with libgw32c to provide dl* functions on
+	win32 
+	* babl/babl-extension.c: added definitions of dl* function forwin32
+	* tests/Makefile.am: removed -ldl for win32
+
 2005-09-01  Sven Neumann  <sven@gimp.org>
 
 	* tests/Makefile.am (TESTS_ENVIRONMENT): set BABL_PATH to include
