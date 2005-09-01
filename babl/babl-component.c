@@ -117,7 +117,7 @@ babl_component_new (void *first_arg,
   babl = component_new (first_arg, id, luma, chroma, alpha);
 
   { 
-    Babl *ret = db_insert (babl);
+    Babl *ret = babl_db_insert (db, babl);
     if (ret!=babl)
         babl_free (babl);
     return ret;

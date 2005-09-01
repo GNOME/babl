@@ -161,7 +161,7 @@ babl_model_new (void *first_argument,
   babl = model_new (create_name (name, components, component), id, components, component);
   
   { 
-    Babl *ret = db_insert (babl);
+    Babl *ret = babl_db_insert (db, babl);
     if (ret!=babl)
         babl_free (babl);
     return ret;

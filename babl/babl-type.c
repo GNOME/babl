@@ -133,7 +133,7 @@ babl_type_new (void *first_arg,
   babl = type_new (first_arg, id, bits);
 
   { 
-    Babl *ret = db_insert (babl);
+    Babl *ret = babl_db_insert (db, babl);
     if (ret!=babl)
         babl_free (babl);
     return ret;

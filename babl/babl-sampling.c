@@ -24,8 +24,8 @@
 
 #include "babl-internal.h"
 
-static BablSampling db[(HORIZONTAL_MAX-HORIZONTAL_MIN+1)*
-                       (VERTICAL_MAX-VERTICAL_MIN+1)];
+static BablSampling sampling_db[(HORIZONTAL_MAX-HORIZONTAL_MIN+1)*
+                                (VERTICAL_MAX-VERTICAL_MIN+1)];
 
 Babl *
 babl_sampling (int horizontal,
@@ -35,7 +35,7 @@ babl_sampling (int horizontal,
       vertical<=4 &&
       horizontal>=1 &&
       horizontal<=4)
-    return (Babl*)&db [ (vertical-1) * 4 + (horizontal-1)];
+    return (Babl*)&sampling_db [ (vertical-1) * 4 + (horizontal-1)];
   else
     babl_log ("babl_samping(%i,%i): arguments out of bounds",
               horizontal, vertical);
@@ -63,7 +63,7 @@ babl_sampling_each (BablEachFunction  each_fun,
     for (vertical=VERTICAL_MIN; vertical<=VERTICAL_MAX; vertical++)
       {
        int index= (vertical-VERTICAL_MIN) * VERTICAL_MAX + (horizontal - HORIZONTAL_MIN);
-       if (each_fun (BABL (&db[index]), user_data))
+       if (each_fun (BABL (&sampling_db[index]), user_data))
          return;
       }
 }
@@ -85,14 +85,14 @@ babl_sampling_init (void)
     for (vertical=VERTICAL_MIN; vertical<=VERTICAL_MAX; vertical++)
       {
         int index= (vertical-VERTICAL_MIN) * VERTICAL_MAX + (horizontal - HORIZONTAL_MIN);
-        db[index].instance.class_type = BABL_SAMPLING;
-        db[index].instance.id = 0;
-        db[index].horizontal = horizontal;
-        db[index].vertical   = vertical;
-        db[index].instance.name = db[index].name;
-        db[index].name[0]='0'+horizontal;
-        db[index].name[1]=':';
-        db[index].name[2]='0'+vertical;
-        db[index].name[3]='\0';
+        sampling_db[index].instance.class_type = BABL_SAMPLING;
+        sampling_db[index].instance.id = 0;
+        sampling_db[index].horizontal = horizontal;
+        sampling_db[index].vertical   = vertical;
+        sampling_db[index].instance.name = sampling_db[index].name;
+        sampling_db[index].name[0]='0'+horizontal;
+        sampling_db[index].name[1]=':';
+        sampling_db[index].name[2]='0'+vertical;
+        sampling_db[index].name[3]='\0';
       }
 }

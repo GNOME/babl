@@ -249,7 +249,7 @@ babl_format_new (void *first_arg,
                      component, sampling, type);
  
   { 
-    Babl *ret = db_insert (babl);
+    Babl *ret = babl_db_insert (db, babl);
     if (ret!=babl)
         babl_free (babl);
     return ret;

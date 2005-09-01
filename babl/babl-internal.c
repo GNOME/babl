@@ -58,13 +58,19 @@ int babl_hmpf_on_name_lookups = 0;
 #include <unistd.h>
 
 void
-babl_die (void)
+babl_backtrack (void)
 {
   char buf[512];
 
   sprintf (buf,"echo bt>/tmp/babl.gdb;"
                "gdb -q --batch -x /tmp/babl.gdb --pid=%i 2>/dev/null", getpid());
   system (buf);
+}
+
+void
+babl_die (void)
+{
+  babl_backtrack ();
   exit (-1);
 }
 

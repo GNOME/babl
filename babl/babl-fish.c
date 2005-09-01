@@ -101,7 +101,7 @@ babl_fish_reference_new (Babl *source,
   babl->fish.pixels      = 0;
 
   { 
-    Babl *ret = db_insert (babl);
+    Babl *ret = babl_db_insert (db, babl);
     if (ret!=babl)
         babl_free (babl);
     return ret;

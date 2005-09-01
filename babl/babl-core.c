@@ -1,6 +1,5 @@
 /* babl - dynamically extendable universal pixel conversion library.
- * Copyright (C) 2005, Øyvind Kolås.
- *
+   
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -44,7 +43,6 @@ convert_double_double (void *src,
     }
   return n;
 }
-
 
 static long
 copy_strip_1 (int    src_bands,

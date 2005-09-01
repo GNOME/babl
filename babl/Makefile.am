@@ -5,6 +5,7 @@ SUBDIRS = base
 c_sources =				\
         babl.c				\
 	babl-core.c   			\
+	babl-db.c			\
 	babl-component.c		\
 	babl-conversion.c		\
 	babl-extension.c		\

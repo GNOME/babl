@@ -89,7 +89,6 @@ babl_extension_quiet_log (void)
   if (babl_quiet)
     return babl_quiet;
   babl_quiet = extension_new ("", NULL, NULL);
-  db_insert (babl_quiet);
   return babl_quiet;
 }
 
@@ -100,13 +99,15 @@ babl_extension_base (void)
   void *dl_handle        = NULL;
   void (*destroy) (void) = NULL;
 
+  if (!db) 
+    db = babl_db_init ();
   babl = extension_new ("BablBase",
                         dl_handle,
                         destroy);
   babl_set_extender (babl);
 
   { 
-    Babl *ret = db_insert (babl);
+    Babl *ret = babl_db_insert (db, babl);
     if (ret!=babl)
         babl_free (babl);
     else
@@ -127,6 +128,7 @@ init_hook (void)
 static void
 destroy_hook (void)
 {
+  babl_free (babl_quiet);
   babl_quiet=NULL;
 }
 
@@ -188,7 +190,7 @@ babl_extension_load (const char *path)
       return load_failed (babl);
     }
 
-  if (db_insert (babl) == babl)
+  if (babl_db_insert (db, babl) == babl)
     {
       babl_set_extender (NULL);
       return babl;

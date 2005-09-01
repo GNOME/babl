@@ -37,6 +37,7 @@
 #define _BABL_INTERNAL_H
 
 
+#include "babl-db.h"
 #include "babl-ids.h"
 #include "babl-util.h"
 #include "babl-memory.h"
@@ -66,6 +67,8 @@ void   babl_core_init               (void);
 
 /**** LOGGER ****/
 #include <stdarg.h>
+
+void babl_backtrack (void);
 
 static inline void
 real_babl_log (const char *file,
@@ -125,13 +128,14 @@ const char  *babl_class_name     (BablClassType klass);
 void         babl_internal_init    (void);
 void         babl_internal_destroy (void);
 
+extern BablDb *db;
 
 #define BABL_DEFINE_EACH(type_name)                           \
 void                                                          \
 babl_##type_name##_each (BablEachFunction  each_fun,          \
-                  void             *user_data)                \
+                         void             *user_data)         \
 {                                                             \
-  db_each (each_fun, user_data);                              \
+  babl_db_each (db, each_fun, user_data);                     \
 }                                                             \
 
 #define BABL_DEFINE_LOOKUP_BY_ID(type_name)                   \
@@ -139,10 +143,10 @@ Babl *                                                        \
 babl_##type_name##_id (int id)                                \
 {                                                             \
   Babl *babl;                                                 \
-  babl = db_exist (id, NULL);                                 \
+  babl = babl_db_exist (db, id, NULL);                        \
   if (!babl)                                                  \
     {                                                         \
-      babl_log ("%s(%i): not found", __FUNCTION__, id);   \
+      babl_log ("%s(%i): not found", __FUNCTION__, id);       \
     }                                                         \
   return babl;                                                \
 }
@@ -157,7 +161,7 @@ babl_##type_name (const char *name)                             \
     {                                                           \
       babl_log ("%s(\"%s\"): hmpf!", __FUNCTION__, name);       \
     }                                                           \
-  babl = db_exist (0, name);                                    \
+  babl = babl_db_exist (db, 0, name);                           \
                                                                 \
   if (!babl)                                                    \
     {                                                           \
@@ -180,11 +184,15 @@ babl_##type_name (const char *name)                             \
 #endif
 
 #define BABL_DEFINE_INIT(type_name)                           \
+                                                              \
+static BablDb *db=NULL;                                       \
+                                                              \
 void                                                          \
 babl_##type_name##_init (void)                                \
 {                                                             \
   BABL_PRE_INIT_HOOK;                                         \
-  db_init ();                                                 \
+  if (!db)                                                    \
+    db=babl_db_init ();                                       \
   BABL_INIT_HOOK;                                             \
 }
 
@@ -193,8 +201,8 @@ void                                                          \
 babl_##type_name##_destroy (void)                             \
 {                                                             \
   BABL_DESTROY_PRE_HOOK;                                      \
-  db_each (each_babl_##type_name##_destroy, NULL);            \
-  db_destroy ();                                              \
+  babl_db_each (db,each_babl_##type_name##_destroy, NULL);    \
+  babl_db_destroy (db);                                       \
   BABL_DESTROY_HOOK;                                          \
 }
 

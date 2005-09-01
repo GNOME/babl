@@ -1,3 +1,23 @@
+2005-09-01  Øyvind Kolås  <pippin@gimp.org>
+
+	Added a 128 item hashtable to each object list.
+
+	* babl/Makefile.am: added new file 'babl-db.c'
+	* babl/babl-db.h: moved static function ...
+	* babl/babl-db.c: ... here in a new file, also implemented a hashing
+	optimization based on the strings of names.
+	* babl/babl-internal.h: changed API in base class templates.
+	* babl/babl-component.c,
+	* babl/babl-extension.c,
+	* babl/babl-fish.c,
+	* babl/babl-format.c,
+	* babl/babl-image.c,
+	* babl/babl-model.c,
+	* babl/babl-sampling.c,
+	* babl/babl-type.c: changed db_insert(..) to babl_db_insert(db, ...)
+
+	* babl/babl.c: added babl_fish_init ()
+
 2005-08-31  Øyvind Kolås  <pippin@gimp.org>
 
 	* docs/index-static.html.in: Changed ChangeLog link in NEWS section.
