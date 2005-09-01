@@ -8,21 +8,21 @@ SUBDIRS = babl	\
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = babl.pc
 
-built_dist_files = 	\
-	README		\
-	babl.pc
+built_dist_files = README
 
-EXTRA_DIST = $(built_dist_files) \
-	AUTHORS		\
-	COPYING		\
-	INSTALL		\
-	NEWS		\
-	ChangeLog	\
-	autogen.sh	\
+EXTRA_DIST = \
+	$(built_dist_files)	\
+	AUTHORS			\
+	COPYING			\
+	INSTALL			\
+	NEWS			\
+	ChangeLog		\
+	autogen.sh		\
 	babl.pc.in
 
-DISTCLEANFILES = $(built_dist_files)
-
+DISTCLEANFILES = \
+	$(built_dist_files)	\
+	babl.pc
 
 .PHONY: snapshot
 
