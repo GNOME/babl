@@ -8,6 +8,10 @@
 
 2005-09-01  Sven Neumann  <sven@gimp.org>
 
+	* Makefile.am: don't dist the generated babl.pc file.
+
+2005-09-01  Sven Neumann  <sven@gimp.org>
+
 	* tests/Makefile.am (TESTS_ENVIRONMENT): set BABL_PATH to include
 	extension from the builddir.
 
