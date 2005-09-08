@@ -52,11 +52,22 @@
         margin-bottom: 1em;
       }
 
-      table {
-        margin-top: 1em;
-        margin-bottom: 1em;
-        width: 100%;
+      div.expander {
+        border: 1px solid #bbb;
       }
+      div.expander_title {
+        border-bottom: 1px solid #aaa;
+      }
+      div.expander_content {
+        margin-left: 3em;
+        display: none;
+        padding-bottom: 1em;
+      }
+      div.expander_content dl{
+        margin: 0;
+        padding: 0;
+      }
+
       table th {
         font-weight: normal;
         background-color: #ccc;
@@ -84,6 +95,32 @@
         padding-top: 0.1em;
         padding-bottom: 0.1em;
         float: left;
+        overflow: hidden;
+        width: 4em;
+        color: white;
+        border: 1px solid white;
+      }
+
+      .nopad {
+        margin :0;
+        padding:0;
+      }
+
+      td.component {
+        background-color: #060;
+        padding-left: 0.5em;
+        padding-top: 0.1em;
+        padding-bottom: 0.1em;
+        overflow: hidden;
+        width: 4em;
+        color: white;
+        border: 1px solid white;
+      }
+      td.type {
+        background-color: #006;
+        padding-left: 0.5em;
+        padding-top: 0.1em;
+        padding-bottom: 0.1em;
         overflow: hidden;
         width: 4em;
         color: white;

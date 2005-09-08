@@ -14,6 +14,48 @@
     <style type='text/css'>
        @import url(babl.css);
     </style>
+
+    <script type='text/javascript'>
+        function hide(id)
+        {
+          (document.getElementById(id)).style.display = "none";
+        }
+        function show(id)
+        {
+          (document.getElementById(id)).style.display = "block";
+        }
+    function get_visible (id)
+    {
+      var element = document.getElementById(id);
+
+      if (element &&
+          element.style.display &&
+          element.style.display != "none")
+         return true;
+      return false;
+    }
+
+    function set_visible (id, visible)
+    {
+      var element = document.getElementById(id);
+
+      if (element)
+        {
+          if (visible)
+              element.style.display = "block";
+          else
+              element.style.display = "none";
+        }
+    }
+    function toggle_visible (id)
+    {
+      if (get_visible(id))
+        set_visible(id, false);
+      else
+        set_visible(id,true);
+    }
+
+    </script>
   </head>
   <body>
 
@@ -35,14 +77,10 @@
         <li><a href='#Color-models'>&nbsp;&nbsp;Color models</a></li>
         <li><a href='#Pixel-formats'>&nbsp;&nbsp;Pixel formats</a></li>
         <li><a href='#Dependencies'>Dependencies</a></li>
-        <li><a href='#Dependencies-Core'>&nbsp;&nbsp;Core</a></li>
-        <li><a href='#Dependencies-Extensions'>&nbsp;&nbsp;Extensions</a></li>
         <li><a href='#Source'>Source</a></li>
         <li><a href='#Usage'>Usage</a></li>
         <li><a href='#Extending'>Extending</a></li>
-        <li><a href='#TODO'>TODO</a></li>
-        <li><a href='#TODO-Core'>&nbsp;&nbsp;Core</a></li>
-        <li><a href='#TODO-Extensions'>&nbsp;&nbsp;Extensions</a></li>
+        <li><a href='#TODO'>Todo</a></li>
         <li><a href='#Copyright'>Copyright</a></li>
         <li><a href='#Authors'>&nbsp;&nbsp;Authors</a></li>
       </ul>
@@ -70,23 +108,13 @@
         <h3>Core</h3>
         <ul>
           <li class='frozen'>Small API for simple use cases</li>
-          <li class='stable'>Specification of new formats</li>
           <li class='stable'>Planar and linear buffers</li>
           <li class='stable'>Thread safety for processing.</li>
 
-          <li class='unstable'>Extension and <a href='http://pippin.gimp.org/babl/introspect.txt'>introspection</a> of formats,
+          <li class='unstable'>Extendable and <a href='http://pippin.gimp.org/babl/introspect.txt'>introspectable</a> formats,
           color models, components and datatypes</li>
-          <li class='unstable'>Horizontal an vertical subsampling (for
-          implementing 4:2:2 4:2:0 4:1:1 etc. chroma subsampling)</li>
-          <li class='unstable'>Reference 64bit floating point conversions for data types and color models.
-          
-          <p><em>Note:</em> This portion of babl has still not received rigorous
-          testing, the main development of babl is still focused on internal
-          infrastructure work. As the development of babl allows, initial tests
-          and usage of babl is welcome; as it would help kill of random
-          mystypes in constants and such earlier, and make it a more valid
-          actual regression suite.
-          </p>
+          <li class='unstable'>Reference 64bit floating point conversions for
+          data types and color models.
 <!--BablBase-->
           </li>
         </ul>
@@ -108,9 +136,6 @@
           </dl>
           </li>
         </ul>
-        <p>
-        The extension api is not going to be frozen until after the 1.0 release.
-        </p>
 
 
         <a name='Dependencies'></a>
@@ -119,16 +144,8 @@
         <p> Babl is intended to be a low level infrastructure library and thus
         strives for few dependencies and thus portability. </p>
 
-        <a name='Dependencies-Core'></a>
-        <h3>Core</h3>
         <ul>
-          <li>The C Standard library.</li>
-        </ul>
-
-        <a name='Dependencies-Extensions'></a>
-        <h3>Extensions</h3>
-        <ul>
-          <li>libdl - dynamic modules. (planned)</li>
+          <li>libdl (win32 uses separate solution)</li>
         </ul>
 
 
@@ -198,20 +215,16 @@
         </p>
         
         <a name='TODO'></a>
-        <a name='TODO-Core'></a>
         <h2>TODO</h2>
         
-        <h3>Core</h3>
         <ul>
-          <li>Speed up name resolution in babl-db.h (using a hash table, and
-              probably also a id table)</li>
-          <li>Meta level optimizations.</li>
           <li>Compile and/or runtime profiling. <em>(The speed of conversions
             is bound to 'wobble', according to architecture, compiler flags,
             concurrently running processes and phase of moon.)</em></li>
-          <li>Subsampling support</li>
-          <li>Support for datatypes that are not a multiple of 8bit.</li>
+          <li class='unstable'>Horizontal and vertical subsampling (for
+          implementing 4:2:2 4:2:0 4:1:1 etc. chroma subsampling)</li>
           <li>Thread safety for mutations of the type system.</li>
+          <li>Support for datatypes that are not a multiple of 8bit.</li>
           <!--<li>Relative error is the difference between the two vaues
           divided by the actual value, for instance, if the actual result of a
           calculation should be 3.13159, but the result obtained was 3.14x10^0,
@@ -228,30 +241,6 @@ cp babl/babl-classes.c      babl/babl-internal.c
 -->
         </ul>
 
-        <a name='TODO-Extensions'></a>
-        <h3>Extensions</h3>
-        <ul>
-          <li>Dynamic modules
-          babl will probably look in a colon
-          seperated list of paths to search sequentially for modules. 
-          The default assumed value is
-          <pre>BABL_PATH="/usr/lib/babl/:/usr/local/lib/babl:(HOME)/.local/lib/babl:$(HOME)/lib/babl".
-          </pre>
-          NB: the modules will be loaded from the directories pointed to by
-          the path in reverse order, this should allow the user to override
-          system wide definitions for types, models and formats.
-          
-          <p><b>currently the extensions are hardcoded to be installed in /home/pippin/.babl/
-          and the only extensions looked for are naive-CMYK.so and CIE-Lab.so this will change
-          shortly. Look in babl/babl-extension.c (bottom)   and  extensions/Makefile.in  to
-          change it if you so desire.</b></p>
-          
-          
-          </li>
-          
-        </ul>
-
-
 
         <a name='Copyright'></a>
         <h2>Copyright</h2>
@@ -264,15 +253,7 @@ cp babl/babl-classes.c      babl/babl-internal.c
         <a name='Authors'></a>
         <h3>Authors</h3>
 
-        <dl>
-          <dt>Maintainer:</dt>
-          <dd><a href='http://pippin.gimp.org/'>Øyvind Kolås</a></dd>
-          <dt>Original author:</dt>
-          <dd>Øyvind Kolås</dd>
-          <dt>Contributors:<dt>
-<dd><pre class='authors'><!--AUTHORS-->          
-</pre></dd>
-        </dl>
+<!--AUTHORS-->          
      
         <a href='graphics/index.html'><img class='BablFish' alt='/babl-@BABL_VERSION@' title='babl-@BABL_VERSION@' src='graphics/babl-48x48.png'/></a>
       </div>

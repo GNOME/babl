@@ -1,3 +1,15 @@
+2005-09-08  Øyvind Kolås  <pippin@gimp.org>
+
+	* AUTHORS: Added Micahel Schumacher, and email addresses.
+	* docs/index-static.html.in:
+	* docs/babl.css:
+	* tests/babl-html-dump.c: (main), (normalize), (show_item),
+	(hide_item), (each_item), (model_html), (type_html),
+	(conversion_html), (format_html): Use DHTML for expandable display of
+	registered data structures.
+	* docs/graphics/Makefile.am: added web target, and .SILENT option.
+	* docs/Makefile.am: added .SILENT option.
+
 2005-09-01  Michael Schumacher  <schumaml@cvs.gnome.org>
 
 	* configure.ac: added a check for OS_WIN32

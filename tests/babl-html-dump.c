@@ -22,37 +22,120 @@
 static void model_html              (Babl *babl);
 static void type_html               (Babl *babl);
 static void format_html             (Babl *babl);
+static void conversion_html         (Babl *babl);
 
 static int  each_item               (Babl *babl,
                                      void *user_data);
+static int  show_item               (Babl *babl,
+                                     void *user_data);
+static int  hide_item               (Babl *babl,
+                                     void *user_data);
+
 
 int
 main (void)
 {
   babl_init ();
 
+  printf ("<br/><a href='javascript:");
+  printf ("show(\"x_types\");show(\"x_models\");show(\"x_formats\");show(\"x_conversions\");");
+  babl_type_each (show_item, NULL);
+  babl_model_each (show_item, NULL);
+  babl_format_each (show_item, NULL);
+  babl_conversion_each (show_item, NULL);
+  printf ("'>+</a>");
 
-  printf ("<a name='Data-types'></a>\n");
-  printf ("<table><tr><th>Data type</th><th>bits</th><th>bytes</th></tr>\n");
+  printf ("<a href='javascript:");
+  printf ("hide(\"x_types\");hide(\"x_models\");hide(\"x_formats\");hide(\"x_conversions\");");
+  babl_type_each (hide_item, NULL);
+  babl_model_each (hide_item, NULL);
+  babl_format_each (hide_item, NULL);
+  babl_conversion_each (hide_item, NULL);
+  printf ("'>-</a>");
+
+  printf ("<div class='expander'>");
+  printf ("<div class='expander_title'><a style='font-size:110%%' name='Data-types' href='javascript:toggle_visible(\"x_types\")'>Data types</a></div><div class='expander_content' id='x_types'>\n");
   babl_type_each (each_item, NULL);
-  printf ("<tr><td><a name='Color-models'></a>&nbsp;</td></tr>\n");
-  printf ("<tr><th>Color model</th><th>components</th></tr>\n");
+  printf ("</div>\n");
+  printf ("</div>\n");
+
+  printf ("<div class='expander'>");
+  printf ("<div class='expander_title'><a style='font-size:110%%' name='Color-models' href='javascript:toggle_visible(\"x_models\")'>Color models</a></div><div class='expander_content' id='x_models'>\n");
   babl_model_each (each_item, NULL);
-  printf ("<tr><td><a name='Pixel-formats'></a>&nbsp;</td></tr>\n");
-  printf ("<tr><th>Pixel format</th><th>bytes/pixel</th><th>color model</th><th>bands</th> </tr>\n");
+  printf ("</div>\n");
+  printf ("</div>\n");
+
+
+  printf ("<div class='expander'>");
+  printf ("<div class='expander_title'><a style='font-size:110%%' name='Pixel-formats' href='javascript:toggle_visible(\"x_formats\")'>Pixel formats</a></div><div class='expander_content' id='x_formats'>\n");
   babl_format_each (each_item, NULL);
-  printf ("</table>\n");
+  printf ("</div>\n");
+  printf ("</div>\n");
+
+
+  printf ("<div class='expander'>");
+  printf ("<div class='expander_title'><a style='font-size:110%%' name='Conversions' href='javascript:toggle_visible(\"x_conversions\")'>Conversions</a></div><div class='expander_content' id='x_conversions'>\n");
+  babl_conversion_each (each_item, NULL);
+  printf ("</div>\n");
+  printf ("</div>\n");
 
   babl_destroy ();
 
   return 0;
 }
 
+
+static char normalized_buf[512];
+
+const char *normalize(const char *str)
+{
+  char *s = normalized_buf;
+  strcpy (normalized_buf, str);
+
+  while (*s)
+    {
+      if ( (*s >= 'a' && *s <= 'z') ||
+           (*s >= 'A' && *s <= 'Z') ||
+           (*s >= '0' && *s <= '9'))
+        {
+        }
+      else
+        {
+          *s='_';
+        }
+      s++;
+    }
+  return normalized_buf;
+}
+
+
+static int
+show_item (Babl *babl,
+           void *user_data)
+{
+  printf ("show(\"x_%s\");", normalize(babl->instance.name));
+  return 0;
+}
+
+
+static int
+hide_item (Babl *babl,
+           void *user_data)
+{
+  printf ("hide(\"x_%s\");", normalize(babl->instance.name));
+  return 0;
+}
+
 static int
 each_item (Babl *babl,
-              void *user_data)
+           void *user_data)
 {
-  printf ("\t<tr><td valign='top'><span class='name'>%s</span></td>", babl->instance.name);
+  printf ("<div class='expander'>");
+  printf ("<div class='expander_title'><a href='javascript:toggle_visible(\"x_%s\")'>%s</a></div>\n",
+      normalize(babl->instance.name), babl->instance.name);
+  printf ("<div class='expander_content' id='x_%s'>\n",
+      normalize (babl->instance.name));
+
 
   switch (babl->class_type)
     {
@@ -65,11 +148,18 @@ each_item (Babl *babl,
       case BABL_FORMAT:
         format_html (babl);
         break;
+      case BABL_CONVERSION:
+      case BABL_CONVERSION_LINEAR:
+      case BABL_CONVERSION_PLANE:
+      case BABL_CONVERSION_PLANAR:
+        conversion_html (babl);
+        break;
       default:
         break;
     }
 
-  printf ("</tr>\n");
+  printf ("</div>\n");
+  printf ("</div>\n");
   return 0;
 }
 
@@ -78,19 +168,29 @@ model_html (Babl *babl)
 {
   int i;
 
-  printf ("<td>");
+  printf ("<dl>");
+  printf ("<dt>components</dt><dd><table class='nopad'>");
+
   for (i=0; i< babl->model.components; i++)
     {
-      printf ("<span class='component'>%s</span><span class='spacer'>&nbsp;</span><br/>", BABL(babl->model.component[i])->instance.name  );
+      printf ("<tr><td class='type'>%s</td></tr>",
+       BABL(babl->model.component[i])->instance.name  );
     }
-  printf ("</td>");
+  printf ("</table></dd></dl>");
 }
 
 static void
 type_html (Babl *babl)
 {
-  printf ("<td>%i</td>", babl->type.bits);
-  printf ("<td>%i</td>", babl->type.bits / 8);
+  printf ("<dl><dt>bits</dt><dd>%i</dd>", babl->type.bits);
+  printf ("<dt>bytes</dt><dd>%i</dd></dl>", babl->type.bits / 8);
+}
+
+
+static void
+conversion_html (Babl *babl)
+{
+  printf ("\n");
 }
 
 static void
@@ -98,32 +198,17 @@ format_html (Babl *babl)
 {
   int i;
 
-  printf ("<td valign='top'>");
-  printf ("<span class='name'>%i</span>", babl->format.bytes_per_pixel);
-  printf ("</td>");
-  printf ("<td valign='top'>");
-  printf ("<span class='name'>%s</span>", BABL(babl->format.model)->instance.name  );
-  printf ("</td>");
-  printf ("<td>");
+  printf ("<dl>");
+  printf ("<dt>bytes/pixel</dt><dd>%i</dd>", babl->format.bytes_per_pixel);
+  printf ("<dt>model</dt><dd>%s</dd>", BABL(babl->format.model)->instance.name  );
+  printf ("<dt>components</dt><dd><table class='nopad'>");
+
   for (i=0; i< babl->format.components; i++)
     {
-      printf ("<span class='type'>%s </span><span class='component'>%s</span><span class='spacer'>&nbsp;</span><br/>",
+      printf ("<tr><td class='type'>%s</td><td class='component'>%s</td></tr>",
        BABL(babl->format.type[i])->instance.name,
        BABL(babl->format.component[i])->instance.name  );
     }
-  printf ("</td>");
-#if 0
-  int i;
-  babl_log ("\t\tplanar=%i", babl->format.planar);
-  babl_log ("\t\tbands=%i",  babl->format.bands);
-
-  for (i=0; i< babl->format.bands; i++)
-    {
-      babl_log ("\t\tband[%i] type='%s' component='%s' sampling='%s'",
-                i,   babl->format.type[i]->instance.name,
-                     babl->format.component[i]->instance.name,
-                     babl->format.sampling[i]->instance.name);
-    }
-#endif
+  printf ("</table></dd></dl>");
 }
 
