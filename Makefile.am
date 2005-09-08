@@ -1,9 +1,9 @@
 AUTOMAKE_OPTIONS = foreign dist-bzip2
 
-SUBDIRS = babl	\
-	  tests	\
-	  docs	\
-	  extensions
+SUBDIRS = babl		\
+	  extensions 	\
+	  tests		\
+	  docs
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = babl.pc

@@ -53,8 +53,8 @@ distdir:
 	cp $(CFILES) $(Makefile.in) $$distdir
 
 dvi:
-check:
 	#playing along with automake
+check: all
 
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status

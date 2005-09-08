@@ -1,5 +1,7 @@
 2005-09-08  Øyvind Kolås  <pippin@gimp.org>
 
+	* Makefile.am: build extensions before tests.
+	* extensions/Makefile.in: build extensions when check is done.
 	* tests/Makefile.am: removed erroniously added foo test.
 
 2005-09-08  Øyvind Kolås  <pippin@gimp.org>
