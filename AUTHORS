@@ -1,2 +1,8 @@
-Øyvind Kolås
-Sven Neumann
+<dl>
+  <dt>Øyvind Kolås <em>pippin@gimp.org</em></dt>
+        <dd>Maintainer and original author.</dd>
+  <dt>Sven Neumann <em>sven@gimp.org</em></dt>
+        <dd>Build enviroment sanity.</dd>
+  <dt>Michael Schumacher <em>schumaml@cvs.gnome.org</em></dt>
+        <dd>win32 support for dynamic extensions.</dd>
+</dl>
