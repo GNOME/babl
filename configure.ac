@@ -36,6 +36,11 @@ AM_PROG_LIBTOOL
 AC_STDC_HEADERS
 AM_SANITY_CHECK
 
+WEBSITE_HOST=pippin.gimp.org
+AC_SUBST(WEBSITE_HOST)
+WEBSITE_LOCATION=public_html/babl/
+AC_SUBST(WEBSITE_LOCATION)
+
 if eval "test x$GCC = xyes"; then
   case " $CFLAGS " in
   *[\ \	]-Wall[\ \	]*) ;;
