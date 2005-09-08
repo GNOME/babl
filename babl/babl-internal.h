@@ -51,6 +51,9 @@ int    babl_fish_reference_process  (Babl      *babl,
                                      BablImage *source,
                                      BablImage *destination,
                                      long       n);
+Babl * babl_fish_reference          (Babl *source,
+                                     Babl *destination);
+Babl * babl_fish_simple             (BablConversion *conversion);
 Babl * babl_image_from_linear       (void      *buffer,
                                      Babl      *format);
 Babl * babl_image_double_from_image (Babl      *source);

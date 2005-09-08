@@ -28,8 +28,6 @@ static int
 each_babl_component_destroy (Babl *babl,
                              void *data)
 {
-  babl_free (babl->component.from);
-  babl_free (babl->component.to);
   babl_free (babl);
   return 0;  /* continue iterating */
 }
@@ -52,8 +50,6 @@ component_new (const char *name,
   babl->component.luma   = luma;
   babl->component.chroma = chroma;
   babl->component.alpha  = alpha;
-  babl->component.from   = NULL;
-  babl->component.to     = NULL;
   return babl;
 }
 

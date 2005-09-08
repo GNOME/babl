@@ -39,74 +39,53 @@ conversion_new (const char        *name,
                 int                time_cost,
                 int                loss,
                 BablFuncLinear     linear,
-                BablFuncPlanar     planar,
-                BablFuncPlanarBit  planar_bit)
+                BablFuncPlane      plane, 
+                BablFuncPlanar     planar)
 {
   Babl *babl = NULL;
 
-  /* destination is of same type as source */ 
+  babl_assert (source->class_type ==
+               destination->class_type);
+
+  if (linear)
+    {
+      babl = babl_malloc (sizeof (BablConversion));
+      babl->class_type      = BABL_CONVERSION_LINEAR;
+      babl->conversion.function.linear = linear;
+    }
+  else if (plane)
+    {
+      babl = babl_malloc (sizeof (BablConversion));
+      babl->class_type      = BABL_CONVERSION_PLANE;
+      babl->conversion.function.plane = plane;
+    }
+  else if (planar)
+    {
+      babl = babl_malloc (sizeof (BablConversion));
+      babl->class_type = BABL_CONVERSION_PLANAR;
+      babl->conversion.function.planar = planar;
+    }
   switch (source->class_type)
     {
       case BABL_TYPE:
-        if (linear)
-          {
-            babl = babl_malloc (sizeof (BablConversionType));
-            babl->class_type      = BABL_CONVERSION_TYPE;
-            babl->conversion.function.linear = linear;
-          }
-        else if (planar)
-          {
-            babl = babl_malloc (sizeof (BablConversionTypePlanar));
-            babl->class_type = BABL_CONVERSION_TYPE_PLANAR;
-            babl->conversion.function.planar = planar;
-          }
-        else if (planar_bit)
-          {
-            babl_log ("planar_bit support not implemented yet");
-          }
         break;
       case BABL_MODEL:
         if (linear)
           {
-            babl_log ("linear support for model conversion not supported");
+            babl_fatal ("linear support for %s not supported",
+                        babl_class_name (source->class_type));
           }
-        else if (planar)
+        else if (plane)
           {
-            babl = babl_malloc (sizeof (BablConversionModelPlanar));
-            babl->class_type = BABL_CONVERSION_MODEL_PLANAR;
-            babl->conversion.function.planar = planar;
-          }
-        else if (planar_bit)
-          {
-            babl_log ("planar_bit support for model conversion not supported");
+            babl_fatal ("plane support for %s not supported",
+                        babl_class_name (source->class_type));
           }
         break;
       case BABL_FORMAT:
-        if (linear)
-          {
-            babl = babl_malloc (sizeof (BablConversionFormat));
-            babl->class_type = BABL_CONVERSION_FORMAT;
-            babl->conversion.function.linear = linear;
-          }
-        else if (planar)
-          {
-            babl = babl_malloc (sizeof (BablConversionFormatPlanar));
-            babl->class_type = BABL_CONVERSION_FORMAT_PLANAR;
-            babl->conversion.function.planar = planar;
-          }
-        else if (planar_bit)
-          {
-            babl_log ("planar_bit support for pixelformat conversion not supported");
-          }
         break;
       default:
-          babl_log ("%s unexpected", babl_class_name (babl->class_type));
+          babl_fatal ("%s unexpected", babl_class_name (babl->class_type));
         break;
-    }
-  if (!babl)
-    {
-      babl_log ("args=(name='%s', ...): creation failed",  name);
-      return NULL;
     }
 
   babl->instance.id            = id;
@@ -154,8 +133,8 @@ babl_conversion_new (void *first_arg,
   int                time_cost   = 0;
   int                loss        = 0;
   BablFuncLinear     linear      = NULL;
+  BablFuncPlane      plane       = NULL;
   BablFuncPlanar     planar      = NULL;
-  BablFuncPlanarBit  planar_bit  = NULL;
 
   int                got_func    = 0;
   const char        *arg         = first_arg;
@@ -183,27 +162,27 @@ babl_conversion_new (void *first_arg,
         {
           if (got_func++)
             {
-              babl_log ("already got a conversion func, registration of multiple might be possible later\n"); 
+              babl_fatal ("already got a conversion func\n"); 
             }
           linear = va_arg (varg, BablFuncLinear);
+        }
+
+      else if (!strcmp (arg, "plane"))
+        {
+          if (got_func++)
+            {
+              babl_fatal ("already got a conversion func\n"); 
+            }
+          plane = va_arg (varg, BablFuncPlane);
         }
 
       else if (!strcmp (arg, "planar"))
         {
           if (got_func++)
             {
-              babl_log ("already got a conversion func, registration of multiple might be possible later\n"); 
+              babl_fatal ("already got a conversion func\n"); 
             }
           planar = va_arg (varg, BablFuncPlanar);
-        }
-
-      else if (!strcmp (arg, "planar-bit"))
-        {
-          if (got_func++)
-            {
-              babl_log ("already got a conversion func, registration of multiple might be possible later\n"); 
-            }
-          planar_bit = va_arg (varg, BablFuncPlanarBit);
         }
 
       else if (!strcmp (arg, "time-cost"))
@@ -227,8 +206,8 @@ babl_conversion_new (void *first_arg,
   assert (source);
   assert (destination);
 
-  babl = conversion_new (create_name (source, destination), id, source, destination, time_cost, loss, linear,
-                         planar, planar_bit);
+  babl = conversion_new (create_name (source, destination),
+       id, source, destination, time_cost, loss, linear, plane, planar);
 
   { 
     Babl *ret = babl_db_insert (db, babl);
@@ -242,12 +221,22 @@ static long
 babl_conversion_linear_process (BablConversion *conversion,
                                 void           *source,
                                 void           *destination,
-                                int             src_pitch,
-                                int             dst_pitch,
                                 long            n)
 {
-  conversion->function.linear (source, destination, src_pitch, dst_pitch, n);
-  return n;
+  return conversion->function.linear (source, destination, n);
+}
+
+static long
+babl_conversion_plane_process (BablConversion *conversion,
+                               void           *source,
+                               void           *destination,
+                               int             src_pitch,
+                               int             dst_pitch,
+                               long            n)
+{
+  return conversion->function.plane (source,    destination,
+                                     src_pitch, dst_pitch,
+                                     n);
 }
 
 static long
@@ -267,14 +256,13 @@ babl_conversion_planar_process (BablConversion *conversion,
   memcpy (src_data, source->data, sizeof (void*) * source->components);
   memcpy (dst_data, destination->data, sizeof (void*) * destination->components);
   
-  conversion->function.planar (source->components,
-                               src_data,
-                               source->pitch,
-                               destination->components,
-                               dst_data,
-                               destination->pitch,
-                               n);
-  return n;
+  return conversion->function.planar (source->components,
+                                      src_data,
+                                      source->pitch,
+                                      destination->components,
+                                      dst_data,
+                                      destination->pitch,
+                                      n);
 }
 
 long
@@ -287,7 +275,7 @@ babl_conversion_process (BablConversion *conversion,
 
   switch (BABL(conversion)->class_type)
   {
-    case BABL_CONVERSION_TYPE:
+    case BABL_CONVERSION_PLANE:
       {
         void *src_data = NULL;
         void *dst_data = NULL;
@@ -302,32 +290,30 @@ babl_conversion_process (BablConversion *conversion,
             src_data  = img->data[0];
             src_pitch = img->pitch[0];
           }
+        if (BABL_IS_BABL(destination))
+          {
+            BablImage *img = (BablImage*)destination;
+           
+            dst_data  = img->data[0];
+            dst_pitch = img->pitch[0];
+          }
+
         if (!src_data)
           src_data=source;
         if (!src_pitch)
           src_pitch=BABL(conversion->source)->type.bits/8;
-
-
-        if (BABL_IS_BABL(destination))
-          {
-            BablImage *img;
-           
-            img       = (BablImage*)destination;
-            dst_data  = img->data[0];
-            dst_pitch = img->pitch[0];
-          }
         if (!dst_data)
           dst_data=destination;
         if (!dst_pitch)
           dst_pitch=BABL(conversion->destination)->type.bits/8;
 
-        babl_conversion_linear_process (conversion,
-                                        src_data,  dst_data,
-                                        src_pitch, dst_pitch,
-                                        n);
+        babl_conversion_plane_process (conversion,
+                                       src_data,  dst_data,
+                                       src_pitch, dst_pitch,
+                                       n);
       }
       break;
-    case BABL_CONVERSION_MODEL_PLANAR:
+    case BABL_CONVERSION_PLANAR:
       babl_assert (BABL_IS_BABL (source));
       babl_assert (BABL_IS_BABL (destination));
 
@@ -336,6 +322,16 @@ babl_conversion_process (BablConversion *conversion,
                                       (BablImage*)      destination,
                                                         n);
       break;
+    case BABL_CONVERSION_LINEAR:
+      babl_assert (!BABL_IS_BABL (source));
+      babl_assert (!BABL_IS_BABL (destination));
+
+      babl_conversion_linear_process (conversion,
+                                      source, 
+                                      destination,
+                                      n);
+      break;
+
     default:
       babl_log ("args=(%s, %p, %p, %li) unhandled conversion type: %s",
            conversion->instance.name, source, destination, n,

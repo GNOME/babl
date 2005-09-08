@@ -85,7 +85,7 @@ babl_core_init (void)
   babl_conversion_new (
     babl_type_id (BABL_DOUBLE),
     babl_type_id (BABL_DOUBLE),
-    "linear",      convert_double_double,
+    "plane",      convert_double_double,
     NULL
   );
 

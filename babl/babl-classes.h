@@ -23,11 +23,18 @@
 /* Type and Format */
 typedef long (*BablFuncLinear)    (void  *src,
                                    void  *dst,
+                                   long   n);
+
+/* Signature of functions registered for reference type
+ * conversions,
+ */
+typedef long (*BablFuncPlane)     (void  *src,
+                                   void  *dst,
                                    int    src_pitch,
                                    int    dst_pitch,
                                    long   n);
 
-/* TypePlanar, ModelPlanar and FormatPlanar */
+/* TypePlanar,ModelPlanar and FormatPlanar */
 typedef long (*BablFuncPlanar)    (int    src_bands,
                                    void  *src[],
                                    int    src_pitch[],
@@ -36,6 +43,7 @@ typedef long (*BablFuncPlanar)    (int    src_bands,
                                    int    dst_pitch[],
                                    long   n);
 
+#if 0
 typedef long (*BablFuncPlanarBit) (int    src_bands,
                                    void  *src[],
                                    int    src_bit[],
@@ -47,6 +55,7 @@ typedef long (*BablFuncPlanarBit) (int    src_bands,
                                    int    dst_pitch[],
                                    int    dst_bit_pitch[],
                                    long   n);
+#endif
 
 /* magic number used at the start of all babl objects, used to do
  * differentiation in polymorphic functions. (as well as manual
@@ -65,14 +74,13 @@ typedef enum {
   BABL_FORMAT,
 
   BABL_CONVERSION,
-  BABL_CONVERSION_TYPE,
-  BABL_CONVERSION_TYPE_PLANAR,
-  BABL_CONVERSION_MODEL_PLANAR,
-  BABL_CONVERSION_FORMAT,
-  BABL_CONVERSION_FORMAT_PLANAR,
+  BABL_CONVERSION_LINEAR,
+  BABL_CONVERSION_PLANE,
+  BABL_CONVERSION_PLANAR,
 
   BABL_FISH,
   BABL_FISH_REFERENCE,
+  BABL_FISH_SIMPLE,
   BABL_IMAGE,
 
   BABL_EXTENSION,
@@ -103,38 +111,13 @@ BablConversion {
   union
     {
       BablFuncLinear     linear;
+      BablFuncPlane      plane;
       BablFuncPlanar     planar;
-      BablFuncPlanarBit  planar_bit;
     } function;
   int                    processings;
   long                   pixels;
 } BablConversion;
 
-typedef struct {
-  BablConversion       conversion;
-  BablConversion      *from_double;
-  BablConversion      *to_double;
-} BablConversionType;
-
-typedef struct
-{
-  BablConversion conversion;
-} BablConversionTypePlanar;
-
-typedef struct
-{
-  BablConversion conversion;
-} BablConversionModelPlanar;
-
-typedef struct
-{
-  BablConversion conversion;
-} BablConversionFormat;
-
-typedef struct
-{
-  BablConversion conversion;
-} BablConversionFormatPlanar;
 
 typedef struct
 {
@@ -177,8 +160,6 @@ typedef struct
 typedef struct
 {
   BablInstance     instance;
-  BablConversion **from; /*< NULL terminated list of conversions from class */
-  BablConversion **to;   /*< NULL terminated list of conversions to class   */
   int              luma;
   int              chroma;
   int              alpha;
@@ -249,6 +230,15 @@ typedef struct
   BablFish         fish;
 } BablFishReference;
 
+/* BablFishSimple is the simplest type of fish, wrapping a single
+ * conversion function
+ */
+typedef struct
+{
+  BablFish         fish;
+  BablConversion  *conversion;
+} BablFishSimple;
+
 typedef struct
 {
   BablInstance   instance;               /* path to .so / .dll is stored in instance name */
@@ -269,6 +259,7 @@ typedef union
   BablImage         image;
   BablFish          fish;
   BablFishReference reference_fish;
+  BablFishSimple    fish_simple;
   BablExtension     extension;
 } Babl;
 

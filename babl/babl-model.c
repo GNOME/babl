@@ -121,11 +121,9 @@ babl_model_new (void *first_argument,
 
 
               case BABL_CONVERSION:
-              case BABL_CONVERSION_TYPE:
-              case BABL_CONVERSION_TYPE_PLANAR:
-              case BABL_CONVERSION_MODEL_PLANAR:
-              case BABL_CONVERSION_FORMAT:
-              case BABL_CONVERSION_FORMAT_PLANAR:
+              case BABL_CONVERSION_LINEAR:
+              case BABL_CONVERSION_PLANE:
+              case BABL_CONVERSION_PLANAR:
               case BABL_FISH:
               case BABL_FISH_REFERENCE:
               case BABL_IMAGE:

@@ -57,14 +57,14 @@ typedef struct SearchData
   BablConversion *result;
 } SearchData;
 
-Babl *babl_conversion_find (void *source,
+Babl *babl_conversion_find2 (void *source,
                             void *destination)
 {
   int i=0;
   Babl **conversion;
 
   conversion = (void*)BABL(source)->type.from;
-  while (conversion[i])
+  while (conversion && conversion[i])
     {
       if (conversion[i]->conversion.destination == destination)
         return (Babl*)conversion[i];
@@ -75,9 +75,27 @@ Babl *babl_conversion_find (void *source,
 }
 
 
+Babl *babl_conversion_find (void *source,
+                             void *destination)
+{
+  int i=0;
+  Babl **conversion;
+
+  conversion = (void*)BABL(source)->type.from;
+  while (conversion && conversion[i])
+    {
+      if (conversion[i]->conversion.destination == destination)
+        return (Babl*)conversion[i];
+      i++;
+    }
+  return NULL;
+}
+
+
+
 Babl *
-babl_fish_reference_new (Babl *source,
-                         Babl *destination)
+babl_fish_reference (Babl *source,
+                     Babl *destination)
 {
   Babl *babl = NULL;
   char *name = create_name (source, destination, 1);
@@ -99,6 +117,39 @@ babl_fish_reference_new (Babl *source,
 
   babl->fish.processings = 0;
   babl->fish.pixels      = 0;
+
+  { 
+    Babl *ret = babl_db_insert (db, babl);
+    if (ret!=babl)
+        babl_free (babl);
+    return ret;
+  }
+}
+
+Babl *
+babl_fish_simple (BablConversion *conversion)
+{
+  Babl *babl = NULL;
+  char *name;
+
+  babl_assert (BABL_IS_BABL (conversion));
+
+  name  = create_name (BABL(conversion->source),
+                       BABL(conversion->destination),
+                       0);
+
+  babl                   = babl_malloc (sizeof (BablFishSimple) +
+                                        strlen (name) + 1);
+  babl->class_type       = BABL_FISH_SIMPLE;
+  babl->instance.id      = 0;
+  babl->instance.name    = ((void *)babl) + sizeof(BablFishSimple);
+  strcpy (babl->instance.name, name);
+  babl->fish.source      = (union Babl*)conversion->source;
+  babl->fish.destination = (union Babl*)conversion->destination;
+
+  babl->fish.processings = 0;
+  babl->fish.pixels      = 0;
+  babl->fish_simple.conversion = conversion;
 
   { 
     Babl *ret = babl_db_insert (db, babl);
@@ -149,8 +200,17 @@ babl_fish (void *source,
       babl_log ("args=(%p, %p) destination format invalid", source, destination);
       return NULL;
     }
-  
-  return babl_fish_reference_new (source_format, destination_format);
+ 
+ 
+  {
+    Babl *shortcut_conversion = babl_conversion_find (source_format, destination_format);
+
+    if (shortcut_conversion)
+      {
+        return babl_fish_simple (&(shortcut_conversion->conversion));
+      }
+  }
+  return babl_fish_reference (source_format, destination_format);
 }
 
 
@@ -201,7 +261,7 @@ convert_to_double (BablFormat *source_fmt,
         }
 
       babl_process (
-           babl_conversion_find (src_img->type[0], dst_img->type[0]),
+           babl_conversion_find2 (src_img->type[0], dst_img->type[0]),
            src_img, dst_img,
            n);
       src_img->data[0] += src_img->type[0]->bits/8;
@@ -256,7 +316,7 @@ convert_from_double (BablFormat *destination_fmt,
         }
 
       babl_process (
-           babl_conversion_find (src_img->type[0], dst_img->type[0]),
+           babl_conversion_find2 (src_img->type[0], dst_img->type[0]),
            src_img, dst_img,
            n);
       dst_img->data[0] += dst_img->type[0]->bits/8;
@@ -350,7 +410,7 @@ babl_fish_reference_process (Babl      *babl,
    );
 
   babl_process (
-    babl_conversion_find (
+    babl_conversion_find2 (
         BABL(babl->fish.source)->format.model,
         babl_model_id (BABL_RGBA)
     ),
@@ -358,7 +418,7 @@ babl_fish_reference_process (Babl      *babl,
     n);
 
   babl_process (
-    babl_conversion_find (
+    babl_conversion_find2 (
         babl_model_id (BABL_RGBA),
         BABL(babl->fish.destination)->format.model
     ),

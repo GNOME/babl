@@ -1,4 +1,27 @@
 2005-09-08  Øyvind Kolås  <pippin@gimp.org>
+	
+	Made simple fishes work in the core.
+
+	* babl/babl-classes.h: reduced number of conversion classes.
+	removed unused from and to members in struct.
+	* babl/babl-conversion.c: (conversion_new), (babl_conversion_new),
+	(babl_conversion_linear_process), (babl_conversion_plane_process),
+	(babl_conversion_planar_process), (babl_conversion_process):
+	* babl/babl-component.c: (each_babl_component_destroy),
+	(component_new): removed unused from and to members.
+	* babl/babl-fish.c: (babl_conversion_find2),
+	(babl_conversion_find), (babl_fish_reference), (babl_fish_simple),
+	(babl_fish), (convert_to_double), (convert_from_double),
+	(babl_fish_reference_process): use fast path if found directly in a
+	simple fishes.
+	* babl/babl-format.c: (babl_format_new):
+	* babl/babl-internal.c: (babl_process):
+	* babl/babl-internal.h:
+	* babl/babl-introspect.c: (each_introspect):
+	* babl/babl-model.c: (babl_model_new):
+	* babl/babl-core.c: (babl_core_init): s/linear/plane/
+
+2005-09-08  Øyvind Kolås  <pippin@gimp.org>
 
 	* AUTHORS: Added Micahel Schumacher, and email addresses.
 	* docs/index-static.html.in:

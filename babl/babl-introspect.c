@@ -201,7 +201,6 @@ each_introspect (Babl *babl,
         item_conversions_introspect (babl);
         break;
       case BABL_COMPONENT:
-        item_conversions_introspect (babl);
         break;
       case BABL_MODEL:
         model_introspect (babl);
@@ -216,17 +215,14 @@ each_introspect (Babl *babl,
         item_conversions_introspect (babl);
         break;
       case BABL_CONVERSION:
-      case BABL_CONVERSION_TYPE:
-      case BABL_CONVERSION_TYPE_PLANAR:
-      case BABL_CONVERSION_MODEL_PLANAR:
-      case BABL_CONVERSION_FORMAT:
-      case BABL_CONVERSION_FORMAT_PLANAR:
+      case BABL_CONVERSION_PLANE:
+      case BABL_CONVERSION_PLANAR:
+      case BABL_CONVERSION_LINEAR:
         conversion_introspect (babl);
         break;
       case BABL_FISH:
-        fish_introspect (babl);
-        break;
       case BABL_FISH_REFERENCE:
+      case BABL_FISH_SIMPLE:
         fish_introspect (babl);
         break;
       default:

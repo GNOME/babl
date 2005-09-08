@@ -30,13 +30,12 @@ static const char *class_names[] =
     "BablModel",
     "BablFormat",
     "BablConversion",
-    "BablConversionType",
-    "BablConversionTypePlanar",
-    "BablConversionModelPlanar",
-    "BablConversionFormat",
-    "BablConversionFormatPlanar",
+    "BablConversionLinear",
+    "BablConversionPlane",
+    "BablConversionPlanar",
     "BablFish",
     "BablFishReference",
+    "BablFishSimple",
     "BablImage",
     "BablExtenstion",
     "BablSky"
@@ -96,7 +95,7 @@ babl_process (Babl *babl,
 
   /* matches all conversion classes */
   if (babl->class_type >= BABL_CONVERSION &&
-      babl->class_type <= BABL_CONVERSION_FORMAT_PLANAR)
+      babl->class_type <= BABL_CONVERSION_PLANAR)
     return babl_conversion_process (babl, source, destination, n);
   
   if (babl->class_type == BABL_FISH)
@@ -104,6 +103,32 @@ babl_process (Babl *babl,
   
   if (babl->class_type == BABL_FISH_REFERENCE)
     {
+       BablImage *source_image      = NULL;
+       BablImage *destination_image = NULL;
+       long ret=0;
+
+       if (BABL_IS_BABL (source))
+         source_image = source;
+       if (!source_image)
+         source_image = (BablImage*) babl_image_from_linear (
+                                        source, (Babl*)babl->fish.source);
+       if (BABL_IS_BABL (destination))
+         destination_image = destination;
+       if (!destination_image)
+         destination_image = (BablImage*) babl_image_from_linear (
+                        destination, (Babl*)babl->fish.destination);
+
+       ret = babl_fish_reference_process (babl, source, destination, n);
+
+       babl_free (source_image);
+       babl_free (destination_image);
+
+       return ret;
+    }
+
+  if (babl->class_type == BABL_FISH_SIMPLE)
+    {
+       long ret=0;
        BablImage *source_image      = NULL;
        BablImage *destination_image = NULL;
 
@@ -118,12 +143,21 @@ babl_process (Babl *babl,
          destination_image = (BablImage*) babl_image_from_linear (
                         destination, (Babl*)babl->fish.destination);
 
-       babl_fish_reference_process (babl, source, destination, n);
-
+       if (BABL(babl->fish_simple.conversion)->class_type==BABL_CONVERSION_LINEAR)
+         {
+           ret = babl_conversion_process (BABL(babl->fish_simple.conversion),
+                                          source, destination, n);
+         }
+       else
+         {
+           ret = babl_conversion_process (BABL(babl->fish_simple.conversion),
+                                          source_image, destination_image, n);
+         }
+       
        babl_free (source_image);
        babl_free (destination_image);
 
-       return 0;
+       return ret;
     }
 
   babl_log ("eek");
