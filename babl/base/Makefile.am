@@ -1,3 +1,4 @@
+
 h_sources =  			\
 	babl-base.h
 
@@ -6,6 +7,7 @@ c_sources =			\
 	type-float.c		\
 	type-u8.c		\
 	type-u16.c		\
+	type-u32.c		\
 	model-rgb.c		\
 	model-gray.c		\
 	model-ycbcr.c

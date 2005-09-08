@@ -46,6 +46,7 @@ babl_base_destroy (void)
 void babl_base_type_float  (void);
 void babl_base_type_u8     (void);
 void babl_base_type_u16    (void);
+void babl_base_type_u32    (void);
 
 static void
 types (void)
@@ -53,6 +54,7 @@ types (void)
   babl_base_type_float  ();
   babl_base_type_u8     ();
   babl_base_type_u16    ();
+  babl_base_type_u32    ();
 }
 
 /*

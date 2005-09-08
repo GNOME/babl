@@ -24,12 +24,11 @@
 #include "babl.h"
 #include "babl-ids.h"
 
-
 static inline long
-convert_double_u16_scaled (double    min_val,
+convert_double_u32_scaled (double    min_val,
                            double    max_val,
-                           uint16_t  min,
-                           uint16_t  max,
+                           uint32_t  min,
+                           uint32_t  max,
                            void     *src,
                            void     *dst,
                            int       src_pitch,
@@ -39,16 +38,16 @@ convert_double_u16_scaled (double    min_val,
   while (n--)
     {
       double   dval = *(double *) src;
-      uint16_t u16val;
+      uint32_t u32val;
 
       if (dval < min_val)
-        u16val = min;
+        u32val = min;
       else if (dval > max_val)
-        u16val = max;
+        u32val = max;
       else
-        u16val = (dval-min_val) / (max_val-min_val) * (max-min) + min;
+        u32val = (dval-min_val) / (max_val-min_val) * (max-min) + min;
 
-      *(uint16_t *) dst = u16val;
+      *(uint32_t *) dst = u32val;
       dst += dst_pitch;
       src += src_pitch;
     }
@@ -56,10 +55,10 @@ convert_double_u16_scaled (double    min_val,
 }
 
 static inline long
-convert_u16_double_scaled (double    min_val,
+convert_u32_double_scaled (double    min_val,
                            double    max_val,
-                           uint16_t  min,
-                           uint16_t  max,
+                           uint32_t  min,
+                           uint32_t  max,
                            void     *src,
                            void     *dst,
                            int       src_pitch,
@@ -68,15 +67,15 @@ convert_u16_double_scaled (double    min_val,
 {
   while (n--)
     {
-      int    u16val = *(uint16_t*) src;
+      int    u32val = *(uint32_t*) src;
       double dval;
 
-      if (u16val < min)
+      if (u32val < min)
         dval = min_val;
-      else if (u16val > max)
+      else if (u32val > max)
         dval = max_val;
       else
-        dval  = (u16val-min) / (double)(max-min) * (max_val-min_val) + min_val;
+        dval  = (u32val-min) / (double)(max-min) * (max_val-min_val) + min_val;
 
       (*(double *) dst) = dval;
       dst += dst_pitch;
@@ -93,7 +92,7 @@ convert_##name##_double (void *src,                             \
                          int   dst_pitch,                       \
                          long  n)                               \
 {                                                               \
-  return convert_u16_double_scaled (min_val, max_val, min, max, \
+  return convert_u32_double_scaled (min_val, max_val, min, max, \
                              src, dst, src_pitch, dst_pitch, n);\
 }                                                               \
 static long                                                     \
@@ -103,32 +102,32 @@ convert_double_##name (void *src,                               \
                        int   dst_pitch,                         \
                        long  n)                                 \
 {                                                               \
-  return convert_double_u16_scaled (min_val, max_val, min, max, \
+  return convert_double_u32_scaled (min_val, max_val, min, max, \
                              src, dst, src_pitch, dst_pitch, n);\
 }
 
-MAKE_CONVERSIONS(u16,0.0,1.0,0,UINT16_MAX);
+MAKE_CONVERSIONS(u32,0.0,1.0,0,UINT32_MAX);
 
 void
-babl_base_type_u16 (void)
+babl_base_type_u32 (void)
 {
   babl_type_new (
-    "u16",
-    "id",   BABL_U16,
-    "bits", 16,
+    "u32",
+    "id",   BABL_U32,
+    "bits", 32,
     NULL);
 
   babl_conversion_new (
-    babl_type_id (BABL_U16),
+    babl_type_id (BABL_U32),
     babl_type_id (BABL_DOUBLE),
-    "plane", convert_u16_double,
+    "plane", convert_u32_double,
     NULL
   );
 
   babl_conversion_new (
     babl_type_id (BABL_DOUBLE),
-    babl_type_id (BABL_U16),
-    "plane", convert_double_u16,
+    babl_type_id (BABL_U32),
+    "plane", convert_double_u32,
     NULL
   );
 }

@@ -142,13 +142,13 @@ babl_base_type_u8 (void)
   babl_conversion_new (
     babl_type_id (BABL_U8),
     babl_type_id (BABL_DOUBLE),
-    "linear",      convert_u8_double,
+    "plane",      convert_u8_double,
     NULL
   );
   babl_conversion_new (
     babl_type_id (BABL_DOUBLE),
     babl_type_id (BABL_U8),
-    "linear",      convert_double_u8,
+    "plane",      convert_double_u8,
     NULL
   );
 
@@ -156,26 +156,26 @@ babl_base_type_u8 (void)
   babl_conversion_new (
     babl_type_id (BABL_U8_LUMA),
     babl_type_id (BABL_DOUBLE),
-    "linear",      convert_u8_luma_double,
+    "plane",      convert_u8_luma_double,
     NULL
   );
   babl_conversion_new (
     babl_type_id (BABL_DOUBLE),
     babl_type_id (BABL_U8_LUMA),
-    "linear",      convert_double_u8_luma,
+    "plane",      convert_double_u8_luma,
     NULL
   );
 
   babl_conversion_new (
     babl_type_id (BABL_U8_CHROMA),
     babl_type_id (BABL_DOUBLE),
-    "linear",      convert_u8_chroma_double,
+    "plane",      convert_u8_chroma_double,
     NULL
   );
   babl_conversion_new (
     babl_type_id (BABL_DOUBLE),
     babl_type_id (BABL_U8_CHROMA),
-    "linear",      convert_double_u8_chroma,
+    "plane",      convert_double_u8_chroma,
     NULL
   );
 }

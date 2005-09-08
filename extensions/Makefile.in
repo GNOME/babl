@@ -20,6 +20,8 @@ CFLAGS  += -Wall
 
 CIE-Lab.so: CIE-Lab.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<  -lm
+lcms.so: lcms.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<  `pkg-config lcms --cflags --libs`
 
 
 
@@ -51,6 +53,7 @@ distdir:
 	cp $(CFILES) $(Makefile.in) $$distdir
 
 dvi:
+check:
 	#playing along with automake
 
 .PRECIOUS: Makefile

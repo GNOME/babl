@@ -1,4 +1,19 @@
 2005-09-08  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/base/type-float.c: 
+	* babl/base/type-u16.c: 
+	* babl/base/type-u8.c: s/"linear"/"plane"/
+	* babl/base/Makefile.am,
+	* babl/base/babl-base.c,
+	* babl/base/type-u32.c: new type.
+	* extensions/CIE-Lab.c: 
+	* extensions/Makefile.in: changes needed (for not yet added) lcms
+	extension.
+	* tests/Makefile.am: added new test.
+	* tests/conversions.c: new test to check fast paths against reference
+	fish.
+
+2005-09-08  Øyvind Kolås  <pippin@gimp.org>
 	
 	Made simple fishes work in the core.
 
@@ -20,6 +35,7 @@
 	* babl/babl-introspect.c: (each_introspect):
 	* babl/babl-model.c: (babl_model_new):
 	* babl/babl-core.c: (babl_core_init): s/linear/plane/
+	* tests/babl_class_name.c: update according to class changes.
 
 2005-09-08  Øyvind Kolås  <pippin@gimp.org>
 
@@ -32,6 +48,7 @@
 	registered data structures.
 	* docs/graphics/Makefile.am: added web target, and .SILENT option.
 	* docs/Makefile.am: added .SILENT option.
+	* configure.ac: added website location.
 
 2005-09-01  Michael Schumacher  <schumaml@cvs.gnome.org>
 

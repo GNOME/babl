@@ -407,26 +407,26 @@ types_u8 (void)
   babl_conversion_new (
     babl_type ("CIE u8 L"),
     babl_type ("double"),
-    "linear",      convert_u8_l_double,
+    "plane",      convert_u8_l_double,
     NULL
   );
   babl_conversion_new (
     babl_type ("double"),
     babl_type ("CIE u8 L"),
-    "linear",      convert_double_u8_l,
+    "plane",      convert_double_u8_l,
     NULL
   );
 
   babl_conversion_new (
     babl_type ("CIE u8 ab"),
     babl_type ("double"),
-    "linear",      convert_u8_ab_double,
+    "plane",      convert_u8_ab_double,
     NULL
   );
   babl_conversion_new (
     babl_type ("double"),
     babl_type ("CIE u8 ab"),
-    "linear",      convert_double_u8_ab,
+    "plane",      convert_double_u8_ab,
     NULL
   );
 }
@@ -547,26 +547,26 @@ types_u16 (void)
   babl_conversion_new (
     babl_type ("CIE u16 L"),
     babl_type ("double"),
-    "linear",      convert_u16_l_double,
+    "plane",      convert_u16_l_double,
     NULL
   );
   babl_conversion_new (
     babl_type ("double"),
     babl_type ("CIE u16 L"),
-    "linear",      convert_double_u16_l,
+    "plane",      convert_double_u16_l,
     NULL
   );
 
   babl_conversion_new (
     babl_type ("CIE u16 ab"),
     babl_type ("double"),
-    "linear",      convert_u16_ab_double,
+    "plane",      convert_u16_ab_double,
     NULL
   );
   babl_conversion_new (
     babl_type ("double"),
     babl_type ("CIE u16 ab"),
-    "linear",      convert_double_u16_ab,
+    "plane",      convert_double_u16_ab,
     NULL
   );
 }
