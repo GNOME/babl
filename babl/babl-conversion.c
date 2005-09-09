@@ -36,8 +36,6 @@ conversion_new (const char        *name,
                 int                id,
                 Babl              *source,
                 Babl              *destination,
-                int                time_cost,
-                int                loss,
                 BablFuncLinear     linear,
                 BablFuncPlane      plane, 
                 BablFuncPlanar     planar)
@@ -92,8 +90,7 @@ conversion_new (const char        *name,
   babl->instance.name          = babl_strdup (name);
   babl->conversion.source      = (union Babl*)source;
   babl->conversion.destination = (union Babl*)destination;
-  babl->conversion.time_cost   = time_cost;
-  babl->conversion.loss        = loss;
+  babl->conversion.error       = 0.0;
 
   babl->conversion.pixels      = 0;
   babl->conversion.processings = 0;
@@ -130,8 +127,6 @@ babl_conversion_new (void *first_arg,
   Babl              *babl;
 
   int                id          = 0;
-  int                time_cost   = 0;
-  int                loss        = 0;
   BablFuncLinear     linear      = NULL;
   BablFuncPlane      plane       = NULL;
   BablFuncPlanar     planar      = NULL;
@@ -185,14 +180,6 @@ babl_conversion_new (void *first_arg,
           planar = va_arg (varg, BablFuncPlanar);
         }
 
-      else if (!strcmp (arg, "time-cost"))
-        {
-          time_cost = va_arg (varg, int);
-        }
-      else if (!strcmp (arg, "loss"))
-        {
-          loss = va_arg (varg, int);
-        }
       else
         {
           babl_fatal ("unhandled argument '%s'", arg);
@@ -207,7 +194,7 @@ babl_conversion_new (void *first_arg,
   assert (destination);
 
   babl = conversion_new (create_name (source, destination),
-       id, source, destination, time_cost, loss, linear, plane, planar);
+       id, source, destination, linear, plane, planar);
 
   { 
     Babl *ret = babl_db_insert (db, babl);

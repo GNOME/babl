@@ -1,3 +1,9 @@
+2005-09-09  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/babl-classes.h: added error to BablConversion.
+	* babl/babl-conversion.c: (conversion_new), (babl_conversion_new):
+		track changes to fields in constructors.
+
 2005-09-08  Øyvind Kolås  <pippin@gimp.org>
 
 	* Makefile.am: build extensions before tests.

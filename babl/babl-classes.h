@@ -107,7 +107,7 @@ BablConversion {
   union Babl            *source;
   union Babl            *destination;
   int                    time_cost;
-  int                    loss;
+  double                 error;
   union
     {
       BablFuncLinear     linear;
