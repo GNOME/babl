@@ -28,11 +28,11 @@ all: $(HTML_FILES)
 
 
 
-index.html: index-static.html $(top_builddir)/tests/babl_html_dump $(top_srcdir)/AUTHORS  $(top_srcdir)/NEWS
+index.html: index-static.html $(top_builddir)/tests/babl_html_dump $(top_srcdir)/AUTHORS  $(top_srcdir)/NEWS $(top_srcdir)/extensions/*.so Makefile.am
 	echo -n "HTML: $@"
 	cp $< $@ 
 	(TMPFILE=`tempfile`;\
-	$(top_builddir)/tests/babl_html_dump > $$TMPFILE;\
+	export BABL_PATH="$(top_builddir)/extensions"; $(top_builddir)/tests/babl_html_dump > $$TMPFILE;\
 	$(top_srcdir)/docs/tools/xml_insert.sh $@ BablBase $$TMPFILE;\
 	rm -f $$TMPFILE )
 

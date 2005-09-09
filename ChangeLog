@@ -1,5 +1,11 @@
 2005-09-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* docs/Makefile.am: set BABL_PATH to builddir for creating the
+	documentation
+	* docs/index-static.html.in: various updates.
+
+2005-09-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/base/type-u16.c: (convert_double_u16_scaled):
 	* babl/base/type-u32.c: (convert_double_u32_scaled):
 	* babl/base/type-u8.c: (convert_double_u8_scaled),

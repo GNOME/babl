@@ -174,18 +174,18 @@
               pixel_count<span class='paren'>);</span></pre>
         
         <p>If the existing pixel formats are not sufficient for your conversion
-        needs, new ones can be created and named on the fly. The constructor
+        needs, new ones can be created on the fly. The constructor
         will provide the prior created one if duplicates are registered. </p>
         <pre
-><span class='function'>babl_format_new</span> <span class='paren'>(</span><span class='string'>"bgr-u8"</span>,
-                 <span class='function'>babl_model</span> <span class='paren'>(</span><span class='string'>"rgb"</span><span class='paren'>)</span>,
+><span class='function'>babl_format_new</span> <span class='paren'>(</span><span class='function'>babl_model</span> <span class='paren'>(</span><span class='string'>"rgb"</span><span class='paren'>)</span>,
                  <span class='function'>babl_type</span> <span class='paren'>(</span><span class='string'>"u8"</span><span class='paren'>)</span>,
                  <span class='function'>babl_component</span> <span class='paren'>(</span><span class='string'>"B"</span><span class='paren'>)</span>,
                  <span class='function'>babl_component</span> <span class='paren'>(</span><span class='string'>"G"</span><span class='paren'>)</span>,
                  <span class='function'>babl_component</span> <span class='paren'>(</span><span class='string'>"R"</span><span class='paren'>)</span>,
                  <span class='NULL'>NULL</span><span class='paren'>);</span></pre>
 
-        <p>Instead of a linear buffer you can an image descriptor which desribes the start of the memory segment, the pitch in bytes between samples, and the rowstride (optionally 0 for unlimited).
+        <p>Instead of a linear buffer you can an image descriptor which desribes the start of the memory segment, the pitch in bytes between samples, and the rowstride (not used yet,
+        use 0 to indicate unlimited for compatibility with future API.)
         </p>
         <pre
 ><span class='function'>babl_process</span> <span class='paren'>(</span><span class='function'>babl_fish</span> <span class='paren'>(</span><span class='string'>"srgb"</span>, <span class='string'>"y'cbcr420p"</span><span class='paren'>)</span>,
@@ -196,23 +196,17 @@
                           <span class='NULL'>NULL</span><span class='paren'>);</span>
 </pre>
 
-        <p>For more code samples look in the tests directory.</p>
-        
         <a name='Extending'></a>
         <h2>Extending</h2>
         
         <p>For samples of how the current internal api of specification of
-        data types, color models, and conversions look in the babl/base/
+        data types, color models, and conversions look in the <tt>extensions/</tt>
         directory. The tables in this HTML file is directly generated
-        based on the data registered by BablBase. The API's used are very
+        based on the data registered by BablCore (double and RGBA), BablBase (core datatypes, and RGB models), 
+        extensions (CIE Lab, naive CMYK, various shortcut conversions). The API's used are very
         similar in style to the API's described under the <a href='#Usage'>Usage section</a>.
         </p>
 
-        <p>For now, the only way to extend babl is from the application
-        using the library, by structuring your code in a similar fashion
-        to BablBase it should be easier to later turn it into a loadable
-        module.
-        </p>
         
         <a name='TODO'></a>
         <h2>TODO</h2>
