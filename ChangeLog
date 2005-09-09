@@ -1,5 +1,14 @@
 2005-09-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-format.c: (create_name): Create shorter names when
+	the format uses a single datatype and the components are listed in
+	model order.
+	* babl/base/model-lab.c: removed.
+	* babl/base/model-rgb.c: (formats),
+	* babl/base/model-ycbcr.c: (formats): Use automatic names for formats.
+
+2005-09-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-classes.h: added error to BablConversion.
 	* babl/babl-conversion.c: (conversion_new), (babl_conversion_new):
 		track changes to fields in constructors.

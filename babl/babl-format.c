@@ -115,11 +115,50 @@ create_name (BablModel      *model,
              BablType      **type)
 {
   char *p = &buf[0];
+  int   i;
+  int   same_types=1;
+  BablType **t=type;
+  BablType *first_type = *type;
+  BablComponent **c1=component;
+  BablComponent **c2=model->component;
 
+  
   sprintf (p, "%s ", model->instance.name);
   p+=strlen (model->instance.name) + 1;
 
-  while (components--)
+  i=components;
+  while (i--)
+    {
+      if (first_type != *t)
+        {
+          same_types=0;
+          break;
+        }
+      t++;
+    }
+
+  i=components;
+  while (i--)
+    {
+      if (*c1 != *c2)
+        {
+          same_types=0;
+          break;
+        }
+      c1++;
+      c2++;
+    }
+
+
+  if (same_types)
+    {
+      sprintf (p, "%s", first_type->instance.name);
+      return buf;
+    }
+
+  i=components;
+
+  while (i--)
     {
       sprintf (p, "(%s as %s) ", 
          (*component)->instance.name,
