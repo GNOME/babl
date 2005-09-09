@@ -1,5 +1,14 @@
 2005-09-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/base/type-u16.c: (convert_double_u16_scaled):
+	* babl/base/type-u32.c: (convert_double_u32_scaled):
+	* babl/base/type-u8.c: (convert_double_u8_scaled),
+	(babl_base_type_u8):
+	* extensions/CIE-Lab.c: (convert_double_u8_scaled),
+	(convert_double_u16_scaled): uintval = rint (dval * MAXINT)
+
+2005-09-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* tests/conversions.c: (validate_conversion): do relative average
 	error calculations.
 	* tests/srgb_to_lab_u8.c: update values.

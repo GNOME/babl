@@ -20,6 +20,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <assert.h>
+#include <math.h>
 
 #include "babl.h"
 #include "babl-ids.h"
@@ -46,7 +47,7 @@ convert_double_u16_scaled (double    min_val,
       else if (dval > max_val)
         u16val = max;
       else
-        u16val = (dval-min_val) / (max_val-min_val) * (max-min) + min;
+        u16val = rint((dval-min_val) / (max_val-min_val) * (max-min) + min);
 
       *(uint16_t *) dst = u16val;
       dst += dst_pitch;

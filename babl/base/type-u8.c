@@ -19,10 +19,12 @@
 
 #include <string.h>
 #include <assert.h>
+#include <stdint.h>
 
 #include "babl.h"
 #include "babl-ids.h"
 
+#include <math.h>
 static inline long
 convert_double_u8_scaled (double        min_val,
                           double        max_val,
@@ -44,7 +46,7 @@ convert_double_u8_scaled (double        min_val,
       else if (dval > max_val)
         u8val = max;
       else
-        u8val = (dval-min_val) / (max_val-min_val) * (max-min) + min;
+        u8val = rint ((dval-min_val) / (max_val-min_val) * (max-min) + min);
 
       *(unsigned char *) dst = u8val;
       src += src_pitch;
@@ -106,7 +108,7 @@ convert_double_##name (void *src,                               \
                             src, dst, src_pitch, dst_pitch, n); \
 }
 
-MAKE_CONVERSIONS (u8,        0.0, (255.0F/256.0F)*1.0, 0x00, 0xff);
+MAKE_CONVERSIONS (u8,        0.0, 1.0, 0x00, UINT8_MAX);
 MAKE_CONVERSIONS (u8_luma,   0.0, 1.0, 16, 235);
 MAKE_CONVERSIONS (u8_chroma, 0.0, 1.0, 16, 240);
 
@@ -138,7 +140,6 @@ babl_base_type_u8 (void)
     "max_val",      0.5,
     NULL
   );
-
   babl_conversion_new (
     babl_type_id (BABL_U8),
     babl_type_id (BABL_DOUBLE),
@@ -151,8 +152,6 @@ babl_base_type_u8 (void)
     "plane",      convert_double_u8,
     NULL
   );
-
-
   babl_conversion_new (
     babl_type_id (BABL_U8_LUMA),
     babl_type_id (BABL_DOUBLE),
@@ -165,7 +164,6 @@ babl_base_type_u8 (void)
     "plane",      convert_double_u8_luma,
     NULL
   );
-
   babl_conversion_new (
     babl_type_id (BABL_U8_CHROMA),
     babl_type_id (BABL_DOUBLE),
