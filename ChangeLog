@@ -1,5 +1,12 @@
 2005-09-09  Øyvind Kolås  <pippin@gimp.org>
 
+	* tests/conversions.c: (validate_conversion): do relative average
+	error calculations.
+	* tests/srgb_to_lab_u8.c: update values.
+	* tests/types.c: set a very low tolerance.
+
+2005-09-09  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-format.c: (create_name): Create shorter names when
 	the format uses a single datatype and the components are listed in
 	model order.

@@ -3,7 +3,7 @@
 
 int OK=1;
 
-#define TOLERANCE 0.0046
+#define TOLERANCE 0.000000001
 #define samples   2048
 double test[samples];
 

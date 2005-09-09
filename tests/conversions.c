@@ -7,8 +7,10 @@
 
 int OK=1;
 
-#define pixels    102400
+#define pixels    512
 #define TOLERANCE 0.001
+
+#define ERROR_TOLERANCE 0.5
 
 double test[pixels * 4];
 
@@ -70,6 +72,8 @@ validate_conversion (BablConversion *conversion)
   Babl *fmt_source      = BABL(conversion->source);
   Babl *fmt_destination = BABL(conversion->destination);
 
+  double error=0.0;
+  
   void    *source;
   void    *destination;
   double  *destination_rgba_double;
@@ -97,38 +101,53 @@ validate_conversion (BablConversion *conversion)
 
   {
     int i;
-    int log=0;
+    int cnt=0;
 
     for (i=0;i<pixels;i++)
       {
         int j;
+        int log=0;
         for (j=0;j<4;j++)
+          {
+            error += fabs (destination_rgba_double[i*4+j] - 
+                            ref_destination_rgba_double[i*4+j]);
+
            if (fabs (destination_rgba_double[i*4+j] - 
                      ref_destination_rgba_double[i*4+j])>TOLERANCE)
-             {
-                if (!log)
-                  log=1;
-                OK=0;
-             }
-        if (log && log < 5)
+                log=1;
+          }
+        if (0 && log && cnt < 5)
           {
+            /* enabling this code prints out the RGBA double values at various stages,
+             * which are used for the average relative error
+             */
+          
             babl_log ("%s", conversion->instance.name);
-            babl_log ("\ttest:           %2.3f %2.3f %2.3f %2.3f", test [i*4+0],
+            babl_log ("\ttest:           %2.5f %2.5f %2.5f %2.5f", test [i*4+0],
                                                                    test [i*4+1],
                                                                    test [i*4+2],
                                                                    test [i*4+3]);
-            babl_log ("\tconversion:     %2.3f %2.3f %2.3f %2.3f", destination_rgba_double [i*4+0],
+            babl_log ("\tconversion:     %2.5f %2.5f %2.5f %2.5f", destination_rgba_double [i*4+0],
                                                                    destination_rgba_double [i*4+1],
                                                                    destination_rgba_double [i*4+2],
                                                                    destination_rgba_double [i*4+3]);
-            babl_log ("\tref_conversion: %2.3f %2.3f %2.3f %2.3f", ref_destination_rgba_double [i*4+0],
+            babl_log ("\tref_conversion: %2.5f %2.5f %2.5f %2.5f", ref_destination_rgba_double [i*4+0],
                                                                    ref_destination_rgba_double [i*4+1],
                                                                    ref_destination_rgba_double [i*4+2],
                                                                    ref_destination_rgba_double [i*4+3]);
-            log++;
+            cnt++;
             OK=0;
           }
       }
+     error /= pixels;
+     error *= 100;
+
+     conversion->error = error;
+     if (error >= ERROR_TOLERANCE)
+       {
+          babl_log ("%s\terror:%f", conversion->instance.name, error);
+          OK = 0;
+       }
   }
 
   
