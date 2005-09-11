@@ -29,7 +29,6 @@ each_babl_type_destroy (Babl *babl,
                         void *data)
 {
   babl_free (babl->type.from);
-  babl_free (babl->type.to);
   babl_free (babl);
   return 0;  /* continue iterating */
 }
@@ -52,7 +51,6 @@ type_new (const char  *name,
   strcpy (babl->instance.name, name);
   babl->type.bits     = bits;
   babl->type.from     = NULL;
-  babl->type.to       = NULL;
 
   return babl;
 }

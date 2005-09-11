@@ -29,7 +29,6 @@ foo (Babl *babl,
   return 0;
 }
 
-static Babl *babl_conversion_source      (Babl *babl);
 static Babl *babl_conversion_destination (Babl *babl);
 
 static int
@@ -60,29 +59,6 @@ type_sanity (Babl *babl,
     {
       OK = 0;
       babl_log ("lack of sanity! type '%s' has no conversion to double",
-                babl->instance.name);
-    }
-
-
-  ok = 0;
-  if (babl->type.to)
-    {
-      ptr = (void **) babl->type.to;
-
-      while (ptr && NULL!=*ptr)
-        {
-          if (babl_conversion_source ((Babl *)(*ptr)) == babl_type_id (BABL_DOUBLE))
-            {
-              ok = 1;
-              break;
-            }
-          ptr++;
-        }
-    }
-  if (!ok)
-    {
-      OK=0;
-      babl_log ("lack of sanity! type '%s' has no conversion from double",
                 babl->instance.name);
     }
 
@@ -121,29 +97,6 @@ model_sanity (Babl *babl,
                 babl->instance.name);
     }
 
-
-  ok = 0;
-  if (babl->model.to)
-    {
-      ptr = (void **) babl->model.to;
-
-      while (ptr && NULL!=*ptr)
-        {
-          if (babl_conversion_source ((Babl *)(*ptr)) == babl_model_id (BABL_RGBA))
-            {
-              ok = 1;
-              break;
-            }
-          ptr++;
-        }
-    }
-  if (!ok)
-    {
-      babl_log ("lack of sanity! model '%s' has no conversion from 'rgba'",
-                babl->instance.name);
-      OK=0;
-    }
-
   return 0;
 }
 
@@ -180,11 +133,6 @@ babl_sanity (void)
   babl_conversion_each   (foo, NULL);
 
   return OK;
-}
-
-static Babl *babl_conversion_source (Babl *babl)
-{
-  return (Babl *)babl->conversion.source;
 }
 
 static Babl *babl_conversion_destination (Babl *babl)

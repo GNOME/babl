@@ -28,7 +28,6 @@ each_babl_format_destroy (Babl *babl,
                           void *data)
 {
   babl_free (babl->format.from);
-  babl_free (babl->format.to);
   babl_free (babl);
 
   return 0;  /* continue iterating */
@@ -75,7 +74,6 @@ format_new (const char     *name,
                        sizeof (int)            * (components));
 
   babl->format.from      = NULL;
-  babl->format.to        = NULL;
   babl->format.component = ((void *)babl) + sizeof (BablFormat);
   babl->format.type      = ((void *)babl->format.component) + sizeof (BablComponent*) * (components);
   babl->format.sampling  = ((void *)babl->format.type)      + sizeof (BablType*) * (components);

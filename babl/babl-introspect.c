@@ -111,18 +111,6 @@ item_conversions_introspect (Babl *babl)
       ptr++;
     }
   
-  if (babl->type.to)
-    babl_log ("\t\tconversions to %s: %i",
-       babl->instance.name, list_length ((void **)(babl->type.to)));
-
-
-  ptr = (void **)babl->type.to;
-
-  while (ptr && NULL!=*ptr)
-    {
-      babl_log ("\t\t\t'%s'", ((Babl *)(*ptr))->instance.name);
-      ptr++;
-    }
 }
 
 static void

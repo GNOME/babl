@@ -68,11 +68,11 @@ image_new (BablFormat     *format,
 
 Babl *
 babl_image_from_linear (void  *buffer,
-                            Babl  *format)
+                        Babl  *format)
 {
   Babl          *babl;
-  BablModel     *model;
-  int            components;
+  BablModel     *model = NULL;
+  int            components = 0;
   int            i;
   BablComponent *component [BABL_MAX_COMPONENTS];
   BablSampling  *sampling  [BABL_MAX_COMPONENTS];

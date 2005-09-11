@@ -1,3 +1,18 @@
+2005-09-11  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/babl-classes.h: Removed unused list of conversions to
+	types/models/formats.
+
+	* babl/babl-conversion.c: (conversion_new):
+	* babl/babl-format.c: (each_babl_format_destroy), (format_new):
+	* babl/babl-image.c: (babl_image_from_linear):
+	* babl/babl-introspect.c: (item_conversions_introspect):
+	* babl/babl-memory.c: (babl_realloc):
+	* babl/babl-model.c: (each_babl_model_destroy), (model_new):
+	* babl/babl-sampling.c: (each_babl_sampling_destroy):
+	* babl/babl-sanity.c: (type_sanity), (model_sanity), (babl_sanity):
+	* babl/babl-type.c: (each_babl_type_destroy), (type_new):
+
 2005-09-09  Øyvind Kolås  <pippin@gimp.org>
 
 	* docs/Makefile.am: set BABL_PATH to builddir for creating the

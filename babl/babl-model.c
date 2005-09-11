@@ -28,7 +28,6 @@ each_babl_model_destroy (Babl *babl,
                          void         *data)
 {
   babl_free (babl->model.from);
-  babl_free (babl->model.to);
   babl_free (babl);
   return 0;  /* continue iterating */
 }
@@ -73,7 +72,6 @@ model_new (const char     *name,
   memcpy (babl->model.component, component, sizeof (BablComponent*)*components);
 
   babl->model.from         = NULL;
-  babl->model.to           = NULL;
   return babl;
 }
 

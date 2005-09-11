@@ -151,7 +151,7 @@ void *
 babl_realloc (void   *ptr,
               size_t  size)
 {
-  void *ret;
+  void *ret = NULL;
 
   if (!ptr)
     {

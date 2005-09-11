@@ -96,7 +96,6 @@ conversion_new (const char        *name,
   babl->conversion.processings = 0;
 
   babl_add_ptr_to_list ((void ***)&(source->type.from), babl);
-  babl_add_ptr_to_list ((void ***)&(destination->type.to), babl);
   
   return babl;
 }
