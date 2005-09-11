@@ -4,6 +4,7 @@ babl_class_name
 babl_html_dump
 conversions
 float_to_u8
+formats
 grayscale_to_rgb
 introspect
 models
