@@ -1,5 +1,9 @@
 2005-09-11  Øyvind Kolås  <pippin@gimp.org>
 
+	* extensions/CIE-Lab.c: (formats): s/cie-lab-u16/CIE Lab u16/
+
+2005-09-11  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-classes.h: Removed unused list of conversions to
 	types/models/formats.
 

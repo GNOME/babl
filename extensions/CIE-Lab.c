@@ -278,7 +278,7 @@ formats (void)
     NULL);
 
   babl_format_new (
-    "name",        "cie-lab-u16",
+    "name",        "CIE Lab u16",
     babl_model     ("CIE Lab"),
 
     babl_type      ("CIE u16 L"),
