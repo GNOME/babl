@@ -199,6 +199,8 @@ babl_format_new (void *first_arg,
           switch (babl->class_type)
             {
               case BABL_TYPE:
+              case BABL_TYPE_FLOAT:
+              case BABL_TYPE_INTEGER:
                 current_type = (BablType*) babl;
                 break;
               case BABL_COMPONENT:
@@ -236,8 +238,10 @@ babl_format_new (void *first_arg,
               case BABL_CONVERSION_PLANE:
               case BABL_CONVERSION_PLANAR:
               case BABL_FISH:
+              case BABL_FISH_SIMPLE:
               case BABL_FISH_REFERENCE:
               case BABL_IMAGE:
+              case BABL_EXTENSION:
                 babl_log ("%s unexpected",
                            babl_class_name (babl->class_type));
                 break;

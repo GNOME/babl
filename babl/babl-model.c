@@ -113,6 +113,8 @@ babl_model_new (void *first_argument,
                   babl_log ("submodels not handled yet");
                   break;
               case BABL_TYPE:
+              case BABL_TYPE_INTEGER:
+              case BABL_TYPE_FLOAT:
               case BABL_SAMPLING:
               case BABL_INSTANCE:
               case BABL_FORMAT:
@@ -124,7 +126,9 @@ babl_model_new (void *first_argument,
               case BABL_CONVERSION_PLANAR:
               case BABL_FISH:
               case BABL_FISH_REFERENCE:
+              case BABL_FISH_SIMPLE:
               case BABL_IMAGE:
+              case BABL_EXTENSION:
                 babl_log ("%s unexpected", babl_class_name (babl->class_type));
                 break;
               case BABL_SKY: /* shut up compiler */

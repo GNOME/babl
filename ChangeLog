@@ -1,5 +1,13 @@
 2005-09-11  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl.h: use gcc 4.x attribute for NULL sentinel.
+	* babl/babl-format.c: (babl_format_new): added missing enumeration
+	values to switch.
+	* babl/babl-model.c: (babl_model_new): added missing enumeration
+	values to switch.
+
+2005-09-11  Øyvind Kolås  <pippin@gimp.org>
+
 	* tests/formats.c: new test (that might form the basis of loss
 	calculations done for ranking of formats).
 	* tests/Makefile.am: added new test

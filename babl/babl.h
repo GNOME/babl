@@ -41,6 +41,11 @@ void   babl_init       (void);
  */
 void   babl_destroy    (void);
 
+#if     __GNUC__ >= 4
+#define BABL_ARG_NULL_TERMINATED __attribute__((__sentinel__))
+#else
+#define BABL_ARG_NULL_TERMINATED
+#endif
 
 #define BABL_CLASS_NO_NAME(type_name)                            \
                                                                  \
@@ -55,7 +60,7 @@ void   babl_##type_name##_each    (BablEachFunction  each_fun,   \
 BABL_CLASS_NO_NAME (type_name)                                   \
 Babl * babl_##type_name           (const char       *name);      \
 Babl * babl_##type_name##_new     (void             *first_arg,  \
-                                   ...);
+                                   ...) BABL_ARG_NULL_TERMINATED;
 
 typedef int  (*BablEachFunction) (Babl *entry,
                                   void *data);
@@ -99,7 +104,7 @@ long   babl_process    (Babl *babl_fish,
  *                    NULL);
  */
 Babl * babl_image      (void *first_component,
-                        ...);
+                        ...) BABL_ARG_NULL_TERMINATED;
 
 
 
