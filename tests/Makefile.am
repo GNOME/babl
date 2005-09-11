@@ -9,10 +9,11 @@ TESTS =				\
 	rgb_to_ycbcr		\
 	srgb_to_lab_u8		\
 	sanity			\
+	babl_class_name		\
 	conversions		\
 	types			\
 	models			\
-	babl_class_name
+	formats			
 
 TESTS_ENVIRONMENT = BABL_PATH=$(top_builddir)/extensions
 
@@ -23,6 +24,7 @@ rgb_to_ycbcr_SOURCES        = rgb_to_ycbcr.c
 babl_class_name_SOURCES     = babl_class_name.c
 sanity_SOURCES              = sanity.c
 types_SOURCES               = types.c
+formats_SOURCES             = formats.c
 models_SOURCES              = models.c
 
 

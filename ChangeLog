@@ -1,5 +1,11 @@
 2005-09-11  Øyvind Kolås  <pippin@gimp.org>
 
+	* tests/formats.c: new test (that might form the basis of loss
+	calculations done for ranking of formats).
+	* tests/Makefile.am: added new test
+
+2005-09-11  Øyvind Kolås  <pippin@gimp.org>
+
 	* extensions/CIE-Lab.c: (formats): s/cie-lab-u16/CIE Lab u16/
 
 2005-09-11  Øyvind Kolås  <pippin@gimp.org>
