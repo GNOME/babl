@@ -100,6 +100,8 @@ format_new (const char     *name,
       babl->format.bytes_per_pixel += type[i]->bits/8;
   }
 
+  babl->format.loss = -1.0;
+
   return babl;
 }
 

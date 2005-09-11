@@ -1,3 +1,12 @@
+2005-09-12  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/babl-classes.h: add loss field to format class.
+	* babl/babl-format.c: (format_new): set loss field to -1 as initial
+	value.
+	* tests/conversions.c: (reference_format): simplify
+	* tests/formats.c: (test_init), (format_check), (main): code
+	simplification.
+
 2005-09-11  Øyvind Kolås  <pippin@gimp.org>
 
 	* babl/babl.h: use gcc 4.x attribute for NULL sentinel.

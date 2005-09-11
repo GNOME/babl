@@ -51,10 +51,7 @@ void test_init (void)
 
 static Babl *reference_format (void)
 {
-  static Babl *self = NULL;
-  
-  if (!self)
-     self = babl_format_new (
+  return babl_format_new (
        babl_model ("RGBA"),
        babl_type ("double"),
        babl_component ("R"),
@@ -62,7 +59,6 @@ static Babl *reference_format (void)
        babl_component ("B"),
        babl_component ("A"),
        NULL);
-  return self;
 }
 
 static void

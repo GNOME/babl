@@ -184,6 +184,8 @@ typedef struct
   BablModel       *model;
   int              bytes_per_pixel;
   int              planar;
+  double           loss; /*< average relative error when converting 
+                             from and to RGBA double */
 } BablFormat;
 
 typedef struct
