@@ -14,59 +14,21 @@ int OK=1;
 
 double test[pixels * 4];
 
-double r_interval (double min, double max)
+static void
+test_init (void)
 {
-  long int rand_i = random ();
-  double ret;
-  ret = (double) rand_i / RAND_MAX;
-  ret*=(max-min);
-  ret+=min;
-  return ret;
-}
+  int    i;
 
-void test_init (void)
-{
-  double r_min  = 0.0,
-         r_max  = 1.0,
-         g_min  = 0.0,
-         g_max  = 1.0,
-         b_min  = 0.0,
-         b_max  = 1.0,
-         a_min  = 0.0,
-         a_max  = 1.0;
-  int i;
-  double r,g,b,a;
-  for (i=0;i<pixels;i++)
-    {
-      r=r_interval(r_min, r_max);
-      g=r_interval(g_min, g_max);
-      b=r_interval(b_min, b_max);
-      a=r_interval(a_min, a_max);
-      test [i*4 + 0]=r;
-      test [i*4 + 1]=g;
-      test [i*4 + 2]=b;
-      test [i*4 + 3]=a;
-    }
-}
-
-static Babl *reference_format (void)
-{
-  return babl_format_new (
-       babl_model ("RGBA"),
-       babl_type ("double"),
-       babl_component ("R"),
-       babl_component ("G"),
-       babl_component ("B"),
-       babl_component ("A"),
-       NULL);
+  for (i = 0; i < pixels * 4; i++)
+     test [i] = (double)random () / RAND_MAX;
 }
 
 static void
 validate_conversion (BablConversion *conversion)
 {
-  Babl *fmt_rgba_double = reference_format ();
-  Babl *fmt_source      = BABL(conversion->source);
-  Babl *fmt_destination = BABL(conversion->destination);
+  Babl *fmt_rgba_double;
+  Babl *fmt_source;
+  Babl *fmt_destination;
 
   double error=0.0;
   
@@ -75,6 +37,17 @@ validate_conversion (BablConversion *conversion)
   double  *destination_rgba_double;
   void    *ref_destination;
   double  *ref_destination_rgba_double;
+
+  fmt_rgba_double = babl_format_new (
+       babl_model ("RGBA"),
+       babl_type ("double"),
+       babl_component ("R"),
+       babl_component ("G"),
+       babl_component ("B"),
+       babl_component ("A"),
+       NULL);
+  fmt_source      = BABL(conversion->source);
+  fmt_destination = BABL(conversion->destination);
 
   source          = babl_calloc (pixels, fmt_source->format.bytes_per_pixel);
   destination     = babl_calloc (pixels, fmt_destination->format.bytes_per_pixel);

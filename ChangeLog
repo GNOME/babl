@@ -1,5 +1,9 @@
 2005-09-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* tests/conversions.c: (test_init): code simplification.
+
+2005-09-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-classes.h: add loss field to format class.
 	* babl/babl-format.c: (format_new): set loss field to -1 as initial
 	value.
