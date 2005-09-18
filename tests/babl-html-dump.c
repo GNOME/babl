@@ -42,7 +42,7 @@ main (void)
   babl_type_each (show_item, NULL);
   babl_model_each (show_item, NULL);
   babl_format_each (show_item, NULL);
-  babl_conversion_each (show_item, NULL);
+/*  babl_conversion_each (show_item, NULL);*/
   printf ("'>+</a>");
 
   printf ("<a href='javascript:");
@@ -50,7 +50,7 @@ main (void)
   babl_type_each (hide_item, NULL);
   babl_model_each (hide_item, NULL);
   babl_format_each (hide_item, NULL);
-  babl_conversion_each (hide_item, NULL);
+  /*babl_conversion_each (hide_item, NULL);*/
   printf ("'>-</a>");
 
   printf ("<div class='expander'>");
@@ -72,13 +72,13 @@ main (void)
   printf ("</div>\n");
   printf ("</div>\n");
 
-
+/*
   printf ("<div class='expander'>");
   printf ("<div class='expander_title'><a style='font-size:110%%' name='Conversions' href='javascript:toggle_visible(\"x_conversions\")'>Conversions</a></div><div class='expander_content' id='x_conversions'>\n");
   babl_conversion_each (each_item, NULL);
   printf ("</div>\n");
   printf ("</div>\n");
-
+*/
   babl_destroy ();
 
   return 0;

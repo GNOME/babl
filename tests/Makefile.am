@@ -10,10 +10,8 @@ TESTS =				\
 	srgb_to_lab_u8		\
 	sanity			\
 	babl_class_name		\
-	conversions		\
 	types			\
-	models			\
-	formats			
+	models	
 
 TESTS_ENVIRONMENT = BABL_PATH=$(top_builddir)/extensions
 
@@ -24,6 +22,8 @@ rgb_to_ycbcr_SOURCES        = rgb_to_ycbcr.c
 babl_class_name_SOURCES     = babl_class_name.c
 sanity_SOURCES              = sanity.c
 types_SOURCES               = types.c
+babl_fish_path_fitness_SOURCES  = babl_fish_path_fitness.c
+babl_fish_path_dhtml_SOURCES  = babl_fish_path_dhtml.c
 formats_SOURCES             = formats.c
 models_SOURCES              = models.c
 
@@ -32,10 +32,14 @@ AM_CFLAGS = -I$(top_srcdir) -I$(top_srcdir)/babl
 
 LDADD = $(top_builddir)/babl/libbabl.la -lm ${dl}
 
-noinst_PROGRAMS =	\
-	introspect	\
-	babl_html_dump	\
-	nop		\
+noinst_PROGRAMS =		\
+	introspect		\
+	babl_fish_path_fitness	\
+	babl_fish_path_dhtml	\
+	babl_html_dump		\
+	conversions		\
+	formats			\
+	nop			\
 	$(TESTS)
 
 introspect_SOURCES     = introspect.c
