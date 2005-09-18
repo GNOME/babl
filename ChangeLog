@@ -1,14 +1,58 @@
 2005-09-18  Øyvind Kolås  <pippin@gimp.org>
 
-	* babl/Makefile.am:
-	* babl/babl-classes.h:
-	* babl/babl-conversion.c: (each_babl_conversion_destroy),
-	(conversion_new), (create_name), (babl_conversion_new),
-	(babl_conversion_process), (test_create), (babl_conversion_error):
+	* docs/tools/changelog2rss: tool to create RSS feed of ChangeLog.
+
+2005-09-18  Øyvind Kolås  <pippin@gimp.org>
+
+	* docs/Makefile.am: Included BablFishPath.[html|txt]
+	* docs/index-static.html.in: included some ramblings about the
+	background and purpose of babl.
+
+2005-09-18  Øyvind Kolås  <pippin@gimp.org>
+
+	* tests/Makefile.am:
+	* tests/babl_fish_path_dhtml.c,
+	* tests/babl_fish_path_fitness.c: new introspection outputters, that
+	report on the conversion matrix of BablFishPath.
+	* tests/babl-html-dump.c: (main): removed conversions, since it is
+	now used as "Vocabulary" in the documentation,.
+	* tests/conversions.c: (each_conversion), (main):
+	* tests/formats.c: (format_check), (main):
+	* tests/models.c: (model_check), (main):
+	* tests/types.c: (type_check), (main): Moved the logic into BablCore
+	in previous commit.
+
+2005-09-18  Øyvind Kolås  <pippin@gimp.org>
+
+
+	Updating test suite, conversion and format quality testing
+	code folded into babl-core in previous commit.
+
+2005-09-18  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/base/model-cmyk.c: (rgb_to_cmyk), (cmyk_to_rgb),
+	(conversions), (formats):
+	* babl/base/model-gray.c: (rgba_to_graya), (rgba_to_gray),
+	(graya_to_rgba), (gray_to_rgba), (conversions):
+	* babl/base/model-rgb.c: (formats):
+	* babl/base/model-ycbcr.c: (rgba_to_ycbcra), (rgba_to_ycbcr),
+	(ycbcra_to_rgba), (ycbcr_to_rgba), (conversions), (formats):
+	* extensions/CIE-Lab.c: (rgba_to_lab), (lab_to_rgba),
+	(rgba_to_laba), (laba_to_rgba), (conversions):
+	* extensions/naive-CMYK.c: (init), (rgba_to_cmyk), (cmyk_to_rgba):
+
+	register linear reference conversions instead, since they can be used
+	in BablFishPath chains.
+
+2005-09-18  Øyvind Kolås  <pippin@gimp.org>
+
+	Adding BablFishPath, as well as splittin out Simple and Reference
+	from babl-fish.c. (lazy commit of large changes :d )
+
+	* babl/babl-internal.h:
 	* babl/babl-core.c: (rgba_to_rgba), (babl_core_init):
 	* babl/babl-db.c: (babl_db_count):
 	* babl/babl-db.h:
-	* babl/babl-extension.c:
 	* babl/babl-fish.c: (match_conversion), (babl_conversion_find),
 	(babl_fish_db), (babl_fish), (babl_fish_process),
 	(each_babl_fish_destroy):
@@ -18,7 +62,6 @@
 	* babl/babl-internal.c: (babl_process), (each_conversion),
 	(each_format), (gen_type_format_for_model),
 	(gen_formats_for_model), (babl_extension_post_load):
-	* babl/babl-internal.h:
 	* babl/babl-introspect.c: (conversion_introspect):
 	* babl/babl-model.c: (babl_model_new), (test_create),
 	(reference_format), (construct_double_format),
@@ -26,27 +69,12 @@
 	* babl/babl-sanity.c: (id_sanity):
 	* babl/babl-type.c: (babl_type_new), (r_interval), (test_init),
 	(double_vector_format), (babl_type_is_symmetric):
+
+2005-09-18  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/babl-classes.h: added BablFishPath
 	* babl/babl-util.c: (babl_list_each), (init_ticks), (babl_ticks):
 	* babl/babl-util.h:
-	* babl/base/model-cmyk.c: (rgb_to_cmyk), (cmyk_to_rgb),
-	(conversions), (formats):
-	* babl/base/model-gray.c: (rgba_to_graya), (rgba_to_gray),
-	(graya_to_rgba), (gray_to_rgba), (conversions):
-	* babl/base/model-rgb.c: (formats):
-	* babl/base/model-ycbcr.c: (rgba_to_ycbcra), (rgba_to_ycbcr),
-	(ycbcra_to_rgba), (ycbcr_to_rgba), (conversions), (formats):
-	* docs/Makefile.am:
-	* docs/index-static.html.in:
-	* extensions/CIE-Lab.c: (rgba_to_lab), (lab_to_rgba),
-	(rgba_to_laba), (laba_to_rgba), (conversions):
-	* extensions/Makefile.in:
-	* extensions/naive-CMYK.c: (init), (rgba_to_cmyk), (cmyk_to_rgba):
-	* tests/Makefile.am:
-	* tests/babl-html-dump.c: (main):
-	* tests/conversions.c: (each_conversion), (main):
-	* tests/formats.c: (format_check), (main):
-	* tests/models.c: (model_check), (main):
-	* tests/types.c: (type_check), (main):
 
 2005-09-18  Øyvind Kolås  <pippin@gimp.org>
 
