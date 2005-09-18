@@ -92,37 +92,56 @@ models (void)
 
 
 static long
-rgb_to_gray (int    src_bands,
-             void **src,
-             int   *src_pitch,
-             int    dst_bands,
-             void **dst,
-             int   *dst_pitch,
-             long   n)
+rgba_to_graya (void *src,
+               void *dst,
+               long   n)
 {
-  BABL_PLANAR_SANITY
   while (n--)
     {
       double red, green, blue;
       double luminance, alpha;
 
-      red   = *(double *)src[0];
-      green = *(double *)src[1];
-      blue  = *(double *)src[2];
-      if (src_bands>3)
-        alpha = *(double *)src[3];
-      else
-        alpha = 1.0;
+      red   = ((double *)src)[0];
+      green = ((double *)src)[1];
+      blue  = ((double *)src)[2];
+      alpha = ((double *)src)[3];
 
       luminance  = red   * RGB_LUMINANCE_RED +
                    green * RGB_LUMINANCE_GREEN +
                    blue  * RGB_LUMINANCE_BLUE;
-      *(double*)dst[0] = luminance;
 
-      if (dst_bands==2)
-        *(double*)dst[1] = alpha;
+      ((double*)dst)[0] = luminance;
+      ((double*)dst)[1] = alpha;
 
-      BABL_PLANAR_STEP
+      src += sizeof (double) * 4;
+      dst += sizeof (double) * 2;
+    }
+  return n;
+}
+
+static long
+rgba_to_gray (void *src,
+              void *dst,
+              long   n)
+{
+  while (n--)
+    {
+      double red, green, blue;
+      double luminance, alpha;
+
+      red   = ((double *)src)[0];
+      green = ((double *)src)[1];
+      blue  = ((double *)src)[2];
+      alpha = ((double *)src)[3];
+
+      luminance  = red   * RGB_LUMINANCE_RED +
+                   green * RGB_LUMINANCE_GREEN +
+                   blue  * RGB_LUMINANCE_BLUE;
+
+      ((double*)dst)[0] = luminance;
+
+      src += sizeof (double) * 4;
+      dst += sizeof (double) * 1;
     }
   return n;
 }
@@ -205,38 +224,56 @@ gray_2_2_to_rgb (int    src_bands,
 
 
 static long
-gray_to_rgb (int    src_bands,
-             void **src,
-             int   *src_pitch,
-             int    dst_bands,
-             void **dst,
-             int   *dst_pitch,
-             long   n)
+graya_to_rgba (void *src,
+               void *dst,
+               long  n)
 {
-  BABL_PLANAR_SANITY
   while (n--)
     {
       double luminance;
       double red, green, blue;
       double alpha;
 
-      luminance = *(double *)src[0];
+      luminance = ((double *)src)[0];
+      alpha     = ((double *)src)[1];
       red       = luminance;
       green     = luminance;
       blue      = luminance;
-      if (src_bands > 1)
-        alpha = *(double *)src[1];
-      else
-        alpha     = 1.0;
 
-      *(double*)dst[0] = red;
-      *(double*)dst[1] = green;
-      *(double*)dst[2] = blue;
+      ((double*)dst)[0] = red;
+      ((double*)dst)[1] = green;
+      ((double*)dst)[2] = blue;
+      ((double*)dst)[3] = alpha;
 
-      if (dst_bands>3)
-        *(double*)dst[3] = alpha;
+      src += sizeof(double)*2;
+      dst += sizeof(double)*4;
+    }
+  return n;
+}
 
-      BABL_PLANAR_STEP
+
+static long
+gray_to_rgba (void *src,
+              void *dst,
+              long  n)
+{
+  while (n--)
+    {
+      double luminance;
+      double red, green, blue;
+
+      luminance = ((double *)src)[0];
+      red       = luminance;
+      green     = luminance;
+      blue      = luminance;
+
+      ((double*)dst)[0] = red;
+      ((double*)dst)[1] = green;
+      ((double*)dst)[2] = blue;
+      ((double*)dst)[3] = 1.0;
+
+      src += sizeof(double)*1;
+      dst += sizeof(double)*4;
     }
   return n;
 }
@@ -409,56 +446,28 @@ conversions (void)
   babl_conversion_new (
     babl_model_id (BABL_GRAY),
     babl_model_id (BABL_RGBA),
-    "planar",      gray_to_rgb,
-    NULL
-  );
-
-  babl_conversion_new (
-    babl_model_id (BABL_GRAY),
-    babl_model_id (BABL_RGB),
-    "planar",      gray_to_rgb,
+    "linear",      gray_to_rgba,
     NULL
   );
 
   babl_conversion_new (
     babl_model_id (BABL_GRAY_ALPHA),
     babl_model_id (BABL_RGBA),
-    "planar",      gray_to_rgb,
-    NULL
-  );
-
-  babl_conversion_new (
-    babl_model_id (BABL_GRAY_ALPHA),
-    babl_model_id (BABL_RGB),
-    "planar",      gray_to_rgb,
+    "linear",      graya_to_rgba,
     NULL
   );
 
   babl_conversion_new (
     babl_model_id (BABL_RGBA),
     babl_model_id (BABL_GRAY_ALPHA),
-    "planar",      rgb_to_gray,
+    "linear",      rgba_to_graya,
     NULL
   );
 
   babl_conversion_new (
     babl_model_id (BABL_RGBA),
     babl_model_id (BABL_GRAY),
-    "planar",      rgb_to_gray,
-    NULL
-  );
-
-  babl_conversion_new (
-    babl_model_id (BABL_RGB),
-    babl_model_id (BABL_GRAY_ALPHA),
-    "planar",      rgb_to_gray,
-    NULL
-  );
-
-  babl_conversion_new (
-    babl_model_id (BABL_RGB),
-    babl_model_id (BABL_GRAY),
-    "planar",      rgb_to_gray,
+    "linear",      rgba_to_gray,
     NULL
   );
 

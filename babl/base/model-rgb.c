@@ -369,16 +369,6 @@ formats (void)
     NULL);
 
   babl_format_new (
-    "id",              BABL_RGBA_DOUBLE,
-    babl_model_id     (BABL_RGBA),
-    babl_type_id      (BABL_DOUBLE),
-    babl_component_id (BABL_RED), 
-    babl_component_id (BABL_GREEN), 
-    babl_component_id (BABL_BLUE),
-    babl_component_id (BABL_ALPHA),
-    NULL);
-
-  babl_format_new (
     "id", BABL_RGB_FLOAT,
     babl_model_id     (BABL_RGB),
     babl_type_id      (BABL_FLOAT),

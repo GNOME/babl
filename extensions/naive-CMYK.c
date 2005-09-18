@@ -23,20 +23,16 @@
 #include "babl.h"
 #include "util.h"
 
-static long rgb_to_cmyk (int    src_bands,
-                         void **src,
-                         int   *src_pitch,
-                         int    dst_bands,
-                         void **dst,
-                         int   *dst_pitch,
-                         long   n);
-static long cmyk_to_rgb (int    src_bands,
-                         void **src,
-                         int   *src_pitch,
-                         int    dst_bands,
-                         void **dst,
-                         int   *dst_pitch,
-                         long   n);
+static long
+rgba_to_cmyk (void *src,
+              void *dst,
+              long   n);
+
+static long 
+cmyk_to_rgba (void *src,
+              void *dst,
+              long  n);
+
 int
 init (void)
 {
@@ -55,45 +51,19 @@ init (void)
     NULL
   );
 
-  babl_model_new (
-    "name", "CMYKA",
-    babl_component ("cyan"),
-    babl_component ("magenta"),
-    babl_component ("yellow"),
-    babl_component ("key"),
-    babl_component ("A"),
-    NULL
-  );
-
   babl_conversion_new (
     babl_model ("RGBA"),
     babl_model ("CMYK"),
-    "planar",      rgb_to_cmyk,
+    "linear",      rgba_to_cmyk,
     NULL
   );
 
   babl_conversion_new (
     babl_model ("CMYK"),
     babl_model ("RGBA"),
-    "planar",      cmyk_to_rgb,
+    "linear",      cmyk_to_rgba,
     NULL
   );
-
-
-  babl_conversion_new (
-    babl_model ("RGBA"),
-    babl_model ("CMYKA"),
-    "planar",      rgb_to_cmyk,
-    NULL
-  );
-
-  babl_conversion_new (
-    babl_model ("CMYKA"),
-    babl_model ("RGBA"),
-    "planar",      cmyk_to_rgb,
-    NULL
-  );
-
   babl_format_new (
       "name",        "CMYK float",
       babl_model     ("CMYK"),
@@ -108,26 +78,21 @@ init (void)
   return 0;
 }
 
-static long
-rgb_to_cmyk (int    src_bands,
-             void **src,
-             int   *src_pitch,
-             int    dst_bands,
-             void **dst,
-             int   *dst_pitch,
-             long   n)
-{
-  BABL_PLANAR_SANITY
 
+static long
+rgba_to_cmyk (void *src,
+              void *dst,
+              long   n)
+{
   while (n--)
     {
-      double red   = *(double*)src[0];
-      double green = *(double*)src[1];
-      double blue  = *(double*)src[2];
+      double red   = ((double*)src)[0];
+      double green = ((double*)src)[1];
+      double blue  = ((double*)src)[2];
 
       double cyan, magenta, yellow, key;
 
-      double pullout = 0.8;
+      double pullout = 1.0;
 
       cyan    = 1.0 - red;
       magenta = 1.0 - green;
@@ -153,36 +118,28 @@ rgb_to_cmyk (int    src_bands,
           yellow  = 0.0;
         }
 
-      *(double*)dst[0] = cyan;
-      *(double*)dst[1] = magenta;
-      *(double*)dst[2] = yellow;
-      *(double*)dst[3] = key;
+      ((double*)dst)[0] = cyan;
+      ((double*)dst)[1] = magenta;
+      ((double*)dst)[2] = yellow;
+      ((double*)dst)[3] = key;
 
-      if (dst_bands > 4)               /* alpha passthorugh */
-        *(double*)dst[4] = (src_bands>3)?*(double*)src[3]:1.0;
-
-      BABL_PLANAR_STEP
+      src+=4*sizeof(double);
+      dst+=4*sizeof(double);
     }
   return n;
 }
 
-static long
-cmyk_to_rgb (int    src_bands,
-             void **src,
-             int   *src_pitch,
-             int    dst_bands,
-             void **dst,
-             int   *dst_pitch,
-             long   n)
+static long 
+cmyk_to_rgba (void *src,
+              void *dst,
+              long  n)
 {
-  BABL_PLANAR_SANITY
-
   while (n--)
     {
-      double cyan    = *(double*)src[0];
-      double magenta = *(double*)src[1];
-      double yellow  = *(double*)src[2];
-      double key     = *(double*)src[3];
+      double cyan    = ((double*)src)[0];
+      double magenta = ((double*)src)[1];
+      double yellow  = ((double*)src)[2];
+      double key     = ((double*)src)[3];
 
       double red, green, blue;
 
@@ -201,14 +158,14 @@ cmyk_to_rgb (int    src_bands,
       green = 1.0 - magenta;
       blue  = 1.0 - yellow;
 
-      *(double*)dst[0] = red;
-      *(double*)dst[1] = green;
-      *(double*)dst[2] = blue;
+      ((double*)dst)[0] = red;
+      ((double*)dst)[1] = green;
+      ((double*)dst)[2] = blue;
 
-      if (dst_bands > 3)               /* alpha passthorugh */
-        *(double*)dst[3] = (src_bands>4)?*(double*)src[4]:1.0;
+      ((double*)dst)[3] = 1.0;
 
-      BABL_PLANAR_STEP
+      src+=4*sizeof(double);
+      dst+=4*sizeof(double);
     }
   return n;
 }

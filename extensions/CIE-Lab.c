@@ -143,67 +143,107 @@ cpercep_distance_space (const double L1, const double a1, const double b1,
 
 
 static long
-rgb_to_lab (int    src_bands,
-            void **src,
-            int   *src_pitch,
-            int    dst_bands,
-            void **dst,
-            int   *dst_pitch,
-            long   n)
+rgba_to_lab (void *src,
+             void *dst,
+             long  n)
 {
-  BABL_PLANAR_SANITY
-
   while (n--)
     {
-      double red   = *(double*)src[0];
-      double green = *(double*)src[1];
-      double blue  = *(double*)src[2];
+      double red   = ((double*)src)[0];
+      double green = ((double*)src)[1];
+      double blue  = ((double*)src)[2];
 
       double L, a, b;
 
       cpercep_rgb_to_space (red, green, blue, &L, &a, &b);
 
-      *(double*)dst[0] = L;
-      *(double*)dst[1] = a;
-      *(double*)dst[2] = b;
+      ((double*)dst)[0] = L;
+      ((double*)dst)[1] = a;
+      ((double*)dst)[2] = b;
 
-      if (dst_bands > 3)               /* alpha passthorugh */
-        *(double*)dst[3] = (src_bands>3)?*(double*)src[3]:1.0;
-
-      BABL_PLANAR_STEP
+      src += sizeof(double) * 4;
+      dst += sizeof(double) * 3;
     }
   return n;
 }
 
 static long
-lab_to_rgb (int    src_bands,
-            void **src,
-            int   *src_pitch,
-            int    dst_bands,
-            void **dst,
-            int   *dst_pitch,
-            long   n)
+lab_to_rgba (void *src,
+             void *dst,
+             long  n)
 {
-  BABL_PLANAR_SANITY
-
   while (n--)
     {
-      double L = *(double*)src[0];
-      double a = *(double*)src[1];
-      double b = *(double*)src[2];
+      double L = ((double*)src)[0];
+      double a = ((double*)src)[1];
+      double b = ((double*)src)[2];
 
       double red, green, blue;
 
       cpercep_space_to_rgb (L, a, b, &red, &green, &blue);
 
-      *(double*)dst[0] = red;
-      *(double*)dst[1] = green;
-      *(double*)dst[2] = blue;
+      ((double*)dst)[0] = red;
+      ((double*)dst)[1] = green;
+      ((double*)dst)[2] = blue;
+      ((double*)dst)[3] = 1.0;
 
-      if (dst_bands > 3)               /* alpha passthorugh */
-        *(double*)dst[3] = (src_bands>3)?*(double*)src[3]:1.0;
+      src += sizeof(double) * 3;
+      dst += sizeof(double) * 4;
+    }
+  return n;
+}
 
-      BABL_PLANAR_STEP
+
+static long
+rgba_to_laba (void *src,
+              void *dst,
+              long  n)
+{
+  while (n--)
+    {
+      double red   = ((double*)src)[0];
+      double green = ((double*)src)[1];
+      double blue  = ((double*)src)[2];
+      double alpha = ((double*)src)[3];
+
+      double L, a, b;
+
+      cpercep_rgb_to_space (red, green, blue, &L, &a, &b);
+
+      ((double*)dst)[0] = L;
+      ((double*)dst)[1] = a;
+      ((double*)dst)[2] = b;
+      ((double*)dst)[3] = alpha;
+
+      src += sizeof(double) * 4;
+      dst += sizeof(double) * 4;
+    }
+  return n;
+}
+
+static long
+laba_to_rgba (void *src,
+              void *dst,
+              long  n)
+{
+  while (n--)
+    {
+      double L     = ((double*)src)[0];
+      double a     = ((double*)src)[1];
+      double b     = ((double*)src)[2];
+      double alpha = ((double*)src)[3];
+
+      double red, green, blue;
+
+      cpercep_space_to_rgb (L, a, b, &red, &green, &blue);
+
+      ((double*)dst)[0] = red;
+      ((double*)dst)[1] = green;
+      ((double*)dst)[2] = blue;
+      ((double*)dst)[3] = alpha;
+
+      src += sizeof(double) * 4;
+      dst += sizeof(double) * 4;
     }
   return n;
 }
@@ -215,37 +255,25 @@ conversions (void)
   babl_conversion_new (
     babl_model ("RGBA"),
     babl_model ("CIE Lab"),
-    "planar",      rgb_to_lab,
+    "linear",      rgba_to_lab,
     NULL
   );
   babl_conversion_new (
     babl_model ("CIE Lab"),
     babl_model ("RGBA"),
-    "planar",      lab_to_rgb,
-    NULL
-  );
-  babl_conversion_new (
-    babl_model ("RGB"),
-    babl_model ("CIE Lab"),
-    "planar",      rgb_to_lab,
-    NULL
-  );
-  babl_conversion_new (
-    babl_model ("CIE Lab"),
-    babl_model ("RGB"),
-    "planar",      lab_to_rgb,
+    "linear",      lab_to_rgba,
     NULL
   );
   babl_conversion_new (
     babl_model ("RGBA"),
     babl_model ("CIE Lab alpha"),
-    "planar",      rgb_to_lab,
+    "linear",      rgba_to_laba,
     NULL
   );
   babl_conversion_new (
     babl_model ("CIE Lab alpha"),
     babl_model ("RGBA"),
-    "planar",      lab_to_rgb,
+    "linear",      laba_to_rgba,
     NULL
   );
 
