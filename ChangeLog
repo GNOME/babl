@@ -1,3 +1,10 @@
+2005-09-19  Øyvind Kolås  <pippin@gimp.org>
+
+	* extensions/gggl.c: Added the bulk of gggl based conversions as an
+	extension. Many of these don't live up to the quality requirements of
+	babl, but some do, and provide a good base for further BablFishPath
+	coverage.
+
 2005-09-18  Øyvind Kolås  <pippin@gimp.org>
 
 	* docs/tools/changelog2rss: tool to create RSS feed of ChangeLog.
