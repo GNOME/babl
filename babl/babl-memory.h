@@ -25,7 +25,8 @@ void   babl_set_free      (void      (*free)            (void   *ptr));
 int    babl_memory_sanity (void);
 
 void * babl_malloc        (size_t      size);
-void   babl_free          (void       *ptr);
+void   babl_free          (void       *ptr,
+                           ...);
 void * babl_calloc        (size_t      nmemb,
                            size_t      size);
 void * babl_realloc       (void       *ptr,

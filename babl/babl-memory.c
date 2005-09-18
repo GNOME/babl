@@ -131,9 +131,13 @@ babl_dup (void *ptr)
 
 /* Free memory allocated by a babl function (note: babl_free
  * will complain if memory not allocated by babl is passed.)
+ *
+ * Note: the function is made variadic to be a legal callback
+ * function in some circumstances.
  */
 void
-babl_free (void *ptr)
+babl_free (void *ptr,
+           ...)
 {
   if (!ptr)
     return;
@@ -171,7 +175,15 @@ babl_realloc (void   *ptr,
     }
   else if (babl_sizeof (ptr) < size)
     {
+#ifdef USE_REALLOC_CLEAR
+      /* not needed yet by babl, if aviodable, preferred, since
+       * it has performance hits where it isn't wanted, a special
+       * function might be better when needd.
+       */
+      ret = babl_calloc (size, 1);
+#else
       ret = babl_malloc (size);
+#endif
       memcpy (ret, ptr, babl_sizeof (ptr));
       babl_free (ptr);
       reallocs++;

@@ -1,3 +1,8 @@
+2005-09-18  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/babl-memory.[ch]: (babl_free), (babl_realloc): made babl_free
+	variadic, and added the potential for a clearing realloc.
+
 2005-09-12  Øyvind Kolås  <pippin@gimp.org>
 
 	* tests/conversions.c: (test_init): code simplification.
