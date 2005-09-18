@@ -73,7 +73,8 @@ typedef int  (*BablEachFunction) (Babl *entry,
  *  either strings with the names of the formats or BablFormat objects.
  */
 Babl * babl_fish       (void *source_format,
-                        void *destination_format);
+                        void *destination_format,
+                        ...);
 
 /** Process n pixels from source to destination using babl_fish,
  *  returns number of pixels converted. 

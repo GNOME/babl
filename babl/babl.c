@@ -41,6 +41,9 @@ babl_init (void)
       babl_sanity ();
       babl_fish_init ();
       babl_sanity ();
+      babl_extension_post_load ();  /* measure timings and errors */
+      babl_sanity ();
+
     }
 }
 

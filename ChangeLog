@@ -1,5 +1,10 @@
 2005-09-18  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl.c: (babl_init),
+	* babl/babl.h: made babl_fish variadic.
+
+2005-09-18  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-memory.[ch]: (babl_free), (babl_realloc): made babl_free
 	variadic, and added the potential for a clearing realloc.
 
