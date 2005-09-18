@@ -31,6 +31,7 @@ void     babl_db_destroy (BablDb           *db);
 void     babl_db_each    (BablDb           *db, 
                           BablEachFunction  each_fun,
                           void             *user_data);
+int      babl_db_count   (BablDb           *db);
 Babl   * babl_db_insert  (BablDb           *db,
                           Babl             *entry);
 Babl   * babl_db_exist   (BablDb           *db,

@@ -75,6 +75,13 @@ babl_db_init(void)
   return db;
 }
 
+
+int
+babl_db_count (BablDb *db)
+{
+  return db->count;
+}
+
 void
 babl_db_destroy (BablDb *db)
 {

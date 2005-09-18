@@ -165,6 +165,7 @@ conversion_introspect (Babl *babl)
 {
   babl_log ("\t\tprocessings:%i pixels:%li",
             babl->conversion.processings, babl->conversion.pixels);
+  babl_log ("\t\tcost: %i   error: %f", babl->conversion.cost, babl->conversion.error);
 }
 
 static void

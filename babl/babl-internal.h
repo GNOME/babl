@@ -24,12 +24,14 @@
 #error babl-internal.h included after babl.h
 #endif
 
-#define BABL_MAX_COMPONENTS 32
+#define BABL_MAX_COMPONENTS   32
+#define BABL_MAX_PATH_LENGTH  5
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include "assert.h"
+
 
 #include "babl-classes.h"
 #undef  _BABL_INTERNAL_H
@@ -43,30 +45,57 @@
 #include "babl-memory.h"
 
 
-int    babl_fish_process            (Babl      *babl,
-                                     void      *source,
-                                     void      *destination,
-                                     long       n);
-int    babl_fish_reference_process  (Babl      *babl,
-                                     BablImage *source,
-                                     BablImage *destination,
-                                     long       n);
-Babl * babl_fish_reference          (Babl *source,
-                                     Babl *destination);
-Babl * babl_fish_simple             (BablConversion *conversion);
-Babl * babl_image_from_linear       (void      *buffer,
-                                     Babl      *format);
-Babl * babl_image_double_from_image (Babl      *source);
-void   babl_die                     (void);
-int    babl_sanity                  (void);
-Babl * babl_extension_base          (void);
+Babl   * babl_conversion_find           (void           *source,
+                                         void           *destination);
+double   babl_conversion_error          (BablConversion *conversion);
+long     babl_conversion_process        (Babl           *conversion,
+                                         void           *source,
+                                         void           *destination,
+                                         long            n);
 
-Babl * babl_extender                (void);
-void   babl_set_extender            (Babl *new_extender);
+Babl   * babl_extension_base            (void);
+void     babl_extension_post_load       (void);
 
-Babl * babl_extension_quiet_log     (void);
+Babl   * babl_extender                  (void);
+void     babl_set_extender              (Babl           *new_extender);
 
-void   babl_core_init               (void);
+Babl   * babl_extension_quiet_log       (void);
+
+long     babl_fish_process              (Babl           *babl,
+                                         void           *source,
+                                         void           *destination,
+                                         long            n);
+long     babl_fish_reference_process    (Babl           *babl,
+                                         BablImage      *source,
+                                         BablImage      *destination,
+                                         long            n);
+
+BablDb * babl_fish_db                   (void);
+Babl   * babl_fish_reference            (Babl           *source,
+                                         Babl           *destination);
+Babl   * babl_fish_simple               (BablConversion *conversion);
+Babl   * babl_fish_path                 (Babl           *source,
+                                         Babl           *destination);
+
+long     babl_fish_path_process         (Babl           *babl,
+                                         void           *source,
+                                         void           *destination,
+                                         long            n);
+
+double   babl_format_loss               (Babl           *babl);
+Babl   * babl_image_from_linear         (void           *buffer,
+                                         Babl           *format);
+Babl   * babl_image_double_from_image   (Babl           *source);
+
+double   babl_model_is_symmetric        (Babl           *babl);
+void     babl_die                       (void);
+int      babl_sanity                    (void);
+
+void     babl_core_init                 (void);
+Babl   * babl_format_with_model_as_type (Babl *model,
+                                         Babl *type);
+int      babl_formats_count             (void);  /* should maybe be templated? */
+int      babl_type_is_symmetric         (Babl *babl);
 
 /* FIXME: nasty,. including the symbol even in files where it is
  * not needed,. and a dummy function to use it in those cases
@@ -106,6 +135,7 @@ real_babl_log (const char *file,
   va_end (varg);
 
   fprintf (stdout, "\n");
+  fflush (0);
   return;
   hack_hack ();
 }
@@ -158,7 +188,7 @@ babl_##type_name##_id (int id)                                \
   babl = babl_db_exist (db, id, NULL);                        \
   if (!babl)                                                  \
     {                                                         \
-      babl_log ("%s(%i): not found", __FUNCTION__, id);       \
+      babl_fatal ("%s(%i): not found", __FUNCTION__, id);       \
     }                                                         \
   return babl;                                                \
 }

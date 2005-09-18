@@ -20,6 +20,7 @@
 #include "babl-internal.h"
 #include <string.h>
 #include <stdarg.h>
+#include <math.h>
 #include "babl-db.h"
 
 
@@ -125,8 +126,9 @@ babl_model_new (void *first_argument,
               case BABL_CONVERSION_PLANE:
               case BABL_CONVERSION_PLANAR:
               case BABL_FISH:
-              case BABL_FISH_REFERENCE:
               case BABL_FISH_SIMPLE:
+              case BABL_FISH_REFERENCE:
+              case BABL_FISH_PATH:
               case BABL_IMAGE:
               case BABL_EXTENSION:
                 babl_log ("%s unexpected", babl_class_name (babl->class_type));
@@ -166,6 +168,146 @@ babl_model_new (void *first_argument,
         babl_free (babl);
     return ret;
   }
+}
+
+
+#define TOLERANCE 0.001
+
+#define pixels    512
+
+static double *
+test_create (void)
+{
+  double *test;
+  int     i;
+  
+  srandom (20050728);
+
+  test = babl_malloc (sizeof (double) * pixels * 4);
+
+  for (i = 0; i < pixels * 4; i++)
+     test [i] = ((double) random () / RAND_MAX ) * 1.4 - 0.2;
+
+  return test;
+}
+
+static Babl *reference_format (void)
+{
+  static Babl *self = NULL;
+  
+  if (!self)
+     self = babl_format_new (
+       babl_model ("RGBA"),
+       babl_type ("double"),
+       babl_component ("R"),
+       babl_component ("G"),
+       babl_component ("B"),
+       babl_component ("A"),
+       NULL);
+  return self;
+}
+
+static Babl *construct_double_format (Babl *model)
+{
+  void *argument[42+1];
+  int   args = 0;
+  int   i;
+
+  argument[args++] = model;
+  argument[args++] = babl_type ("double");
+
+  for (i=0;i<model->model.components; i++)
+    {
+      argument[args++] = model->model.component[i];
+    }
+  argument[args++] = NULL;
+
+#define o(argno) argument[argno],
+  return babl_format_new (o(0)  o(1)  o(2)  o(3)
+                          o(4)  o(5)  o(6)  o(7)
+                          o(8)  o(9) o(10) o(11)
+                         o(12) o(13) o(14) o(15)
+                         o(16) o(17) o(18) o(19) 
+                         o(20) o(21) o(22) o(23) 
+                         o(24) o(25) o(26) o(27)
+                         o(28) o(29) o(30) o(31)
+                         o(32) o(33) o(34) o(35)
+                         o(36) o(37) o(38) o(39) 
+                         o(40) o(41) o(42) NULL);
+#undef o
+}
+
+double 
+babl_model_is_symmetric (Babl *babl)
+{
+  double *test;
+  void   *original;
+  double *clipped;
+  void   *destination;
+  double *transformed;
+  int     symmetric=1;
+
+  Babl *ref_fmt;
+  Babl *fmt;
+  Babl *fish_to;
+  Babl *fish_from;
+
+  test      = test_create ();
+  ref_fmt   = reference_format ();
+  fmt       = construct_double_format (babl);
+  fish_to   = babl_fish_reference (ref_fmt, fmt);
+  fish_from = babl_fish_reference (fmt, ref_fmt);
+  
+  original    = babl_calloc (1,64/8 * babl->model.components * pixels);
+  clipped     = babl_calloc (1,64/8 * 4 * pixels);
+  destination = babl_calloc (1,64/8 * babl->model.components * pixels);
+  transformed = babl_calloc (1,64/8 * 4 * pixels);
+
+  babl_process (fish_to,   test,        original,    pixels);
+  babl_process (fish_from, original,    clipped,     pixels);
+  babl_process (fish_to,   clipped,     destination, pixels);
+  babl_process (fish_from, destination, transformed, pixels);
+
+  {
+    int i;
+    int log=0;
+
+    for (i=0;i<pixels;i++)
+      {
+        int j;
+        for (j=0;j<4;j++)
+           if (fabs (clipped[i*4+j] - transformed[i*4+j])>TOLERANCE)
+             {
+                if (!log)
+                  log=1;
+                symmetric=0;
+             }
+        if (log && log < 5)
+          {
+            babl_log ("%s", babl->instance.name);
+            babl_log ("\ttest:     %2.3f %2.3f %2.3f %2.3f", test [i*4+0],
+                                                             test [i*4+1],
+                                                             test [i*4+2],
+                                                             test [i*4+3]);
+            babl_log ("\tclipped:  %2.3f %2.3f %2.3f %2.3f", clipped [i*4+0],
+                                                             clipped [i*4+1],
+                                                             clipped [i*4+2],
+                                                             clipped [i*4+3]);
+            babl_log ("\ttrnsfrmd: %2.3f %2.3f %2.3f %2.3f", transformed [i*4+0],
+                                                             transformed [i*4+1],
+                                                             transformed [i*4+2],
+                                                             transformed [i*4+3]);
+            log++;
+          }
+      }
+  }
+  
+  babl_free (original);
+  babl_free (clipped);
+  babl_free (destination);
+  babl_free (transformed);
+  babl_free (test);
+  return symmetric;
 }
 
 BABL_CLASS_TEMPLATE (model)

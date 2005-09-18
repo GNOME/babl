@@ -44,6 +44,7 @@ convert_double_double (void *src,
   return n;
 }
 
+/*
 static long
 copy_strip_1 (int    src_bands,
               void **src,
@@ -73,6 +74,16 @@ copy_strip_1 (int    src_bands,
   return n;
 }
 
+
+*/
+static long
+rgba_to_rgba (void *src,
+              void *dst,
+              long  n)
+{
+  memcpy (dst, src, n * sizeof (double) * 4);
+  return n;
+}
 void
 babl_core_init (void)
 {
@@ -81,13 +92,6 @@ babl_core_init (void)
     "id",          BABL_DOUBLE,
     "bits",        64,
     NULL);
-
-  babl_conversion_new (
-    babl_type_id (BABL_DOUBLE),
-    babl_type_id (BABL_DOUBLE),
-    "plane",      convert_double_double,
-    NULL
-  );
 
   babl_component_new (
     "R",
@@ -124,10 +128,36 @@ babl_core_init (void)
     babl_component_id (BABL_ALPHA),
     NULL);
 
+  babl_format_new (
+    "id", BABL_RGBA_DOUBLE,
+    babl_model_id (BABL_RGBA),
+    babl_type_id (BABL_DOUBLE),
+    babl_component_id (BABL_RED),
+    babl_component_id (BABL_GREEN),
+    babl_component_id (BABL_BLUE),
+    babl_component_id (BABL_ALPHA),
+    NULL);
+
+  /*
   babl_conversion_new (
     babl_model_id (BABL_RGBA),
     babl_model_id (BABL_RGBA),
     "planar",      copy_strip_1,
+    NULL
+  );
+  */
+
+  babl_conversion_new (
+    babl_type_id (BABL_DOUBLE),
+    babl_type_id (BABL_DOUBLE),
+    "plane",      convert_double_double,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_model_id (BABL_RGBA),
+    babl_model_id (BABL_RGBA),
+    "linear",      rgba_to_rgba,
     NULL
   );
 }

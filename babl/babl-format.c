@@ -19,6 +19,7 @@
 
 #include <string.h>
 #include <stdarg.h>
+#include <math.h>
 
 #include "babl-internal.h"
 #include "babl-db.h"
@@ -186,7 +187,7 @@ babl_format_new (void *first_arg,
   BablType        *type      [BABL_MAX_COMPONENTS];
 
   BablSampling    *current_sampling = (BablSampling*) babl_sampling (1,1);
-  BablType        *current_type     = (BablType*)     babl_type_id (BABL_U8);
+  BablType        *current_type     = (BablType*)     babl_type_id (BABL_DOUBLE);
   char            *name             = NULL;
   void            *arg              = first_arg;
 
@@ -240,8 +241,9 @@ babl_format_new (void *first_arg,
               case BABL_CONVERSION_PLANE:
               case BABL_CONVERSION_PLANAR:
               case BABL_FISH:
-              case BABL_FISH_SIMPLE:
               case BABL_FISH_REFERENCE:
+              case BABL_FISH_SIMPLE:
+              case BABL_FISH_PATH:
               case BABL_IMAGE:
               case BABL_EXTENSION:
                 babl_log ("%s unexpected",
@@ -295,6 +297,124 @@ babl_format_new (void *first_arg,
         babl_free (babl);
     return ret;
   }
+}
+
+int
+babl_formats_count (void)
+{
+  return babl_db_count (db);
+}
+
+
+Babl *
+babl_format_with_model_as_type (Babl *model,
+                                Babl *type)
+{
+  BablComponent *component[10];
+  int i;
+
+  for (i=0;i<model->model.components;i++)
+    {
+      component[i]= model->model.component[i];
+    }
+  component[i]=NULL;
+
+  return babl_format_new (
+      model,
+      type,
+      component[0],
+      component[1],
+      component[2],
+      component[3],
+      component[4],
+      component[5],
+      component[6],
+      component[7],
+      component[8],
+      component[9],
+      NULL
+   );
+}
+
+#define pixels  256
+
+static double *
+test_create (void)
+{
+  double *test;
+  int     i;
+
+  srandom (20050728);
+  
+  test = babl_malloc (sizeof (double) * pixels * 4);
+
+  for (i = 0; i < pixels * 4; i++)
+     test [i] = (double) random () / RAND_MAX;
+
+  return test;
+}
+
+double
+babl_format_loss (Babl *babl)
+{
+  double  loss = 0.0;
+  double *test;
+  void   *original;
+  double *clipped;
+  void   *destination;
+  double *transformed;
+
+  Babl *ref_fmt;
+  Babl *fmt;
+  Babl *fish_to;
+  Babl *fish_from;
+
+  ref_fmt   = babl_format_new (
+       babl_model ("RGBA"),
+       babl_type ("double"),
+       babl_component ("R"),
+       babl_component ("G"),
+       babl_component ("B"),
+       babl_component ("A"),
+       NULL);
+
+  if (babl->format.loss != -1.0)
+    return babl->format.loss;
+  
+  fmt       = babl; 
+  fish_to   = babl_fish_reference (ref_fmt, fmt);
+  fish_from = babl_fish_reference (fmt, ref_fmt);
+ 
+  test        = test_create (); 
+  original    = babl_calloc (pixels, fmt->format.bytes_per_pixel);
+  clipped     = babl_calloc (pixels, ref_fmt->format.bytes_per_pixel);
+  destination = babl_calloc (pixels, fmt->format.bytes_per_pixel);
+  transformed = babl_calloc (pixels,  ref_fmt->format.bytes_per_pixel);
+
+  babl_process (fish_to,   test,        original,    pixels);
+  babl_process (fish_from, original,    clipped,     pixels);
+  babl_process (fish_to,   clipped,     destination, pixels);
+  babl_process (fish_from, destination, transformed, pixels);
+
+  {
+    int i;
+
+    for (i=0;i<pixels*4;i++)
+      {
+        loss += fabs (clipped[i] - test[i]);
+      }
+    loss /= pixels;
+
+  }
+  
+  babl_free (original);
+  babl_free (clipped);
+  babl_free (destination);
+  babl_free (transformed);
+  babl_free (test);
+
+  babl->format.loss = loss;
+  return loss;
 }
 
 BABL_CLASS_TEMPLATE (format)

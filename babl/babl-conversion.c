@@ -21,12 +21,12 @@
 #include "babl-db.h"
 #include <string.h>
 #include <stdarg.h>
+#include <math.h>
 
 static int 
 each_babl_conversion_destroy (Babl *babl,
                               void *data)
 {
-  babl_free (babl->instance.name);
   babl_free (babl);
   return 0;  /* continue iterating */
 }
@@ -45,37 +45,48 @@ conversion_new (const char        *name,
   babl_assert (source->class_type ==
                destination->class_type);
 
+  babl = babl_malloc (sizeof (BablConversion) + strlen (name) + 1);
+  babl->instance.name = (void *)babl + sizeof (BablConversion);
+  strcpy(babl->instance.name, name);
+
   if (linear)
     {
-      babl = babl_malloc (sizeof (BablConversion));
       babl->class_type      = BABL_CONVERSION_LINEAR;
       babl->conversion.function.linear = linear;
     }
   else if (plane)
     {
-      babl = babl_malloc (sizeof (BablConversion));
       babl->class_type      = BABL_CONVERSION_PLANE;
       babl->conversion.function.plane = plane;
     }
   else if (planar)
     {
-      babl = babl_malloc (sizeof (BablConversion));
       babl->class_type = BABL_CONVERSION_PLANAR;
       babl->conversion.function.planar = planar;
     }
   switch (source->class_type)
     {
       case BABL_TYPE:
-        break;
-      case BABL_MODEL:
-        if (linear)
+        if (linear) /* maybe linear could take a special argument, passed as an
+                       additional key/value pair in the constructor. To cast it
+                       as a generic N-element conversion, thus making it applicable
+                       to being generic for any within model conversion of plain
+                       buffers.
+                     */
           {
-            babl_fatal ("linear support for %s not supported",
+            babl_fatal ("linear conversions not supported for %s",
                         babl_class_name (source->class_type));
           }
-        else if (plane)
+        else if (planar)
           {
-            babl_fatal ("plane support for %s not supported",
+            babl_fatal ("planar conversions not supported for %ssupported",
+                        babl_class_name (source->class_type));
+          }
+        break;
+      case BABL_MODEL:
+        if (plane)
+          {
+            babl_fatal ("plane conversions not supported for %s",
                         babl_class_name (source->class_type));
           }
         break;
@@ -87,32 +98,72 @@ conversion_new (const char        *name,
     }
 
   babl->instance.id            = id;
-  babl->instance.name          = babl_strdup (name);
   babl->conversion.source      = (union Babl*)source;
   babl->conversion.destination = (union Babl*)destination;
-  babl->conversion.error       = 0.0;
+  babl->conversion.error       = -1.0;
+  babl->conversion.cost        = 69;
 
   babl->conversion.pixels      = 0;
   babl->conversion.processings = 0;
 
-  babl_add_ptr_to_list ((void ***)&(source->type.from), babl);
-  
+  if (babl->class_type == BABL_CONVERSION_LINEAR &&
+      BABL(babl->conversion.source)->class_type == BABL_MODEL)
+    {
+       Babl *src_format=NULL;
+       Babl *dst_format=NULL;
+       if (BABL(babl->conversion.source) == babl_model_id (BABL_RGBA))
+         {
+           src_format = babl_format_id (BABL_RGBA_DOUBLE);
+           dst_format = babl_format_with_model_as_type (
+                                BABL(babl->conversion.destination),
+                                babl_type_id (BABL_DOUBLE));
+         }
+       else if (BABL(babl->conversion.destination) == babl_model_id (BABL_RGBA))
+         {
+           src_format = babl_format_with_model_as_type (
+                                BABL(babl->conversion.source),
+                                babl_type_id (BABL_DOUBLE));
+           dst_format = babl_format_id (BABL_RGBA_DOUBLE);
+         }
+       else
+         {
+           babl_fatal ("neither source nor destination model is RGBA (requirement might be temporary)");
+         }
+       babl_conversion_new (
+          src_format,
+          dst_format, 
+          "linear", linear,
+          NULL);
+       babl->conversion.error = 0.0;
+    }
+
   return babl;
 }
 
 static char buf[512]="";
 static char *
-create_name (Babl *source, Babl *destination)
+create_name (Babl *source, Babl *destination, int type)
 {
 
   if (babl_extender ())
     {
-      snprintf (buf, 512-1, "%s : %s to %s", BABL(babl_extender())->instance.name, source->instance.name, destination->instance.name);
+      snprintf (buf, 512-1, "%s : %s%s to %s",
+          BABL(babl_extender())->instance.name,
+          type == BABL_CONVERSION_LINEAR?"":
+          type == BABL_CONVERSION_PLANE?"plane ":
+          type == BABL_CONVERSION_PLANAR?"planar ":"Eeeek! ",
+          source->instance.name,
+          destination->instance.name);
       buf[511]='\0';
     }
   else
     {
-      snprintf (buf, 512-1, "%s to %s", source->instance.name, destination->instance.name);
+      snprintf (buf, 512-1, "%s %s to %s",
+          type == BABL_CONVERSION_LINEAR?"":
+          type == BABL_CONVERSION_PLANE?"plane ":
+          type == BABL_CONVERSION_PLANAR?"planar ":"Eeeek! ",
+          source->instance.name,
+          destination->instance.name);
       buf[511]='\0';
     }
   return buf;
@@ -129,7 +180,7 @@ babl_conversion_new (void *first_arg,
   BablFuncLinear     linear      = NULL;
   BablFuncPlane      plane       = NULL;
   BablFuncPlanar     planar      = NULL;
-
+  int                type        = 0;
   int                got_func    = 0;
   const char        *arg         = first_arg;
 
@@ -143,6 +194,7 @@ babl_conversion_new (void *first_arg,
 
   assert (BABL_IS_BABL(source));
   assert (BABL_IS_BABL(destination));
+  
   
   while (arg)
     {
@@ -192,13 +244,28 @@ babl_conversion_new (void *first_arg,
   assert (source);
   assert (destination);
 
-  babl = conversion_new (create_name (source, destination),
+  if (linear)
+    {
+      type = BABL_CONVERSION_LINEAR;
+    }
+  else if (plane)
+    {
+      type = BABL_CONVERSION_PLANE;
+    }
+  else if (planar)
+    {
+      type = BABL_CONVERSION_PLANAR;
+    }
+  babl = conversion_new (create_name (source, destination, type),
        id, source, destination, linear, plane, planar);
 
   { 
     Babl *ret = babl_db_insert (db, babl);
     if (ret!=babl)
         babl_free (babl);
+    else
+        babl_add_ptr_to_list ((void ***)&(source->type.from), babl);
+
     return ret;
   }
 }
@@ -252,11 +319,13 @@ babl_conversion_planar_process (BablConversion *conversion,
 }
 
 long
-babl_conversion_process (BablConversion *conversion,
-                         void           *source,
-                         void           *destination,
-                         long            n)
+babl_conversion_process (Babl *babl,
+                         void *source,
+                         void *destination,
+                         long  n)
 {
+  BablConversion *conversion = (BablConversion*) babl;
+
   babl_assert (BABL_IS_BABL (conversion));
 
   switch (BABL(conversion)->class_type)
@@ -309,8 +378,10 @@ babl_conversion_process (BablConversion *conversion,
                                                         n);
       break;
     case BABL_CONVERSION_LINEAR:
-      babl_assert (!BABL_IS_BABL (source));
-      babl_assert (!BABL_IS_BABL (destination));
+      /* the assertions relied on a babl_malloc structure 
+       *
+       * babl_assert (!BABL_IS_BABL (source));
+      babl_assert (!BABL_IS_BABL (destination));*/
 
       babl_conversion_linear_process (conversion,
                                       source, 
@@ -325,7 +396,136 @@ babl_conversion_process (BablConversion *conversion,
       return 0;
       break;
   }
+
+  conversion->processings ++;
+  conversion->pixels += n;
   return n;
 }
+
+#define pixels   8192*2
+
+static double *
+test_create (void)
+{
+  double *test;
+  int     i;
+  
+  srandom (20050728);
+
+  test = babl_malloc (sizeof (double) * pixels * 4);
+
+  for (i = 0; i < pixels * 4; i++)
+     test [i] = (double) random () / RAND_MAX;
+
+  return test;
+}
+
+double
+babl_conversion_error (BablConversion *conversion)
+{
+  Babl *fmt_source;
+  Babl *fmt_destination;
+
+  Babl *fmt_rgba_double;
+
+  double   error = 0.0;
+  unsigned int ticks_start = 0;
+  unsigned int ticks_end   = 0;
+ 
+  double  *test; 
+  void    *source;
+  void    *destination;
+  double  *destination_rgba_double;
+  void    *ref_destination;
+  double  *ref_destination_rgba_double;
+
+
+  if (!conversion)
+    return 0.0;
+
+  fmt_source      = BABL(conversion->source);
+  fmt_destination = BABL(conversion->destination);
+
+  if (fmt_source == fmt_destination)
+    {
+      conversion->error = 0.0;
+      return 0.0;
+    }
+
+  if (!(fmt_source->instance.id      != BABL_RGBA   &&
+      fmt_destination->instance.id != BABL_RGBA   &&
+      fmt_source->instance.id      != BABL_DOUBLE &&
+      fmt_destination->instance.id != BABL_DOUBLE &&
+      fmt_source->class_type       == BABL_FORMAT &&
+      fmt_destination->class_type  == BABL_FORMAT))
+    {
+      conversion->error = 0.000042;
+    }
+  if (conversion->error != -1.0)  /* double conversion against a set value should work */
+    {
+      return conversion->error;
+    }
+  
+  test=test_create ();
+
+  fmt_rgba_double = babl_format_new (
+       babl_model     ("RGBA"),
+       babl_type      ("double"),
+       babl_component ("R"),
+       babl_component ("G"),
+       babl_component ("B"),
+       babl_component ("A"),
+       NULL);
+
+
+  source          = babl_calloc (pixels, fmt_source->format.bytes_per_pixel);
+  destination     = babl_calloc (pixels, fmt_destination->format.bytes_per_pixel);
+  ref_destination = babl_calloc (pixels, fmt_destination->format.bytes_per_pixel);
+  destination_rgba_double     = babl_calloc (pixels, fmt_rgba_double->format.bytes_per_pixel);
+  ref_destination_rgba_double = babl_calloc (pixels, fmt_rgba_double->format.bytes_per_pixel);
+  
+  babl_process (babl_fish_reference (fmt_rgba_double, fmt_source),
+      test, source, pixels);
+
+  ticks_start = babl_ticks ();
+  babl_process (babl_fish_simple (conversion),
+      source, destination, pixels);
+  ticks_end = babl_ticks ();
+
+  babl_process (babl_fish_reference (fmt_source, fmt_destination),
+      source, ref_destination, pixels);
+
+  babl_process (babl_fish_reference (fmt_destination, fmt_rgba_double),
+      ref_destination, ref_destination_rgba_double, pixels);
+  babl_process (babl_fish_reference (fmt_destination, fmt_rgba_double),
+      destination, destination_rgba_double, pixels);
+
+  {
+    int i;
+
+    for (i=0;i<pixels;i++)
+      {
+        int j;
+        for (j=0;j<4;j++)
+            error += fabs (destination_rgba_double[i*4+j] - 
+                            ref_destination_rgba_double[i*4+j]);
+      }
+     error /= pixels;
+     error *= 100;
+  }
+  
+  babl_free (source);
+  babl_free (destination);
+  babl_free (destination_rgba_double);
+  babl_free (ref_destination);
+  babl_free (ref_destination_rgba_double);
+  babl_free (test);
+
+  conversion->error = error;
+  conversion->cost  = ticks_end-ticks_start;
+
+  return error;
+}
+
 
 BABL_CLASS_TEMPLATE (conversion)
