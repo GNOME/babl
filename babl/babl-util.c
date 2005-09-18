@@ -60,3 +60,43 @@ babl_add_ptr_to_list (void ***list,
   (*list)[orig_len+1]=NULL;
 }
 
+void
+babl_list_each (void             **list,
+                BablEachFunction   each_fun,
+                void              *user_data)
+{
+  int i;
+  if (!list)
+    return;
+  for (i=0; i < list_length (list); i++)
+    {
+      if (each_fun ((Babl*) list[i], user_data))
+         break;
+    }
+}
+
+#include <sys/time.h>
+#include <time.h>
+
+static struct timeval start_time;
+static struct timeval measure_time;
+
+#define msecs(time) ((time.tv_sec-start_time.tv_sec)*1000 + time.tv_usec/1000)
+
+static void
+init_ticks (void)
+{
+  static int done=0;
+  if (done)
+    return;
+  done=1;
+  gettimeofday (&start_time, NULL);
+}
+
+unsigned int
+babl_ticks (void)
+{
+  init_ticks ();
+  gettimeofday (&measure_time, NULL);
+  return msecs(measure_time) - msecs(start_time);
+}

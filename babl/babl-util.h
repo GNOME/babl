@@ -23,4 +23,10 @@
 void   babl_add_ptr_to_list (void       ***list,
                              void         *new);
 
+void
+babl_list_each (void             **list,
+                BablEachFunction   each_fun,
+                void              *user_data);
+
+unsigned int    babl_ticks (void);
 #endif
