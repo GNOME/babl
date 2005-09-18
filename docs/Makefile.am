@@ -8,7 +8,8 @@ DIST_SUBDIRS= graphics
 #
 #
 HTML_FILES = index-static.html 	\
-	     index.html
+	     index.html		\
+	     BablFishPath.html
 
 EXTRA_DIST= 			\
 	.cvsignore		\
@@ -18,24 +19,42 @@ EXTRA_DIST= 			\
 	index.html		\
 	LGPL
 
-BUILT_EXTRA_DIST = index.html
+BUILT_EXTRA_DIST = index.html BablFishPath.html
 
-CLEANFILES = README
+CLEANFILES = README changelog.rss
 DISTCLEANFILES = index-static.html 
-MAINTAINERCLEANFILES = index.html
+MAINTAINERCLEANFILES = $(BUILT_EXTRA_DIST)
 
-all: $(HTML_FILES)
+all: $(HTML_FILES) rss
 
 
+BablFishPath.html: $(top_builddir)/tests/babl_fish_path_dhtml
+	echo -n "HTML:"
+	echo -n " $@"
+	export BABL_PATH="$(top_builddir)/extensions"; $< > $@ &&\
+	echo " [OK]" || echo " Fail"
 
-index.html: index-static.html $(top_builddir)/tests/babl_html_dump $(top_srcdir)/AUTHORS  $(top_srcdir)/NEWS $(top_srcdir)/extensions/*.so Makefile.am
+BablFishPath.txt: $(top_builddir)/tests/babl_fish_path_fitness
+	echo -n "UTF8:"
+	echo -n " $@"
+	export BABL_PATH="$(top_builddir)/extensions"; $< > $@ &&\
+	echo " [OK]" || echo " Fail"
+
+index.html: index-static.html                    \
+	    $(top_builddir)/tests/babl_html_dump \
+	    $(top_srcdir)/AUTHORS                \
+	    $(top_srcdir)/NEWS                   \
+	    BablFishPath.txt			 \
+	    Makefile.am
 	echo -n "HTML: $@"
 	cp $< $@ 
 	(TMPFILE=`tempfile`;\
 	export BABL_PATH="$(top_builddir)/extensions"; $(top_builddir)/tests/babl_html_dump > $$TMPFILE;\
 	$(top_srcdir)/docs/tools/xml_insert.sh $@ BablBase $$TMPFILE;\
 	rm -f $$TMPFILE )
-
+	echo -n "."
+	
+	$(top_srcdir)/docs/tools/xml_insert.sh $@ BablFishPath BablFishPath.txt
 	$(top_srcdir)/docs/tools/xml_insert.sh $@ AUTHORS $(top_srcdir)/AUTHORS
 	$(top_srcdir)/docs/tools/xml_insert.sh $@ NEWS $(top_srcdir)/NEWS
 	echo " [OK]"
@@ -45,12 +64,21 @@ distclean-local:
 		rm -f $(BUILT_EXTRA_DIST);	\
 	fi
 
+rss: changelog.rss
+
+rss: changelog.rss
+
+changelog.rss: ../ChangeLog
+	echo -n " RSS:"
+	echo -n " $@"
+	tools/changelog2rss $< > $@ && \
+	echo " [OK]" || echo " Fail"
 
 web: all graphics
 	echo -n " WEB: "
 	ping -c 1 $(WEBSITE_HOST) >/dev/null && \
 	   (\
-	      scp *.html *.css\
+	      scp *.txt *.html *.css\
 	          "$(WEBSITE_HOST):$(WEBSITE_LOCATION)/" >/dev/null && \
 		  echo -n "."; \
 	      scp graphics/*.png graphics/*.html\

@@ -16,14 +16,14 @@
     </style>
 
     <script type='text/javascript'>
-        function hide(id)
-        {
-          (document.getElementById(id)).style.display = "none";
-        }
-        function show(id)
-        {
-          (document.getElementById(id)).style.display = "block";
-        }
+    function hide(id)
+    {
+      (document.getElementById(id)).style.display = "none";
+    }
+    function show(id)
+    {
+      (document.getElementById(id)).style.display = "block";
+    }
     function get_visible (id)
     {
       var element = document.getElementById(id);
@@ -34,7 +34,6 @@
          return true;
       return false;
     }
-
     function set_visible (id, visible)
     {
       var element = document.getElementById(id);
@@ -54,7 +53,6 @@
       else
         set_visible(id,true);
     }
-
     </script>
   </head>
   <body>
@@ -70,27 +68,32 @@
          <h3>Contents</h3>
       </div>
       <ul>
-        <li><a href='#About'>About</a></li>
+        <li><a href='#Babl'>Babl</a></li>
         <li><a href='#NEWS'>News</a></li>
+        <li><a href='#Background'>Background</a></li>
+        <li><a href='#How'>How?</a></li>
         <li><a href='#Features'>Features</a></li>
+        <li><a href='#Vocabulary'>Vocabulary</a></li>
         <li><a href='#Data-types'>&nbsp;&nbsp;Data types</a></li>
         <li><a href='#Color-models'>&nbsp;&nbsp;Color models</a></li>
         <li><a href='#Pixel-formats'>&nbsp;&nbsp;Pixel formats</a></li>
+        <li><a href='#Extensions'>Extensions</a></li>
         <li><a href='#Dependencies'>Dependencies</a></li>
         <li><a href='#Source'>Source</a></li>
         <li><a href='#Usage'>Usage</a></li>
         <li><a href='#Extending'>Extending</a></li>
+        <li><a href='#ColorManagement'>Color Management</a></li>
         <li><a href='#TODO'>Todo</a></li>
         <li><a href='#Copyright'>Copyright</a></li>
         <li><a href='#Authors'>&nbsp;&nbsp;Authors</a></li>
       </ul>
     </div>
 
-    <a name='About'></a>
+    <a name='Babl'></a>
     <div class='paper'>
       <div class='content'>
 
-        <h2>About</h2>
+        <!--<h1>Babl</h1>-->
         <p>Babl is a <em>dynamic, any to any, pixel format conversion
           library</em> It provides conversions between the myriad of buffer
         types images can be stored in. Babl doesn't only help with existing
@@ -99,8 +102,56 @@
 
         <a name='NEWS'></a>
         <h2>News</h2>
+<!--
 <!--NEWS-->
-        <p>Also see the <a href='http://cvs.gnome.org/viewcvs/*checkout*/babl/ChangeLog'>ChangeLog in CVS</a>.</p>
+-->
+        <p>See the <a href='http://cvs.gnome.org/viewcvs/*checkout*/babl/ChangeLog'>ChangeLog in CVS</a>.</p>
+
+        <a name='Background'></a>
+        <h2>Background</h2>
+        <p> When creating various libraries and small tool that deal with
+        computer graphics I often have created conversion functions
+        transforming raster images between different representations. </p>
+
+        <p>Libraries to help with such conversions already do exist, but no
+        extendable candidate have surfaced in searches when looking.
+        </p>
+
+        <p>The vocabulary developed in babl will most likely be part of GEGL's
+        vocabulary to describe image buffers.
+        </p>
+
+        <a name='How'></a>
+        <h2>How babl works</h2>
+        <p>When using BablFishes to do your conversions, you request a fish to
+        convert between two formats, and an optimal fish to babls capability is
+        provided that you can use to do your conversions. Babl also provides
+        the capability to describe new formats based on a vocbulary of user
+        registered color models and data types.
+        </p>
+
+        <p> The need to provide your own reference conversions should be
+        unneccesary, since babl provides a good base vocabulary in BablBase,
+        as well as extensions.</p>
+
+        <p>When performing further extensions to the vocabulary of babl, the
+        internal consistency is governed by reference conversions that operate
+        on <em>double</em> (64 bit floating point values.) The only color model
+        created during BablCore bootstrap is <em>RGBA</em> (linear light RGB,
+        0.0 - 1.0, with a linear 0.0 - 1.0 opacity channel.) backed by
+        <em>double</em>.
+        </p>
+
+        <p>If what babls built in conversion isn't fast enough, you can provide
+        your own conversion between two formats, your registered conversion
+        will be taken into account when constructing other BablFishes as well.
+        </p>
+
+        <p>Babl extensions are shared objects, if you are already using a set
+        of conversion functions and you'd like to keep using them, as well as
+        the conversions babl provide, wrap your existing functions as an
+        extension. The code needed to wrap existing conversions is small.
+        </p>
 
         <a name='Features'></a>
         <h2>Features</h2>
@@ -114,11 +165,14 @@
           <li class='unstable'>Extendable and <a href='http://pippin.gimp.org/babl/introspect.txt'>introspectable</a> formats,
           color models, components and datatypes</li>
           <li class='unstable'>Reference 64bit floating point conversions for
-          data types and color models.
-<!--BablBase-->
-          </li>
+          data types and color models.</li>
         </ul>
 
+        <a name='Vocabulary'></a>
+        <h3 style='margin-bottom:0em;'>Vocabulary</h3>
+<!--BablBase-->
+        
+        <a name='Extensions'></a>
         <h3>Extensions</h3>
         <p>
         At compile, load and runtime; babl is extendable with:
@@ -137,6 +191,14 @@
           </li>
         </ul>
 
+        <h3>Shortcut coverage</h3>
+        <p>The diagram shown below is the coverage of shortcut conversions that already exist,
+           prior to the BablFishPath actually being operational, due to lack of testing of loss
+           against the reference conversions this is the most optimistic estimate. (<a href='BablFishPath.html'>DHTML version</a>)
+        </p>
+<pre style='font-size:50%;height:30em;overflow:scroll'>
+<!--BablFishPath-->
+</pre>
 
         <a name='Dependencies'></a>
         <h2>Dependencies</h2>
@@ -169,7 +231,7 @@
         buffers represented by an existing BablPixelFormat.
         </p>
         <pre
-><span class='function'>babl_process</span> <span class='paren'>(</span><span class='function'>babl_fish</span> <span class='paren'>(</span><span class='string'>"srgb"</span>, <span class='string'>"lab-float"</span><span class='paren'>)</span>,
+><span class='function'>babl_process</span> <span class='paren'>(</span><span class='function'>babl_fish</span> <span class='paren'>(</span><span class='string'>"srgb"</span>, <span class='string'>"CIE Lab float"</span><span class='paren'>)</span>,
               srgb_buffer, lab_buffer,
               pixel_count<span class='paren'>);</span></pre>
         
@@ -177,22 +239,22 @@
         needs, new ones can be created on the fly. The constructor
         will provide the prior created one if duplicates are registered. </p>
         <pre
-><span class='function'>babl_format_new</span> <span class='paren'>(</span><span class='function'>babl_model</span> <span class='paren'>(</span><span class='string'>"rgb"</span><span class='paren'>)</span>,
+><span class='function'>babl_format_new</span> <span class='paren'>(</span><span class='function'>babl_model</span> <span class='paren'>(</span><span class='string'>"R'G'B'"</span><span class='paren'>)</span>,
                  <span class='function'>babl_type</span> <span class='paren'>(</span><span class='string'>"u8"</span><span class='paren'>)</span>,
-                 <span class='function'>babl_component</span> <span class='paren'>(</span><span class='string'>"B"</span><span class='paren'>)</span>,
-                 <span class='function'>babl_component</span> <span class='paren'>(</span><span class='string'>"G"</span><span class='paren'>)</span>,
-                 <span class='function'>babl_component</span> <span class='paren'>(</span><span class='string'>"R"</span><span class='paren'>)</span>,
+                 <span class='function'>babl_component</span> <span class='paren'>(</span><span class='string'>"B'"</span><span class='paren'>)</span>,
+                 <span class='function'>babl_component</span> <span class='paren'>(</span><span class='string'>"G'"</span><span class='paren'>)</span>,
+                 <span class='function'>babl_component</span> <span class='paren'>(</span><span class='string'>"R'"</span><span class='paren'>)</span>,
                  <span class='NULL'>NULL</span><span class='paren'>);</span></pre>
 
         <p>Instead of a linear buffer you can an image descriptor which desribes the start of the memory segment, the pitch in bytes between samples, and the rowstride (not used yet,
         use 0 to indicate unlimited for compatibility with future API.)
         </p>
         <pre
-><span class='function'>babl_process</span> <span class='paren'>(</span><span class='function'>babl_fish</span> <span class='paren'>(</span><span class='string'>"srgb"</span>, <span class='string'>"y'cbcr420p"</span><span class='paren'>)</span>,
+><span class='function'>babl_process</span> <span class='paren'>(</span><span class='function'>babl_fish</span> <span class='paren'>(</span><span class='string'>"srgb"</span>, <span class='string'>"Y'CbCr u8"</span><span class='paren'>)</span>,
               srgb_buffer,
               <span class='function'>babl_image</span> <span class='paren'>(</span><span class='function'><span class='string'>"Y'"</span>, luma_buffer, 1, 0,
-                          <span class='string'>"Cb"</span>, cb_buffer,  1, 0,
-                          <span class='string'>"Cr"</span>, cr_buffer,  1, 0,
+                          <span class='string'>"Cb"</span>, cb_buffer,   1, 0,
+                          <span class='string'>"Cr"</span>, cr_buffer,   1, 0,
                           <span class='NULL'>NULL</span><span class='paren'>);</span>
 </pre>
 
@@ -207,34 +269,30 @@
         similar in style to the API's described under the <a href='#Usage'>Usage section</a>.
         </p>
 
+        <a name='ColorManagement'></a>
+        <h2>Color Management</h2>
+        <p> Babl is not a color management system, since it doesn't deal with
+        ICC profiles. One way to deal with this is to register a custom color
+        model, that is backed by for instance <em>lcms</em>. (see the
+        <em>lcms-lab</em> extension) Then when using the newly registered color
+        model to create pixel formats, lcms will be used behind the scenes.
+        </p>
         
         <a name='TODO'></a>
         <h2>TODO</h2>
         
         <ul>
-          <li>Compile and/or runtime profiling. <em>(The speed of conversions
+          <li>Compile-time instead of runtime profiling / storae of profiling
+          and loss data.. <em>(The speed of conversions
             is bound to 'wobble', according to architecture, compiler flags,
             concurrently running processes and phase of moon.)</em></li>
           <li class='unstable'>Horizontal and vertical subsampling (for
           implementing 4:2:2 4:2:0 4:1:1 etc. chroma subsampling)</li>
           <li>Thread safety for mutations of the type system.</li>
           <li>Support for datatypes that are not a multiple of 8bit.</li>
-          <!--<li>Relative error is the difference between the two vaues
-          divided by the actual value, for instance, if the actual result of a
-          calculation should be 3.13159, but the result obtained was 3.14x10^0,
-          the relative error is 0.00159/3.14159 => 0.0005 (source: 'A new book
-          on c (cook1_0a.pdf)')</li>-->
-<!--
-cvs:
-
-cp babl/babl-pixel-format.c babl/babl-format.c
-cp babl/babl-pixel-format.h babl/babl-format.h
-cp babl/babl-classes.c      babl/babl-internal.c
-
-
--->
+          <li>dithering</li>
+          <li>image resampling?</li>
         </ul>
-
 
         <a name='Copyright'></a>
         <h2>Copyright</h2>
