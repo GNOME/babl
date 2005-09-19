@@ -1,5 +1,9 @@
 2005-09-19  Øyvind Kolås  <pippin@gimp.org>
 
+	* docs/index-static.html.in: s/DHTML/interactive/
+
+2005-09-19  Øyvind Kolås  <pippin@gimp.org>
+
 	BablFishPath touchups.
 
 	* babl/babl-conversion.c: cost = cost * 10 + 1, makes the overhead

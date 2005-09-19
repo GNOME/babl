@@ -194,7 +194,7 @@
         <h3>Shortcut coverage</h3>
         <p>The diagram shown below is the coverage of shortcut conversions that already exist,
            prior to the BablFishPath actually being operational, due to lack of testing of loss
-           against the reference conversions this is the most optimistic estimate. (<a href='BablFishPath.html'>DHTML version</a>)
+           against the reference conversions this is the most optimistic estimate. (<a href='BablFishPath.html'>Interactive version</a>)
         </p>
 <pre style='font-size:50%;height:30em;overflow:scroll'>
 <!--BablFishPath-->
