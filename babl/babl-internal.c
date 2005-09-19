@@ -160,6 +160,8 @@ babl_extension_post_load (void)
 {
   babl_conversion_each (each_conversion, NULL);
   babl_format_each     (each_format, NULL);
+    return;
   babl_model_each (gen_formats_for_model, NULL);
+  babl_format_each     (each_format, NULL);
 }
 

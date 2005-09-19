@@ -1624,6 +1624,7 @@ conv_labF_xyzF (unsigned char *src, unsigned char *dst, long samples)
       dst_f += 3;
       src_f += 3;
     }
+  return samples;
 }
 
 static INLINE long
@@ -1667,6 +1668,7 @@ conv_xyzF_labF (unsigned char *src, unsigned char *dst, long samples)
       dst_f += 3;
       src_f += 3;
     }
+  return samples;
 }
 
 /******* end of cpercep lift out **/

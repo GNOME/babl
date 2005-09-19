@@ -282,6 +282,8 @@
         <h2>TODO</h2>
         
         <ul>
+          <li>Validate that BablFishPath is actually faster than the
+          BablFishReference it is a replacement for.</li>
           <li>Compile-time instead of runtime profiling / storae of profiling
           and loss data.. <em>(The speed of conversions
             is bound to 'wobble', according to architecture, compiler flags,

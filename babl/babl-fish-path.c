@@ -198,6 +198,8 @@ chain_gen_each (Babl *babl,
           temp_loss = analytic_loss;
           
           if (error <= (1.0 + BABL_LEGAL_ERROR)  /* we're legal */ &&  
+              (temp_loss >= format_analytic_loss (c->from, c->to)) &&
+                  
              
               /* better than the existing best candidate */ 
               ( temp_loss <  *c->best_loss ||

@@ -1,5 +1,23 @@
 2005-09-19  Øyvind Kolås  <pippin@gimp.org>
 
+	BablFishPath touchups.
+
+	* babl/babl-conversion.c: cost = cost * 10 + 1, makes the overhead
+	of actually running a conversion 1. Removed stupid long pats from
+	created conversions.
+	* babl/babl-fish-path.c: (chain_gen_each): Ensure the chain doesn't
+	take us through larger loss than allowed.
+	* babl/babl-internal.c: (babl_extension_post_load): do not
+	autogenerate formats.
+	* docs/index-static.html.in: updating documentation.
+	* tests/babl_fish_path_dhtml.c: (table_destination_each),
+	(table_source_each), (main): recoded to use CSS tricks instead of
+	javascript, reduced generated file size by 50%;
+	* extensions/gggl.c: (conv_labF_xyzF), (conv_xyzF_labF): added missing
+	return value.
+
+2005-09-19  Øyvind Kolås  <pippin@gimp.org>
+
 	* extensions/gggl.c: Added the bulk of gggl based conversions as an
 	extension. Many of these don't live up to the quality requirements of
 	babl, but some do, and provide a good base for further BablFishPath

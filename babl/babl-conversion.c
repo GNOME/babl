@@ -522,7 +522,7 @@ babl_conversion_error (BablConversion *conversion)
   babl_free (test);
 
   conversion->error = error;
-  conversion->cost  = ticks_end-ticks_start;
+  conversion->cost  = (ticks_end-ticks_start)*10+1;
 
   return error;
 }
