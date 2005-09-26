@@ -16,6 +16,7 @@ c_sources =				\
 	babl-extension.c		\
 	babl-fish.c			\
 	babl-fish-simple.c		\
+	babl-fish-stats.c		\
 	babl-fish-reference.c		\
 	babl-fish-path.c    	 	\
 	babl-format.c			\

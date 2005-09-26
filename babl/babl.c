@@ -52,6 +52,18 @@ babl_destroy (void)
 {
   if (!--ref_count)
     {
+      if (getenv ("BABL_STATS"))
+      {
+         char logfile_name[]="/tmp/babl-stats.html";
+         FILE *logfile;
+         logfile = fopen (logfile_name, "w");
+         if (logfile)
+           {
+            babl_fish_stats (logfile);
+            fclose (logfile);
+           }
+      }
+      
       babl_extension_destroy ();
       babl_fish_destroy ();
       babl_conversion_destroy ();
