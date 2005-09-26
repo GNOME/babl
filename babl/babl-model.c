@@ -173,7 +173,7 @@ babl_model_new (void *first_argument,
 
 #define TOLERANCE 0.001
 
-#define pixels    512
+#define test_pixels    512
 
 static double *
 test_create (void)
@@ -183,9 +183,9 @@ test_create (void)
   
   srandom (20050728);
 
-  test = babl_malloc (sizeof (double) * pixels * 4);
+  test = babl_malloc (sizeof (double) * test_pixels * 4);
 
-  for (i = 0; i < pixels * 4; i++)
+  for (i = 0; i < test_pixels * 4; i++)
      test [i] = ((double) random () / RAND_MAX ) * 1.4 - 0.2;
 
   return test;
@@ -258,21 +258,26 @@ babl_model_is_symmetric (Babl *babl)
   fish_to   = babl_fish_reference (ref_fmt, fmt);
   fish_from = babl_fish_reference (fmt, ref_fmt);
   
-  original    = babl_calloc (1,64/8 * babl->model.components * pixels);
-  clipped     = babl_calloc (1,64/8 * 4 * pixels);
-  destination = babl_calloc (1,64/8 * babl->model.components * pixels);
-  transformed = babl_calloc (1,64/8 * 4 * pixels);
+  original    = babl_calloc (1,64/8 * babl->model.components * test_pixels);
+  clipped     = babl_calloc (1,64/8 * 4 * test_pixels);
+  destination = babl_calloc (1,64/8 * babl->model.components * test_pixels);
+  transformed = babl_calloc (1,64/8 * 4 * test_pixels);
 
-  babl_process (fish_to,   test,        original,    pixels);
-  babl_process (fish_from, original,    clipped,     pixels);
-  babl_process (fish_to,   clipped,     destination, pixels);
-  babl_process (fish_from, destination, transformed, pixels);
+  babl_process (fish_to,   test,        original,    test_pixels);
+  babl_process (fish_from, original,    clipped,     test_pixels);
+  babl_process (fish_to,   clipped,     destination, test_pixels);
+  babl_process (fish_from, destination, transformed, test_pixels);
+
+  fish_to->fish.processings-=2;
+  fish_from->fish.processings-=2;
+  fish_to->fish.pixels-=test_pixels*2;
+  fish_from->fish.pixels -= test_pixels*2;
 
   {
     int i;
     int log=0;
 
-    for (i=0;i<pixels;i++)
+    for (i=0;i<test_pixels;i++)
       {
         int j;
         for (j=0;j<4;j++)

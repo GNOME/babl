@@ -120,6 +120,11 @@ babl_core_init (void)
    "alpha",
    NULL);
 
+  babl_component_new (
+   "PAD",
+   "id",    BABL_PADDING,
+   NULL);
+
   babl_model_new (
     "id", BABL_RGBA,
     babl_component_id (BABL_RED),

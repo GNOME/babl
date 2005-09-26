@@ -1,5 +1,28 @@
 2005-09-27  Øyvind Kolås  <pippin@gimp.org>
 
+	Upgrade of BablFishPath.
+
+	* babl/babl-fish-path.c: (legal_error), (max_path_length),
+	(get_conversion_chain), (chain_contains_fmt), (chain_gen_each),
+	(babl_fish_path), (chain_process), (babl_fish_path_process),
+	(test_create), (chain_error): Various updates, needed instrumentation
+	and error data is now calculated and cached.
+	* babl/babl-fish-reference.c: (babl_fish_reference): do not update
+	instrumentation for internal calls.
+	* babl/babl-fish-simple.c: (babl_fish_simple): do not update
+	instrumentation for internal calls.
+	* babl/babl-introspect.c: (conversion_introspect): some more
+	      information.
+	* babl/babl-model.c: (test_create), (babl_model_is_symmetric): use
+	  comparion function from babl-util
+	* babl/babl-conversion.c: (test_create), (babl_conversion_cost),
+	(babl_conversion_error): use comparion function from babl-util.
+	* babl/babl.c: (babl_init): no need to do post extension tricks
+				    anymore.
+	* babl/babl-core.c: (babl_core_init): added PAD component.
+	  
+2005-09-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-util.h,
 	* babl/babl-util.c: (babl_rel_avg_error): moved buffer comparison
 						  function to one place.

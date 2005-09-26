@@ -402,7 +402,7 @@ babl_conversion_process (Babl *babl,
   return n;
 }
 
-#define pixels   8192*2
+#define test_pixels   512
 
 static double *
 test_create (void)
@@ -412,21 +412,37 @@ test_create (void)
   
   srandom (20050728);
 
-  test = babl_malloc (sizeof (double) * pixels * 4);
+  test = babl_malloc (sizeof (double) * test_pixels * 4);
 
-  for (i = 0; i < pixels * 4; i++)
+  for (i = 0; i < test_pixels * 4; i++)
      test [i] = (double) random () / RAND_MAX;
-
   return test;
 }
 
+long
+babl_conversion_cost (BablConversion *conversion)
+{
+  if (!conversion)
+    return 100000000.0;
+  if (conversion->error==-1.0)
+    babl_conversion_error (conversion);
+  return conversion->cost;
+}
+  
 double
 babl_conversion_error (BablConversion *conversion)
 {
   Babl *fmt_source;
   Babl *fmt_destination;
 
-  Babl *fmt_rgba_double;
+  Babl *fmt_rgba_double = fmt_rgba_double = babl_format_new (
+       babl_model     ("RGBA"),
+       babl_type      ("double"),
+       babl_component ("R"),
+       babl_component ("G"),
+       babl_component ("B"),
+       babl_component ("A"),
+       NULL);
 
   double   error = 0.0;
   unsigned int ticks_start = 0;
@@ -439,6 +455,9 @@ babl_conversion_error (BablConversion *conversion)
   void    *ref_destination;
   double  *ref_destination_rgba_double;
 
+  Babl *fish_rgba_to_source;
+  Babl *fish_reference;
+  Babl *fish_destination_to_rgba;
 
   if (!conversion)
     return 0.0;
@@ -446,13 +465,17 @@ babl_conversion_error (BablConversion *conversion)
   fmt_source      = BABL(conversion->source);
   fmt_destination = BABL(conversion->destination);
 
+  fish_rgba_to_source      = babl_fish_reference (fmt_rgba_double, fmt_source);
+  fish_reference           = babl_fish_reference (fmt_source, fmt_destination);
+  fish_destination_to_rgba = babl_fish_reference (fmt_destination, fmt_rgba_double);
+
   if (fmt_source == fmt_destination)
     {
       conversion->error = 0.0;
       return 0.0;
     }
 
-  if (!(fmt_source->instance.id      != BABL_RGBA   &&
+  if (!(fmt_source->instance.id    != BABL_RGBA   &&
       fmt_destination->instance.id != BABL_RGBA   &&
       fmt_source->instance.id      != BABL_DOUBLE &&
       fmt_destination->instance.id != BABL_DOUBLE &&
@@ -468,51 +491,41 @@ babl_conversion_error (BablConversion *conversion)
   
   test=test_create ();
 
-  fmt_rgba_double = babl_format_new (
-       babl_model     ("RGBA"),
-       babl_type      ("double"),
-       babl_component ("R"),
-       babl_component ("G"),
-       babl_component ("B"),
-       babl_component ("A"),
-       NULL);
 
-
-  source          = babl_calloc (pixels, fmt_source->format.bytes_per_pixel);
-  destination     = babl_calloc (pixels, fmt_destination->format.bytes_per_pixel);
-  ref_destination = babl_calloc (pixels, fmt_destination->format.bytes_per_pixel);
-  destination_rgba_double     = babl_calloc (pixels, fmt_rgba_double->format.bytes_per_pixel);
-  ref_destination_rgba_double = babl_calloc (pixels, fmt_rgba_double->format.bytes_per_pixel);
+  source          = babl_calloc (test_pixels, fmt_source->format.bytes_per_pixel);
+  destination     = babl_calloc (test_pixels, fmt_destination->format.bytes_per_pixel);
+  ref_destination = babl_calloc (test_pixels, fmt_destination->format.bytes_per_pixel);
+  destination_rgba_double     = babl_calloc (test_pixels, fmt_rgba_double->format.bytes_per_pixel);
+  ref_destination_rgba_double = babl_calloc (test_pixels, fmt_rgba_double->format.bytes_per_pixel);
   
-  babl_process (babl_fish_reference (fmt_rgba_double, fmt_source),
-      test, source, pixels);
+  babl_process (fish_rgba_to_source,
+      test, source, test_pixels);
 
   ticks_start = babl_ticks ();
   babl_process (babl_fish_simple (conversion),
-      source, destination, pixels);
+      source, destination, test_pixels);
   ticks_end = babl_ticks ();
 
-  babl_process (babl_fish_reference (fmt_source, fmt_destination),
-      source, ref_destination, pixels);
+  babl_process (fish_reference,
+      source, ref_destination, test_pixels);
 
-  babl_process (babl_fish_reference (fmt_destination, fmt_rgba_double),
-      ref_destination, ref_destination_rgba_double, pixels);
-  babl_process (babl_fish_reference (fmt_destination, fmt_rgba_double),
-      destination, destination_rgba_double, pixels);
+  babl_process (fish_destination_to_rgba,
+      ref_destination, ref_destination_rgba_double, test_pixels);
+  babl_process (fish_destination_to_rgba,
+      destination, destination_rgba_double, test_pixels);
 
-  {
-    int i;
+  error = babl_rel_avg_error (destination_rgba_double,
+                              ref_destination_rgba_double,
+                              test_pixels*4);
 
-    for (i=0;i<pixels;i++)
-      {
-        int j;
-        for (j=0;j<4;j++)
-            error += fabs (destination_rgba_double[i*4+j] - 
-                            ref_destination_rgba_double[i*4+j]);
-      }
-     error /= pixels;
-     error *= 100;
-  }
+  fish_rgba_to_source->fish.processings--;
+  fish_reference->fish.processings--;
+  fish_destination_to_rgba->fish.processings-=2;
+
+  fish_rgba_to_source->fish.pixels -= test_pixels;
+  fish_reference->fish.pixels -= test_pixels;
+  fish_destination_to_rgba->fish.pixels -= 2 * test_pixels;
+
   
   babl_free (source);
   babl_free (destination);
@@ -526,6 +539,5 @@ babl_conversion_error (BablConversion *conversion)
 
   return error;
 }
-
 
 BABL_CLASS_TEMPLATE (conversion)

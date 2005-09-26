@@ -69,7 +69,9 @@ babl_fish_reference (Babl   *source,
 
   babl->fish.processings = 0;
   babl->fish.pixels      = 0;
-
+  babl->fish.error       = 0.0;  /* assuming the provided reference conversions for types
+                                    and models are as exact as possible
+                                  */
   { 
     Babl *ret = babl_db_insert (babl_fish_db (), babl);
     if (ret!=babl)

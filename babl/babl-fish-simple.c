@@ -47,6 +47,9 @@ babl_fish_simple (BablConversion *conversion)
   babl->fish.processings = 0;
   babl->fish.pixels      = 0;
   babl->fish_simple.conversion = conversion;
+  babl->fish.error       = 0.0; /* babl fish simple should only be used by bablfish
+                                   reference, and babl fish reference only requests clean
+                                   conversions */
 
   { 
     Babl *ret = babl_db_insert (babl_fish_db (), babl);

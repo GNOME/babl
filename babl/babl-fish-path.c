@@ -17,9 +17,45 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <math.h>
 #include "babl-internal.h"
 
-#define BABL_LEGAL_ERROR 0.000001
+static double
+chain_error (Babl            *fmt_source,
+             Babl            *fmt_destination,
+             BablConversion **chain,
+             int              conversions);
+
+//#define BABL_LEGAL_ERROR 0.000001
+//#define BABL_LEGAL_ERROR 0.01
+
+static double legal_error (void)
+{
+  double error=0.00000001;
+  const char *env;
+
+  env=getenv ("BABL_ERROR");
+  if (env)
+    error = atof (env);
+  else if (error<=0.0)
+    error = 0.0;
+  return error;
+}
+
+static int max_path_length (void)
+{
+  int         max_length=3;
+  const char *env;
+
+  env=getenv ("BABL_PATH_LENGTH");
+  if (env)
+    max_length = atoi (env);
+  if (max_length>BABL_HARD_MAX_PATH_LENGTH)
+    max_length=BABL_HARD_MAX_PATH_LENGTH;
+  else if (max_length<=0)
+    max_length = 1;
+  return max_length;
+}
 
 typedef struct BablChainContext {
   Babl  *from;
@@ -27,80 +63,32 @@ typedef struct BablChainContext {
 
   double *best_cost;
   double *best_loss;
+  double *best_error;
 
-  Babl **chain;
+  BablConversion **chain;
   int   *conversions;
 
-  Babl **temp_chain;
+  BablConversion **temp_chain;
   int    temp_conversions;
 
   int    max_conversions;
 } BablChainContext;
 
 static int
-format_has_alpha (Babl *babl)
-{
-  int i;
-  for (i=0; i<babl->format.components; i++)
-    if (babl->format.component[i]->instance.id == BABL_ALPHA)
-      return 1;
-  return 0;
-}
-
-static int
-format_analytic_loss (Babl *source,
-                      Babl *destination)
-{
-  int loss = 0;
-
-  if (source->format.components <
-      destination->format.components)
-    {
-      loss |= 8;
-    }
-
-  if ( format_has_alpha (source) &&
-      !format_has_alpha (destination))
-    {
-      loss |= 4;
-    }
-
-  if ( BABL(source->format.type[0])->type.bits >
-       BABL(destination->format.type[0])->type.bits)
-    {
-      loss |= 2;
-    }
-
-  if ( source->format.bytes_per_pixel >
-       destination->format.bytes_per_pixel)
-    {
-      loss |= 1;
-    }
-
-
-
-
-  return loss;
-}
-
-
-static int
 chain_gen_each (Babl *babl,
                 void *userdata);
 
 static int
-get_conversion_chain (Babl   *from,
-                      Babl   *to,
-
-                      double *best_cost,
-                      double *best_loss,
-                      Babl  **chain,
-                      int    *conversions,
-
-                      Babl  **temp_chain,
-                      int     temp_conversions,
-
-                      int     max_conversions)
+get_conversion_chain (Babl             *from,
+                      Babl             *to,
+                      double           *best_cost,
+                      double           *best_loss,
+                      double           *best_error,
+                      BablConversion  **chain,
+                      int              *conversions,
+                      BablConversion  **temp_chain,
+                      int               temp_conversions,
+                      int               max_conversions)
 {
   BablChainContext context;
 
@@ -113,6 +101,7 @@ get_conversion_chain (Babl   *from,
       *conversions = 0;
       *best_cost   = 200000.0;
       *best_loss   = 200000.0;
+      *best_error  = 200000.0;
       chain[0] = NULL;
       temp_chain[0] = NULL;
 
@@ -130,6 +119,7 @@ get_conversion_chain (Babl   *from,
 
   context.best_cost        = best_cost;
   context.best_loss        = best_loss;
+  context.best_error       = best_error;
   context.chain            = chain;
   context.conversions      = conversions;
 
@@ -153,17 +143,32 @@ get_conversion_chain (Babl   *from,
   else
     {
       if (BABL(temp_chain[temp_conversions-1]) &&
-          BABL(temp_chain[temp_conversions-1]->conversion.destination)->
+          BABL(temp_chain[temp_conversions-1]->destination)->
           format.from)
 
          babl_list_each (
            (void **) 
-           BABL(temp_chain[temp_conversions-1]->conversion.destination)->
+           BABL(temp_chain[temp_conversions-1]->destination)->
            format.from,
            chain_gen_each,
            &context);
     }
 
+  return 0;
+}
+
+static int
+chain_contains_fmt (BablConversion **chain,
+                    int              conversions,
+                    Babl            *fmt)
+{
+  int i;
+  for (i=0;i<conversions;i++)
+    if (BABL(chain[i]->destination)==fmt ||
+        BABL(chain[i]->source)==fmt)
+      {
+        return 1;
+      }
   return 0;
 }
 
@@ -174,50 +179,44 @@ chain_gen_each (Babl *babl,
   BablChainContext *c = userdata;
 
   /* fill in the conversion for the chain index we are at */
-  c->temp_chain[c->temp_conversions] = babl;
+  c->temp_chain[c->temp_conversions] = (BablConversion*)babl;
 
     {
-      if (BABL(babl->conversion.destination) == c->to)
+      if ((BABL(babl->conversion.destination) == c->to) )
         {
           /* a candidate path has been found */
         
-          double    temp_cost = 0.0;
-          double    temp_loss = 0.0;
-          double    error     = 1.0;
-          int       analytic_loss = 0;
+          double    temp_cost  = 0.0;
+          double    temp_error = 1.0;
           int       i;
 
           for (i=0; i < c->temp_conversions+1; i++)
             {
-              error     *= (1.0+c->temp_chain[i]->conversion.error);
-              temp_cost += c->temp_chain[i]->conversion.cost;
-              analytic_loss |= format_analytic_loss (
-                BABL(c->temp_chain[i]->conversion.source),
-                BABL(c->temp_chain[i]->conversion.destination));
+              temp_error *= (1.0+babl_conversion_error (c->temp_chain[i]));
+              temp_cost  += babl_conversion_cost (c->temp_chain[i]);
             }
-          temp_loss = analytic_loss;
           
-          if (error <= (1.0 + BABL_LEGAL_ERROR)  /* we're legal */ &&  
-              (temp_loss >= format_analytic_loss (c->from, c->to)) &&
-                  
-             
-              /* better than the existing best candidate */ 
-              ( temp_loss <  *c->best_loss ||
-               (temp_loss == *c->best_loss &&
-                temp_cost <  *c->best_cost)))
+          if (temp_cost <  *c->best_cost         &&
+              temp_error - 1.0 <= legal_error()  &&   /* this check before the next; which does a more accurate
+                                                         measurement of the error */
+              (temp_error=chain_error (c->from, c->to, c->temp_chain, c->temp_conversions+1)) <= legal_error() 
+             )
             {
               int i;
 
               *c->best_cost   = temp_cost;
-              *c->best_loss   = temp_loss;
+              *c->best_error  = temp_error;
               *c->conversions = c->temp_conversions + 1;
 
               /* copy from temp chain to best chain */
-              for (i = 0.0; i < *c->conversions; i++)
+              for (i = 0; i < *c->conversions; i++)
                  c->chain[i] = c->temp_chain[i];
             }
         }
-      else
+      else if (babl->conversion.source != babl->conversion.destination &&
+               !chain_contains_fmt (c->temp_chain,
+                                    c->temp_conversions,
+                                    BABL(babl->conversion.destination)))
         {
             /* try to add another conversion level in chain,.. */
             get_conversion_chain (c->from,  /* irrelevant when recalled */
@@ -225,6 +224,7 @@ chain_gen_each (Babl *babl,
 
                                   c->best_cost,
                                   c->best_loss,
+                                  c->best_error,
                                   c->chain,
                                   c->conversions,
 
@@ -273,7 +273,7 @@ babl_fish_path (Babl   *source,
 {
   Babl *babl = NULL;
   char *name = create_name (source, destination, 1);
-  Babl *temp_chain[BABL_MAX_PATH_LENGTH];
+  BablConversion *temp_chain[BABL_HARD_MAX_PATH_LENGTH];
 
   babl_assert (BABL_IS_BABL (source));
   babl_assert (BABL_IS_BABL (destination));
@@ -292,6 +292,7 @@ babl_fish_path (Babl   *source,
 
   babl->fish.processings = 0;
   babl->fish.pixels      = 0;
+  babl->fish.error       = 200000;
 
   babl->fish_path.cost        = 200000;
   babl->fish_path.loss        = 200000;
@@ -305,11 +306,13 @@ babl_fish_path (Babl   *source,
                         destination,
                         &babl->fish_path.cost,
                         &babl->fish_path.loss,
-                        (Babl**)(babl->fish_path.conversion),
+                        &babl->fish.error,
+                        (BablConversion**)(babl->fish_path.conversion),
                         &babl->fish_path.conversions,
                         temp_chain,
                         0, 
-                        BABL_MAX_PATH_LENGTH);
+                        max_path_length ());
+
   if (babl->fish_path.conversions==0)
     {
       babl_free (babl);
@@ -345,7 +348,7 @@ chain_process (BablConversion *chain[],
   
   for (i=0; i<conversions; i++)
     {
-      if (i==0 && conversions == i+1)
+      if (i==0 && conversions == 1)
         {
           babl_conversion_process ( BABL(chain[i]),
               source, destination, n);
@@ -354,19 +357,6 @@ chain_process (BablConversion *chain[],
         {
           babl_conversion_process ( BABL(chain[i]),
               source, bufA, n);
-        }
-      else if (i % 2 == 1)
-        {
-          if (i + 1 == conversions)
-            {
-              babl_conversion_process ( BABL(chain[i]),
-                  bufA, destination, n);
-            }
-          else
-            {
-              babl_conversion_process ( BABL(chain[i]),
-                  bufA, bufB, n);
-            }
         }
       else if (i % 2 == 0)
         {
@@ -381,7 +371,19 @@ chain_process (BablConversion *chain[],
                   bufB, bufA, n);
             }
         }
-      i ++;
+      else if (i % 2 == 1)
+        {
+          if (i + 1 == conversions)
+            {
+              babl_conversion_process ( BABL(chain[i]),
+                  bufA, destination, n);
+            }
+          else
+            {
+              babl_conversion_process ( BABL(chain[i]),
+                  bufA, bufB, n);
+            }
+        }
     }
   if (bufA)
     babl_free (bufA);
@@ -397,21 +399,8 @@ babl_fish_path_process (Babl *babl,
                         void *destination,
                         long n)
 {
-  /*
-  int i;
-  */
-
   babl_assert (source);
   babl_assert (destination);
-/*  
-  babl_log ("path processing from %s to %s",
-            BABL(babl->fish.source)->instance.name,
-            BABL(babl->fish.destination)->instance.name);
-
-  for (i=0; i< babl->fish_path.conversions; i++)
-    babl_log ("\t%s\n",
-             BABL(babl->fish_path.conversion[i])->instance.name);
-*/
   
   return chain_process (babl->fish_path.conversion,
                         babl->fish_path.conversions,
@@ -420,3 +409,99 @@ babl_fish_path_process (Babl *babl,
                         n);
 }
 
+
+#define test_pixels   128
+
+static double *
+test_create (void)
+{
+  double *test;
+  int     i;
+  
+  srandom (20050728);
+
+  test = babl_malloc (sizeof (double) * test_pixels * 4);
+
+  for (i = 0; i < test_pixels * 4; i++)
+     test [i] = (double) random () / RAND_MAX;
+
+  return test;
+}
+
+static double
+chain_error (Babl            *fmt_source,
+             Babl            *fmt_destination,
+             BablConversion **chain,
+             int              conversions)
+{
+  Babl *fmt_rgba_double = babl_format_new (
+       babl_model     ("RGBA"),
+       babl_type      ("double"),
+       babl_component ("R"),
+       babl_component ("G"),
+       babl_component ("B"),
+       babl_component ("A"),
+       NULL);
+
+  double   error = 0.0;
+ 
+  double  *test; 
+  void    *source;
+  void    *destination;
+  double  *destination_rgba_double;
+  void    *ref_destination;
+  double  *ref_destination_rgba_double;
+
+  Babl *fish_rgba_to_source      = babl_fish_reference (fmt_rgba_double, fmt_source);
+  Babl *fish_reference           = babl_fish_reference (fmt_source, fmt_destination);
+  Babl *fish_destination_to_rgba = babl_fish_reference (fmt_destination, fmt_rgba_double);
+
+  test=test_create ();
+
+
+  source          = babl_calloc (test_pixels, fmt_source->format.bytes_per_pixel);
+  destination     = babl_calloc (test_pixels, fmt_destination->format.bytes_per_pixel);
+  ref_destination = babl_calloc (test_pixels, fmt_destination->format.bytes_per_pixel);
+  destination_rgba_double     = babl_calloc (test_pixels, fmt_rgba_double->format.bytes_per_pixel);
+  ref_destination_rgba_double = babl_calloc (test_pixels, fmt_rgba_double->format.bytes_per_pixel);
+ 
+ /* create sourcebuffer from testbuffer in the correct format */ 
+  babl_process (fish_rgba_to_source,
+      test, source, test_pixels);
+
+  /* calculate the reference buffer of how it should be */
+  babl_process (fish_reference,
+      source, ref_destination, test_pixels);
+
+  /* calculate this chains view of what the result should be */
+  chain_process (chain, conversions, source, destination, test_pixels);
+
+  /* transform the reference and the actual destination buffers to RGBA
+   * for comparison with each other
+   */
+  babl_process (fish_destination_to_rgba,
+      ref_destination, ref_destination_rgba_double, test_pixels);
+  babl_process (fish_destination_to_rgba,
+      destination, destination_rgba_double, test_pixels);
+
+  error = babl_rel_avg_error (destination_rgba_double,
+                              ref_destination_rgba_double,
+                              test_pixels*4);
+
+  fish_rgba_to_source->fish.processings--;
+  fish_reference->fish.processings--;
+  fish_destination_to_rgba->fish.processings-=2;
+
+  fish_rgba_to_source->fish.pixels -= test_pixels;
+  fish_reference->fish.pixels -= test_pixels;
+  fish_destination_to_rgba->fish.pixels -= 2 * test_pixels;
+
+  babl_free (source);
+  babl_free (destination);
+  babl_free (destination_rgba_double);
+  babl_free (ref_destination);
+  babl_free (ref_destination_rgba_double);
+  babl_free (test);
+
+  return error;
+}
