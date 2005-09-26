@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include "babl-memory.h"
 #include "babl-internal.h"
 
@@ -100,3 +101,23 @@ babl_ticks (void)
   gettimeofday (&measure_time, NULL);
   return msecs(measure_time) - msecs(start_time);
 }
+
+double
+babl_rel_avg_error (double *imgA,
+                    double *imgB,
+                    long    samples)
+{
+  double error = 0.0;
+  int i;
+
+  for (i=0; i<samples; i++)
+      error += fabs (imgA[i] - imgB[i]);
+
+  if (error >= 0.000001)
+    error /= samples;
+  else
+    error = 0.0;
+
+  return error;
+}
+

@@ -20,6 +20,8 @@
 #ifndef _BABL_UTIL_H
 #define _BABL_UTIL_H
 
+#include <math.h>
+
 void   babl_add_ptr_to_list (void       ***list,
                              void         *new);
 
@@ -29,4 +31,9 @@ babl_list_each (void             **list,
                 void              *user_data);
 
 unsigned int    babl_ticks (void);
+
+double
+babl_rel_avg_error (double *imgA,
+                    double *imgB,
+                    long    samples);
 #endif

@@ -17,6 +17,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <stdlib.h>
 #include "babl-internal.h"
 
 static const char *class_names[] =
@@ -124,44 +125,3 @@ babl_name (Babl *babl)
   babl_assert (BABL_IS_BABL (babl));
   return babl->instance.name;
 }
-
-static int
-each_conversion (Babl *babl,
-                 void *user_data)
-{
-  babl_conversion_error (&babl->conversion);
-  return 0;
-}
-
-static int
-each_format (Babl *babl,
-             void *user_data)
-{
-  babl_format_loss (babl);
-  return 0;
-}
-
-static int
-gen_type_format_for_model (Babl *type, void *userdata)
-{
-  babl_format_with_model_as_type (userdata, type);
-  return 0;
-}
-
-static int
-gen_formats_for_model (Babl *model, void *userdata)
-{
-  babl_type_each (gen_type_format_for_model, model);
-  return 0;
-}
-
-void
-babl_extension_post_load (void)
-{
-  babl_conversion_each (each_conversion, NULL);
-  babl_format_each     (each_format, NULL);
-    return;
-  babl_model_each (gen_formats_for_model, NULL);
-  babl_format_each     (each_format, NULL);
-}
-

@@ -24,8 +24,8 @@
 #error babl-internal.h included after babl.h
 #endif
 
-#define BABL_MAX_COMPONENTS   32
-#define BABL_MAX_PATH_LENGTH  5
+#define BABL_MAX_COMPONENTS       32
+#define BABL_HARD_MAX_PATH_LENGTH  8
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -48,13 +48,13 @@
 Babl   * babl_conversion_find           (void           *source,
                                          void           *destination);
 double   babl_conversion_error          (BablConversion *conversion);
+long     babl_conversion_cost           (BablConversion *conversion);
 long     babl_conversion_process        (Babl           *conversion,
                                          void           *source,
                                          void           *destination,
                                          long            n);
 
 Babl   * babl_extension_base            (void);
-void     babl_extension_post_load       (void);
 
 Babl   * babl_extender                  (void);
 void     babl_set_extender              (Babl           *new_extender);
@@ -74,6 +74,7 @@ BablDb * babl_fish_db                   (void);
 Babl   * babl_fish_reference            (Babl           *source,
                                          Babl           *destination);
 Babl   * babl_fish_simple               (BablConversion *conversion);
+void     babl_fish_stats                (FILE           *file);
 Babl   * babl_fish_path                 (Babl           *source,
                                          Babl           *destination);
 

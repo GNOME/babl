@@ -1,3 +1,29 @@
+2005-09-27  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/babl-util.h,
+	* babl/babl-util.c: (babl_rel_avg_error): moved buffer comparison
+						  function to one place.
+	* babl/babl-classes.h: Added error field to fishes, made path length
+	dynamic.
+	* babl/babl-internal.h: added misc global constants.
+	* babl/babl-internal.c: created caching accessors in classes, to avoid
+	very large bootstrapping time.
+	* babl/babl-conversion.c: (test_create), (babl_conversion_cost),
+	(babl_conversion_error):
+	* babl/babl-format.c: (test_create), (babl_format_loss):
+	* babl/babl-type.c: (babl_type_is_symmetric):
+
+2005-09-27  Øyvind Kolås  <pippin@gimp.org>
+
+	Moved html generator stats code into a seperate source fil in core,
+	babl now creates /tmp/babl-stats.txt when the BABL_STATS enviroment
+	variable is set.
+
+	* babl/Makefile.am:
+	* babl/babl.c:
+	* tests/babl_fish_path_dhtml.c: (main):
+	* babl/babl-fish-stats.c: (table_destination_each).
+
 2005-09-19  Øyvind Kolås  <pippin@gimp.org>
 
 	* docs/index-static.html.in: s/DHTML/interactive/

@@ -336,7 +336,7 @@ babl_format_with_model_as_type (Babl *model,
    );
 }
 
-#define pixels  256
+#define test_pixels  256
 
 static double *
 test_create (void)
@@ -346,9 +346,9 @@ test_create (void)
 
   srandom (20050728);
   
-  test = babl_malloc (sizeof (double) * pixels * 4);
+  test = babl_malloc (sizeof (double) * test_pixels * 4);
 
-  for (i = 0; i < pixels * 4; i++)
+  for (i = 0; i < test_pixels * 4; i++)
      test [i] = (double) random () / RAND_MAX;
 
   return test;
@@ -386,27 +386,23 @@ babl_format_loss (Babl *babl)
   fish_from = babl_fish_reference (fmt, ref_fmt);
  
   test        = test_create (); 
-  original    = babl_calloc (pixels, fmt->format.bytes_per_pixel);
-  clipped     = babl_calloc (pixels, ref_fmt->format.bytes_per_pixel);
-  destination = babl_calloc (pixels, fmt->format.bytes_per_pixel);
-  transformed = babl_calloc (pixels,  ref_fmt->format.bytes_per_pixel);
+  original    = babl_calloc (test_pixels, fmt->format.bytes_per_pixel);
+  clipped     = babl_calloc (test_pixels, ref_fmt->format.bytes_per_pixel);
+  destination = babl_calloc (test_pixels, fmt->format.bytes_per_pixel);
+  transformed = babl_calloc (test_pixels,  ref_fmt->format.bytes_per_pixel);
 
-  babl_process (fish_to,   test,        original,    pixels);
-  babl_process (fish_from, original,    clipped,     pixels);
-  babl_process (fish_to,   clipped,     destination, pixels);
-  babl_process (fish_from, destination, transformed, pixels);
+  babl_process (fish_to,   test,        original,    test_pixels);
+  babl_process (fish_from, original,    clipped,     test_pixels);
+  babl_process (fish_to,   clipped,     destination, test_pixels);
+  babl_process (fish_from, destination, transformed, test_pixels);
 
-  {
-    int i;
-
-    for (i=0;i<pixels*4;i++)
-      {
-        loss += fabs (clipped[i] - test[i]);
-      }
-    loss /= pixels;
-
-  }
+  loss = babl_rel_avg_error (clipped, test, test_pixels*4);
   
+  fish_to->fish.processings-=2;
+  fish_from->fish.processings-=2;
+  fish_to->fish.pixels-=test_pixels*2;
+  fish_from->fish.pixels -= test_pixels*2;
+
   babl_free (original);
   babl_free (clipped);
   babl_free (destination);

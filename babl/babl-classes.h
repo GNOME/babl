@@ -201,8 +201,9 @@ typedef struct
   BablInstance    instance;
   union Babl     *source;
   union Babl     *destination;
-  int   processings;
-  long  pixels;
+  int             processings;
+  long            pixels;
+  double          error;
 } BablFish;
 
 
@@ -232,7 +233,7 @@ typedef struct
   BablFish         fish;
   double           cost;
   double           loss;
-  BablConversion  *conversion[BABL_MAX_PATH_LENGTH];
+  BablConversion  *conversion[BABL_HARD_MAX_PATH_LENGTH];
   int              conversions;
 } BablFishPath;
 
