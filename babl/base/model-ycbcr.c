@@ -60,14 +60,14 @@ models (void)
 {
   babl_model_new (
     "id", BABL_YCBCR,
-    babl_component_id (BABL_LUMINANCE_GAMMA_2_2),
+    babl_component_id (BABL_LUMA),
     babl_component_id (BABL_CB),
     babl_component_id (BABL_CR),
     NULL);
 
   babl_model_new (
     "id", BABL_YCBCR_ALPHA,
-    babl_component_id (BABL_LUMINANCE_GAMMA_2_2),
+    babl_component_id (BABL_LUMA),
     babl_component_id (BABL_CB),
     babl_component_id (BABL_CR),
     babl_component_id (BABL_ALPHA),
@@ -244,7 +244,7 @@ formats (void)
     babl_model_id  (BABL_YCBCR),
     babl_type_id   (BABL_U8_LUMA),
     babl_sampling  (1, 1),
-    babl_component_id (BABL_LUMINANCE_GAMMA_2_2),
+    babl_component_id (BABL_LUMA),
     babl_type_id   (BABL_U8_CHROMA),
     babl_sampling  (2, 2),
     babl_component_id (BABL_CB), 
@@ -260,7 +260,7 @@ formats (void)
     babl_model_id  (BABL_YCBCR),
     babl_type_id   (BABL_U8_LUMA),
     babl_sampling  (1, 1),
-    babl_component_id (BABL_LUMINANCE_GAMMA_2_2),
+    babl_component_id (BABL_LUMA),
     babl_type_id   (BABL_U8_CHROMA),
     babl_sampling  (2, 2),
     babl_component_id (BABL_CB), 
@@ -276,7 +276,7 @@ formats (void)
     babl_model_id  (BABL_YCBCR),
     babl_type_id   (BABL_U8_LUMA),
     babl_sampling  (1, 1),
-    babl_component_id (BABL_LUMINANCE_GAMMA_2_2),
+    babl_component_id (BABL_LUMA),
     babl_type_id   (BABL_U8_CHROMA),
     babl_sampling  (2, 1),
     babl_component_id (BABL_CB), 
@@ -291,7 +291,7 @@ formats (void)
     babl_model_id  (BABL_YCBCR),
     babl_type_id   (BABL_U8_LUMA),
     babl_sampling  (1, 1),
-    babl_component_id (BABL_LUMINANCE_GAMMA_2_2),
+    babl_component_id (BABL_LUMA),
     babl_type_id   (BABL_U8_CHROMA),
     babl_sampling  (4, 1),
     babl_component_id (BABL_CB), 

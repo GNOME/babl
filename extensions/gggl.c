@@ -49,7 +49,7 @@
  *       gamma correction  (not really,. gamma correction belongs in seperate ops,.
  */
 
-#define USE_TABLES
+//#define USE_TABLES
 #ifdef USE_TABLES
 
 /* lookup tables used in conversion */
@@ -147,7 +147,6 @@ gggl_float_to_index16 (float f)
   return u.s[1];
 }
 
-
 static INLINE long
 conv_F_8 (unsigned char *src, unsigned char *dst, long samples)
 {
@@ -218,19 +217,13 @@ conv_F_8 (unsigned char *src, unsigned char *dst, long samples)
   long n=samples;
   while (n--)
     {
-      float     f = ((*(float *) src));
-      if (f < 0.0)
-        {
-          *(unsigned char *) dst = 0;
-        }
-      else if (f > 1.0)
-        {
-          *(unsigned char *) dst = 255;
-        }
-      else
-        {
-          *(unsigned char *) dst = rint (f * 255.0);
-        }
+      float f  = ((*(float *) src));
+      int   uval = rint (f * 255.0);
+
+      if (uval < 0) uval = 0;
+      if (uval > 255) uval = 255;
+      *(unsigned char *) dst = uval;
+
       dst += 1;
       src += 4;
     }
@@ -268,7 +261,7 @@ conv_8_F (unsigned char *src, unsigned char *dst, long samples)
   long n=samples;
   while (n--)
     {
-      (*(float *) dst) = (*(unsigned char *) src / 255.0);
+      (*(float *) dst) = ((*(unsigned char *) src) / 255.0);
       dst += 4;
       src += 1;
     }
@@ -290,6 +283,33 @@ conv_16_F (unsigned char *src, unsigned char *dst, long samples)
 
 
 #endif
+
+
+static INLINE long
+conv_F_D (unsigned char *src, unsigned char *dst, long samples)
+{
+  long n=samples;
+  while (n--)
+    {
+      *(double *) dst = ((*(float *) src));
+      dst += 8;
+      src += 4;
+    }
+  return samples;
+}
+
+static INLINE long
+conv_D_F (unsigned char *src, unsigned char *dst, long samples)
+{
+  long n=samples;
+  while (n--)
+    {
+      *(float *) dst = ((*(double *) src));
+      dst += 4;
+      src += 8;
+    }
+  return samples;
+}
 
 static INLINE long
 conv_16_8 (unsigned char *src, unsigned char *dst, long samples)
@@ -373,27 +393,38 @@ conv_gaF_ga16 (unsigned char *src, unsigned char *dst, long samples)
 static INLINE long
 conv_rgba8_rgbaF (unsigned char *src, unsigned char *dst, long samples)
 {
-  conv_8_F (src, dst, samples * 4);
-  return samples;
+  return conv_8_F (src, dst, samples * 4) / 4;
 }
 
 static INLINE long
 conv_rgb8_rgbF (unsigned char *src, unsigned char *dst, long samples)
 {
-  conv_8_F (src, dst, samples * 3);
-  return samples;
+  return conv_8_F (src, dst, samples * 3) / 3;
 }
 
 static INLINE long
 conv_ga8_gaF (unsigned char *src, unsigned char *dst, long samples)
 {
-  conv_8_F (src, dst, samples * 2);
-  return samples;
+  return conv_8_F (src, dst, samples * 2) / 2;
 }
 
 #define conv_rgbA8_rgbAF conv_rgba8_rgbaF
 #define conv_gA8_gAF     conv_ga8_gaF
 #define conv_g8_gF       conv_8_F
+
+static INLINE long
+conv_rgbaF_rgbaD (unsigned char *src, unsigned char *dst, long samples)
+{
+  conv_F_D (src, dst, samples * 4);
+  return samples;
+}
+
+static INLINE long
+conv_rgbaD_rgbaF (unsigned char *src, unsigned char *dst, long samples)
+{
+  conv_D_F (src, dst, samples * 4);
+  return samples;
+}
 
 static INLINE long
 conv_rgba16_rgbaF (unsigned char *src, unsigned char *dst, long samples)
@@ -514,7 +545,7 @@ conv_rgbAF_rgbaF (unsigned char *src, unsigned char *dst, long samples)
   long n=samples;
   while (n--)
     {
-      float     alpha = (*(float *) (src + 4 * 3));
+      float     alpha = (((float *) src)[3]);
       int       c;
       if (alpha >= 1.0)
         {
@@ -556,7 +587,7 @@ conv_rgbaF_rgbAF (unsigned char *src, unsigned char *dst, long samples)
   long n=samples;
   while (n--)
     {
-      float     alpha = (*(float *) (src + 4 * 3));
+      float     alpha = (((float *) src)[3]);
       int       c;
 
       if (alpha >= 1.0)
@@ -601,13 +632,13 @@ conv_rgbaF_rgbF (unsigned char *src, unsigned char *dst, long samples)
   long n=samples;
   while (n--)
     {
-      *(int *) dst = (*(int *) src);
+      *(float *) dst = (*(float *) src);
       dst += 4;
       src += 4;
-      *(int *) dst = (*(int *) src);
+      *(float *) dst = (*(float *) src);
       dst += 4;
       src += 4;
-      *(int *) dst = (*(int *) src);
+      *(float *) dst = (*(float *) src);
       dst += 4;
       src += 4;
       src += 4;
@@ -621,15 +652,15 @@ conv_rgbF_rgbaF (unsigned char *src, unsigned char *dst, long samples)
   long n=samples;
   while (n--)
     {
-      *(int *) dst = (*(int *) src);
-      dst += 4;
+      *(float *) dst = (*(float *) src);
       src += 4;
-      *(int *) dst = (*(int *) src);
       dst += 4;
+      *(float *) dst = (*(float *) src);
       src += 4;
-      *(int *) dst = (*(int *) src);
       dst += 4;
+      *(float *) dst = (*(float *) src);
       src += 4;
+      dst += 4;
       *(float *) dst = 1.0;
       dst += 4;
     }
@@ -739,15 +770,15 @@ conv_rgbaF_gaF (unsigned char *src, unsigned char *dst, long samples)
   long n=samples;
   while (n--)
     {
-      int       c;
-      float     sum = 0;
+      float     gray = 0;
 
-      for (c = 0; c < 3; c++)
-        {
-          sum += (*(float *) src);
-          src += 4;
-        }
-      (*(float *) dst) = sum / 3;
+      gray += (*(float *) src) * 0.212671;
+      src += 4;
+      gray += (*(float *) src) * 0.715160;
+      src += 4;
+      gray += (*(float *) src) * 0.072169;
+      src += 4;
+      (*(float *) dst) = gray;
       dst += 4;
       (*(int *) dst) = (*(int *) src);
       dst += 4;
@@ -838,7 +869,7 @@ conv_rgbaF_rgb8 (unsigned char *src, unsigned char *dst, long samples)
 
       for (c = 0; c < 3; c++)
         {
-          *(unsigned char *) dst = (*(float *) src) * 255.0;
+          *(unsigned char *) dst = rint ((*(float *) src) * 255.0);
           dst += 1;
           src += 4;
         }
@@ -914,7 +945,7 @@ conv_rgbA16_rgbaF (unsigned char *src, unsigned char *dst, long samples)
   long n=samples;
   while (n--)
     {
-      float     alpha = (*(unsigned short *) src + (3)) / 65535.0;
+      float     alpha = (((unsigned short *) src)[3]) / 65535.0;
       int       c;
 
       for (c = 0; c < 3; c++)
@@ -1242,15 +1273,16 @@ conv_rgb8_rgba8 (unsigned char *src, unsigned char *dst, long samples)
   long n=samples; 
   while (n--)
     {
-      *(unsigned int *) dst = *(unsigned int *) src;
+      /**(unsigned int *) dst = *(unsigned int *) src;
+      dst[3] = 255;*/
+
+      dst[0] = src[0];
+      dst[1] = src[1];
+      dst[2] = src[2];
       dst[3] = 255;
       src += 3;
       dst += 4;
     }
-  dst[0] = src[0];
-  dst[1] = src[1];
-  dst[2] = src[2];
-  dst[3] = 255;
   return samples;
 }
 
@@ -1311,7 +1343,36 @@ conv_rgba8_rgb8 (unsigned char *src, unsigned char *dst, long samples)
   return samples;
 }
 
-#define conv_rgbA8_rgb8 conv_rgbP8_rgb8
+static INLINE long
+conv_rgbA8_rgb8 (unsigned char *src, unsigned char *dst, long samples)
+{
+  long n=samples;
+  while (n--)
+    {
+      int alpha = src[3];
+      if (alpha == 255)
+        {
+          *dst++ = src[0];
+          *dst++ = src[1];
+          *dst++ = src[2];
+        }
+      else if (alpha == 0)
+        {
+          *dst++ = 0;
+          *dst++ = 0;
+          *dst++ = 0;
+        }
+      else
+        {
+          unsigned int aa = (255 << 16) / alpha;
+          *dst++ = (src[0] * aa) >> 16;
+          *dst++ = (src[1] * aa) >> 16;
+          *dst++ = (src[2] * aa) >> 16;
+        }
+      src += 4;
+    }
+  return samples;
+}
 
 #ifndef byteclamp
 #define byteclamp(j) do{if(j<0)j=0; else if(j>255)j=255;}while(0)
@@ -1689,125 +1750,133 @@ typedef struct Conversion
 int
 init (void)
 {
+  Babl *rgbaD = babl_format_new (
+      babl_model ("R'G'B'A"),
+      babl_type  ("double"),
+      babl_component ("R'"),
+      babl_component ("G'"),
+      babl_component ("B'"),
+      babl_component ("A"),
+      NULL);
   Babl *rgbaF = babl_format_new (
-      babl_model ("RGBA"),
+      babl_model ("R'G'B'A"),
       babl_type  ("float"),
-      babl_component ("R"),
-      babl_component ("G"),
-      babl_component ("B"),
+      babl_component ("R'"),
+      babl_component ("G'"),
+      babl_component ("B'"),
       babl_component ("A"),
       NULL);
   Babl *rgba16 = babl_format_new (
-      babl_model ("RGBA"),
+      babl_model ("R'G'B'A"),
       babl_type  ("u16"),
-      babl_component ("R"),
-      babl_component ("G"),
-      babl_component ("B"),
+      babl_component ("R'"),
+      babl_component ("G'"),
+      babl_component ("B'"),
       babl_component ("A"),
       NULL);
   Babl *rgba8 = babl_format_new (
-      babl_model ("RGBA"),
+      babl_model ("R'G'B'A"),
       babl_type  ("u8"),
-      babl_component ("R"),
-      babl_component ("G"),
-      babl_component ("B"),
+      babl_component ("R'"),
+      babl_component ("G'"),
+      babl_component ("B'"),
       babl_component ("A"),
       NULL);
   Babl *rgbAF = babl_format_new (
-      babl_model ("RaGaBaA"),
+      babl_model ("R'aG'aB'aA"),
       babl_type  ("float"),
-      babl_component ("Ra"),
-      babl_component ("Ga"),
-      babl_component ("Ba"),
+      babl_component ("R'a"),
+      babl_component ("G'a"),
+      babl_component ("B'a"),
       babl_component ("A"),
       NULL);
   Babl *rgbA16 = babl_format_new (
-      babl_model ("RaGaBaA"),
+      babl_model ("R'aG'aB'aA"),
       babl_type  ("u16"),
-      babl_component ("Ra"),
-      babl_component ("Ga"),
-      babl_component ("Ba"),
+      babl_component ("R'a"),
+      babl_component ("G'a"),
+      babl_component ("B'a"),
       babl_component ("A"),
       NULL);
   Babl *rgbA8 = babl_format_new (
-      babl_model ("RaGaBaA"),
+      babl_model ("R'aG'aB'aA"),
       babl_type  ("u8"),
-      babl_component ("Ra"),
-      babl_component ("Ga"),
-      babl_component ("Ba"),
+      babl_component ("R'a"),
+      babl_component ("G'a"),
+      babl_component ("B'a"),
       babl_component ("A"),
       NULL);
   Babl *rgbF = babl_format_new (
-      babl_model ("RGB"),
+      babl_model ("R'G'B'"),
       babl_type  ("float"),
-      babl_component ("R"),
-      babl_component ("G"),
-      babl_component ("B"),
+      babl_component ("R'"),
+      babl_component ("G'"),
+      babl_component ("B'"),
       NULL);
   Babl *rgb16 = babl_format_new (
-      babl_model ("RGB"),
+      babl_model ("R'G'B'"),
       babl_type  ("u16"),
-      babl_component ("R"),
-      babl_component ("G"),
-      babl_component ("B"),
+      babl_component ("R'"),
+      babl_component ("G'"),
+      babl_component ("B'"),
       NULL);
   Babl *rgb8 = babl_format_new (
-      babl_model ("RGB"),
+      babl_model ("R'G'B'"),
       babl_type  ("u8"),
-      babl_component ("R"),
-      babl_component ("G"),
-      babl_component ("B"),
+      babl_component ("R'"),
+      babl_component ("G'"),
+      babl_component ("B'"),
       NULL);
   Babl *gaF = babl_format_new (
-      babl_model ("YA"),
+      babl_model ("Y'A"),
       babl_type  ("float"),
-      babl_component ("Y"),
+      babl_component ("Y'"),
       babl_component ("A"),
       NULL);
   Babl *gAF = babl_format_new (
-      babl_model ("YaA"),
+      babl_model ("Y'aA"),
       babl_type  ("float"),
-      babl_component ("Ya"),
+      babl_component ("Y'a"),
       babl_component ("A"),
       NULL);
   Babl *gF = babl_format_new (
-      babl_model ("Y"),
+      babl_model ("Y'"),
       babl_type  ("float"),
-      babl_component ("Y"),
+      babl_component ("Y'"),
       NULL);
   Babl *ga16 = babl_format_new (
-      babl_model ("YA"),
+      babl_model ("Y'A"),
       babl_type  ("u16"),
-      babl_component ("Y"),
+      babl_component ("Y'"),
       babl_component ("A"),
       NULL);
   Babl *gA16 = babl_format_new (
-      babl_model ("YaA"),
+      babl_model ("Y'aA"),
       babl_type  ("u16"),
-      babl_component ("Ya"),
+      babl_component ("Y'a"),
       babl_component ("A"),
       NULL);
   Babl *g16 = babl_format_new (
-      babl_model ("Y"),
+      babl_model ("Y'"),
       babl_type  ("u16"),
-      babl_component ("Y"),
+      babl_component ("Y'"),
       NULL);
   Babl *ga8 = babl_format_new (
-      babl_model ("YA"),
+      babl_model ("Y'A"),
       babl_type  ("u8"),
-      babl_component ("Y"),
+      babl_component ("Y'"),
       babl_component ("A"),
       NULL);
   Babl *gA8 = babl_format_new (
-      babl_model ("YaA"),
+      babl_model ("Y'aA"),
       babl_type  ("u8"),
-      babl_component ("Ya"),
+      babl_component ("Y'a"),
       babl_component ("A"),
       NULL);
   Babl *g8 = babl_format_new (
-      babl_model ("Y"),
+      babl_model ("Y'"),
       babl_type  ("u8"),
-      babl_component ("Y"),
+      babl_component ("Y'"),
       NULL);
   Babl *yuv8 = babl_format_new (
       "name", "Y'CbCr u8",
@@ -1937,6 +2006,8 @@ init (void)
   o (rgbF, yuvF);
   o (yuvaF, rgbaF);
   o (rgbaF, yuvaF);
+  o (rgbaF, rgbaD);
+  o (rgbaD, rgbaF);
 #if 0
   o (rgbF, xyzF);
   o (xyzF, rgbF);

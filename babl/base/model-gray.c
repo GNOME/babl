@@ -53,7 +53,13 @@ components (void)
 
   babl_component_new (
    "Y'", 
-   "id",    BABL_LUMINANCE_GAMMA_2_2,
+   "id",    BABL_LUMA,
+   "luma",
+   NULL);
+
+  babl_component_new (
+   "Y'a", 
+   "id",    BABL_LUMA_MUL_ALPHA,
    "luma",
    NULL);
 }
@@ -66,16 +72,6 @@ models (void)
     babl_component_id (BABL_LUMINANCE),
     NULL);
 
-  babl_model_new (
-    "id", BABL_GRAY_GAMMA_2_2,
-    babl_component_id (BABL_LUMINANCE_GAMMA_2_2),
-    NULL);
-
-  babl_model_new (
-    "id", BABL_GRAY_GAMMA_2_2_ALPHA,
-    babl_component_id (BABL_LUMINANCE_GAMMA_2_2),
-    babl_component_id (BABL_ALPHA),
-    NULL);
 
   babl_model_new (
     "id", BABL_GRAY_ALPHA,
@@ -86,6 +82,24 @@ models (void)
   babl_model_new (
     "id", BABL_GRAY_ALPHA_PREMULTIPLIED,
     babl_component_id (BABL_LUMINANCE_MUL_ALPHA),
+    babl_component_id (BABL_ALPHA),
+    NULL);
+
+
+  babl_model_new (
+    "id", BABL_GRAY_GAMMA_2_2,
+    babl_component_id (BABL_LUMA),
+    NULL);
+
+  babl_model_new (
+    "id", BABL_GRAY_GAMMA_2_2_ALPHA,
+    babl_component_id (BABL_LUMA),
+    babl_component_id (BABL_ALPHA),
+    NULL);
+
+  babl_model_new (
+    "id", BABL_GRAY_GAMMA_2_2_ALPHA_PREMULTIPLIED,
+    babl_component_id (BABL_LUMA_MUL_ALPHA),
     babl_component_id (BABL_ALPHA),
     NULL);
 }
@@ -412,6 +426,62 @@ premultiplied_to_non_premultiplied (int    src_bands,
   return n;
 }
 
+static long
+rgba2gray_gamma_2_2_premultiplied (void *src,
+                                   void *dst,
+                                   long  n)
+{
+  while (n--)
+    {
+      double red   = ((double*)src)[0];
+      double green = ((double*)src)[1];
+      double blue  = ((double*)src)[2];
+      double alpha = ((double*)src)[3];
+
+      double luminance;
+      double luma;
+        
+      luminance  = red   * RGB_LUMINANCE_RED +
+                   green * RGB_LUMINANCE_GREEN +
+                   blue  * RGB_LUMINANCE_BLUE;
+      luma = linear_to_gamma_2_2 (luminance);
+
+      ((double*)dst)[0] = luma * alpha;
+      ((double*)dst)[1] = alpha;
+
+      src+=4 * sizeof (double);
+      dst+=2 * sizeof (double);
+    }
+  return n;
+}
+
+
+static long
+gray_gamma_2_2_premultiplied2rgba (void *src,
+                                   void *dst,
+                                   long   n)
+{
+  while (n--)
+    {
+      double luma  = ((double*) src)[0];
+      double alpha = ((double*) src)[1];
+      double luminance;
+
+      luma = luma / alpha;
+      luminance = gamma_2_2_to_linear (luma);
+      
+      ((double*)dst)[0] = luminance;
+      ((double*)dst)[1] = luminance;
+      ((double*)dst)[2] = luminance;
+      ((double*)dst)[3] = alpha;
+
+      src+=2 * sizeof (double);
+      dst+=4 * sizeof (double);
+    }
+  return n;
+}
+
+
 static void
 conversions (void)
 {
@@ -440,6 +510,21 @@ conversions (void)
     babl_model_id (BABL_RGBA),
     babl_model_id (BABL_GRAY_GAMMA_2_2_ALPHA),
     "planar",      rgb_to_gray_2_2,
+    NULL
+  );
+
+
+  babl_conversion_new (
+    babl_model_id (BABL_GRAY_GAMMA_2_2_ALPHA_PREMULTIPLIED),
+    babl_model_id (BABL_RGBA),
+    "linear",      gray_gamma_2_2_premultiplied2rgba,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_model_id (BABL_RGBA),
+    babl_model_id (BABL_GRAY_GAMMA_2_2_ALPHA_PREMULTIPLIED),
+    "linear",      rgba2gray_gamma_2_2_premultiplied,
     NULL
   );
 

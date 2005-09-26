@@ -1,5 +1,28 @@
 2005-09-27  Øyvind Kolås  <pippin@gimp.org>
 
+	Updates done due to improvements gotten from BablFishStat feedback.
+
+	* babl/base/model-gray.c: (components), (models),
+	(rgba2gray_gamma_2_2_premultiplied),
+	(gray_gamma_2_2_premultiplied2rgba), (conversions):
+	* babl/base/model-rgb.c: (components), (models), (copy_strip_1),
+	(g3_gamma_2_2), (g3_inv_gamma_2_2),
+	(non_premultiplied_to_premultiplied),
+	(premultiplied_to_non_premultiplied),
+	(rgba2rgba_gamma_2_2_premultiplied),
+	(rgba_gamma_2_2_premultiplied2rgba), (rgba2rgba_gamma_2_2),
+	(rgba_gamma_2_22rgba), (conversions), (formats):
+	* babl/base/model-ycbcr.c: (models), (formats):
+	* docs/index-static.html.in:
+	* extensions/gggl.c: (conv_F_8), (conv_8_F), (conv_F_D),
+	(conv_D_F), (conv_rgba8_rgbaF), (conv_rgb8_rgbF), (conv_ga8_gaF),
+	(conv_rgbaF_rgbaD), (conv_rgbaD_rgbaF), (conv_rgbAF_rgbaF),
+	(conv_rgbaF_rgbAF), (conv_rgbaF_rgbF), (conv_rgbF_rgbaF),
+	(conv_rgbaF_gaF), (conv_rgbaF_rgb8), (conv_rgbA16_rgbaF),
+	(conv_rgb8_rgba8), (conv_rgbA8_rgb8), (init):
+
+2005-09-27  Øyvind Kolås  <pippin@gimp.org>
+
 	Upgrade of BablFishPath.
 
 	* babl/babl-fish-path.c: (legal_error), (max_path_length),
