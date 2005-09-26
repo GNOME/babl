@@ -1,5 +1,9 @@
 2005-09-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* tests/srgb_to_lab_u8.c: (test): renamed format (srgb -> R'G'B' u8)
+
+2005-09-27  Øyvind Kolås  <pippin@gimp.org>
+
 	Updates done due to improvements gotten from BablFishStat feedback.
 
 	* babl/base/model-gray.c: (components), (models),
