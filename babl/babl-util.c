@@ -82,7 +82,7 @@ babl_list_each (void             **list,
 static struct timeval start_time;
 static struct timeval measure_time;
 
-#define msecs(time) ((time.tv_sec-start_time.tv_sec)*1000 + time.tv_usec/1000)
+#define msecs(time) ((time.tv_sec-start_time.tv_sec)*10000000 + time.tv_usec)
 
 static void
 init_ticks (void)

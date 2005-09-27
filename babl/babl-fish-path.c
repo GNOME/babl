@@ -292,6 +292,7 @@ babl_fish_path (Babl   *source,
 
   babl->fish.processings = 0;
   babl->fish.pixels      = 0;
+  babl->fish.msecs       = 0;
   babl->fish.error       = 200000;
 
   babl->fish_path.cost        = 200000;
@@ -399,14 +400,18 @@ babl_fish_path_process (Babl *babl,
                         void *destination,
                         long n)
 {
+  long ret;
+
   babl_assert (source);
   babl_assert (destination);
-  
-  return chain_process (babl->fish_path.conversion,
-                        babl->fish_path.conversions,
-                        source,
-                        destination,
-                        n);
+
+  ret = chain_process (babl->fish_path.conversion,
+                       babl->fish_path.conversions,
+                       source,
+                       destination,
+                       n);
+
+  return ret;
 }
 
 

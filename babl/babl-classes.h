@@ -189,21 +189,20 @@ typedef struct
   int            *stride;
 } BablImage;
 
-/* BablFish base class, the user of babl is just requesting a
- * conversion, after that an appropriate species of fish is
- * constructed to handle the request.
- * 
- * TODO:
- *   * implement 
+/* BablFish, common base class for various fishes.
  */
 typedef struct
 {
   BablInstance    instance;
   union Babl     *source;
   union Babl     *destination;
-  int             processings;
-  long            pixels;
-  double          error;
+
+  double          error;    /* the amount of noise introduced by the fish */
+
+  /* instrumentation */
+  int             processings; /* number of times the fish has been used */
+  long            pixels;      /* number of pixels translates */
+  long            msecs;       /* msecs spent within this fish */
 } BablFish;
 
 
@@ -211,6 +210,8 @@ typedef struct
 /* BablFishSimple is the simplest type of fish, wrapping a single
  * conversion function, (note this might not be the optimal chosen
  * conversion even if it exists)
+ *
+ * TODO: exterminate
  */
 typedef struct
 {
@@ -221,39 +222,35 @@ typedef struct
 
 
 /* BablFishPath is a combination of registered conversions, both
- * from the reference types / model conversions, and optimized paths.
+ * from the reference types / model conversions, and optimized format to
+ * format conversion.
  *
  * This is the most advanced scheduled species of fish, some future
- * version of babl might even be evovling combined fishes in a background
- * thread, based on profiled usage. For this to work in a future version
- * transmogrification between the fish classes would be used.
+ * version of babl might even be evovling path fishes in a background
+ * thread, based on the fish instrumentation. For this to work in a future
+ * version transmogrification between the fish classes would be used.
  */
 typedef struct
 {
   BablFish         fish;
-  double           cost;
-  double           loss;
+  double           cost;   /* number of  ticks *10 + chain_length */
+  double           loss;   /* error introduced */
+
   BablConversion  *conversion[BABL_HARD_MAX_PATH_LENGTH];
   int              conversions;
 } BablFishPath;
 
-/* BablFishReference on the double versions of conversions
- * that are required to exist for maximum sanity.
+/* BablFishReference 
  *
  * A BablFishReference is not intended to be fast, thus the algorithm
- * encoded can use a multi stage approach, where some of the stages could
- * be completely removed for optimization reasons.
- *
- * This is not the intention of the "BablFishReference factory", it's
- * implementation is meant to be kept as small as possible wrt logic.
+ * encoded can use a multi stage approach, based on the knowledge babl
+ * has encoded in the pixel formats.
  *
  * One of the contributions that would be welcome are new fish factories.
  *
  * TODO:
- *   * cache the looked up conversions, removing all overhead but the
- *     actual conversions.
  *   * make optimal use of a single allocation containing enough space
- *     for the maximum amount of memory needed in to adjecant buffers
+ *     for the maximum amount of memory needed in two adjecant buffers
  *     at any time.
  */
 typedef struct
@@ -263,7 +260,7 @@ typedef struct
 
 typedef struct
 {
-  BablInstance   instance;               /* path to .so / .dll is stored in instance name */
+  BablInstance   instance; /* path to .so / .dll is stored in instance name */
   void          *dl_handle;
   void         (*destroy) (void); 
 } BablExtension;

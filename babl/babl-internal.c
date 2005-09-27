@@ -97,9 +97,17 @@ babl_process (Babl *babl,
       babl->class_type == BABL_FISH_PATH ||
       babl->class_type == BABL_FISH_SIMPLE)
     {
+       long ret;
+       long ticks = babl_ticks ();
+       ret = babl_fish_process (babl, source, destination, n);
+
+       ticks -= babl_ticks();
+       ticks *= -1;
+
+       babl->fish.msecs += ticks;
        babl->fish.processings++;
-       babl->fish.pixels += n;
-       return babl_fish_process (babl, source, destination, n);
+       babl->fish.pixels += ret;
+       return ret;
     }
 
   babl_fatal ("eek");

@@ -687,7 +687,7 @@ conv_gF_gaF (unsigned char *src, unsigned char *dst, long samples)
   long n=samples;
   while (n--)
     {
-      *(int *) dst = (*(int *) src);
+      *(float *) dst = (*(float *) src);
       dst += 4;
       src += 4;
       *(float *) dst = 1.0;
@@ -714,7 +714,7 @@ conv_gF_rgbF (unsigned char *src, unsigned char *dst, long samples)
 
       for (c = 0; c < 3; c++)
         {
-          (*(int *) dst) = (*(int *) src);
+          (*(float *) dst) = (*(float *) src);
           dst += 4;
         }
       src += 4;
@@ -736,7 +736,7 @@ conv_rgbF_gF (unsigned char *src, unsigned char *dst, long samples)
           sum += (*(float *) src);
           src += 4;
         }
-      sum /= 3;
+      sum /= 3.0;
       (*(float *) dst) = sum;
       dst += 4;
     }
@@ -869,7 +869,13 @@ conv_rgbaF_rgb8 (unsigned char *src, unsigned char *dst, long samples)
 
       for (c = 0; c < 3; c++)
         {
-          *(unsigned char *) dst = rint ((*(float *) src) * 255.0);
+          int val=rint ((*(float *) src) * 255.0);
+          if (val<0)
+            *(unsigned char *) dst = 0;
+          else if (val>255)
+            *(unsigned char *) dst = 255;
+          else
+            *(unsigned char *) dst = val;
           dst += 1;
           src += 4;
         }

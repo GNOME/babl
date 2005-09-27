@@ -1,5 +1,22 @@
 2005-09-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-classes.h: Added time consumption instrumentation to
+	BablFish.
+	* babl/babl-fish-path.c: (babl_fish_path), (babl_fish_path_process):
+	intialization of instrumentation data.
+	* babl/babl-fish-stats.c: (table_destination_each), (each_conv),
+	(conversions), (babl_fish_stats): Output timing data, as well as a
+	list of all conversions with the obviously bad ones marked in red.
+	* babl/babl-internal.c: (babl_process): update instrumentation.
+	* babl/babl-introspect.c: (conversion_introspect): only query error
+	from conversions where that is legal.
+	* babl/babl-util.c: changed from msecs to nsecs (might be some more
+	places in the code to change names of variables.)
+	* extensions/gggl.c: (conv_gF_gaF), (conv_gF_rgbF), (conv_rgbF_gF),
+	(conv_rgbaF_rgb8): Changes to increase sanity.
+
+2005-09-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* tests/srgb_to_lab_u8.c: (test): renamed format (srgb -> R'G'B' u8)
 
 2005-09-27  Øyvind Kolås  <pippin@gimp.org>

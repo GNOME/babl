@@ -57,6 +57,7 @@ table_destination_each (Babl *babl,
               fprintf (output_file, "<h3><span class='g'>path</span> %s <span class='g'>to</span> %s</h3>", source->instance.name, destination->instance.name);
               if (fish->fish.processings > 0)
                 {
+                  fprintf (output_file, "<span class='g'>msecs:</span>%li<br/>", fish->fish.msecs);
                   fprintf (output_file, "<span class='g'>Processings:</span>%i<br/>", fish->fish.processings);
                   fprintf (output_file, "<span class='g'>Pixels:</span>%li<br/>", fish->fish.pixels);
                 }
@@ -95,6 +96,7 @@ table_destination_each (Babl *babl,
 
               if (fish->fish.processings > 0)
                 {
+                  fprintf (output_file, "<span class='g'>msecs:</span>%li<br/>", fish->fish.msecs);
                   fprintf (output_file, "<span class='g'>Processings:</span>%i<br/>", fish->fish.processings);
                   fprintf (output_file, "<span class='g'>Pixels:</span>%li<br/>", fish->fish.pixels);
                 }
@@ -173,6 +175,42 @@ table_source_each (Babl *babl,
   fprintf (output_file, "</tr>\n");
   source_no++;
   return 0;
+}
+
+static int
+each_conv (Babl *babl,
+           void *data)
+{
+  double error, cost;
+
+  if (BABL(babl->conversion.source)->class_type != BABL_FORMAT)
+    return 0;
+
+  error = babl_conversion_error (&babl->conversion);
+  cost  = babl_conversion_cost  (&babl->conversion);
+
+  if (error>0.01)
+    {
+      fprintf (output_file, "<dt style='background-color: #fcc;'>%s</dt>", babl->instance.name);
+      fprintf (output_file, "<dd style='background-color: #fcc;'>");
+    }
+  else
+    {
+      fprintf (output_file, "<dt>%s</dt><dd>", babl->instance.name);
+    }
+  fprintf (output_file, "<em>error:</em> %f <em>cost:</em> %4.0f <em>processings:</em> %i <em>pixels:</em> %li", error, cost,
+            babl->conversion.processings, babl->conversion.pixels);
+  fprintf (output_file, "</dd>");
+   
+  return 0;
+}
+
+static void
+conversions ()
+{
+  fprintf (output_file, "<h2>Conversions</h2><dl>\n");
+  babl_conversion_each (each_conv, NULL);
+  fprintf (output_file, "</dl>\n");
 }
 
 void
@@ -302,6 +340,8 @@ babl_fish_stats (FILE *file)
   fprintf (output_file, "</table>");
 
   fprintf (output_file, "<div style='height:20em'></div>\n");
+
+  conversions ();
 
   fprintf (output_file, "</body></html>\n");
 }
