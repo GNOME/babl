@@ -253,7 +253,8 @@
               <span class='function'>babl_image</span> <span class='paren'>(</span><span class='function'><span class='string'>"Y'"</span>, luma_buffer, 1, 0,
                           <span class='string'>"Cb"</span>, cb_buffer,   1, 0,
                           <span class='string'>"Cr"</span>, cr_buffer,   1, 0,
-                          <span class='NULL'>NULL</span><span class='paren'>);</span>
+                          <span class='NULL'>NULL</span><span class='paren'>)</span>,
+                          pixel_count<span class='paren'>);</span>
 </pre>
 
         <a name='Extending'></a>

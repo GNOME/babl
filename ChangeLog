@@ -1,3 +1,8 @@
+2005-10-08  Øyvind Kolås  <pippin@gimp.org>
+
+	* docs/index-static.html.in: Fixed the second processing example. (
+	added missing pixel_count)
+
 2005-09-27  Øyvind Kolås  <pippin@gimp.org>
 
 	* babl/babl-classes.h: Added time consumption instrumentation to
