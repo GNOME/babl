@@ -138,8 +138,12 @@ create_name (BablModel      *model,
       t++;
     }
 
+  if (same_types && 
+      components != model->components)
+    same_types = 0;
+  
   i=components;
-  while (i--)
+  while (same_types && i--)
     {
       if (*c1 != *c2)
         {
