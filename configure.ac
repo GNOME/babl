@@ -6,7 +6,6 @@ m4_define([babl_micro_version], 2)
 
 AC_INIT(babl, babl_major_version.babl_minor_version.babl_micro_version)
 AC_CONFIG_SRCDIR(babl/babl.h)
-AC_CONFIG_HEADERS(config.h)
 
 BABL_MAJOR_VERSION=babl_major_version
 BABL_MINOR_VERSION=babl_minor_version
@@ -29,6 +28,7 @@ BABL_RELEASE=$BABL_MAJOR_VERSION.$BABL_MINOR_VERSION
 AC_SUBST(BABL_RELEASE)
 AC_SUBST(BABL_VERSION)
 
+AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE(no-define)
 
 AC_PROG_CC
