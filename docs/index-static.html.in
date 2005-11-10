@@ -109,16 +109,17 @@
 
         <a name='Background'></a>
         <h2>Background</h2>
-        <p> When creating various libraries and small tool that deal with
-        computer graphics I often have created conversion functions
-        transforming raster images between different representations. </p>
+        <p> When creating various libraries and small tools that deal with
+        computer graphics I have often created function for converting
+        raster images between different representations. </p>
 
         <p>Libraries to help with such conversions already do exist, but no
-        extendable candidate have surfaced in searches when looking.
+        extendable candidate have surfaced in my searches.
         </p>
 
-        <p>The vocabulary developed in babl will most likely be part of GEGL's
-        vocabulary to describe image buffers.
+        <p>The vocabulary developed in babl will most likely be part of
+        <a href='http://www.gegl.org/'>GEGL</a>'s vocabulary to describe image
+        buffers.
         </p>
 
         <a name='How'></a>
@@ -130,27 +131,27 @@
         registered color models and data types.
         </p>
 
-        <p> The need to provide your own reference conversions should be
-        unneccesary, since babl provides a good base vocabulary in BablBase,
-        as well as extensions.</p>
+        <p>Babl provides a base vocabulary in BablBase and some extensions
+        thar are thought to be generally useful.</p>
 
         <p>When performing further extensions to the vocabulary of babl, the
         internal consistency is governed by reference conversions that operate
         on <em>double</em> (64 bit floating point values.) The only color model
         created during BablCore bootstrap is <em>RGBA</em> (linear light RGB,
         0.0 - 1.0, with a linear 0.0 - 1.0 opacity channel.) backed by
-        <em>double</em>.
+        the <em>double</em> datatype.
         </p>
 
-        <p>If what babls built in conversion isn't fast enough, you can provide
-        your own conversion between two formats, your registered conversion
-        will be taken into account when constructing other BablFishes as well.
+        <p>If babls conversion isn't fast enough, you can provide
+        your own conversion shortcut between two formats. The registered
+        shortcut might also be used by babl as an intermediate conversion when
+        constructing BablFishes for other conversions.
         </p>
 
-        <p>Babl extensions are shared objects, if you are already using a set
-        of conversion functions and you'd like to keep using them, as well as
-        the conversions babl provide, wrap your existing functions as an
-        extension. The code needed to wrap existing conversions is small.
+        <p>Babl extensions are shared objects, if you already have developed
+        some fast conversion functions, wrapping them as babl extensions should
+        not take much time, and will speed up babl for other users as well you
+        make the conversions available for others as well.
         </p>
 
         <a name='Features'></a>
@@ -192,7 +193,8 @@
         </ul>
 
         <h3>Shortcut coverage</h3>
-        <p>The diagram shown below is the coverage of shortcut conversions that already exist, only chains of converions that produce the same results as the reference conversions would result in are shown.
+        <p>The diagram shown below visualizes the coverage of current shortcut
+        conversions. 
         </p>
 <pre style='font-size:50%;height:30em;overflow:scroll'>
 <!--BablFishPath-->
@@ -205,7 +207,7 @@
         strives for few dependencies and thus portability. </p>
 
         <ul>
-          <li>libdl (win32 uses separate solution)</li>
+          <li>libdl (for loading extensions, babl is also reported to work on win32)</li>
         </ul>
 
 

@@ -1,3 +1,7 @@
+2005-11-10  Øyvind Kolås  <pippin@gimp.org>
+
+	* docs/index-static.html.in: Minor reformulations and spelling fixes.
+
 2005-11-08  Sven Neumann  <sven@gimp.org>
 
 	* configure.ac: use AM_CONFIG_HEADER instead of AC_CONFIG_HEADERS.
