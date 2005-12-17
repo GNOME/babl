@@ -1,3 +1,8 @@
+2005-12-17  Michael Schumacher  <schumaml@cvs.gnome.org>
+
+	* extensions/Makefile.in: add libgw32 and its dependencies to
+	LDADD for the win32 platform
+
 2005-11-10  Øyvind Kolås  <pippin@gimp.org>
 
 	* docs/index-static.html.in: Minor reformulations and spelling fixes.

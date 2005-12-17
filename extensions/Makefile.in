@@ -1,6 +1,9 @@
 # General minimalistic compile file for self contained single
 # file babl_extensions
 
+@OS_WIN32_TRUE@win32_libs = -lgw32c -liberty -lole32 -luuid -lwsock32
+@OS_WIN32_TRUE@no_undefined = -no-undefined
+
 CC = @CC@
 
 CFILES  = $(wildcard *.c)
@@ -11,7 +14,7 @@ all: $(SOBJS)
 CFLAGS  += -Wall
 
 %.so: %.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
 
 # if extension needing external libraries are to be # compiled with this make
 # file, each of them can be added according to the this pattern:
@@ -19,14 +22,16 @@ CFLAGS  += -Wall
 #	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<  [own compile and link flags]
 
 CIE-Lab.so: CIE-Lab.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<  -lm
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) -lm
 lcms.so: lcms.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<  `pkg-config lcms --cflags --libs`
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config lcms --cflags --libs`
 
 
 
 #############################################################################
-LDFLAGS = -shared -lc
+LDFLAGS += -shared 
+
+LDADD    = ../babl/.libs/libbabl.a $(win32_libs) $(no-undefined)
 
 CFLAGS  += -I../babl
 
