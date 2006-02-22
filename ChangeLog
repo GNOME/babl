@@ -1,5 +1,10 @@
 2006-02-22  Øyvind Kolås  <pippin@gimp.org>
 
+	* docs/index-static.html.in: added a link to the DHTML version of the
+	coverage map.
+
+2006-02-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* extensions/gggl.c: (conv_rgbaF_rgb8), (conv_rgbAF_rgbF), (init):
 	added two more conversions for gggl usage.
 

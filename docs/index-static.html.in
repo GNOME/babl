@@ -194,7 +194,7 @@
 
         <h3>Shortcut coverage</h3>
         <p>The diagram shown below visualizes the coverage of current shortcut
-        conversions. 
+        conversions. A <a href='BablFishPath.html'>DHTML version</a> is also available.
         </p>
 <pre style='font-size:50%;height:30em;overflow:scroll'>
 <!--BablFishPath-->
@@ -283,7 +283,7 @@
         <h2>TODO</h2>
         
         <ul>
-          <li>Validate that BablFishPath is actually faster than the
+          <li>Validate that a created BablFishPath is actually faster than the
           BablFishReference it is a replacement for.</li>
           <li>Compile-time instead of runtime profiling / storae of profiling
           and loss data.. <em>(The speed of conversions
@@ -291,10 +291,9 @@
             concurrently running processes and phase of moon.)</em></li>
           <li class='unstable'>Horizontal and vertical subsampling (for
           implementing 4:2:2 4:2:0 4:1:1 etc. chroma subsampling)</li>
-          <li>Thread safety for mutations of the type system.</li>
+          <li>Thread safety (locking) for mutations of the type system.</li>
           <li>Support for datatypes that are not a multiple of 8bit.</li>
           <li>dithering</li>
-          <li>image resampling?</li>
         </ul>
 
         <a name='Copyright'></a>
