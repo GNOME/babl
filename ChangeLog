@@ -1,3 +1,8 @@
+2006-02-22  Øyvind Kolås  <pippin@gimp.org>
+
+	* extensions/gggl.c: (conv_rgbaF_rgb8), (conv_rgbAF_rgbF), (init):
+	added two more conversions for gggl usage.
+
 2005-12-17  Michael Schumacher  <schumaml@cvs.gnome.org>
 
 	* extensions/Makefile.in: add libgw32 and its dependencies to

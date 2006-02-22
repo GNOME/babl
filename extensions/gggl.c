@@ -49,7 +49,7 @@
  *       gamma correction  (not really,. gamma correction belongs in seperate ops,.
  */
 
-//#define USE_TABLES
+#define USE_TABLES
 #ifdef USE_TABLES
 
 /* lookup tables used in conversion */
@@ -337,6 +337,34 @@ conv_8_16 (unsigned char *src, unsigned char *dst, long samples)
   return samples;
 }
 
+static INLINE long
+conv_rgbaF_rgb8 (unsigned char *src, unsigned char *dst, long samples)
+{
+  long n=samples;
+  while (n--)
+  {
+      register float f = (*(float *) src);
+      *(unsigned char *) dst = table_F_8[gggl_float_to_index16 (f)];
+      src += 4;
+      dst += 1;
+
+      f = (*(float *) src);
+      *(unsigned char *) dst = table_F_8[gggl_float_to_index16 (f)];
+      src += 4;
+      dst += 1;
+
+      f = (*(float *) src);
+      *(unsigned char *) dst = table_F_8[gggl_float_to_index16 (f)];
+      src += 4;
+      dst += 1;
+
+      src += 4;
+
+  }
+  return samples;
+}
+
+
 /*********/
 static INLINE long
 conv_rgbaF_rgba8 (unsigned char *src, unsigned char *dst, long samples)
@@ -576,6 +604,49 @@ conv_rgbAF_rgbaF (unsigned char *src, unsigned char *dst, long samples)
         }
       *(float *) dst = alpha;
       dst += 4;
+      src += 4;
+    }
+  return samples;
+}
+
+
+static INLINE long
+conv_rgbAF_rgbF (unsigned char *src, unsigned char *dst, long samples)
+{
+  long n=samples;
+  while (n--)
+    {
+      float     alpha = (((float *) src)[3]);
+      if (alpha >= 1.0)
+        {
+          register int       c;
+          for (c = 0; c < 3; c++)
+            {
+              *(float *) dst = *(float *) src;
+              dst += 4;
+              src += 4;
+            }
+        }
+      else if (alpha <= 0.0)
+        {
+          register int       c;
+          for (c = 0; c < 3; c++)
+            {
+              *(float *) dst = 0;
+              dst += 4;
+              src += 4;
+            }
+        }
+      else
+        {
+          register int       c;
+          for (c = 0; c < 3; c++)
+            {
+              *(float *) dst = ((*(float *) src) / alpha);
+              dst += 4;
+              src += 4;
+            }
+        }
       src += 4;
     }
   return samples;
@@ -2014,6 +2085,8 @@ init (void)
   o (rgbaF, yuvaF);
   o (rgbaF, rgbaD);
   o (rgbaD, rgbaF);
+  o (rgbaF, rgb8);
+  o (rgbAF, rgbF);
 #if 0
   o (rgbF, xyzF);
   o (xyzF, rgbF);
