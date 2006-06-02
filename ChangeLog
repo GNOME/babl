@@ -1,5 +1,9 @@
 2006-06-02  Øyvind Kolås  <pippin@gimp.org>
 
+	* extensions/gggl.c: (table_init): Fix some compile warnings.
+
+2006-06-02  Øyvind Kolås  <pippin@gimp.org>
+
 	I'm not entirely sure about installing babl-classes.h like this, it
 	might make more sense to create setters/getters to be used. Thus
 	making it possible to extend the structs at a later stage without breaking

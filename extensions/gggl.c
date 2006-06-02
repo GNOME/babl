@@ -126,8 +126,8 @@ table_init (void)
       for (i = 0; i < 256; i++)
         {
           float     f = table_8_F[i];
-          unsigned short *hi = ((unsigned short *) &f);
-          unsigned short *lo = ((unsigned short *) &f);
+          unsigned short *hi = ((unsigned short *)(void*) &f);
+          unsigned short *lo = ((unsigned short *)(void*) &f);
           *lo = 0;
           table_F_8[(*hi)] = i;
         }
@@ -929,7 +929,7 @@ conv_rgbaF_rgbA16 (unsigned char *src, unsigned char *dst, long samples)
     }
   return samples;
 }
-
+#if 0
 static INLINE long
 conv_rgbaF_rgb8 (unsigned char *src, unsigned char *dst, long samples)
 {
@@ -954,6 +954,7 @@ conv_rgbaF_rgb8 (unsigned char *src, unsigned char *dst, long samples)
     }
   return samples;
 }
+#endif
 
 static INLINE long
 conv_rgbaF_g8 (unsigned char *src, unsigned char *dst, long samples)
