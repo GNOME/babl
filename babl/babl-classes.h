@@ -47,7 +47,7 @@ typedef long (*BablFuncPlanar)    (int    src_bands,
  * differentiation in polymorphic functions. (as well as manual
  * type check assertions).
  */
-#define BABL_MAGIC   0xbAb10000
+#define BABL_MAGIC   0xbAb100
 
 typedef enum {
   BABL_INSTANCE = BABL_MAGIC,
@@ -219,7 +219,9 @@ typedef struct
   BablConversion  *conversion;
 } BablFishSimple;
 
-
+#ifndef BABL_HARD_MAX_PATH_LENGTH
+#define BABL_HARD_MAX_PATH_LENGTH 16
+#endif
 
 /* BablFishPath is a combination of registered conversions, both
  * from the reference types / model conversions, and optimized format to
@@ -236,8 +238,8 @@ typedef struct
   double           cost;   /* number of  ticks *10 + chain_length */
   double           loss;   /* error introduced */
 
-  BablConversion  *conversion[BABL_HARD_MAX_PATH_LENGTH];
   int              conversions;
+  BablConversion  *conversion[BABL_HARD_MAX_PATH_LENGTH];
 } BablFishPath;
 
 /* BablFishReference 

@@ -1,3 +1,14 @@
+2006-06-02  Øyvind Kolås  <pippin@gimp.org>
+
+	I'm not entirely sure about installing babl-classes.h like this, it
+	might make more sense to create setters/getters to be used. Thus
+	making it possible to extend the structs at a later stage without breaking
+	binary compatibility.
+
+	* babl/Makefile.am: Added babl-classes.h to the installed headers
+	* babl/babl-classes.h: Made the magic number fit in 32bit int.
+	* babl/babl.h: include babl-classes.h
+
 2006-02-22  Øyvind Kolås  <pippin@gimp.org>
 
 	* docs/index-static.html.in: added a link to the DHTML version of the

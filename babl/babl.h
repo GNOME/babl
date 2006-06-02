@@ -25,6 +25,7 @@
 #ifndef _BABL_H
 #define _BABL_H
 
+#include "babl-classes.h"
 #ifdef _BABL_INTERNAL_H
 #error babl.h included after babl-internal.h
 #endif
