@@ -1,3 +1,8 @@
+2006-06-05  Øyvind Kolås  <pippin@gimp.org>
+
+	* extensions/gegl-fixups.c: A babl extension to make the testing of
+	gegl faster.
+
 2006-06-02  Øyvind Kolås  <pippin@gimp.org>
 
 	* extensions/gggl.c: (table_init): Fix some compile warnings.
