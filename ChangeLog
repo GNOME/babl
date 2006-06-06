@@ -1,3 +1,7 @@
+2006-06-06  Øyvind Kolås  <pippin@gimp.org>
+
+	* docs/Makefile.am: Do not rely that a command calle tempfile exists.
+
 2006-06-05  Øyvind Kolås  <pippin@gimp.org>
 
 	* extensions/gegl-fixups.c: A babl extension to make the testing of
