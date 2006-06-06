@@ -1,5 +1,14 @@
 2006-06-06  Øyvind Kolås  <pippin@gimp.org>
 
+	Register all the formats that the gggl based conversions use in
+	babl-base. This allows a string based short hand vocabulary of format
+	names that can be expected to exist.
+
+	* babl/base/Makefile.am: added formats.c
+	* babl/base/babl-base.c: (babl_base_init): initialize formats.
+
+2006-06-06  Øyvind Kolås  <pippin@gimp.org>
+
 	Added conversions based on gggl that assume no gamma in their
 	conversions.
 	* extensions/gggl-lies.c: Added.

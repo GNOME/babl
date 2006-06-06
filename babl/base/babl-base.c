@@ -19,6 +19,7 @@
 
 extern int babl_hmpf_on_name_lookups;
 
+void babl_formats_init (void);
 static void types  (void);
 static void models (void);
 
@@ -29,6 +30,7 @@ babl_base_init (void)
 
   types ();
   models ();
+  babl_formats_init ();
 
   babl_hmpf_on_name_lookups --;
 }
