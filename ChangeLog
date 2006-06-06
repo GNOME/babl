@@ -1,5 +1,11 @@
 2006-06-06  Øyvind Kolås  <pippin@gimp.org>
 
+	Added conversions based on gggl that assume no gamma in their
+	conversions.
+	* extensions/gggl-lies.c: Added.
+
+2006-06-06  Øyvind Kolås  <pippin@gimp.org>
+
 	* docs/Makefile.am: redirect the check for tempfile to /dev/null
 	* docs/tools/xml_insert.sh: Add tempfile workaround here as well.
 
