@@ -1,5 +1,10 @@
 2006-06-06  Øyvind Kolås  <pippin@gimp.org>
 
+	* docs/Makefile.am: redirect the check for tempfile to /dev/null
+	* docs/tools/xml_insert.sh: Add tempfile workaround here as well.
+
+2006-06-06  Øyvind Kolås  <pippin@gimp.org>
+
 	* docs/Makefile.am: Do not rely that a command calle tempfile exists.
 
 2006-06-05  Øyvind Kolås  <pippin@gimp.org>

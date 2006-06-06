@@ -11,7 +11,7 @@
 #
 # FIXME: add argument checking / error handling
 
-TMP_FILE=`tempfile`
+which tempfile > /dev/null && TMP_FILE=`tempfile` || TMP_FILE="/tmp/temp_file"
 
 cp $1 $TMP_FILE
 

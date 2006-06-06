@@ -48,7 +48,7 @@ index.html: index-static.html                    \
 	    Makefile.am
 	echo -n "HTML: $@"
 	cp $< $@ 
-	(which tempfile && TMPFILE=`tempfile` || TMPFILE="/tmp/babl_build_tempfile" ;\
+	(which tempfile > /dev/null&& TMPFILE=`tempfile` || TMPFILE="/tmp/babl_build_tempfile" ;\
 	export BABL_PATH="$(top_builddir)/extensions"; $(top_builddir)/tests/babl_html_dump > $$TMPFILE;\
 	$(top_srcdir)/docs/tools/xml_insert.sh $@ BablBase $$TMPFILE;\
 	rm -f $$TMPFILE )
