@@ -1,3 +1,14 @@
+2006-06-12  Øyvind Kolås  <pippin@gimp.org>
+
+	Do not expect the user to pass in BablImages (existance of babl
+	pointer decorations should not be allowed to be used to implement type
+	checking for provided buffers/bablimages)
+
+	* babl/babl-fish.c: (babl_fish_process):
+	* babl/babl-fish-reference.c: (babl_fish_reference_process):
+	* docs/index-static.html.in: removed section about planar BablImages
+	since the API is now disabled.
+
 2006-06-06  Øyvind Kolås  <pippin@gimp.org>
 
 	Register all the formats that the gggl based conversions use in

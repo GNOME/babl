@@ -144,13 +144,17 @@ babl_fish_process (Babl *babl,
       case BABL_FISH_SIMPLE:
       case BABL_FISH_PATH:
 
+#if 0
          if (BABL_IS_BABL (source))
            source_image = source;
+#endif
          if (!source_image)
            source_image = (BablImage*) babl_image_from_linear (
                                           source, (Babl*)babl->fish.source);
+#if 0
          if (BABL_IS_BABL (destination))
            destination_image = destination;
+#endif
          if (!destination_image)
            destination_image = (BablImage*) babl_image_from_linear (
                           destination, (Babl*)babl->fish.destination);

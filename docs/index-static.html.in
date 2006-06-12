@@ -245,7 +245,7 @@
                  <span class='function'>babl_component</span> <span class='paren'>(</span><span class='string'>"G'"</span><span class='paren'>)</span>,
                  <span class='function'>babl_component</span> <span class='paren'>(</span><span class='string'>"R'"</span><span class='paren'>)</span>,
                  <span class='NULL'>NULL</span><span class='paren'>);</span></pre>
-
+<!--
         <p>Instead of a linear buffer you can an image descriptor which desribes the start of the memory segment, the pitch in bytes between samples, and the rowstride (not used yet,
         use 0 to indicate unlimited for compatibility with future API.)
         </p>
@@ -258,6 +258,7 @@
                           <span class='NULL'>NULL</span><span class='paren'>)</span>,
                           pixel_count<span class='paren'>);</span>
 </pre>
+-->
 
         <a name='Extending'></a>
         <h2>Extending</h2>
@@ -273,24 +274,25 @@
         <a name='ColorManagement'></a>
         <h2>Color Management</h2>
         <p> Babl is not a color management system, since it doesn't deal with
-        ICC profiles. One way to deal with this is to register a custom color
-        model, that is backed by for instance <em>lcms</em>. (see the
-        <em>lcms-lab</em> extension) Then when using the newly registered color
-        model to create pixel formats, lcms will be used behind the scenes.
-        </p>
-        
+        ICC profiles. Babl is designed primarily for internal use when the
+        color space is already known (sRGB, CIE Lab, Luminance or similar).</p>
+
+        <p>
+        It is also possible to register new color models that are managed by a
+        color management system like <em>lcms</em>, take a look at the <em>lcms-lab</em>
+        extensions for an example.</p>
+
         <a name='TODO'></a>
         <h2>TODO</h2>
         
         <ul>
           <li>Validate that a created BablFishPath is actually faster than the
           BablFishReference it is a replacement for.</li>
-          <li>Compile-time instead of runtime profiling / storae of profiling
+          <li>Compile-time instead of runtime profiling / storage of profiling
           and loss data.. <em>(The speed of conversions
             is bound to 'wobble', according to architecture, compiler flags,
             concurrently running processes and phase of moon.)</em></li>
-          <li class='unstable'>Horizontal and vertical subsampling (for
-          implementing 4:2:2 4:2:0 4:1:1 etc. chroma subsampling)</li>
+          <li class='unstable'>Horizontal chroma subsampling (4:2:2 and 4:1:1)</li>
           <li>Thread safety (locking) for mutations of the type system.</li>
           <li>Support for datatypes that are not a multiple of 8bit.</li>
           <li>dithering</li>
