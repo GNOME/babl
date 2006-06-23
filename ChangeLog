@@ -1,3 +1,7 @@
+2006-06-24  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl.pc.in: stripped trailing /babl from CFLAGS include path.
+
 2006-06-12  Øyvind Kolås  <pippin@gimp.org>
 
 	Do not expect the user to pass in BablImages (existance of babl
