@@ -6,6 +6,6 @@ includedir=@includedir@
 Name: babl
 Description: Dynamic; any to any, pixel format conversion library
 Version: @VERSION@
-Libs: -L${libdir} -lbabl -ldl
+Libs: -L${libdir} -lbabl -ldl -lm
 Cflags: -I${includedir}/@PACKAGE_NAME@-@BABL_API_VERSION@
 

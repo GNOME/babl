@@ -1,3 +1,8 @@
+2006-07-06  Øyvind Kolås  <pippin@gimp.org>
+	
+	* babl.pc.in:  Added -lm to the list of libraries that need to be
+	linked along with babl.
+
 2006-06-24  Øyvind Kolås  <pippin@gimp.org>
 
 	* babl.pc.in: stripped trailing /babl from CFLAGS include path.
