@@ -31,7 +31,8 @@ lcms.so: lcms.c
 #############################################################################
 LDFLAGS += -shared 
 
-LDADD    = ../babl/.libs/libbabl.a $(win32_libs) $(no-undefined)
+#LDADD    = ../babl/.libs/libbabl.so $(win32_libs) $(no-undefined)
+LDADD    = $(win32_libs) $(no-undefined)
 
 CFLAGS  += -I../babl
 

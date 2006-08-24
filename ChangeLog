@@ -1,3 +1,7 @@
+2006-08-24  Øyvind Kolås  <pippin@gimp.org>
+
+	* extensions/Makefile.in:
+
 2006-07-06  Øyvind Kolås  <pippin@gimp.org>
 	
 	* babl.pc.in:  Added -lm to the list of libraries that need to be
