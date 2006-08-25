@@ -32,6 +32,7 @@ AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE(no-define)
 
 AC_PROG_CC
+AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
 AC_STDC_HEADERS
 AM_SANITY_CHECK
@@ -125,8 +126,6 @@ AC_MSG_RESULT([$os_win32])
 AC_SUBST(PATHSEP)
 
 AM_CONDITIONAL(OS_WIN32, test "$os_win32" = "yes")
-AC_DEFINE(OS_WIN32, 1, "Define to 1 if you are compiling for Microsoft Windows.")
-
 AM_CONDITIONAL(OS_UNIX, test "$os_win32" != "yes")
 
 dnl ===========================================================================

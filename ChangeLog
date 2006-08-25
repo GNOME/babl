@@ -1,3 +1,11 @@
+2006-08-25  Michael Schumacher  <schumaml@cvs.gnome.org>
+
+	* configure.ac: added AC_LIBTOOL_WIN32_DLL as a preparation for
+	proper builds of shared libs on win32 & there's no need to define
+	OS_WIN32 here... 
+	* babl/babl-extension.c:  ...if the only place where it is needed
+	can be handled by HAVE_DLFCN_H
+
 2006-08-24  Øyvind Kolås  <pippin@gimp.org>
 
 	* extensions/Makefile.in:

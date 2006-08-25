@@ -138,7 +138,7 @@ destroy_hook (void)
 #include <sys/stat.h>
 #include <unistd.h>
 
-#ifndef OS_WIN32
+#ifdef HAVE_DLFCN_H
 #include <dlfcn.h>
 #else
 void  *dlopen(const char *, int);
