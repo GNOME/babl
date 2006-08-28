@@ -22,7 +22,7 @@ EXTRA_DIST= 			\
 BUILT_EXTRA_DIST = index.html BablFishPath.html
 
 CLEANFILES = README changelog.rss
-DISTCLEANFILES = index-static.html 
+DISTCLEANFILES = index-static.html  BablFishPath.txt
 MAINTAINERCLEANFILES = $(BUILT_EXTRA_DIST)
 
 all: $(HTML_FILES) rss

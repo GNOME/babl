@@ -1,3 +1,13 @@
+2006-08-28  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	Changes to get 'make distcheck' working properly.
+
+	* docs/Makefile.am: Added BablFishPath to DISTCLEANFILES.
+
+	* extensions/Makefile.am: Added.
+
+	* extensions/Makefile.in: Removed (replaced by Makefile.am).
+
 2006-08-25  Michael Schumacher  <schumaml@cvs.gnome.org>
 
 	* configure.ac: added AC_LIBTOOL_WIN32_DLL as a preparation for
@@ -8,10 +18,10 @@
 
 2006-08-24  Øyvind Kolås  <pippin@gimp.org>
 
-	* extensions/Makefile.in:
+	* extensions/Makefile.in: do not add libbabl.a into plug-ins
 
 2006-07-06  Øyvind Kolås  <pippin@gimp.org>
-	
+
 	* babl.pc.in:  Added -lm to the list of libraries that need to be
 	linked along with babl.
 
@@ -67,8 +77,8 @@
 
 	I'm not entirely sure about installing babl-classes.h like this, it
 	might make more sense to create setters/getters to be used. Thus
-	making it possible to extend the structs at a later stage without breaking
-	binary compatibility.
+	making it possible to extend the structs at a later stage without
+	breaking binary compatibility.
 
 	* babl/Makefile.am: Added babl-classes.h to the installed headers
 	* babl/babl-classes.h: Made the magic number fit in 32bit int.
