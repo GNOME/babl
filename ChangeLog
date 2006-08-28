@@ -1,8 +1,16 @@
 2006-08-28  Kevin Cozens  <kcozens@cvs.gnome.org>
 
+	* configure.ac: Added AM_MAINTAINER_MODE.
+
+	* docs/Makefile.am: Moved BablFishPath.txt to BUILT_EXTRA_DIST.
+
+	* tests/Makefile.am: Removed .cvsignore from EXTRA_DIST.
+
+2006-08-28  Kevin Cozens  <kcozens@cvs.gnome.org>
+
 	Changes to get 'make distcheck' working properly.
 
-	* docs/Makefile.am: Added BablFishPath to DISTCLEANFILES.
+	* docs/Makefile.am: Added BablFishPath.txt to DISTCLEANFILES.
 
 	* extensions/Makefile.am: Added.
 

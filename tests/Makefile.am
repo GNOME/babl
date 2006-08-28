@@ -45,5 +45,3 @@ noinst_PROGRAMS =		\
 introspect_SOURCES     = introspect.c
 babl_html_dump_SOURCES = babl-html-dump.c
 nop_SOURCES            = nop.c
-
-EXTRA_DIST = .cvsignore

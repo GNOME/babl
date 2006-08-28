@@ -19,10 +19,10 @@ EXTRA_DIST= 			\
 	index.html		\
 	LGPL
 
-BUILT_EXTRA_DIST = index.html BablFishPath.html
+BUILT_EXTRA_DIST = index.html BablFishPath.html BablFishPath.txt
 
 CLEANFILES = README changelog.rss
-DISTCLEANFILES = index-static.html  BablFishPath.txt
+DISTCLEANFILES = index-static.html
 MAINTAINERCLEANFILES = $(BUILT_EXTRA_DIST)
 
 all: $(HTML_FILES) rss
