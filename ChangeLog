@@ -1,5 +1,9 @@
 2006-08-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* extensions/.cvsignore: added Makefile.in
+
+2006-08-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* configure.ac: set the version of babl to 0.0.5 (odd micro indicating
 	that it is a CVS version).
 
