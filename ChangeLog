@@ -1,5 +1,12 @@
 2006-08-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* configure.ac: set the version of babl to 0.0.4
+	* docs/index-static.html.in: added downloading location for tarballs
+	of babl.
+	* AUTHORS: Added Kevin Cozens
+
+2006-08-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* Makefile.am: added a dependency on all for README, making it
 	possible to do ./autogen.sh && make distcheck #from a clean CVS
 	checkout.

@@ -79,7 +79,8 @@
         <li><a href='#Pixel-formats'>&nbsp;&nbsp;Pixel formats</a></li>
         <li><a href='#Extensions'>Extensions</a></li>
         <li><a href='#Dependencies'>Dependencies</a></li>
-        <li><a href='#Source'>Source</a></li>
+        <li><a href='#Download'>Download</a></li>
+        <li><a href='#CVS'>CVS</a></li>
         <li><a href='#Usage'>Usage</a></li>
         <li><a href='#Extending'>Extending</a></li>
         <li><a href='#ColorManagement'>Color Management</a></li>
@@ -89,139 +90,145 @@
       </ul>
     </div>
 
-    <a name='Babl'></a>
+<a name='Babl'></a>
     <div class='paper'>
-      <div class='content'>
+  <div class='content'>
 
-        <!--<h1>Babl</h1>-->
-        <p>Babl is a <em>dynamic, any to any, pixel format conversion
-          library</em> It provides conversions between the myriad of buffer
-        types images can be stored in. Babl doesn't only help with existing
-        pixel formats, but also facilitates creation of new and uncommon
-        ones.</p>
+    <!--<h1>Babl</h1>-->
+    <p>Babl is a <em>dynamic, any to any, pixel format conversion
+      library</em> It provides conversions between the myriad of buffer
+    types images can be stored in. Babl doesn't only help with existing
+    pixel formats, but also facilitates creation of new and uncommon
+    ones.</p>
 
-        <a name='NEWS'></a>
-        <h2>News</h2>
+    <a name='NEWS'></a>
+    <h2>News</h2>
 <!--
 <!--NEWS-->
 -->
-        <p>See the <a href='http://cvs.gnome.org/viewcvs/*checkout*/babl/ChangeLog'>ChangeLog in CVS</a>.</p>
+    <p>See the <a href='http://cvs.gnome.org/viewcvs/*checkout*/babl/ChangeLog'>ChangeLog in CVS</a>.</p>
 
-        <a name='Background'></a>
-        <h2>Background</h2>
-        <p> When creating various libraries and small tools that deal with
-        computer graphics I have often created function for converting
-        raster images between different representations. </p>
+    <a name='Background'></a>
+    <h2>Background</h2>
+    <p> When creating various libraries and small tools that deal with
+    computer graphics I have often created function for converting
+    raster images between different representations. </p>
 
-        <p>Libraries to help with such conversions already do exist, but no
-        extendable candidate have surfaced in my searches.
-        </p>
+    <p>Libraries to help with such conversions already do exist, but no
+    extendable candidate have surfaced in my searches.
+    </p>
 
-        <p>The vocabulary developed in babl will most likely be part of
-        <a href='http://www.gegl.org/'>GEGL</a>'s vocabulary to describe image
-        buffers.
-        </p>
+    <p>The vocabulary developed in babl will most likely be part of
+    <a href='http://www.gegl.org/'>GEGL</a>'s vocabulary to describe image
+    buffers.
+    </p>
 
-        <a name='How'></a>
-        <h2>How babl works</h2>
-        <p>When using BablFishes to do your conversions, you request a fish to
-        convert between two formats, and an optimal fish to babls capability is
-        provided that you can use to do your conversions. Babl also provides
-        the capability to describe new formats based on a vocbulary of user
-        registered color models and data types.
-        </p>
+    <a name='How'></a>
+    <h2>How babl works</h2>
+    <p>When using BablFishes to do your conversions, you request a fish to
+    convert between two formats, and an optimal fish to babls capability is
+    provided that you can use to do your conversions. Babl also provides
+    the capability to describe new formats based on a vocbulary of user
+    registered color models and data types.
+    </p>
 
-        <p>Babl provides a base vocabulary in BablBase and some extensions
-        thar are thought to be generally useful.</p>
+    <p>Babl provides a base vocabulary in BablBase and some extensions
+    thar are thought to be generally useful.</p>
 
-        <p>When performing further extensions to the vocabulary of babl, the
-        internal consistency is governed by reference conversions that operate
-        on <em>double</em> (64 bit floating point values.) The only color model
-        created during BablCore bootstrap is <em>RGBA</em> (linear light RGB,
-        0.0 - 1.0, with a linear 0.0 - 1.0 opacity channel.) backed by
-        the <em>double</em> datatype.
-        </p>
+    <p>When performing further extensions to the vocabulary of babl, the
+    internal consistency is governed by reference conversions that operate
+    on <em>double</em> (64 bit floating point values.) The only color model
+    created during BablCore bootstrap is <em>RGBA</em> (linear light RGB,
+    0.0 - 1.0, with a linear 0.0 - 1.0 opacity channel.) backed by
+    the <em>double</em> datatype.
+    </p>
 
-        <p>If babls conversion isn't fast enough, you can provide
-        your own conversion shortcut between two formats. The registered
-        shortcut might also be used by babl as an intermediate conversion when
-        constructing BablFishes for other conversions.
-        </p>
+    <p>If babls conversion isn't fast enough, you can provide
+    your own conversion shortcut between two formats. The registered
+    shortcut might also be used by babl as an intermediate conversion when
+    constructing BablFishes for other conversions.
+    </p>
 
-        <p>Babl extensions are shared objects, if you already have developed
-        some fast conversion functions, wrapping them as babl extensions should
-        not take much time, and will speed up babl for other users as well you
-        make the conversions available for others as well.
-        </p>
+    <p>Babl extensions are shared objects, if you already have developed
+    some fast conversion functions, wrapping them as babl extensions should
+    not take much time, and will speed up babl for other users as well you
+    make the conversions available for others as well.
+    </p>
 
-        <a name='Features'></a>
-        <h2>Features</h2>
+    <a name='Features'></a>
+    <h2>Features</h2>
 
-        <h3>Core</h3>
-        <ul>
-          <li class='frozen'>Small API for simple use cases</li>
-          <li class='stable'>Planar and linear buffers</li>
-          <li class='stable'>Thread safety for processing.</li>
+    <h3>Core</h3>
+    <ul>
+      <li class='frozen'>Small API for simple use cases</li>
+      <li class='stable'>Planar and linear buffers</li>
+      <li class='stable'>Thread safety for processing.</li>
 
-          <li class='unstable'>Extendable and <a href='http://pippin.gimp.org/babl/introspect.txt'>introspectable</a> formats,
-          color models, components and datatypes</li>
-          <li class='unstable'>Reference 64bit floating point conversions for
-          data types and color models.</li>
-        </ul>
+      <li class='unstable'>Extendable and <a href='http://pippin.gimp.org/babl/introspect.txt'>introspectable</a> formats,
+      color models, components and datatypes</li>
+      <li class='unstable'>Reference 64bit floating point conversions for
+      data types and color models.</li>
+    </ul>
 
-        <a name='Vocabulary'></a>
-        <h3 style='margin-bottom:0em;'>Vocabulary</h3>
+    <a name='Vocabulary'></a>
+    <h3 style='margin-bottom:0em;'>Vocabulary</h3>
 <!--BablBase-->
-        
-        <a name='Extensions'></a>
-        <h3>Extensions</h3>
-        <p>
-        At compile, load and runtime; babl is extendable with:
-        </p>
-        <ul>
-          <li>data  types.</li>
-          <li>color models.</li>
-          <li>pixel formats.</li>
-          <li>optimized conversion functions:
-          <dl>
-            <dt>SIMD instructions</dt>
-            <dd>MMX, SSE, Altivec ...</dd>
-            <dt>External libraries</dd>
-            <dd>liboil, hermes, libavcodec, lcms, ...</li>
-          </dl>
-          </li>
-        </ul>
+    
+    <a name='Extensions'></a>
+    <h3>Extensions</h3>
+    <p>
+    At compile, load and runtime; babl is extendable with:
+    </p>
+    <ul>
+      <li>data  types.</li>
+      <li>color models.</li>
+      <li>pixel formats.</li>
+      <li>optimized conversion functions:
+      <dl>
+        <dt>SIMD instructions</dt>
+        <dd>MMX, SSE, Altivec ...</dd>
+        <dt>External libraries</dd>
+        <dd>liboil, hermes, libavcodec, lcms, ...</li>
+      </dl>
+      </li>
+    </ul>
 
-        <h3>Shortcut coverage</h3>
-        <p>The diagram shown below visualizes the coverage of current shortcut
-        conversions. A <a href='BablFishPath.html'>DHTML version</a> is also available.
-        </p>
+    <h3>Shortcut coverage</h3>
+    <p>The diagram shown below visualizes the coverage of current shortcut
+    conversions. A <a href='BablFishPath.html'>DHTML version</a> is also available.
+    </p>
 <pre style='font-size:50%;height:30em;overflow:scroll'>
 <!--BablFishPath-->
 </pre>
 
-        <a name='Dependencies'></a>
-        <h2>Dependencies</h2>
+    <a name='Dependencies'></a>
+    <h2>Dependencies</h2>
 
-        <p> Babl is intended to be a low level infrastructure library and thus
-        strives for few dependencies and thus portability. </p>
+    <p> Babl is intended to be a low level infrastructure library and thus
+    strives for few dependencies and thus portability. </p>
 
-        <ul>
-          <li>libdl (for loading extensions, babl is also reported to work on win32)</li>
-        </ul>
+    <ul>
+      <li>libdl (for loading extensions, babl is also reported to work on win32)</li>
+    </ul>
 
+    <a name='Download'></a>
+    <h2>Download</h2>
 
-        <a name='Source'></a>
-        <h2>Source</h2>
+    <p>The latest versioned development version of babl can be found in
+    <a href='http://pippin.gimp.org/babl/dist'>http://pippin.gimp.org/babl/dist/</a>.
+    </p>
 
-        <p>
-        The latest development version is available in <a href='http://cvs.gnome.org/viewcvs/babl/'>the babl module in GNOME CVS</a>.
-        </p>
-        <!--
-        <div class='screen'>
-          <p>You can also <a href='source-local.html'>browse the source</a> for
-          the version this website was built. </p>
-        </div>
+    <a name='CVS'></a>
+    <h2>CVS</h2>
+
+    <p>
+    The latest development version is available in <a href='http://cvs.gnome.org/viewcvs/babl/'>the babl module in GNOME CVS</a>.
+    </p>
+    <!--
+    <div class='screen'>
+      <p>You can also <a href='source-local.html'>browse the source</a> for
+      the version this website was built. </p>
+    </div>
         -->
 
         <a name='Usage'></a>

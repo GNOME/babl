@@ -2,7 +2,7 @@ AC_PREREQ(2.54)
 
 m4_define([babl_major_version], 0)
 m4_define([babl_minor_version], 0)
-m4_define([babl_micro_version], 2)
+m4_define([babl_micro_version], 4)
 
 AC_INIT(babl, babl_major_version.babl_minor_version.babl_micro_version)
 AC_CONFIG_SRCDIR(babl/babl.h)
