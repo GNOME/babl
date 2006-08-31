@@ -30,14 +30,13 @@ DISTCLEANFILES = \
 if HAVE_W3M
 dist-check-w3m:
 
-README: docs/index.html
+README: all docs/index.html
 	$(W3M) -cols 72 -dump $< > $@
 else
 dist-check-w3m:
 	@echo "*** w3m must be available in order to make dist"
 	@false
 endif
-
 
 snapshot:
 	$(MAKE) dist distdir=$(PACKAGE)-`date +"%Y%m%d"`

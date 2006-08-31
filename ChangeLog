@@ -1,3 +1,9 @@
+2006-08-31  Øyvind Kolås  <pippin@gimp.org>
+
+	* Makefile.am: added a dependency on all for README, making it
+	possible to do ./autogen.sh && make distcheck #from a clean CVS
+	checkout.
+
 2006-08-28  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* configure.ac: Added AM_MAINTAINER_MODE.
