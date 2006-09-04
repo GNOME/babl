@@ -2,7 +2,7 @@
 # file babl_extensions
 
 if OS_WIN32
-win32_libs = -lgw32c -liberty -lole32 -luuid -lwsock32
+win32_libs = ../babl/.libs/libbabl.a -lgw32c -liberty -lole32 -luuid -lwsock32
 no_undefined = -no-undefined
 endif
 

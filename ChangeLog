@@ -1,3 +1,8 @@
+2006-09-04  Michael Schumacher  <schumaml@cvs.gnome.org>
+
+	* extensions/Makefile.am: have to link with libbabl.a, at least on
+	the Windows platforms
+
 2006-08-31  Øyvind Kolås  <pippin@gimp.org>
 
 	* extensions/.cvsignore: added Makefile.in
