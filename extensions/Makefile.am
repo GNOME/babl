@@ -17,7 +17,7 @@ all-local: $(SOBJS)
 
 CFLAGS  += -I $(top_srcdir)/babl -I $(top_srcdir)/extensions
 
-LDFLAGS += -shared 
+LDFLAGS += -shared -fPIC
 
 LDADD    = $(win32_libs) $(no-undefined)
 
