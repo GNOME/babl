@@ -1,3 +1,7 @@
+2006-09-09  Øyvind Kolås  <pippin@gimp.org>
+
+	* extensions/Makefile.am: moved -fPIC from LD_FLAGS to CFLAGS.
+	
 2006-09-08  Øyvind Kolås  <pippin@gimp.org>
 
 	* extensions/Makefile.am: added -fPIC to LD_FLAGS, thus making it

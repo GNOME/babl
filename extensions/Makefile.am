@@ -15,9 +15,9 @@ INSTALLED_ITEMS = $(subst $(srcdir),$(ext_dir),$(CFILES:.c=.so))
 
 all-local: $(SOBJS)
 
-CFLAGS  += -I $(top_srcdir)/babl -I $(top_srcdir)/extensions
+CFLAGS  += -I $(top_srcdir)/babl -I $(top_srcdir)/extensions -fPIC
 
-LDFLAGS += -shared -fPIC
+LDFLAGS += -shared
 
 LDADD    = $(win32_libs) $(no-undefined)
 
