@@ -91,7 +91,7 @@ babl_process (Babl *babl,
   if (babl->class_type >= BABL_CONVERSION &&
       babl->class_type <= BABL_CONVERSION_PLANAR)
     return babl_conversion_process (babl, source, destination, n);
-  
+
   if (babl->class_type == BABL_FISH ||
       babl->class_type == BABL_FISH_REFERENCE ||
       babl->class_type == BABL_FISH_PATH ||
@@ -102,9 +102,9 @@ babl_process (Babl *babl,
        ret = babl_fish_process (babl, source, destination, n);
 
        ticks -= babl_ticks();
-       ticks *= -1;
+       ticks *= -1L;
 
-       babl->fish.msecs += ticks;
+       babl->fish.usecs += ticks;
        babl->fish.processings++;
        babl->fish.pixels += ret;
        return ret;

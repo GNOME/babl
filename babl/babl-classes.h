@@ -93,7 +93,7 @@ BablConversion {
   BablInstance           instance;
   union Babl            *source;
   union Babl            *destination;
-  int                    cost;
+  long                   cost;
   double                 error;
   union
     {
@@ -171,7 +171,7 @@ typedef struct
   BablModel       *model;
   int              bytes_per_pixel;
   int              planar;
-  double           loss; /*< average relative error when converting 
+  double           loss; /*< average relative error when converting
                              from and to RGBA double */
 } BablFormat;
 
@@ -202,7 +202,7 @@ typedef struct
   /* instrumentation */
   int             processings; /* number of times the fish has been used */
   long            pixels;      /* number of pixels translates */
-  long            msecs;       /* msecs spent within this fish */
+  long            usecs;       /* usecs spent within this fish */
 } BablFish;
 
 
@@ -242,7 +242,7 @@ typedef struct
   BablConversion  *conversion[BABL_HARD_MAX_PATH_LENGTH];
 } BablFishPath;
 
-/* BablFishReference 
+/* BablFishReference
  *
  * A BablFishReference is not intended to be fast, thus the algorithm
  * encoded can use a multi stage approach, based on the knowledge babl
@@ -264,7 +264,7 @@ typedef struct
 {
   BablInstance   instance; /* path to .so / .dll is stored in instance name */
   void          *dl_handle;
-  void         (*destroy) (void); 
+  void         (*destroy) (void);
 } BablExtension;
 
 typedef union

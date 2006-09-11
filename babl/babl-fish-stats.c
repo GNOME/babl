@@ -42,11 +42,11 @@ table_destination_each (Babl *babl,
 
       babl_assert (fish);
 
-      
+
       switch (fish->class_type)
         {
           case BABL_FISH_PATH:
-            
+
             fprintf (output_file, "<td class='cell'%s><a href='javascript:o()'>%s",
                fish->fish.processings > 0 ? " style='background-color: #69f'":"",
             utf8_bar[fish->fish_path.conversions]);
@@ -57,7 +57,7 @@ table_destination_each (Babl *babl,
               fprintf (output_file, "<h3><span class='g'>path</span> %s <span class='g'>to</span> %s</h3>", source->instance.name, destination->instance.name);
               if (fish->fish.processings > 0)
                 {
-                  fprintf (output_file, "<span class='g'>msecs:</span>%li<br/>", fish->fish.msecs);
+                  fprintf (output_file, "<span class='g'>usecs:</span>%li<br/>", fish->fish.usecs);
                   fprintf (output_file, "<span class='g'>Processings:</span>%i<br/>", fish->fish.processings);
                   fprintf (output_file, "<span class='g'>Pixels:</span>%li<br/>", fish->fish.pixels);
                 }
@@ -96,7 +96,7 @@ table_destination_each (Babl *babl,
 
               if (fish->fish.processings > 0)
                 {
-                  fprintf (output_file, "<span class='g'>msecs:</span>%li<br/>", fish->fish.msecs);
+                  fprintf (output_file, "<span class='g'>usecs:</span>%li<br/>", fish->fish.usecs);
                   fprintf (output_file, "<span class='g'>Processings:</span>%i<br/>", fish->fish.processings);
                   fprintf (output_file, "<span class='g'>Pixels:</span>%li<br/>", fish->fish.pixels);
                 }
@@ -144,7 +144,7 @@ table_source_each (Babl *babl,
             break;
         }
     }
-  
+
   fprintf (output_file, "<tr>");
   fprintf (output_file, "<td class='format_name'><a href='javascript:o();'>%s", expanded_name);
   {
@@ -201,7 +201,7 @@ each_conv (Babl *babl,
   fprintf (output_file, "<em>error:</em> %f <em>cost:</em> %4.0f <em>processings:</em> %i <em>pixels:</em> %li", error, cost,
             babl->conversion.processings, babl->conversion.pixels);
   fprintf (output_file, "</dd>");
-   
+
   return 0;
 }
 
@@ -218,7 +218,7 @@ babl_fish_stats (FILE *file)
 {
   output_file = file;
 
-  fprintf (output_file, 
+  fprintf (output_file,
 "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
 "<html>\n"

@@ -28,7 +28,7 @@ static int list_length (void **list)
 {
   void **ptr;
   int    len=0;
-  
+
   ptr = list;
   while (NULL!=*ptr)
     {
@@ -43,13 +43,13 @@ babl_add_ptr_to_list (void ***list,
                       void   *new)
 {
   int orig_len=0;
- 
+
   if (*list)
     {
       orig_len = list_length (*list);
     }
 
-  *list = babl_realloc ( (*list), 
+  *list = babl_realloc ( (*list),
                           sizeof(void *) * (orig_len + 2));
 
   if (!(*list))
@@ -82,7 +82,7 @@ babl_list_each (void             **list,
 static struct timeval start_time;
 static struct timeval measure_time;
 
-#define msecs(time) ((time.tv_sec-start_time.tv_sec)*10000000 + time.tv_usec)
+#define usecs(time) ((time.tv_sec-start_time.tv_sec)*1000000 + time.tv_usec)
 
 static void
 init_ticks (void)
@@ -94,12 +94,12 @@ init_ticks (void)
   gettimeofday (&start_time, NULL);
 }
 
-unsigned int
+long
 babl_ticks (void)
 {
   init_ticks ();
   gettimeofday (&measure_time, NULL);
-  return msecs(measure_time) - msecs(start_time);
+  return usecs(measure_time) - usecs(start_time);
 }
 
 double
@@ -108,7 +108,7 @@ babl_rel_avg_error (double *imgA,
                     long    samples)
 {
   double error = 0.0;
-  int i;
+  long   i;
 
   for (i=0; i<samples; i++)
       error += fabs (imgA[i] - imgB[i]);

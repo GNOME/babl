@@ -147,7 +147,7 @@ get_conversion_chain (Babl             *from,
           format.from)
 
          babl_list_each (
-           (void **) 
+           (void **)
            BABL(temp_chain[temp_conversions-1]->destination)->
            format.from,
            chain_gen_each,
@@ -185,7 +185,7 @@ chain_gen_each (Babl *babl,
       if ((BABL(babl->conversion.destination) == c->to) )
         {
           /* a candidate path has been found */
-        
+
           double    temp_cost  = 0.0;
           double    temp_error = 1.0;
           int       i;
@@ -195,11 +195,11 @@ chain_gen_each (Babl *babl,
               temp_error *= (1.0+babl_conversion_error (c->temp_chain[i]));
               temp_cost  += babl_conversion_cost (c->temp_chain[i]);
             }
-          
+
           if (temp_cost <  *c->best_cost         &&
               temp_error - 1.0 <= legal_error()  &&   /* this check before the next; which does a more accurate
                                                          measurement of the error */
-              (temp_error=chain_error (c->from, c->to, c->temp_chain, c->temp_conversions+1)) <= legal_error() 
+              (temp_error=chain_error (c->from, c->to, c->temp_chain, c->temp_conversions+1)) <= legal_error()
              )
             {
               int i;
@@ -292,7 +292,7 @@ babl_fish_path (Babl   *source,
 
   babl->fish.processings = 0;
   babl->fish.pixels      = 0;
-  babl->fish.msecs       = 0;
+  babl->fish.usecs       = 0;
   babl->fish.error       = 200000;
 
   babl->fish_path.cost        = 200000;
@@ -302,7 +302,7 @@ babl_fish_path (Babl   *source,
 
   babl_assert (source->class_type == BABL_FORMAT);
   babl_assert (destination->class_type == BABL_FORMAT);
-  
+
   get_conversion_chain (source,
                         destination,
                         &babl->fish_path.cost,
@@ -311,7 +311,7 @@ babl_fish_path (Babl   *source,
                         (BablConversion**)(babl->fish_path.conversion),
                         &babl->fish_path.conversions,
                         temp_chain,
-                        0, 
+                        0,
                         max_path_length ());
 
   if (babl->fish_path.conversions==0)
@@ -319,8 +319,8 @@ babl_fish_path (Babl   *source,
       babl_free (babl);
       return NULL;
     }
-  
-  { 
+
+  {
     Babl *ret = babl_db_insert (babl_fish_db (), babl);
     if (ret!=babl)
         babl_free (babl);
@@ -338,15 +338,15 @@ chain_process (BablConversion *chain[],
   void *bufA = NULL;
   void *bufB = NULL;
   int   i;
-  
+
   babl_assert (source);
   babl_assert (destination);
-  
+
   if (conversions > 1)
     bufA = babl_malloc (n * sizeof (double) * 5);
   if (conversions > 2)
     bufB = babl_malloc (n * sizeof (double) * 5);
-  
+
   for (i=0; i<conversions; i++)
     {
       if (i==0 && conversions == 1)
@@ -422,7 +422,7 @@ test_create (void)
 {
   double *test;
   int     i;
-  
+
   srandom (20050728);
 
   test = babl_malloc (sizeof (double) * test_pixels * 4);
@@ -449,8 +449,8 @@ chain_error (Babl            *fmt_source,
        NULL);
 
   double   error = 0.0;
- 
-  double  *test; 
+
+  double  *test;
   void    *source;
   void    *destination;
   double  *destination_rgba_double;
@@ -469,8 +469,8 @@ chain_error (Babl            *fmt_source,
   ref_destination = babl_calloc (test_pixels, fmt_destination->format.bytes_per_pixel);
   destination_rgba_double     = babl_calloc (test_pixels, fmt_rgba_double->format.bytes_per_pixel);
   ref_destination_rgba_double = babl_calloc (test_pixels, fmt_rgba_double->format.bytes_per_pixel);
- 
- /* create sourcebuffer from testbuffer in the correct format */ 
+
+ /* create sourcebuffer from testbuffer in the correct format */
   babl_process (fish_rgba_to_source,
       test, source, test_pixels);
 

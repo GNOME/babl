@@ -1,3 +1,16 @@
+2006-09-10  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* babl/babl-classes.h
+	* babl/babl-conversion.c
+	* babl/babl-fish-path.c
+	* babl/babl-fish-stats.c
+	* babl/babl-internal.c: Tick times are in usecs not msecs. Use longs
+	to hold tick values.
+
+	* babl/babl-util.h:
+	* babl/babl-util.c (babl_ticks): Fixed calculation of time (usecs
+	not msecs). Changed declaration to return a long not unsigned int.
+
 2006-09-09  Øyvind Kolås  <pippin@gimp.org>
 
 	* extensions/Makefile.am: moved -fPIC from LD_FLAGS to CFLAGS.

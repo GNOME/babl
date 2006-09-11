@@ -23,7 +23,7 @@
 #include <stdarg.h>
 #include <math.h>
 
-static int 
+static int
 each_babl_conversion_destroy (Babl *babl,
                               void *data)
 {
@@ -37,7 +37,7 @@ conversion_new (const char        *name,
                 Babl              *source,
                 Babl              *destination,
                 BablFuncLinear     linear,
-                BablFuncPlane      plane, 
+                BablFuncPlane      plane,
                 BablFuncPlanar     planar)
 {
   Babl *babl = NULL;
@@ -101,7 +101,7 @@ conversion_new (const char        *name,
   babl->conversion.source      = (union Babl*)source;
   babl->conversion.destination = (union Babl*)destination;
   babl->conversion.error       = -1.0;
-  babl->conversion.cost        = 69;
+  babl->conversion.cost        = 69L;
 
   babl->conversion.pixels      = 0;
   babl->conversion.processings = 0;
@@ -131,7 +131,7 @@ conversion_new (const char        *name,
          }
        babl_conversion_new (
           src_format,
-          dst_format, 
+          dst_format,
           "linear", linear,
           NULL);
        babl->conversion.error = 0.0;
@@ -194,21 +194,21 @@ babl_conversion_new (void *first_arg,
 
   assert (BABL_IS_BABL(source));
   assert (BABL_IS_BABL(destination));
-  
-  
+
+
   while (arg)
     {
-     
+
       if (!strcmp (arg, "id"))
         {
           id = va_arg (varg, int);
         }
-      
+
       else if (!strcmp (arg, "linear"))
         {
           if (got_func++)
             {
-              babl_fatal ("already got a conversion func\n"); 
+              babl_fatal ("already got a conversion func\n");
             }
           linear = va_arg (varg, BablFuncLinear);
         }
@@ -217,7 +217,7 @@ babl_conversion_new (void *first_arg,
         {
           if (got_func++)
             {
-              babl_fatal ("already got a conversion func\n"); 
+              babl_fatal ("already got a conversion func\n");
             }
           plane = va_arg (varg, BablFuncPlane);
         }
@@ -226,7 +226,7 @@ babl_conversion_new (void *first_arg,
         {
           if (got_func++)
             {
-              babl_fatal ("already got a conversion func\n"); 
+              babl_fatal ("already got a conversion func\n");
             }
           planar = va_arg (varg, BablFuncPlanar);
         }
@@ -238,7 +238,7 @@ babl_conversion_new (void *first_arg,
 
       arg = va_arg (varg, char *);
     }
-    
+
   va_end   (varg);
 
   assert (source);
@@ -259,7 +259,7 @@ babl_conversion_new (void *first_arg,
   babl = conversion_new (create_name (source, destination, type),
        id, source, destination, linear, plane, planar);
 
-  { 
+  {
     Babl *ret = babl_db_insert (db, babl);
     if (ret!=babl)
         babl_free (babl);
@@ -301,14 +301,14 @@ babl_conversion_planar_process (BablConversion *conversion,
 #ifdef USE_ALLOCA
   void **src_data = alloca (sizeof (void*) * source->components);
   void **dst_data = alloca (sizeof (void*) * destination->components);
-#else 
+#else
   void *src_data[BABL_MAX_COMPONENTS];
   void *dst_data[BABL_MAX_COMPONENTS];
 #endif
 
   memcpy (src_data, source->data, sizeof (void*) * source->components);
   memcpy (dst_data, destination->data, sizeof (void*) * destination->components);
-  
+
   return conversion->function.planar (source->components,
                                       src_data,
                                       source->pitch,
@@ -340,7 +340,7 @@ babl_conversion_process (Babl *babl,
         if (BABL_IS_BABL(source))
           {
             BablImage *img;
-           
+
             img       = (BablImage*)source;
             src_data  = img->data[0];
             src_pitch = img->pitch[0];
@@ -348,7 +348,7 @@ babl_conversion_process (Babl *babl,
         if (BABL_IS_BABL(destination))
           {
             BablImage *img = (BablImage*)destination;
-           
+
             dst_data  = img->data[0];
             dst_pitch = img->pitch[0];
           }
@@ -373,18 +373,18 @@ babl_conversion_process (Babl *babl,
       babl_assert (BABL_IS_BABL (destination));
 
       babl_conversion_planar_process (                  conversion,
-                                      (BablImage*)      source, 
+                                      (BablImage*)      source,
                                       (BablImage*)      destination,
                                                         n);
       break;
     case BABL_CONVERSION_LINEAR:
-      /* the assertions relied on a babl_malloc structure 
+      /* the assertions relied on a babl_malloc structure
        *
        * babl_assert (!BABL_IS_BABL (source));
       babl_assert (!BABL_IS_BABL (destination));*/
 
       babl_conversion_linear_process (conversion,
-                                      source, 
+                                      source,
                                       destination,
                                       n);
       break;
@@ -409,7 +409,7 @@ test_create (void)
 {
   double *test;
   int     i;
-  
+
   srandom (20050728);
 
   test = babl_malloc (sizeof (double) * test_pixels * 4);
@@ -423,12 +423,12 @@ long
 babl_conversion_cost (BablConversion *conversion)
 {
   if (!conversion)
-    return 100000000.0;
+    return 100000000L;
   if (conversion->error==-1.0)
     babl_conversion_error (conversion);
   return conversion->cost;
 }
-  
+
 double
 babl_conversion_error (BablConversion *conversion)
 {
@@ -445,10 +445,10 @@ babl_conversion_error (BablConversion *conversion)
        NULL);
 
   double   error = 0.0;
-  unsigned int ticks_start = 0;
-  unsigned int ticks_end   = 0;
- 
-  double  *test; 
+  long     ticks_start = 0;
+  long     ticks_end   = 0;
+
+  double  *test;
   void    *source;
   void    *destination;
   double  *destination_rgba_double;
@@ -488,7 +488,7 @@ babl_conversion_error (BablConversion *conversion)
     {
       return conversion->error;
     }
-  
+
   test=test_create ();
 
 
@@ -497,7 +497,7 @@ babl_conversion_error (BablConversion *conversion)
   ref_destination = babl_calloc (test_pixels, fmt_destination->format.bytes_per_pixel);
   destination_rgba_double     = babl_calloc (test_pixels, fmt_rgba_double->format.bytes_per_pixel);
   ref_destination_rgba_double = babl_calloc (test_pixels, fmt_rgba_double->format.bytes_per_pixel);
-  
+
   babl_process (fish_rgba_to_source,
       test, source, test_pixels);
 
@@ -526,7 +526,7 @@ babl_conversion_error (BablConversion *conversion)
   fish_reference->fish.pixels -= test_pixels;
   fish_destination_to_rgba->fish.pixels -= 2 * test_pixels;
 
-  
+
   babl_free (source);
   babl_free (destination);
   babl_free (destination_rgba_double);

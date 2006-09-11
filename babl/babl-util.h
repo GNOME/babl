@@ -30,7 +30,8 @@ babl_list_each (void             **list,
                 BablEachFunction   each_fun,
                 void              *user_data);
 
-unsigned int    babl_ticks (void);
+long
+babl_ticks     (void);
 
 double
 babl_rel_avg_error (double *imgA,
