@@ -1,3 +1,9 @@
+2006-09-12  Øyvind Kolås  <pippin@gimp.org>
+
+	* autogen.sh: decreased required automake version to 1.7.9. (It
+	could probably be decreased even further, but this is at least
+	known to work.)
+
 2006-09-12  Michael Schumacher  <schumaml@cvs.gnome.org>
 
 	* autogen.sh: use the autogen.sh of GIMP as a base for babl's

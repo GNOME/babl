@@ -16,7 +16,7 @@ AUTOMAKE=${AUTOMAKE-automake-1.9}
 LIBTOOLIZE=${LIBTOOLIZE-libtoolize}
 
 AUTOCONF_REQUIRED_VERSION=2.54
-AUTOMAKE_REQUIRED_VERSION=1.8.3
+AUTOMAKE_REQUIRED_VERSION=1.7.9
 LIBTOOL_REQUIRED_VERSION=1.4
 LIBTOOL_WIN32=1.5
 
@@ -135,6 +135,9 @@ elif (automake-1.9 --version) < /dev/null > /dev/null 2>&1; then
 elif (automake-1.8 --version) < /dev/null > /dev/null 2>&1; then
    AUTOMAKE=automake-1.8
    ACLOCAL=aclocal-1.8
+elif (automake-1.7 --version) < /dev/null > /dev/null 2>&1; then
+   AUTOMAKE=automake-1.7
+   ACLOCAL=aclocal-1.7
 else
     echo
     echo "  You must have automake $AUTOMAKE_REQUIRED_VERSION or newer installed to compile $PROJECT."
