@@ -1,3 +1,9 @@
+2006-09-12  Michael Schumacher  <schumaml@cvs.gnome.org>
+
+	* autogen.sh: use the autogen.sh of GIMP as a base for babl's
+	autogen.sh. Among other things, this enables maintainer mode by
+	default. 
+
 2006-09-10  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* babl/babl-classes.h
