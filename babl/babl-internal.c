@@ -75,6 +75,8 @@ babl_die (void)
   exit (-1);
 }
 
+long babl_total_usecs = 0;
+
 long
 babl_process (Babl *babl,
               void *source,
@@ -104,6 +106,7 @@ babl_process (Babl *babl,
        ticks -= babl_ticks();
        ticks *= -1L;
 
+       babl_total_usecs += ticks;
        babl->fish.usecs += ticks;
        babl->fish.processings++;
        babl->fish.pixels += ret;

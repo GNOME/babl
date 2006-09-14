@@ -1,3 +1,9 @@
+2006-09-14  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/babl-internal.c: (babl_process): added global babl_total_usecs,
+	not exported through headers, but useful to be able to substract the
+	babl conversion time from other algorithms using babl.
+
 2006-09-12  Øyvind Kolås  <pippin@gimp.org>
 
 	* autogen.sh: decreased required automake version to 1.7.9. (It
