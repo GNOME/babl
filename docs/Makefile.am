@@ -39,6 +39,7 @@ BablFishPath.txt: $(top_builddir)/tests/babl_fish_path_fitness
 	echo -n " $@"
 	export BABL_PATH="$(top_builddir)/extensions"; $< > $@ &&\
 	echo " [OK]" || echo " Fail"
+	if [ "x"$$CRUCIBLE_ID != "x" ] ;then echo;echo;cat $@;echo;echo;fi
 
 index.html: index-static.html                    \
 	    $(top_builddir)/tests/babl_html_dump \
