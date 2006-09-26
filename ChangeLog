@@ -1,3 +1,7 @@
+2006-09-26  Dominik Ernst  <dernst@gmx.de>
+
+	* babl/babl-classes.h: fixed an issue with g++
+
 2006-09-23  Øyvind Kolås  <pippin@gimp.org>
 
 	* docs/Makefile.am: output the conversion grid when building on

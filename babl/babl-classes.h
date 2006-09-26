@@ -267,7 +267,7 @@ typedef struct
   void         (*destroy) (void);
 } BablExtension;
 
-typedef union
+typedef union Babl
 {
   BablClassType     class_type;
   BablInstance      instance;
