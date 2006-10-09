@@ -64,8 +64,8 @@ babl_fish_reference (Babl   *source,
   babl->instance.id      = 0;
   babl->instance.name    = ((void *)babl) + sizeof(BablFishReference);
   strcpy (babl->instance.name, name);
-  babl->fish.source      = (union Babl*)source;
-  babl->fish.destination = (union Babl*)destination;
+  babl->fish.source      = source;
+  babl->fish.destination = destination;
 
   babl->fish.processings = 0;
   babl->fish.pixels      = 0;

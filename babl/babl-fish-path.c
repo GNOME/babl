@@ -287,8 +287,8 @@ babl_fish_path (Babl   *source,
   babl->instance.id      = 0;
   babl->instance.name    = ((void *)babl) + sizeof(BablFishPath);
   strcpy (babl->instance.name, name);
-  babl->fish.source      = (union Babl*)source;
-  babl->fish.destination = (union Babl*)destination;
+  babl->fish.source      = source;
+  babl->fish.destination = destination;
 
   babl->fish.processings = 0;
   babl->fish.pixels      = 0;

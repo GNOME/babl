@@ -41,8 +41,8 @@ babl_fish_simple (BablConversion *conversion)
   babl->instance.id      = 0;
   babl->instance.name    = ((void *)babl) + sizeof(BablFishSimple);
   strcpy (babl->instance.name, name);
-  babl->fish.source      = (union Babl*)conversion->source;
-  babl->fish.destination = (union Babl*)conversion->destination;
+  babl->fish.source      = conversion->source;
+  babl->fish.destination = conversion->destination;
 
   babl->fish.processings = 0;
   babl->fish.pixels      = 0;

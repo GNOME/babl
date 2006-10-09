@@ -1,3 +1,13 @@
+2006-10-09  Øyvind Kolås  <pippin@gimp.org>
+
+	Cleaned up the typedef for Babl, fixes issues with g++.
+
+	* babl/babl-classes.h:
+	* babl/babl-conversion.c: (conversion_new):
+	* babl/babl-fish-path.c: (babl_fish_path):
+	* babl/babl-fish-reference.c: (babl_fish_reference):
+	* babl/babl-fish-simple.c: (babl_fish_simple):
+
 2006-09-26  Dominik Ernst  <dernst@gmx.de>
 
 	* babl/babl-classes.h: fixed an issue with g++

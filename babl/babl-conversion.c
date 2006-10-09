@@ -98,8 +98,8 @@ conversion_new (const char        *name,
     }
 
   babl->instance.id            = id;
-  babl->conversion.source      = (union Babl*)source;
-  babl->conversion.destination = (union Babl*)destination;
+  babl->conversion.source      = source;
+  babl->conversion.destination = destination;
   babl->conversion.error       = -1.0;
   babl->conversion.cost        = 69L;
 

@@ -76,6 +76,7 @@ typedef enum {
 } BablClassType;
 
 
+typedef union _Babl Babl;
 
 /* common header for any item inserted into database */
 typedef struct
@@ -91,8 +92,8 @@ typedef struct
 typedef struct
 BablConversion {
   BablInstance           instance;
-  union Babl            *source;
-  union Babl            *destination;
+  Babl                  *source;
+  Babl                  *destination;
   long                   cost;
   double                 error;
   union
@@ -194,8 +195,8 @@ typedef struct
 typedef struct
 {
   BablInstance    instance;
-  union Babl     *source;
-  union Babl     *destination;
+  Babl           *source;
+  Babl           *destination;
 
   double          error;    /* the amount of noise introduced by the fish */
 
@@ -267,7 +268,7 @@ typedef struct
   void         (*destroy) (void);
 } BablExtension;
 
-typedef union Babl
+union _Babl
 {
   BablClassType     class_type;
   BablInstance      instance;
@@ -283,7 +284,7 @@ typedef union Babl
   BablFishSimple    fish_simple;
   BablFishPath      fish_path;
   BablExtension     extension;
-} Babl;
+} _Babl;
 
 #endif
 
