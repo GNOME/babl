@@ -1,3 +1,7 @@
+2006-08-31  Øyvind Kolås  <pippin@gimp.org>
+
+	* configure.ac: set the version of babl to 0.0.6
+
 2006-10-09  Øyvind Kolås  <pippin@gimp.org>
 
 	Cleaned up the typedef for Babl, fixes issues with g++.
