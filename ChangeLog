@@ -1,5 +1,9 @@
 2006-08-31  Øyvind Kolås  <pippin@gimp.org>
 
+	* configure.ac: set the version of babl to 0.0.7
+
+2006-08-31  Øyvind Kolås  <pippin@gimp.org>
+
 	* configure.ac: set the version of babl to 0.0.6
 
 2006-10-09  Øyvind Kolås  <pippin@gimp.org>
