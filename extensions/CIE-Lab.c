@@ -294,6 +294,17 @@ formats (void)
     NULL);
 
   babl_format_new (
+    "name",        "CIE Lab alpha float",
+    babl_model     ("CIE Lab alpha"),
+
+    babl_type      ("double"),
+    babl_component ("CIE L"), 
+    babl_component ("CIE a"), 
+    babl_component ("CIE b"),
+    babl_component ("A"),
+    NULL);
+
+  babl_format_new (
     "name",        "CIE Lab u8",
     babl_model     ("CIE Lab"),
 
