@@ -46,6 +46,8 @@ library_include_HEADERS =		\
 
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/babl/base
 
+AM_CPPFLAGS = -DPREFIX=\""$(prefix)"\"
+
 lib_LTLIBRARIES= libbabl.la
 libbabl_la_SOURCES= $(h_sources) $(c_sources)
 libbabl_la_LIBADD=\

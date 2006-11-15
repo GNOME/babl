@@ -1,3 +1,10 @@
+2006-11-15  Øyvind Kolås  <pippin@gimp.org>
+
+	Set the default BABL_PATH based on the prefix babl is compiled for.
+
+	* babl/Makefile.am:
+	* babl/babl-extension.c:
+
 2006-11-07  Øyvind Kolås  <pippin@gimp.org>
 
 	* extensions/CIE-Lab.c: (formats): added "CIE Lab alpha float" as

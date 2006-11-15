@@ -22,7 +22,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #else
-#define BABL_PATH           "~/.babl-0.0:/usr/local/lib/babl-0.0:/usr/lib/babl-0.0";
+#define BABL_PATH           PREFIX "/babl-0.0"
 #define BABL_PATH_SEPERATOR "/"
 #define BABL_LIST_SEPERATOR ':'
 #endif
