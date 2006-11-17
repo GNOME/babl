@@ -70,7 +70,7 @@ extension_new (const char *path,
   Babl *babl;
 
   babl                       = babl_malloc (sizeof (BablExtension) + strlen (path) + 1);
-  babl->instance.name        = (void *) babl + sizeof (BablExtension);
+  babl->instance.name        = (char *) babl + sizeof (BablExtension);
   strcpy (babl->instance.name, path);
   babl->instance.id          = 0;
   babl->class_type           = BABL_EXTENSION;
@@ -162,7 +162,7 @@ load_failed (Babl *babl)
   return NULL;
 }
 
-Babl *
+static Babl *
 babl_extension_load (const char *path)
 {
   Babl *babl             = NULL;

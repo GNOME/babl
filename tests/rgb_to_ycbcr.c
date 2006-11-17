@@ -43,7 +43,7 @@ float reference_buf [PIXELS*3]=
 
 float destination_buf [PIXELS*3];
 
-int
+static int
 test (void)
 {
   Babl *fish;

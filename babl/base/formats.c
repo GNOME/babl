@@ -19,6 +19,7 @@
 
 #include "babl.h"
 #include "babl-ids.h"
+#include "babl-base.h"
 
 void
 babl_formats_init (void)

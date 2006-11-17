@@ -21,6 +21,7 @@
 #include "babl.h"
 #include "babl-ids.h"
 #include "util.h"
+#include "babl-base.h"
 
 static void models        (void);
 static void components    (void);
@@ -152,10 +153,10 @@ models (void)
 
 static long
 copy_strip_1 (int    src_bands,
-              void **src,
+              char **src,
               int   *src_pitch,
               int    dst_bands,
-              void **dst,
+              char **dst,
               int   *dst_pitch,
               long   samples)
 {
@@ -182,10 +183,10 @@ copy_strip_1 (int    src_bands,
 
 static long
 g3_gamma_2_2 (int    src_bands,
-              void **src,
+              char **src,
               int   *src_pitch,
               int    dst_bands,
-              void **dst,
+              char **dst,
               int   *dst_pitch,
               long   samples)
 {
@@ -207,10 +208,10 @@ g3_gamma_2_2 (int    src_bands,
 
 static long
 g3_inv_gamma_2_2 (int    src_bands,
-                  void **src,
+                  char **src,
                   int   *src_pitch,
                   int    dst_bands,
-                  void **dst,
+                  char **dst,
                   int   *dst_pitch,
                   long   samples)
 {
@@ -237,10 +238,10 @@ g3_inv_gamma_2_2 (int    src_bands,
 
 static long
 non_premultiplied_to_premultiplied (int    src_bands,
-                                    void **src,
+                                    char **src,
                                     int   *src_pitch,
                                     int    dst_bands,
-                                    void **dst,
+                                    char **dst,
                                     int   *dst_pitch,
                                     long   samples)
 {
@@ -265,10 +266,10 @@ non_premultiplied_to_premultiplied (int    src_bands,
 
 static long
 premultiplied_to_non_premultiplied (int    src_bands,
-                                    void **src,
+                                    char **src,
                                     int   *src_pitch,
                                     int    dst_bands,
-                                    void **dst,
+                                    char **dst,
                                     int   *dst_pitch,
                                     long   samples)
 {
@@ -301,8 +302,8 @@ premultiplied_to_non_premultiplied (int    src_bands,
 
 
 static long
-rgba2rgba_gamma_2_2_premultiplied (void *src,
-                                   void *dst,
+rgba2rgba_gamma_2_2_premultiplied (char *src,
+                                   char *dst,
                                    long  samples)
 {
   long n=samples; 
@@ -321,8 +322,8 @@ rgba2rgba_gamma_2_2_premultiplied (void *src,
 
 
 static long
-rgba_gamma_2_2_premultiplied2rgba (void *src,
-                                   void *dst,
+rgba_gamma_2_2_premultiplied2rgba (char *src,
+                                   char *dst,
                                    long   samples)
 {
   long n=samples; 
@@ -342,8 +343,8 @@ rgba_gamma_2_2_premultiplied2rgba (void *src,
 
 
 static long
-rgba2rgba_gamma_2_2 (void *src,
-                     void *dst,
+rgba2rgba_gamma_2_2 (char *src,
+                     char *dst,
                      long  samples)
 {
   long n=samples; 
@@ -362,9 +363,9 @@ rgba2rgba_gamma_2_2 (void *src,
 
 
 static long
-rgba_gamma_2_22rgba (void *src,
-                     void *dst,
-                     long   samples)
+rgba_gamma_2_22rgba (char *src,
+                     char *dst,
+                     long  samples)
 {
   long n=samples;
   

@@ -29,7 +29,7 @@ image_new (BablFormat     *format,
            BablComponent **component,
            BablSampling  **sampling,
            BablType      **type,
-           void          **data,
+           char          **data,
            int            *pitch,
            int            *stride)
 {
@@ -43,12 +43,12 @@ image_new (BablFormat     *format,
                        sizeof (void*)          * (components) +
                        sizeof (int)            * (components) +
                        sizeof (int)            * (components));
-  babl->image.component     = ((void *)babl)                  + sizeof (BablImage);
-  babl->image.sampling      = ((void *)babl->image.component) + sizeof (BablComponent*) * (components);
-  babl->image.type          = ((void *)babl->image.sampling)  + sizeof (BablSampling*)  * (components);
-  babl->image.data          = ((void *)babl->image.type)      + sizeof (BablType*)      * (components);
-  babl->image.pitch         = ((void *)babl->image.data)      + sizeof (void*)          * (components);
-  babl->image.stride        = ((void *)babl->image.pitch)     + sizeof (int)            * (components);
+  babl->image.component = (void*)(((char *)babl)                  + sizeof (BablImage));
+  babl->image.sampling  = (void*)(((char *)babl->image.component) + sizeof (BablComponent*) * (components));
+  babl->image.type      = (void*)(((char *)babl->image.sampling)  + sizeof (BablSampling*)  * (components));
+  babl->image.data      = (void*)(((char *)babl->image.type)      + sizeof (BablType*)      * (components));
+  babl->image.pitch     = (void*)(((char *)babl->image.data)      + sizeof (void*)          * (components));
+  babl->image.stride    = (void*)(((char *)babl->image.pitch)     + sizeof (int)            * (components));
 
   babl->class_type       = BABL_IMAGE;
   babl->instance.id      = 0;
@@ -67,7 +67,7 @@ image_new (BablFormat     *format,
 }
 
 Babl *
-babl_image_from_linear (void  *buffer,
+babl_image_from_linear (char  *buffer,
                         Babl  *format)
 {
   Babl          *babl;
@@ -77,7 +77,7 @@ babl_image_from_linear (void  *buffer,
   BablComponent *component [BABL_MAX_COMPONENTS];
   BablSampling  *sampling  [BABL_MAX_COMPONENTS];
   BablType      *type      [BABL_MAX_COMPONENTS];
-  void          *data      [BABL_MAX_COMPONENTS];
+  char          *data      [BABL_MAX_COMPONENTS];
   int            pitch     [BABL_MAX_COMPONENTS];
   int            stride    [BABL_MAX_COMPONENTS];
 
@@ -152,7 +152,7 @@ babl_image (void *first,
   BablComponent *component [BABL_MAX_COMPONENTS];
   BablSampling  *sampling  [BABL_MAX_COMPONENTS];
   BablType      *type      [BABL_MAX_COMPONENTS];
-  void          *data      [BABL_MAX_COMPONENTS];
+  char          *data      [BABL_MAX_COMPONENTS];
   int            pitch     [BABL_MAX_COMPONENTS];
   int            stride    [BABL_MAX_COMPONENTS];
 

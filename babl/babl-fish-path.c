@@ -285,7 +285,7 @@ babl_fish_path (Babl   *source,
                                         strlen (name) + 1);
   babl->class_type       = BABL_FISH_PATH;
   babl->instance.id      = 0;
-  babl->instance.name    = ((void *)babl) + sizeof(BablFishPath);
+  babl->instance.name    = ((char*)babl) + sizeof(BablFishPath);
   strcpy (babl->instance.name, name);
   babl->fish.source      = source;
   babl->fish.destination = destination;

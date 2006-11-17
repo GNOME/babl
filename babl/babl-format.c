@@ -75,10 +75,10 @@ format_new (const char     *name,
                        sizeof (int)            * (components));
 
   babl->format.from      = NULL;
-  babl->format.component = ((void *)babl) + sizeof (BablFormat);
-  babl->format.type      = ((void *)babl->format.component) + sizeof (BablComponent*) * (components);
-  babl->format.sampling  = ((void *)babl->format.type)      + sizeof (BablType*) * (components);
-  babl->instance.name    = ((void *)babl->format.sampling)  + sizeof (BablSampling*) * (components);
+  babl->format.component = (void*)(((char *)babl) + sizeof (BablFormat));
+  babl->format.type      = (void*)(((char *)babl->format.component) + sizeof (BablComponent*) * (components));
+  babl->format.sampling  = (void*)(((char *)babl->format.type)      + sizeof (BablType*) * (components));
+  babl->instance.name    = ((char *)babl->format.sampling)  + sizeof (BablSampling*) * (components);
   
   babl->class_type    = BABL_FORMAT;
   babl->instance.id   = id;

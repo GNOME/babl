@@ -6,7 +6,7 @@
 #include "babl-internal.h"
 
 
-int format_check (Babl *babl,
+static int format_check (Babl *babl,
                   void *userdata)
 {
   babl_log ("%s\tloss: %f", babl->instance.name, babl->format.loss);

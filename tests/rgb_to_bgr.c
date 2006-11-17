@@ -36,7 +36,7 @@ unsigned char reference_buf [PIXELS*3]=
 
 unsigned char destination_buf [PIXELS*3];
 
-int
+static int
 test (void)
 {
   Babl *fish;

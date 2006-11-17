@@ -177,7 +177,7 @@ babl_fish_process (Babl *babl,
              else
                {
                  ret = babl_conversion_process (BABL(babl->fish_simple.conversion),
-                                              source_image, destination_image, n);
+                                              (char*)source_image, (char*)destination_image, n);
                }
            }
 

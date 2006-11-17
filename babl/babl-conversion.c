@@ -46,7 +46,7 @@ conversion_new (const char        *name,
                destination->class_type);
 
   babl = babl_malloc (sizeof (BablConversion) + strlen (name) + 1);
-  babl->instance.name = (void *)babl + sizeof (BablConversion);
+  babl->instance.name = (char *)babl + sizeof (BablConversion);
   strcpy(babl->instance.name, name);
 
   if (linear)
@@ -299,11 +299,11 @@ babl_conversion_planar_process (BablConversion *conversion,
                                 long            n)
 {
 #ifdef USE_ALLOCA
-  void **src_data = alloca (sizeof (void*) * source->components);
-  void **dst_data = alloca (sizeof (void*) * destination->components);
+  char **src_data = alloca (sizeof (void*) * source->components);
+  char **dst_data = alloca (sizeof (void*) * destination->components);
 #else
-  void *src_data[BABL_MAX_COMPONENTS];
-  void *dst_data[BABL_MAX_COMPONENTS];
+  char *src_data[BABL_MAX_COMPONENTS];
+  char *dst_data[BABL_MAX_COMPONENTS];
 #endif
 
   memcpy (src_data, source->data, sizeof (void*) * source->components);
@@ -320,8 +320,8 @@ babl_conversion_planar_process (BablConversion *conversion,
 
 long
 babl_conversion_process (Babl *babl,
-                         void *source,
-                         void *destination,
+                         char *source,
+                         char *destination,
                          long  n)
 {
   BablConversion *conversion = (BablConversion*) babl;

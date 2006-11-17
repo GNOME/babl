@@ -46,7 +46,7 @@ type_new (const char  *name,
   babl_assert (bits % 8 == 0);
   
   babl                = babl_malloc (sizeof (BablType) + strlen (name) + 1);
-  babl->instance.name = (void*) babl + sizeof (BablType);
+  babl->instance.name = (void*)((char*) babl + sizeof (BablType));
   babl->class_type    = BABL_TYPE;
   babl->instance.id   = id;
   strcpy (babl->instance.name, name);
@@ -145,7 +145,7 @@ babl_type_new (void *first_arg,
 
 double test[samples];
 
-double r_interval (double min, double max)
+static double r_interval (double min, double max)
 {
   long int rand_i = random ();
   double ret;
@@ -155,7 +155,7 @@ double r_interval (double min, double max)
   return ret;
 }
 
-void test_init (double min, double max)
+static void test_init (double min, double max)
 {
   int i;
   srandom (20050728);

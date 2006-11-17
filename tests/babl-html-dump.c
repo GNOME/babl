@@ -87,7 +87,7 @@ main (void)
 
 static char normalized_buf[512];
 
-const char *normalize(const char *str)
+static const char *normalize(const char *str)
 {
   char *s = normalized_buf;
   strcpy (normalized_buf, str);

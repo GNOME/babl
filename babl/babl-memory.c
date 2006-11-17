@@ -50,7 +50,7 @@ typedef struct
 
 #define OFFSET   (sizeof(BablAllocInfo))
 
-#define BAI(ptr)    ((BablAllocInfo*)(((void*)ptr)-OFFSET))
+#define BAI(ptr)    ((BablAllocInfo*)(((char*)ptr)-OFFSET))
 #define IS_BAI(ptr) (BAI(ptr)->signature == signature)
 
 /* runtime statistics: */
@@ -95,7 +95,7 @@ functions_sanity (void)
 void *
 babl_malloc (size_t size)
 {
-  void *ret;
+  char *ret;
 
   babl_assert (size);
 
@@ -107,7 +107,7 @@ babl_malloc (size_t size)
   BAI(ret + OFFSET)->signature = signature;
   BAI(ret + OFFSET)->size      = size;
   mallocs++;
-  return ret + OFFSET;
+  return (void*)(ret + OFFSET);
 }
 
 /* Create a duplicate allocation of the same size, note

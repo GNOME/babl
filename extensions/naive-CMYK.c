@@ -24,14 +24,16 @@
 #include "util.h"
 
 static long
-rgba_to_cmyk (void *src,
-              void *dst,
+rgba_to_cmyk (char *src,
+              char *dst,
               long   n);
 
 static long 
-cmyk_to_rgba (void *src,
-              void *dst,
+cmyk_to_rgba (char *src,
+              char *dst,
               long  n);
+
+int init (void);
 
 int
 init (void)
@@ -80,8 +82,8 @@ init (void)
 
 
 static long
-rgba_to_cmyk (void *src,
-              void *dst,
+rgba_to_cmyk (char *src,
+              char *dst,
               long   n)
 {
   while (n--)
@@ -130,8 +132,8 @@ rgba_to_cmyk (void *src,
 }
 
 static long 
-cmyk_to_rgba (void *src,
-              void *dst,
+cmyk_to_rgba (char *src,
+              char *dst,
               long  n)
 {
   while (n--)

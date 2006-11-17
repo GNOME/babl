@@ -63,8 +63,8 @@ model_new (const char     *name,
   babl                   = babl_malloc (sizeof (BablModel) +
                                         sizeof (BablComponent*) * (components) +
                                         strlen (name) + 1);
-  babl->model.component = ((void*)babl) + sizeof (BablModel);
-  babl->instance.name   = ((void*)babl->model.component) + sizeof (BablComponent*) * (components);
+  babl->model.component = (void*)(((char*)babl) + sizeof (BablModel));
+  babl->instance.name   = (void*)(((char*)babl->model.component) + sizeof (BablComponent*) * (components));
   
   babl->class_type       = BABL_MODEL;
   babl->instance.id      = id;

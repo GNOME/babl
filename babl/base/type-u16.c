@@ -24,6 +24,7 @@
 
 #include "babl.h"
 #include "babl-ids.h"
+#include "babl-base.h"
 
 
 static inline long
@@ -31,8 +32,8 @@ convert_double_u16_scaled (double    min_val,
                            double    max_val,
                            uint16_t  min,
                            uint16_t  max,
-                           void     *src,
-                           void     *dst,
+                           char     *src,
+                           char     *dst,
                            int       src_pitch,
                            int       dst_pitch,
                            long      n)
@@ -61,8 +62,8 @@ convert_u16_double_scaled (double    min_val,
                            double    max_val,
                            uint16_t  min,
                            uint16_t  max,
-                           void     *src,
-                           void     *dst,
+                           char     *src,
+                           char     *dst,
                            int       src_pitch,
                            int       dst_pitch,
                            long      n)

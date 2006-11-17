@@ -42,7 +42,7 @@ component_new (const char *name,
   Babl *babl;
 
   babl                   = babl_malloc (sizeof (BablComponent) + strlen (name) + 1);
-  babl->instance.name    = (void *) babl + sizeof (BablComponent);
+  babl->instance.name    = (char *) babl + sizeof (BablComponent);
   strcpy (babl->instance.name, name);
 
   babl->class_type       = BABL_COMPONENT;

@@ -17,13 +17,13 @@
  */
 
 #include <string.h>
-#include "babl.h"
+#include "babl-internal.h"
 #include "babl-ids.h"
 #include "util.h"
 
 static long
-convert_double_double (void *src,
-                       void *dst,
+convert_double_double (char *src,
+                       char *dst,
                        int   src_pitch,
                        int   dst_pitch,
                        long  n)
@@ -47,10 +47,10 @@ convert_double_double (void *src,
 /*
 static long
 copy_strip_1 (int    src_bands,
-              void **src,
+              char **src,
               int   *src_pitch,
               int    dst_bands,
-              void **dst,
+              char **dst,
               int   *dst_pitch,
               long   n)
 {
@@ -77,8 +77,8 @@ copy_strip_1 (int    src_bands,
 
 */
 static long
-rgba_to_rgba (void *src,
-              void *dst,
+rgba_to_rgba (char *src,
+              char *dst,
               long  n)
 {
   memcpy (dst, src, n * sizeof (double) * 4);

@@ -23,6 +23,7 @@
 
 #include "babl.h"
 #include "babl-ids.h"
+#include "babl-base.h"
 
 #include <math.h>
 static inline long
@@ -30,8 +31,8 @@ convert_double_u8_scaled (double        min_val,
                           double        max_val,
                           unsigned char min,
                           unsigned char max,
-                          void         *src,
-                          void         *dst,
+                          char         *src,
+                          char         *dst,
                           int           src_pitch,
                           int           dst_pitch,
                           long          n)
@@ -60,8 +61,8 @@ convert_u8_double_scaled (double        min_val,
                           double        max_val,
                           unsigned char min,
                           unsigned char max,
-                          void         *src,
-                          void         *dst,
+                          char         *src,
+                          char         *dst,
                           int           src_pitch,
                           int           dst_pitch,
                           long          n)

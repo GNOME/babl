@@ -50,8 +50,8 @@ Babl   * babl_conversion_find           (void           *source,
 double   babl_conversion_error          (BablConversion *conversion);
 long     babl_conversion_cost           (BablConversion *conversion);
 long     babl_conversion_process        (Babl           *conversion,
-                                         void           *source,
-                                         void           *destination,
+                                         char           *source,
+                                         char           *destination,
                                          long            n);
 
 Babl   * babl_extension_base            (void);
@@ -84,7 +84,7 @@ long     babl_fish_path_process         (Babl           *babl,
                                          long            n);
 
 double   babl_format_loss               (Babl           *babl);
-Babl   * babl_image_from_linear         (void           *buffer,
+Babl   * babl_image_from_linear         (char           *buffer,
                                          Babl           *format);
 Babl   * babl_image_double_from_image   (Babl           *source);
 

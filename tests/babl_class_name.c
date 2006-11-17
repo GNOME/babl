@@ -44,7 +44,7 @@ struct
     {0, NULL}
   };
 
-int
+static int
 test (void)
 {
   int i=0;

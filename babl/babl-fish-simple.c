@@ -39,7 +39,7 @@ babl_fish_simple (BablConversion *conversion)
                                         strlen (name) + 1);
   babl->class_type       = BABL_FISH_SIMPLE;
   babl->instance.id      = 0;
-  babl->instance.name    = ((void *)babl) + sizeof(BablFishSimple);
+  babl->instance.name    = ((char *)babl) + sizeof(BablFishSimple);
   strcpy (babl->instance.name, name);
   babl->fish.source      = conversion->source;
   babl->fish.destination = conversion->destination;

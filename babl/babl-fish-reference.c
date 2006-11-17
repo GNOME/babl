@@ -62,7 +62,7 @@ babl_fish_reference (Babl   *source,
                                         strlen (name) + 1);
   babl->class_type       = BABL_FISH_REFERENCE;
   babl->instance.id      = 0;
-  babl->instance.name    = ((void *)babl) + sizeof(BablFishReference);
+  babl->instance.name    = ((char *)babl) + sizeof(BablFishReference);
   strcpy (babl->instance.name, name);
   babl->fish.source      = source;
   babl->fish.destination = destination;
@@ -84,15 +84,15 @@ babl_fish_reference (Babl   *source,
 static void
 convert_to_double (BablFormat *source_fmt,
                    BablImage  *source,
-                   void       *source_buf,
-                   void       *source_double_buf,
+                   char       *source_buf,
+                   char       *source_double_buf,
                    int         n)
 {
   int i;
 
   BablImage *src_img;
   BablImage *dst_img;
-
+  
   src_img = (BablImage*) babl_image (
       babl_component_id (BABL_LUMINANCE), NULL, 1, 0, NULL);
   dst_img = (BablImage*) babl_image (
@@ -140,9 +140,9 @@ convert_to_double (BablFormat *source_fmt,
 
 static void
 convert_from_double (BablFormat *destination_fmt,
-                     void       *destination_double_buf,
+                     char       *destination_double_buf,
                      BablImage  *destination,
-                     void       *destination_buf,
+                     char       *destination_buf,
                      int         n)
 {
   int i;
@@ -213,7 +213,7 @@ process_same_model (Babl      *babl,
   convert_to_double (
      (BablFormat*) BABL(babl->fish.source),
      BABL_IS_BABL(source)?source:NULL,
-     BABL_IS_BABL(source)?NULL:source,
+     BABL_IS_BABL(source)?NULL:(char*)source,
      double_buf,
      n
    );
@@ -222,7 +222,7 @@ process_same_model (Babl      *babl,
      (BablFormat*) BABL(babl->fish.destination),
      double_buf,
      BABL_IS_BABL(destination)?destination:NULL,
-     BABL_IS_BABL(destination)?NULL:destination,
+     BABL_IS_BABL(destination)?NULL:(char*)destination,
      n
    );
 
@@ -271,7 +271,7 @@ babl_fish_reference_process (Babl      *babl,
   convert_to_double (
      (BablFormat*) BABL(babl->fish.source),
      NULL,
-     source,
+     (char*)source,
      source_double_buf,
      n
    );
@@ -325,7 +325,7 @@ babl_fish_reference_process (Babl      *babl,
      (BablFormat*) BABL(babl->fish.destination),
      destination_double_buf,
      NULL,
-     destination,
+     (char*)destination,
      n
    );
 

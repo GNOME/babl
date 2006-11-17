@@ -22,10 +22,11 @@
 
 #include "babl.h"
 #include "babl-ids.h"
+#include "babl-base.h"
 
 static long
-convert_double_float (void *src,
-                      void *dst,
+convert_double_float (char *src,
+                      char *dst,
                       int   src_pitch,
                       int   dst_pitch,
                       long  n)
@@ -40,8 +41,8 @@ convert_double_float (void *src,
 }
 
 static long
-convert_float_double (void *src,
-                      void *dst,
+convert_float_double (char *src,
+                      char *dst,
                       int   src_pitch,
                       int   dst_pitch,
                       long  n)

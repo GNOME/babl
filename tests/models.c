@@ -8,8 +8,8 @@
 int OK=1;
 
 
-int model_check (Babl *babl,
-                 void *userdata)
+static int model_check (Babl *babl,
+                        void *userdata)
 {
   if (!babl_model_is_symmetric (babl))
     {

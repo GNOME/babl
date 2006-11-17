@@ -24,6 +24,7 @@
 #include "util.h"
 #include "rgb-constants.h"
 #include "math.h"
+#include "babl-base.h"
 
 static void components  (void);
 static void models      (void);
@@ -106,9 +107,9 @@ models (void)
 
 
 static long
-rgba_to_graya (void *src,
-               void *dst,
-               long   n)
+rgba_to_graya (char *src,
+               char *dst,
+               long  n)
 {
   while (n--)
     {
@@ -134,9 +135,9 @@ rgba_to_graya (void *src,
 }
 
 static long
-rgba_to_gray (void *src,
-              void *dst,
-              long   n)
+rgba_to_gray (char *src,
+              char *dst,
+              long  n)
 {
   while (n--)
     {
@@ -163,10 +164,10 @@ rgba_to_gray (void *src,
 
 static long
 rgb_to_gray_2_2 (int    src_bands,
-                 void **src,
+                 char **src,
                  int   *src_pitch,
                  int    dst_bands,
-                 void **dst,
+                 char **dst,
                  int   *dst_pitch,
                  long   n)
 {
@@ -200,10 +201,10 @@ rgb_to_gray_2_2 (int    src_bands,
 
 static long
 gray_2_2_to_rgb (int    src_bands,
-                 void **src,
+                 char **src,
                  int   *src_pitch,
                  int    dst_bands,
-                 void **dst,
+                 char **dst,
                  int   *dst_pitch,
                  long   n)
 {
@@ -238,8 +239,8 @@ gray_2_2_to_rgb (int    src_bands,
 
 
 static long
-graya_to_rgba (void *src,
-               void *dst,
+graya_to_rgba (char *src,
+               char *dst,
                long  n)
 {
   while (n--)
@@ -267,8 +268,8 @@ graya_to_rgba (void *src,
 
 
 static long
-gray_to_rgba (void *src,
-              void *dst,
+gray_to_rgba (char *src,
+              char *dst,
               long  n)
 {
   while (n--)
@@ -294,10 +295,10 @@ gray_to_rgba (void *src,
 
 static long
 gray_alpha_premultiplied_to_rgba (int    src_bands,
-                                  void **src,
+                                  char **src,
                                   int   *src_pitch,
                                   int    dst_bands,
-                                  void **dst,
+                                  char **dst,
                                   int   *dst_pitch,
                                   long   n)
 {
@@ -331,10 +332,10 @@ gray_alpha_premultiplied_to_rgba (int    src_bands,
 
 static long
 rgba_to_gray_alpha_premultiplied (int    src_bands,
-                                  void **src,
+                                  char **src,
                                   int   *src_pitch,
                                   int    dst_bands,
-                                  void **dst,
+                                  char **dst,
                                   int   *dst_pitch,
                                   long   n)
 {
@@ -365,10 +366,10 @@ rgba_to_gray_alpha_premultiplied (int    src_bands,
 
 static long
 non_premultiplied_to_premultiplied (int    src_bands,
-                                    void **src,
+                                    char **src,
                                     int   *src_pitch,
                                     int    dst_bands,
-                                    void **dst,
+                                    char **dst,
                                     int   *dst_pitch,
                                     long   n)
 {
@@ -393,10 +394,10 @@ non_premultiplied_to_premultiplied (int    src_bands,
 
 static long
 premultiplied_to_non_premultiplied (int    src_bands,
-                                    void **src,
+                                    char **src,
                                     int   *src_pitch,
                                     int    dst_bands,
-                                    void **dst,
+                                    char **dst,
                                     int   *dst_pitch,
                                     long   n)
 {
@@ -427,8 +428,8 @@ premultiplied_to_non_premultiplied (int    src_bands,
 }
 
 static long
-rgba2gray_gamma_2_2_premultiplied (void *src,
-                                   void *dst,
+rgba2gray_gamma_2_2_premultiplied (char *src,
+                                   char *dst,
                                    long  n)
 {
   while (n--)
@@ -457,8 +458,8 @@ rgba2gray_gamma_2_2_premultiplied (void *src,
 
 
 static long
-gray_gamma_2_2_premultiplied2rgba (void *src,
-                                   void *dst,
+gray_gamma_2_2_premultiplied2rgba (char *src,
+                                   char *dst,
                                    long   n)
 {
   while (n--)

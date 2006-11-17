@@ -1,3 +1,74 @@
+2006-11-17  Øyvind Kolås  <pippin@gimp.org>
+
+	Make babl compile with stricter compiler warnings, mostly related to
+	changing pointer arith from void* to char*.
+
+	* babl/babl-classes.h:
+	* babl/babl-component.c: (component_new):
+	* babl/babl-conversion.c: (conversion_new),
+	(babl_conversion_planar_process), (babl_conversion_process):
+	* babl/babl-core.c: (convert_double_double), (rgba_to_rgba):
+	* babl/babl-extension.c: (extension_new):
+	* babl/babl-fish-path.c: (babl_fish_path):
+	* babl/babl-fish-reference.c: (babl_fish_reference),
+	(convert_to_double), (convert_from_double), (process_same_model),
+	(babl_fish_reference_process):
+	* babl/babl-fish-simple.c: (babl_fish_simple):
+	* babl/babl-fish.c: (babl_fish_process):
+	* babl/babl-format.c: (format_new):
+	* babl/babl-image.c: (image_new), (babl_image_from_linear),
+	(babl_image):
+	* babl/babl-internal.h:
+	* babl/babl-memory.c: (babl_malloc):
+	* babl/babl-model.c: (model_new):
+	* babl/babl-type.c: (type_new), (r_interval), (test_init):
+	* babl/base/babl-base.c:
+	* babl/base/babl-base.h:
+	* babl/base/formats.c:
+	* babl/base/model-gray.c: (rgba_to_graya), (rgba_to_gray),
+	(rgb_to_gray_2_2), (gray_2_2_to_rgb), (graya_to_rgba),
+	(gray_to_rgba), (gray_alpha_premultiplied_to_rgba),
+	(rgba_to_gray_alpha_premultiplied),
+	(non_premultiplied_to_premultiplied),
+	(premultiplied_to_non_premultiplied),
+	(rgba2gray_gamma_2_2_premultiplied),
+	(gray_gamma_2_2_premultiplied2rgba):
+	* babl/base/model-rgb.c: (copy_strip_1), (g3_gamma_2_2),
+	(g3_inv_gamma_2_2), (non_premultiplied_to_premultiplied),
+	(premultiplied_to_non_premultiplied),
+	(rgba2rgba_gamma_2_2_premultiplied),
+	(rgba_gamma_2_2_premultiplied2rgba), (rgba2rgba_gamma_2_2),
+	(rgba_gamma_2_22rgba):
+	* babl/base/model-ycbcr.c: (rgba_to_ycbcra), (rgba_to_ycbcr),
+	(ycbcra_to_rgba), (ycbcr_to_rgba):
+	* babl/base/type-float.c: (convert_double_float),
+	(convert_float_double):
+	* babl/base/type-u16.c: (convert_double_u16_scaled),
+	(convert_u16_double_scaled):
+	* babl/base/type-u32.c: (convert_double_u32_scaled),
+	(convert_u32_double_scaled):
+	* babl/base/type-u8.c: (convert_double_u8_scaled),
+	(convert_u8_double_scaled):
+	* extensions/CIE-Lab.c: (rgba_to_lab), (lab_to_rgba),
+	(rgba_to_laba), (laba_to_rgba), (convert_double_u8_scaled),
+	(convert_u8_double_scaled), (convert_double_u16_scaled),
+	(convert_u16_double_scaled):
+	* extensions/gegl-fixups.c: (conv_F_8), (conv_8_F):
+	* extensions/gggl-lies.c: (conv_F_8), (conv_F_16), (conv_8_F),
+	(conv_16_F):
+	* extensions/gggl.c: (conv_F_8), (conv_F_16), (conv_8_F),
+	(conv_16_F):
+	* extensions/naive-CMYK.c: (rgba_to_cmyk), (cmyk_to_rgba):
+	* tests/babl-html-dump.c: (normalize):
+	* tests/babl_class_name.c:
+	* tests/formats.c: (format_check):
+	* tests/grayscale_to_rgb.c:
+	* tests/models.c: (model_check):
+	* tests/rgb_to_bgr.c:
+	* tests/rgb_to_ycbcr.c:
+	* tests/srgb_to_lab_u8.c:
+	* tests/types.c: (type_check):
+
 2006-11-15  Øyvind Kolås  <pippin@gimp.org>
 
 	Set the default BABL_PATH based on the prefix babl is compiled for.

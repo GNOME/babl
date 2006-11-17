@@ -150,9 +150,9 @@ gggl_float_to_index16 (float f)
 static INLINE long
 conv_F_8 (unsigned char *src, unsigned char *dst, long samples)
 {
+  long n=samples;
   if (!table_inited)
     table_init ();
-  long n=samples;
   while (n--)
     {
       register float f = (*(float *) src);
@@ -166,9 +166,9 @@ conv_F_8 (unsigned char *src, unsigned char *dst, long samples)
 static INLINE long
 conv_F_16 (unsigned char *src, unsigned char *dst, long samples)
 {
+  long n=samples;
   if (!table_inited)
     table_init ();
-  long n=samples;
   while (n--)
     {
       register float f = (*(float *) src);
@@ -182,9 +182,9 @@ conv_F_16 (unsigned char *src, unsigned char *dst, long samples)
 static INLINE long
 conv_8_F (unsigned char *src, unsigned char *dst, long samples)
 {
+  long n=samples;
   if (!table_inited)
     table_init ();
-  long n=samples;
   while (n--)
     {
       (*(float *) dst) = table_8_F[*(unsigned char *) src];
@@ -197,9 +197,9 @@ conv_8_F (unsigned char *src, unsigned char *dst, long samples)
 static INLINE long
 conv_16_F (unsigned char *src, unsigned char *dst, long samples)
 {
+  long n=samples;
   if (!table_inited)
     table_init ();
-  long n=samples;
   while (n--)
     {
       (*(float *) dst) = table_16_F[*(unsigned short *) src];
@@ -1824,6 +1824,8 @@ typedef struct Conversion
                                    (should be dwelled further into) */
   void      (*function) (unsigned char *src, unsigned char *dst, long samples);
 } Conversion;
+
+int init (void);
 
 int
 init (void)

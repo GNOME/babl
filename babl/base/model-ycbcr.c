@@ -22,6 +22,7 @@
 #include <assert.h>
 #include "babl.h"
 #include "babl-ids.h"
+#include "babl-base.h"
 
 #include "util.h"
 
@@ -75,8 +76,8 @@ models (void)
 }
 
 static long
-rgba_to_ycbcra (void *src,
-                void *dst,
+rgba_to_ycbcra (char *src,
+                char *dst,
                 long  n)
 {
   while (n--)
@@ -109,8 +110,8 @@ rgba_to_ycbcra (void *src,
 
 
 static long
-rgba_to_ycbcr (void *src,
-               void *dst,
+rgba_to_ycbcr (char *src,
+               char *dst,
                long  n)
 {
   while (n--)
@@ -140,8 +141,8 @@ rgba_to_ycbcr (void *src,
 }
 
 static long
-ycbcra_to_rgba (void *src,
-                void *dst,
+ycbcra_to_rgba (char *src,
+                char *dst,
                 long  n)
 {
   while (n--)
@@ -174,8 +175,8 @@ ycbcra_to_rgba (void *src,
 
 
 static long
-ycbcr_to_rgba (void *src,
-               void *dst,
+ycbcr_to_rgba (char *src,
+               char *dst,
                long  n)
 {
   while (n--)

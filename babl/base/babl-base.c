@@ -17,9 +17,10 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include "babl-base.h"
+
 extern int babl_hmpf_on_name_lookups;
 
-void babl_formats_init (void);
 static void types  (void);
 static void models (void);
 
@@ -45,10 +46,6 @@ babl_base_destroy (void)
  * types
  */
 
-void babl_base_type_float  (void);
-void babl_base_type_u8     (void);
-void babl_base_type_u16    (void);
-void babl_base_type_u32    (void);
 
 static void
 types (void)
@@ -63,9 +60,6 @@ types (void)
  * models
  */
 
-void babl_base_model_rgb   (void);
-void babl_base_model_gray  (void);
-void babl_base_model_ycbcr (void);
 
 static void
 models (void)

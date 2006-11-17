@@ -3,8 +3,8 @@
 
 int OK=1;
 
-int type_check (Babl *babl,
-                void *userdata)
+static int type_check (Babl *babl,
+                       void *userdata)
 {
   if (!babl_type_is_symmetric (babl))
     {

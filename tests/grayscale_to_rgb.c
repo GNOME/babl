@@ -28,7 +28,7 @@ float rgb_buf_ref [PIXELS*3]=
 
 float rgb_buf     [PIXELS*3];
 
-int
+static int
 test (void)
 {
   Babl *fish;

@@ -21,25 +21,25 @@
 #define _BABL_CLASSES_H
 
 /* Type and Format */
-typedef long (*BablFuncLinear)    (void  *src,
-                                   void  *dst,
+typedef long (*BablFuncLinear)    (char  *src,
+                                   char  *dst,
                                    long   n);
 
 /* Signature of functions registered for reference type
  * conversions,
  */
-typedef long (*BablFuncPlane)     (void  *src,
-                                   void  *dst,
+typedef long (*BablFuncPlane)     (char  *src,
+                                   char  *dst,
                                    int    src_pitch,
                                    int    dst_pitch,
                                    long   n);
 
 /* TypePlanar,ModelPlanar and FormatPlanar */
 typedef long (*BablFuncPlanar)    (int    src_bands,
-                                   void  *src[],
+                                   char  *src[],
                                    int    src_pitch[],
                                    int    dst_bands,
-                                   void  *dst[],
+                                   char  *dst[],
                                    int    dst_pitch[],
                                    long   n);
 
@@ -185,7 +185,7 @@ typedef struct
   BablComponent **component;
   BablSampling  **sampling;
   BablType      **type;
-  void          **data;
+  char          **data;
   int            *pitch;
   int            *stride;
 } BablImage;
