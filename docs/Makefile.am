@@ -15,6 +15,7 @@ EXTRA_DIST= 			\
 	.cvsignore		\
 	babl.css  		\
 	tools/xml_insert.sh	\
+	tools/changelog2rss	\
 	index-static.html.in	\
 	index.html		\
 	LGPL

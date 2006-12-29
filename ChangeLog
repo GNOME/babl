@@ -1,3 +1,7 @@
+2006-12-29  Øyvind Kolås  <pippin@gimp.org>
+
+	* docs/Makefile.am: include changelog2rss script.
+
 2006-11-17  Øyvind Kolås  <pippin@gimp.org>
 
 	Make babl compile with stricter compiler warnings, mostly related to
