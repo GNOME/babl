@@ -4,8 +4,8 @@ libdir=@libdir@
 includedir=@includedir@
 
 Name: babl
-Description: Dynamic; any to any, pixel format conversion library
-Version: @VERSION@
-Libs: -L${libdir} -lbabl -ldl -lm
+Description: Dynamic, any to any, pixel format conversion library
+Version: @BABL_REAL_VERSION@
+Libs: -L${libdir} -lbabl-@BABL_API_VERSION@ @DL_LIB@ @MATH_LIB@
 Cflags: -I${includedir}/@PACKAGE_NAME@-@BABL_API_VERSION@
 

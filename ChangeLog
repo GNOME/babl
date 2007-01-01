@@ -1,3 +1,18 @@
+2007-01-01  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	Some changes to fix build problems in FreeBSD and Windows.
+
+	* configure.ac: Added missing m4 defines specifying version numbers,
+	and tests for libdl and libm (sets DL_LIB and MATH_LIB respectively).
+
+	* babl.pc.in: Replaced several hard-coded items with ones defined
+	when configure is run.
+
+	* babl/base/Makefile.am:
+	* extensions/Makefile.am:
+	* tests/Makefile.am: Use $(DL_LIB) and $(MATH_LIB) instead of
+	hard-coded options.
+
 2006-12-29  Øyvind Kolås  <pippin@gimp.org>
 
 	* configure.ac: set the version of babl to 0.0.9

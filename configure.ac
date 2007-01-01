@@ -3,6 +3,9 @@ AC_PREREQ(2.54)
 m4_define([babl_major_version], 0)
 m4_define([babl_minor_version], 0)
 m4_define([babl_micro_version], 9)
+m4_define([babl_real_version],
+          [babl_major_version.babl_minor_version.babl_micro_version])
+m4_define([babl_version], [babl_real_version])
 
 AC_INIT(babl, babl_major_version.babl_minor_version.babl_micro_version)
 AC_CONFIG_SRCDIR(babl/babl.h)
@@ -12,6 +15,7 @@ BABL_MINOR_VERSION=babl_minor_version
 BABL_MICRO_VERSION=babl_micro_version
 BABL_REAL_VERSION=babl_real_version
 BABL_VERSION=babl_version
+AC_SUBST(BABL_REAL_VERSION)
 
 BABL_API_VERSION=babl_major_version.babl_minor_version
 AC_SUBST(BABL_API_VERSION)
@@ -53,7 +57,7 @@ if eval "test x$GCC = xyes"; then
   esac
 fi
 
-babl_extension_dir="$(libdir)/babl"
+babl_extension_dir="$libdir/babl"
 AC_SUBST(babl_extension_dir)
 
 AC_PATH_PROG(INKSCAPE, inkscape, no)
@@ -115,11 +119,13 @@ esac
 AC_MSG_RESULT([$platform_win32])
 AM_CONDITIONAL(PLATFORM_WIN32, test "$platform_win32" = "yes")
 
+MATH_LIB=-lm
 AC_MSG_CHECKING([for native Win32])
 case "$target_or_host" in
   *-*-mingw*)
     os_win32=yes
     PATHSEP=';'
+    MATH_LIB=
     ;;
   *)
     os_win32=no
@@ -128,11 +134,15 @@ case "$target_or_host" in
 esac
 AC_MSG_RESULT([$os_win32])
 AC_SUBST(PATHSEP)
+AC_SUBST(MATH_LIB)
 
 AM_CONDITIONAL(OS_WIN32, test "$os_win32" = "yes")
 AM_CONDITIONAL(OS_UNIX, test "$os_win32" != "yes")
 
 dnl ===========================================================================
+
+AC_CHECK_LIB([dl], [dlopen], [DL_LIB="-ldl"])
+AC_SUBST(DL_LIB)
 
 AC_DEFINE_UNQUOTED(BABL_PATH, "~/.babl-$BABL_API_VERSION:/usr/local/lib/babl-$BABL_API_VERSION:/usr/lib/babl-$BABL_API_VERSION", [search path for babl extensions (default value of enviroment variable)])
 AC_DEFINE(BABL_PATH_SEPERATOR, "/", [string used to seperate directories in a path string]) 

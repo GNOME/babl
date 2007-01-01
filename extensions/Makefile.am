@@ -30,7 +30,7 @@ LDADD    = $(win32_libs) $(no-undefined)
 #	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<  [own compile and link flags]
 
 CIE-Lab.so: CIE-Lab.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) -lm
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(MATH_LIB)
 #lcms.so: lcms.c
 #	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config lcms --cflags --libs`
 #############################################################################

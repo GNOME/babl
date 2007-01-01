@@ -23,4 +23,4 @@ EXTRA_DIST := 		\
 	rgb-constants.h	\
 	util.h
 
-LDADD = -lm
+LDADD = $(MATH_LIB)
