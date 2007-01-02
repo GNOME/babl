@@ -1,5 +1,18 @@
 2007-01-01  Kevin Cozens  <kcozens@cvs.gnome.org>
 
+	* docs/index-static.html.in: Fixes for various punctuation, grammar,
+	and typographical errors.
+
+2007-01-01  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* configure.ac: Changes to properly (or at least better) version the
+	babl library.
+
+	* babl.pc.in: It is too soon to include version information in the
+	name of the babl library at link time.
+
+2007-01-01  Kevin Cozens  <kcozens@cvs.gnome.org>
+
 	Some changes to fix build problems in FreeBSD and Windows.
 
 	* configure.ac: Added missing m4 defines specifying version numbers,

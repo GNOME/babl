@@ -96,7 +96,7 @@
 
     <!--<h1>Babl</h1>-->
     <p>Babl is a <em>dynamic, any to any, pixel format conversion
-      library</em> It provides conversions between the myriad of buffer
+      library</em>. It provides conversions between the myriad of buffer
     types images can be stored in. Babl doesn't only help with existing
     pixel formats, but also facilitates creation of new and uncommon
     ones.</p>
@@ -111,11 +111,12 @@
     <a name='Background'></a>
     <h2>Background</h2>
     <p> When creating various libraries and small tools that deal with
-    computer graphics I have often created function for converting
-    raster images between different representations. </p>
+    computer graphics I have often created functions for converting
+    raster images between different representations.
+    </p>
 
     <p>Libraries to help with such conversions already do exist, but no
-    extendable candidate have surfaced in my searches.
+    extendable candidates have surfaced in my searches.
     </p>
 
     <p>The vocabulary developed in babl will most likely be part of
@@ -128,18 +129,18 @@
     <p>When using BablFishes to do your conversions, you request a fish to
     convert between two formats, and an optimal fish to babls capability is
     provided that you can use to do your conversions. Babl also provides
-    the capability to describe new formats based on a vocbulary of user
+    the capability to describe new formats based on a vocabulary of user
     registered color models and data types.
     </p>
 
     <p>Babl provides a base vocabulary in BablBase and some extensions
-    thar are thought to be generally useful.</p>
+    that are thought to be generally useful.</p>
 
     <p>When performing further extensions to the vocabulary of babl, the
     internal consistency is governed by reference conversions that operate
-    on <em>double</em> (64 bit floating point values.) The only color model
+    on <em>double</em> (64 bit floating point values). The only color model
     created during BablCore bootstrap is <em>RGBA</em> (linear light RGB,
-    0.0 - 1.0, with a linear 0.0 - 1.0 opacity channel.) backed by
+    0.0 - 1.0, with a linear 0.0 - 1.0 opacity channel) backed by
     the <em>double</em> datatype.
     </p>
 
@@ -149,10 +150,9 @@
     constructing BablFishes for other conversions.
     </p>
 
-    <p>Babl extensions are shared objects, if you already have developed
+    <p>Babl extensions are shared objects. If you have already developed
     some fast conversion functions, wrapping them as babl extensions should
-    not take much time, and will speed up babl for other users as well you
-    make the conversions available for others as well.
+    not take much time and will speed up babl for other users as well.
     </p>
 
     <a name='Features'></a>
@@ -163,7 +163,6 @@
       <li class='frozen'>Small API for simple use cases</li>
       <li class='stable'>Planar and linear buffers</li>
       <li class='stable'>Thread safety for processing.</li>
-
       <li class='unstable'>Extendable and <a href='http://pippin.gimp.org/babl/introspect.txt'>introspectable</a> formats,
       color models, components and datatypes</li>
       <li class='unstable'>Reference 64bit floating point conversions for
@@ -177,10 +176,10 @@
     <a name='Extensions'></a>
     <h3>Extensions</h3>
     <p>
-    At compile, load and runtime; babl is extendable with:
+    At compile, load, and runtime; babl is extendable with:
     </p>
     <ul>
-      <li>data  types.</li>
+      <li>data types.</li>
       <li>color models.</li>
       <li>pixel formats.</li>
       <li>optimized conversion functions:
@@ -270,7 +269,7 @@
         <a name='Extending'></a>
         <h2>Extending</h2>
         
-        <p>For samples of how the current internal api of specification of
+        <p>For samples of how the current internal API specification of
         data types, color models, and conversions look in the <tt>extensions/</tt>
         directory. The tables in this HTML file is directly generated
         based on the data registered by BablCore (double and RGBA), BablBase (core datatypes, and RGB models), 
