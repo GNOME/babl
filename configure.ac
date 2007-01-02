@@ -1,11 +1,22 @@
 AC_PREREQ(2.54)
 
+# Making releases on the stable branch:
+#   BABL_MICRO_VERSION += 1;
+#   BABL_INTERFACE_AGE += 1;
+
 m4_define([babl_major_version], 0)
 m4_define([babl_minor_version], 0)
 m4_define([babl_micro_version], 9)
 m4_define([babl_real_version],
           [babl_major_version.babl_minor_version.babl_micro_version])
 m4_define([babl_version], [babl_real_version])
+m4_define([babl_interface_age], [0])
+m4_define([babl_binary_age],
+          [m4_eval(100 * babl_minor_version + babl_micro_version)])
+
+# This is the X.Y used in -lbabl-X.Y
+m4_define([babl_api_version], [babl_major_version.babl_minor_version])
+
 
 AC_INIT(babl, babl_major_version.babl_minor_version.babl_micro_version)
 AC_CONFIG_SRCDIR(babl/babl.h)
@@ -13,24 +24,34 @@ AC_CONFIG_SRCDIR(babl/babl.h)
 BABL_MAJOR_VERSION=babl_major_version
 BABL_MINOR_VERSION=babl_minor_version
 BABL_MICRO_VERSION=babl_micro_version
-BABL_REAL_VERSION=babl_real_version
+BABL_INTERFACE_AGE=babl_interface_age
+BABL_BINARY_AGE=babl_binary_age
 BABL_VERSION=babl_version
+BABL_REAL_VERSION=babl_real_version
+BABL_API_VERSION=babl_api_version
+AC_SUBST(BABL_MAJOR_VERSION)
+AC_SUBST(BABL_MINOR_VERSION)
+AC_SUBST(BABL_MICRO_VERSION)
+AC_SUBST(BABL_INTERFACE_AGE)
+AC_SUBST(BABL_BINARY_AGE)
+AC_SUBST(BABL_VERSION)
 AC_SUBST(BABL_REAL_VERSION)
-
-BABL_API_VERSION=babl_major_version.babl_minor_version
 AC_SUBST(BABL_API_VERSION)
 
-BABL_LIBRARY_VERSION=0:0:0
+BABL_RELEASE=babl_api_version
+AC_SUBST(BABL_RELEASE)
 
+# libtool versioning
+m4_define([lt_current], [m4_eval(100 * babl_minor_version + babl_micro_version - babl_interface_age)])
+m4_define([lt_revision], [babl_interface_age])
+m4_define([lt_age], [m4_eval(babl_binary_age - babl_interface_age)])
+BABL_LIBRARY_VERSION="lt_current:lt_revision:lt_age"
+BABL_CURRENT_MINUS_AGE=m4_eval(lt_current - lt_age)
 AC_SUBST(BABL_LIBRARY_VERSION)
+AC_SUBST(BABL_CURRENT_MINUS_AGE)
 
 PACKAGE_NAME=babl
 AC_SUBST(PACKAGE_NAME)
-
-BABL_VERSION=$BABL_MAJOR_VERSION.$BABL_MINOR_VERSION.$BABL_MICRO_VERSION
-BABL_RELEASE=$BABL_MAJOR_VERSION.$BABL_MINOR_VERSION
-AC_SUBST(BABL_RELEASE)
-AC_SUBST(BABL_VERSION)
 
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE(no-define)
@@ -56,9 +77,6 @@ if eval "test x$GCC = xyes"; then
   *) CFLAGS="$CFLAGS -Wall" ;;
   esac
 fi
-
-babl_extension_dir="$libdir/babl"
-AC_SUBST(babl_extension_dir)
 
 AC_PATH_PROG(INKSCAPE, inkscape, no)
 AM_CONDITIONAL(HAVE_INKSCAPE, test "x$INKSCAPE" != "xno")
