@@ -2,7 +2,6 @@
 # file babl_extensions
 
 if OS_WIN32
-win32_libs = ../babl/.libs/libbabl.a -lgw32c -liberty -lole32 -luuid -lwsock32
 no_undefined = -no-undefined
 endif
 
@@ -19,7 +18,7 @@ CFLAGS  += -I $(top_srcdir)/babl -I $(top_srcdir)/extensions -fPIC
 
 LDFLAGS += -shared
 
-LDADD    = $(win32_libs) $(no-undefined)
+LDADD    = $(no-undefined)
 
 %.so: %.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)

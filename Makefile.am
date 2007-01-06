@@ -1,7 +1,13 @@
 AUTOMAKE_OPTIONS = foreign dist-bzip2
 
+if OS_WIN32
+extensions=
+else
+extensions=extensions
+endif
+
 SUBDIRS = babl		\
-	  extensions 	\
+	  ${extensions}	\
 	  tests		\
 	  docs
 

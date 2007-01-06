@@ -1,5 +1,12 @@
 2007-01-06  Michael Schumacher  <schumaml@cvs.gnome.org>
 
+	* Makefile.am: don't go into the extensions subdirectory on
+	Windows 
+	* extensions/Makefile.am: removed the win32_libs definition, using
+	libgw32c does more harm than good, apparently
+	
+2007-01-06  Michael Schumacher  <schumaml@cvs.gnome.org>
+
 	* docs/Makefile.am: added EXEEXT to the tools used in some
 	commands 
 
