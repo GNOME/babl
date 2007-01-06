@@ -2,10 +2,6 @@
 
 require 'parsedate'
 
-SITE_TITLE = `pwd`.chomp.split('/').last
-
-LISTING_TYPE = 0
-
 class ChangeLogEntry
     attr_accessor :category, :time, :title, :content, :author
     

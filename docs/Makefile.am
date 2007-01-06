@@ -29,13 +29,13 @@ MAINTAINERCLEANFILES = $(BUILT_EXTRA_DIST)
 all: $(HTML_FILES) rss
 
 
-BablFishPath.html: $(top_builddir)/tests/babl_fish_path_dhtml
+BablFishPath.html: $(top_builddir)/tests/babl_fish_path_dhtml$(EXEEXT)
 	echo -n "HTML:"
 	echo -n " $@"
 	export BABL_PATH="$(top_builddir)/extensions"; $< > $@ &&\
 	echo " [OK]" || echo " Fail"
 
-BablFishPath.txt: $(top_builddir)/tests/babl_fish_path_fitness
+BablFishPath.txt: $(top_builddir)/tests/babl_fish_path_fitness$(EXEEXT)
 	echo -n "UTF8:"
 	echo -n " $@"
 	export BABL_PATH="$(top_builddir)/extensions"; $< > $@ &&\
@@ -43,7 +43,7 @@ BablFishPath.txt: $(top_builddir)/tests/babl_fish_path_fitness
 	if [ "x"$$CRUCIBLE_ID != "x" ] ;then echo;echo;cat $@;echo;echo;fi
 
 index.html: index-static.html                    \
-	    $(top_builddir)/tests/babl_html_dump \
+	    $(top_builddir)/tests/babl_html_dump$(EXEEXT) \
 	    $(top_srcdir)/AUTHORS                \
 	    $(top_srcdir)/NEWS                   \
 	    BablFishPath.txt			 \
@@ -51,7 +51,7 @@ index.html: index-static.html                    \
 	echo -n "HTML: $@"
 	cp $< $@ 
 	(which tempfile > /dev/null&& TMPFILE=`tempfile` || TMPFILE="/tmp/babl_build_tempfile" ;\
-	export BABL_PATH="$(top_builddir)/extensions"; $(top_builddir)/tests/babl_html_dump > $$TMPFILE;\
+	export BABL_PATH="$(top_builddir)/extensions"; $(top_builddir)/tests/babl_html_dump$(EXEEXT) > $$TMPFILE;\
 	$(top_srcdir)/docs/tools/xml_insert.sh $@ BablBase $$TMPFILE;\
 	rm -f $$TMPFILE )
 	echo -n "."

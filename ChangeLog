@@ -1,3 +1,11 @@
+2007-01-06  Michael Schumacher  <schumaml@cvs.gnome.org>
+
+	* docs/Makefile.am: added EXEEXT to the tools used in some
+	commands 
+
+	* docs/tools/changelog2rss: remove unused SET_TITLE and
+	LISTING_TYPE; the former did cause an error on Windows
+
 2007-01-01  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* docs/index-static.html.in: Fixes for various punctuation, grammar,
