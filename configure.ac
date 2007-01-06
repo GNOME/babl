@@ -56,6 +56,7 @@ AC_SUBST(PACKAGE_NAME)
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE(no-define)
 
+AC_DISABLE_STATIC
 AC_PROG_CC
 AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
@@ -161,6 +162,9 @@ dnl ===========================================================================
 
 AC_CHECK_LIB([dl], [dlopen], [DL_LIB="-ldl"])
 AC_SUBST(DL_LIB)
+
+AC_CHECK_FUNCS(dlopen)
+AC_REPLACE_FUNCS(gettimeofday)
 
 AC_DEFINE_UNQUOTED(BABL_PATH, "~/.babl-$BABL_API_VERSION:/usr/local/lib/babl-$BABL_API_VERSION:/usr/lib/babl-$BABL_API_VERSION", [search path for babl extensions (default value of enviroment variable)])
 AC_DEFINE(BABL_PATH_SEPERATOR, "/", [string used to seperate directories in a path string]) 

@@ -1,5 +1,28 @@
 2007-01-06  Michael Schumacher  <schumaml@cvs.gnome.org>
 
+        This change makes babl buildable on Windows.
+	
+	* configure.ac: Add a check for function dlopen and disabled
+	static libs by default. Check for gettimeofday by using
+	AC_REPLACE_FUNCS.
+	
+	* babl/babl-internal.h: Add definitions for srandom and radnom to
+	srand and rand for the windows platform.
+	* babl/babl-conversion.c 
+	* babl-model.c: Include babl-internal.h after math.h
+
+	* babl/babl-extension.c: Use #ifdef HAVE_DLOPEN to hide dl* if it
+	is not available.
+
+	* babl/Makefile.am: Removed win32_libs and added @LTLIBOBJS@ to
+	LIBADD to get the replacement for gettimeofday linked in if
+	needed. 
+
+	* babl/gettimeofday.c: New file to provide a replacement for
+	gettimeofday, only used on Windows yet.
+
+2007-01-06  Michael Schumacher  <schumaml@cvs.gnome.org>
+
 	* Makefile.am: don't go into the extensions subdirectory on
 	Windows 
 	* extensions/Makefile.am: removed the win32_libs definition, using

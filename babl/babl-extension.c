@@ -140,11 +140,6 @@ destroy_hook (void)
 
 #ifdef HAVE_DLFCN_H
 #include <dlfcn.h>
-#else
-void  *dlopen(const char *, int);
-void  *dlsym(void *, const char *);
-int    dlclose(void *);
-char  *dlerror(void);
 #endif
 
 #ifndef RTLD_NOW
@@ -167,6 +162,7 @@ babl_extension_load (const char *path)
 {
   Babl *babl             = NULL;
 
+#ifdef HAVE_DLOPEN
   /* do the actual loading thing */
   void *dl_handle        = NULL;
   int  (*init)    (void) = NULL;
@@ -196,6 +192,7 @@ babl_extension_load (const char *path)
       babl_log ("babl_extension_init() in extension '%s' failed (return!=0)", path);
       return load_failed (babl);
     }
+#endif
 
   if (babl_db_insert (db, babl) == babl)
     {
@@ -340,7 +337,7 @@ each_babl_extension_destroy (Babl *babl,
 {
   if (babl->extension.destroy)
     babl->extension.destroy();
-#ifdef BABL_DYNAMIC_EXTENSIONS
+#ifdef HAVE_DLOPEN
   if (babl->extension.dl_handle)
     dlclose (babl->extension.dl_handle);
 #endif

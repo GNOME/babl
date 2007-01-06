@@ -17,10 +17,10 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "babl-internal.h"
 #include <string.h>
 #include <stdarg.h>
 #include <math.h>
+#include "babl-internal.h"
 #include "babl-db.h"
 
 

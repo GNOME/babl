@@ -44,6 +44,11 @@
 #include "babl-util.h"
 #include "babl-memory.h"
 
+/* redefining some functions for the win32 platform */
+#ifdef _WIN32
+#define srandom srand
+#define random  rand
+#endif
 
 Babl   * babl_conversion_find           (void           *source,
                                          void           *destination);

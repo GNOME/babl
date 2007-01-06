@@ -1,7 +1,6 @@
 ## Source directory
 
 if OS_WIN32
-win32_libs = -lgw32c -lole32 -luuid -lwsock32
 no_undefined = -no-undefined
 endif
 
@@ -52,7 +51,7 @@ lib_LTLIBRARIES= libbabl.la
 libbabl_la_SOURCES= $(h_sources) $(c_sources)
 libbabl_la_LIBADD=\
 	base/libbase.la \
-	${win32_libs}
+	@LTLIBOBJS@
 
 libbabl_la_LDFLAGS= \
 	-version-info $(BABL_LIBRARY_VERSION) \
