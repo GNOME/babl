@@ -1,3 +1,13 @@
+2007-01-07  Øyvind Kolås  <pippin@gimp.org>
+
+	* configure.ac: set version to 0.0.11
+
+2007-01-07  Øyvind Kolås  <pippin@gimp.org>
+
+	* configure.ac: set version to 0.0.10
+	* docs/index-static.html.in: reworded things due to the subversion
+	switch.
+
 2007-01-06  Michael Schumacher  <schumaml@cvs.gnome.org>
 
         This change makes babl buildable on Windows.
