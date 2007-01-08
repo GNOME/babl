@@ -21,6 +21,14 @@
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
+
+#ifdef HAVE_DLFCN_H
+#ifndef HAVE_DLOPEN
+#define HAVE_DLOPEN 1
+#endif
+#endif
+
+
 #else
 #define BABL_PATH           PREFIX "/babl-0.0"
 #define BABL_PATH_SEPERATOR "/"
