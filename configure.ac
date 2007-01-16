@@ -163,7 +163,6 @@ dnl ===========================================================================
 AC_CHECK_LIB([dl], [dlopen], [DL_LIB="-ldl"])
 AC_SUBST(DL_LIB)
 
-AC_CHECK_FUNCS(dlopen)
 AC_REPLACE_FUNCS(gettimeofday)
 
 AC_DEFINE_UNQUOTED(BABL_PATH, "~/.babl-$BABL_API_VERSION:/usr/local/lib/babl-$BABL_API_VERSION:/usr/lib/babl-$BABL_API_VERSION", [search path for babl extensions (default value of enviroment variable)])

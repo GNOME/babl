@@ -1,3 +1,11 @@
+2007-01-16  Michael Schumacher  <schumaml@cvs.gnome.org>
+
+	* configure.ac: remove the check for dlopen again - didn't work as
+	intended 
+	* babl/babl-extension.c: for #idfef WIN32, #define dl* functions
+	to their Windows equivalents (LoadLibrary, GetProcAddress,
+	FreeLibrary). 
+
 2007-01-08  Øyvind Kolås  <pippin@gimp.org>
 
 	* babl/babl-extension.c: define HAVE_DLOPEN if HAVE_DLFCN is set.

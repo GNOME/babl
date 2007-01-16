@@ -21,21 +21,11 @@
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
-
-#ifdef HAVE_DLFCN_H
-#ifndef HAVE_DLOPEN
-#define HAVE_DLOPEN 1
-#endif
-#endif
-
-
 #else
 #define BABL_PATH           PREFIX "/babl-0.0"
 #define BABL_PATH_SEPERATOR "/"
 #define BABL_LIST_SEPERATOR ':'
 #endif
-
-
 
 #define BABL_INIT_HOOK     init_hook();
 #define BABL_DESTROY_HOOK  destroy_hook();
@@ -148,11 +138,23 @@ destroy_hook (void)
 
 #ifdef HAVE_DLFCN_H
 #include <dlfcn.h>
+#define HLIB void *
 #endif
 
 #ifndef RTLD_NOW
 #define RTLD_NOW 0
 #endif
+
+#ifdef WIN32 
+#define WIN32_LEAN_AND_MEAN 
+#include <windows.h>
+#define HLIB   HINSTANCE
+
+#define dlopen(a, b) LoadLibrary(a) 
+#define dlsym(l, s)  GetProcAddress(l, s) 
+#define dlclose(l)   FreeLibrary(l) 
+#define dlerror()    GetLastError()
+#endif 
 
 static Babl *
 load_failed (Babl *babl)
@@ -169,10 +171,8 @@ static Babl *
 babl_extension_load (const char *path)
 {
   Babl *babl             = NULL;
-
-#ifdef HAVE_DLOPEN
   /* do the actual loading thing */
-  void *dl_handle        = NULL;
+  HLIB dl_handle         = NULL;
   int  (*init)    (void) = NULL;
   void (*destroy) (void) = NULL;
  
@@ -200,7 +200,6 @@ babl_extension_load (const char *path)
       babl_log ("babl_extension_init() in extension '%s' failed (return!=0)", path);
       return load_failed (babl);
     }
-#endif
 
   if (babl_db_insert (db, babl) == babl)
     {
@@ -345,10 +344,8 @@ each_babl_extension_destroy (Babl *babl,
 {
   if (babl->extension.destroy)
     babl->extension.destroy();
-#ifdef HAVE_DLOPEN
   if (babl->extension.dl_handle)
     dlclose (babl->extension.dl_handle);
-#endif
 
   babl_free (babl);
   return 0;  /* continue iterating */
