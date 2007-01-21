@@ -37,7 +37,7 @@ CIE-Lab.so: CIE-Lab.c
 clean-local:
 	rm -f $(SOBJS)
 
-ext_dir = $(DESTDIR)$(prefix)/lib/babl-@BABL_API_VERSION@
+ext_dir = $(DESTDIR)$(libdir)/babl-@BABL_API_VERSION@
 
 install-exec-local: all-local
 	$(INSTALL) -d $(ext_dir)

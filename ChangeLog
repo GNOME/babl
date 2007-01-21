@@ -1,5 +1,13 @@
 2007-01-22  Øyvind Kolås  <pippin@gimp.org>
 
+	Applied patch from Tim Mooney fixing bug #392916
+
+	* extensions/Makefile.am: $(prefix)/lib/babl-0.0 for its extensions
+	dir, which is incorrect for many 64 bit platforms.  It should instead
+	use $(libdir)/babl-0.0.
+
+2007-01-22  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-internal.h: applied patch from Tim Mooney fixing bug
 	#392843, replacing _FUNCTION_ with _func_ which is the C99 equivalent
 	of the gcc extension.
