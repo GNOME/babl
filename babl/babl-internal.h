@@ -147,10 +147,10 @@ real_babl_log (const char *file,
 }
 
 #define babl_log(args...)                               \
-  real_babl_log(__FILE__, __LINE__, __FUNCTION__, args)
+  real_babl_log(__FILE__, __LINE__, __func__, args)
 
 #define babl_fatal(args...) do{                         \
-  real_babl_log(__FILE__, __LINE__, __FUNCTION__, args);\
+  real_babl_log(__FILE__, __LINE__, __func__, args);\
   babl_die();}                                          \
 while(0)
 
@@ -194,7 +194,7 @@ babl_##type_name##_id (int id)                                \
   babl = babl_db_exist (db, id, NULL);                        \
   if (!babl)                                                  \
     {                                                         \
-      babl_fatal ("%s(%i): not found", __FUNCTION__, id);       \
+      babl_fatal ("%s(%i): not found", __func__, id);       \
     }                                                         \
   return babl;                                                \
 }
@@ -207,13 +207,13 @@ babl_##type_name (const char *name)                             \
                                                                 \
   if (babl_hmpf_on_name_lookups)                                \
     {                                                           \
-      babl_log ("%s(\"%s\"): hmpf!", __FUNCTION__, name);       \
+      babl_log ("%s(\"%s\"): hmpf!", __func__, name);       \
     }                                                           \
   babl = babl_db_exist (db, 0, name);                           \
                                                                 \
   if (!babl)                                                    \
     {                                                           \
-      babl_fatal ("%s(\"%s\"): not found", __FUNCTION__, name); \
+      babl_fatal ("%s(\"%s\"): not found", __func__, name); \
     }                                                           \
   return babl;                                                  \
 }
