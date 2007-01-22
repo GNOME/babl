@@ -1,3 +1,8 @@
+# programs used for doc creation
+babl_fish_path_dhtml   = $(top_builddir)/tests/babl_fish_path_dhtml
+babl_fish_path_fitness = $(top_builddir)/tests/babl_fish_path_fitness
+babl_html_dump         = $(top_builddir)/tests/babl_html_dump
+
 .SILENT:
 SUBDIRS=      graphics
 DIST_SUBDIRS= graphics
@@ -29,13 +34,13 @@ MAINTAINERCLEANFILES = $(BUILT_EXTRA_DIST)
 all: $(HTML_FILES) rss
 
 
-BablFishPath.html: $(top_builddir)/tests/babl_fish_path_dhtml$(EXEEXT)
+BablFishPath.html: $(babl_fish_path_dhtml)
 	echo -n "HTML:"
 	echo -n " $@"
 	export BABL_PATH="$(top_builddir)/extensions"; $< > $@ &&\
 	echo " [OK]" || echo " Fail"
 
-BablFishPath.txt: $(top_builddir)/tests/babl_fish_path_fitness$(EXEEXT)
+BablFishPath.txt: $(babl_fish_path_fitness)
 	echo -n "UTF8:"
 	echo -n " $@"
 	export BABL_PATH="$(top_builddir)/extensions"; $< > $@ &&\
@@ -43,7 +48,7 @@ BablFishPath.txt: $(top_builddir)/tests/babl_fish_path_fitness$(EXEEXT)
 	if [ "x"$$CRUCIBLE_ID != "x" ] ;then echo;echo;cat $@;echo;echo;fi
 
 index.html: index-static.html                    \
-	    $(top_builddir)/tests/babl_html_dump$(EXEEXT) \
+	    $(babl_html_dump) 			 \
 	    $(top_srcdir)/AUTHORS                \
 	    $(top_srcdir)/NEWS                   \
 	    BablFishPath.txt			 \
@@ -51,11 +56,11 @@ index.html: index-static.html                    \
 	echo -n "HTML: $@"
 	cp $< $@ 
 	(which tempfile > /dev/null&& TMPFILE=`tempfile` || TMPFILE="/tmp/babl_build_tempfile" ;\
-	export BABL_PATH="$(top_builddir)/extensions"; $(top_builddir)/tests/babl_html_dump$(EXEEXT) > $$TMPFILE;\
+	export BABL_PATH="$(top_builddir)/extensions"; $(babl_html_dump) > $$TMPFILE;\
 	$(top_srcdir)/docs/tools/xml_insert.sh $@ BablBase $$TMPFILE;\
 	rm -f $$TMPFILE )
 	echo -n "."
-	
+
 	$(top_srcdir)/docs/tools/xml_insert.sh $@ BablFishPath BablFishPath.txt
 	$(top_srcdir)/docs/tools/xml_insert.sh $@ AUTHORS $(top_srcdir)/AUTHORS
 	$(top_srcdir)/docs/tools/xml_insert.sh $@ NEWS $(top_srcdir)/NEWS
@@ -65,8 +70,6 @@ distclean-local:
 	if test $(srcdir) = .; then :; else 	\
 		rm -f $(BUILT_EXTRA_DIST);	\
 	fi
-
-rss: changelog.rss
 
 rss: changelog.rss
 
