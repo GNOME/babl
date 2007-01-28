@@ -1,12 +1,15 @@
 <dl>
   <dt>Øyvind Kolås <em>pippin@gimp.org</em></dt>
-        <dd>Maintainer and original author.</dd>
+        <dd>Lead developer.</dd>
   <dt>Sven Neumann <em>sven@gimp.org</em></dt>
-        <dd>Build enviroment sanity.</dd>
+        <dd>Build sanity.</dd>
+  <dt>Michael Natterer <em>mitch@gimp.org</em></dt>
+        <dd>Build sanity.</dd>
+  <dt>Kevin Cozens  <kcozens@cvs.gnome.org></dt>
+        <dd>Build sanity.</dd>
+  <dt>Tim Mooney</dt>
+        <dd>Portability fixes.</dd>
   <dt>Michael Schumacher <em>schumaml@cvs.gnome.org</em></dt>
         <dd>win32 support for dynamic extensions.</dd>
-  <dt>Kevin Cozens  <kcozens@cvs.gnome.org></dt>
-        <dd>Build environment fixes.</dd>
-  <dt>Tim Mooney</dt>
         <dd>Portability fixes.</dd>
 </dl>
