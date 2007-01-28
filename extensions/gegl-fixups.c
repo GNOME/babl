@@ -496,6 +496,7 @@ init (void)
       babl_component ("A"),
       NULL);
   Babl *bgrA8 = babl_format_new (
+      "name", "B'aG'aR'aA u8",
       babl_model ("R'aG'aB'aA"),
       babl_type  ("u8"),
       babl_component ("B'a"),
@@ -511,6 +512,7 @@ init (void)
       babl_component ("B'"),
       NULL);
   Babl *sdl32 = babl_format_new (
+      "name", "B'aG'aR'aPAD u8",
       babl_model ("R'G'B'"),
       babl_type  ("u8"),
       babl_component ("B'"),
