@@ -1,5 +1,10 @@
 2007-01-28  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-conversion.c: (babl_conversion_new): shut up compiler
+	warning.
+
+2007-01-28  Øyvind Kolås  <pippin@gimp.org>
+
 	* extensions/gegl-fixups.c: (init): give names to the custom formats.
 
 2007-01-28  Øyvind Kolås  <pippin@gimp.org>

@@ -265,7 +265,7 @@ babl_conversion_new (void *first_arg,
     if (ret!=babl)
         babl_free (babl);
     else
-        babl_add_ptr_to_list ((void ***)&(source->type.from), babl);
+        babl_add_ptr_to_list ((void ***)((Babl*)&(source->type.from)), babl);
 
     return ret;
   }
