@@ -1,5 +1,13 @@
 2007-01-28  Øyvind Kolås  <pippin@gimp.org>
 
+	* docs/index-static.html.in: things are not in CVS but SVN now.
+
+2007-01-07  Øyvind Kolås  <pippin@gimp.org>
+
+	* configure.ac: set version to 0.0.12
+
+2007-01-28  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-conversion.c: (babl_conversion_new): shut up compiler
 	warning.
 

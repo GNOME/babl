@@ -80,7 +80,7 @@
         <li><a href='#Extensions'>Extensions</a></li>
         <li><a href='#Dependencies'>Dependencies</a></li>
         <li><a href='#Download'>Download</a></li>
-        <li><a href='#CVS'>CVS</a></li>
+        <li><a href='#Subversion'>SVN</a></li>
         <li><a href='#Usage'>Usage</a></li>
         <li><a href='#Extending'>Extending</a></li>
         <li><a href='#ColorManagement'>Color Management</a></li>
@@ -106,7 +106,7 @@
 <!--
 <!--NEWS-->
 -->
-    <p>See the <a href='http://cvs.gnome.org/viewcvs/*checkout*/babl/ChangeLog'>ChangeLog in CVS</a>.</p>
+    <p>See the <a href='http://svn.gnome.org/viewcvs/babl/trunk/ChangeLog?view=markup'>ChangeLog in Subversion</a>.</p>
 
     <a name='Background'></a>
     <h2>Background</h2>
@@ -214,14 +214,14 @@
     <h2>Download</h2>
 
     <p>The latest versioned development version of babl can be found in
-    <a href='http://pippin.gimp.org/babl/dist'>http://pippin.gimp.org/babl/dist/</a>.
+    <a href='ftp://ftp.gtk.org/pub/babl/'>ftp://ftp.gtk.org/pub/babl/</a>.
     </p>
 
-    <a name='CVS'></a>
-    <h2>CVS</h2>
+    <a name='Subversion'></a>
+    <h2>Subversion</h2>
 
     <p>
-    The latest development version is available in <a href='http://cvs.gnome.org/viewcvs/babl/'>the babl module in GNOME CVS</a>.
+    The latest development version is available in <a href='http://svn.gnome.org/viewcvs/gegl/trunk/ChangeLog?view=markup'>the babl module in GNOME Subversion</a>.
     </p>
     <!--
     <div class='screen'>
