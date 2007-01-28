@@ -1,5 +1,9 @@
 2007-01-07  Øyvind Kolås  <pippin@gimp.org>
 
+	* configure.ac: set version to 0.0.13
+
+2007-01-07  Øyvind Kolås  <pippin@gimp.org>
+
 	* configure.ac: set version to 0.0.12
 
 2007-01-28  Øyvind Kolås  <pippin@gimp.org>
