@@ -82,7 +82,6 @@ static float table_8g_F[1 << 8];
 static unsigned char table_F_8[1 << 16];
 static unsigned char table_F_8g[1 << 16];
 
-
 static int table_inited = 0;
 
 static void
@@ -443,6 +442,27 @@ conv_rgbAF_rgb8 (unsigned char *srcc,
   return samples;
 }
 
+static long
+conv_bgrA8_rgba8 (unsigned char *srcc,
+                  unsigned char *dstc,
+                  long           samples)
+{
+  unsigned char *src = (void*)srcc;
+  unsigned char *dst = (void*)dstc;
+  long n=samples;
+  while (n--)
+    {
+      unsigned char alpha=src[3];
+      dst[0]=alpha?(src[2]*255/alpha):0;
+      dst[1]=alpha?(src[1]*255/alpha):0;
+      dst[2]=alpha?(src[0]*255/alpha):0;
+      dst[3]=alpha;
+      src+=4;
+      dst+=4;
+    }
+  return samples;
+}
+
 
 #define conv_rgb8_rgbAF conv_rgb8_rgbaF
 
@@ -475,6 +495,14 @@ init (void)
       babl_component ("B'"),
       babl_component ("A"),
       NULL);
+  Babl *bgrA8 = babl_format_new (
+      babl_model ("R'aG'aB'aA"),
+      babl_type  ("u8"),
+      babl_component ("B'a"),
+      babl_component ("G'a"),
+      babl_component ("R'a"),
+      babl_component ("A"),
+      NULL);
   Babl *rgb8 = babl_format_new (
       babl_model ("R'G'B'"),
       babl_type  ("u8"),
@@ -503,6 +531,7 @@ init (void)
   o (rgbaF, rgb8);
   o (rgbAF, rgb8);
   o (rgbAF, sdl32);
+  o (bgrA8, rgba8);
 
   return 0;
 }
