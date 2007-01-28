@@ -1,5 +1,9 @@
 2007-01-28  Øyvind Kolås  <pippin@gimp.org>
 
+	* AUTHORS: added Tim Mooney
+
+2007-01-28  Øyvind Kolås  <pippin@gimp.org>
+
 	* extensions/gegl-fixups.c: (conv_bgrA8_rgba8), (init): added
 	optimized permutator for going from cairo's buffer format to RGBA byte
 	order, as well as unpremultiplying.

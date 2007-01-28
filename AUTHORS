@@ -7,4 +7,6 @@
         <dd>win32 support for dynamic extensions.</dd>
   <dt>Kevin Cozens  <kcozens@cvs.gnome.org></dt>
         <dd>Build environment fixes.</dd>
+  <dt>Tim Mooney</dt>
+        <dd>Portability fixes.</dd>
 </dl>
