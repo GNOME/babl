@@ -46,8 +46,33 @@
  * was a must.
  *
  * TODO: error diffusion,
- *       gamma correction  (not really,. gamma correction belongs in seperate ops,.
  */
+
+#define BABL_USE_SRGB_GAMMA
+
+#ifdef BABL_USE_SRGB_GAMMA
+
+static inline double
+linear_to_gamma_2_2 (double value)
+{
+  if (value > 0.0030402477F)
+    return 1.055F * pow (value, (1.0F/2.4F)) - 0.055F;
+  return 12.92F * value;
+}
+
+static inline double
+gamma_2_2_to_linear (double value)
+{
+  if (value > 0.03928F)
+    return pow ((value + 0.055F) / 1.055F, 2.4F);
+  return value / 12.92F;
+}
+
+
+#else
+  #define linear_to_gamma_2_2(value) (pow((value), (1.0F/2.2F)))
+  #define gamma_2_2_to_linear(value) (pow((value), 2.2F))
+#endif
 
 
 /* lookup tables used in conversion */
@@ -74,7 +99,7 @@ table_init (void)
       {
         float direct = i/255.0;
         table_8_F[i] = direct;
-        table_8g_F[i] = pow(direct, 2.2F);
+        table_8g_F[i] = gamma_2_2_to_linear(direct);
       }
   }
   /* fill tables for conversion from float to integer */
@@ -106,7 +131,7 @@ table_init (void)
         else
           {
             c  = rint (u.f * 255.0);
-            cg = rint (pow(u.f,2.2F) * 255.0);
+            cg = rint (linear_to_gamma_2_2(u.f) * 255.0);
           }
 
         table_F_8[u.s[1]] = c;
@@ -157,6 +182,24 @@ conv_F_8 (unsigned char *src, unsigned char *dst, long samples)
   return samples;
 }
 
+
+static INLINE long
+conv_F_8g (unsigned char *src, unsigned char *dst, long samples)
+{
+  long n=samples;
+  if (!table_inited)
+    table_init ();
+  while (n--)
+    {
+      register float f = (*(float *) src);
+      *(unsigned char *) dst = table_F_8g[gggl_float_to_index16 (f)];
+      dst += 1;
+      src += 4;
+    }
+  return samples;
+}
+
+
 static INLINE long
 conv_8_F (unsigned char *src, unsigned char *dst, long samples)
 {
@@ -180,17 +223,17 @@ conv_rgbaF_rgb8 (unsigned char *src, unsigned char *dst, long samples)
   while (n--)
   {
       register float f = (*(float *) src);
-      *(unsigned char *) dst = table_F_8[gggl_float_to_index16 (f)];
+      *(unsigned char *) dst = table_F_8g[gggl_float_to_index16 (f)];
       src += 4;
       dst += 1;
 
       f = (*(float *) src);
-      *(unsigned char *) dst = table_F_8[gggl_float_to_index16 (f)];
+      *(unsigned char *) dst = table_F_8g[gggl_float_to_index16 (f)];
       src += 4;
       dst += 1;
 
       f = (*(float *) src);
-      *(unsigned char *) dst = table_F_8[gggl_float_to_index16 (f)];
+      *(unsigned char *) dst = table_F_8g[gggl_float_to_index16 (f)];
       src += 4;
       dst += 1;
 
@@ -201,11 +244,32 @@ conv_rgbaF_rgb8 (unsigned char *src, unsigned char *dst, long samples)
 }
 
 
-/*********/
 static INLINE long
 conv_rgbaF_rgba8 (unsigned char *src, unsigned char *dst, long samples)
 {
-  conv_F_8 (src, dst, samples * 4);
+  long n=samples;
+  while (n--)
+  {
+      register float f = (*(float *) src);
+      *(unsigned char *) dst = table_F_8g[gggl_float_to_index16 (f)];
+      src += 4;
+      dst += 1;
+
+      f = (*(float *) src);
+      *(unsigned char *) dst = table_F_8g[gggl_float_to_index16 (f)];
+      src += 4;
+      dst += 1;
+
+      f = (*(float *) src);
+      *(unsigned char *) dst = table_F_8g[gggl_float_to_index16 (f)];
+      src += 4;
+      dst += 1;
+
+      f = (*(float *) src);
+      *(unsigned char *) dst = table_F_8[gggl_float_to_index16 (f)];
+      src += 4;
+      dst += 1;
+  }
   return samples;
 }
 
@@ -214,7 +278,7 @@ conv_rgbaF_rgba8 (unsigned char *src, unsigned char *dst, long samples)
 static INLINE long
 conv_rgbF_rgb8 (unsigned char *src, unsigned char *dst, long samples)
 {
-  conv_F_8 (src, dst, samples * 3);
+  conv_F_8g (src, dst, samples * 3);
   return samples;
 }
 
@@ -342,6 +406,44 @@ conv_rgbaF_sdl32 (unsigned char *srcc,
   return samples;
 }
 
+static long
+conv_rgbAF_rgb8 (unsigned char *srcc,
+                 unsigned char *dstc,
+                 long           samples)
+{
+  float         *src = (void*)srcc;
+  unsigned char *dst = (void*)dstc;
+  long n=samples;
+  while (n--)
+    {
+      int i;
+      float alpha = src[3];
+      if (alpha < 0.0001)
+        alpha = 0.0001;
+      for (i=0;i<3;i++)
+        {
+          float ca=src[i];
+          float c;
+          int ret;
+          c=ca/alpha;
+          if (alpha==0.0)
+            ret=0;
+          else
+            ret = table_F_8g[gggl_float_to_index16 (c)];
+          if (ret<=0)
+            dst[i]=0;
+          else if (ret>255)
+            dst[i]=255;
+          else
+            dst[i] = ret;
+        }
+      src += 4;
+      dst += 3;
+    }
+  return samples;
+}
+
+
 #define conv_rgb8_rgbAF conv_rgb8_rgbaF
 
 int init (void);
@@ -398,6 +500,8 @@ init (void)
   o (rgb8, rgbAF);
   o (rgba8, rgbaF);
   o (rgbaF, sdl32);
+  o (rgbaF, rgb8);
+  o (rgbAF, rgb8);
   o (rgbAF, sdl32);
 
   return 0;
