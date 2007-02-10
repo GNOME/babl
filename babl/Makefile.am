@@ -47,13 +47,12 @@ INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/babl/base
 
 AM_CPPFLAGS = -DPREFIX=\""$(prefix)"\"
 
-lib_LTLIBRARIES= libbabl.la
-libbabl_la_SOURCES= $(h_sources) $(c_sources)
-libbabl_la_LIBADD=\
+lib_LTLIBRARIES= libbabl-@BABL_API_VERSION@.la
+libbabl_@BABL_API_VERSION@_la_SOURCES= $(h_sources) $(c_sources)
+libbabl_@BABL_API_VERSION@_la_LIBADD=\
 	base/libbase.la \
 	@LTLIBOBJS@
 
-libbabl_la_LDFLAGS= \
-	-version-info $(BABL_LIBRARY_VERSION) \
-	-release $(BABL_RELEASE) \
-	${no_undefined}
+libbabl_@BABL_API_VERSION@_la_LDFLAGS= \
+	${no_undefined}                \
+	-version-info $(BABL_LIBRARY_VERSION)

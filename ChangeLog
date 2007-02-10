@@ -1,5 +1,16 @@
 2007-02-09  Kevin Cozens  <kcozens@cvs.gnome.org>
 
+	* autogen.sh: Changed CVS reference to SVN.
+
+	* configure.ac: Set BABL_UNSTABLE to 1 for odd micro numbers
+	when major and minor are both 0.
+
+	* babl.pc.in
+	* babl/Makefile.am 
+	* tests/Makefile.am: Use version number in library name.
+
+2007-02-09  Kevin Cozens  <kcozens@cvs.gnome.org>
+
 	* babl/Makefile.am
 	* babl/base/Makefile.am
 	* docs/graphics/Makefile.am: Removed references to .cvsignore.

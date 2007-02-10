@@ -25,7 +25,8 @@ models_SOURCES              = models.c
 
 AM_CFLAGS = -I$(top_srcdir) -I$(top_srcdir)/babl
 
-LDADD = $(top_builddir)/babl/libbabl.la $(DL_LIB) $(MATH_LIB)
+LDADD = $(top_builddir)/babl/libbabl-@BABL_API_VERSION@.la \
+	$(DL_LIB) $(MATH_LIB)
 
 noinst_PROGRAMS =		\
 	introspect		\

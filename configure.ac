@@ -1,8 +1,16 @@
+dnl Process this file with autoconf to produce a configure script.
+
 AC_PREREQ(2.54)
 
 # Making releases on the stable branch:
 #   BABL_MICRO_VERSION += 1;
 #   BABL_INTERFACE_AGE += 1;
+#   BABL_BINARY_AGE += 1;
+# if any functions have been added,
+#    set BABL_INTERFACE_AGE to 0.
+# if backwards compatibility has been broken,
+#    set BABL_BINARY_AGE _and_ BABL_INTERFACE_AGE to 0.
+
 
 m4_define([babl_major_version], 0)
 m4_define([babl_minor_version], 0)
@@ -10,6 +18,8 @@ m4_define([babl_micro_version], 13)
 m4_define([babl_real_version],
           [babl_major_version.babl_minor_version.babl_micro_version])
 m4_define([babl_version], [babl_real_version])
+
+dnl Number of releases since we've added interfaces
 m4_define([babl_interface_age], [0])
 m4_define([babl_binary_age],
           [m4_eval(100 * babl_minor_version + babl_micro_version)])
@@ -17,6 +27,13 @@ m4_define([babl_binary_age],
 # This is the X.Y used in -lbabl-X.Y
 m4_define([babl_api_version], [babl_major_version.babl_minor_version])
 
+m4_define([stability_version_number],
+          m4_if(m4_eval(babl_major_version || babl_minor_version), [0],
+                        [babl_micro_version], [babl_minor_version]))
+m4_define([babl_unstable],
+          m4_if(m4_eval(stability_version_number % 2), [1], [yes], [no]))
+m4_define([babl_stable],
+          m4_if(m4_eval(stability_version_number % 2), [0], [yes], [no]))
 
 AC_INIT(babl, babl_major_version.babl_minor_version.babl_micro_version)
 AC_CONFIG_SRCDIR(babl/babl.h)
@@ -41,6 +58,19 @@ AC_SUBST(BABL_API_VERSION)
 BABL_RELEASE=babl_api_version
 AC_SUBST(BABL_RELEASE)
 
+
+dnl The symbol BABL_UNSTABLE is defined above for substitution in
+dnl Makefiles and conditionally defined here as a preprocessor symbol
+dnl and automake conditional.
+BABL_UNSTABLE=babl_unstable 
+if test "x$BABL_UNSTABLE" = "xyes"; then
+  AC_DEFINE(BABL_UNSTABLE, 1,
+            [Define to 1 if this is an unstable version of BABL])
+fi
+AM_CONDITIONAL(BABL_UNSTABLE, test "x$GEGL_UNSTABLE" = "xyes")
+AC_SUBST(BABL_UNSTABLE)
+
+
 # libtool versioning
 m4_define([lt_current], [m4_eval(100 * babl_minor_version + babl_micro_version - babl_interface_age)])
 m4_define([lt_revision], [babl_interface_age])
@@ -53,8 +83,11 @@ AC_SUBST(BABL_CURRENT_MINUS_AGE)
 PACKAGE_NAME=babl
 AC_SUBST(PACKAGE_NAME)
 
-AM_CONFIG_HEADER(config.h)
+
+dnl ==========================================================================
+
 AM_INIT_AUTOMAKE(no-define)
+AM_CONFIG_HEADER(config.h)
 
 AC_DISABLE_STATIC
 AC_PROG_CC
