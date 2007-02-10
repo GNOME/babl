@@ -13,7 +13,6 @@ SVG_FILES = 			\
 	babl-48x48.svg
 
 EXTRA_DIST = 			\
-	.cvsignore		\
 	index.html		\
 	$(PNG_FILES)		\
 	$(SVG_FILES)

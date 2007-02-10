@@ -19,7 +19,6 @@ noinst_LTLIBRARIES= libbase.la
 libbase_la_SOURCES= $(h_sources) $(c_sources) 
 
 EXTRA_DIST := 		\
-	.cvsignore	\
 	rgb-constants.h	\
 	util.h
 

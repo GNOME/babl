@@ -17,7 +17,6 @@ HTML_FILES = index-static.html 	\
 	     BablFishPath.html
 
 EXTRA_DIST= 			\
-	.cvsignore		\
 	babl.css  		\
 	tools/xml_insert.sh	\
 	tools/changelog2rss	\

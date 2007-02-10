@@ -57,6 +57,3 @@ libbabl_la_LDFLAGS= \
 	-version-info $(BABL_LIBRARY_VERSION) \
 	-release $(BABL_RELEASE) \
 	${no_undefined}
-
-EXTRA_DIST := 			\
-	.cvsignore
