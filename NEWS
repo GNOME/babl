@@ -4,12 +4,34 @@ the news section both in the README and the webpage.
 
 
                                                                           -->
-xxxx-xx-xx babl-0.0.2 <em>Green fish release</em>                   </dt><dd>
 
-<p><em>DRAFT</em>
+
+2007-01-07 babl-0.0.12                                              </dt><dd>
+Speedups for GEGL
+Build environment fixes.
+                                                                    </dd><dt>
+2006-xx-xx babl-0.0.10                                              </dt><dd>
+Build environment fixes.
+
+                                                                    </dd><dt>
+2006-12-29 babl-0.0.8                                               </dt><dd>
+Made code adhere more strictly to C standard.
+Set the BABL_PATH based on build prefix
+
+                                                                    </dd><dt>
+2006-10-09 babl-0.0.6                                               </dt><dd>
+Build environment fixes.
+Fixed timing code for picking correct conversions.
+
+                                                                    </dd><dt>
+2006-08-31 babl-0.0.4                                               </dt><dd>
+Build environment fixes
+Reduced used/exposed API.
+Added GEGL speedup extension.
+                                                                    </dd><dt>
+2005-0x-xx babl-0.0.2 <em>Green fish release</em>                   </dt><dd>
 
 Initial release.
-</p>
 
                                                                     </dd><dt>
 2005-08-xx babl-0.0.1                                               </dt><dd>
