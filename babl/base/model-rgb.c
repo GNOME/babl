@@ -289,7 +289,7 @@ premultiplied_to_non_premultiplied (int    src_bands,
             }
           else
             {
-              *(double*)dst[band] = 0.001;
+              *(double*)dst[band] = 0.00;
             }
         }
       *(double*)dst[dst_bands-1] = alpha;
@@ -330,9 +330,18 @@ rgba_gamma_2_2_premultiplied2rgba (char *src,
   while (n--)
     {
       double alpha = ((double*) src)[3];
-      ((double*)dst)[0] = gamma_2_2_to_linear (((double*) src)[0] / alpha);
-      ((double*)dst)[1] = gamma_2_2_to_linear (((double*) src)[1] / alpha);
-      ((double*)dst)[2] = gamma_2_2_to_linear (((double*) src)[2] / alpha);
+    if (alpha > 0.0001)
+        {
+          ((double*)dst)[0] = gamma_2_2_to_linear (((double*) src)[0] / alpha);
+          ((double*)dst)[1] = gamma_2_2_to_linear (((double*) src)[1] / alpha);
+          ((double*)dst)[2] = gamma_2_2_to_linear (((double*) src)[2] / alpha);
+        }
+      else
+        {
+          ((double*)dst)[0] = 0.0;
+          ((double*)dst)[1] = 0.0;
+          ((double*)dst)[2] = 0.0;
+        }
       ((double*)dst)[3] = alpha;
 
       src+=4 * sizeof (double);
