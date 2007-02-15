@@ -415,26 +415,19 @@ conv_rgbAF_rgb8 (unsigned char *srcc,
   long n=samples;
   while (n--)
     {
-      int i;
       float alpha = src[3];
-      if (alpha < 0.0001)
-        alpha = 0.0001;
-      for (i=0;i<3;i++)
+      if (alpha < 0.00001)
         {
-          float ca=src[i];
-          float c;
-          int ret;
-          c=ca/alpha;
-          if (alpha==0.0)
-            ret=0;
-          else
-            ret = table_F_8g[gggl_float_to_index16 (c)];
-          if (ret<=0)
-            dst[i]=0;
-          else if (ret>255)
-            dst[i]=255;
-          else
-            dst[i] = ret;
+          dst[0]=0;
+          dst[1]=0;
+          dst[2]=0;
+        }
+      else
+        {
+          float alpha_recip = 1.0/alpha;
+          dst[0] = table_F_8g[gggl_float_to_index16 (src[0]*alpha_recip)];
+          dst[1] = table_F_8g[gggl_float_to_index16 (src[1]*alpha_recip)];
+          dst[2] = table_F_8g[gggl_float_to_index16 (src[2]*alpha_recip)];
         }
       src += 4;
       dst += 3;

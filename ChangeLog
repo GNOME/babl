@@ -1,5 +1,10 @@
 2007-02-15  Øyvind Kolås  <pippin@gimp.org>
 
+	* extensions/gegl-fixups.c: (conv_rgbAF_rgb8): simplified logic
+	of code to speed it up.
+
+2007-02-15  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/base/model-rgb.c: (premultiplied_to_non_premultiplied),
 	(rgba_gamma_2_2_premultiplied2rgba): avoid divisions by zero,
 	thus making the reference conversions correct.
