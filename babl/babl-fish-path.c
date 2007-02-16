@@ -31,28 +31,36 @@ chain_error (Babl            *fmt_source,
 
 static double legal_error (void)
 {
-  double error=0.00000001;
+  static double error=0.0;
   const char *env;
+
+  if (error != 0.0)
+    return error;
 
   env=getenv ("BABL_ERROR");
   if (env)
     error = atof (env);
-  else if (error<=0.0)
-    error = 0.0;
+  else 
+    error = 0.000001;
   return error;
 }
 
 static int max_path_length (void)
 {
-  int         max_length=3;
+  static int  max_length=0;
   const char *env;
+
+  if (max_length != 0)
+    return max_length;
 
   env=getenv ("BABL_PATH_LENGTH");
   if (env)
     max_length = atoi (env);
-  if (max_length>BABL_HARD_MAX_PATH_LENGTH)
-    max_length=BABL_HARD_MAX_PATH_LENGTH;
-  else if (max_length<=0)
+  else
+    max_length = 4;
+  if (max_length > BABL_HARD_MAX_PATH_LENGTH)
+    max_length = BABL_HARD_MAX_PATH_LENGTH;
+  else if (max_length <= 0)
     max_length = 1;
   return max_length;
 }

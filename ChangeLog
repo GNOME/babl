@@ -1,5 +1,11 @@
 2007-02-16  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-fish-path.c: (legal_error), (max_path_length): cache the
+	values looked up from BABL_ERROR and BABL_PATH_LENGTH environment
+	variables, changed default maximum conversion path length from 3 to 4.
+
+2007-02-16  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/base/formats.c: (babl_formats_init): specify Y'CbCrA model
 	instead of Y'CbCr for Y'CbCrA float.
 
