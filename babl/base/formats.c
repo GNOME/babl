@@ -170,7 +170,7 @@ babl_formats_init (void)
       babl_component_id (BABL_CR),
       NULL);
   babl_format_new (
-      babl_model_id (BABL_YCBCR),
+      babl_model_id (BABL_YCBCR_ALPHA),
       babl_type_id (BABL_FLOAT),
       babl_component_id (BABL_LUMA),
       babl_type_id (BABL_FLOAT),
