@@ -17,8 +17,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-/* FIXME: this file should be renamed model-gray.c */
-
 #include "babl.h"
 #include "babl-ids.h"
 #include "util.h"

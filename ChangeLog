@@ -1,5 +1,9 @@
 2007-02-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/base/model-gray.c: removed obsoloted FIXME.
+
+2007-02-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* docs/index-static.html.in: reincorporate NEWS, added link to
 	extensions dir in subversion.
 
