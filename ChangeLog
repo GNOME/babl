@@ -1,6 +1,11 @@
 2007-02-17  Øyvind Kolås  <pippin@gimp.org>
 
-	* babl/base/model-gray.c: removed obsoloted FIXME.
+	* docs/index-static.html.in: adds, reordering and trimming of
+	information in webpage.
+
+2007-02-17  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/base/model-gray.c: removed obsoleted FIXME.
 
 2007-02-17  Øyvind Kolås  <pippin@gimp.org>
 

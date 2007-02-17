@@ -69,21 +69,19 @@
       </div>
       <ul>
         <li><a href='#Babl'>Babl</a></li>
-        <li><a href='#NEWS'>News</a></li>
-        <li><a href='#Background'>Background</a></li>
-        <li><a href='#How'>How?</a></li>
-        <li><a href='#Features'>Features</a></li>
-        <li><a href='#Vocabulary'>Vocabulary</a></li>
-        <li><a href='#Data-types'>&nbsp;&nbsp;Data types</a></li>
-        <li><a href='#Color-models'>&nbsp;&nbsp;Color models</a></li>
-        <li><a href='#Pixel-formats'>&nbsp;&nbsp;Pixel formats</a></li>
-        <li><a href='#Extensions'>Extensions</a></li>
-        <li><a href='#Dependencies'>Dependencies</a></li>
+        <li><a href='#Features'>&nbsp;&nbsp;Features</a></li>
         <li><a href='#Download'>Download</a></li>
-        <li><a href='#Subversion'>SVN</a></li>
-        <li><a href='#Usage'>Usage</a></li>
-        <li><a href='#Extending'>Extending</a></li>
-        <li><a href='#ColorManagement'>Color Management</a></li>
+        <!--<li><a href='#Background'>Background</a></li>-->
+        <li><a href='#Documentation'>Documentation</a></li>
+        <li><a href='#Usage'>&nbsp;&nbsp;Usage</a></li>
+        <li><a href='#Vocabulary'>&nbsp;&nbsp;Vocabulary</a></li>
+        <!--<li><a href='#Data-types'>&nbsp;&nbsp;&nbsp;&nbsp;Data types</a></li>
+        <li><a href='#Color-models'>&nbsp;&nbsp;&nbsp;&nbsp;Color models</a></li>
+        <li><a href='#Pixel-formats'>&nbsp;&nbsp;&nbsp;&nbsp;Pixel formats</a></li>-->
+
+        <li><a href='#Shortcut_coverage'>&nbsp;&nbsp;Shortcut&nbsp;Coverage</a></li>
+        <li><a href='#Extending'>&nbsp;&nbsp;Extending</a></li>
+        <!--<li><a href='#ColorManagement'>Color Management</a></li>-->
         <li><a href='#TODO'>Todo</a></li>
         <li><a href='#Copyright'>Copyright</a></li>
         <li><a href='#Authors'>&nbsp;&nbsp;Authors</a></li>
@@ -101,11 +99,11 @@
     pixel formats, but also facilitates creation of new and uncommon
     ones.</p>
 
-    <a name='NEWS'></a>
-    <h2>News</h2>
-<!--NEWS-->
+    <p><a href='http://www.gegl.org/'>GEGL</a> uses babl both for enumeration
+    of pixel formats as well as conversions between them.</p>
 
-    <a name='Background'></a>
+
+    <!--<a name='Background'></a>
     <h2>Background</h2>
     <p> When creating various libraries and small tools that deal with
     computer graphics I have often created functions for converting
@@ -119,10 +117,43 @@
     <p>The vocabulary developed in babl will most likely be part of
     <a href='http://www.gegl.org/'>GEGL</a>'s vocabulary to describe image
     buffers.
+    </p>-->
+
+
+    <a name='Features'></a>
+    <h2>Features</h2>
+
+    <ul>
+      <li class='frozen'>Tiny API in normal use.</li>
+      <li class='stable'>Planar and linear buffers.</li>
+      <li class='stable'>Thread safe processing.</li>
+      <li class='unstable'>Extendable <!--and <a href='http://pippin.gimp.org/babl/introspect.txt'>introspectable</a> -->formats,
+      color models, components and datatypes</li>
+      <li class='unstable'>Reference 64bit floating point conversions for
+      data types and color models.</li>
+    </ul>
+
+    <a name='Download'></a>
+    <h2>Download</h2>
+
+    <p>The latest versioned development version of babl can be found in
+    <a href='ftp://ftp.gtk.org/pub/babl/'>ftp://ftp.gtk.org/pub/babl/</a>.
     </p>
 
-    <a name='How'></a>
-    <h2>How babl works</h2>
+    <p>Babl development happens in GNOME Subversion in the <tt>babl</tt> module.
+    It can be <a href='http://svn.gnome.org/viewcvs/babl/trunk/'>browsed online</a> and checked out with:
+    </p>
+    <pre>svn co http://svn.gnome.org/svn/babl/trunk/ babl</pre>
+
+    <p>The following is a list of the major changes that have gone into
+    each babl release. If there are significant improvements to babl when
+    a GEGL release is done a babl release is most often put out just prior
+    to the GEGL release.</p>
+
+    <!--NEWS-->
+
+    <a name='Documentation'></a>
+    <h2>Documentation</h2>
     <p>When using BablFishes to do your conversions, you request a fish to
     convert between two formats, and an optimal fish to babls capability is
     provided that you can use to do your conversions. Babl also provides
@@ -152,83 +183,8 @@
     not take much time and will speed up babl for other users as well.
     </p>
 
-    <a name='Features'></a>
-    <h2>Features</h2>
-
-    <h3>Core</h3>
-    <ul>
-      <li class='frozen'>Small API for simple use cases</li>
-      <li class='stable'>Planar and linear buffers</li>
-      <li class='stable'>Thread safety for processing.</li>
-      <li class='unstable'>Extendable and <a href='http://pippin.gimp.org/babl/introspect.txt'>introspectable</a> formats,
-      color models, components and datatypes</li>
-      <li class='unstable'>Reference 64bit floating point conversions for
-      data types and color models.</li>
-    </ul>
-
-    <a name='Vocabulary'></a>
-    <h3 style='margin-bottom:0em;'>Vocabulary</h3>
-<!--BablBase-->
-    
-    <a name='Extensions'></a>
-    <h3>Extensions</h3>
-    <p>
-    At compile, load, and runtime; babl is extendable with:
-    </p>
-    <ul>
-      <li>data types.</li>
-      <li>color models.</li>
-      <li>pixel formats.</li>
-      <li>optimized conversion functions:
-      <dl>
-        <dt>SIMD instructions</dt>
-        <dd>MMX, SSE, Altivec ...</dd>
-        <dt>External libraries</dd>
-        <dd>liboil, hermes, libavcodec, lcms, ...</li>
-      </dl>
-      </li>
-    </ul>
-
-    <h3>Shortcut coverage</h3>
-    <p>The diagram shown below visualizes the coverage of current shortcut
-    conversions. A <a href='BablFishPath.html'>DHTML version</a> is also available.
-    </p>
-<pre style='font-size:50%;height:30em;overflow:scroll'>
-<!--BablFishPath-->
-</pre>
-
-    <a name='Dependencies'></a>
-    <h2>Dependencies</h2>
-
-    <p> Babl is intended to be a low level infrastructure library and thus
-    strives for few dependencies and thus portability. </p>
-
-    <ul>
-      <li>libdl (for loading extensions, babl is also reported to work on win32)</li>
-    </ul>
-
-    <a name='Download'></a>
-    <h2>Download</h2>
-
-    <p>The latest versioned development version of babl can be found in
-    <a href='ftp://ftp.gtk.org/pub/babl/'>ftp://ftp.gtk.org/pub/babl/</a>.
-    </p>
-
-    <a name='Subversion'></a>
-    <h2>Subversion</h2>
-
-    <p>
-    The latest development version is available in <a href='http://svn.gnome.org/viewcvs/gegl/trunk/ChangeLog?view=markup'>the babl module in GNOME Subversion</a>.
-    </p>
-    <!--
-    <div class='screen'>
-      <p>You can also <a href='source-local.html'>browse the source</a> for
-      the version this website was built. </p>
-    </div>
-        -->
-
         <a name='Usage'></a>
-        <h2>Usage</h2>
+        <h3>Usage</h3>
 
         <p>The simplest scenario for using babl is converting between linear
         buffers represented by an existing BablPixelFormat.
@@ -269,6 +225,39 @@
 </pre>
 -->
 
+
+    <a name='Vocabulary'></a>
+    <h3 style='margin-bottom:0em;'>Vocabulary</h3>
+<!--BablBase-->
+
+<!-- 
+    <a name='Extensions'></a>
+    <h3>Extensions</h3>
+    <p>
+    At compile, load, and runtime; babl is extendable with:
+    </p>
+    <ul>
+      <li>data types.</li>
+      <li>color models.</li>
+      <li>pixel formats.</li>
+      <li>optimized conversion functions:
+      <dl>
+        <dt>SIMD instructions</dt>
+        <dd>MMX, SSE, Altivec ...</dd>
+        <dt>External libraries</dd>
+        <dd>liboil, hermes, libavcodec, lcms, ...</li>
+      </dl>
+      </li>
+    </ul>-->
+
+    <a name='Shortcut_coverage'></a>
+    <h3>Shortcut coverage</h3>
+    <p>The diagram shown below visualizes the coverage of current shortcut
+    conversions. A <a href='BablFishPath.html'>DHTML version</a> is also available.
+    </p>
+<pre style='font-size:50%;height:30em;overflow:scroll'>
+<!--BablFishPath-->
+</pre>
         <a name='Extending'></a>
         <h2>Extending</h2>
         
@@ -281,6 +270,17 @@
         similar in style to the API's described under the <a href='#Usage'>Usage section</a>.-->
         </p>
 
+
+
+    <!--
+    <div class='screen'>
+      <p>You can also <a href='source-local.html'>browse the source</a> for
+      the version this website was built. </p>
+    </div>
+        -->
+
+
+        <!--
         <a name='ColorManagement'></a>
         <h2>Color Management</h2>
         <p> Babl is not a color management system, since it doesn't deal with
@@ -291,6 +291,7 @@
         It is also possible to register new color models that are managed by a
         color management system like <em>lcms</em>, take a look at the <em>lcms-lab</em>
         extensions for an example.</p>
+        -->
 
         <a name='TODO'></a>
         <h2>TODO</h2>
@@ -304,6 +305,7 @@
             concurrently running processes and phase of moon.)</em></li>
           <li class='unstable'>Horizontal chroma subsampling (4:2:2 and 4:1:1)</li>
           <li>Thread safety (locking) for mutations of the type system.</li>
+          <li>Support for conversions between formats that have higher dimensionality than RGBA.</li>
           <li>Support for datatypes that are not a multiple of 8bit.</li>
           <li>dithering</li>
         </ul>
