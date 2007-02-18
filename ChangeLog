@@ -1,5 +1,9 @@
 2007-02-17  Øyvind Kolås  <pippin@gimp.org>
 
+	* configure.ac: increased version to 0.0.14 for release.
+
+2007-02-17  Øyvind Kolås  <pippin@gimp.org>
+
 	* docs/index-static.html.in: adds, reordering and trimming of
 	information in webpage.
 
