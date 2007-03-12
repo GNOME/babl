@@ -1,3 +1,10 @@
+2007-03-12  Michael Schumacher  <schumaml@cvs.gnome.org>
+
+	* Makefile.am: 
+	* extensions/Makefile.am: applied patch by John Marshall to make
+	babl extensions build on Windows. They do not work yet, though. Fixes
+	bug #409957.
+
 2007-03-12  Øyvind Kolås  <pippin@gimp.org>
 
 	* babl/babl-fish.c: (fishing_result_examine), (go_fishing),
