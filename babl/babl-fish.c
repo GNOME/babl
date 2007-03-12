@@ -78,9 +78,6 @@ fishing_result_examine (Babl *babl,
   return 0;  /* continue iterating */
 }
 
-static int yes=0;
-static int no=0;
-
 static Babl * 
 go_fishing (Babl    *source,
             Babl    *destination)
@@ -92,18 +89,7 @@ go_fishing (Babl    *source,
     data.destination = destination;
     data.ret = NULL;
 
-
     babl_db_each (db, fishing_result_examine, &data);
-
-    if (data.ret != NULL)
-      {
-        yes++;
-      }
-    else
-      {
-        no++;
-      }
-
     return data.ret;
   }
 }
