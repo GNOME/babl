@@ -56,6 +56,58 @@ babl_fish_db (void)
   return db;
 }
 
+typedef struct BablFishingData
+{
+  Babl *source;
+  Babl *destination;
+  Babl *ret;
+} BablFishingData;
+
+static int 
+fishing_result_examine (Babl *babl,
+                        void *void_data)
+{
+  BablFishingData *data = void_data;
+
+  if ((void*)data->source == (void*)babl->fish.source &&
+      (void*)data->destination == (void*)babl->fish.destination)
+    {
+          data->ret = babl;
+          return 1; /* stop iterating */
+    }
+  return 0;  /* continue iterating */
+}
+
+static int yes=0;
+static int no=0;
+
+static Babl * 
+go_fishing (Babl    *source,
+            Babl    *destination)
+{
+  {
+    BablFishingData data;
+
+    data.source = source;
+    data.destination = destination;
+    data.ret = NULL;
+
+
+    babl_db_each (db, fishing_result_examine, &data);
+
+    if (data.ret != NULL)
+      {
+        yes++;
+      }
+    else
+      {
+        no++;
+      }
+
+    return data.ret;
+  }
+}
+
 Babl *
 babl_fish (void *source,
            void *destination,
@@ -98,7 +150,13 @@ babl_fish (void *source,
       babl_log ("args=(%p, %p) destination format invalid", source, destination);
       return NULL;
     }
- 
+
+    {
+  Babl *lucky;
+  lucky = go_fishing (source_format, destination_format);
+  if (lucky)
+    return lucky;
+    }
  
   if (0)
     {
@@ -112,7 +170,6 @@ babl_fish (void *source,
         return babl_fish_simple (&(shortcut_conversion->conversion));
       }
   }
-
 
   {
     Babl *fish_path;
