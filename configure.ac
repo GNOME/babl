@@ -200,7 +200,7 @@ AC_REPLACE_FUNCS(gettimeofday)
 
 AC_DEFINE_UNQUOTED(BABL_PATH, "~/.babl-$BABL_API_VERSION:/usr/local/lib/babl-$BABL_API_VERSION:/usr/lib/babl-$BABL_API_VERSION", [search path for babl extensions (default value of enviroment variable)])
 AC_DEFINE(BABL_PATH_SEPERATOR, "/", [string used to seperate directories in a path string]) 
-AC_DEFINE(BABL_LIST_SEPERATOR, ':', [seperator between paths in BABL_PATH])
+AC_DEFINE_UNQUOTED(BABL_LIST_SEPERATOR, '$PATHSEP', [seperator between paths in BABL_PATH])
 
 #####################################
 # File extension for shared libraries
