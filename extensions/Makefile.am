@@ -3,15 +3,12 @@
 
 if OS_WIN32
 no_undefined = -no-undefined
-SOsuf=dll
 libbabldlla=$(top_builddir)/babl/.libs/libbabl-$(BABL_API_VERSION).dll.a
-else
-SOsuf=so
 endif
 
 CFILES          = $(wildcard $(srcdir)/*.c)
-SOBJS           = $(subst $(srcdir)/,,$(CFILES:.c=.$(SOsuf)))
-INSTALLED_ITEMS = $(subst $(srcdir),$(ext_dir),$(CFILES:.c=.$(SOsuf)))
+SOBJS           = $(subst $(srcdir)/,,$(CFILES:.c=$(SHREXT)))
+INSTALLED_ITEMS = $(subst $(srcdir),$(ext_dir),$(CFILES:.c=$(SHREXT)))
 EXTRA_DIST      = $(wildcard *.[ch])
 
 all-local: $(SOBJS)
@@ -22,17 +19,17 @@ LDFLAGS += -shared
 
 LDADD    = $(no-undefined) $(libbabldlla)
 
-%.$(SOsuf): %.c
+%$(SHREXT): %.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
 
 # if extension needing external libraries are to be # compiled with this make
 # file, each of them can be added according to the this pattern:
-# extra.$(SOsuf): extra.c
+# extra$(SHREXT): extra.c
 #	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<  [own compile and link flags]
 
-CIE-Lab.$(SOsuf): CIE-Lab.c
+CIE-Lab$(SHREXT): CIE-Lab.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(MATH_LIB)
-#lcms.$(SOsuf): lcms.c
+#lcms$(SHREXT): lcms.c
 #	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config lcms --cflags --libs`
 #############################################################################
 

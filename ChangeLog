@@ -1,3 +1,12 @@
+2007-03-13  Michael Schumacher  <schumaml@cvs.gnome.org>
+
+	* configure.ac: AC_SUBST and AC_DEFINE $shrext into variables for
+	Makefiles and source.
+	* extension/Makefile.am: use $(SHREXT) instead of .$SOext.
+	* babl/babl-extension.c: use SHREXT instead of a hardcoded ".so"
+	and get rid of a dirent->d_ino > 0 check which has been there for
+	reasons unknown.
+	
 2007-03-12  Michael Schumacher  <schumaml@cvs.gnome.org>
 
 	* Makefile.am: 

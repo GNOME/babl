@@ -223,8 +223,7 @@ babl_extension_load_dir (const char *base_path)
 
      while ((dentry = readdir (dir)) != NULL)
        {
-         if (dentry->d_name[0] != '.' &&
-             dentry->d_ino > 0)
+         if (dentry->d_name[0] != '.')
            {
              char   *path = NULL;
              struct  stat st;
@@ -237,7 +236,7 @@ babl_extension_load_dir (const char *base_path)
              stat (path, &st);
 
              if ((extension = strrchr (dentry->d_name, '.')) !=NULL &&
-                 !strcmp (extension, ".so"))
+                 !strcmp (extension, SHREXT))
                {
                   babl_extension_load (path);
                }

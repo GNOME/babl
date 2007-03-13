@@ -202,6 +202,14 @@ AC_DEFINE_UNQUOTED(BABL_PATH, "~/.babl-$BABL_API_VERSION:/usr/local/lib/babl-$BA
 AC_DEFINE(BABL_PATH_SEPERATOR, "/", [string used to seperate directories in a path string]) 
 AC_DEFINE(BABL_LIST_SEPERATOR, ':', [seperator between paths in BABL_PATH])
 
+#####################################
+# File extension for shared libraries
+#####################################
+
+SHREXT=$shrext
+AC_SUBST(SHREXT)
+AC_DEFINE_UNQUOTED(SHREXT, "$shrext", [File extension for shared libraries])
+
 dnl ===========================================================================
 
 
