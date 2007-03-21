@@ -1,3 +1,8 @@
+2007-03-21  Øyvind Kolås  <pippin@gimp.org>
+
+	* configure.ac: Make force the value of shrext to either .dll or .so
+	(it seems like it wasn't defined for unixy systems after all).
+
 2007-03-13  Michael Schumacher  <schumaml@cvs.gnome.org>
 
 	* configure.ac: use PATHSEP (platform-dependent, defined to ';' on
