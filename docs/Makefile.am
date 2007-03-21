@@ -21,14 +21,12 @@ EXTRA_DIST= 			\
 	tools/xml_insert.sh	\
 	tools/changelog2rss	\
 	index-static.html.in	\
-	index.html		\
 	LGPL
 
 BUILT_EXTRA_DIST = index.html BablFishPath.html BablFishPath.txt
 
 CLEANFILES = README changelog.rss
-DISTCLEANFILES = index-static.html
-MAINTAINERCLEANFILES = $(BUILT_EXTRA_DIST)
+DISTCLEANFILES = index-static.html $(BUILT_EXTRA_DIST)
 
 all: $(HTML_FILES) rss
 
