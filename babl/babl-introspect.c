@@ -23,13 +23,13 @@
 
 #ifdef BABL_LOG
 
-static void sampling_introspect     (Babl *babl);
-static void model_introspect        (Babl *babl);
-static void type_introspect         (Babl *babl);
-static void format_introspect       (Babl *babl);
+static void sampling_introspect (Babl *babl);
+static void model_introspect (Babl *babl);
+static void type_introspect (Babl *babl);
+static void format_introspect (Babl *babl);
 
-static int  each_introspect         (Babl *babl,
-                                     void *user_data);
+static int  each_introspect (Babl *babl,
+                             void *user_data);
 #endif
 
 void
@@ -37,41 +37,41 @@ babl_introspect (Babl *babl)
 {
 #ifdef BABL_LOG
   Babl *extender_backup = babl_extender ();
-  
-  babl_set_extender (babl_extension_quiet_log());
+
+  babl_set_extender (babl_extension_quiet_log ());
 
   if (babl)
     {
       each_introspect (babl, NULL);
       return;
     }
-  babl_log ("Introspection report");  
-  babl_log ("====================================================");  
+  babl_log ("Introspection report");
+  babl_log ("====================================================");
 
   babl_log ("");
   babl_log ("Data Types:");
-  babl_type_each         (each_introspect, NULL);
+  babl_type_each (each_introspect, NULL);
   babl_log ("");
   babl_log ("Sampling (chroma subsampling) factors:");
-  babl_sampling_each     (each_introspect, NULL);
+  babl_sampling_each (each_introspect, NULL);
   babl_log ("");
   babl_log ("Components:");
-  babl_component_each    (each_introspect, NULL);
+  babl_component_each (each_introspect, NULL);
   babl_log ("");
   babl_log ("Models (of components):");
-  babl_model_each        (each_introspect, NULL);
+  babl_model_each (each_introspect, NULL);
   babl_log ("");
   babl_log ("Pixel formats:");
   babl_format_each (each_introspect, NULL);
   babl_log ("");
   babl_log ("conversions:");
-  babl_conversion_each   (each_introspect, NULL);
+  babl_conversion_each (each_introspect, NULL);
   babl_log ("");
   babl_log ("extensions:");
-  babl_extension_each    (each_introspect, NULL);
+  babl_extension_each (each_introspect, NULL);
   babl_log ("");
   babl_log ("fishes");
-  babl_fish_each         (each_introspect, NULL);
+  babl_fish_each (each_introspect, NULL);
   babl_log ("");
 
   babl_set_extender (extender_backup);
@@ -82,10 +82,10 @@ babl_introspect (Babl *babl)
 static int list_length (void **list)
 {
   void **ptr;
-  int    len=0;
-  
+  int    len = 0;
+
   ptr = list;
-  while (NULL!=*ptr)
+  while (NULL != *ptr)
     {
       ptr++;
       len++;
@@ -101,28 +101,28 @@ item_conversions_introspect (Babl *babl)
 
   if (babl->type.from)
     babl_log ("\t\tconversions from %s: %i",
-       babl->instance.name, list_length ((void **)(babl->type.from)));
+              babl->instance.name, list_length ((void **) (babl->type.from)));
 
-  ptr = (void **)babl->type.from;
+  ptr = (void **) babl->type.from;
 
-  while (ptr && NULL!=*ptr)
+  while (ptr && NULL != *ptr)
     {
-      babl_log ("\t\t\t'%s'", ((Babl *)(*ptr))->instance.name);
+      babl_log ("\t\t\t'%s'", ((Babl *) (*ptr))->instance.name);
       ptr++;
     }
-  
 }
 
 static void
 model_introspect (Babl *babl)
 {
   int i;
+
   babl_log ("\t\tcomponents=%i", babl->model.components);
 
-  for (i=0; i< babl->model.components; i++)
+  for (i = 0; i < babl->model.components; i++)
     {
       babl_log ("\t\tindex[%i] = \"%s\"", i,
-         BABL(babl->model.component[i])->instance.name  );
+                BABL (babl->model.component[i])->instance.name);
     }
 }
 
@@ -147,16 +147,17 @@ static void
 format_introspect (Babl *babl)
 {
   int i;
+
   babl_log ("\t\tmodel=\"%s\"", babl->format.model->instance.name);
   babl_log ("\t\tplanar=%i", babl->format.planar);
-  babl_log ("\t\tcomponents=%i",  babl->format.components);
+  babl_log ("\t\tcomponents=%i", babl->format.components);
 
-  for (i=0; i< babl->format.components; i++)
+  for (i = 0; i < babl->format.components; i++)
     {
       babl_log ("\t\tband[%i] type=\"%s\" sampling=\"%s\" component=\"%s\"",
-                i,   babl->format.type[i]->instance.name,
-                     babl->format.sampling[i]->instance.name,
-                     babl->format.component[i]->instance.name);
+                i, babl->format.type[i]->instance.name,
+                babl->format.sampling[i]->instance.name,
+                babl->format.component[i]->instance.name);
     }
 }
 
@@ -165,7 +166,7 @@ conversion_introspect (Babl *babl)
 {
   babl_log ("\t\tprocessings:%i pixels:%li",
             babl->conversion.processings, babl->conversion.pixels);
-  if (BABL(babl->conversion.source)->class_type == BABL_FORMAT)
+  if (BABL (babl->conversion.source)->class_type == BABL_FORMAT)
     {
       babl_log ("\t\terror: %f", babl_conversion_error (&babl->conversion));
     }
@@ -183,40 +184,47 @@ each_introspect (Babl *babl,
                  void *user_data)
 {
   babl_log ("\t\"%s\"\t%i\t%s",
-   babl->instance.name,
-   babl->instance.id,
-   babl_class_name (babl->class_type));
+            babl->instance.name,
+            babl->instance.id,
+            babl_class_name (babl->class_type));
   switch (babl->class_type)
     {
       case BABL_TYPE:
         type_introspect (babl);
         item_conversions_introspect (babl);
         break;
+
       case BABL_COMPONENT:
         break;
+
       case BABL_MODEL:
         model_introspect (babl);
         item_conversions_introspect (babl);
         break;
+
       case BABL_FORMAT:
         format_introspect (babl);
         item_conversions_introspect (babl);
         break;
+
       case BABL_SAMPLING:
         sampling_introspect (babl);
         item_conversions_introspect (babl);
         break;
+
       case BABL_CONVERSION:
       case BABL_CONVERSION_PLANE:
       case BABL_CONVERSION_PLANAR:
       case BABL_CONVERSION_LINEAR:
         conversion_introspect (babl);
         break;
+
       case BABL_FISH:
       case BABL_FISH_REFERENCE:
       case BABL_FISH_SIMPLE:
         fish_introspect (babl);
         break;
+
       default:
         break;
     }

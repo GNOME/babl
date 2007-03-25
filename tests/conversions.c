@@ -5,15 +5,15 @@
 #include <math.h>
 #include "babl-internal.h"
 
-#define ERROR_TOLERANCE 0.5
+#define ERROR_TOLERANCE    0.5
 
-static int OK=1;
+static int OK = 1;
 
 static int
 each_conversion (Babl *babl,
                  void *userdata)
 {
-  double error = babl->conversion.error; 
+  double error = babl->conversion.error;
 
   if (error >= ERROR_TOLERANCE)
     {

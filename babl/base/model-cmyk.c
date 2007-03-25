@@ -24,42 +24,42 @@
 
 #include "util.h"
 
-static void components    (void);
-static void models        (void);
-static void conversions   (void);
-static void formats       (void);
+static void components (void);
+static void models (void);
+static void conversions (void);
+static void formats (void);
 
 void
 babl_base_model_cmyk (void)
 {
-  components    ();
-  models        ();
-  conversions   ();
-  formats       ();
+  components ();
+  models ();
+  conversions ();
+  formats ();
 }
 
 static void
 components (void)
 {
-    babl_component_new (
-   "cyan",
-   "id", BABL_CYAN,
-   NULL);
+  babl_component_new (
+    "cyan",
+    "id", BABL_CYAN,
+    NULL);
 
   babl_component_new (
-   "yellow",
-   "id", BABL_YELLOW,
-   NULL);
+    "yellow",
+    "id", BABL_YELLOW,
+    NULL);
 
   babl_component_new (
-   "magenta",
-   "id", BABL_MAGENTA,
-   NULL);
+    "magenta",
+    "id", BABL_MAGENTA,
+    NULL);
 
   babl_component_new (
-   "key",
-   "id", BABL_KEY,
-   NULL);
+    "key",
+    "id", BABL_KEY,
+    NULL);
 }
 
 static void
@@ -98,13 +98,13 @@ models (void)
 static long
 rgb_to_cmyk (void *src,
              void *dst,
-             long   n)
+             long  n)
 {
   while (n--)
     {
-      double red   = ((double*)src)[0];
-      double green = ((double*)src)[1];
-      double blue  = ((double*)src)[2];
+      double red   = ((double *) src)[0];
+      double green = ((double *) src)[1];
+      double blue  = ((double *) src)[2];
 
       double cyan, magenta, yellow, key;
 
@@ -115,17 +115,17 @@ rgb_to_cmyk (void *src,
       yellow  = 1.0 - blue;
 
       key = 1.0;
-      if (cyan    < key) key = cyan;
+      if (cyan < key) key = cyan;
       if (magenta < key) key = magenta;
-      if (yellow  < key) key = yellow;
+      if (yellow < key) key = yellow;
 
       key *= pullout;
 
       if (key < 1.0)
         {
-          cyan    = (cyan - key)    / (1.0 -key);
-          magenta = (magenta - key) / (1.0 -key);
-          yellow  = (yellow - key)  / (1.0 -key);
+          cyan    = (cyan - key) / (1.0 - key);
+          magenta = (magenta - key) / (1.0 - key);
+          yellow  = (yellow - key) / (1.0 - key);
         }
       else
         {
@@ -134,36 +134,36 @@ rgb_to_cmyk (void *src,
           yellow  = 0.0;
         }
 
-      ((double*)dst)[0] = cyan;
-      ((double*)dst)[1] = magenta;
-      ((double*)dst)[2] = yellow;
-      ((double*)dst)[3] = key;
+      ((double *) dst)[0] = cyan;
+      ((double *) dst)[1] = magenta;
+      ((double *) dst)[2] = yellow;
+      ((double *) dst)[3] = key;
 
-      src+=4*sizeof(double);
-      dst+=4*sizeof(double)
+      src += 4 * sizeof (double);
+      dst += 4 * sizeof (double)
     }
   return n;
 }
 
-static long 
+static long
 cmyk_to_rgb (void *src,
              void *dst,
              long  n)
 {
   while (n--)
     {
-      double cyan    = ((double*)src)[0];
-      double yellow  = ((double*)src)[1];
-      double magenta = ((double*)src)[2];
-      double key     = ((double*)src)[3];
+      double cyan    = ((double *) src)[0];
+      double yellow  = ((double *) src)[1];
+      double magenta = ((double *) src)[2];
+      double key     = ((double *) src)[3];
 
       double red, green, blue;
 
       if (key < 1.0)
         {
-          cyan    = cyan    * (1.0 - key) + key;
+          cyan    = cyan * (1.0 - key) + key;
           magenta = magenta * (1.0 - key) + key;
-          yellow  = yellow  * (1.0 - key) + key;
+          yellow  = yellow * (1.0 - key) + key;
         }
       else
         {
@@ -174,14 +174,14 @@ cmyk_to_rgb (void *src,
       green = 1.0 - magenta;
       blue  = 1.0 - yellow;
 
-      ((double*)dst)[0] = red;
-      ((double*)dst)[1] = green;
-      ((double*)dst)[2] = blue;
+      ((double *) dst)[0] = red;
+      ((double *) dst)[1] = green;
+      ((double *) dst)[2] = blue;
 
-      ((double*)dst)[3] = 1.0;
+      ((double *) dst)[3] = 1.0;
 
-      src+=4*sizeof(double);
-      dst+=4*sizeof(double)
+      src += 4 * sizeof (double);
+      dst += 4 * sizeof (double)
     }
   return n;
 }
@@ -191,18 +191,18 @@ conversions (void)
 {
   babl_conversion_new (
     "babl-base: rgba to cmyk",
-    "source",      babl_model_id (BABL_RGBA),
+    "source", babl_model_id (BABL_RGBA),
     "destination", babl_model_id (BABL_CMYK),
-    "linear",      rgb_to_cmyk,
+    "linear", rgb_to_cmyk,
     NULL
   );
 
 
   babl_conversion_new (
     "babl-base: cmyk to rgba",
-    "source",      babl_model_id (BABL_CMYK),
+    "source", babl_model_id (BABL_CMYK),
     "destination", babl_model_id (BABL_RGBA),
-    "linear",      cmyk_to_rgb,
+    "linear", cmyk_to_rgb,
     NULL
   );
 }

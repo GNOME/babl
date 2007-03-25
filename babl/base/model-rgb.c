@@ -23,43 +23,40 @@
 #include "util.h"
 #include "babl-base.h"
 
-static void models        (void);
-static void components    (void);
-static void conversions   (void);
-static void formats       (void);
+static void models (void);
+static void components (void);
+static void conversions (void);
+static void formats (void);
 
 void
 babl_base_model_rgb (void)
 {
-  components    ();
-  models        ();
-  conversions   ();
-  formats       ();
+  components ();
+  models ();
+  conversions ();
+  formats ();
 }
 
 static void
 components (void)
 {
-
-
-
   babl_component_new (
     "Ra",
-    "id",    BABL_RED_MUL_ALPHA,
+    "id", BABL_RED_MUL_ALPHA,
     "luma",
     "chroma",
     "alpha",
     NULL);
   babl_component_new (
     "Ga",
-    "id",    BABL_GREEN_MUL_ALPHA,
+    "id", BABL_GREEN_MUL_ALPHA,
     "luma",
     "chroma",
     "alpha",
     NULL);
   babl_component_new (
     "Ba",
-    "id",    BABL_BLUE_MUL_ALPHA,
+    "id", BABL_BLUE_MUL_ALPHA,
     "luma",
     "chroma",
     "alpha",
@@ -67,51 +64,50 @@ components (void)
 
   babl_component_new (
     "R'",
-   "id",    BABL_RED_GAMMA_2_2,
+    "id", BABL_RED_GAMMA_2_2,
     "luma",
     "chroma",
     NULL);
 
   babl_component_new (
     "G'",
-   "id",    BABL_GREEN_GAMMA_2_2,
-   "luma", 
-   "chroma",
-   NULL);
-  
+    "id", BABL_GREEN_GAMMA_2_2,
+    "luma",
+    "chroma",
+    NULL);
+
   babl_component_new (
     "B'",
-   "id",    BABL_BLUE_GAMMA_2_2,
-   "luma",
-   "chroma",
-   NULL);
+    "id", BABL_BLUE_GAMMA_2_2,
+    "luma",
+    "chroma",
+    NULL);
 
   babl_component_new (
     "R'a",
-   "id",    BABL_RED_GAMMA_2_2_MUL_ALPHA,
+    "id", BABL_RED_GAMMA_2_2_MUL_ALPHA,
     "luma",
     "chroma",
     NULL);
 
   babl_component_new (
     "G'a",
-   "id",    BABL_GREEN_GAMMA_2_2_MUL_ALPHA,
-   "luma", 
-   "chroma",
-   NULL);
-  
+    "id", BABL_GREEN_GAMMA_2_2_MUL_ALPHA,
+    "luma",
+    "chroma",
+    NULL);
+
   babl_component_new (
     "B'a",
-   "id",    BABL_BLUE_GAMMA_2_2_MUL_ALPHA,
-   "luma",
-   "chroma",
-   NULL);
+    "id", BABL_BLUE_GAMMA_2_2_MUL_ALPHA,
+    "luma",
+    "chroma",
+    NULL);
 }
 
 static void
 models (void)
 {
-
   babl_model_new (
     "id", BABL_RGB,
     babl_component_id (BABL_RED),
@@ -119,7 +115,7 @@ models (void)
     babl_component_id (BABL_BLUE),
     NULL);
 
-    babl_model_new (
+  babl_model_new (
     "id", BABL_RGBA_PREMULTIPLIED,
     babl_component_id (BABL_RED_MUL_ALPHA),
     babl_component_id (BABL_GREEN_MUL_ALPHA),
@@ -160,20 +156,21 @@ copy_strip_1 (int    src_bands,
               int   *dst_pitch,
               long   samples)
 {
-  long n=samples; 
+  long n = samples;
+
   BABL_PLANAR_SANITY
   while (n--)
     {
       int i;
 
-      for (i=0;i<dst_bands;i++)
+      for (i = 0; i < dst_bands; i++)
         {
           double foo;
-          if (i<src_bands)
+          if (i < src_bands)
             foo = *(double *) src[i];
           else
             foo = 1.0;
-          *(double*)dst[i] = foo;
+          *(double *) dst[i] = foo;
         }
 
       BABL_PLANAR_STEP
@@ -190,15 +187,16 @@ g3_gamma_2_2 (int    src_bands,
               int   *dst_pitch,
               long   samples)
 {
-  long n=samples;
+  long n = samples;
+
   BABL_PLANAR_SANITY
   while (n--)
     {
       int band;
-      for (band=0;band<3;band++)
-        *(double*)dst[band] = linear_to_gamma_2_2 (*(double*) src[band]);
-      for (;band<dst_bands;band++)
-        *(double*)dst[band] = *(double*) src[band];
+      for (band = 0; band < 3; band++)
+        *(double *) dst[band] = linear_to_gamma_2_2 (*(double *) src[band]);
+      for (; band < dst_bands; band++)
+        *(double *) dst[band] = *(double *) src[band];
 
       BABL_PLANAR_STEP
     }
@@ -215,21 +213,22 @@ g3_inv_gamma_2_2 (int    src_bands,
                   int   *dst_pitch,
                   long   samples)
 {
-  long n=samples;
+  long n = samples;
+
   BABL_PLANAR_SANITY
   while (n--)
     {
       int band;
-      for (band=0;band<3;band++)
+      for (band = 0; band < 3; band++)
         {
-          *(double*)dst[band] = gamma_2_2_to_linear (*(double*) src[band]);
+          *(double *) dst[band] = gamma_2_2_to_linear (*(double *) src[band]);
         }
-      for (;band<dst_bands;band++)
+      for (; band < dst_bands; band++)
         {
-          if (band<src_bands)
-            *(double*)dst[band] = *(double*) src[band];
+          if (band < src_bands)
+            *(double *) dst[band] = *(double *) src[band];
           else
-            *(double*)dst[band] = 1.0;
+            *(double *) dst[band] = 1.0;
         }
       BABL_PLANAR_STEP
     }
@@ -245,19 +244,20 @@ non_premultiplied_to_premultiplied (int    src_bands,
                                     int   *dst_pitch,
                                     long   samples)
 {
-  long n=samples; 
+  long n = samples;
+
   BABL_PLANAR_SANITY
   while (n--)
     {
       double alpha;
-      int band;
+      int    band;
 
-      alpha = *(double *)src[src_bands-1];
-      for (band=0; band<src_bands-1;band++)
+      alpha = *(double *) src[src_bands - 1];
+      for (band = 0; band < src_bands - 1; band++)
         {
-          *(double*)dst[band] = *(double*) src[band] * alpha;
+          *(double *) dst[band] = *(double *) src[band] * alpha;
         }
-      *(double*)dst[dst_bands-1] = alpha;
+      *(double *) dst[dst_bands - 1] = alpha;
 
       BABL_PLANAR_STEP
     }
@@ -273,26 +273,27 @@ premultiplied_to_non_premultiplied (int    src_bands,
                                     int   *dst_pitch,
                                     long   samples)
 {
-  long n=samples; 
+  long n = samples;
+
   BABL_PLANAR_SANITY
   while (n--)
     {
       double alpha;
-      int band;
+      int    band;
 
-      alpha = *(double *)src[src_bands-1];
-      for (band=0; band<src_bands-1;band++)
+      alpha = *(double *) src[src_bands - 1];
+      for (band = 0; band < src_bands - 1; band++)
         {
-          if (alpha>0.001)
+          if (alpha > 0.001)
             {
-              *(double*)dst[band] = *(double*) src[band] / alpha;
+              *(double *) dst[band] = *(double *) src[band] / alpha;
             }
           else
             {
-              *(double*)dst[band] = 0.00;
+              *(double *) dst[band] = 0.00;
             }
         }
-      *(double*)dst[dst_bands-1] = alpha;
+      *(double *) dst[dst_bands - 1] = alpha;
 
       BABL_PLANAR_STEP
     }
@@ -306,16 +307,17 @@ rgba2rgba_gamma_2_2_premultiplied (char *src,
                                    char *dst,
                                    long  samples)
 {
-  long n=samples; 
+  long n = samples;
+
   while (n--)
     {
-      double alpha = ((double*)src)[3];
-      ((double*)dst)[0] = linear_to_gamma_2_2 (((double*) src)[0]) * alpha;
-      ((double*)dst)[1] = linear_to_gamma_2_2 (((double*) src)[1]) * alpha;
-      ((double*)dst)[2] = linear_to_gamma_2_2 (((double*) src)[2]) * alpha;
-      ((double*)dst)[3] = alpha;
-      src+=4 * sizeof (double);
-      dst+=4 * sizeof (double);
+      double alpha = ((double *) src)[3];
+      ((double *) dst)[0] = linear_to_gamma_2_2 (((double *) src)[0]) * alpha;
+      ((double *) dst)[1] = linear_to_gamma_2_2 (((double *) src)[1]) * alpha;
+      ((double *) dst)[2] = linear_to_gamma_2_2 (((double *) src)[2]) * alpha;
+      ((double *) dst)[3] = alpha;
+      src                += 4 * sizeof (double);
+      dst                += 4 * sizeof (double);
     }
   return samples;
 }
@@ -324,28 +326,29 @@ rgba2rgba_gamma_2_2_premultiplied (char *src,
 static long
 rgba_gamma_2_2_premultiplied2rgba (char *src,
                                    char *dst,
-                                   long   samples)
+                                   long  samples)
 {
-  long n=samples; 
+  long n = samples;
+
   while (n--)
     {
-      double alpha = ((double*) src)[3];
-    if (alpha > 0.0001)
+      double alpha = ((double *) src)[3];
+      if (alpha > 0.0001)
         {
-          ((double*)dst)[0] = gamma_2_2_to_linear (((double*) src)[0] / alpha);
-          ((double*)dst)[1] = gamma_2_2_to_linear (((double*) src)[1] / alpha);
-          ((double*)dst)[2] = gamma_2_2_to_linear (((double*) src)[2] / alpha);
+          ((double *) dst)[0] = gamma_2_2_to_linear (((double *) src)[0] / alpha);
+          ((double *) dst)[1] = gamma_2_2_to_linear (((double *) src)[1] / alpha);
+          ((double *) dst)[2] = gamma_2_2_to_linear (((double *) src)[2] / alpha);
         }
       else
         {
-          ((double*)dst)[0] = 0.0;
-          ((double*)dst)[1] = 0.0;
-          ((double*)dst)[2] = 0.0;
+          ((double *) dst)[0] = 0.0;
+          ((double *) dst)[1] = 0.0;
+          ((double *) dst)[2] = 0.0;
         }
-      ((double*)dst)[3] = alpha;
+      ((double *) dst)[3] = alpha;
 
-      src+=4 * sizeof (double);
-      dst+=4 * sizeof (double);
+      src += 4 * sizeof (double);
+      dst += 4 * sizeof (double);
     }
   return samples;
 }
@@ -356,16 +359,17 @@ rgba2rgba_gamma_2_2 (char *src,
                      char *dst,
                      long  samples)
 {
-  long n=samples; 
+  long n = samples;
+
   while (n--)
     {
-      double alpha = ((double*)src)[3];
-      ((double*)dst)[0] = linear_to_gamma_2_2 (((double*) src)[0]);
-      ((double*)dst)[1] = linear_to_gamma_2_2 (((double*) src)[1]);
-      ((double*)dst)[2] = linear_to_gamma_2_2 (((double*) src)[2]);
-      ((double*)dst)[3] = alpha;
-      src+=4 * sizeof (double);
-      dst+=4 * sizeof (double);
+      double alpha = ((double *) src)[3];
+      ((double *) dst)[0] = linear_to_gamma_2_2 (((double *) src)[0]);
+      ((double *) dst)[1] = linear_to_gamma_2_2 (((double *) src)[1]);
+      ((double *) dst)[2] = linear_to_gamma_2_2 (((double *) src)[2]);
+      ((double *) dst)[3] = alpha;
+      src                += 4 * sizeof (double);
+      dst                += 4 * sizeof (double);
     }
   return samples;
 }
@@ -376,18 +380,18 @@ rgba_gamma_2_22rgba (char *src,
                      char *dst,
                      long  samples)
 {
-  long n=samples;
-  
+  long n = samples;
+
   while (n--)
     {
-      double alpha = ((double*) src)[3];
-      ((double*)dst)[0] = gamma_2_2_to_linear (((double*) src)[0]);
-      ((double*)dst)[1] = gamma_2_2_to_linear (((double*) src)[1]);
-      ((double*)dst)[2] = gamma_2_2_to_linear (((double*) src)[2]);
-      ((double*)dst)[3] = alpha;
+      double alpha = ((double *) src)[3];
+      ((double *) dst)[0] = gamma_2_2_to_linear (((double *) src)[0]);
+      ((double *) dst)[1] = gamma_2_2_to_linear (((double *) src)[1]);
+      ((double *) dst)[2] = gamma_2_2_to_linear (((double *) src)[2]);
+      ((double *) dst)[3] = alpha;
 
-      src+=4 * sizeof (double);
-      dst+=4 * sizeof (double);
+      src += 4 * sizeof (double);
+      dst += 4 * sizeof (double);
     }
   return samples;
 }
@@ -398,7 +402,7 @@ conversions (void)
   babl_conversion_new (
     babl_model_id (BABL_RGBA),
     babl_model_id (BABL_RGBA),
-    "planar",      copy_strip_1,
+    "planar", copy_strip_1,
     NULL
   );
 
@@ -406,41 +410,41 @@ conversions (void)
   babl_conversion_new (
     babl_model_id (BABL_RGB),
     babl_model_id (BABL_RGBA),
-    "planar",      copy_strip_1,
+    "planar", copy_strip_1,
     NULL
   );
 
   babl_conversion_new (
     babl_model_id (BABL_RGBA),
     babl_model_id (BABL_RGB),
-    "planar",      copy_strip_1,
+    "planar", copy_strip_1,
     NULL
   );
 
   babl_conversion_new (
     babl_model_id (BABL_RGBA),
     babl_model_id (BABL_RGBA_PREMULTIPLIED),
-    "planar",      non_premultiplied_to_premultiplied,
+    "planar", non_premultiplied_to_premultiplied,
     NULL
   );
 
   babl_conversion_new (
     babl_model_id (BABL_RGBA_PREMULTIPLIED),
     babl_model_id (BABL_RGBA),
-    "planar",      premultiplied_to_non_premultiplied,
+    "planar", premultiplied_to_non_premultiplied,
     NULL
   );
 
   babl_conversion_new (
     babl_model_id (BABL_RGBA),
     babl_model_id (BABL_RGB_GAMMA_2_2),
-    "planar",      g3_gamma_2_2,
+    "planar", g3_gamma_2_2,
     NULL
   );
   babl_conversion_new (
     babl_model_id (BABL_RGB_GAMMA_2_2),
     babl_model_id (BABL_RGBA),
-    "planar",      g3_inv_gamma_2_2,
+    "planar", g3_inv_gamma_2_2,
     NULL
   );
 
@@ -465,17 +469,16 @@ conversions (void)
     babl_model_id (BABL_RGBA),
     "linear", rgba_gamma_2_2_premultiplied2rgba,
     NULL);
-  
 }
 
 static void
 formats (void)
 {
-    babl_format_new (
+  babl_format_new (
     //"name", "srgb",
     "id", BABL_SRGB,
-    babl_model_id     (BABL_RGB_GAMMA_2_2),
-    babl_type_id      (BABL_U8),
+    babl_model_id (BABL_RGB_GAMMA_2_2),
+    babl_type_id (BABL_U8),
     babl_component_id (BABL_RED_GAMMA_2_2),
     babl_component_id (BABL_GREEN_GAMMA_2_2),
     babl_component_id (BABL_BLUE_GAMMA_2_2),
@@ -483,8 +486,8 @@ formats (void)
 
   babl_format_new (
     "id", BABL_SRGBA,
-    babl_model_id     (BABL_RGBA_GAMMA_2_2),
-    babl_type_id      (BABL_U8),
+    babl_model_id (BABL_RGBA_GAMMA_2_2),
+    babl_type_id (BABL_U8),
     babl_component_id (BABL_RED_GAMMA_2_2),
     babl_component_id (BABL_GREEN_GAMMA_2_2),
     babl_component_id (BABL_BLUE_GAMMA_2_2),
@@ -492,30 +495,30 @@ formats (void)
     NULL);
 
   babl_format_new (
-    "id",              BABL_RGBA_FLOAT,
-    babl_model_id     (BABL_RGBA),
-    babl_type_id      (BABL_FLOAT),
-    babl_component_id (BABL_RED), 
-    babl_component_id (BABL_GREEN), 
+    "id", BABL_RGBA_FLOAT,
+    babl_model_id (BABL_RGBA),
+    babl_type_id (BABL_FLOAT),
+    babl_component_id (BABL_RED),
+    babl_component_id (BABL_GREEN),
     babl_component_id (BABL_BLUE),
     babl_component_id (BABL_ALPHA),
     NULL);
 
   babl_format_new (
     "id", BABL_RGB_FLOAT,
-    babl_model_id     (BABL_RGB),
-    babl_type_id      (BABL_FLOAT),
-    babl_component_id (BABL_RED), 
-    babl_component_id (BABL_GREEN), 
+    babl_model_id (BABL_RGB),
+    babl_type_id (BABL_FLOAT),
+    babl_component_id (BABL_RED),
+    babl_component_id (BABL_GREEN),
     babl_component_id (BABL_BLUE),
     NULL);
 
 #ifdef XXXX
   babl_format_new (
     "id", BABL_RGB565,
-     babl_model_id (BABL_RGB),
-    babl_component_id (BABL_RED), 
-    babl_component_id (BABL_GREEN), 
+    babl_model_id (BABL_RGB),
+    babl_component_id (BABL_RED),
+    babl_component_id (BABL_GREEN),
     babl_component_id (BABL_BLUE),
 
   );

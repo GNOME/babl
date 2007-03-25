@@ -24,7 +24,7 @@
 #include <stdarg.h>
 
 
-static int 
+static int
 each_babl_component_destroy (Babl *babl,
                              void *data)
 {
@@ -41,8 +41,8 @@ component_new (const char *name,
 {
   Babl *babl;
 
-  babl                   = babl_malloc (sizeof (BablComponent) + strlen (name) + 1);
-  babl->instance.name    = (char *) babl + sizeof (BablComponent);
+  babl                = babl_malloc (sizeof (BablComponent) + strlen (name) + 1);
+  babl->instance.name = (char *) babl + sizeof (BablComponent);
   strcpy (babl->instance.name, name);
 
   babl->class_type       = BABL_COMPONENT;
@@ -59,24 +59,24 @@ babl_component_new (void *first_arg,
 {
   va_list     varg;
   Babl       *babl;
-  int         id         = 0;
-  int         luma    = 0;
-  int         chroma  = 0;
-  int         alpha   = 0;
-  const char *arg=(char*)first_arg;
+  int         id     = 0;
+  int         luma   = 0;
+  int         chroma = 0;
+  int         alpha  = 0;
+  const char *arg    = (char *) first_arg;
 
   va_start (varg, first_arg);
-  
+
   while (1)
     {
       arg = va_arg (varg, char *);
       if (!arg)
         break;
-      
+
       if (BABL_IS_BABL (arg))
         {
 #ifdef BABL_LOG
-          Babl *babl = (Babl*) arg;
+          Babl *babl = (Babl *) arg;
           babl_log ("%s unexpected", babl_class_name (babl->class_type));
 #endif
         }
@@ -86,12 +86,12 @@ babl_component_new (void *first_arg,
         {
           id = va_arg (varg, int);
         }
-      
+
       else if (!strcmp (arg, "luma"))
         {
           luma = 1;
         }
-      
+
       else if (!strcmp (arg, "chroma"))
         {
           chroma = 1;
@@ -101,21 +101,21 @@ babl_component_new (void *first_arg,
         {
           alpha = 1;
         }
-      
+
       else
         {
           babl_fatal ("unhandled argument '%s' for format '%s'", arg, first_arg);
         }
     }
-    
-  va_end   (varg);
+
+  va_end (varg);
 
   babl = component_new (first_arg, id, luma, chroma, alpha);
 
-  { 
+  {
     Babl *ret = babl_db_insert (db, babl);
-    if (ret!=babl)
-        babl_free (babl);
+    if (ret != babl)
+      babl_free (babl);
     return ret;
   }
 }

@@ -21,28 +21,28 @@
 #include <math.h>
 #include "babl-internal.h"
 
-#define PIXELS    3
-#define TOLERANCE 0
+#define PIXELS       3
+#define TOLERANCE    0
 
-unsigned char source_buf [PIXELS*3]=
-  {10,20,30,
-   30,30,30,
-   40,50,60};
+unsigned char source_buf [PIXELS * 3] =
+{ 10,   20, 30,
+  30, 30, 30,
+  40, 50, 60 };
 
-unsigned char reference_buf [PIXELS*3]=
-  {30,20,10,
-   30,30,30,
-   60,50,40};
+unsigned char reference_buf [PIXELS * 3] =
+{ 30,   20, 10,
+  30, 30, 30,
+  60, 50, 40 };
 
-unsigned char destination_buf [PIXELS*3];
+unsigned char destination_buf [PIXELS * 3];
 
 static int
 test (void)
 {
   Babl *fish;
   int   i;
-  int   OK=1;
-  
+  int   OK = 1;
+
   fish = babl_fish (
     babl_format_new (
       babl_model ("RGB"),
@@ -60,17 +60,17 @@ test (void)
       babl_component ("R"),
       NULL
     )
-  );
+         );
 
   babl_process (fish, source_buf, destination_buf, PIXELS);
-  
-  for (i=0; i<PIXELS * 3; i++)
+
+  for (i = 0; i < PIXELS * 3; i++)
     {
-      if (abs(destination_buf[i] - reference_buf[i]) > TOLERANCE)
+      if (abs (destination_buf[i] - reference_buf[i]) > TOLERANCE)
         {
           babl_log ("%2i (%2i%%3=%i, %2i/3=%i) is %i should be %i",
-                      i, i,i%3,    i,i/3,  destination_buf[i], reference_buf[i]);
-          OK=0;
+                    i, i, i % 3, i, i / 3, destination_buf[i], reference_buf[i]);
+          OK = 0;
         }
     }
   if (!OK)
@@ -83,7 +83,7 @@ main (int    argc,
       char **argv)
 {
   babl_init ();
-  if (test())
+  if (test ())
     return -1;
   babl_destroy ();
   return 0;

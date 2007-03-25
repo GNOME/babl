@@ -1,7 +1,7 @@
 #include <math.h>
 #include "babl-internal.h"
 
-int OK=1;
+int OK = 1;
 
 static int type_check (Babl *babl,
                        void *userdata)
@@ -9,7 +9,7 @@ static int type_check (Babl *babl,
   if (!babl_type_is_symmetric (babl))
     {
       babl_log ("%s is not symmetric", babl->instance.name);
-      OK=0;
+      OK = 0;
     }
   return 0;
 }

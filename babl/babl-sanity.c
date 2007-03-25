@@ -20,7 +20,7 @@
 #include "babl-internal.h"
 
 static int OK;
- 
+
 static int
 foo (Babl *babl,
      void *user_data)
@@ -38,16 +38,16 @@ type_sanity (Babl *babl,
   /* ensure that every type has reference conversions to
    * and from double */
   void **ptr;
-  int  ok;
+  int    ok;
 
   ok = 0;
   if (babl->type.from)
     {
       ptr = (void **) babl->type.from;
 
-      while (ptr && NULL!=*ptr)
+      while (ptr && NULL != *ptr)
         {
-          if (babl_conversion_destination ((Babl *)(*ptr)) == babl_type_id (BABL_DOUBLE))
+          if (babl_conversion_destination ((Babl *) (*ptr)) == babl_type_id (BABL_DOUBLE))
             {
               ok = 1;
               break;
@@ -73,16 +73,16 @@ model_sanity (Babl *babl,
   /* ensure that every type has reference conversions to
    * and from rgba */
   void **ptr;
-  int  ok;
+  int    ok;
 
   ok = 0;
   if (babl->model.from)
     {
       ptr = (void **) babl->model.from;
 
-      while (ptr && NULL!=*ptr)
+      while (ptr && NULL != *ptr)
         {
-          if (babl_conversion_destination ((Babl *)(*ptr)) == babl_model_id (BABL_RGBA))
+          if (babl_conversion_destination ((Babl *) (*ptr)) == babl_model_id (BABL_RGBA))
             {
               ok = 1;
               break;
@@ -92,7 +92,7 @@ model_sanity (Babl *babl,
     }
   if (!ok)
     {
-      OK=0;
+      OK = 0;
       babl_log ("lack of sanity! model '%s' has no conversion to 'rgba'",
                 babl->instance.name);
     }
@@ -106,11 +106,11 @@ id_sanity (Babl *babl,
 {
   if (0 && 0 == babl->instance.id &&
       babl->instance.creator &&
-      !strcmp(BABL(babl->instance.creator)->instance.name, "BablBase"))
+      !strcmp (BABL (babl->instance.creator)->instance.name, "BablBase"))
     {
-      OK=0;
+      OK = 0;
       babl_log ("%s\t'%s' has id==0",
-        babl_class_name (babl->class_type), babl->instance.name);
+                babl_class_name (babl->class_type), babl->instance.name);
     }
   return 0;
 }

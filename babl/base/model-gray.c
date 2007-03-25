@@ -24,14 +24,14 @@
 #include "math.h"
 #include "babl-base.h"
 
-static void components  (void);
-static void models      (void);
+static void components (void);
+static void models (void);
 static void conversions (void);
 
 void babl_base_model_gray (void)
 {
-  components  ();
-  models      ();
+  components ();
+  models ();
   conversions ();
 }
 
@@ -39,28 +39,28 @@ static void
 components (void)
 {
   babl_component_new (
-   "Y", 
-   "id",    BABL_LUMINANCE,
-   "luma",
-   NULL);
+    "Y",
+    "id", BABL_LUMINANCE,
+    "luma",
+    NULL);
 
   babl_component_new (
-   "Ya",
-   "id",    BABL_LUMINANCE_MUL_ALPHA,
-   "luma",
-   NULL);
+    "Ya",
+    "id", BABL_LUMINANCE_MUL_ALPHA,
+    "luma",
+    NULL);
 
   babl_component_new (
-   "Y'", 
-   "id",    BABL_LUMA,
-   "luma",
-   NULL);
+    "Y'",
+    "id", BABL_LUMA,
+    "luma",
+    NULL);
 
   babl_component_new (
-   "Y'a", 
-   "id",    BABL_LUMA_MUL_ALPHA,
-   "luma",
-   NULL);
+    "Y'a",
+    "id", BABL_LUMA_MUL_ALPHA,
+    "luma",
+    NULL);
 }
 
 static void
@@ -114,17 +114,17 @@ rgba_to_graya (char *src,
       double red, green, blue;
       double luminance, alpha;
 
-      red   = ((double *)src)[0];
-      green = ((double *)src)[1];
-      blue  = ((double *)src)[2];
-      alpha = ((double *)src)[3];
+      red   = ((double *) src)[0];
+      green = ((double *) src)[1];
+      blue  = ((double *) src)[2];
+      alpha = ((double *) src)[3];
 
-      luminance  = red   * RGB_LUMINANCE_RED +
-                   green * RGB_LUMINANCE_GREEN +
-                   blue  * RGB_LUMINANCE_BLUE;
+      luminance = red * RGB_LUMINANCE_RED +
+                  green * RGB_LUMINANCE_GREEN +
+                  blue * RGB_LUMINANCE_BLUE;
 
-      ((double*)dst)[0] = luminance;
-      ((double*)dst)[1] = alpha;
+      ((double *) dst)[0] = luminance;
+      ((double *) dst)[1] = alpha;
 
       src += sizeof (double) * 4;
       dst += sizeof (double) * 2;
@@ -142,16 +142,16 @@ rgba_to_gray (char *src,
       double red, green, blue;
       double luminance, alpha;
 
-      red   = ((double *)src)[0];
-      green = ((double *)src)[1];
-      blue  = ((double *)src)[2];
-      alpha = ((double *)src)[3];
+      red   = ((double *) src)[0];
+      green = ((double *) src)[1];
+      blue  = ((double *) src)[2];
+      alpha = ((double *) src)[3];
 
-      luminance  = red   * RGB_LUMINANCE_RED +
-                   green * RGB_LUMINANCE_GREEN +
-                   blue  * RGB_LUMINANCE_BLUE;
+      luminance = red * RGB_LUMINANCE_RED +
+                  green * RGB_LUMINANCE_GREEN +
+                  blue * RGB_LUMINANCE_BLUE;
 
-      ((double*)dst)[0] = luminance;
+      ((double *) dst)[0] = luminance;
 
       src += sizeof (double) * 4;
       dst += sizeof (double) * 1;
@@ -178,18 +178,18 @@ rgb_to_gray_2_2 (int    src_bands,
       red   = *(double *) src[0];
       green = *(double *) src[1];
       blue  = *(double *) src[2];
-      if (src_bands>3)
-        alpha = *(double *)src[3];
+      if (src_bands > 3)
+        alpha = *(double *) src[3];
       else
         alpha = 1.0;
 
-      luminance  = red   * RGB_LUMINANCE_RED +
-                   green * RGB_LUMINANCE_GREEN +
-                   blue  * RGB_LUMINANCE_BLUE;
-      *(double*)dst[0] = linear_to_gamma_2_2 (luminance);
+      luminance = red * RGB_LUMINANCE_RED +
+                  green * RGB_LUMINANCE_GREEN +
+                  blue * RGB_LUMINANCE_BLUE;
+      *(double *) dst[0] = linear_to_gamma_2_2 (luminance);
 
-      if (dst_bands==2)
-        *(double*)dst[1] = alpha;
+      if (dst_bands == 2)
+        *(double *) dst[1] = alpha;
 
       BABL_PLANAR_STEP
     }
@@ -213,21 +213,21 @@ gray_2_2_to_rgb (int    src_bands,
       double red, green, blue;
       double alpha;
 
-      luminance = gamma_2_2_to_linear (*(double *)src[0]);
+      luminance = gamma_2_2_to_linear (*(double *) src[0]);
       red       = luminance;
       green     = luminance;
       blue      = luminance;
       if (src_bands > 1)
-        alpha = *(double *)src[1];
+        alpha = *(double *) src[1];
       else
-        alpha     = 1.0;
+        alpha = 1.0;
 
-      *(double*)dst[0] = red;
-      *(double*)dst[1] = green;
-      *(double*)dst[2] = blue;
+      *(double *) dst[0] = red;
+      *(double *) dst[1] = green;
+      *(double *) dst[2] = blue;
 
-      if (dst_bands>3)
-        *(double*)dst[3] = alpha;
+      if (dst_bands > 3)
+        *(double *) dst[3] = alpha;
 
       BABL_PLANAR_STEP
     }
@@ -247,19 +247,19 @@ graya_to_rgba (char *src,
       double red, green, blue;
       double alpha;
 
-      luminance = ((double *)src)[0];
-      alpha     = ((double *)src)[1];
+      luminance = ((double *) src)[0];
+      alpha     = ((double *) src)[1];
       red       = luminance;
       green     = luminance;
       blue      = luminance;
 
-      ((double*)dst)[0] = red;
-      ((double*)dst)[1] = green;
-      ((double*)dst)[2] = blue;
-      ((double*)dst)[3] = alpha;
+      ((double *) dst)[0] = red;
+      ((double *) dst)[1] = green;
+      ((double *) dst)[2] = blue;
+      ((double *) dst)[3] = alpha;
 
-      src += sizeof(double)*2;
-      dst += sizeof(double)*4;
+      src += sizeof (double) * 2;
+      dst += sizeof (double) * 4;
     }
   return n;
 }
@@ -275,18 +275,18 @@ gray_to_rgba (char *src,
       double luminance;
       double red, green, blue;
 
-      luminance = ((double *)src)[0];
+      luminance = ((double *) src)[0];
       red       = luminance;
       green     = luminance;
       blue      = luminance;
 
-      ((double*)dst)[0] = red;
-      ((double*)dst)[1] = green;
-      ((double*)dst)[2] = blue;
-      ((double*)dst)[3] = 1.0;
+      ((double *) dst)[0] = red;
+      ((double *) dst)[1] = green;
+      ((double *) dst)[2] = blue;
+      ((double *) dst)[3] = 1.0;
 
-      src += sizeof(double)*1;
-      dst += sizeof(double)*4;
+      src += sizeof (double) * 1;
+      dst += sizeof (double) * 4;
     }
   return n;
 }
@@ -306,8 +306,8 @@ gray_alpha_premultiplied_to_rgba (int    src_bands,
 
   while (n--)
     {
-      double luminance = *(double *)src[0];
-      double alpha     = *(double *)src[1];
+      double luminance = *(double *) src[0];
+      double alpha     = *(double *) src[1];
 
       if (alpha > 0.00001)
         {
@@ -317,11 +317,11 @@ gray_alpha_premultiplied_to_rgba (int    src_bands,
         {
           luminance = 0.0;
         }
-      
-      *(double*)dst[0] = luminance;
-      *(double*)dst[1] = luminance;
-      *(double*)dst[2] = luminance;
-      *(double*)dst[3] = alpha;
+
+      *(double *) dst[0] = luminance;
+      *(double *) dst[1] = luminance;
+      *(double *) dst[2] = luminance;
+      *(double *) dst[3] = alpha;
       BABL_PLANAR_STEP
     }
   return n;
@@ -343,20 +343,20 @@ rgba_to_gray_alpha_premultiplied (int    src_bands,
 
   while (n--)
     {
-      double red       = *(double *)src[0];
-      double green     = *(double *)src[1];
-      double blue      = *(double *)src[2];
-      double alpha     = *(double *)src[3];
+      double red   = *(double *) src[0];
+      double green = *(double *) src[1];
+      double blue  = *(double *) src[2];
+      double alpha = *(double *) src[3];
       double luminance;
 
-      luminance  = red   * RGB_LUMINANCE_RED +
-                   green * RGB_LUMINANCE_GREEN +
-                   blue  * RGB_LUMINANCE_BLUE;
+      luminance = red * RGB_LUMINANCE_RED +
+                  green * RGB_LUMINANCE_GREEN +
+                  blue * RGB_LUMINANCE_BLUE;
 
       luminance *= alpha;
-      
-      *(double*)dst[0] = luminance;
-      *(double*)dst[1] = alpha;
+
+      *(double *) dst[0] = luminance;
+      *(double *) dst[1] = alpha;
       BABL_PLANAR_STEP
     }
   return n;
@@ -376,14 +376,14 @@ non_premultiplied_to_premultiplied (int    src_bands,
   while (n--)
     {
       double alpha;
-      int band;
+      int    band;
 
-      alpha = *(double *)src[src_bands-1];
-      for (band=0; band<src_bands-1;band++)
+      alpha = *(double *) src[src_bands - 1];
+      for (band = 0; band < src_bands - 1; band++)
         {
-          *(double*)dst[band] = *(double*) src[band] * alpha;
+          *(double *) dst[band] = *(double *) src[band] * alpha;
         }
-      *(double*)dst[dst_bands-1] = alpha;
+      *(double *) dst[dst_bands - 1] = alpha;
 
       BABL_PLANAR_STEP
     }
@@ -404,21 +404,21 @@ premultiplied_to_non_premultiplied (int    src_bands,
   while (n--)
     {
       double alpha;
-      int band;
+      int    band;
 
-      alpha = *(double *)src[src_bands-1];
-      for (band=0; band<src_bands-1;band++)
+      alpha = *(double *) src[src_bands - 1];
+      for (band = 0; band < src_bands - 1; band++)
         {
-          if (alpha>0.001)
+          if (alpha > 0.001)
             {
-              *(double*)dst[band] = *(double*) src[band] / alpha;
+              *(double *) dst[band] = *(double *) src[band] / alpha;
             }
           else
             {
-              *(double*)dst[band] = 0.001;
+              *(double *) dst[band] = 0.001;
             }
         }
-      *(double*)dst[dst_bands-1] = alpha;
+      *(double *) dst[dst_bands - 1] = alpha;
 
       BABL_PLANAR_STEP
     }
@@ -432,24 +432,24 @@ rgba2gray_gamma_2_2_premultiplied (char *src,
 {
   while (n--)
     {
-      double red   = ((double*)src)[0];
-      double green = ((double*)src)[1];
-      double blue  = ((double*)src)[2];
-      double alpha = ((double*)src)[3];
+      double red   = ((double *) src)[0];
+      double green = ((double *) src)[1];
+      double blue  = ((double *) src)[2];
+      double alpha = ((double *) src)[3];
 
       double luminance;
       double luma;
-        
-      luminance  = red   * RGB_LUMINANCE_RED +
-                   green * RGB_LUMINANCE_GREEN +
-                   blue  * RGB_LUMINANCE_BLUE;
+
+      luminance = red * RGB_LUMINANCE_RED +
+                  green * RGB_LUMINANCE_GREEN +
+                  blue * RGB_LUMINANCE_BLUE;
       luma = linear_to_gamma_2_2 (luminance);
 
-      ((double*)dst)[0] = luma * alpha;
-      ((double*)dst)[1] = alpha;
+      ((double *) dst)[0] = luma * alpha;
+      ((double *) dst)[1] = alpha;
 
-      src+=4 * sizeof (double);
-      dst+=2 * sizeof (double);
+      src += 4 * sizeof (double);
+      dst += 2 * sizeof (double);
     }
   return n;
 }
@@ -458,24 +458,24 @@ rgba2gray_gamma_2_2_premultiplied (char *src,
 static long
 gray_gamma_2_2_premultiplied2rgba (char *src,
                                    char *dst,
-                                   long   n)
+                                   long  n)
 {
   while (n--)
     {
-      double luma  = ((double*) src)[0];
-      double alpha = ((double*) src)[1];
+      double luma  = ((double *) src)[0];
+      double alpha = ((double *) src)[1];
       double luminance;
 
-      luma = luma / alpha;
+      luma      = luma / alpha;
       luminance = gamma_2_2_to_linear (luma);
-      
-      ((double*)dst)[0] = luminance;
-      ((double*)dst)[1] = luminance;
-      ((double*)dst)[2] = luminance;
-      ((double*)dst)[3] = alpha;
 
-      src+=2 * sizeof (double);
-      dst+=4 * sizeof (double);
+      ((double *) dst)[0] = luminance;
+      ((double *) dst)[1] = luminance;
+      ((double *) dst)[2] = luminance;
+      ((double *) dst)[3] = alpha;
+
+      src += 2 * sizeof (double);
+      dst += 4 * sizeof (double);
     }
   return n;
 }
@@ -487,28 +487,28 @@ conversions (void)
   babl_conversion_new (
     babl_model_id (BABL_GRAY_GAMMA_2_2),
     babl_model_id (BABL_RGBA),
-    "planar",      gray_2_2_to_rgb,
+    "planar", gray_2_2_to_rgb,
     NULL
   );
 
   babl_conversion_new (
     babl_model_id (BABL_RGBA),
     babl_model_id (BABL_GRAY_GAMMA_2_2),
-    "planar",      rgb_to_gray_2_2,
+    "planar", rgb_to_gray_2_2,
     NULL
   );
 
   babl_conversion_new (
     babl_model_id (BABL_GRAY_GAMMA_2_2_ALPHA),
     babl_model_id (BABL_RGBA),
-    "planar",      gray_2_2_to_rgb,
+    "planar", gray_2_2_to_rgb,
     NULL
   );
 
   babl_conversion_new (
     babl_model_id (BABL_RGBA),
     babl_model_id (BABL_GRAY_GAMMA_2_2_ALPHA),
-    "planar",      rgb_to_gray_2_2,
+    "planar", rgb_to_gray_2_2,
     NULL
   );
 
@@ -516,70 +516,70 @@ conversions (void)
   babl_conversion_new (
     babl_model_id (BABL_GRAY_GAMMA_2_2_ALPHA_PREMULTIPLIED),
     babl_model_id (BABL_RGBA),
-    "linear",      gray_gamma_2_2_premultiplied2rgba,
+    "linear", gray_gamma_2_2_premultiplied2rgba,
     NULL
   );
 
   babl_conversion_new (
     babl_model_id (BABL_RGBA),
     babl_model_id (BABL_GRAY_GAMMA_2_2_ALPHA_PREMULTIPLIED),
-    "linear",      rgba2gray_gamma_2_2_premultiplied,
+    "linear", rgba2gray_gamma_2_2_premultiplied,
     NULL
   );
 
   babl_conversion_new (
     babl_model_id (BABL_GRAY),
     babl_model_id (BABL_RGBA),
-    "linear",      gray_to_rgba,
+    "linear", gray_to_rgba,
     NULL
   );
 
   babl_conversion_new (
     babl_model_id (BABL_GRAY_ALPHA),
     babl_model_id (BABL_RGBA),
-    "linear",      graya_to_rgba,
+    "linear", graya_to_rgba,
     NULL
   );
 
   babl_conversion_new (
     babl_model_id (BABL_RGBA),
     babl_model_id (BABL_GRAY_ALPHA),
-    "linear",      rgba_to_graya,
+    "linear", rgba_to_graya,
     NULL
   );
 
   babl_conversion_new (
     babl_model_id (BABL_RGBA),
     babl_model_id (BABL_GRAY),
-    "linear",      rgba_to_gray,
+    "linear", rgba_to_gray,
     NULL
   );
 
   babl_conversion_new (
     babl_model_id (BABL_GRAY_ALPHA),
     babl_model_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
-    "planar",      non_premultiplied_to_premultiplied,
+    "planar", non_premultiplied_to_premultiplied,
     NULL
   );
 
   babl_conversion_new (
     babl_model_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
     babl_model_id (BABL_GRAY_ALPHA),
-    "planar",      premultiplied_to_non_premultiplied,
+    "planar", premultiplied_to_non_premultiplied,
     NULL
   );
 
   babl_conversion_new (
     babl_model_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
     babl_model_id (BABL_RGBA),
-    "planar",      gray_alpha_premultiplied_to_rgba,
+    "planar", gray_alpha_premultiplied_to_rgba,
     NULL
   );
 
   babl_conversion_new (
     babl_model_id (BABL_RGBA),
     babl_model_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
-    "planar",      rgba_to_gray_alpha_premultiplied,
+    "planar", rgba_to_gray_alpha_premultiplied,
     NULL
   );
 }

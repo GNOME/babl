@@ -20,44 +20,44 @@
 #include <math.h>
 #include "babl-internal.h"
 
-#define PIXELS    6
-#define TOLERANCE 0
+#define PIXELS       6
+#define TOLERANCE    0
 
-unsigned char source_buf [PIXELS*3]=
-  {  0,   0,   0,
-   127, 127, 127,
-   255, 255, 255,
-   255, 0.0, 0.0,
-   0.0, 255, 0.0,
-   0.0, 0.0, 255};
+unsigned char source_buf [PIXELS * 3] =
+{ 0,     0,   0,
+  127, 127, 127,
+  255, 255, 255,
+  255, 0.0, 0.0,
+  0.0, 255, 0.0,
+  0.0, 0.0, 255 };
 
-unsigned char reference_buf [PIXELS*3]=
-  {  0, 128, 128,
-   136, 128, 128,
-   255, 128, 128,
-   136, 208, 195,
-   224,  42, 211,
-    82, 207,  20};
+unsigned char reference_buf [PIXELS * 3] =
+{ 0,     128, 128,
+  136, 128, 128,
+  255, 128, 128,
+  136, 208, 195,
+  224, 42,  211,
+  82,  207, 20 };
 
-unsigned char destination_buf [PIXELS*3];
+unsigned char destination_buf [PIXELS * 3];
 
 static int
 test (void)
 {
-  int   i;
-  int   OK=1;
- 
+  int i;
+  int OK = 1;
+
   babl_process (babl_fish ("R'G'B' u8", "CIE Lab u8"),
                 source_buf, destination_buf,
                 PIXELS);
-  
-  for (i=0; i<PIXELS * 3; i++)
+
+  for (i = 0; i < PIXELS * 3; i++)
     {
-      if (abs(destination_buf[i] - reference_buf[i]) > TOLERANCE)
+      if (abs (destination_buf[i] - reference_buf[i]) > TOLERANCE)
         {
           babl_log ("%2i (%2i%%3=%i, %2i/3=%i) is %i should be %i",
-                      i, i,i%3,    i,i/3,  destination_buf[i], reference_buf[i]);
-          OK=0;
+                    i, i, i % 3, i, i / 3, destination_buf[i], reference_buf[i]);
+          OK = 0;
         }
     }
   if (!OK)
@@ -70,7 +70,7 @@ main (int    argc,
       char **argv)
 {
   babl_init ();
-  if (test())
+  if (test ())
     return -1;
   babl_destroy ();
   return 0;

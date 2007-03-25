@@ -33,36 +33,36 @@ each_babl_conversion_destroy (Babl *babl,
 }
 
 static Babl *
-conversion_new (const char        *name,
-                int                id,
-                Babl              *source,
-                Babl              *destination,
-                BablFuncLinear     linear,
-                BablFuncPlane      plane,
-                BablFuncPlanar     planar)
+conversion_new (const char    *name,
+                int            id,
+                Babl          *source,
+                Babl          *destination,
+                BablFuncLinear linear,
+                BablFuncPlane  plane,
+                BablFuncPlanar planar)
 {
   Babl *babl = NULL;
 
   babl_assert (source->class_type ==
                destination->class_type);
 
-  babl = babl_malloc (sizeof (BablConversion) + strlen (name) + 1);
-  babl->instance.name = (char *)babl + sizeof (BablConversion);
-  strcpy(babl->instance.name, name);
+  babl                = babl_malloc (sizeof (BablConversion) + strlen (name) + 1);
+  babl->instance.name = (char *) babl + sizeof (BablConversion);
+  strcpy (babl->instance.name, name);
 
   if (linear)
     {
-      babl->class_type      = BABL_CONVERSION_LINEAR;
+      babl->class_type                 = BABL_CONVERSION_LINEAR;
       babl->conversion.function.linear = linear;
     }
   else if (plane)
     {
-      babl->class_type      = BABL_CONVERSION_PLANE;
+      babl->class_type                = BABL_CONVERSION_PLANE;
       babl->conversion.function.plane = plane;
     }
   else if (planar)
     {
-      babl->class_type = BABL_CONVERSION_PLANAR;
+      babl->class_type                 = BABL_CONVERSION_PLANAR;
       babl->conversion.function.planar = planar;
     }
   switch (source->class_type)
@@ -84,6 +84,7 @@ conversion_new (const char        *name,
                         babl_class_name (source->class_type));
           }
         break;
+
       case BABL_MODEL:
         if (plane)
           {
@@ -91,10 +92,12 @@ conversion_new (const char        *name,
                         babl_class_name (source->class_type));
           }
         break;
+
       case BABL_FORMAT:
         break;
+
       default:
-          babl_fatal ("%s unexpected", babl_class_name (babl->class_type));
+        babl_fatal ("%s unexpected", babl_class_name (babl->class_type));
         break;
     }
 
@@ -108,64 +111,63 @@ conversion_new (const char        *name,
   babl->conversion.processings = 0;
 
   if (babl->class_type == BABL_CONVERSION_LINEAR &&
-      BABL(babl->conversion.source)->class_type == BABL_MODEL)
+      BABL (babl->conversion.source)->class_type == BABL_MODEL)
     {
-       Babl *src_format=NULL;
-       Babl *dst_format=NULL;
-       if (BABL(babl->conversion.source) == babl_model_id (BABL_RGBA))
-         {
-           src_format = babl_format_id (BABL_RGBA_DOUBLE);
-           dst_format = babl_format_with_model_as_type (
-                                BABL(babl->conversion.destination),
-                                babl_type_id (BABL_DOUBLE));
-         }
-       else if (BABL(babl->conversion.destination) == babl_model_id (BABL_RGBA))
-         {
-           src_format = babl_format_with_model_as_type (
-                                BABL(babl->conversion.source),
-                                babl_type_id (BABL_DOUBLE));
-           dst_format = babl_format_id (BABL_RGBA_DOUBLE);
-         }
-       else
-         {
-           babl_fatal ("neither source nor destination model is RGBA (requirement might be temporary)");
-         }
-       babl_conversion_new (
-          src_format,
-          dst_format,
-          "linear", linear,
-          NULL);
-       babl->conversion.error = 0.0;
+      Babl *src_format = NULL;
+      Babl *dst_format = NULL;
+      if (BABL (babl->conversion.source) == babl_model_id (BABL_RGBA))
+        {
+          src_format = babl_format_id (BABL_RGBA_DOUBLE);
+          dst_format = babl_format_with_model_as_type (
+            BABL (babl->conversion.destination),
+            babl_type_id (BABL_DOUBLE));
+        }
+      else if (BABL (babl->conversion.destination) == babl_model_id (BABL_RGBA))
+        {
+          src_format = babl_format_with_model_as_type (
+            BABL (babl->conversion.source),
+            babl_type_id (BABL_DOUBLE));
+          dst_format = babl_format_id (BABL_RGBA_DOUBLE);
+        }
+      else
+        {
+          babl_fatal ("neither source nor destination model is RGBA (requirement might be temporary)");
+        }
+      babl_conversion_new (
+        src_format,
+        dst_format,
+        "linear", linear,
+        NULL);
+      babl->conversion.error = 0.0;
     }
 
   return babl;
 }
 
-static char buf[512]="";
+static char buf[512] = "";
 static char *
 create_name (Babl *source, Babl *destination, int type)
 {
-
   if (babl_extender ())
     {
-      snprintf (buf, 512-1, "%s : %s%s to %s",
-          BABL(babl_extender())->instance.name,
-          type == BABL_CONVERSION_LINEAR?"":
-          type == BABL_CONVERSION_PLANE?"plane ":
-          type == BABL_CONVERSION_PLANAR?"planar ":"Eeeek! ",
-          source->instance.name,
-          destination->instance.name);
-      buf[511]='\0';
+      snprintf (buf, 512 - 1, "%s : %s%s to %s",
+                BABL (babl_extender ())->instance.name,
+                type == BABL_CONVERSION_LINEAR ? "" :
+                type == BABL_CONVERSION_PLANE ? "plane " :
+                type == BABL_CONVERSION_PLANAR ? "planar " : "Eeeek! ",
+                source->instance.name,
+                destination->instance.name);
+      buf[511] = '\0';
     }
   else
     {
-      snprintf (buf, 512-1, "%s %s to %s",
-          type == BABL_CONVERSION_LINEAR?"":
-          type == BABL_CONVERSION_PLANE?"plane ":
-          type == BABL_CONVERSION_PLANAR?"planar ":"Eeeek! ",
-          source->instance.name,
-          destination->instance.name);
-      buf[511]='\0';
+      snprintf (buf, 512 - 1, "%s %s to %s",
+                type == BABL_CONVERSION_LINEAR ? "" :
+                type == BABL_CONVERSION_PLANE ? "plane " :
+                type == BABL_CONVERSION_PLANAR ? "planar " : "Eeeek! ",
+                source->instance.name,
+                destination->instance.name);
+      buf[511] = '\0';
     }
   return buf;
 }
@@ -174,32 +176,31 @@ Babl *
 babl_conversion_new (void *first_arg,
                      ...)
 {
-  va_list            varg;
-  Babl              *babl;
+  va_list        varg;
+  Babl          *babl;
 
-  int                id          = 0;
-  BablFuncLinear     linear      = NULL;
-  BablFuncPlane      plane       = NULL;
-  BablFuncPlanar     planar      = NULL;
-  int                type        = 0;
-  int                got_func    = 0;
-  const char        *arg         = first_arg;
+  int            id       = 0;
+  BablFuncLinear linear   = NULL;
+  BablFuncPlane  plane    = NULL;
+  BablFuncPlanar planar   = NULL;
+  int            type     = 0;
+  int            got_func = 0;
+  const char    *arg      = first_arg;
 
-  Babl *source;
-  Babl *destination;
+  Babl          *source;
+  Babl          *destination;
 
   va_start (varg, first_arg);
-  source = (Babl*) arg;
-  destination = va_arg (varg, Babl*);
-  arg = va_arg (varg, char *);
+  source      = (Babl *) arg;
+  destination = va_arg (varg, Babl *);
+  arg         = va_arg (varg, char *);
 
-  assert (BABL_IS_BABL(source));
-  assert (BABL_IS_BABL(destination));
+  assert (BABL_IS_BABL (source));
+  assert (BABL_IS_BABL (destination));
 
 
   while (arg)
     {
-
       if (!strcmp (arg, "id"))
         {
           id = va_arg (varg, int);
@@ -240,7 +241,7 @@ babl_conversion_new (void *first_arg,
       arg = va_arg (varg, char *);
     }
 
-  va_end   (varg);
+  va_end (varg);
 
   assert (source);
   assert (destination);
@@ -258,14 +259,14 @@ babl_conversion_new (void *first_arg,
       type = BABL_CONVERSION_PLANAR;
     }
   babl = conversion_new (create_name (source, destination, type),
-       id, source, destination, linear, plane, planar);
+                         id, source, destination, linear, plane, planar);
 
   {
     Babl *ret = babl_db_insert (db, babl);
-    if (ret!=babl)
-        babl_free (babl);
+    if (ret != babl)
+      babl_free (babl);
     else
-        babl_add_ptr_to_list ((void ***)((Babl*)&(source->type.from)), babl);
+      babl_add_ptr_to_list ((void ***) ((Babl *) &(source->type.from)), babl);
 
     return ret;
   }
@@ -288,7 +289,7 @@ babl_conversion_plane_process (BablConversion *conversion,
                                int             dst_pitch,
                                long            n)
 {
-  return conversion->function.plane (source,    destination,
+  return conversion->function.plane (source, destination,
                                      src_pitch, dst_pitch,
                                      n);
 }
@@ -300,15 +301,15 @@ babl_conversion_planar_process (BablConversion *conversion,
                                 long            n)
 {
 #ifdef USE_ALLOCA
-  char **src_data = alloca (sizeof (void*) * source->components);
-  char **dst_data = alloca (sizeof (void*) * destination->components);
+  char **src_data = alloca (sizeof (void *) * source->components);
+  char **dst_data = alloca (sizeof (void *) * destination->components);
 #else
-  char *src_data[BABL_MAX_COMPONENTS];
-  char *dst_data[BABL_MAX_COMPONENTS];
+  char  *src_data[BABL_MAX_COMPONENTS];
+  char  *dst_data[BABL_MAX_COMPONENTS];
 #endif
 
-  memcpy (src_data, source->data, sizeof (void*) * source->components);
-  memcpy (dst_data, destination->data, sizeof (void*) * destination->components);
+  memcpy (src_data, source->data, sizeof (void *) * source->components);
+  memcpy (dst_data, destination->data, sizeof (void *) * destination->components);
 
   return conversion->function.planar (source->components,
                                       src_data,
@@ -325,85 +326,87 @@ babl_conversion_process (Babl *babl,
                          char *destination,
                          long  n)
 {
-  BablConversion *conversion = (BablConversion*) babl;
+  BablConversion *conversion = (BablConversion *) babl;
 
   babl_assert (BABL_IS_BABL (conversion));
 
-  switch (BABL(conversion)->class_type)
-  {
-    case BABL_CONVERSION_PLANE:
+  switch (BABL (conversion)->class_type)
+    {
+      case BABL_CONVERSION_PLANE:
       {
-        void *src_data = NULL;
-        void *dst_data = NULL;
+        void *src_data  = NULL;
+        void *dst_data  = NULL;
         int   src_pitch = 0;
         int   dst_pitch = 0;
 
-        if (BABL_IS_BABL(source))
+        if (BABL_IS_BABL (source))
           {
             BablImage *img;
 
-            img       = (BablImage*)source;
+            img       = (BablImage *) source;
             src_data  = img->data[0];
             src_pitch = img->pitch[0];
           }
-        if (BABL_IS_BABL(destination))
+        if (BABL_IS_BABL (destination))
           {
-            BablImage *img = (BablImage*)destination;
+            BablImage *img = (BablImage *) destination;
 
             dst_data  = img->data[0];
             dst_pitch = img->pitch[0];
           }
 
         if (!src_data)
-          src_data=source;
+          src_data = source;
         if (!src_pitch)
-          src_pitch=BABL(conversion->source)->type.bits/8;
+          src_pitch = BABL (conversion->source)->type.bits / 8;
         if (!dst_data)
-          dst_data=destination;
+          dst_data = destination;
         if (!dst_pitch)
-          dst_pitch=BABL(conversion->destination)->type.bits/8;
+          dst_pitch = BABL (conversion->destination)->type.bits / 8;
 
         babl_conversion_plane_process (conversion,
-                                       src_data,  dst_data,
+                                       src_data, dst_data,
                                        src_pitch, dst_pitch,
                                        n);
       }
-      break;
-    case BABL_CONVERSION_PLANAR:
-      babl_assert (BABL_IS_BABL (source));
-      babl_assert (BABL_IS_BABL (destination));
+        break;
 
-      babl_conversion_planar_process (                  conversion,
-                                      (BablImage*)      source,
-                                      (BablImage*)      destination,
-                                                        n);
-      break;
-    case BABL_CONVERSION_LINEAR:
-      /* the assertions relied on a babl_malloc structure
-       *
-       * babl_assert (!BABL_IS_BABL (source));
-      babl_assert (!BABL_IS_BABL (destination));*/
+      case BABL_CONVERSION_PLANAR:
+        babl_assert (BABL_IS_BABL (source));
+        babl_assert (BABL_IS_BABL (destination));
 
-      babl_conversion_linear_process (conversion,
-                                      source,
-                                      destination,
-                                      n);
-      break;
+        babl_conversion_planar_process (conversion,
+                                        (BablImage *) source,
+                                        (BablImage *) destination,
+                                        n);
+        break;
 
-    default:
-      babl_log ("args=(%s, %p, %p, %li) unhandled conversion type: %s",
-           conversion->instance.name, source, destination, n,
-          babl_class_name (conversion->instance.class_type));
-      return 0;
-      break;
-  }
+      case BABL_CONVERSION_LINEAR:
+        /* the assertions relied on a babl_malloc structure
+         *
+         * babl_assert (!BABL_IS_BABL (source));
+           babl_assert (!BABL_IS_BABL (destination));*/
 
-  conversion->processings ++;
+        babl_conversion_linear_process (conversion,
+                                        source,
+                                        destination,
+                                        n);
+        break;
+
+      default:
+        babl_log ("args=(%s, %p, %p, %li) unhandled conversion type: %s",
+                  conversion->instance.name, source, destination, n,
+                  babl_class_name (conversion->instance.class_type));
+        return 0;
+        break;
+    }
+
+  conversion->processings++;
   conversion->pixels += n;
   return n;
 }
 
-#define test_pixels   512
+#define test_pixels    512
 
 static double *
 test_create (void)
@@ -416,7 +419,7 @@ test_create (void)
   test = babl_malloc (sizeof (double) * test_pixels * 4);
 
   for (i = 0; i < test_pixels * 4; i++)
-     test [i] = (double) random () / RAND_MAX;
+    test [i] = (double) random () / RAND_MAX;
   return test;
 }
 
@@ -425,7 +428,7 @@ babl_conversion_cost (BablConversion *conversion)
 {
   if (!conversion)
     return 100000000L;
-  if (conversion->error==-1.0)
+  if (conversion->error == -1.0)
     babl_conversion_error (conversion);
   return conversion->cost;
 }
@@ -436,35 +439,34 @@ babl_conversion_error (BablConversion *conversion)
   Babl *fmt_source;
   Babl *fmt_destination;
 
-  Babl *fmt_rgba_double = fmt_rgba_double = babl_format_new (
-       babl_model     ("RGBA"),
-       babl_type      ("double"),
-       babl_component ("R"),
-       babl_component ("G"),
-       babl_component ("B"),
-       babl_component ("A"),
-       NULL);
+  Babl *fmt_rgba_double = babl_format_new (babl_model ("RGBA"),
+                                           babl_type ("double"),
+                                           babl_component ("R"),
+                                           babl_component ("G"),
+                                           babl_component ("B"),
+                                           babl_component ("A"),
+                                           NULL);
 
-  double   error = 0.0;
-  long     ticks_start = 0;
-  long     ticks_end   = 0;
+  double  error       = 0.0;
+  long    ticks_start = 0;
+  long    ticks_end   = 0;
 
-  double  *test;
-  void    *source;
-  void    *destination;
-  double  *destination_rgba_double;
-  void    *ref_destination;
-  double  *ref_destination_rgba_double;
+  double *test;
+  void   *source;
+  void   *destination;
+  double *destination_rgba_double;
+  void   *ref_destination;
+  double *ref_destination_rgba_double;
 
-  Babl *fish_rgba_to_source;
-  Babl *fish_reference;
-  Babl *fish_destination_to_rgba;
+  Babl   *fish_rgba_to_source;
+  Babl   *fish_reference;
+  Babl   *fish_destination_to_rgba;
 
   if (!conversion)
     return 0.0;
 
-  fmt_source      = BABL(conversion->source);
-  fmt_destination = BABL(conversion->destination);
+  fmt_source      = BABL (conversion->source);
+  fmt_destination = BABL (conversion->destination);
 
   fish_rgba_to_source      = babl_fish_reference (fmt_rgba_double, fmt_source);
   fish_reference           = babl_fish_reference (fmt_source, fmt_destination);
@@ -476,12 +478,12 @@ babl_conversion_error (BablConversion *conversion)
       return 0.0;
     }
 
-  if (!(fmt_source->instance.id    != BABL_RGBA   &&
-      fmt_destination->instance.id != BABL_RGBA   &&
-      fmt_source->instance.id      != BABL_DOUBLE &&
-      fmt_destination->instance.id != BABL_DOUBLE &&
-      fmt_source->class_type       == BABL_FORMAT &&
-      fmt_destination->class_type  == BABL_FORMAT))
+  if (!(fmt_source->instance.id != BABL_RGBA &&
+        fmt_destination->instance.id != BABL_RGBA &&
+        fmt_source->instance.id != BABL_DOUBLE &&
+        fmt_destination->instance.id != BABL_DOUBLE &&
+        fmt_source->class_type == BABL_FORMAT &&
+        fmt_destination->class_type == BABL_FORMAT))
     {
       conversion->error = 0.000042;
     }
@@ -490,41 +492,41 @@ babl_conversion_error (BablConversion *conversion)
       return conversion->error;
     }
 
-  test=test_create ();
+  test = test_create ();
 
 
-  source          = babl_calloc (test_pixels, fmt_source->format.bytes_per_pixel);
-  destination     = babl_calloc (test_pixels, fmt_destination->format.bytes_per_pixel);
-  ref_destination = babl_calloc (test_pixels, fmt_destination->format.bytes_per_pixel);
+  source                      = babl_calloc (test_pixels, fmt_source->format.bytes_per_pixel);
+  destination                 = babl_calloc (test_pixels, fmt_destination->format.bytes_per_pixel);
+  ref_destination             = babl_calloc (test_pixels, fmt_destination->format.bytes_per_pixel);
   destination_rgba_double     = babl_calloc (test_pixels, fmt_rgba_double->format.bytes_per_pixel);
   ref_destination_rgba_double = babl_calloc (test_pixels, fmt_rgba_double->format.bytes_per_pixel);
 
   babl_process (fish_rgba_to_source,
-      test, source, test_pixels);
+                test, source, test_pixels);
 
   ticks_start = babl_ticks ();
   babl_process (babl_fish_simple (conversion),
-      source, destination, test_pixels);
+                source, destination, test_pixels);
   ticks_end = babl_ticks ();
 
   babl_process (fish_reference,
-      source, ref_destination, test_pixels);
+                source, ref_destination, test_pixels);
 
   babl_process (fish_destination_to_rgba,
-      ref_destination, ref_destination_rgba_double, test_pixels);
+                ref_destination, ref_destination_rgba_double, test_pixels);
   babl_process (fish_destination_to_rgba,
-      destination, destination_rgba_double, test_pixels);
+                destination, destination_rgba_double, test_pixels);
 
   error = babl_rel_avg_error (destination_rgba_double,
                               ref_destination_rgba_double,
-                              test_pixels*4);
+                              test_pixels * 4);
 
   fish_rgba_to_source->fish.processings--;
   fish_reference->fish.processings--;
-  fish_destination_to_rgba->fish.processings-=2;
+  fish_destination_to_rgba->fish.processings -= 2;
 
-  fish_rgba_to_source->fish.pixels -= test_pixels;
-  fish_reference->fish.pixels -= test_pixels;
+  fish_rgba_to_source->fish.pixels      -= test_pixels;
+  fish_reference->fish.pixels           -= test_pixels;
   fish_destination_to_rgba->fish.pixels -= 2 * test_pixels;
 
 
@@ -536,7 +538,7 @@ babl_conversion_error (BablConversion *conversion)
   babl_free (test);
 
   conversion->error = error;
-  conversion->cost  = (ticks_end-ticks_start)*10+1;
+  conversion->cost  = (ticks_end - ticks_start) * 10 + 1;
 
   return error;
 }

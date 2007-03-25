@@ -5,7 +5,7 @@
 #include <math.h>
 #include "babl-internal.h"
 
-int OK=1;
+int OK = 1;
 
 
 static int model_check (Babl *babl,
@@ -14,7 +14,7 @@ static int model_check (Babl *babl,
   if (!babl_model_is_symmetric (babl))
     {
       babl_log ("%s is not symmetric", babl->instance.name);
-      OK=0;
+      OK = 0;
     }
   return 0;
 }

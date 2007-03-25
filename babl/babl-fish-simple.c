@@ -33,28 +33,28 @@ babl_fish_simple (BablConversion *conversion)
 
   babl_assert (BABL_IS_BABL (conversion));
 
-  name  = create_name (conversion);
+  name = create_name (conversion);
 
-  babl                   = babl_malloc (sizeof (BablFishSimple) +
-                                        strlen (name) + 1);
-  babl->class_type       = BABL_FISH_SIMPLE;
-  babl->instance.id      = 0;
-  babl->instance.name    = ((char *)babl) + sizeof(BablFishSimple);
+  babl = babl_malloc (sizeof (BablFishSimple) +
+                      strlen (name) + 1);
+  babl->class_type    = BABL_FISH_SIMPLE;
+  babl->instance.id   = 0;
+  babl->instance.name = ((char *) babl) + sizeof (BablFishSimple);
   strcpy (babl->instance.name, name);
   babl->fish.source      = conversion->source;
   babl->fish.destination = conversion->destination;
 
-  babl->fish.processings = 0;
-  babl->fish.pixels      = 0;
+  babl->fish.processings       = 0;
+  babl->fish.pixels            = 0;
   babl->fish_simple.conversion = conversion;
-  babl->fish.error       = 0.0; /* babl fish simple should only be used by bablfish
+  babl->fish.error             = 0.0;/* babl fish simple should only be used by bablfish
                                    reference, and babl fish reference only requests clean
                                    conversions */
 
-  { 
+  {
     Babl *ret = babl_db_insert (babl_fish_db (), babl);
-    if (ret!=babl)
-        babl_free (babl);
+    if (ret != babl)
+      babl_free (babl);
     return ret;
   }
 }

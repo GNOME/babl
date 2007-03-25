@@ -34,8 +34,8 @@ convert_double_float (char *src,
   while (n--)
     {
       (*(float *) dst) = (*(double *) src);
-      dst += dst_pitch;
-      src += src_pitch;
+      dst             += dst_pitch;
+      src             += src_pitch;
     }
   return n;
 }
@@ -50,8 +50,8 @@ convert_float_double (char *src,
   while (n--)
     {
       (*(double *) dst) = (*(float *) src);
-      dst += dst_pitch;
-      src += src_pitch;
+      dst              += dst_pitch;
+      src              += src_pitch;
     }
   return n;
 }
@@ -61,7 +61,7 @@ babl_base_type_float (void)
 {
   babl_type_new (
     "float",
-    "id",   BABL_FLOAT,
+    "id", BABL_FLOAT,
     "bits", 32,
     NULL);
 

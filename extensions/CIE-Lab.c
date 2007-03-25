@@ -23,29 +23,29 @@
 
 int init (void);
 
-static void types         (void);
-static void components    (void);
-static void models        (void);
-static void conversions   (void);
-static void formats       (void);
+static void types (void);
+static void components (void);
+static void models (void);
+static void conversions (void);
+static void formats (void);
 
 int
 init (void)
 {
-  types         ();
-  components    ();
-  models        ();
-  formats       ();
-  conversions   ();
+  types ();
+  components ();
+  models ();
+  formats ();
+  conversions ();
   return 0;
 }
 
 static void
 components (void)
 {
-  babl_component_new ( "CIE L", NULL);
-  babl_component_new ( "CIE a", "chroma", NULL);
-  babl_component_new ( "CIE b", "chroma", NULL);
+  babl_component_new ("CIE L", NULL);
+  babl_component_new ("CIE a", "chroma", NULL);
+  babl_component_new ("CIE b", "chroma", NULL);
 }
 
 static void
@@ -67,46 +67,46 @@ models (void)
     NULL);
 }
 
-/***********    cpercep.h *********   */ 
+/***********    cpercep.h *********   */
 
 /*
-Copyright (C) 1997-2002 Adam D. Moss (the "Author").  All Rights Reserved.
+   Copyright (C) 1997-2002 Adam D. Moss (the "Author").  All Rights Reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is fur-
-nished to do so, subject to the following conditions:
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is fur-
+   nished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FIT-
-NESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
-AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CON-
-NECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FIT-
+   NESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+   AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+   IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CON-
+   NECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-Except as contained in this notice, the name of the Author of the
-Software shall not be used in advertising or otherwise to promote the sale,
-use or other dealings in this Software without prior written authorization
-from the Author.
-*/
+   Except as contained in this notice, the name of the Author of the
+   Software shall not be used in advertising or otherwise to promote the sale,
+   use or other dealings in this Software without prior written authorization
+   from the Author.
+ */
 
 /*
-  cpercep.c: The CPercep Functions v0.9: 2002-02-10
-  Adam D. Moss: adam@gimp.org <http://www.foxbox.org/adam/code/cpercep/>
+   cpercep.c: The CPercep Functions v0.9: 2002-02-10
+   Adam D. Moss: adam@gimp.org <http://www.foxbox.org/adam/code/cpercep/>
 
-  TODO: document functions, rename erroneously-named arguments
-*/
+   TODO: document functions, rename erroneously-named arguments
+ */
 
 #ifndef __CPERCEP_H__
 #define __CPERCEP_H__
 
 
-void  cpercep_init         (void);
+void  cpercep_init (void);
 
 void  cpercep_rgb_to_space (double  inr,
                             double  ing,
@@ -127,20 +127,20 @@ void  cpercep_space_to_rgb (double  inr,
 /* This is in the header so that it can potentially be inlined. */
 static const double
 cpercep_distance_space (const double L1, const double a1, const double b1,
-			const double L2, const double a2, const double b2)
+                        const double L2, const double a2, const double b2)
 {
   const double Ld = L1 - L2;
   const double ad = a1 - a2;
   const double bd = b1 - b2;
 
-  return (Ld*Ld + ad*ad + bd*bd);
+  return (Ld * Ld + ad * ad + bd * bd);
 }
 #endif
 
 
 #endif /* __CPERCEP_H__ */
 
-/***********   /cpercep.h *********   */ 
+/***********   /cpercep.h *********   */
 
 
 
@@ -151,20 +151,20 @@ rgba_to_lab (char *src,
 {
   while (n--)
     {
-      double red   = ((double*)src)[0];
-      double green = ((double*)src)[1];
-      double blue  = ((double*)src)[2];
+      double red   = ((double *) src)[0];
+      double green = ((double *) src)[1];
+      double blue  = ((double *) src)[2];
 
       double L, a, b;
 
       cpercep_rgb_to_space (red, green, blue, &L, &a, &b);
 
-      ((double*)dst)[0] = L;
-      ((double*)dst)[1] = a;
-      ((double*)dst)[2] = b;
+      ((double *) dst)[0] = L;
+      ((double *) dst)[1] = a;
+      ((double *) dst)[2] = b;
 
-      src += sizeof(double) * 4;
-      dst += sizeof(double) * 3;
+      src += sizeof (double) * 4;
+      dst += sizeof (double) * 3;
     }
   return n;
 }
@@ -176,21 +176,21 @@ lab_to_rgba (char *src,
 {
   while (n--)
     {
-      double L = ((double*)src)[0];
-      double a = ((double*)src)[1];
-      double b = ((double*)src)[2];
+      double L = ((double *) src)[0];
+      double a = ((double *) src)[1];
+      double b = ((double *) src)[2];
 
       double red, green, blue;
 
       cpercep_space_to_rgb (L, a, b, &red, &green, &blue);
 
-      ((double*)dst)[0] = red;
-      ((double*)dst)[1] = green;
-      ((double*)dst)[2] = blue;
-      ((double*)dst)[3] = 1.0;
+      ((double *) dst)[0] = red;
+      ((double *) dst)[1] = green;
+      ((double *) dst)[2] = blue;
+      ((double *) dst)[3] = 1.0;
 
-      src += sizeof(double) * 3;
-      dst += sizeof(double) * 4;
+      src += sizeof (double) * 3;
+      dst += sizeof (double) * 4;
     }
   return n;
 }
@@ -203,22 +203,22 @@ rgba_to_laba (char *src,
 {
   while (n--)
     {
-      double red   = ((double*)src)[0];
-      double green = ((double*)src)[1];
-      double blue  = ((double*)src)[2];
-      double alpha = ((double*)src)[3];
+      double red   = ((double *) src)[0];
+      double green = ((double *) src)[1];
+      double blue  = ((double *) src)[2];
+      double alpha = ((double *) src)[3];
 
       double L, a, b;
 
       cpercep_rgb_to_space (red, green, blue, &L, &a, &b);
 
-      ((double*)dst)[0] = L;
-      ((double*)dst)[1] = a;
-      ((double*)dst)[2] = b;
-      ((double*)dst)[3] = alpha;
+      ((double *) dst)[0] = L;
+      ((double *) dst)[1] = a;
+      ((double *) dst)[2] = b;
+      ((double *) dst)[3] = alpha;
 
-      src += sizeof(double) * 4;
-      dst += sizeof(double) * 4;
+      src += sizeof (double) * 4;
+      dst += sizeof (double) * 4;
     }
   return n;
 }
@@ -230,22 +230,22 @@ laba_to_rgba (char *src,
 {
   while (n--)
     {
-      double L     = ((double*)src)[0];
-      double a     = ((double*)src)[1];
-      double b     = ((double*)src)[2];
-      double alpha = ((double*)src)[3];
+      double L     = ((double *) src)[0];
+      double a     = ((double *) src)[1];
+      double b     = ((double *) src)[2];
+      double alpha = ((double *) src)[3];
 
       double red, green, blue;
 
       cpercep_space_to_rgb (L, a, b, &red, &green, &blue);
 
-      ((double*)dst)[0] = red;
-      ((double*)dst)[1] = green;
-      ((double*)dst)[2] = blue;
-      ((double*)dst)[3] = alpha;
+      ((double *) dst)[0] = red;
+      ((double *) dst)[1] = green;
+      ((double *) dst)[2] = blue;
+      ((double *) dst)[3] = alpha;
 
-      src += sizeof(double) * 4;
-      dst += sizeof(double) * 4;
+      src += sizeof (double) * 4;
+      dst += sizeof (double) * 4;
     }
   return n;
 }
@@ -253,80 +253,79 @@ laba_to_rgba (char *src,
 static void
 conversions (void)
 {
-
   babl_conversion_new (
     babl_model ("RGBA"),
     babl_model ("CIE Lab"),
-    "linear",      rgba_to_lab,
+    "linear", rgba_to_lab,
     NULL
   );
   babl_conversion_new (
     babl_model ("CIE Lab"),
     babl_model ("RGBA"),
-    "linear",      lab_to_rgba,
+    "linear", lab_to_rgba,
     NULL
   );
   babl_conversion_new (
     babl_model ("RGBA"),
     babl_model ("CIE Lab alpha"),
-    "linear",      rgba_to_laba,
+    "linear", rgba_to_laba,
     NULL
   );
   babl_conversion_new (
     babl_model ("CIE Lab alpha"),
     babl_model ("RGBA"),
-    "linear",      laba_to_rgba,
+    "linear", laba_to_rgba,
     NULL
   );
 
-  cpercep_init  ();
+  cpercep_init ();
 }
 
 static void
 formats (void)
 {
   babl_format_new (
-    "name",        "CIE Lab float",
-    babl_model     ("CIE Lab"),
+    "name", "CIE Lab float",
+    babl_model ("CIE Lab"),
 
-    babl_type      ("float"),
-    babl_component ("CIE L"), 
-    babl_component ("CIE a"), 
+    babl_type ("float"),
+    babl_component ("CIE L"),
+    babl_component ("CIE a"),
     babl_component ("CIE b"),
     NULL);
 
   babl_format_new (
-    "name",        "CIE Lab alpha float",
-    babl_model     ("CIE Lab alpha"),
+    "name", "CIE Lab alpha float",
+    babl_model ("CIE Lab alpha"),
 
-    babl_type      ("double"),
-    babl_component ("CIE L"), 
-    babl_component ("CIE a"), 
+    babl_type ("double"),
+    babl_component ("CIE L"),
+    babl_component ("CIE a"),
     babl_component ("CIE b"),
     babl_component ("A"),
     NULL);
 
   babl_format_new (
-    "name",        "CIE Lab u8",
-    babl_model     ("CIE Lab"),
+    "name", "CIE Lab u8",
+    babl_model ("CIE Lab"),
 
-    babl_type      ("CIE u8 L"),
+    babl_type ("CIE u8 L"),
     babl_component ("CIE L"),
-    babl_type      ("CIE u8 ab"),
-    babl_component ("CIE a"), 
-    babl_type      ("CIE u8 ab"),
+    babl_type ("CIE u8 ab"),
+    babl_component ("CIE a"),
+    babl_type ("CIE u8 ab"),
     babl_component ("CIE b"),
     NULL);
 
   babl_format_new (
-    "name",        "CIE Lab u16",
-    babl_model     ("CIE Lab"),
+    "name", "CIE Lab u16",
+    babl_model ("CIE Lab"),
 
-    babl_type      ("CIE u16 L"),
+    babl_type ("CIE u16 L"),
     babl_component ("CIE L"),
-    babl_type      ("CIE u16 ab"),
-    babl_component ("CIE a"), 
-    babl_type      ("CIE u16 ab"),
+    babl_type ("CIE u16 ab"),
+    babl_component ("CIE a"),
+    babl_type ("CIE u16 ab"),
     babl_component ("CIE b"),
     NULL);
 }
@@ -345,7 +344,7 @@ convert_double_u8_scaled (double        min_val,
 {
   while (n--)
     {
-      double         dval = *(double *) src;
+      double        dval = *(double *) src;
       unsigned char u8val;
 
       if (dval < min_val)
@@ -353,11 +352,11 @@ convert_double_u8_scaled (double        min_val,
       else if (dval > max_val)
         u8val = max;
       else
-        u8val = rint ((dval-min_val) / (max_val-min_val) * (max-min) + min);
+        u8val = rint ((dval - min_val) / (max_val - min_val) * (max - min) + min);
 
       *(unsigned char *) dst = u8val;
-      src += src_pitch;
-      dst += dst_pitch;
+      src                   += src_pitch;
+      dst                   += dst_pitch;
     }
   return n;
 }
@@ -383,7 +382,7 @@ convert_u8_double_scaled (double        min_val,
       else if (u8val > max)
         dval = max_val;
       else
-        dval  = (u8val-min) / (double)(max-min) * (max_val-min_val) + min_val;
+        dval = (u8val - min) / (double) (max - min) * (max_val - min_val) + min_val;
 
       (*(double *) dst) = dval;
 
@@ -394,30 +393,30 @@ convert_u8_double_scaled (double        min_val,
 }
 
 #define MAKE_CONVERSIONS(name, min_val, max_val, min, max)      \
-static long                                                     \
-convert_##name##_double (char *src,                             \
-                         char *dst,                             \
-                         int   src_pitch,                       \
-                         int   dst_pitch,                       \
-                         long  n)                               \
-{                                                               \
-  return convert_u8_double_scaled (min_val, max_val, min, max,  \
-                            src, dst, src_pitch, dst_pitch, n); \
-}                                                               \
-static long                                                     \
-convert_double_##name (char *src,                               \
-                       char *dst,                               \
-                       int   src_pitch,                         \
-                       int   dst_pitch,                         \
-                       long  n)                                 \
-{                                                               \
-  return convert_double_u8_scaled (min_val, max_val, min, max,  \
-                            src, dst, src_pitch, dst_pitch, n); \
-}
+  static long \
+  convert_ ## name ## _double (char *src, \
+                               char *dst, \
+                               int src_pitch, \
+                               int dst_pitch, \
+                               long n)                               \
+  { \
+    return convert_u8_double_scaled (min_val, max_val, min, max, \
+                                     src, dst, src_pitch, dst_pitch, n); \
+  }                                                               \
+  static long \
+  convert_double_ ## name (char *src, \
+                           char *dst, \
+                           int src_pitch, \
+                           int dst_pitch, \
+                           long n)                                 \
+  { \
+    return convert_double_u8_scaled (min_val, max_val, min, max, \
+                                     src, dst, src_pitch, dst_pitch, n); \
+  }
 
 /* source ICC.1:2004-10 */
 
-MAKE_CONVERSIONS (u8_l,  0.0, 100.0,    0x00, 0xff);
+MAKE_CONVERSIONS (u8_l, 0.0, 100.0, 0x00, 0xff);
 MAKE_CONVERSIONS (u8_ab, -128.0, 127.0, 0x00, 0xff);
 
 #undef MAKE_CONVERSIONS
@@ -429,9 +428,9 @@ types_u8 (void)
     "CIE u8 L",
     "integer",
     "unsigned",
-    "bits",         8,
-    "min_val",    0.0,
-    "max_val",  100.0,
+    "bits", 8,
+    "min_val", 0.0,
+    "max_val", 100.0,
     NULL
   );
 
@@ -439,35 +438,35 @@ types_u8 (void)
     "CIE u8 ab",
     "integer",
     "unsigned",
-    "bits",         8,
-    "min_val",  -50.0,
-    "max_val",   50.0,
+    "bits", 8,
+    "min_val", -50.0,
+    "max_val", 50.0,
     NULL
   );
 
   babl_conversion_new (
     babl_type ("CIE u8 L"),
     babl_type ("double"),
-    "plane",      convert_u8_l_double,
+    "plane", convert_u8_l_double,
     NULL
   );
   babl_conversion_new (
     babl_type ("double"),
     babl_type ("CIE u8 L"),
-    "plane",      convert_double_u8_l,
+    "plane", convert_double_u8_l,
     NULL
   );
 
   babl_conversion_new (
     babl_type ("CIE u8 ab"),
     babl_type ("double"),
-    "plane",      convert_u8_ab_double,
+    "plane", convert_u8_ab_double,
     NULL
   );
   babl_conversion_new (
     babl_type ("double"),
     babl_type ("CIE u8 ab"),
-    "plane",      convert_double_u8_ab,
+    "plane", convert_double_u8_ab,
     NULL
   );
 }
@@ -493,11 +492,11 @@ convert_double_u16_scaled (double         min_val,
       else if (dval > max_val)
         u16val = max;
       else
-        u16val = rint ((dval-min_val) / (max_val-min_val) * (max-min) + min);
+        u16val = rint ((dval - min_val) / (max_val - min_val) * (max - min) + min);
 
       *(unsigned short *) dst = u16val;
-      dst += dst_pitch;
-      src += src_pitch;
+      dst                    += dst_pitch;
+      src                    += src_pitch;
     }
   return n;
 }
@@ -515,7 +514,7 @@ convert_u16_double_scaled (double         min_val,
 {
   while (n--)
     {
-      int    u16val = *(unsigned short*) src;
+      int    u16val = *(unsigned short *) src;
       double dval;
 
       if (u16val < min)
@@ -523,38 +522,38 @@ convert_u16_double_scaled (double         min_val,
       else if (u16val > max)
         dval = max_val;
       else
-        dval  = (u16val-min) / (double)(max-min) * (max_val-min_val) + min_val;
+        dval = (u16val - min) / (double) (max - min) * (max_val - min_val) + min_val;
 
       (*(double *) dst) = dval;
-      dst += dst_pitch;
-      src += src_pitch;
+      dst              += dst_pitch;
+      src              += src_pitch;
     }
   return n;
 }
 
 #define MAKE_CONVERSIONS(name, min_val, max_val, min, max)      \
-static long                                                     \
-convert_##name##_double (char *src,                             \
-                         char *dst,                             \
-                         int   src_pitch,                       \
-                         int   dst_pitch,                       \
-                         long  n)                               \
-{                                                               \
-  return convert_u16_double_scaled (min_val, max_val, min, max, \
-                             src, dst, src_pitch, dst_pitch, n);\
-}                                                               \
-static long                                                     \
-convert_double_##name (char *src,                               \
-                       char *dst,                               \
-                       int   src_pitch,                         \
-                       int   dst_pitch,                         \
-                       long  n)                                 \
-{                                                               \
-  return convert_double_u16_scaled (min_val, max_val, min, max, \
-                             src, dst, src_pitch, dst_pitch, n);\
-}
+  static long \
+  convert_ ## name ## _double (char *src, \
+                               char *dst, \
+                               int src_pitch, \
+                               int dst_pitch, \
+                               long n)                               \
+  { \
+    return convert_u16_double_scaled (min_val, max_val, min, max, \
+                                      src, dst, src_pitch, dst_pitch, n); \
+  }                                                               \
+  static long \
+  convert_double_ ## name (char *src, \
+                           char *dst, \
+                           int src_pitch, \
+                           int dst_pitch, \
+                           long n)                                 \
+  { \
+    return convert_double_u16_scaled (min_val, max_val, min, max, \
+                                      src, dst, src_pitch, dst_pitch, n); \
+  }
 
-MAKE_CONVERSIONS (u16_l,    0.0,  100.0, 0x00, 0xffff);
+MAKE_CONVERSIONS (u16_l, 0.0, 100.0, 0x00, 0xffff);
 MAKE_CONVERSIONS (u16_ab, -128.0, 127.0, 0x00, 0xffff);
 
 #undef MAKE_CONVERSIONS
@@ -562,25 +561,24 @@ MAKE_CONVERSIONS (u16_ab, -128.0, 127.0, 0x00, 0xffff);
 static void
 types_u16 (void)
 {
-
   babl_type_new (
     "CIE u16 L",
     "integer",
     "unsigned",
-    "bits",        16,
-    "min_val",    0.0,
-    "max_val",  100.0,
+    "bits", 16,
+    "min_val", 0.0,
+    "max_val", 100.0,
     NULL
   );
 
   babl_type_new (
     "CIE u16 ab",
-    "id",       "CIE u8 ab",
+    "id", "CIE u8 ab",
     "integer",
     "unsigned",
-    "bits",        16,
-    "min_val",  -50.0,
-    "max_val",   50.0,
+    "bits", 16,
+    "min_val", -50.0,
+    "max_val", 50.0,
     NULL
   );
 
@@ -588,26 +586,26 @@ types_u16 (void)
   babl_conversion_new (
     babl_type ("CIE u16 L"),
     babl_type ("double"),
-    "plane",      convert_u16_l_double,
+    "plane", convert_u16_l_double,
     NULL
   );
   babl_conversion_new (
     babl_type ("double"),
     babl_type ("CIE u16 L"),
-    "plane",      convert_double_u16_l,
+    "plane", convert_double_u16_l,
     NULL
   );
 
   babl_conversion_new (
     babl_type ("CIE u16 ab"),
     babl_type ("double"),
-    "plane",      convert_u16_ab_double,
+    "plane", convert_u16_ab_double,
     NULL
   );
   babl_conversion_new (
     babl_type ("double"),
     babl_type ("CIE u16 ab"),
-    "plane",      convert_double_u16_ab,
+    "plane", convert_double_u16_ab,
     NULL
   );
 }
@@ -622,75 +620,75 @@ types (void)
 
 
 
-/***********   cpercep.c *********   */ 
+/***********   cpercep.c *********   */
 
 
 /*
-Copyright (C) 1999-2002 Adam D. Moss (the "Author").  All Rights Reserved.
+   Copyright (C) 1999-2002 Adam D. Moss (the "Author").  All Rights Reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is fur-
-nished to do so, subject to the following conditions:
+   Permission is hereby granted, free of charge, to any person obtaining a copy
+   of this software and associated documentation files (the "Software"), to deal
+   in the Software without restriction, including without limitation the rights
+   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   copies of the Software, and to permit persons to whom the Software is fur-
+   nished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+   The above copyright notice and this permission notice shall be included in
+   all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FIT-
-NESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
-AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CON-
-NECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FIT-
+   NESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+   AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+   IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CON-
+   NECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-Except as contained in this notice, the name of the Author of the
-Software shall not be used in advertising or otherwise to promote the sale,
-use or other dealings in this Software without prior written authorization
-from the Author.
-*/
+   Except as contained in this notice, the name of the Author of the
+   Software shall not be used in advertising or otherwise to promote the sale,
+   use or other dealings in this Software without prior written authorization
+   from the Author.
+ */
 
 /*
-  cpercep.c: The CPercep Functions v0.9: 2002-02-10
-  Adam D. Moss: adam@gimp.org <http://www.foxbox.org/adam/code/cpercep/>
+   cpercep.c: The CPercep Functions v0.9: 2002-02-10
+   Adam D. Moss: adam@gimp.org <http://www.foxbox.org/adam/code/cpercep/>
 
-  This code module concerns itself with conversion from a hard-coded
-  RGB colour space (sRGB by default) to CIE L*a*b* and back again with
-  (primarily) precision and (secondarily) speed, oriented largely
-  towards the purposes of quantifying the PERCEPTUAL difference between
-  two arbitrary RGB colours with a minimum of fuss.
+   This code module concerns itself with conversion from a hard-coded
+   RGB colour space (sRGB by default) to CIE L*a*b* and back again with
+   (primarily) precision and (secondarily) speed, oriented largely
+   towards the purposes of quantifying the PERCEPTUAL difference between
+   two arbitrary RGB colours with a minimum of fuss.
 
-  Motivation One: The author is disheartened at the amount of graphics
-  processing software around which uses weighted or non-weighted
-  Euclidean distance between co-ordinates within a (poorly-defined) RGB
-  space as the basis of what should really be an estimate of perceptual
-  difference to the human eye.  Certainly it's fast to do it that way,
-  but please think carefully about whether your particular application
-  should be tolerating sloppy results for the sake of real-time response.
+   Motivation One: The author is disheartened at the amount of graphics
+   processing software around which uses weighted or non-weighted
+   Euclidean distance between co-ordinates within a (poorly-defined) RGB
+   space as the basis of what should really be an estimate of perceptual
+   difference to the human eye.  Certainly it's fast to do it that way,
+   but please think carefully about whether your particular application
+   should be tolerating sloppy results for the sake of real-time response.
 
-  Motivation Two: Lack of tested, re-usable and free code available
-  for this purpose.  The difficulty in finding something similar to
-  CPercep with a free license motivated this project; I hope that this
-  code also serves to illustrate how to perform the
-  R'G'B'->XYZ->L*a*b*->XYZ->R'G'B' transformation correctly since I
-  was distressed to note how many of the equations and code snippets
-  on the net were omitting the reverse transform and/or were using
-  incorrectly-derived or just plain wrong constants.
+   Motivation Two: Lack of tested, re-usable and free code available
+   for this purpose.  The difficulty in finding something similar to
+   CPercep with a free license motivated this project; I hope that this
+   code also serves to illustrate how to perform the
+   R'G'B'->XYZ->L*a*b*->XYZ->R'G'B' transformation correctly since I
+   was distressed to note how many of the equations and code snippets
+   on the net were omitting the reverse transform and/or were using
+   incorrectly-derived or just plain wrong constants.
 
-  TODO: document functions, rename erroneously-named arguments
-*/
+   TODO: document functions, rename erroneously-named arguments
+ */
 
 /* defines added to make it compile outside gimp */
 
 #ifndef gboolean
-#define gboolean int
+#define gboolean    int
 #endif
 #ifndef FALSE
-#define FALSE    0
+#define FALSE       0
 #endif
 #ifndef TRUE
-#define TRUE     1
+#define TRUE        1
 #endif
 
 
@@ -699,7 +697,7 @@ from the Author.
 
 #ifndef __GLIBC__
 /* cbrt() is a GNU extension */
-#define cbrt(x) (pow(x, 1.0/3.0))
+#define cbrt(x)    (pow (x, 1.0 / 3.0))
 #endif
 
 /* #include "cpercep.h" */
@@ -718,7 +716,7 @@ from the Author.
    destined for an sRGB-alike display device (a typical modern monitor)
    -- if you change this then you'll probably want to change ASSUMED_GAMMA,
    the phosphor colours and the white point definition.
-*/
+ */
 
 /* #define SANITY */
 /* #define APPROX */
@@ -726,13 +724,13 @@ from the Author.
 
 
 #ifdef SRGB
-#define ASSUMED_GAMMA (2.2F)
+#define ASSUMED_GAMMA    (2.2F)
 #else
 /*#define ASSUMED_GAMMA (2.591F)*/
-#define ASSUMED_GAMMA (1.0F)
+#define ASSUMED_GAMMA    (1.0F)
 #endif
 
-#define REV_GAMMA ((1.0F / ASSUMED_GAMMA))
+#define REV_GAMMA        ((1.0F / ASSUMED_GAMMA))
 
 
 /* define characteristics of the source RGB space (and the space
@@ -792,30 +790,30 @@ static double powtable[256];
 
 
 #ifndef CLAMP
-#define CLAMP(x,l,u) ((x)<(l)?(l):((x)>(u)?(u):(x)))
+#define CLAMP(x, l, u)    ((x) < (l) ? (l) : ((x) > (u) ? (u) : (x)))
 #endif
 
 
 static void
-init_powtable(const double gamma)
+init_powtable (const double gamma)
 {
   int i;
 
 #ifndef SRGB
   /* pure gamma function */
-  for (i=0; i<256; i++)
+  for (i = 0; i < 256; i++)
     {
-      powtable[i] = pow((i)/255.0F, gamma);
+      powtable[i] = pow ((i) / 255.0F, gamma);
     }
 #else
   /* sRGB gamma curve */
-  for (i=0; i<11 /* 0.03928 * 255 */; i++)
+  for (i = 0; i < 11 /* 0.03928 * 255 */; i++)
     {
       powtable[i] = (i) / (255.0F * 12.92F);
     }
-  for (; i<256; i++)
+  for (; i < 256; i++)
     {
-      powtable[i] = pow( (((i) / 255.0F) + 0.055F) / 1.055F, 2.4F);
+      powtable[i] = pow ((((i) / 255.0F) + 0.055F) / 1.055F, 2.4F);
     }
 #endif
 }
@@ -869,7 +867,7 @@ Minvert (CMatrix src, CMatrix dest)
 
 
 static void
-rgbxyzrgb_init(void)
+rgbxyzrgb_init (void)
 {
   init_powtable (ASSUMED_GAMMA);
 
@@ -879,7 +877,7 @@ rgbxyzrgb_init(void)
 
   {
     CMatrix MRC, MRCi;
-    double C1,C2,C3;
+    double  C1, C2, C3;
 
     MRC[0][0] = pxr;
     MRC[0][1] = pxg;
@@ -893,9 +891,9 @@ rgbxyzrgb_init(void)
 
     Minvert (MRC, MRCi);
 
-    C1 = MRCi[0][0]*xnn + MRCi[0][1] + MRCi[0][2]*znn;
-    C2 = MRCi[1][0]*xnn + MRCi[1][1] + MRCi[1][2]*znn;
-    C3 = MRCi[2][0]*xnn + MRCi[2][1] + MRCi[2][2]*znn;
+    C1 = MRCi[0][0] * xnn + MRCi[0][1] + MRCi[0][2] * znn;
+    C2 = MRCi[1][0] * xnn + MRCi[1][1] + MRCi[1][2] * znn;
+    C3 = MRCi[2][0] * xnn + MRCi[2][1] + MRCi[2][2] * znn;
 
     Mrgb_to_xyz[0][0] = MRC[0][0] * C1;
     Mrgb_to_xyz[0][1] = MRC[0][1] * C2;
@@ -914,50 +912,50 @@ rgbxyzrgb_init(void)
 
 static void
 xyz_to_rgb (double *inx_outr,
-	    double *iny_outg,
-	    double *inz_outb)
+            double *iny_outg,
+            double *inz_outb)
 {
   const double x = *inx_outr;
   const double y = *iny_outg;
   const double z = *inz_outb;
 
-  *inx_outr = Mxyz_to_rgb[0][0]*x + Mxyz_to_rgb[0][1]*y + Mxyz_to_rgb[0][2]*z;
-  *iny_outg = Mxyz_to_rgb[1][0]*x + Mxyz_to_rgb[1][1]*y + Mxyz_to_rgb[1][2]*z;
-  *inz_outb = Mxyz_to_rgb[2][0]*x + Mxyz_to_rgb[2][1]*y + Mxyz_to_rgb[2][2]*z;
+  *inx_outr = Mxyz_to_rgb[0][0] * x + Mxyz_to_rgb[0][1] * y + Mxyz_to_rgb[0][2] * z;
+  *iny_outg = Mxyz_to_rgb[1][0] * x + Mxyz_to_rgb[1][1] * y + Mxyz_to_rgb[1][2] * z;
+  *inz_outb = Mxyz_to_rgb[2][0] * x + Mxyz_to_rgb[2][1] * y + Mxyz_to_rgb[2][2] * z;
 }
 
 
 static void
 rgb_to_xyz (double *inr_outx,
-	    double *ing_outy,
-	    double *inb_outz)
+            double *ing_outy,
+            double *inb_outz)
 {
   const double r = *inr_outx;
   const double g = *ing_outy;
   const double b = *inb_outz;
 
-  *inr_outx = Mrgb_to_xyz[0][0]*r + Mrgb_to_xyz[0][1]*g + Mrgb_to_xyz[0][2]*b;
-  *ing_outy = Mrgb_to_xyz[1][0]*r + Mrgb_to_xyz[1][1]*g + Mrgb_to_xyz[1][2]*b;
-  *inb_outz = Mrgb_to_xyz[2][0]*r + Mrgb_to_xyz[2][1]*g + Mrgb_to_xyz[2][2]*b;
+  *inr_outx = Mrgb_to_xyz[0][0] * r + Mrgb_to_xyz[0][1] * g + Mrgb_to_xyz[0][2] * b;
+  *ing_outy = Mrgb_to_xyz[1][0] * r + Mrgb_to_xyz[1][1] * g + Mrgb_to_xyz[1][2] * b;
+  *inb_outz = Mrgb_to_xyz[2][0] * r + Mrgb_to_xyz[2][1] * g + Mrgb_to_xyz[2][2] * b;
 }
 
 
 static inline double
-ffunc(const double t)
+ffunc (const double t)
 {
   if (t > 0.008856F)
     {
-      return (cbrt(t));
+      return (cbrt (t));
     }
   else
     {
-      return (7.787F * t + 16.0F/116.0F);
+      return (7.787F * t + 16.0F / 116.0F);
     }
 }
 
 
 static inline double
-ffunc_inv(const double t)
+ffunc_inv (const double t)
 {
   if (t > 0.206893F)
     {
@@ -965,18 +963,18 @@ ffunc_inv(const double t)
     }
   else
     {
-      return ((t - 16.0F/116.0F) / 7.787F);
+      return ((t - 16.0F / 116.0F) / 7.787F);
     }
 }
 
 
 static void
 xyz_to_lab (double *inx,
-	    double *iny,
-	    double *inz)
+            double *iny,
+            double *inz)
 {
-  double L,a,b;
-  double ffuncY;
+  double       L, a, b;
+  double       ffuncY;
   const double X = *inx;
   const double Y = *iny;
   const double Z = *inz;
@@ -984,24 +982,24 @@ xyz_to_lab (double *inx,
   if (Y > 0.0F)
     {
       if (Y > 0.008856F)
-	{
-	  L = (116.0F * cbrt(Y)) - 16.0F;
-	}
+        {
+          L = (116.0F * cbrt (Y)) - 16.0F;
+        }
       else
-	{
-	  L = (Y * 903.3F);
-	}
+        {
+          L = (Y * 903.3F);
+        }
 
 #ifdef SANITY
       if (L < 0.0F)
-	{
-	  g_printerr (" <eek1>%f \007",(float)L);
-	}
+        {
+          g_printerr (" <eek1>%f \007", (float) L);
+        }
 
       if (L > 100.0F)
-	{
-	  g_printerr (" <eek2>%f \007",(float)L);
-	}
+        {
+          g_printerr (" <eek2>%f \007", (float) L);
+        }
 #endif
     }
   else
@@ -1009,9 +1007,9 @@ xyz_to_lab (double *inx,
       L = 0.0;
     }
 
-  ffuncY = ffunc(Y);
-  a = 500.0F * (ffunc(X/xnn) - ffuncY);
-  b = 200.0F * (ffuncY - ffunc(Z/znn));
+  ffuncY = ffunc (Y);
+  a      = 500.0F * (ffunc (X / xnn) - ffuncY);
+  b      = 200.0F * (ffuncY - ffunc (Z / znn));
 
   *inx = L;
   *iny = a;
@@ -1021,11 +1019,11 @@ xyz_to_lab (double *inx,
 
 static void
 lab_to_xyz (double *inl,
-	    double *ina,
-	    double *inb)
+            double *ina,
+            double *inb)
 {
-  double X,Y,Z;
-  double P;
+  double       X, Y, Z;
+  double       P;
   const double L = *inl;
   const double a = *ina;
   const double b = *inb;
@@ -1038,31 +1036,31 @@ lab_to_xyz (double *inl,
   else
     {
       Y = L / 903.3F;
-      P = 7.787F * Y + 16.0F/116.0F;
+      P = 7.787F * Y + 16.0F / 116.0F;
     }
 
   X = (P + a / 500.0F);
-  X = xnn * ffunc_inv(X);
+  X = xnn *ffunc_inv (X);
   Z = (P - b / 200.0F);
-  Z = znn * ffunc_inv(Z);
+  Z = znn *ffunc_inv (Z);
 
 #ifdef SANITY
-  if (X<-0.00000F)
+  if (X < -0.00000F)
     {
-      if (X<-0.0001F)
-	g_printerr ("{badX %f {%f,%f,%f}}",X,L,a,b);
+      if (X < -0.0001F)
+        g_printerr ("{badX %f {%f,%f,%f}}", X, L, a, b);
       X = 0.0F;
     }
-  if (Y<-0.00000F)
+  if (Y < -0.00000F)
     {
-      if (Y<-0.0001F)
-	g_printerr ("{badY %f}",Y);
+      if (Y < -0.0001F)
+        g_printerr ("{badY %f}", Y);
       Y = 0.0F;
     }
-  if (Z<-0.00000F)
+  if (Z < -0.00000F)
     {
-      if (Z<-0.1F)
-	g_printerr ("{badZ %f}",Z);
+      if (Z < -0.1F)
+        g_printerr ("{badZ %f}", Z);
       Z = 0.0F;
     }
 #endif
@@ -1080,9 +1078,9 @@ cpercep_init (void)
 {
   static gboolean initialized = FALSE;
 
-  if (! initialized)
+  if (!initialized)
     {
-      rgbxyzrgb_init();
+      rgbxyzrgb_init ();
       initialized = TRUE;
     }
 }
@@ -1091,7 +1089,7 @@ void
 cpercep_rgb_to_space (double  inr,
                       double  ing,
                       double  inb,
-		      double *outr,
+                      double *outr,
                       double *outg,
                       double *outb)
 {
@@ -1104,37 +1102,37 @@ cpercep_rgb_to_space (double  inr,
       (inr) < -0.0F ||
       (ing) < -0.0F ||
       (inb) < -0.0F
-      )
-    abort();
+  )
+    abort ();
 #endif /* SANITY */
-  inr = powtable[(int)inr];
-  ing = powtable[(int)ing];
-  inb = powtable[(int)inb];
+  inr = powtable[(int) inr];
+  ing = powtable[(int) ing];
+  inb = powtable[(int) inb];
 #else
 #ifdef SRGB
   /* sRGB gamma curve */
   if (inr <= (0.03928F * 255.0F))
-      inr = inr / (255.0F * 12.92F);
+    inr = inr / (255.0F * 12.92F);
   else
-      inr = pow( (inr + (0.055F * 255.0F)) / (1.055F * 255.0F), 2.4F);
+    inr = pow ((inr + (0.055F * 255.0F)) / (1.055F * 255.0F), 2.4F);
 
   if (ing <= (0.03928F * 255.0F))
-      ing = ing / (255.0F * 12.92F);
+    ing = ing / (255.0F * 12.92F);
   else
-      ing = pow( (ing + (0.055F * 255.0F)) / (1.055F * 255.0F), 2.4F);
+    ing = pow ((ing + (0.055F * 255.0F)) / (1.055F * 255.0F), 2.4F);
 
   if (inb <= (0.03928F * 255.0F))
-      inb = inb / (255.0F * 12.92F);
+    inb = inb / (255.0F * 12.92F);
   else
-      inb = pow( (inb + (0.055F * 255.0F)) / (1.055F * 255.0F), 2.4F);
+    inb = pow ((inb + (0.055F * 255.0F)) / (1.055F * 255.0F), 2.4F);
 #else
   /* pure gamma function */
 
   /*  babl uses normalized RGB
-  inr = pow((inr)/255.0F, ASSUMED_GAMMA);
-  ing = pow((ing)/255.0F, ASSUMED_GAMMA);
-  inb = pow((inb)/255.0F, ASSUMED_GAMMA);
-  */
+     inr = pow((inr)/255.0F, ASSUMED_GAMMA);
+     ing = pow((ing)/255.0F, ASSUMED_GAMMA);
+     inb = pow((inb)/255.0F, ASSUMED_GAMMA);
+   */
 #endif /* SRGB */
 #endif /* APPROX */
 
@@ -1146,24 +1144,24 @@ cpercep_rgb_to_space (double  inr,
       (inr) < 0.0F ||
       (ing) < 0.0F ||
       (inb) < 0.0F
-      )
+  )
     {
       g_printerr ("%%");
       /* abort(); */
     }
 #endif /* SANITY */
 
-  rgb_to_xyz(&inr, &ing, &inb);
+  rgb_to_xyz (&inr, &ing, &inb);
 
 #ifdef SANITY
   if (inr < 0.0F || ing < 0.0F || inb < 0.0F)
     {
       g_printerr (" [BAD2 XYZ: %f,%f,%f]\007 ",
-	      inr,ing,inb);
+                  inr, ing, inb);
     }
 #endif /* SANITY */
 
-  xyz_to_lab(&inr, &ing, &inb);
+  xyz_to_lab (&inr, &ing, &inb);
 
   *outr = inr;
   *outg = ing;
@@ -1175,48 +1173,48 @@ void
 cpercep_space_to_rgb (double  inr,
                       double  ing,
                       double  inb,
-		      double *outr,
+                      double *outr,
                       double *outg,
                       double *outb)
 {
-  lab_to_xyz(&inr, &ing, &inb);
+  lab_to_xyz (&inr, &ing, &inb);
 
 #ifdef SANITY
-  if (inr<-0.0F || ing<-0.0F || inb<-0.0F)
+  if (inr < -0.0F || ing < -0.0F || inb < -0.0F)
     {
       g_printerr (" [BAD1 XYZ: %f,%f,%f]\007 ",
-	      inr,ing,inb);
+                  inr, ing, inb);
     }
 #endif
 
-  xyz_to_rgb(&inr, &ing, &inb);
+  xyz_to_rgb (&inr, &ing, &inb);
 
   /* yes, essential.  :( */
-  inr = CLAMP(inr,0.0F,1.0F);
-  ing = CLAMP(ing,0.0F,1.0F);
-  inb = CLAMP(inb,0.0F,1.0F);
+  inr = CLAMP (inr, 0.0F, 1.0F);
+  ing = CLAMP (ing, 0.0F, 1.0F);
+  inb = CLAMP (inb, 0.0F, 1.0F);
 
 #ifdef SRGB
   if (inr <= 0.0030402477F)
     inr = inr * (12.92F * 255.0F);
   else
-    inr = pow(inr, 1.0F/2.4F) * (1.055F * 255.0F) - (0.055F * 255.0F);
+    inr = pow (inr, 1.0F / 2.4F) * (1.055F * 255.0F) - (0.055F * 255.0F);
 
   if (ing <= 0.0030402477F)
     ing = ing * (12.92F * 255.0F);
   else
-    ing = pow(ing, 1.0F/2.4F) * (1.055F * 255.0F) - (0.055F * 255.0F);
+    ing = pow (ing, 1.0F / 2.4F) * (1.055F * 255.0F) - (0.055F * 255.0F);
 
   if (inb <= 0.0030402477F)
     inb = inb * (12.92F * 255.0F);
   else
-    inb = pow(inb, 1.0F/2.4F) * (1.055F * 255.0F) - (0.055F * 255.0F);
+    inb = pow (inb, 1.0F / 2.4F) * (1.055F * 255.0F) - (0.055F * 255.0F);
 #else
   /* babl uses normalized RGB values
-  inr = 255.0F * pow(inr, REV_GAMMA);
-  ing = 255.0F * pow(ing, REV_GAMMA);
-  inb = 255.0F * pow(inb, REV_GAMMA);
-  */
+     inr = 255.0F * pow(inr, REV_GAMMA);
+     ing = 255.0F * pow(ing, REV_GAMMA);
+     inb = 255.0F * pow(inb, REV_GAMMA);
+   */
 #endif
 
   *outr = inr;
@@ -1229,18 +1227,18 @@ cpercep_space_to_rgb (double  inr,
 /* EXPERIMENTAL SECTION */
 
 const double
-xscaler(const double start, const double end,
-	const double me, const double him)
+xscaler (const double start, const double end,
+         const double me, const double him)
 {
-  return start + ((end-start) * him) / (me + him);
+  return start + ((end - start) * him) / (me + him);
 }
 
 
 void
 mix_colours (const double L1, const double a1, const double b1,
-	     const double L2, const double a2, const double b2,
-	     double *rtnL, double *rtna, double *rtnb,
-	     double mass1, double mass2)
+             const double L2, const double a2, const double b2,
+             double *rtnL, double *rtna, double *rtnb,
+             double mass1, double mass2)
 {
   double w1, w2;
 
@@ -1249,13 +1247,12 @@ mix_colours (const double L1, const double a1, const double b1,
   *rtna = xscaler (a1, a2, mass1, mass2);
   *rtnb = xscaler (b1, b2, mass1, mass2);
 #else
-
 #if 1
   w1 = mass1 * L1;
   w2 = mass2 * L2;
 #else
-  w1 = mass1 * (L1*L1*L1);
-  w2 = mass2 * (L2*L2*L2);
+  w1 = mass1 * (L1 * L1 * L1);
+  w2 = mass2 * (L2 * L2 * L2);
 #endif
 
   *rtnL = xscaler (L1, L2, mass1, mass2);
@@ -1263,19 +1260,19 @@ mix_colours (const double L1, const double a1, const double b1,
   if (w1 <= 0.0 &&
       w2 <= 0.0)
     {
-      *rtna =
-	*rtnb = 0.0;
+      *rtna   =
+        *rtnb = 0.0;
 #ifdef SANITY
       /* g_printerr ("\007OUCH. "); */
 #endif
     }
   else
     {
-      *rtna = xscaler(a1, a2, w1, w2);
-      *rtnb = xscaler(b1, b2, w1, w2);
+      *rtna = xscaler (a1, a2, w1, w2);
+      *rtnb = xscaler (b1, b2, w1, w2);
     }
 #endif
 }
 #endif /* EXPERIMENTAL SECTION */
 
-/***********  /cpercep.c *********   */ 
+/***********  /cpercep.c *********   */

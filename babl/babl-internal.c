@@ -21,32 +21,32 @@
 #include "babl-internal.h"
 
 static const char *class_names[] =
-  {
-    "BablInstance",
-    "BablType",
-    "BablTypeInteger",
-    "BablTypeFloat",
-    "BablSampling",
-    "BablComponent",
-    "BablModel",
-    "BablFormat",
-    "BablConversion",
-    "BablConversionLinear",
-    "BablConversionPlane",
-    "BablConversionPlanar",
-    "BablFish",
-    "BablFishReference",
-    "BablFishSimple",
-    "BablFishPath",
-    "BablImage",
-    "BablExtenstion",
-    "BablSky"
-  };
+{
+  "BablInstance",
+  "BablType",
+  "BablTypeInteger",
+  "BablTypeFloat",
+  "BablSampling",
+  "BablComponent",
+  "BablModel",
+  "BablFormat",
+  "BablConversion",
+  "BablConversionLinear",
+  "BablConversionPlane",
+  "BablConversionPlanar",
+  "BablFish",
+  "BablFishReference",
+  "BablFishSimple",
+  "BablFishPath",
+  "BablImage",
+  "BablExtenstion",
+  "BablSky"
+};
 
 const char *
 babl_class_name (BablClassType klass)
 {
-  return class_names[klass-BABL_INSTANCE];
+  return class_names[klass - BABL_INSTANCE];
 }
 
 /* global variable, indicating whether name lookups
@@ -63,8 +63,8 @@ babl_backtrack (void)
 {
   char buf[512];
 
-  sprintf (buf,"echo bt>/tmp/babl.gdb;"
-               "gdb -q --batch -x /tmp/babl.gdb --pid=%i 2>/dev/null", getpid());
+  sprintf (buf, "echo bt>/tmp/babl.gdb;"
+           "gdb -q --batch -x /tmp/babl.gdb --pid=%i 2>/dev/null", getpid ());
   system (buf);
 }
 
@@ -87,7 +87,7 @@ babl_process (Babl *babl,
   babl_assert (source);
   babl_assert (destination);
   babl_assert (BABL_IS_BABL (babl));
-  babl_assert (n>0);
+  babl_assert (n > 0);
 
   /* matches all conversion classes */
   if (babl->class_type >= BABL_CONVERSION &&
@@ -99,18 +99,18 @@ babl_process (Babl *babl,
       babl->class_type == BABL_FISH_PATH ||
       babl->class_type == BABL_FISH_SIMPLE)
     {
-       long ret;
-       long ticks = babl_ticks ();
-       ret = babl_fish_process (babl, source, destination, n);
+      long ret;
+      long ticks = babl_ticks ();
+      ret = babl_fish_process (babl, source, destination, n);
 
-       ticks -= babl_ticks();
-       ticks *= -1L;
+      ticks -= babl_ticks ();
+      ticks *= -1L;
 
-       babl_total_usecs += ticks;
-       babl->fish.usecs += ticks;
-       babl->fish.processings++;
-       babl->fish.pixels += ret;
-       return ret;
+      babl_total_usecs += ticks;
+      babl->fish.usecs += ticks;
+      babl->fish.processings++;
+      babl->fish.pixels += ret;
+      return ret;
     }
 
   babl_fatal ("eek");

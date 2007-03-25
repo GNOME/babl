@@ -1,5 +1,9 @@
 2007-03-21  Øyvind Kolås  <pippin@gimp.org>
 
+	Reindented all of the code using uncrustify.
+
+2007-03-21  Øyvind Kolås  <pippin@gimp.org>
+
 	* configure.ac: Make force the value of shrext to either .dll or .so
 	(it seems like it wasn't defined for unixy systems after all).
 
@@ -190,7 +194,7 @@
 
 2007-01-06  Michael Schumacher  <schumaml@cvs.gnome.org>
 
-        This change makes babl buildable on Windows.
+	This change makes babl buildable on Windows.
 	
 	* configure.ac: Add a check for function dlopen and disabled
 	static libs by default. Check for gettimeofday by using

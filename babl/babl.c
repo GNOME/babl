@@ -19,12 +19,12 @@
 
 #include "babl-internal.h"
 
-static int ref_count=0;
+static int ref_count = 0;
 
 void
 babl_init (void)
 {
-  if (ref_count++==0)
+  if (ref_count++ == 0)
     {
       babl_internal_init ();
       babl_type_init ();
@@ -41,27 +41,26 @@ babl_init (void)
       babl_sanity ();
       babl_fish_init ();
       babl_sanity ();
-
     }
 }
 
 void
 babl_destroy (void)
 {
-  if (!--ref_count)
+  if (!-- ref_count)
     {
       if (getenv ("BABL_STATS"))
-      {
-         char logfile_name[]="/tmp/babl-stats.html";
-         FILE *logfile;
-         logfile = fopen (logfile_name, "w");
-         if (logfile)
-           {
-            babl_fish_stats (logfile);
-            fclose (logfile);
-           }
-      }
-      
+        {
+          char  logfile_name[] = "/tmp/babl-stats.html";
+          FILE *logfile;
+          logfile = fopen (logfile_name, "w");
+          if (logfile)
+            {
+              babl_fish_stats (logfile);
+              fclose (logfile);
+            }
+        }
+
       babl_extension_destroy ();
       babl_fish_destroy ();
       babl_conversion_destroy ();

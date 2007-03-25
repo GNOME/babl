@@ -22,9 +22,9 @@
 #include <string.h>
 #include "babl-internal.h"
 
-#define HASH_TABLE_SIZE    128
-#define DB_INITIAL_SIZE    16 
-#define DB_INCREMENT_SIZE  16
+#define HASH_TABLE_SIZE      128
+#define DB_INITIAL_SIZE      16
+#define DB_INCREMENT_SIZE    16
 
 static inline int hash (const char *str)
 {
@@ -32,11 +32,12 @@ static inline int hash (const char *str)
   int i   = 1;
 
   while (*str)
-    ret = (ret + ( i++ * (*str ++ & 31 ))) % (HASH_TABLE_SIZE-1);
+    ret = (ret + (i++ * (*str++ & 31))) % (HASH_TABLE_SIZE - 1);
   return ret;
 }
 
-typedef struct _BablDb {
+typedef struct _BablDb
+{
   Babl  *hash [HASH_TABLE_SIZE];
   int    size;
   int    count;
@@ -62,15 +63,16 @@ babl_db_find (BablDb     *db,
 
 
 BablDb *
-babl_db_init(void)
+babl_db_init (void)
 {
   BablDb *db = babl_calloc (sizeof (BablDb), 1);
+
   db->size  = DB_INITIAL_SIZE;
   db->count = 0;
   db->items = NULL;
   if (db->size)
     {
-      db->items = babl_calloc (sizeof (BablInstance*), db->size);
+      db->items = babl_calloc (sizeof (BablInstance *), db->size);
     }
   return db;
 }
@@ -101,19 +103,19 @@ babl_db_insert (BablDb *db,
   collision = babl_db_exist (db, item->instance.id, item->instance.name);
 
   if (collision)
-     return collision;
+    return collision;
 
   if (db->count + 1 > db->size)     /* must reallocate storage */
     {
       Babl **new_items;
 
-      new_items = babl_realloc (db->items, (db->size + DB_INCREMENT_SIZE) * sizeof (BablInstance*));
+      new_items = babl_realloc (db->items, (db->size + DB_INCREMENT_SIZE) * sizeof (BablInstance *));
       babl_assert (new_items);
 
       db->items = new_items;
 
       /* null out the currently unused portions of memory */
-      memset (db->items + db->size, 0, DB_INCREMENT_SIZE * sizeof (Babl*));
+      memset (db->items + db->size, 0, DB_INCREMENT_SIZE * sizeof (Babl *));
       db->size += DB_INCREMENT_SIZE;
     }
 
@@ -122,26 +124,26 @@ babl_db_insert (BablDb *db,
     if (db->hash[key] == NULL)
       db->hash[key] = item;
   }
-  db->items[db->count++]=item;
+  db->items[db->count++] = item;
 
   /* this point all registered items pass through, a nice
-   * place to brand them with where the item came from. */
+  * place to brand them with where the item came from. */
   item->instance.creator = babl_extender ();
   return item;
 }
 
 void
-babl_db_each (BablDb           *db,
-              BablEachFunction  each_fun,
-              void             *user_data)
+babl_db_each (BablDb          *db,
+              BablEachFunction each_fun,
+              void            *user_data)
 {
   int i;
 
-  for (i=0; i< db->count; i++)
+  for (i = 0; i < db->count; i++)
     {
       if (db->items[i])
         {
-          if (each_fun ((Babl*) db->items[i], user_data))
+          if (each_fun ((Babl *) db->items[i], user_data))
             break;
         }
     }
@@ -149,12 +151,12 @@ babl_db_each (BablDb           *db,
 
 typedef struct BablDbExistData
 {
-  int          id;
-  const char  *name;
-  Babl        *ret;
+  int         id;
+  const char *name;
+  Babl       *ret;
 } BablDbExistData;
 
-static int 
+static int
 babl_db_each_exist (Babl *babl,
                     void *void_data)
 {
@@ -162,8 +164,8 @@ babl_db_each_exist (Babl *babl,
 
   if (data->id && data->id == babl->instance.id)
     {
-          data->ret = babl;
-          return 1; /* stop iterating */
+      data->ret = babl;
+      return 1;     /* stop iterating */
     }
   else if (data->name && !strcmp (babl->instance.name, data->name))
     {
@@ -173,7 +175,7 @@ babl_db_each_exist (Babl *babl,
   return 0;  /* continue iterating */
 }
 
-Babl * 
+Babl *
 babl_db_exist (BablDb     *db,
                int         id,
                const char *name)
@@ -181,18 +183,18 @@ babl_db_exist (BablDb     *db,
   Babl *ret = NULL;
 
   if (name)
-      ret = db->hash[hash (name)];
+    ret = db->hash[hash (name)];
   if (ret &&
       name[0] == ret->instance.name[0] &&
       !strcmp (name, ret->instance.name))
-      return ret;
+    return ret;
 
   {
     BablDbExistData data;
 
-    data.id = id;
+    data.id   = id;
     data.name = name;
-    data.ret = NULL;
+    data.ret  = NULL;
 
     babl_db_each (db, babl_db_each_exist, &data);
 

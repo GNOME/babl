@@ -19,23 +19,23 @@
 
 #include "babl-internal.h"
 
-#define PIXELS 5
+#define PIXELS    5
 
-float grayscale_buf [PIXELS]= {-0.1, 0.0, 0.4, 1.0, 2.0};
+float grayscale_buf [PIXELS] = { -0.1, 0.0, 0.4, 1.0, 2.0 };
 
-float rgb_buf_ref [PIXELS*3]=
-{ -0.1, -0.1, -0.1, 0.0, 0.0, 0.0, 0.4, 0.4, 0.4, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0 }; 
+float rgb_buf_ref [PIXELS * 3] =
+{ -0.1, -0.1, -0.1, 0.0, 0.0, 0.0, 0.4, 0.4, 0.4, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0 };
 
-float rgb_buf     [PIXELS*3];
+float rgb_buf     [PIXELS * 3];
 
 static int
 test (void)
 {
   Babl *fish;
   int   i;
-  int   OK=1;
+  int   OK = 1;
 
-  
+
   fish = babl_fish (
     babl_format_new (
       babl_model ("Y"),
@@ -51,18 +51,18 @@ test (void)
       babl_component ("B"),
       NULL
     )
-  );
+         );
 
-  babl_process (fish, 
-     grayscale_buf, rgb_buf, 
-     PIXELS);
-  
-  for (i=0; i<PIXELS * 3; i++)
+  babl_process (fish,
+                grayscale_buf, rgb_buf,
+                PIXELS);
+
+  for (i = 0; i < PIXELS * 3; i++)
     {
       if (rgb_buf[i] != rgb_buf_ref[i])
         {
           babl_log ("index %i is problematic", i);
-          OK=0;
+          OK = 0;
         }
     }
   if (!OK)
@@ -75,7 +75,7 @@ main (int    argc,
       char **argv)
 {
   babl_init ();
-  if (test())
+  if (test ())
     return -1;
   babl_destroy ();
   return 0;

@@ -24,7 +24,7 @@
 #include "babl-internal.h"
 #include "babl-db.h"
 
-static int 
+static int
 each_babl_format_destroy (Babl *babl,
                           void *data)
 {
@@ -49,56 +49,56 @@ format_new (const char     *name,
   {
     int i;
     /* i is desintation position */
-    for (i=0 ; i<model->components; i++)
+    for (i = 0; i < model->components; i++)
       {
         int j;
 
-        for (j=0;j<components;j++)
+        for (j = 0; j < components; j++)
           {
             if (component[j] == model->component[i])
               goto component_found;
           }
         babl_fatal ("matching source component for %s in model %s not found",
                     model->component[i]->instance.name, model->instance.name);
-        component_found:
+component_found:
         ;
       }
   }
 
   /* allocate all memory in one chunk */
-  babl  = babl_malloc (sizeof (BablFormat) +
-                       strlen (name) + 1 +
-                       sizeof (BablComponent*) * (components) +
-                       sizeof (BablSampling*)  * (components) +
-                       sizeof (BablType*)      * (components) +
-                       sizeof (int)            * (components) +
-                       sizeof (int)            * (components));
+  babl = babl_malloc (sizeof (BablFormat) +
+                      strlen (name) + 1 +
+                      sizeof (BablComponent *) * (components) +
+                      sizeof (BablSampling *) * (components) +
+                      sizeof (BablType *) * (components) +
+                      sizeof (int) * (components) +
+                      sizeof (int) * (components));
 
   babl->format.from      = NULL;
-  babl->format.component = (void*)(((char *)babl) + sizeof (BablFormat));
-  babl->format.type      = (void*)(((char *)babl->format.component) + sizeof (BablComponent*) * (components));
-  babl->format.sampling  = (void*)(((char *)babl->format.type)      + sizeof (BablType*) * (components));
-  babl->instance.name    = ((char *)babl->format.sampling)  + sizeof (BablSampling*) * (components);
-  
-  babl->class_type    = BABL_FORMAT;
-  babl->instance.id   = id;
+  babl->format.component = (void *) (((char *) babl) + sizeof (BablFormat));
+  babl->format.type      = (void *) (((char *) babl->format.component) + sizeof (BablComponent *) * (components));
+  babl->format.sampling  = (void *) (((char *) babl->format.type) + sizeof (BablType *) * (components));
+  babl->instance.name    = ((char *) babl->format.sampling) + sizeof (BablSampling *) * (components);
+
+  babl->class_type  = BABL_FORMAT;
+  babl->instance.id = id;
 
   strcpy (babl->instance.name, name);
 
   babl->format.model      = model;
   babl->format.components = components;
 
-  memcpy (babl->format.component, component, sizeof (BablComponent*) * components);
-  memcpy (babl->format.type     , type     , sizeof (BablType*)      * components);
-  memcpy (babl->format.sampling , sampling , sizeof (BablSampling*)  * components);
+  memcpy (babl->format.component, component, sizeof (BablComponent *) * components);
+  memcpy (babl->format.type, type, sizeof (BablType *) * components);
+  memcpy (babl->format.sampling, sampling, sizeof (BablSampling *) * components);
 
-  babl->format.planar     = planar;
+  babl->format.planar = planar;
 
   babl->format.bytes_per_pixel = 0;
   {
     int i;
-    for (i=0;i<components;i++)
-      babl->format.bytes_per_pixel += type[i]->bits/8;
+    for (i = 0; i < components; i++)
+      babl->format.bytes_per_pixel += type[i]->bits / 8;
   }
 
   babl->format.loss = -1.0;
@@ -107,7 +107,7 @@ format_new (const char     *name,
 }
 
 
-static char buf[512]="";
+static char buf[512] = "";
 
 static const char *
 create_name (BablModel      *model,
@@ -115,39 +115,39 @@ create_name (BablModel      *model,
              BablComponent **component,
              BablType      **type)
 {
-  char *p = &buf[0];
-  int   i;
-  int   same_types=1;
-  BablType **t=type;
-  BablType *first_type = *type;
-  BablComponent **c1=component;
-  BablComponent **c2=model->component;
+  char           *p = &buf[0];
+  int             i;
+  int             same_types = 1;
+  BablType      **t          = type;
+  BablType       *first_type = *type;
+  BablComponent **c1         = component;
+  BablComponent **c2         = model->component;
 
-  
+
   sprintf (p, "%s ", model->instance.name);
-  p+=strlen (model->instance.name) + 1;
+  p += strlen (model->instance.name) + 1;
 
-  i=components;
+  i = components;
   while (i--)
     {
       if (first_type != *t)
         {
-          same_types=0;
+          same_types = 0;
           break;
         }
       t++;
     }
 
-  if (same_types && 
+  if (same_types &&
       components != model->components)
     same_types = 0;
-  
-  i=components;
+
+  i = components;
   while (same_types && i--)
     {
       if (*c1 != *c2)
         {
-          same_types=0;
+          same_types = 0;
           break;
         }
       c1++;
@@ -161,15 +161,15 @@ create_name (BablModel      *model,
       return buf;
     }
 
-  i=components;
+  i = components;
 
   while (i--)
     {
-      sprintf (p, "(%s as %s) ", 
-         (*component)->instance.name,
-         (*type)->instance.name);
-      p+=strlen ((*component)->instance.name) +
-         strlen ((*type)->instance.name     ) + strlen("( as ) ");
+      sprintf (p, "(%s as %s) ",
+               (*component)->instance.name,
+               (*type)->instance.name);
+      p += strlen ((*component)->instance.name) +
+           strlen ((*type)->instance.name) + strlen ("( as ) ");
       component++;
       type++;
     }
@@ -180,64 +180,68 @@ Babl *
 babl_format_new (void *first_arg,
                  ...)
 {
-  va_list varg;
-  Babl            *babl;
-  int              id     = 0;
-  int              planar = 0;
-  int              components  = 0;
-  BablModel       *model  = NULL;
-  BablComponent   *component [BABL_MAX_COMPONENTS];
-  BablSampling    *sampling  [BABL_MAX_COMPONENTS];
-  BablType        *type      [BABL_MAX_COMPONENTS];
+  va_list        varg;
+  Babl          *babl;
+  int            id         = 0;
+  int            planar     = 0;
+  int            components = 0;
+  BablModel     *model      = NULL;
+  BablComponent *component [BABL_MAX_COMPONENTS];
+  BablSampling  *sampling  [BABL_MAX_COMPONENTS];
+  BablType      *type      [BABL_MAX_COMPONENTS];
 
-  BablSampling    *current_sampling = (BablSampling*) babl_sampling (1,1);
-  BablType        *current_type     = (BablType*)     babl_type_id (BABL_DOUBLE);
-  char            *name             = NULL;
-  void            *arg              = first_arg;
+  BablSampling  *current_sampling = (BablSampling *) babl_sampling (1, 1);
+  BablType      *current_type     = (BablType *) babl_type_id (BABL_DOUBLE);
+  char          *name             = NULL;
+  void          *arg              = first_arg;
 
   va_start (varg, first_arg);
-  
+
   while (1)
     {
       if (BABL_IS_BABL (arg))
         {
-          Babl *babl = (Babl*)arg;
+          Babl *babl = (Babl *) arg;
 
           switch (babl->class_type)
             {
               case BABL_TYPE:
               case BABL_TYPE_FLOAT:
               case BABL_TYPE_INTEGER:
-                current_type = (BablType*) babl;
+                current_type = (BablType *) babl;
                 break;
+
               case BABL_COMPONENT:
                 if (!model)
                   {
                     babl_fatal ("no model specified before component %s",
                                 babl->instance.name);
                   }
-                component [components] = (BablComponent*) babl;
+                component [components] = (BablComponent *) babl;
                 type      [components] = current_type;
                 sampling  [components] = current_sampling;
                 components++;
 
-                if (components>=BABL_MAX_COMPONENTS)
+                if (components >= BABL_MAX_COMPONENTS)
                   {
                     babl_fatal ("maximum number of components (%i) exceeded for %s",
                                 BABL_MAX_COMPONENTS, name);
                   }
                 break;
+
               case BABL_SAMPLING:
-                  current_sampling = (BablSampling*)arg;
-                  break;
+                current_sampling = (BablSampling *) arg;
+                break;
+
               case BABL_MODEL:
-                  if (model)
-                    {
+                if (model)
+                  {
                     babl_log ("args=(%s): model %s already requested",
-                      babl->instance.name, model->instance.name);
-                    }
-                  model = (BablModel*)arg;
-                  break;
+                              babl->instance.name, model->instance.name);
+                  }
+                model = (BablModel *) arg;
+                break;
+
               case BABL_INSTANCE:
               case BABL_FORMAT:
               case BABL_CONVERSION:
@@ -251,8 +255,9 @@ babl_format_new (void *first_arg,
               case BABL_IMAGE:
               case BABL_EXTENSION:
                 babl_log ("%s unexpected",
-                           babl_class_name (babl->class_type));
+                          babl_class_name (babl->class_type));
                 break;
+
               case BABL_SKY: /* shut up compiler */
                 break;
             }
@@ -267,17 +272,17 @@ babl_format_new (void *first_arg,
         {
           name = va_arg (varg, char *);
         }
-      
+
       else if (!strcmp (arg, "packed"))
         {
           planar = 0;
         }
-      
+
       else if (!strcmp (arg, "planar"))
         {
           planar = 1;
         }
-      
+
       else
         {
           babl_fatal ("unhandled argument '%s' for format '%s'", arg, name);
@@ -287,18 +292,18 @@ babl_format_new (void *first_arg,
       if (!arg)
         break;
     }
-    
-  va_end   (varg);
 
-  babl = format_new (name?name:create_name (model, components, component, type),
+  va_end (varg);
+
+  babl = format_new (name ? name : create_name (model, components, component, type),
                      id,
                      planar, components, model,
                      component, sampling, type);
- 
-  { 
+
+  {
     Babl *ret = babl_db_insert (db, babl);
-    if (ret!=babl)
-        babl_free (babl);
+    if (ret != babl)
+      babl_free (babl);
     return ret;
   }
 }
@@ -315,32 +320,32 @@ babl_format_with_model_as_type (Babl *model,
                                 Babl *type)
 {
   BablComponent *component[10];
-  int i;
+  int            i;
 
-  for (i=0;i<model->model.components;i++)
+  for (i = 0; i < model->model.components; i++)
     {
-      component[i]= model->model.component[i];
+      component[i] = model->model.component[i];
     }
-  component[i]=NULL;
+  component[i] = NULL;
 
   return babl_format_new (
-      model,
-      type,
-      component[0],
-      component[1],
-      component[2],
-      component[3],
-      component[4],
-      component[5],
-      component[6],
-      component[7],
-      component[8],
-      component[9],
-      NULL
-   );
+           model,
+           type,
+           component[0],
+           component[1],
+           component[2],
+           component[3],
+           component[4],
+           component[5],
+           component[6],
+           component[7],
+           component[8],
+           component[9],
+           NULL
+  );
 }
 
-#define test_pixels  256
+#define test_pixels    256
 
 static double *
 test_create (void)
@@ -349,11 +354,11 @@ test_create (void)
   int     i;
 
   srandom (20050728);
-  
+
   test = babl_malloc (sizeof (double) * test_pixels * 4);
 
   for (i = 0; i < test_pixels * 4; i++)
-     test [i] = (double) random () / RAND_MAX;
+    test [i] = (double) random () / RAND_MAX;
 
   return test;
 }
@@ -368,44 +373,44 @@ babl_format_loss (Babl *babl)
   void   *destination;
   double *transformed;
 
-  Babl *ref_fmt;
-  Babl *fmt;
-  Babl *fish_to;
-  Babl *fish_from;
+  Babl   *ref_fmt;
+  Babl   *fmt;
+  Babl   *fish_to;
+  Babl   *fish_from;
 
-  ref_fmt   = babl_format_new (
-       babl_model ("RGBA"),
-       babl_type ("double"),
-       babl_component ("R"),
-       babl_component ("G"),
-       babl_component ("B"),
-       babl_component ("A"),
-       NULL);
+  ref_fmt = babl_format_new (
+    babl_model ("RGBA"),
+    babl_type ("double"),
+    babl_component ("R"),
+    babl_component ("G"),
+    babl_component ("B"),
+    babl_component ("A"),
+    NULL);
 
   if (babl->format.loss != -1.0)
     return babl->format.loss;
-  
-  fmt       = babl; 
+
+  fmt       = babl;
   fish_to   = babl_fish_reference (ref_fmt, fmt);
   fish_from = babl_fish_reference (fmt, ref_fmt);
- 
-  test        = test_create (); 
+
+  test        = test_create ();
   original    = babl_calloc (test_pixels, fmt->format.bytes_per_pixel);
   clipped     = babl_calloc (test_pixels, ref_fmt->format.bytes_per_pixel);
   destination = babl_calloc (test_pixels, fmt->format.bytes_per_pixel);
-  transformed = babl_calloc (test_pixels,  ref_fmt->format.bytes_per_pixel);
+  transformed = babl_calloc (test_pixels, ref_fmt->format.bytes_per_pixel);
 
-  babl_process (fish_to,   test,        original,    test_pixels);
-  babl_process (fish_from, original,    clipped,     test_pixels);
-  babl_process (fish_to,   clipped,     destination, test_pixels);
+  babl_process (fish_to, test, original, test_pixels);
+  babl_process (fish_from, original, clipped, test_pixels);
+  babl_process (fish_to, clipped, destination, test_pixels);
   babl_process (fish_from, destination, transformed, test_pixels);
 
-  loss = babl_rel_avg_error (clipped, test, test_pixels*4);
-  
-  fish_to->fish.processings-=2;
-  fish_from->fish.processings-=2;
-  fish_to->fish.pixels-=test_pixels*2;
-  fish_from->fish.pixels -= test_pixels*2;
+  loss = babl_rel_avg_error (clipped, test, test_pixels * 4);
+
+  fish_to->fish.processings   -= 2;
+  fish_from->fish.processings -= 2;
+  fish_to->fish.pixels        -= test_pixels * 2;
+  fish_from->fish.pixels      -= test_pixels * 2;
 
   babl_free (original);
   babl_free (clipped);

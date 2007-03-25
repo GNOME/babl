@@ -25,7 +25,7 @@
 #include "babl-db.h"
 
 
-static int 
+static int
 each_babl_type_destroy (Babl *babl,
                         void *data)
 {
@@ -36,22 +36,22 @@ each_babl_type_destroy (Babl *babl,
 
 
 static Babl *
-type_new (const char  *name,
-          int          id,
-          int          bits)
+type_new (const char *name,
+          int         id,
+          int         bits)
 {
   Babl *babl;
 
   babl_assert (bits != 0);
   babl_assert (bits % 8 == 0);
-  
+
   babl                = babl_malloc (sizeof (BablType) + strlen (name) + 1);
-  babl->instance.name = (void*)((char*) babl + sizeof (BablType));
+  babl->instance.name = (void *) ((char *) babl + sizeof (BablType));
   babl->class_type    = BABL_TYPE;
   babl->instance.id   = id;
   strcpy (babl->instance.name, name);
-  babl->type.bits     = bits;
-  babl->type.from     = NULL;
+  babl->type.bits = bits;
+  babl->type.from = NULL;
 
   return babl;
 }
@@ -60,30 +60,30 @@ Babl *
 babl_type_new (void *first_arg,
                ...)
 {
-  va_list  varg;
-  Babl    *babl;
-  int      id         = 0;
-  int      is_integer = 0;
-  int      bits       = 0;
-  long     min        = 0;
-  long     max        = 255;
-  double   min_val    = 0.0;
-  double   max_val    = 0.0;
+  va_list     varg;
+  Babl       *babl;
+  int         id         = 0;
+  int         is_integer = 0;
+  int         bits       = 0;
+  long        min        = 0;
+  long        max        = 255;
+  double      min_val    = 0.0;
+  double      max_val    = 0.0;
 
-  const char *arg=first_arg;
+  const char *arg = first_arg;
 
   va_start (varg, first_arg);
-  
+
   while (1)
     {
       arg = va_arg (varg, char *);
       if (!arg)
         break;
-     
+
       if (BABL_IS_BABL (arg))
         {
 #ifdef BABL_LOG
-          Babl *babl = (Babl*)arg;
+          Babl *babl = (Babl *) arg;
 
           babl_log ("%s unexpected", babl_class_name (babl->class_type));
 #endif
@@ -93,12 +93,12 @@ babl_type_new (void *first_arg,
         {
           id = va_arg (varg, int);
         }
-      
+
       else if (!strcmp (arg, "bits"))
         {
           bits = va_arg (varg, int);
-          min = 0;
-          max = 1<<bits;
+          min  = 0;
+          max  = 1 << bits;
         }
       else if (!strcmp (arg, "integer"))
         {
@@ -120,48 +120,50 @@ babl_type_new (void *first_arg,
         {
           max_val = va_arg (varg, double);
         }
-      
+
       else
         {
           babl_fatal ("unhandled argument '%s' for format '%s'", arg, first_arg);
         }
     }
-    
-  va_end   (varg);
+
+  va_end (varg);
 
   babl = type_new (first_arg, id, bits);
 
-  { 
+  {
     Babl *ret = babl_db_insert (db, babl);
-    if (ret!=babl)
-        babl_free (babl);
+    if (ret != babl)
+      babl_free (babl);
     return ret;
   }
 }
 
 
-#define TOLERANCE 0.000000001
-#define samples   512
+#define TOLERANCE    0.000000001
+#define samples      512
 
 double test[samples];
 
 static double r_interval (double min, double max)
 {
   long int rand_i = random ();
-  double ret;
-  ret = (double) rand_i / RAND_MAX;
-  ret*=(max-min);
-  ret+=min;
+  double   ret;
+
+  ret  = (double) rand_i / RAND_MAX;
+  ret *= (max - min);
+  ret += min;
   return ret;
 }
 
 static void test_init (double min, double max)
 {
   int i;
+
   srandom (20050728);
-  for (i=0;i<samples;i++)
+  for (i = 0; i < samples; i++)
     {
-      test [i]=r_interval(min,max);
+      test [i] = r_interval (min, max);
     }
 }
 
@@ -169,71 +171,71 @@ static void test_init (double min, double max)
 static Babl *double_vector_format (void)
 {
   static Babl *self = NULL;
-  
+
   if (!self)
-     self = babl_format_new (
-       babl_model ("Y"),
-       babl_type ("double"),
-       babl_component ("Y"),
-       NULL);
+    self = babl_format_new (
+      babl_model ("Y"),
+      babl_type ("double"),
+      babl_component ("Y"),
+      NULL);
   return self;
 }
 
 int
 babl_type_is_symmetric (Babl *babl)
 {
-  int     is_symmetrical=1;
+  int     is_symmetrical = 1;
   void   *original;
   double *clipped;
   void   *destination;
   double *transformed;
 
-  Babl *ref_fmt;
-  Babl *fmt;
-  Babl *fish_to;
-  Babl *fish_from;
+  Babl   *ref_fmt;
+  Babl   *fmt;
+  Babl   *fish_to;
+  Babl   *fish_from;
 
   test_init (0.0, 182.0);
-  
+
   ref_fmt = double_vector_format ();
-  fmt = babl_format_new (babl_model ("Y"),
-                         babl,
-                         babl_component ("Y"),
-                         NULL);
+  fmt     = babl_format_new (babl_model ("Y"),
+                             babl,
+                             babl_component ("Y"),
+                             NULL);
   fish_to   = babl_fish_reference (ref_fmt, fmt);
   fish_from = babl_fish_reference (fmt, ref_fmt);
-  
-  original    = babl_calloc (1,babl->type.bits/8 * samples);
-  clipped     = babl_calloc (1,64/8              * samples);
-  destination = babl_calloc (1,babl->type.bits/8 * samples);
-  transformed = babl_calloc (1,64/8              * samples);
-  
-  babl_process (fish_to,   test,        original,    samples);
-  babl_process (fish_from, original,    clipped,     samples);
-  babl_process (fish_to,   clipped,     destination, samples);
+
+  original    = babl_calloc (1, babl->type.bits / 8 * samples);
+  clipped     = babl_calloc (1, 64 / 8 * samples);
+  destination = babl_calloc (1, babl->type.bits / 8 * samples);
+  transformed = babl_calloc (1, 64 / 8 * samples);
+
+  babl_process (fish_to, test, original, samples);
+  babl_process (fish_from, original, clipped, samples);
+  babl_process (fish_to, clipped, destination, samples);
   babl_process (fish_from, destination, transformed, samples);
 
-  fish_from->fish.processings-=2;
-  fish_to->fish.processings-=2;
-  fish_from->fish.pixels -= samples*2;
-  fish_to->fish.pixels -= samples*2;
+  fish_from->fish.processings -= 2;
+  fish_to->fish.processings   -= 2;
+  fish_from->fish.pixels      -= samples * 2;
+  fish_to->fish.pixels        -= samples * 2;
 
   {
-    int cnt=0;
+    int cnt = 0;
     int i;
-    for (i=0;i<samples;i++)
+    for (i = 0; i < samples; i++)
       {
-        if (fabs (clipped[i] - transformed[i])> TOLERANCE)
+        if (fabs (clipped[i] - transformed[i]) > TOLERANCE)
           {
-            if (cnt++<4)
-            babl_log ("%s:  %f %f %f)",
-             babl->instance.name, test[i], clipped[i], transformed[i]
-             );
-            is_symmetrical=0;
+            if (cnt++ < 4)
+              babl_log ("%s:  %f %f %f)",
+                        babl->instance.name, test[i], clipped[i], transformed[i]
+              );
+            is_symmetrical = 0;
           }
       }
   }
-  
+
   babl_free (original);
   babl_free (clipped);
   babl_free (destination);

@@ -22,20 +22,20 @@
 #include <string.h>
 #include "babl-internal.h"
 
-static void *(* malloc_f) (size_t size) = malloc;
-static void  (* free_f)   (void *ptr)   = free;
+static void *(*malloc_f)(size_t size) = malloc;
+static void  (*free_f)(void *ptr)     = free;
 
 static void *first_malloc_used = NULL;
 static void *first_free_used   = NULL;
 
 void
-babl_set_malloc (void *(* malloc_function) (size_t size))
+babl_set_malloc (void *(*malloc_function)(size_t size))
 {
   malloc_f = malloc_function;
 }
 
 void
-babl_set_free   (void (* free_function) (void *ptr))
+babl_set_free (void (*free_function)(void *ptr))
 {
   free_f = free_function;
 }
@@ -44,14 +44,14 @@ static char *signature = "So long and thanks for all the fish.";
 
 typedef struct
 {
-  char   *signature;
-  size_t  size;
+  char  *signature;
+  size_t size;
 } BablAllocInfo;
 
-#define OFFSET   (sizeof(BablAllocInfo))
+#define OFFSET    (sizeof (BablAllocInfo))
 
-#define BAI(ptr)    ((BablAllocInfo*)(((char*)ptr)-OFFSET))
-#define IS_BAI(ptr) (BAI(ptr)->signature == signature)
+#define BAI(ptr)       ((BablAllocInfo *) (((char *) ptr) - OFFSET))
+#define IS_BAI(ptr)    (BAI (ptr)->signature == signature)
 
 /* runtime statistics: */
 static int mallocs  = 0;
@@ -65,8 +65,9 @@ static const char *
 mem_stats (void)
 {
   static char buf[128];
+
   sprintf (buf, "mallocs:%i callocs:%i strdups:%i dups:%i allocs:%i frees:%i reallocs:%i\t|",
-    mallocs, callocs, strdups, dups, mallocs+callocs+strdups+dups, frees, reallocs);
+           mallocs, callocs, strdups, dups, mallocs + callocs + strdups + dups, frees, reallocs);
   return buf;
 }
 
@@ -74,7 +75,7 @@ static void
 functions_sanity (void)
 {
   if (first_malloc_used != malloc_f ||
-      first_free_used   != free_f)
+      first_free_used != free_f)
     {
       if (first_malloc_used == NULL)
         {
@@ -87,8 +88,8 @@ functions_sanity (void)
         }
     }
 }
-  
-/* Allocate /size/ bytes of memory 
+
+/* Allocate /size/ bytes of memory
  *
  * contents of memory undefined.
  */
@@ -102,12 +103,12 @@ babl_malloc (size_t size)
   functions_sanity ();
   ret = malloc_f (size + OFFSET);
   if (!ret)
-    babl_fatal ("args=(%i): failed",  size);
+    babl_fatal ("args=(%i): failed", size);
 
-  BAI(ret + OFFSET)->signature = signature;
-  BAI(ret + OFFSET)->size      = size;
+  BAI (ret + OFFSET)->signature = signature;
+  BAI (ret + OFFSET)->size      = size;
   mallocs++;
-  return (void*)(ret + OFFSET);
+  return (void *) (ret + OFFSET);
 }
 
 /* Create a duplicate allocation of the same size, note
@@ -118,11 +119,11 @@ void *
 babl_dup (void *ptr)
 {
   void *ret;
- 
+
   babl_assert (IS_BAI (ptr));
 
-  ret = babl_malloc (BAI(ptr)->size);
-  memcpy (ret, ptr, BAI(ptr)->size);
+  ret = babl_malloc (BAI (ptr)->size);
+  memcpy (ret, ptr, BAI (ptr)->size);
 
   dups++;
   mallocs--;
@@ -141,11 +142,11 @@ babl_free (void *ptr,
 {
   if (!ptr)
     return;
-  if(!IS_BAI(ptr))
+  if (!IS_BAI (ptr))
     babl_fatal ("memory not allocated by babl allocator");
   functions_sanity ();
-  BAI(ptr)->signature=NULL;
-  free_f (BAI(ptr));
+  BAI (ptr)->signature = NULL;
+  free_f (BAI (ptr));
   frees++;
 }
 
@@ -153,8 +154,8 @@ babl_free (void *ptr,
  * common allocated memory between old and new size is preserved.
  */
 void *
-babl_realloc (void   *ptr,
-              size_t  size)
+babl_realloc (void  *ptr,
+              size_t size)
 {
   void *ret = NULL;
 
@@ -165,7 +166,7 @@ babl_realloc (void   *ptr,
 
   babl_assert (IS_BAI (ptr));
 
-  if (size==0)
+  if (size == 0)
     {
       babl_free (ptr);
       return NULL;
@@ -192,8 +193,8 @@ babl_realloc (void   *ptr,
     }
 
   if (!ret)
-    babl_fatal ("args=(%p, %i): failed",  ptr, size);
-  
+    babl_fatal ("args=(%p, %i): failed", ptr, size);
+
   return NULL;
 }
 
@@ -202,12 +203,12 @@ void *
 babl_calloc (size_t nmemb,
              size_t size)
 {
-  void *ret = babl_malloc (nmemb*size);
+  void *ret = babl_malloc (nmemb * size);
 
   if (!ret)
-    babl_fatal ("args=(%i, %i): failed",  nmemb, size);
+    babl_fatal ("args=(%i, %i): failed", nmemb, size);
 
-  memset (ret, 0, nmemb*size);
+  memset (ret, 0, nmemb * size);
 
   callocs++;
   mallocs--;
@@ -220,7 +221,7 @@ size_t
 babl_sizeof (void *ptr)
 {
   babl_assert (IS_BAI (ptr));
-  return BAI(ptr)->size;
+  return BAI (ptr)->size;
 }
 
 /*  duplicate allocation needed for a string, and
@@ -231,10 +232,10 @@ babl_strdup (const char *s)
 {
   char *ret;
 
-  ret = babl_malloc (strlen (s)+1);
+  ret = babl_malloc (strlen (s) + 1);
   if (!ret)
-    babl_log ("args=(%s): failed",  s);
-  strcpy (ret, s); 
+    babl_log ("args=(%s): failed", s);
+  strcpy (ret, s);
 
   strdups++;
   mallocs--;
@@ -252,26 +253,26 @@ babl_strcat (char       *dest,
              const char *src)
 {
   char *ret;
-  int src_len;
-  int dst_len;
+  int   src_len;
+  int   dst_len;
 
   src_len = strlen (src);
   if (!dest)
     {
-      ret = babl_malloc (src_len+1);
+      ret = babl_malloc (src_len + 1);
       strcpy (ret, src);
       return ret;
     }
   babl_assert (IS_BAI (dest));
   dst_len = strlen (dest);
-  
+
   ret = dest;
 
   if (babl_sizeof (dest) < src_len + dst_len + 1)
     {
       size_t new_size = babl_sizeof (dest);
       while (new_size < src_len + dst_len + 1)
-        new_size*=2;
+        new_size *= 2;
       ret = babl_realloc (dest, new_size);
     }
 
@@ -288,9 +289,9 @@ babl_memory_sanity (void)
   if (frees != mallocs + strdups + callocs)
     {
       babl_log ("memory usage does not add up!\n"
-"%s\n"
-"\tbalance: %i-%i=%i\n",
-  mem_stats(), (strdups+mallocs+callocs),frees, (strdups+mallocs+callocs)-frees);
+                "%s\n"
+                "\tbalance: %i-%i=%i\n",
+                mem_stats (), (strdups + mallocs + callocs), frees, (strdups + mallocs + callocs) - frees);
       return -1;
     }
   return 0;
