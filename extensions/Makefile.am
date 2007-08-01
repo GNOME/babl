@@ -17,7 +17,11 @@ CFLAGS  += -I $(top_srcdir)/babl -I $(top_srcdir)/extensions -fPIC
 
 LDFLAGS += -shared
 
-LDADD    = $(no-undefined) $(libbabldlla)
+if OS_WIN32
+LDADD    = $(no-undefined) $(libbabldlla) $(MATH_LIB)
+else
+LDADD    = $(top_builddir)/babl/.libs/libbabl-$(BABL_API_VERSION).so $(MATH_LIB)
+endif
 
 %$(SHREXT): %.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
@@ -28,7 +32,7 @@ LDADD    = $(no-undefined) $(libbabldlla)
 #	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<  [own compile and link flags]
 
 CIE-Lab$(SHREXT): CIE-Lab.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) $(MATH_LIB)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
 #lcms$(SHREXT): lcms.c
 #	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config lcms --cflags --libs`
 #############################################################################

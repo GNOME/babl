@@ -53,6 +53,6 @@ libbabl_@BABL_API_VERSION@_la_LIBADD=\
 	base/libbase.la \
 	@LTLIBOBJS@
 
-libbabl_@BABL_API_VERSION@_la_LDFLAGS= \
-	${no_undefined}                \
+libbabl_@BABL_API_VERSION@_la_LDFLAGS= 		\
+	${no_undefined} -ldl $(MATH_LIB)	\
 	-version-info $(BABL_LIBRARY_VERSION)

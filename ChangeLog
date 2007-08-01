@@ -1,3 +1,11 @@
+2007-08-01  Øyvind Kolås  <pippin@gimp.org>
+
+	Fixed compiler abort on certain LDFLAGS values (-Wl,-z,defs) by
+	applying patch from christopher taylor, closing bug #462536.
+
+	* babl/Makefile.am:
+	* extensions/Makefile.am:
+
 2007-03-21  Øyvind Kolås  <pippin@gimp.org>
 
 	Reindented all of the code using uncrustify.
