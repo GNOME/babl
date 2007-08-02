@@ -1688,8 +1688,6 @@ conv_yuvF_rgbF (unsigned char *src, unsigned char *dst, long samples)
 
 /******* lab, xyz and rgb interaction, lifted from cpercep by adam d. moss */
 
-#include <math.h>
-
 /*
    static const double Xn = 0.951;
    static const double Yn = 1.0;

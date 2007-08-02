@@ -1,3 +1,8 @@
+2007-08-02  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* extensions/gggl.c
+	* extensions/gggl-lies.c: Only include math.h once.
+
 2007-08-01  Øyvind Kolås  <pippin@gimp.org>
 
 	Fixed compiler abort on certain LDFLAGS values (-Wl,-z,defs) by
