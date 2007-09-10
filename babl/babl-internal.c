@@ -87,6 +87,8 @@ babl_process (Babl *babl,
   babl_assert (source);
   babl_assert (destination);
   babl_assert (BABL_IS_BABL (babl));
+  if (n == 0)
+    return 0;
   babl_assert (n > 0);
 
   /* matches all conversion classes */
