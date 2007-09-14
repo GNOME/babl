@@ -178,16 +178,19 @@ AC_MSG_CHECKING([for native Win32])
 case "$target_or_host" in
   *-*-mingw*)
     os_win32=yes
-    PATHSEP=';'
+    PATH_SEP=';'
+    DIR_SEP='\'
     MATH_LIB=
     ;;
   *)
     os_win32=no
-    PATHSEP=':'
+    PATH_SEP=':'
+    DIR_SEP='/'
     ;;
 esac
 AC_MSG_RESULT([$os_win32])
-AC_SUBST(PATHSEP)
+AC_SUBST(PATH_SEP)
+AC_SUBST(DIR_SEP)
 AC_SUBST(MATH_LIB)
 
 AM_CONDITIONAL(OS_WIN32, test "$os_win32" = "yes")
@@ -200,9 +203,10 @@ AC_SUBST(DL_LIB)
 
 AC_REPLACE_FUNCS(gettimeofday)
 
-AC_DEFINE_UNQUOTED(BABL_PATH, "~/.babl-$BABL_API_VERSION:/usr/local/lib/babl-$BABL_API_VERSION:/usr/lib/babl-$BABL_API_VERSION", [search path for babl extensions (default value of enviroment variable)])
-AC_DEFINE(BABL_PATH_SEPERATOR, "/", [string used to seperate directories in a path string]) 
-AC_DEFINE_UNQUOTED(BABL_LIST_SEPERATOR, '$PATHSEP', [seperator between paths in BABL_PATH])
+#BABL_PATH_SEPARATOR must be defined as a character.
+#BABL_DIR_SEPARATOR must be defined as a string.
+AC_DEFINE_UNQUOTED(BABL_PATH_SEPARATOR, '$PATH_SEP', [separator between paths in BABL_PATH])
+AC_DEFINE_UNQUOTED(BABL_DIR_SEPARATOR, "$DIR_SEP", [separator between directories in BABL_PATH])
 
 #####################################
 # File extension for shared libraries

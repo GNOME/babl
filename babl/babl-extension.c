@@ -21,11 +21,9 @@
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
-#else
-#define BABL_PATH              PREFIX "/babl-0.0"
-#define BABL_PATH_SEPERATOR    "/"
-#define BABL_LIST_SEPERATOR    ':'
 #endif
+
+#define BABL_PATH              PREFIX "/lib/babl-0.0"
 
 #define BABL_INIT_HOOK         init_hook ();
 #define BABL_DESTROY_HOOK      destroy_hook ();
@@ -227,12 +225,12 @@ babl_extension_load_dir (const char *base_path)
         {
           if (dentry->d_name[0] != '.')
             {
-              char        *path = NULL;
-              struct  stat st;
-              char        *extension;
+              char       *path = NULL;
+              struct stat st;
+              char       *extension;
 
               path = babl_strcat (path, base_path);
-              path = babl_strcat (path, BABL_PATH_SEPERATOR);
+              path = babl_strcat (path, BABL_DIR_SEPARATOR);
               path = babl_strcat (path, dentry->d_name);
 
               stat (path, &st);
@@ -313,7 +311,7 @@ babl_extension_load_dir_list (const char *dir_list)
           case '\0':
             eos = 1;
 
-          case BABL_LIST_SEPERATOR:
+          case BABL_PATH_SEPARATOR:
           {
             char *expanded_path = expand_path (path);
             babl_extension_load_dir (expanded_path);

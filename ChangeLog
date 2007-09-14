@@ -1,3 +1,15 @@
+2007-09-14  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	Changes to let BABL find its extensions at run time when the
+	BABL_PATH environment variable is not set.
+
+	* configure.ac: Don't specify BABL_PATH in here. Renamed
+	BABL_LIST_SEPERATOR to BABL_DIR_SEPARATOR.
+
+	* babl/babl-extension.c: Include /lib as part of default BABL_PATH.
+	Renamed #define's used to specify the path and directory separators.
+	Use the values from config.h that were set when ./configure was run.
+
 2007-09-11  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* autogen.sh: Added check for existence of automake-1.10.
