@@ -1,4 +1,11 @@
 2007-09-14  Kevin Cozens  <kcozens@cvs.gnome.org>
+	
+	* configure.ac: Define name of babl library file.
+
+	* babl/babl-extension.c: Use name of babl library defined when
+	./configure was run.
+
+2007-09-14  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	Changes to let BABL find its extensions at run time when the
 	BABL_PATH environment variable is not set.

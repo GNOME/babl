@@ -208,6 +208,8 @@ AC_REPLACE_FUNCS(gettimeofday)
 AC_DEFINE_UNQUOTED(BABL_PATH_SEPARATOR, '$PATH_SEP', [separator between paths in BABL_PATH])
 AC_DEFINE_UNQUOTED(BABL_DIR_SEPARATOR, "$DIR_SEP", [separator between directories in BABL_PATH])
 
+AC_DEFINE_UNQUOTED(BABL_LIBRARY, "$PACKAGE_NAME-$BABL_API_VERSION", [name of BABL library])
+
 #####################################
 # File extension for shared libraries
 #####################################

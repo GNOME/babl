@@ -23,7 +23,7 @@
 #include "config.h"
 #endif
 
-#define BABL_PATH              PREFIX "/lib/babl-0.0"
+#define BABL_PATH              PREFIX "/lib/" BABL_LIBRARY
 
 #define BABL_INIT_HOOK         init_hook ();
 #define BABL_DESTROY_HOOK      destroy_hook ();
