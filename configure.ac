@@ -179,7 +179,7 @@ case "$target_or_host" in
   *-*-mingw*)
     os_win32=yes
     PATH_SEP=';'
-    DIR_SEP='\'
+    DIR_SEP='\\'
     MATH_LIB=
     ;;
   *)

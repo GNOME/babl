@@ -1,3 +1,7 @@
+2007-10-30  Michael Schumacher  <schumaml@cvs.gnome.org>
+
+	* configure.ac: DIR_SEP='\' is evil, use DIR_SEP='\\' instead.
+
 2007-09-14  Kevin Cozens  <kcozens@cvs.gnome.org>
 	
 	* configure.ac: Define name of babl library file.
