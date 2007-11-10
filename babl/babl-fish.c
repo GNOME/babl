@@ -73,6 +73,12 @@ fishing_result_examine (Babl *babl,
       (void *) data->destination == (void *) babl->fish.destination)
     {
       data->ret = babl;
+      /* we do not return BABL_FISH_REFERENCE's since those might exist
+       * even before a valid BABL_FISH_PATH has been constructed for a
+       * given conversion.
+       */
+      if (data->ret->class_type == BABL_FISH_REFERENCE)
+        return 0;
       return 1;     /* stop iterating */
     }
   return 0;  /* continue iterating */
@@ -137,14 +143,16 @@ babl_fish (void *source,
       return NULL;
     }
 
-  {
+  if(1){
     Babl *lucky;
     lucky = go_fishing (source_format, destination_format);
     if (lucky)
       return lucky;
   }
 
-  if (0)
+  if (0) /* do not accept shortcut conversions, since there might be
+            a faster path
+          */
     {
       Babl *shortcut_conversion;
 

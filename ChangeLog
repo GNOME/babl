@@ -1,5 +1,12 @@
 2007-11-10  Øyvind Kolås  <pippin@gimp.org>
 
+	Do not accept BABL_FISH_REFERENCE as a valid result when fishing for
+	existing fishes.
+
+	* babl/babl-fish.c: (fishing_result_examine), (babl_fish):
+
+2007-11-10  Øyvind Kolås  <pippin@gimp.org>
+
 	* docs/index-static.html.in: documented BABL_STATS environment
 	variable.
 
