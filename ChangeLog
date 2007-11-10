@@ -1,5 +1,11 @@
 2007-11-10  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-db.c: (babl_db_each_inline), (babl_db_exist): Optimized
+	lookup by adding an inline version of babl_db_each specially for
+	babl_db_exist.
+
+2007-11-10  Øyvind Kolås  <pippin@gimp.org>
+
 	Do not accept BABL_FISH_REFERENCE as a valid result when fishing for
 	existing fishes.
 

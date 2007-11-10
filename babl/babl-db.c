@@ -149,6 +149,23 @@ babl_db_each (BablDb          *db,
     }
 }
 
+static inline void
+babl_db_each_inline (BablDb          *db,
+                     BablEachFunction each_fun,
+                     void            *user_data)
+{
+  int i;
+
+  for (i = 0; i < db->count; i++)
+    {
+      if (db->items[i])
+        {
+          if (each_fun ((Babl *) db->items[i], user_data))
+            break;
+        }
+    }
+}
+
 typedef struct BablDbExistData
 {
   int         id;
@@ -196,7 +213,7 @@ babl_db_exist (BablDb     *db,
     data.name = name;
     data.ret  = NULL;
 
-    babl_db_each (db, babl_db_each_exist, &data);
+    babl_db_each_inline (db, babl_db_each_exist, &data);
 
     return data.ret;
   }
