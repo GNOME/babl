@@ -80,6 +80,7 @@
         <li><a href='#Pixel-formats'>&nbsp;&nbsp;&nbsp;&nbsp;Pixel formats</a></li>-->
 
         <li><a href='#Shortcut_coverage'>&nbsp;&nbsp;Shortcut&nbsp;Coverage</a></li>
+        <li><a href='#Environment'>&nbsp;&nbsp;Environment</a></li
         <li><a href='#Extending'>&nbsp;&nbsp;Extending</a></li>
         <!--<li><a href='#ColorManagement'>Color Management</a></li>-->
         <li><a href='#TODO'>Todo</a></li>
@@ -258,6 +259,19 @@
 <pre style='font-size:50%;height:30em;overflow:scroll'>
 <!--BablFishPath-->
 </pre>
+
+        <a name='Environment'></a>
+        <h2>Environment</h2>
+
+        <p>If the environment variable <tt>BABL_STATS</tt> is set  containting
+        a html pixel format conversion usage matrix will be written to
+        <tt>/tmp/babl-stats.html</tt>. This allows figuring out which
+        conversions is taking up time during processing, and what shortcuts <a
+            href='#Extending'>extensions</a> might be created or improved to
+        make babl do it's job faster.
+        </p>
+
+
         <a name='Extending'></a>
         <h2>Extending</h2>
         

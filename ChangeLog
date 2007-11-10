@@ -1,3 +1,8 @@
+2007-11-10  Øyvind Kolås  <pippin@gimp.org>
+
+	* docs/index-static.html.in: documented BABL_STATS environment
+	variable.
+
 2007-11-09  Øyvind Kolås  <pippin@gimp.org>
 
 	Upgraded babl from LGPLv2 to LGPLv3. Copyright statements in all files
