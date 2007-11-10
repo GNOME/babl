@@ -1,3 +1,12 @@
+2007-11-09  Øyvind Kolås  <pippin@gimp.org>
+
+	Upgraded babl from LGPLv2 to LGPLv3. Copyright statements in all files
+	have been updated to reflect this change, the permission to use leter
+	versions of the GNU licenses have been retained in all instances.)
+
+	* COPYING: changed to GPLv3
+	* COPYING.LESSER: added (LGPLv3's overlay over GPLv3)
+
 2007-10-30  Michael Schumacher  <schumaml@cvs.gnome.org>
 
 	* configure.ac: DIR_SEP='\' is evil, use DIR_SEP='\\' instead.

@@ -314,9 +314,9 @@
         <h2>Copyright</h2>
 
         <p> Babl is free software; you can redistribute it and/or modify it
-        under the terms of the <a href='LGPL'>GNU Lesser General Public
+        under the terms of the <a href='COPYING.LESSER'>GNU Lesser General Public
           License</a> as published by the Free Software Foundation; either
-        version 2 of the License, or (at your option) any later version. </p>
+        version 3 of the License, or (at your option) any later version. </p>
 
         <a name='Authors'></a>
         <h3>Authors</h3>
