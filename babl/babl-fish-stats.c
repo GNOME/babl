@@ -91,9 +91,30 @@ table_destination_each (Babl *babl,
 
           case BABL_FISH_REFERENCE:
             fprintf (output_file, "<td class='cell'%s><a href='javascript:o()'>&nbsp",
-                     fish->fish.processings > 0 ? " style='background-color: #69f'" : "");
+                     fish->fish.processings > 0 ? " style='background-color: #f99'" : "");
             fprintf (output_file, "<div class='tooltip'>");
             fprintf (output_file, "<h3><span class='g'>Reference</span> %s <span class='g'>to</span> %s</h3>", source->instance.name, destination->instance.name);
+
+            if (fish->fish.processings > 0)
+              {
+                fprintf (output_file, "<span class='g'>usecs:</span>%li<br/>", fish->fish.usecs);
+                fprintf (output_file, "<span class='g'>Processings:</span>%i<br/>", fish->fish.processings);
+                fprintf (output_file, "<span class='g'>Pixels:</span>%li<br/>", fish->fish.pixels);
+              }
+            fprintf (output_file, "</div>");
+            fprintf (output_file, "</a></td>\n");
+            break;
+
+          case BABL_FISH_SIMPLE:
+            fprintf (output_file, "<td class='cell'%s><a href='javascript:o()'>&middot;",
+                     fish->fish.processings > 1 ? " style='background-color: #69f'" : "");
+            fprintf (output_file, "<div class='tooltip'>");
+            fprintf (output_file, "<h3><span class='g'>Simple</span> %s <span class='g'>to</span> %s</h3>", source->instance.name, destination->instance.name);
+
+
+            fprintf (output_file, "%s<br/>", BABL (fish->fish_simple.conversion)->instance.name);
+            fprintf (output_file, "<span class='g'>cost:</span> %li<br/>", babl_conversion_cost ((fish->fish_simple.conversion)));
+            fprintf (output_file, "<span class='g'>error:</span> %e<br/>", babl_conversion_error ((fish->fish_simple.conversion)));
 
             if (fish->fish.processings > 0)
               {
@@ -215,6 +236,8 @@ conversions ()
   babl_conversion_each (each_conv, NULL);
   fprintf (output_file, "</dl>\n");
 }
+
+
 
 void
 babl_fish_stats (FILE *file)

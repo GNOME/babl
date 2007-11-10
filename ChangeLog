@@ -1,5 +1,10 @@
 2007-11-10  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-fish-stats.c: (table_destination_each): improve
+	visualization of results.
+
+2007-11-10  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-db.c: (babl_db_each_inline), (babl_db_exist): Optimized
 	lookup by adding an inline version of babl_db_each specially for
 	babl_db_exist.
