@@ -91,8 +91,22 @@ babl_image_from_linear (char *buffer,
   switch (format->class_type)
     {
       case BABL_FORMAT:
-        model      = (BablModel *) format->format.model;
         components = format->format.components;
+        if (format->format.image_template != NULL) /* single item cache for speeding
+                                                      up subsequent use of linear buffers
+                                                      for subsequent accesses
+                                                    */
+          { 
+            babl = format->format.image_template;
+            format->format.image_template = NULL;
+            for (i = 0; i < components; i++)
+              {
+                babl->image.data[i] = buffer + offset;
+                offset   += (format->format.type[i]->bits / 8);
+              }
+            return babl;
+          }
+        model      = (BablModel *) format->format.model;
 
         memcpy (component, format->format.component, sizeof (Babl *) * components);
         memcpy (sampling, format->format.sampling, sizeof (Babl *) * components);
@@ -136,7 +150,7 @@ babl_image_from_linear (char *buffer,
     }
 
   babl = image_new (
-    (BablFormat *) format,
+    (BablFormat *) format!=model?format:NULL,
     model, components,
     component, sampling, type, data, pitch, stride);
   return babl;

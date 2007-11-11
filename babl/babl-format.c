@@ -102,6 +102,7 @@ component_found:
   }
 
   babl->format.loss = -1.0;
+  babl->format.image_template = NULL;
 
   return babl;
 }

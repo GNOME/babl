@@ -1,3 +1,18 @@
+2007-11-11  Øyvind Kolås  <pippin@gimp.org>
+
+	Keep a cache of the linear version of BablImage's needed for
+	BablFormats around. This reduces the constant overhead for
+	conversions.
+
+	* babl/babl-classes.h: added .image_template field to BablFormat.
+	* babl/babl-format.c: (format_new): make .image_template NULL by
+	defualt.
+	* babl/babl-image.c: (babl_image_from_linear): use .image_template if
+	available instead of creating our own BablImage from scratch.
+	* babl/babl-memory.c: (babl_free): special case freeing of BablImage
+	and BablFormat to do the extra juggling needed for the image_template
+	cache.
+
 2007-11-10  Øyvind Kolås  <pippin@gimp.org>
 
 	* babl/babl-fish-stats.c: (table_destination_each): improve

@@ -168,6 +168,9 @@ typedef struct
   int              components;
   BablComponent  **component;
   BablType       **type;
+  void            *image_template; /* image template for use with 
+                                       linear (non-planer) images */
+
   BablSampling   **sampling;
   BablModel       *model;
   int              bytes_per_pixel;
@@ -183,8 +186,8 @@ typedef struct
   BablModel      *model;     /*< (always known) */
   int             components;
   BablComponent **component;
-  BablSampling  **sampling;
   BablType      **type;
+  BablSampling  **sampling;
   char          **data;
   int            *pitch;
   int            *stride;

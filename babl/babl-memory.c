@@ -140,6 +140,49 @@ void
 babl_free (void *ptr,
            ...)
 {
+  /* XXX:
+   *  Extra logic to make the bookeeping of BablImage cached
+   *  templates work out correctly, by using a babl_image_destroy
+   *  and custom destroy functions for babl_format this would be
+   *  avoided and the extra overhead not needed for non image/format
+   *  typed allocations.
+   */
+  if (BABL_IS_BABL (ptr))
+    {
+      switch (BABL (ptr)->instance.class_type)
+        {
+        case BABL_IMAGE:
+          {
+            BablFormat *format = BABL(ptr)->image.format;
+            if (format)
+              {
+                if (format->image_template == NULL)
+                  {
+                    format->image_template = ptr;
+                    return;
+                  }
+                else
+                  {
+                  }
+              }
+          }
+          break;
+        case BABL_FORMAT:
+          {
+            BablFormat *format = ptr;
+            if (format->image_template != NULL)
+              {
+                BAI (format->image_template)->signature = NULL;
+                free_f (BAI (format->image_template));
+                frees++;
+              }
+            format->image_template = NULL;
+          }
+          break;
+          default:
+          break;
+        }
+    }
   if (!ptr)
     return;
   if (!IS_BAI (ptr))
