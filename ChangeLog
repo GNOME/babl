@@ -1,5 +1,10 @@
 2007-11-11  Øyvind Kolås  <pippin@gimp.org>
 
+	* Modified copyright statement to refer to an URL instead of a civic
+	address for the Free Software Foundation and the text of the license.
+
+2007-11-11  Øyvind Kolås  <pippin@gimp.org>
+
 	Keep a cache of the linear version of BablImage's needed for
 	BablFormats around. This reduces the constant overhead for
 	conversions.

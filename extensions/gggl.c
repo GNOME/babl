@@ -1,7 +1,6 @@
 /*
  * This file was part of gggl, it implements a variety of pixel conversion
- * functions that are usable with babl, the file needs more cleanup, and
- * doesn't return the number of samples processed as a long, like it's supposed to.
+ * functions that are usable with babl, the file needs more cleanup.
  *
  *    GGGL is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -14,8 +13,7 @@
  *    GNU General Public License for more details.
  *
  *    You should have received a copy of the GNU General Public License
- *    along with GGGL; if not, write to the Free Software
- *    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *    along with GGGL; if not, see <http://www.gnu.org/licenses/>.
  *
  *    Rights are granted to use this shared object in libraries covered by
  *    LGPL. (exception added, during import into babl CVS.)
