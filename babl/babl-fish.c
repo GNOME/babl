@@ -173,7 +173,7 @@ babl_fish_process (Babl *babl,
           {
             if (babl->fish.source == babl->fish.destination)
               { /* XXX: we're assuming linear buffers */
-                memcpy (destination, destination, n * babl->fish.source->format.bytes_per_pixel);
+                memcpy (destination, source, n * babl->fish.source->format.bytes_per_pixel);
                 ret = n;
               }
             else
