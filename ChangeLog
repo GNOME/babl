@@ -1,5 +1,10 @@
 2007-11-13  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-fish.c: (babl_fish_process): swapped source and
+	destination around in memcpy.
+
+2007-11-13  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-fish.c: (go_fishing): optimized fishing when looking
 	up existing fish (should perhaps be moved to lists going from given
 	formats, similar to how conversions are added there instead.) Made
