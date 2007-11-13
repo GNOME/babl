@@ -1,3 +1,16 @@
+2007-11-13  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/babl-fish.c: (go_fishing): optimized fishing when looking
+	up existing fish (should perhaps be moved to lists going from given
+	formats, similar to how conversions are added there instead.) Made
+	go_fishing accept BABL_FISH_REFERENCE when source and desintation
+	formats are equal.
+	  (babl_fish_process): removed most of the need for BablImage for
+	  linear buffers, do a memcpy when source and destination formats
+	  are equal (and we're a BABL_FISH_REFERENCE).
+	* babl/babl-db.[ch]: moved the BablDb struct out into public to
+	allow faster iteration through it.
+
 2007-11-11  Øyvind Kolås  <pippin@gimp.org>
 
 	* Modified copyright statement to refer to an URL instead of a civic

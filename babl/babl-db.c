@@ -21,7 +21,6 @@
 #include <string.h>
 #include "babl-internal.h"
 
-#define HASH_TABLE_SIZE      128
 #define DB_INITIAL_SIZE      16
 #define DB_INCREMENT_SIZE    16
 
@@ -35,13 +34,6 @@ static inline int hash (const char *str)
   return ret;
 }
 
-typedef struct _BablDb
-{
-  Babl  *hash [HASH_TABLE_SIZE];
-  int    size;
-  int    count;
-  Babl **items;
-} _BablDb;
 
 Babl *
 babl_db_find (BablDb     *db,

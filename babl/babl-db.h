@@ -25,6 +25,15 @@
 
 typedef struct _BablDb BablDb;
 
+#define HASH_TABLE_SIZE      128
+typedef struct _BablDb
+{
+  Babl  *hash [HASH_TABLE_SIZE];
+  int    size;
+  int    count;
+  Babl **items;
+} _BablDb;
+
 BablDb * babl_db_init    (void);
 void     babl_db_destroy (BablDb           *db);
 void     babl_db_each    (BablDb           *db, 

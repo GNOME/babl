@@ -55,48 +55,26 @@ babl_fish_db (void)
   return db;
 }
 
-typedef struct BablFishingData
-{
-  Babl *source;
-  Babl *destination;
-  Babl *ret;
-} BablFishingData;
-
-static int
-fishing_result_examine (Babl *babl,
-                        void *void_data)
-{
-  BablFishingData *data = void_data;
-
-  if ((void *) data->source == (void *) babl->fish.source &&
-      (void *) data->destination == (void *) babl->fish.destination)
-    {
-      data->ret = babl;
-      /* we do not return BABL_FISH_REFERENCE's since those might exist
-       * even before a valid BABL_FISH_PATH has been constructed for a
-       * given conversion.
-       */
-      if (data->ret->class_type == BABL_FISH_REFERENCE)
-        return 0;
-      return 1;     /* stop iterating */
-    }
-  return 0;  /* continue iterating */
-}
-
-static Babl *
+static inline Babl *
 go_fishing (Babl *source,
             Babl *destination)
 {
-  {
-    BablFishingData data;
+  BablDb *db = babl_fish_db ();
+  int i;
 
-    data.source      = source;
-    data.destination = destination;
-    data.ret         = NULL;
-
-    babl_db_each (db, fishing_result_examine, &data);
-    return data.ret;
-  }
+  for (i=0; i<db->count; i++)
+    {
+      Babl *item = db->items[i];
+      if ((void *) source == (void *) item->fish.source &&
+          (void *) destination == (void *) item->fish.destination &&
+          (item->class_type != BABL_FISH_REFERENCE ||
+           source == destination)
+          )
+        {
+          return item;
+        }
+    }
+  return NULL;
 }
 
 Babl *
@@ -142,7 +120,7 @@ babl_fish (void *source,
       return NULL;
     }
 
-  if(1){
+  {
     Babl *lucky;
     lucky = go_fishing (source_format, destination_format);
     if (lucky)
@@ -184,8 +162,6 @@ babl_fish_process (Babl *babl,
                    void *destination,
                    long  n)
 {
-  BablImage *source_image      = NULL;
-  BablImage *destination_image = NULL;
   long       ret               = 0;
 
   switch (babl->class_type)
@@ -193,25 +169,17 @@ babl_fish_process (Babl *babl,
       case BABL_FISH_REFERENCE:
       case BABL_FISH_SIMPLE:
       case BABL_FISH_PATH:
-
-#if 0
-        if (BABL_IS_BABL (source))
-          source_image = source;
-#endif
-        if (!source_image)
-          source_image = (BablImage *) babl_image_from_linear (
-            source, (Babl *) babl->fish.source);
-#if 0
-        if (BABL_IS_BABL (destination))
-          destination_image = destination;
-#endif
-        if (!destination_image)
-          destination_image = (BablImage *) babl_image_from_linear (
-            destination, (Babl *) babl->fish.destination);
-
         if (babl->class_type == BABL_FISH_REFERENCE)
           {
-            ret = babl_fish_reference_process (babl, source, destination, n);
+            if (babl->fish.source == babl->fish.destination)
+              { /* XXX: we're assuming linear buffers */
+                memcpy (source, destination, n * babl->fish.source->format.bytes_per_pixel);
+                ret = n;
+              }
+            else
+              {
+                ret = babl_fish_reference_process (babl, source, destination, n);
+              }
           }
         else if (babl->class_type == BABL_FISH_PATH)
           {
@@ -226,15 +194,10 @@ babl_fish_process (Babl *babl,
               }
             else
               {
-                ret = babl_conversion_process (BABL (babl->fish_simple.conversion),
-                                               (char *) source_image, (char *) destination_image, n);
+                babl_assert (0);
               }
           }
-
-        babl_free (source_image);
-        babl_free (destination_image);
         break;
-
       default:
         babl_log ("NYI");
         ret = -1;
