@@ -5,7 +5,14 @@ the news section both in the README and the webpage.
 
                                                                           -->
 
+2007-11-25 babl-0.0.16                                              </dt><dd>
+Reduced constant overhead for linear conversions.
+Misc build environment cleanups.
 
+                                                                    </dd><dt>
+2007-01-07 babl-0.0.14                                              </dt><dd>
+Cache values parsed from BABL_foo environment variables.
+                                                                    </dd><dt>
 2007-01-07 babl-0.0.12                                              </dt><dd>
 Speedups for GEGL
 Build environment fixes.

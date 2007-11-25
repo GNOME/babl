@@ -21,7 +21,8 @@ EXTRA_DIST= 			\
 	tools/xml_insert.sh	\
 	tools/changelog2rss	\
 	index-static.html.in	\
-	LGPL
+	COPYING			\
+	COPYING.LESSER
 
 BUILT_EXTRA_DIST = index.html BablFishPath.html BablFishPath.txt
 
