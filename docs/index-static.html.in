@@ -191,7 +191,7 @@
         buffers represented by an existing BablPixelFormat.
         </p>
         <pre
-><span class='function'>babl_process</span> <span class='paren'>(</span><span class='function'>babl_fish</span> <span class='paren'>(</span><span class='string'>"srgb"</span>, <span class='string'>"CIE Lab float"</span><span class='paren'>)</span>,
+><span class='function'>babl_process</span> <span class='paren'>(</span><span class='function'>babl_fish</span> <span class='paren'>(</span><span class='function'>babl_format</span> <span class='paren'>(</span><span class='string'>"srgb"</span><span class='paren'>)</span>, <span class='function'>babl_format</span> <span class='paren'>(</span><span class='string'>"CIE Lab float"</span><span class='paren'>)</span><span class='paren'>)</span>,
               srgb_buffer, lab_buffer,
               pixel_count<span class='paren'>);</span></pre>
         
