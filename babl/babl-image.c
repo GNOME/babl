@@ -149,7 +149,7 @@ babl_image_from_linear (char *buffer,
     }
 
   babl = image_new (
-    (BablFormat *) format!=model?format:NULL,
+    ((void*)format!=(void*)model)?(BablFormat*)format:NULL,
     model, components,
     component, sampling, type, data, pitch, stride);
   return babl;

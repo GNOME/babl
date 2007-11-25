@@ -1,5 +1,10 @@
 2007-11-25  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-image.c: (babl_image_from_linear): do additional casts to
+	silence warnings from compiler.
+
+2007-11-25  Øyvind Kolås  <pippin@gimp.org>
+
 	* docs/index-static.html.in: changed documentation to use babl_format
 	instead of passing naked strings into babl_fish, (both will work,
 	but using babl_format is a bit saner).
