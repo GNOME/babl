@@ -49,8 +49,8 @@
 #define random  rand
 #endif
 
-Babl   * babl_conversion_find           (void           *source,
-                                         void           *destination);
+Babl * babl_conversion_find       (const void     *source,
+                                         const void     *destination);
 double   babl_conversion_error          (BablConversion *conversion);
 long     babl_conversion_cost           (BablConversion *conversion);
 long     babl_conversion_process        (Babl           *conversion,
@@ -75,12 +75,12 @@ long     babl_fish_reference_process    (Babl           *babl,
                                          long            n);
 
 BablDb * babl_fish_db                   (void);
-Babl   * babl_fish_reference            (Babl           *source,
-                                         Babl           *destination);
+Babl   * babl_fish_reference            (const Babl     *source,
+                                         const Babl     *destination);
 Babl   * babl_fish_simple               (BablConversion *conversion);
 void     babl_fish_stats                (FILE           *file);
-Babl   * babl_fish_path                 (Babl           *source,
-                                         Babl           *destination);
+Babl   * babl_fish_path                 (const Babl     *source,
+                                         const Babl     *destination);
 
 long     babl_fish_path_process         (Babl           *babl,
                                          void           *source,

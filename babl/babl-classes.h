@@ -91,8 +91,8 @@ typedef struct
 typedef struct
 BablConversion {
   BablInstance           instance;
-  Babl                  *source;
-  Babl                  *destination;
+  const Babl            *source;
+  const Babl            *destination;
   long                   cost;
   double                 error;
   union
@@ -197,8 +197,8 @@ typedef struct
 typedef struct
 {
   BablInstance    instance;
-  Babl           *source;
-  Babl           *destination;
+  const Babl     *source;
+  const Babl     *destination;
 
   double          error;    /* the amount of noise introduced by the fish */
 

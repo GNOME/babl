@@ -31,8 +31,8 @@ assert_conversion_find (void *source,
 
 static char buf[1024];
 static char *
-create_name (Babl *source,
-             Babl *destination,
+create_name (const Babl *source,
+             const Babl *destination,
              int   is_reference)
 {
   /* fish names are intentionally kept short */
@@ -45,8 +45,8 @@ create_name (Babl *source,
 
 
 Babl *
-babl_fish_reference (Babl *source,
-                     Babl *destination)
+babl_fish_reference (const Babl *source,
+                     const Babl *destination)
 {
   Babl *babl = NULL;
   char *name = create_name (source, destination, 1);

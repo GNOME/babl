@@ -36,13 +36,13 @@ match_conversion (Babl *conversion,
 }
 
 Babl *
-babl_conversion_find (void *source,
-                      void *destination)
+babl_conversion_find (const void *source,
+                      const void *destination)
 {
-  void *data = destination;
+  void *data = (void*)destination;
 
   babl_list_each ((void *) BABL (source)->type.from, match_conversion, &data);
-  if (data == destination)
+  if (data == (void*)destination) /* didn't change */
     return NULL;
   return data;
 }
@@ -56,8 +56,8 @@ babl_fish_db (void)
 }
 
 static inline Babl *
-go_fishing (Babl *source,
-            Babl *destination)
+go_fishing (const Babl *source,
+            const Babl *destination)
 {
   BablDb *db = babl_fish_db ();
   int i;
@@ -78,12 +78,12 @@ go_fishing (Babl *source,
 }
 
 Babl *
-babl_fish (void *source,
-           void *destination,
+babl_fish (const void *source,
+           const void *destination,
            ...)
 {
-  Babl *source_format      = NULL;
-  Babl *destination_format = NULL;
+  const Babl *source_format      = NULL;
+  const Babl *destination_format = NULL;
 
   babl_assert (source);
   babl_assert (destination);

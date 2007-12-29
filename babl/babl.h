@@ -72,8 +72,8 @@ typedef int  (*BablEachFunction) (Babl *entry,
  *  destination_format, source and destination can be
  *  either strings with the names of the formats or BablFormat objects.
  */
-Babl * babl_fish       (void *source_format,
-                        void *destination_format,
+Babl * babl_fish       (const void *source_format,
+                        const void *destination_format,
                         ...);
 
 /** Process n pixels from source to destination using babl_fish,
@@ -189,7 +189,7 @@ Babl * babl_sampling   (int horizontal,
  */  
 
 
-const char *babl_name (Babl *babl);  /* returns the name of a babl object */
+const char *babl_name (const Babl *babl);  /* returns the name of a babl object */
 void   babl_introspect (Babl *babl); /* introspect a given BablObject     */
 
 #undef BABL_CLASS

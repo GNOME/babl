@@ -20,8 +20,8 @@
 #include "babl-internal.h"
 
 static double
-chain_error (Babl            *fmt_source,
-             Babl            *fmt_destination,
+chain_error (const Babl      *fmt_source,
+             const Babl      *fmt_destination,
              BablConversion **chain,
              int              conversions);
 
@@ -66,8 +66,8 @@ static int max_path_length (void)
 
 typedef struct BablChainContext
 {
-  Babl *from;
-  Babl *to;
+  const Babl *from;
+  const Babl *to;
 
   double *best_cost;
   double *best_loss;
@@ -87,8 +87,8 @@ chain_gen_each (Babl *babl,
                 void *userdata);
 
 static int
-get_conversion_chain (Babl            *from,
-                      Babl            *to,
+get_conversion_chain (const Babl      *from,
+                      const Babl      *to,
                       double          *best_cost,
                       double          *best_loss,
                       double          *best_error,
@@ -266,9 +266,9 @@ assert_conversion_find (void *source,
 
 static char buf[1024];
 static char *
-create_name (Babl *source,
-             Babl *destination,
-             int   is_reference)
+create_name (const Babl *source,
+             const Babl *destination,
+             int         is_reference)
 {
   /* fish names are intentionally kept short */
   snprintf (buf, 1024, "%s %p %p", "",
@@ -277,8 +277,8 @@ create_name (Babl *source,
 }
 
 Babl *
-babl_fish_path (Babl *source,
-                Babl *destination)
+babl_fish_path (const Babl *source,
+                const Babl *destination)
 {
   Babl           *babl = NULL;
   char           *name = create_name (source, destination, 1);
@@ -443,8 +443,8 @@ test_create (void)
 }
 
 static double
-chain_error (Babl            *fmt_source,
-             Babl            *fmt_destination,
+chain_error (const Babl      *fmt_source,
+             const Babl      *fmt_destination,
              BablConversion **chain,
              int              conversions)
 {
