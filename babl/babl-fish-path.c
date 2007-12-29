@@ -168,7 +168,7 @@ get_conversion_chain (const Babl      *from,
 static int
 chain_contains_fmt (BablConversion **chain,
                     int              conversions,
-                    Babl            *fmt)
+                    const Babl      *fmt)
 {
   int i;
 

@@ -1,3 +1,8 @@
+2007-12-29  Michael Natterer  <mitch@gimp.org>
+
+	* babl/babl-fish-path.c (chain_contains_fmt): one const was
+	forgotten.
+
 2007-12-29  Øyvind Kolås  <pippin@gimp.org>
 
 	* babl/babl.h:
