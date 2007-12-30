@@ -1,3 +1,11 @@
+=========================== 0.0.18 released =============================
+
+2007-12-30  Øyvind Kolås  <pippin@gimp.org>
+
+	* NEWS: updated for 0.0.8 release
+	* configure.ac: increased version to 0.0.18 for release.
+
+
 2007-12-29  Michael Natterer  <mitch@gimp.org>
 
 	* babl/babl-fish-path.c (chain_contains_fmt): one const was
