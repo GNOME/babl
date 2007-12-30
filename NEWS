@@ -5,6 +5,10 @@ the news section both in the README and the webpage.
 
                                                                           -->
 
+2007-12-30 babl-0.0.18                                              </dt><dd>
+Constified use of babl formats.
+
+                                                                    </dd><dt>
 2007-11-25 babl-0.0.16                                              </dt><dd>
 Reduced constant overhead for linear conversions.
 Misc build environment cleanups.
