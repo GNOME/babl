@@ -20,7 +20,7 @@ LDFLAGS += -shared
 if OS_WIN32
 LDADD    = $(no-undefined) $(libbabldlla) $(MATH_LIB)
 else
-LDADD    = $(top_builddir)/babl/.libs/libbabl-$(BABL_API_VERSION).so $(MATH_LIB)
+LDADD    = $(top_builddir)/babl/.libs/libbabl-$(BABL_API_VERSION)$(SHREXT) $(MATH_LIB)
 endif
 
 %$(SHREXT): %.c
