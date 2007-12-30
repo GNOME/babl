@@ -6,7 +6,7 @@
 
 2007-12-30  Øyvind Kolås  <pippin@gimp.org>
 
-	* NEWS: updated for 0.0.8 release
+	* NEWS: updated for 0.0.18 release
 	* configure.ac: increased version to 0.0.18 for release.
 
 2007-12-29  Michael Natterer  <mitch@gimp.org>
