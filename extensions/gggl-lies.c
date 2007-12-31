@@ -64,20 +64,21 @@ static int table_inited = 0;
 static void
 table_init (void)
 {
+  int i;
+
   if (table_inited)
     return;
   table_inited = 1;
 
   /* fill tables for conversion from integer to float */
-  {
-    int i;
-    for (i = 0; i < 1 << 8; i++)
-      {
-        table_8_F[i] = (i * 1.0) / 255.0;
-      }
-    for (i = 0; i < 1 << 16; i++)
+  for (i = 0; i < 1 << 8; i++)
+    {
+      table_8_F[i] = (i * 1.0) / 255.0;
+    }
+  for (i = 0; i < 1 << 16; i++)
+    {
       table_16_F[i] = (i * 1.0) / 65535.0;
-  }
+    }
   /* fill tables for conversion from float to integer */
   {
     union
@@ -89,10 +90,12 @@ table_init (void)
 
     u.s[0] = 0.0;
 
-    for (u.s[1] = 0; u.s[1] < 65535; u.s[1] += 1)
+    for (i = 0; i < 1 << 16; i++)
       {
         unsigned char  c;
         unsigned short s;
+
+        u.s[1] = i;
 
         if (u.f <= 0.0)
           {
