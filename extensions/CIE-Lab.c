@@ -101,45 +101,21 @@ models (void)
    TODO: document functions, rename erroneously-named arguments
  */
 
-#ifndef __CPERCEP_H__
-#define __CPERCEP_H__
+static void  cpercep_init (void);
 
+static void  cpercep_rgb_to_space (double  inr,
+                                   double  ing,
+                                   double  inb,
+                                   double *outr,
+                                   double *outg,
+                                   double *outb);
 
-void  cpercep_init (void);
-
-void  cpercep_rgb_to_space (double  inr,
-                            double  ing,
-                            double  inb,
-                            double *outr,
-                            double *outg,
-                            double *outb);
-
-void  cpercep_space_to_rgb (double  inr,
-                            double  ing,
-                            double  inb,
-                            double *outr,
-                            double *outg,
-                            double *outb);
-
-
-#if 0
-/* This is in the header so that it can potentially be inlined. */
-static const double
-cpercep_distance_space (const double L1, const double a1, const double b1,
-                        const double L2, const double a2, const double b2)
-{
-  const double Ld = L1 - L2;
-  const double ad = a1 - a2;
-  const double bd = b1 - b2;
-
-  return (Ld * Ld + ad * ad + bd * bd);
-}
-#endif
-
-
-#endif /* __CPERCEP_H__ */
-
-/***********   /cpercep.h *********   */
+static void  cpercep_space_to_rgb (double  inr,
+                                   double  ing,
+                                   double  inb,
+                                   double *outr,
+                                   double *outg,
+                                   double *outb);
 
 
 
@@ -699,8 +675,6 @@ types (void)
 #define cbrt(x)    (pow (x, 1.0 / 3.0))
 #endif
 
-/* #include "cpercep.h" */
-
 
 /* defines:
 
@@ -1072,7 +1046,7 @@ lab_to_xyz (double *inl,
 
 
 /* call this before using the CPercep function */
-void
+static void
 cpercep_init (void)
 {
   static gboolean initialized = FALSE;
@@ -1084,7 +1058,7 @@ cpercep_init (void)
     }
 }
 
-void
+static void
 cpercep_rgb_to_space (double  inr,
                       double  ing,
                       double  inb,
@@ -1168,7 +1142,7 @@ cpercep_rgb_to_space (double  inr,
 }
 
 
-void
+static void
 cpercep_space_to_rgb (double  inr,
                       double  ing,
                       double  inb,
