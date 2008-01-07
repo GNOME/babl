@@ -235,7 +235,7 @@ babl_extension_load_dir (const char *base_path)
               stat (path, &st);
 
               if ((extension = strrchr (dentry->d_name, '.')) != NULL &&
-                  !strcmp (extension, SHREXT))
+                  !strcmp (extension, G_MODULE_SUFFIX))
                 {
                   babl_extension_load (path);
                 }

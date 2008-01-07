@@ -1,3 +1,8 @@
+2008-01-07  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* babl/babl-extension.c (babl_extension_load_dir): Use G_MODULE_SUFFIX
+	instead of a hard-coded suffix.
+
 2008-01-06  Sven Neumann  <sven@gimp.org>
 
 	* extensions/CIE-Lab.c: made internal functions static.
