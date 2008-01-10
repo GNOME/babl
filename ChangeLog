@@ -1,5 +1,11 @@
 2008-01-10  Sven Neumann  <sven@gimp.org>
 
+	* extensions/gimp-8bit.c: added extension to speed up code paths
+	that are executed by the GIMP/GEGL hybrid. So far only 8bit to
+	float conversions are handled.
+
+2008-01-10  Sven Neumann  <sven@gimp.org>
+
 	* extensions/Makefile.am: extended CFLAGS so that config.h can be
 	included.
 
