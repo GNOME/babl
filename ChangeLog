@@ -1,3 +1,13 @@
+2008-01-10  Sven Neumann  <sven@gimp.org>
+
+	* extensions/Makefile.am: extended CFLAGS so that config.h can be
+	included.
+
+	* extensions/*.c: fixed up includes.
+
+	* extensions/gegl-fixups.c: use linear <-> gamma conversions from
+	base/util.c.
+
 2008-01-07  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* babl/babl-extension.c (babl_extension_load_dir): Reverted previous

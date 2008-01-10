@@ -16,21 +16,21 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <string.h>
+#include "config.h"
+
 #include <math.h>
-#include <assert.h>
+#include <string.h>
+
 #include "babl.h"
-#include "util.h"
 
-static long
-rgba_to_cmyk (char *src,
-              char *dst,
-              long  n);
 
-static long
-cmyk_to_rgba (char *src,
-              char *dst,
-              long  n);
+static long  rgba_to_cmyk (char *src,
+                           char *dst,
+                           long  n);
+
+static long  cmyk_to_rgba (char *src,
+                           char *dst,
+                           long  n);
 
 int init (void);
 

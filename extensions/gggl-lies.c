@@ -1,7 +1,8 @@
 /*
  * This file was part of gggl, it implements a variety of pixel conversion
  * functions that are usable with babl, the file needs more cleanup, and
- * doesn't return the number of samples processed as a long, like it's supposed to.
+ * doesn't return the number of samples processed as a long, like it's
+ * supposed to.
  *
  *    GGGL is free software; you can redistribute it and/or modify
  *    it under the terms of the GNU General Public License as published by
@@ -22,13 +23,16 @@
  *  Copyright 2003, 2004, 2005 Øyvind Kolås <pippin@gimp.org>
  */
 
+#include "config.h"
+
+#include <math.h>
+#include <string.h>
+
 #include "babl.h"
+
 
 #define INLINE    inline
 
-#include <math.h>
-#include <stdio.h>
-#include <string.h>
 
 /*
  * Implemented according to information read from:

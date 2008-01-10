@@ -21,13 +21,15 @@
  *  Copyright 2003, 2004, 2005 Øyvind Kolås <pippin@gimp.org>
  */
 
-#include "babl.h"
-
-#define INLINE    inline
+#include "config.h"
 
 #include <math.h>
-#include <stdio.h>
 #include <string.h>
+
+#include "babl.h"
+
+
+#define INLINE    inline
 
 /*
  * Implemented according to information read from:

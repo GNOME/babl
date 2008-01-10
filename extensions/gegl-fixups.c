@@ -22,14 +22,6 @@
  *  Copyright 2003, 2004, 2005, 2007 Øyvind Kolås <pippin@gimp.org>
  */
 
-#include "babl.h"
-
-#define INLINE    inline
-
-#include <math.h>
-#include <stdio.h>
-#include <string.h>
-
 /*
  * Implemented according to information read from:
  *
@@ -47,32 +39,14 @@
  * TODO: error diffusion,
  */
 
-#define BABL_USE_SRGB_GAMMA
+#include "config.h"
 
-#ifdef BABL_USE_SRGB_GAMMA
+#include "babl.h"
 
-static inline double
-linear_to_gamma_2_2 (double value)
-{
-  if (value > 0.0030402477F)
-    return 1.055F *pow (value, (1.0F / 2.4F)) - 0.055F;
-  return 12.92F * value;
-}
-
-static inline double
-gamma_2_2_to_linear (double value)
-{
-  if (value > 0.03928F)
-    return pow ((value + 0.055F) / 1.055F, 2.4F);
-  return value / 12.92F;
-}
+#include "base/util.h"
 
 
-#else
-  #define linear_to_gamma_2_2(value)    (pow ((value), (1.0F / 2.2F)))
-  #define gamma_2_2_to_linear(value)    (pow ((value), 2.2F))
-#endif
-
+#define INLINE    inline
 
 /* lookup tables used in conversion */
 

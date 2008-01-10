@@ -13,7 +13,11 @@ EXTRA_DIST      = $(wildcard *.[ch])
 
 all-local: $(SOBJS)
 
-CFLAGS  += -I $(top_srcdir)/babl -I $(top_srcdir)/extensions -fPIC
+CFLAGS += \
+	-I $(top_srcdir)		\
+	-I $(top_srcdir)/babl		\
+	-I $(top_srcdir)/extensions	\
+	-fPIC
 
 LDFLAGS += -shared
 
