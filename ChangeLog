@@ -1,3 +1,13 @@
+2008-01-17  Øyvind Kolås  <pippin@gimp.org>
+
+	Applied patch from Deji Akingunola <dakingun@gmail.com> to make babl
+	correctly pick up the path to the extensions on 64bit systems. Fixes
+	bug #510038
+
+	* babl/Makefile.am: added -DLIBDIR
+	* babl/babl-extension.c: use libdir and not PREFIX "/lib" when
+	defining the default BABL_PATH.
+
 2008-01-10  Sven Neumann  <sven@gimp.org>
 
 	* extensions/gimp-8bit.c: added extension to speed up code paths
