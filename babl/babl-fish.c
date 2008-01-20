@@ -67,8 +67,8 @@ go_fishing (const Babl *source,
       Babl *item = db->items[i];
       if ((void *) source == (void *) item->fish.source &&
           (void *) destination == (void *) item->fish.destination &&
-          (item->class_type != BABL_FISH_REFERENCE ||
-           source == destination)
+          (item->class_type == BABL_FISH_PATH || /* accept only paths */
+           source == destination)                /* or memcpy */
           )
         {
           return item;
@@ -128,7 +128,9 @@ babl_fish (const void *source,
   }
 
   if (0) /* do not accept shortcut conversions, since there might be
-            a faster path
+            a faster path, besides the shortcut conversion might
+            have a too large error, let's rely on the paths for
+            error checking.
           */
     {
       Babl *shortcut_conversion;

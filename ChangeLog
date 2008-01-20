@@ -1,3 +1,17 @@
+2008-01-20  Øyvind Kolås  <pippin@gimp.org>
+
+	Always use BablFishPath's for accepted conversions. The path
+	construction code is the location of the regression test, an
+	earlier (now unneeded) optimization allowed using the first
+	and best conversion available. The (not in bugzilla afair) bug
+	manifest by this depended on the order of .so's on the file system
+	to manifest itself.
+
+	* babl/babl-fish.c: (go_fishing): only accepts paths when we go
+	fishing for existing conversions.
+	(babl_fish): elaborated a comment about why we avoid shortcut
+	conversions and only paths.
+
 2008-01-17  Øyvind Kolås  <pippin@gimp.org>
 
 	Applied patch from Deji Akingunola <dakingun@gmail.com> to make babl
