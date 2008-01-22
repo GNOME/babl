@@ -1,3 +1,8 @@
+2008-01-22  Sven Neumann  <sven@gimp.org>
+
+	* extensions/gimp-8bit.c (u8_gamma_2_2_to_float_linear): use the
+	correct lookup table.
+
 2008-01-20  Øyvind Kolås  <pippin@gimp.org>
 
 	Always use BablFishPath's for accepted conversions. The path

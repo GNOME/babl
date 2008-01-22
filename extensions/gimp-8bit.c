@@ -74,7 +74,7 @@ u8_gamma_2_2_to_float_linear (unsigned char *src,
   long   n = samples;
 
   while (n--)
-    *d++ = lut_linear[*src++];
+    *d++ = lut_gamma_2_2[*src++];
 
   return samples;
 }
