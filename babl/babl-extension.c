@@ -22,7 +22,7 @@
 #include "config.h"
 #endif
 
-#define BABL_PATH              LIBDIR "/" BABL_LIBRARY
+#define BABL_PATH              LIBDIR BABL_DIR_SEPARATOR BABL_LIBRARY
 
 #define BABL_INIT_HOOK         init_hook ();
 #define BABL_DESTROY_HOOK      destroy_hook ();

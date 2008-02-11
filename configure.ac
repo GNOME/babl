@@ -161,6 +161,10 @@ esac
 
 AC_MSG_CHECKING([for some Win32 platform])
 case "$target_or_host" in 
+  *-*-darwin*)
+    platform_win32=no
+    shrext=.dylib
+    ;;
   *-*-mingw* | *-*-cygwin*)
     platform_win32=yes
     shrext=.dll

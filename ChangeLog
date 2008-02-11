@@ -1,3 +1,9 @@
+2008-02-11  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* configure.ac: Set shrext to ".dylib" for Darwin (ie. Mac OS).
+
+	* babl/babl-extension.c: Use BABL_DIR_SEPARATOR instead of "/".
+
 2008-01-22  Sven Neumann  <sven@gimp.org>
 
 	* extensions/gimp-8bit.c (u8_gamma_2_2_to_float_linear): use the
