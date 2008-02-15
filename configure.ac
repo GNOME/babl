@@ -155,23 +155,47 @@ case "$target_or_host" in
 esac
 
 
+####################################################
+# Check how to generate plug-ins (with gcc at least)
+####################################################
+
+AC_MSG_CHECKING([for some Win32 platform])
+case "$target_or_host" in 
+  *-*-darwin*)                 # darwin
+    shrext=.dylib
+    dynamiclib=-dynamiclib
+    ;;
+  *-*-mingw* | *-*-cygwin*)    # windows
+    shrext=.dll
+    dynamiclib=-shared
+    ;;
+  *)                           # linux (and BSD?)
+    dynamiclib=-shared
+    shrext=.so
+    ;;
+esac
+
+SHREXT=$shrext
+AC_SUBST(SHREXT)
+AC_DEFINE_UNQUOTED(SHREXT,     "$shrext",     [File extension for shared libraries])
+
+DYNAMICLIB=$dynamiclib
+AC_SUBST(DYNAMICLIB)
+AC_DEFINE_UNQUOTED(DYNAMICLIB, "$dynamiclib", [Dynamic shared library])
+
+dnl ===========================================================================
+
 #################
 # Check for Win32
 #################
 
 AC_MSG_CHECKING([for some Win32 platform])
 case "$target_or_host" in 
-  *-*-darwin*)
-    platform_win32=no
-    shrext=.dylib
-    ;;
   *-*-mingw* | *-*-cygwin*)
     platform_win32=yes
-    shrext=.dll
     ;;
   *)
     platform_win32=no
-    shrext=.so
     ;;
 esac
 AC_MSG_RESULT([$platform_win32])
@@ -214,15 +238,6 @@ AC_DEFINE_UNQUOTED(BABL_DIR_SEPARATOR, "$DIR_SEP", [separator between directorie
 
 AC_DEFINE_UNQUOTED(BABL_LIBRARY, "$PACKAGE_NAME-$BABL_API_VERSION", [name of BABL library])
 
-#####################################
-# File extension for shared libraries
-#####################################
-
-SHREXT=$shrext
-AC_SUBST(SHREXT)
-AC_DEFINE_UNQUOTED(SHREXT, "$shrext", [File extension for shared libraries])
-
-dnl ===========================================================================
 
 
 dnl ===========================================================================

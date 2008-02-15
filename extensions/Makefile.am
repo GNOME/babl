@@ -19,7 +19,7 @@ CFLAGS += \
 	-I $(top_srcdir)/extensions	\
 	-fPIC
 
-LDFLAGS += -shared
+LDFLAGS += $(DYNAMICLIB)
 
 if OS_WIN32
 LDADD    = $(no-undefined) $(libbabldlla) $(MATH_LIB)
