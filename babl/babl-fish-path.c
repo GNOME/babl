@@ -437,7 +437,7 @@ test_create (void)
   test = babl_malloc (sizeof (double) * test_pixels * 4);
 
   for (i = 0; i < test_pixels * 4; i++)
-    test [i] = (double) random () / RAND_MAX;
+    test [i] = ((double) random () / RAND_MAX) * 2 - 0.25;
 
   return test;
 }
