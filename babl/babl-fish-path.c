@@ -424,20 +424,29 @@ babl_fish_path_process (Babl *babl,
 }
 
 
-#define num_test_pixels  128
+#define num_test_pixels  (128 + 16 + 16)
 
 static double *
 test_create (void)
 {
   double *test;
-  int     i;
+  int     i, j;
 
   srandom (20050728);
 
   test = babl_malloc (sizeof (double) * num_test_pixels * 4);
 
-  for (i = 0; i < num_test_pixels * 4; i++)
+  /*  add 128 pixels in the valid range between 0.0 and 1.0  */
+  for (i = 0; i < 128 * 4; i++)
     test [i] = (double) random () / RAND_MAX;
+
+  /*  add 16 pixels between -1.0 and 0.0  */
+  for (j = 0; j < 16 * 4; i++, j++)
+    test [i] = 0.0 - (double) random () / RAND_MAX;
+
+  /*  add 16 pixels between 1.0 and 2.0  */
+  for (j = 0; j < 16 * 4; i++, j++)
+    test [i] = 1.0 + (double) random () / RAND_MAX;
 
   return test;
 }

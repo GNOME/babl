@@ -1,5 +1,11 @@
 2008-02-19  Sven Neumann  <sven@gimp.org>
 
+	* babl/babl-fish-path.c (test_create): add some extra pixels
+	outside the valid range to fix issues with wrong clamping of
+	conversions.
+
+2008-02-19  Sven Neumann  <sven@gimp.org>
+
 	* babl/babl-fish-path.c: renamed test_pixels to num_test_pixels.
 
 2008-02-19  Sven Neumann  <sven@gimp.org>
