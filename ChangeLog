@@ -1,3 +1,8 @@
+2008-02-19  Sven Neumann  <sven@gimp.org>
+
+	* babl/babl-fish-path.c (test_create): reverted previous change as
+	it introduces the risk of not testing any values between 0.0 and 1.0.
+
 2008-02-19  Øyvind Kolås  <pippin@gimp.org>
 
 	* babl/babl-fish-path.c: (test_create): make the testbuffer contain
