@@ -1,5 +1,9 @@
 2008-02-19  Sven Neumann  <sven@gimp.org>
 
+	* babl/babl-fish-path.c: renamed test_pixels to num_test_pixels.
+
+2008-02-19  Sven Neumann  <sven@gimp.org>
+
 	* babl/babl-fish-path.c (test_create): reverted previous change as
 	it introduces the risk of not testing any values between 0.0 and 1.0.
 

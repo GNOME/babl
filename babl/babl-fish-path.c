@@ -424,7 +424,7 @@ babl_fish_path_process (Babl *babl,
 }
 
 
-#define test_pixels    128
+#define num_test_pixels  128
 
 static double *
 test_create (void)
@@ -434,9 +434,9 @@ test_create (void)
 
   srandom (20050728);
 
-  test = babl_malloc (sizeof (double) * test_pixels * 4);
+  test = babl_malloc (sizeof (double) * num_test_pixels * 4);
 
-  for (i = 0; i < test_pixels * 4; i++)
+  for (i = 0; i < num_test_pixels * 4; i++)
     test [i] = (double) random () / RAND_MAX;
 
   return test;
@@ -466,49 +466,56 @@ chain_error (const Babl      *fmt_source,
   void   *ref_destination;
   double *ref_destination_rgba_double;
 
-  Babl   *fish_rgba_to_source      = babl_fish_reference (fmt_rgba_double, fmt_source);
-  Babl   *fish_reference           = babl_fish_reference (fmt_source, fmt_destination);
-  Babl   *fish_destination_to_rgba = babl_fish_reference (fmt_destination, fmt_rgba_double);
+  Babl   *fish_rgba_to_source      = babl_fish_reference (fmt_rgba_double,
+                                                          fmt_source);
+  Babl   *fish_reference           = babl_fish_reference (fmt_source,
+                                                          fmt_destination);
+  Babl   *fish_destination_to_rgba = babl_fish_reference (fmt_destination,
+                                                          fmt_rgba_double);
 
   test = test_create ();
 
-
-  source                      = babl_calloc (test_pixels, fmt_source->format.bytes_per_pixel);
-  destination                 = babl_calloc (test_pixels, fmt_destination->format.bytes_per_pixel);
-  ref_destination             = babl_calloc (test_pixels, fmt_destination->format.bytes_per_pixel);
-  destination_rgba_double     = babl_calloc (test_pixels, fmt_rgba_double->format.bytes_per_pixel);
-  ref_destination_rgba_double = babl_calloc (test_pixels, fmt_rgba_double->format.bytes_per_pixel);
+  source                      = babl_calloc (num_test_pixels,
+                                             fmt_source->format.bytes_per_pixel);
+  destination                 = babl_calloc (num_test_pixels,
+                                             fmt_destination->format.bytes_per_pixel);
+  ref_destination             = babl_calloc (num_test_pixels,
+                                             fmt_destination->format.bytes_per_pixel);
+  destination_rgba_double     = babl_calloc (num_test_pixels,
+                                             fmt_rgba_double->format.bytes_per_pixel);
+  ref_destination_rgba_double = babl_calloc (num_test_pixels,
+                                             fmt_rgba_double->format.bytes_per_pixel);
 
   /* create sourcebuffer from testbuffer in the correct format */
   babl_process (fish_rgba_to_source,
-                test, source, test_pixels);
+                test, source, num_test_pixels);
 
   /* calculate the reference buffer of how it should be */
   babl_process (fish_reference,
-                source, ref_destination, test_pixels);
+                source, ref_destination, num_test_pixels);
 
   /* calculate this chains view of what the result should be */
-  chain_process (chain, conversions, source, destination, test_pixels);
+  chain_process (chain, conversions, source, destination, num_test_pixels);
 
   /* transform the reference and the actual destination buffers to RGBA
    * for comparison with each other
    */
   babl_process (fish_destination_to_rgba,
-                ref_destination, ref_destination_rgba_double, test_pixels);
+                ref_destination, ref_destination_rgba_double, num_test_pixels);
   babl_process (fish_destination_to_rgba,
-                destination, destination_rgba_double, test_pixels);
+                destination, destination_rgba_double, num_test_pixels);
 
   error = babl_rel_avg_error (destination_rgba_double,
                               ref_destination_rgba_double,
-                              test_pixels * 4);
+                              num_test_pixels * 4);
 
   fish_rgba_to_source->fish.processings--;
   fish_reference->fish.processings--;
   fish_destination_to_rgba->fish.processings -= 2;
 
-  fish_rgba_to_source->fish.pixels      -= test_pixels;
-  fish_reference->fish.pixels           -= test_pixels;
-  fish_destination_to_rgba->fish.pixels -= 2 * test_pixels;
+  fish_rgba_to_source->fish.pixels      -= num_test_pixels;
+  fish_reference->fish.pixels           -= num_test_pixels;
+  fish_destination_to_rgba->fish.pixels -= 2 * num_test_pixels;
 
   babl_free (source);
   babl_free (destination);
