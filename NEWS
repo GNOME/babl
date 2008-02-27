@@ -5,6 +5,12 @@ the news section both in the README and the webpage.
 
                                                                           -->
 
+
+2008-02-27 babl-0.0.20                                              </dt><dd>
+Builds on OSX
+Check <0.0 and >1.0 values conversions for accuracy as well.
+
+                                                                    </dd><dt>
 2007-12-30 babl-0.0.18                                              </dt><dd>
 Constified use of babl formats.
 
