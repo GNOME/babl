@@ -1,5 +1,9 @@
 2008-02-27  Øyvind Kolås  <pippin@gimp.org>
 
+	* docs/Makefile.am: use mktemp instead of tempfile.
+
+2008-02-27  Øyvind Kolås  <pippin@gimp.org>
+
 	* extensions/Makefile.am: -I$(top_builddir) to be able to include
 	config.h
 
