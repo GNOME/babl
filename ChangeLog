@@ -1,3 +1,8 @@
+2008-02-27  Øyvind Kolås  <pippin@gimp.org>
+
+	* extensions/Makefile.am: -I$(top_builddir) to be able to include
+	config.h
+
 2008-02-19  Sven Neumann  <sven@gimp.org>
 
 	* babl/babl-fish-path.c (test_create): add some extra pixels
