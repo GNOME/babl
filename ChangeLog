@@ -1,5 +1,14 @@
 2008-03-02  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl.pc.in: do not add @DL_LIBS@ to link line of babl.
+
+2008-03-02  Øyvind Kolås  <pippin@gimp.org>
+
+	* tests/Makefile.am: applied patch from dmacks@netspace.org for
+	bug #519794.
+
+2008-03-02  Øyvind Kolås  <pippin@gimp.org>
+
 	Applied patch from dmacks@netspace.org closing bug #519796
 	* configure.ac:
 	* babl/Makefile.am:
