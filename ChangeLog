@@ -1,3 +1,11 @@
+2008-03-02  Øyvind Kolås  <pippin@gimp.org>
+
+	Applied patch from dmacks@netspace.org closing bug #519796
+	* configure.ac:
+	* babl/Makefile.am:
+	* tests/Makefile.am: Only -ldl if required, passed automatically via
+	$LIBS
+
 2008-02-27  Øyvind Kolås  <pippin@gimp.org>
 
 	* configure.ac: post release version increment to 0.0.21

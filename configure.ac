@@ -226,8 +226,7 @@ AM_CONDITIONAL(OS_UNIX, test "$os_win32" != "yes")
 
 dnl ===========================================================================
 
-AC_CHECK_LIB([dl], [dlopen], [DL_LIB="-ldl"])
-AC_SUBST(DL_LIB)
+AC_SEARCH_LIBS([dlopen], [dl])
 
 AC_REPLACE_FUNCS(gettimeofday)
 

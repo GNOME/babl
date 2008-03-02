@@ -54,5 +54,5 @@ libbabl_@BABL_API_VERSION@_la_LIBADD=\
 	@LTLIBOBJS@
 
 libbabl_@BABL_API_VERSION@_la_LDFLAGS= 		\
-	${no_undefined} ${DL_LIB} $(MATH_LIB)	\
+	${no_undefined} $(MATH_LIB)	\
 	-version-info $(BABL_LIBRARY_VERSION)
