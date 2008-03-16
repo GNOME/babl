@@ -1,5 +1,9 @@
 2008-03-16  Mukund Sivaraman <muks@mukund.org>
 
+	* babl/babl-image.c: Added missing va_end()s.
+
+2008-03-16  Mukund Sivaraman <muks@mukund.org>
+
 	* babl/babl-extension.c: Added missing dlclose()s.
 
 2008-03-02  Øyvind Kolås  <pippin@gimp.org>

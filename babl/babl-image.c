@@ -192,6 +192,7 @@ babl_image (void *first,
           else
             {
               babl_log ("%s unexpected", babl_class_name (babl->class_type));
+              va_end (varg);
               return NULL;
             }
         }
