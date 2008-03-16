@@ -185,6 +185,7 @@ babl_extension_load (const char *path)
   if (!init)
     {
       babl_log ("\n\tint babl_extension_init() function not found in extenstion '%s'", path);
+      dlclose (dl_handle);
       return load_failed (babl);
     }
 
@@ -197,6 +198,7 @@ babl_extension_load (const char *path)
   if (init ())
     {
       babl_log ("babl_extension_init() in extension '%s' failed (return!=0)", path);
+      dlclose (dl_handle);
       return load_failed (babl);
     }
 
