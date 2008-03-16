@@ -272,10 +272,13 @@ expand_path (char *path)
 
   while (*src)
     {
+      char *home;
       switch (*src)
         {
           case '~':
-            dst = babl_strcat (dst, getenv ("HOME"));
+            home = getenv ("HOME");
+            if (NULL != home)
+              dst = babl_strcat (dst, home);
             break;
 
           default:

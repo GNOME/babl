@@ -1,5 +1,11 @@
 2008-03-16  Mukund Sivaraman <muks@mukund.org>
 
+	* babl/babl-extension.c: getenv() can return NULL.
+
+	* babl/babl-memory.c: Check for NULL in babl_strcat().	
+
+2008-03-16  Mukund Sivaraman <muks@mukund.org>
+
 	* babl/babl-image.c: Added missing va_end()s.
 
 2008-03-16  Mukund Sivaraman <muks@mukund.org>

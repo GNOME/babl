@@ -298,6 +298,9 @@ babl_strcat (char       *dest,
   int   src_len;
   int   dst_len;
 
+  if (NULL == src)
+    return dest;
+
   src_len = strlen (src);
   if (!dest)
     {
