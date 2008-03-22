@@ -1,3 +1,20 @@
+2008-03-22  Sven Neumann  <sven@gimp.org>
+
+	Applied patch from Jan Heller that introduces list and hash table
+	functionality and changes the babl database to use coalesced
+	hashing (bug #523507):
+
+	* babl/Makefile.am
+	* babl/babl-list.[ch]
+	* babl/babl-hash-table.[ch]: new files providing list and hash
+	table functionality.
+
+	* babl/babl-internal.h: include the new header files.
+
+	* babl/babl-db.[ch]: use the new code.
+
+	* babl/babl-fish.c: changed accordingly.
+
 2008-03-16  Mukund Sivaraman <muks@mukund.org>
 
 	* babl/babl-extension.c: getenv() can return NULL.

@@ -19,33 +19,55 @@
 #ifndef _DB_H
 #define _DB_H
 
-#ifndef _BABL_INTERNAL_H
-#error  babl-db.h is only to be included after babl-internal.h
+#ifndef _BABL_CLASSES_H
+#error  babl-db.h is only to be included after babl-classes.h
 #endif
+
+#include "babl-list.h"
+#include "babl-hash-table.h"
 
 typedef struct _BablDb BablDb;
 
-#define HASH_TABLE_SIZE      128
 typedef struct _BablDb
 {
-  Babl  *hash [HASH_TABLE_SIZE];
-  int    size;
-  int    count;
-  Babl **items;
+  BablHashTable *name_hash;
+  BablHashTable *id_hash;
+  BablList      *babl_list;
 } _BablDb;
 
-BablDb * babl_db_init    (void);
-void     babl_db_destroy (BablDb           *db);
-void     babl_db_each    (BablDb           *db, 
-                          BablEachFunction  each_fun,
-                          void             *user_data);
-int      babl_db_count   (BablDb           *db);
-Babl   * babl_db_insert  (BablDb           *db,
-                          Babl             *entry);
-Babl   * babl_db_exist   (BablDb           *db,
-                          int               id,
-                          const char       *name);
-Babl   * babl_db_find    (BablDb           *db,
-                          const char       *name);
+
+BablDb *
+babl_db_init (void);
+
+void 
+babl_db_destroy (BablDb *db);
+
+void 
+babl_db_each (BablDb           *db, 
+              BablEachFunction  each_fun,
+              void             *user_data);
+
+int
+babl_db_count (BablDb *db);
+
+Babl * 
+babl_db_insert (BablDb *db,
+                Babl   *entry);
+
+Babl *
+babl_db_exist (BablDb     *db,
+               int        id,
+               const char *name);
+
+Babl * 
+babl_db_exist_by_name (BablDb     *db,
+                       const char *name);
+Babl *
+babl_db_exist_by_id (BablDb *db,
+                     int    id);
+
+Babl *
+babl_db_find (BablDb     *db,
+              const char *name);
 
 #endif

@@ -62,9 +62,9 @@ go_fishing (const Babl *source,
   BablDb *db = babl_fish_db ();
   int i;
 
-  for (i=0; i<db->count; i++)
+  for (i = 0; i < db->babl_list->count; i++)
     {
-      Babl *item = db->items[i];
+      Babl *item = db->babl_list->items[i];
       if ((void *) source == (void *) item->fish.source &&
           (void *) destination == (void *) item->fish.destination &&
           (item->class_type == BABL_FISH_PATH || /* accept only paths */

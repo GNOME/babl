@@ -37,7 +37,8 @@
 #include "babl.h"
 #define _BABL_INTERNAL_H
 
-
+#include "babl-list.h"
+#include "babl-hash-table.h"
 #include "babl-db.h"
 #include "babl-ids.h"
 #include "babl-util.h"
@@ -190,10 +191,10 @@ Babl *                                                        \
 babl_##type_name##_id (int id)                                \
 {                                                             \
   Babl *babl;                                                 \
-  babl = babl_db_exist (db, id, NULL);                        \
+  babl = babl_db_exist_by_id (db, id);                        \
   if (!babl)                                                  \
     {                                                         \
-      babl_fatal ("%s(%i): not found", __func__, id);       \
+      babl_fatal ("%s(%i): not found", __func__, id);         \
     }                                                         \
   return babl;                                                \
 }
@@ -206,13 +207,13 @@ babl_##type_name (const char *name)                             \
                                                                 \
   if (babl_hmpf_on_name_lookups)                                \
     {                                                           \
-      babl_log ("%s(\"%s\"): hmpf!", __func__, name);       \
+      babl_log ("%s(\"%s\"): hmpf!", __func__, name);           \
     }                                                           \
-  babl = babl_db_exist (db, 0, name);                           \
+  babl = babl_db_exist_by_name (db, name);                      \
                                                                 \
   if (!babl)                                                    \
     {                                                           \
-      babl_fatal ("%s(\"%s\"): not found", __func__, name); \
+      babl_fatal ("%s(\"%s\"): not found", __func__, name);     \
     }                                                           \
   return babl;                                                  \
 }
