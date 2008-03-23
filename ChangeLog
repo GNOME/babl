@@ -2,7 +2,8 @@
 
 	Applied patch from Jan Heller that introduces list and hash table
 	functionality and changes the babl database to use coalesced
-	hashing (bug #523507):
+	hashing (bug #523507). This considerably improves BABL
+	performance.
 
 	* babl/Makefile.am
 	* babl/babl-list.[ch]
