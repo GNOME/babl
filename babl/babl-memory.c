@@ -21,20 +21,20 @@
 #include <string.h>
 #include "babl-internal.h"
 
-static void *(*malloc_f)(size_t size) = malloc;
-static void  (*free_f)(void *ptr)     = free;
+static BablMallocFunc malloc_f = malloc;
+static BablFreeFunc   free_f   = free;
 
 static void *first_malloc_used = NULL;
 static void *first_free_used   = NULL;
 
 void
-babl_set_malloc (void *(*malloc_function)(size_t size))
+babl_set_malloc (BablMallocFunc malloc_function)
 {
   malloc_f = malloc_function;
 }
 
 void
-babl_set_free (void (*free_function)(void *ptr))
+babl_set_free (BablFreeFunc free_function)
 {
   free_f = free_function;
 }

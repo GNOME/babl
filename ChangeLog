@@ -1,3 +1,8 @@
+2008-03-23  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* babl/babl-memory.[ch]: typedef:ed BABL free and malloc function
+	pointers.
+
 2008-03-22  Sven Neumann  <sven@gimp.org>
 
 	Applied patch from Jan Heller that introduces list and hash table

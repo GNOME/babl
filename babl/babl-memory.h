@@ -19,8 +19,13 @@
 #ifndef _BABL_MEMORY_H
 #define _BABL_MEMORY_H
 
-void   babl_set_malloc    (void     *(*malloc_function) (size_t  size));
-void   babl_set_free      (void      (*free)            (void   *ptr));
+
+typedef void * (* BablMallocFunc) (size_t size);
+typedef void   (* BablFreeFunc)   (void  *ptr);
+
+
+void   babl_set_malloc    (BablMallocFunc malloc_function);
+void   babl_set_free      (BablFreeFunc   free_function);
 int    babl_memory_sanity (void);
 
 void * babl_malloc        (size_t      size);
