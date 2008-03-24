@@ -142,7 +142,7 @@ babl_type_new (void *first_arg,
 #define TOLERANCE    0.000000001
 #define samples      512
 
-double test[samples];
+static double test[samples];
 
 static double r_interval (double min, double max)
 {
