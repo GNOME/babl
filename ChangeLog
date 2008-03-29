@@ -1,3 +1,18 @@
+2008-03-29  Sven Neumann  <sven@gimp.org>
+
+	* babl/babl-component.c
+	* babl/babl-conversion.c
+	* babl/babl-db.c
+	* babl/babl-extension.c
+	* babl/babl-fish-path.c
+	* babl/babl-fish-reference.c
+	* babl/babl-fish-simple.c
+	* babl/babl-format.c
+	* babl/babl-model.c
+	* babl/babl-type.c: applied patch from Jan Heller that changes the
+	code to test for a pre-existent instance of a babl class in the
+	database before creating a new one.
+
 2008-03-24  Tor Lillqvist  <tml@novell.com>
 
 	* babl/babl-type.c: Make the "test" array static.

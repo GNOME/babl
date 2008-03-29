@@ -161,14 +161,24 @@ babl_model_new (void *first_argument,
 
   va_end (varg);
 
-  babl = model_new (create_name (name, components, component), id, components, component);
+  name = create_name (name, components, component);
 
-  {
-    Babl *ret = babl_db_insert (db, babl);
-    if (ret != babl)
-      babl_free (babl);
-    return ret;
-  }
+  babl = babl_db_exist (db, id, name);
+  if (babl) 
+    {
+      /* There is an instance already registered by the required id/name,
+       * returning the preexistent one instead.
+       */
+      return babl;
+    }
+
+  babl = model_new (name, id, components, component);
+
+  /* Since there is not an already registered instance by the required
+   * id/name, inserting newly created class into database.
+   */
+  babl_db_insert (db, babl);
+  return babl;
 }
 
 

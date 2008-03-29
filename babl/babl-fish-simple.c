@@ -34,6 +34,15 @@ babl_fish_simple (BablConversion *conversion)
 
   name = create_name (conversion);
 
+  babl = babl_db_exist_by_name (babl_fish_db (), name);
+  if (babl) 
+    {
+      /* There is an instance already registered by the required name,
+       * returning the preexistent one instead.
+       */
+      return babl;
+    }
+
   babl = babl_malloc (sizeof (BablFishSimple) +
                       strlen (name) + 1);
   babl->class_type    = BABL_FISH_SIMPLE;
@@ -50,10 +59,9 @@ babl_fish_simple (BablConversion *conversion)
                                    reference, and babl fish reference only requests clean
                                    conversions */
 
-  {
-    Babl *ret = babl_db_insert (babl_fish_db (), babl);
-    if (ret != babl)
-      babl_free (babl);
-    return ret;
-  }
+  /* Since there is not an already registered instance by the required
+   * name, inserting newly created class into database.
+   */
+  babl_db_insert (babl_fish_db (), babl);
+  return babl;
 }

@@ -45,24 +45,25 @@ format_new (const char     *name,
 {
   Babl *babl;
 
-  {
-    int i;
-    /* i is desintation position */
-    for (i = 0; i < model->components; i++)
-      {
-        int j;
-
-        for (j = 0; j < components; j++)
-          {
-            if (component[j] == model->component[i])
-              goto component_found;
-          }
-        babl_fatal ("matching source component for %s in model %s not found",
-                    model->component[i]->instance.name, model->instance.name);
-component_found:
-        ;
-      }
-  }
+  /* i is desintation position */
+  int i, j, component_found = 0;
+  for (i = 0; i < model->components; i++)
+    {
+      for (j = 0; j < components; j++)
+        {
+          if (component[j] == model->component[i])
+            {
+              component_found = 1;
+              break;
+            }  
+        }
+      if (!component_found) 
+        {
+          component_found = 0;
+          babl_fatal ("matching source component for %s in model %s not found",
+                      model->component[i]->instance.name, model->instance.name);
+        }
+    }
 
   /* allocate all memory in one chunk */
   babl = babl_malloc (sizeof (BablFormat) +
@@ -295,17 +296,28 @@ babl_format_new (void *first_arg,
 
   va_end (varg);
 
-  babl = format_new (name ? name : create_name (model, components, component, type),
+  if (!name) 
+    name = create_name (model, components, component, type);
+
+  babl = babl_db_exist (db, id, name);
+  if (babl) 
+    {
+      /* There is an instance already registered by the required id/name,
+       * returning the preexistent one instead.
+       */
+      return babl;
+    }
+    
+  babl = format_new (name,
                      id,
                      planar, components, model,
                      component, sampling, type);
 
-  {
-    Babl *ret = babl_db_insert (db, babl);
-    if (ret != babl)
-      babl_free (babl);
-    return ret;
-  }
+  /* Since there is not an already registered instance by the required
+   * id/name, inserting newly created class into database.
+   */
+  babl_db_insert (db, babl);
+  return babl;
 }
 
 int

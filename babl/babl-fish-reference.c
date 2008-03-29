@@ -51,6 +51,15 @@ babl_fish_reference (const Babl *source,
   Babl *babl = NULL;
   char *name = create_name (source, destination, 1);
 
+  babl = babl_db_exist_by_name (babl_fish_db (), name);
+  if (babl) 
+    {
+      /* There is an instance already registered by the required name,
+       * returning the preexistent one instead.
+       */
+      return babl;
+    }
+
   babl_assert (BABL_IS_BABL (source));
   babl_assert (BABL_IS_BABL (destination));
 
@@ -71,12 +80,12 @@ babl_fish_reference (const Babl *source,
   babl->fish.error       = 0.0;  /* assuming the provided reference conversions for types
                                     and models are as exact as possible
                                   */
-  {
-    Babl *ret = babl_db_insert (babl_fish_db (), babl);
-    if (ret != babl)
-      babl_free (babl);
-    return ret;
-  }
+
+  /* Since there is not an already registered instance by the required
+   * name, inserting newly created class into database.
+   */
+  babl_db_insert (babl_fish_db (), babl);
+  return babl;
 }
 
 

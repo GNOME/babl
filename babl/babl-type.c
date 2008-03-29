@@ -128,14 +128,22 @@ babl_type_new (void *first_arg,
 
   va_end (varg);
 
+  babl = babl_db_exist (db, id, first_arg);
+  if (babl) 
+    {
+      /* There is an instance already registered by the required id/name,
+       * returning the preexistent one instead.
+       */
+      return babl;
+    }
+
   babl = type_new (first_arg, id, bits);
 
-  {
-    Babl *ret = babl_db_insert (db, babl);
-    if (ret != babl)
-      babl_free (babl);
-    return ret;
-  }
+  /* Since there is not an already registered instance by the required
+   * id/name, inserting newly created class into database.
+   */
+  babl_db_insert (db, babl);
+  return babl;
 }
 
 

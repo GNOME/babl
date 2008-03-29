@@ -79,7 +79,7 @@ conversion_new (const char    *name,
           }
         else if (planar)
           {
-            babl_fatal ("planar conversions not supported for %ssupported",
+            babl_fatal ("planar conversions not supported for %s",
                         babl_class_name (source->class_type));
           }
         break;
@@ -257,18 +257,26 @@ babl_conversion_new (void *first_arg,
     {
       type = BABL_CONVERSION_PLANAR;
     }
-  babl = conversion_new (create_name (source, destination, type),
-                         id, source, destination, linear, plane, planar);
 
-  {
-    Babl *ret = babl_db_insert (db, babl);
-    if (ret != babl)
-      babl_free (babl);
-    else
-      babl_add_ptr_to_list ((void ***) ((Babl *) &(source->type.from)), babl);
+  char * name = create_name (source, destination, type);
+  
+  babl = babl_db_exist (db, id, name);
+  if (babl) 
+    {
+      /* There is an instance already registered by the required id/name,
+       * returning the preexistent one instead.
+       */
+      return babl;
+    }
 
-    return ret;
-  }
+  babl = conversion_new (name, id, source, destination, linear, plane, planar);
+
+  /* Since there is not an already registered instance by the required
+   * id/name, inserting newly created class into database.
+   */
+  babl_db_insert (db, babl);
+  babl_add_ptr_to_list ((void ***) ((Babl *) &(source->type.from)), babl);
+  return babl;
 }
 
 static long

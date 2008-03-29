@@ -284,6 +284,15 @@ babl_fish_path (const Babl *source,
   char           *name = create_name (source, destination, 1);
   BablConversion *temp_chain[BABL_HARD_MAX_PATH_LENGTH];
 
+  babl = babl_db_exist_by_name (babl_fish_db (), name);
+  if (babl) 
+    {
+      /* There is an instance already registered by the required name,
+       * returning the preexistent one instead.
+       */
+      return babl;
+    }
+
   babl_assert (BABL_IS_BABL (source));
   babl_assert (BABL_IS_BABL (destination));
 
@@ -329,12 +338,11 @@ babl_fish_path (const Babl *source,
       return NULL;
     }
 
-  {
-    Babl *ret = babl_db_insert (babl_fish_db (), babl);
-    if (ret != babl)
-      babl_free (babl);
-    return ret;
-  }
+  /* Since there is not an already registered instance by the required
+   * name, inserting newly created class into database.
+   */
+  babl_db_insert (babl_fish_db (), babl);
+  return babl;
 }
 
 static long

@@ -184,7 +184,7 @@ babl_extension_load (const char *path)
   init = dlsym (dl_handle, "init");
   if (!init)
     {
-      babl_log ("\n\tint babl_extension_init() function not found in extenstion '%s'", path);
+      babl_log ("\n\tint babl_extension_init() function not found in extension '%s'", path);
       dlclose (dl_handle);
       return load_failed (babl);
     }
@@ -202,7 +202,8 @@ babl_extension_load (const char *path)
       return load_failed (babl);
     }
 
-  if (babl_db_insert (db, babl) == babl)
+  babl_db_insert (db, babl);
+  if (babl == babl_db_exist_by_name (db, path))
     {
       babl_set_extender (NULL);
       return babl;

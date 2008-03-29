@@ -94,12 +94,6 @@ Babl *
 babl_db_insert (BablDb *db,
                 Babl   *item)
 {
-
-  Babl *found = babl_db_exist (db, item->instance.id, item->instance.name);
-
-  if (found)
-    return found;
-
   if (item->instance.id)
     babl_hash_table_insert (db->id_hash, item);
   babl_hash_table_insert (db->name_hash, item);
