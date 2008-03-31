@@ -1,15 +1,17 @@
 <dl>
-  <dt>Øyvind Kolås <em>pippin@gimp.org</em></dt>
+  <dt>Øyvind Kolås <em>pippin at gimp.org</em></dt>
         <dd>Lead developer.</dd>
-  <dt>Sven Neumann <em>sven@gimp.org</em></dt>
+  <dt>Sven Neumann <em>sven at gimp.org</em></dt>
         <dd>Build sanity.</dd>
-  <dt>Michael Natterer <em>mitch@gimp.org</em></dt>
+  <dt>Michael Natterer <em>mitch at gimp.org</em></dt>
         <dd>Build sanity.</dd>
-  <dt>Kevin Cozens  <kcozens@cvs.gnome.org></dt>
+  <dt>Kevin Cozens <kcozens at cvs.gnome.org></dt>
         <dd>Build sanity.</dd>
   <dt>Tim Mooney</dt>
         <dd>Portability fixes.</dd>
-  <dt>Michael Schumacher <em>schumaml@cvs.gnome.org</em></dt>
+  <dt>Michael Schumacher <em>schumaml at cvs.gnome.org</em></dt>
         <dd>win32 support for dynamic extensions.</dd>
         <dd>Portability fixes.</dd>
+  <dt>Jan Heller <em>jan.heller at matfyz.cz</em></dt>
+  	<dd>Optimizations.</dd>
 </dl>

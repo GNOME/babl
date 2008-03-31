@@ -1,3 +1,7 @@
+2008-03-31  Sven Neumann  <sven@gimp.org>
+
+	* AUTHORS: added Jan Heller and obfuscated the email addresses.
+
 2008-03-29  Sven Neumann  <sven@gimp.org>
 
 	* babl/babl-component.c
