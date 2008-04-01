@@ -20,11 +20,12 @@
 #define _BABL_LIST_H
 
 #ifndef _BABL_CLASSES_H
+/* babl-classes.h contains forward declaration
+ * typedef struct _BablList BablList;
+ */
 #error  babl-list.h is only to be included after babl-classes.h
 #endif
 
-
-typedef struct _BablList BablList;
 
 typedef struct _BablList
 {
@@ -37,6 +38,9 @@ typedef struct _BablList
 BablList *
 babl_list_init (void);
 
+BablList *
+babl_list_init_with_size (int initial_size);
+
 void
 babl_list_destroy (BablList *list);
 
@@ -48,9 +52,9 @@ babl_list_insert (BablList *list,
                   Babl     *item);
 
 void
-babl_list_each_temp (BablList      *list,
-                     BablEachFunction each_fun,
-                     void             *user_data);
+babl_list_each (BablList      *list,
+                BablEachFunction each_fun,
+                void             *user_data);
 
 
 #endif

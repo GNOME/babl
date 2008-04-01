@@ -141,10 +141,10 @@ get_conversion_chain (const Babl      *from,
       temp_chain[temp_conversions] = NULL;
       babl_assert (from);
       babl_assert (from->class_type == BABL_FORMAT);
-      if (!from->format.from)
+      if (!from->format.from_list)
         return 0;
 
-      babl_list_each ((void **) from->format.from,
+      babl_list_each (from->format.from_list,
                       chain_gen_each,
                       &context);
     }
@@ -152,12 +152,11 @@ get_conversion_chain (const Babl      *from,
     {
       if (BABL (temp_chain[temp_conversions - 1]) &&
           BABL (temp_chain[temp_conversions - 1]->destination)->
-          format.from)
+          format.from_list)
 
         babl_list_each (
-          (void **)
           BABL (temp_chain[temp_conversions - 1]->destination)->
-          format.from,
+          format.from_list,
           chain_gen_each,
           &context);
     }
@@ -250,15 +249,16 @@ static inline Babl *
 assert_conversion_find (void *source,
                         void *destination)
 {
-  int    i = 0;
-  Babl **conversion;
+  int      i = 0;
+  BablList *conversion_list;
+  Babl     *conversion;
 
-  conversion = (void *) BABL (source)->type.from;
-  while (conversion && conversion[i])
+  conversion_list = BABL (source)->type.from_list;
+  for (i = 0; i < babl_list_size (conversion_list); i++)
     {
-      if (conversion[i]->conversion.destination == destination)
-        return (Babl *) conversion[i];
-      i++;
+      conversion = BABL (conversion_list->items[i]);
+      if (conversion->conversion.destination == destination)
+        return conversion;
     }
   babl_fatal ("failed, aborting");
   return NULL;

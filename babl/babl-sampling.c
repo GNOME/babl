@@ -46,7 +46,8 @@ static int
 each_babl_sampling_destroy (Babl *babl,
                             void *data)
 {
-  babl_free (babl->sampling.from);
+  if (babl->sampling.from_list)
+    babl_list_destroy (babl->sampling.from_list);
   return 0;  /* continue iterating */
 }
 

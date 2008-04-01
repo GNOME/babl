@@ -111,7 +111,7 @@ babl_db_each (BablDb          *db,
               BablEachFunction each_fun,
               void            *user_data)
 {
-  babl_list_each_temp (db->babl_list, each_fun, user_data);
+  babl_list_each (db->babl_list, each_fun, user_data);
 }
 
 

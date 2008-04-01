@@ -76,6 +76,7 @@ typedef enum {
 
 
 typedef union _Babl Babl;
+typedef struct _BablList BablList;
 
 /* common header for any item inserted into database */
 typedef struct
@@ -109,7 +110,7 @@ BablConversion {
 typedef struct
 {
   BablInstance     instance;
-  BablConversion **from;  /*< NULL terminated list of conversions from class */
+  BablList         *from_list;
   int              bits;  /*< number of bits used to represent the data type
                             (initially restricted to a multiple of 8) */
   double           min_val;
@@ -136,7 +137,7 @@ typedef struct
 typedef struct
 {
   BablInstance     instance;
-  BablConversion **from; /*< NULL terminated list of conversions from class */
+  BablList         *from_list;
   int              horizontal;
   int              vertical;
   char             name[4];
@@ -154,7 +155,7 @@ typedef struct
 typedef struct
 {
   BablInstance     instance;
-  BablConversion **from; /*< NULL terminated list of conversions from class */
+  BablList         *from_list;
   int              components;
   BablComponent  **component;
   BablType       **type; /*< must be doubles, used here for convenience in code */
@@ -163,7 +164,7 @@ typedef struct
 typedef struct
 {
   BablInstance     instance;
-  BablConversion **from; /*< NULL terminated list of conversions from class */
+  BablList         *from_list;
   int              components;
   BablComponent  **component;
   BablType       **type;

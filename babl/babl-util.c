@@ -16,65 +16,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <math.h>
-#include "babl-memory.h"
 #include "babl-internal.h"
-
-static int list_length (void **list)
-{
-  void **ptr;
-  int    len = 0;
-
-  ptr = list;
-  while (NULL != *ptr)
-    {
-      ptr++;
-      len++;
-    }
-  return len;
-}
-
-void
-babl_add_ptr_to_list (void ***list,
-                      void   *new)
-{
-  int orig_len = 0;
-
-  if (*list)
-    {
-      orig_len = list_length (*list);
-    }
-
-  *list = babl_realloc ((*list),
-                        sizeof (void *) * (orig_len + 2));
-
-  if (!(*list))
-    {
-      babl_fatal ("failed to realloc");
-    }
-
-  (*list)[orig_len]     = new;
-  (*list)[orig_len + 1] = NULL;
-}
-
-void
-babl_list_each (void           **list,
-                BablEachFunction each_fun,
-                void            *user_data)
-{
-  int i;
-
-  if (!list)
-    return;
-  for (i = 0; i < list_length (list); i++)
-    {
-      if (each_fun ((Babl *) list[i], user_data))
-        break;
-    }
-}
 
 #include <sys/time.h>
 #include <time.h>

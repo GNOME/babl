@@ -27,7 +27,8 @@ static int
 each_babl_format_destroy (Babl *babl,
                           void *data)
 {
-  babl_free (babl->format.from);
+  if (babl->format.from_list)
+    babl_list_destroy (babl->format.from_list);
   babl_free (babl);
 
   return 0;  /* continue iterating */
@@ -74,7 +75,7 @@ format_new (const char     *name,
                       sizeof (int) * (components) +
                       sizeof (int) * (components));
 
-  babl->format.from      = NULL;
+  babl->format.from_list = NULL;
   babl->format.component = (void *) (((char *) babl) + sizeof (BablFormat));
   babl->format.type      = (void *) (((char *) babl->format.component) + sizeof (BablComponent *) * (components));
   babl->format.sampling  = (void *) (((char *) babl->format.type) + sizeof (BablType *) * (components));
@@ -110,7 +111,7 @@ format_new (const char     *name,
 
 static char buf[512] = "";
 
-static const char *
+static char *
 create_name (BablModel      *model,
              int             components,
              BablComponent **component,

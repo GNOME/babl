@@ -16,11 +16,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-/* Implementation of list data structure. This is a bit superior
- * to the list implementation in babl-util.c.
+/* Implementation of list data structure. 
  * Copyright (C) 2008, Jan Heller
- *
- * TODO: migrate babl to BablList
  */
 
 #include "babl-internal.h"
@@ -30,11 +27,19 @@
 BablList *
 babl_list_init (void)
 {
+  return babl_list_init_with_size (BABL_LIST_INITIAL_SIZE);
+}
+
+BablList *
+babl_list_init_with_size (int initial_size)
+{
   BablList *list = babl_calloc (sizeof (BablList), 1);
 
   babl_assert (list);
 
-  list->size = BABL_LIST_INITIAL_SIZE;
+  if (initial_size == 0)
+    initial_size = 1;
+  list->size = initial_size;
   list->count = 0;
   list->items = NULL;
   if (list->size) 
@@ -81,13 +86,10 @@ babl_list_insert (BablList *list,
     list->items[list->count++] = item;
 }
 
-/* TODO: Rename babl_list_each_temp to babl_list_each after the list migration
- */
-
 void
-babl_list_each_temp (BablList         *list,
-                     BablEachFunction each_fun,
-                     void             *user_data)
+babl_list_each (BablList         *list,
+                BablEachFunction each_fun,
+                void             *user_data)
 {
   int i;
 

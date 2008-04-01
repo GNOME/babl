@@ -36,22 +36,20 @@ type_sanity (Babl *babl,
 {
   /* ensure that every type has reference conversions to
    * and from double */
-  void **ptr;
-  int    ok;
+  int      ok, i;
+  BablList *list;
 
   ok = 0;
-  if (babl->type.from)
+  list = babl->type.from_list;
+  if (list)
     {
-      ptr = (void **) babl->type.from;
-
-      while (ptr && NULL != *ptr)
+      for (i = 0; i < babl_list_size (list); i++)
         {
-          if (babl_conversion_destination ((Babl *) (*ptr)) == babl_type_id (BABL_DOUBLE))
+          if (babl_conversion_destination ((Babl *) list->items[i]) == babl_type_id (BABL_DOUBLE))
             {
               ok = 1;
               break;
             }
-          ptr++;
         }
     }
   if (!ok)
@@ -71,22 +69,20 @@ model_sanity (Babl *babl,
 {
   /* ensure that every type has reference conversions to
    * and from rgba */
-  void **ptr;
-  int    ok;
+  int      ok, i;
+  BablList *list;
 
   ok = 0;
-  if (babl->model.from)
+  list = babl->model.from_list;
+  if (list)
     {
-      ptr = (void **) babl->model.from;
-
-      while (ptr && NULL != *ptr)
+      for (i = 0; i < babl_list_size (list); i++)
         {
-          if (babl_conversion_destination ((Babl *) (*ptr)) == babl_model_id (BABL_RGBA))
+          if (babl_conversion_destination ((Babl *) list->items[i]) == babl_model_id (BABL_RGBA))
             {
               ok = 1;
               break;
             }
-          ptr++;
         }
     }
   if (!ok)

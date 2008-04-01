@@ -275,7 +275,9 @@ babl_conversion_new (void *first_arg,
    * id/name, inserting newly created class into database.
    */
   babl_db_insert (db, babl);
-  babl_add_ptr_to_list ((void ***) ((Babl *) &(source->type.from)), babl);
+  if (!source->type.from_list)
+    source->type.from_list = babl_list_init_with_size (BABL_CONVERSIONS);
+  babl_list_insert (source->type.from_list, babl);  
   return babl;
 }
 

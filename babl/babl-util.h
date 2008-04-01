@@ -19,16 +19,6 @@
 #ifndef _BABL_UTIL_H
 #define _BABL_UTIL_H
 
-#include <math.h>
-
-void   babl_add_ptr_to_list (void       ***list,
-                             void         *new);
-
-void
-babl_list_each (void             **list,
-                BablEachFunction   each_fun,
-                void              *user_data);
-
 long
 babl_ticks     (void);
 

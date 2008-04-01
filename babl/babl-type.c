@@ -28,7 +28,8 @@ static int
 each_babl_type_destroy (Babl *babl,
                         void *data)
 {
-  babl_free (babl->type.from);
+  if (babl->type.from_list)
+    babl_list_destroy (babl->type.from_list);
   babl_free (babl);
   return 0;  /* continue iterating */
 }
@@ -44,13 +45,13 @@ type_new (const char *name,
   babl_assert (bits != 0);
   babl_assert (bits % 8 == 0);
 
-  babl                = babl_malloc (sizeof (BablType) + strlen (name) + 1);
-  babl->instance.name = (void *) ((char *) babl + sizeof (BablType));
-  babl->class_type    = BABL_TYPE;
-  babl->instance.id   = id;
+  babl                 = babl_malloc (sizeof (BablType) + strlen (name) + 1);
+  babl->instance.name  = (void *) ((char *) babl + sizeof (BablType));
+  babl->class_type     = BABL_TYPE;
+  babl->instance.id    = id;
   strcpy (babl->instance.name, name);
-  babl->type.bits = bits;
-  babl->type.from = NULL;
+  babl->type.bits      = bits;
+  babl->type.from_list = NULL;
 
   return babl;
 }

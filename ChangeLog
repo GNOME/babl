@@ -1,3 +1,22 @@
+2008-04-01  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/babl-classes.h:
+	* babl/babl-conversion.c:
+	* babl/babl-db.c:
+	* babl/babl-fish-path.c:
+	* babl/babl-fish.c:
+	* babl/babl-format.c: 
+	* babl/babl-internal.h:
+	* babl/babl-introspect.c:
+	* babl/babl-list.c:
+	* babl/babl-list.h:
+	* babl/babl-model.c:
+	* babl/babl-sampling.c:
+	* babl/babl-sanity.c:
+	* babl/babl-type.c:
+	* babl/babl-util.[ch]: applied patch from Jan Heller that improves
+	readability by using the newly introduced BablList structure.
+
 2008-03-31  Sven Neumann  <sven@gimp.org>
 
 	* AUTHORS: added Jan Heller and obfuscated the email addresses.

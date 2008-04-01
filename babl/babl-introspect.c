@@ -78,37 +78,22 @@ babl_introspect (Babl *babl)
 }
 
 #ifdef BABL_LOG
-static int list_length (void **list)
-{
-  void **ptr;
-  int    len = 0;
-
-  ptr = list;
-  while (NULL != *ptr)
-    {
-      ptr++;
-      len++;
-    }
-  return len;
-}
-
 
 static void
 item_conversions_introspect (Babl *babl)
 {
-  void **ptr;
+  int i;
+  BablList *list;
 
-  if (babl->type.from)
-    babl_log ("\t\tconversions from %s: %i",
-              babl->instance.name, list_length ((void **) (babl->type.from)));
-
-  ptr = (void **) babl->type.from;
-
-  while (ptr && NULL != *ptr)
+  list = babl->type.from_list;
+  if (list) 
     {
-      babl_log ("\t\t\t'%s'", ((Babl *) (*ptr))->instance.name);
-      ptr++;
-    }
+      babl_log ("\t\tconversions from %s: %i",
+                babl->instance.name, babl_list_size (list));
+
+      for (i = 0; i < babl_list_size (list); i++)
+        babl_log ("\t\t\t'%s'", BABL (list->items[i])->instance.name);
+   }
 }
 
 static void
