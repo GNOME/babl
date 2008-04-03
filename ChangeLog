@@ -1,3 +1,22 @@
+2008-04-03  Øyvind Kolås  <pippin@gimp.org>
+
+	Applied patch from Jan Heller that ports BablFishPath class to the new
+	list API and the list API is a bit expanded. Further, the algorithm
+	for generating the shortest conversion path is reformulated to be more
+	readable and comprehensible and thoroughly commented. The algorithm
+	for processing the conversion paths is reformulated and commented. 
+	Also contains minor readability cleanups and speedups.
+
+	* babl/babl-classes.h:
+	* babl/babl-conversion.c:
+	* babl/babl-db.c:
+	* babl/babl-fish-path.c: 
+	* babl/babl-fish-stats.c:
+	* babl/babl-fish.c:
+	* babl/babl-list.c:
+	* babl/babl-list.h:
+	* tests/babl_fish_path_fitness.c:
+
 2008-04-01  Øyvind Kolås  <pippin@gimp.org>
 
 	* babl/babl-classes.h:

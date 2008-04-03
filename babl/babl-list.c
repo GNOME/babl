@@ -63,27 +63,76 @@ int
 babl_list_size (BablList *list)
 {
     babl_assert (list);
+
     return list->count;
 }
 
-void
-babl_list_insert (BablList *list,
-                  Babl     *item)
+inline void
+babl_list_insert_last (BablList *list,
+                       Babl     *item)
 {
   babl_assert(list);
   babl_assert(BABL_IS_BABL(item));
 
   if (list->size < list->count + 1)
     {
-        Babl **new_items;
+      Babl **new_items;
 
-        new_items = babl_realloc (list->items, (list->size * 2) * sizeof (BablInstance *));
-        babl_assert (new_items);
-        list->items = new_items;
-        memset (list->items + list->size, 0, list->size * sizeof (BablInstance *));
-        list->size *= 2;
+      new_items = babl_realloc (list->items, (list->size * 2) * sizeof (BablInstance *));
+      babl_assert (new_items);
+      list->items = new_items;
+      memset (list->items + list->size, 0, list->size * sizeof (BablInstance *));
+      list->size *= 2;
     }
     list->items[list->count++] = item;
+}
+
+inline void
+babl_list_remove_last (BablList *list)
+{
+  babl_assert (list);
+  babl_assert (list->count > 0);
+
+  list->count--;
+}
+
+inline Babl *
+babl_list_get_first (BablList *list)
+{
+  babl_assert (list);
+  babl_assert (list->count > 0);
+
+  return (list->items[0]);
+}
+
+inline Babl *
+babl_list_get_last (BablList *list)
+{
+  babl_assert (list);
+  babl_assert (list->count > 0);
+
+  return (list->items[list->count - 1]);
+}
+
+inline void 
+babl_list_copy (BablList *from,
+                BablList *to)
+{
+  babl_assert (from);
+  babl_assert (to);
+
+  if (to->size < from->count)
+    {
+      Babl **new_items;
+
+      new_items = babl_realloc (to->items, from->count * sizeof (BablInstance *));
+      babl_assert (new_items);
+      to->items = new_items;
+      to->size = from->count;
+    }
+
+    memcpy (to->items, from->items, from->count * sizeof (BablInstance *));
+    to->count = from->count;
 }
 
 void

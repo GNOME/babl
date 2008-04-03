@@ -43,8 +43,8 @@ static int destination_each (Babl *babl,
 
       if (temp)
         {
-          printf ("%s", utf8_bar[temp->fish_path.conversions]);
-          total_length += temp->fish_path.conversions;
+          printf ("%s", utf8_bar[babl_list_size (temp->fish_path.conversion_list)]);
+          total_length += babl_list_size (temp->fish_path.conversion_list);
           total_cost   += temp->fish_path.cost;
           ok++;
           total++;

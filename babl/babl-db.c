@@ -97,7 +97,7 @@ babl_db_insert (BablDb *db,
   if (item->instance.id)
     babl_hash_table_insert (db->id_hash, item);
   babl_hash_table_insert (db->name_hash, item);
-  babl_list_insert (db->babl_list, item);
+  babl_list_insert_last (db->babl_list, item);
 
   /* this point all registered items pass through, a nice
   * place to brand them with where the item came from. */

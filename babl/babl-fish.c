@@ -213,6 +213,8 @@ static int
 each_babl_fish_destroy (Babl *babl,
                         void *data)
 {
+  if (babl->class_type == BABL_FISH_PATH)
+    babl_list_destroy (babl->fish_path.conversion_list);
   babl_free (babl);
   return 0;  /* continue iterating */
 }

@@ -48,7 +48,7 @@ table_destination_each (Babl *babl,
 
             fprintf (output_file, "<td class='cell'%s><a href='javascript:o()'>%s",
                      fish->fish.processings > 0 ? " style='background-color: #69f'" : "",
-                     utf8_bar[fish->fish_path.conversions]);
+                     utf8_bar[babl_list_size (fish->fish_path.conversion_list)]);
 
             {
               int i;
@@ -68,12 +68,14 @@ table_destination_each (Babl *babl,
               fprintf (output_file, "<td style='text-align:right'><em>error</em></td>");
               fprintf (output_file, "</tr>");
 
-              for (i = 0; i < fish->fish_path.conversions; i++)
+              for (i = 0; i < babl_list_size (fish->fish_path.conversion_list); i++)
                 {
                   fprintf (output_file, "<tr>");
-                  fprintf (output_file, "<td>%s</td>", BABL (fish->fish_path.conversion[i])->instance.name);
-                  fprintf (output_file, "<td class='r'>%li</td>", babl_conversion_cost (&BABL (fish->fish_path.conversion[i])->conversion));
-                  fprintf (output_file, "<td class='r'>%e</td>", babl_conversion_error (&BABL (fish->fish_path.conversion[i])->conversion));
+                  fprintf (output_file, "<td>%s</td>", BABL (fish->fish_path.conversion_list->items[i])->instance.name);
+                  fprintf (output_file, "<td class='r'>%li</td>", 
+                    babl_conversion_cost (&BABL (fish->fish_path.conversion_list->items[i])->conversion));
+                  fprintf (output_file, "<td class='r'>%e</td>", 
+                    babl_conversion_error (&BABL (fish->fish_path.conversion_list->items[i])->conversion));
                   fprintf (output_file, "</tr>");
                 }
 

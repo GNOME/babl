@@ -277,7 +277,7 @@ babl_conversion_new (void *first_arg,
   babl_db_insert (db, babl);
   if (!source->type.from_list)
     source->type.from_list = babl_list_init_with_size (BABL_CONVERSIONS);
-  babl_list_insert (source->type.from_list, babl);  
+  babl_list_insert_last (source->type.from_list, babl);  
   return babl;
 }
 
@@ -474,6 +474,11 @@ babl_conversion_error (BablConversion *conversion)
   if (!conversion)
     return 0.0;
 
+  if (conversion->error != -1.0)  /* double conversion against a set value should work */
+    {
+      return conversion->error;
+    }
+
   fmt_source      = BABL (conversion->source);
   fmt_destination = BABL (conversion->destination);
 
@@ -495,10 +500,6 @@ babl_conversion_error (BablConversion *conversion)
         fmt_destination->class_type == BABL_FORMAT))
     {
       conversion->error = 0.000042;
-    }
-  if (conversion->error != -1.0)  /* double conversion against a set value should work */
-    {
-      return conversion->error;
     }
 
   test = test_create ();

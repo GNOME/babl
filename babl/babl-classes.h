@@ -177,6 +177,8 @@ typedef struct
   int              planar;
   double           loss; /*< average relative error when converting
                              from and to RGBA double */
+  int              visited; /* for convenience in code while searching 
+                               for conversion paths */
 } BablFormat;
 
 typedef struct
@@ -241,9 +243,7 @@ typedef struct
   BablFish         fish;
   double           cost;   /* number of  ticks *10 + chain_length */
   double           loss;   /* error introduced */
-
-  int              conversions;
-  BablConversion  *conversion[BABL_HARD_MAX_PATH_LENGTH];
+  BablList         *conversion_list;
 } BablFishPath;
 
 /* BablFishReference

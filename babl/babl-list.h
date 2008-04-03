@@ -47,9 +47,22 @@ babl_list_destroy (BablList *list);
 int
 babl_list_size (BablList *list);
 
-void
-babl_list_insert (BablList *list,
-                  Babl     *item);
+inline void
+babl_list_insert_last (BablList *list,
+                       Babl     *item);
+
+inline void
+babl_list_remove_last (BablList *list);
+
+inline Babl *
+babl_list_get_first (BablList *list);
+
+inline Babl *
+babl_list_get_last (BablList *list);
+
+inline void 
+babl_list_copy (BablList *from,
+                BablList *to);
 
 void
 babl_list_each (BablList      *list,
