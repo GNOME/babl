@@ -142,7 +142,7 @@ real_babl_log (const char *file,
   va_end (varg);
 
   fprintf (stdout, "\n");
-  fflush (0);
+  fflush (NULL);
   return;
   hack_hack ();
 }

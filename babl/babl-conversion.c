@@ -189,6 +189,8 @@ babl_conversion_new (void *first_arg,
   Babl          *source;
   Babl          *destination;
 
+  char          *name;
+
   va_start (varg, first_arg);
   source      = (Babl *) arg;
   destination = va_arg (varg, Babl *);
@@ -258,10 +260,10 @@ babl_conversion_new (void *first_arg,
       type = BABL_CONVERSION_PLANAR;
     }
 
-  char * name = create_name (source, destination, type);
-  
+  name = create_name (source, destination, type);
+
   babl = babl_db_exist (db, id, name);
-  if (babl) 
+  if (babl)
     {
       /* There is an instance already registered by the required id/name,
        * returning the preexistent one instead.
@@ -277,7 +279,7 @@ babl_conversion_new (void *first_arg,
   babl_db_insert (db, babl);
   if (!source->type.from_list)
     source->type.from_list = babl_list_init_with_size (BABL_CONVERSIONS);
-  babl_list_insert_last (source->type.from_list, babl);  
+  babl_list_insert_last (source->type.from_list, babl);
   return babl;
 }
 

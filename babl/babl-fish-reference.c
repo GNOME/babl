@@ -170,7 +170,7 @@ convert_from_double (BablFormat *destination_fmt,
   dst_img->data[0]  = destination_buf;
   dst_img->type[0]  = (BablType *) babl_type_id (BABL_DOUBLE);
   dst_img->pitch[0] = destination_fmt->bytes_per_pixel;
-  dst_img->stride   = 0;
+  dst_img->stride[0] = 0;
 
   for (i = 0; i < destination_fmt->components; i++)
     {

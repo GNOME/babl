@@ -1,3 +1,13 @@
+2008-04-02  Mukund Sivaraman <muks@mukund.org>
+
+	Sparse fixes.
+
+	* babl/babl-internal.h: fflush() takes pointer.
+
+	* babl/babl-conversion.c: Don't mix code and declarations.
+
+	* babl/babl-fish-reference.c: Fixed array assignment.
+
 2008-04-03  Øyvind Kolås  <pippin@gimp.org>
 
 	Applied patch from Jan Heller that ports BablFishPath class to the new
