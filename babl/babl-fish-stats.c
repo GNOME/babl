@@ -231,7 +231,7 @@ each_conv (Babl *babl,
 }
 
 static void
-conversions ()
+conversions (void)
 {
   fprintf (output_file, "<h2>Conversions</h2><dl>\n");
   babl_conversion_each (each_conv, NULL);

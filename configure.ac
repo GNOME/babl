@@ -105,12 +105,32 @@ AC_SUBST(WEBSITE_HOST)
 WEBSITE_LOCATION=public_html/babl/
 AC_SUBST(WEBSITE_LOCATION)
 
+
 if eval "test x$GCC = xyes"; then
   case " $CFLAGS " in
   *[\ \	]-Wall[\ \	]*) ;;
   *) CFLAGS="$CFLAGS -Wall" ;;
   esac
 fi
+
+BABL_DETECT_CFLAGS(extra_warnings, '-Wdeclaration-after-statement')
+CFLAGS="$CFLAGS $extra_warnings"
+
+BABL_DETECT_CFLAGS(extra_warnings, '-Wmissing-prototypes')
+CFLAGS="$CFLAGS $extra_warnings"
+
+BABL_DETECT_CFLAGS(extra_warnings, '-Wmissing-declarations')
+CFLAGS="$CFLAGS $extra_warnings"
+
+BABL_DETECT_CFLAGS(extra_warnings, '-Winit-self')
+CFLAGS="$CFLAGS $extra_warnings"
+
+BABL_DETECT_CFLAGS(extra_warnings, '-Wpointer-arith')
+CFLAGS="$CFLAGS $extra_warnings"
+
+BABL_DETECT_CFLAGS(extra_warnings, '-Wold-style-definition')
+CFLAGS="$CFLAGS $extra_warnings"
+
 
 AC_PATH_PROG(INKSCAPE, inkscape, no)
 AM_CONDITIONAL(HAVE_INKSCAPE, test "x$INKSCAPE" != "xno")

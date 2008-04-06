@@ -1,3 +1,14 @@
+2008-04-06  Sven Neumann  <sven@gimp.org>
+
+	* acinclude.m4: new file defining BABL_DETECT_CFLAGS() macro.
+
+	* configure.ac: set CFLAGS to get some extra compiler warnings.
+
+	* babl/babl-fish-stats.c (conversions): fixed old-style function
+	definition.
+
+	* Makefile.am: formatting.
+
 2008-04-02  Mukund Sivaraman <muks@mukund.org>
 
 	Sparse fixes.
