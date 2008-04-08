@@ -1,3 +1,23 @@
+2008-04-08  Øyvind Kolås  <pippin@gimp.org>
+
+	Applied patch from Jan Heller that improves logic of go_fishing code
+	in babl-fish.c. The current code searches list of all fishes while
+	looking for suitable preexistent BABL_FISH_PATH instance. The new code
+	only searches relevant part of database's hash table. Further, the
+	current code searches for fish path every time such a babl fish is
+	requested, even though the same fish path has been requested before
+	and not found. The new code creates dummy BABL_FISH instance with
+	appropriate source/destination formats and inserts it into the fish
+	database to indicate that fish path has been searched for and not
+	found. 
+
+	* babl/babl-fish.c: (find_fish_path), (find_memcpy_fish),
+	(babl_fish_get_id), (babl_fish):
+	* babl/babl-fish-path.c: (babl_fish_path):
+	* babl/babl-fish-reference.c: (babl_fish_reference):
+	* babl/babl-fish-simple.c: (babl_fish_simple):
+	* babl/babl-internal.h:
+
 2008-04-06  Sven Neumann  <sven@gimp.org>
 
 	* acinclude.m4: new file defining BABL_DETECT_CFLAGS() macro.

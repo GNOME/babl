@@ -69,7 +69,7 @@ babl_fish_reference (const Babl *source,
   babl = babl_malloc (sizeof (BablFishReference) +
                       strlen (name) + 1);
   babl->class_type    = BABL_FISH_REFERENCE;
-  babl->instance.id   = 0;
+  babl->instance.id   = babl_fish_get_id (source, destination);
   babl->instance.name = ((char *) babl) + sizeof (BablFishReference);
   strcpy (babl->instance.name, name);
   babl->fish.source      = source;

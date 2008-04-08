@@ -88,6 +88,8 @@ long     babl_fish_path_process         (Babl           *babl,
                                          void           *source,
                                          void           *destination,
                                          long            n);
+int      babl_fish_get_id               (const Babl     *source,
+                                         const Babl     *destination);
 
 double   babl_format_loss               (Babl           *babl);
 Babl   * babl_image_from_linear         (char           *buffer,

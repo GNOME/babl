@@ -193,9 +193,10 @@ Babl *
 babl_fish_path (const Babl *source,
                 const Babl *destination)
 {
-  Babl           *babl = NULL;
-  char           *name = create_name (source, destination, 1);
+  Babl *babl = NULL;
+  char *name;
 
+  name = create_name (source, destination, 1);
   babl = babl_db_exist_by_name (babl_fish_db (), name);
   if (babl) 
     {
@@ -205,17 +206,11 @@ babl_fish_path (const Babl *source,
       return babl;
     }
 
-  babl_assert (BABL_IS_BABL (source));
-  babl_assert (BABL_IS_BABL (destination));
-
-  babl_assert (source->class_type == BABL_FORMAT);
-  babl_assert (destination->class_type == BABL_FORMAT);
-
   babl = babl_calloc (1, sizeof (BablFishPath) +
                       strlen (name) + 1);
 
   babl->class_type                = BABL_FISH_PATH;
-  babl->instance.id               = 0;
+  babl->instance.id               = babl_fish_get_id (source, destination);
   babl->instance.name             = ((char *) babl) + sizeof (BablFishPath);
   strcpy (babl->instance.name, name);
   babl->fish.source               = source;

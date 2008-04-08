@@ -20,6 +20,87 @@
 #include <string.h>
 #include <stdarg.h>
 
+typedef struct _BablFindFish BablFindFish;
+
+typedef struct _BablFindFish
+{
+  Babl       *fish_path;
+  Babl       *fish_ref;
+  Babl       *fish_fish;
+  int        fishes;
+  const Babl *source;
+  const Babl *destination;
+} _BablFishFish;
+
+
+static int
+match_conversion (Babl *conversion,
+                  void *inout);
+
+static int
+find_fish_path (Babl *item, 
+                void *data);
+
+static int
+find_memcpy_fish (Babl *item, 
+                  void *data);
+
+static int
+each_babl_fish_destroy (Babl *babl,
+                        void *data);
+
+
+/* ====================================== */
+
+
+static int
+find_fish_path (Babl *item, 
+                void *data)
+{
+  BablFindFish *ffish = (BablFindFish *) data;
+  if ((item->fish.source == ffish->source) &&
+      (item->fish.destination == ffish->destination))
+    {
+      if (item->instance.class_type == BABL_FISH_REFERENCE)
+        {
+          ffish->fish_ref = item;
+          ffish->fishes++;
+        }  
+      else if (item->instance.class_type == BABL_FISH_PATH)
+        {
+          ffish->fish_path = item;
+          ffish->fishes++;
+        }
+      else if (item->instance.class_type == BABL_FISH)
+        {
+          ffish->fish_fish = item;
+          ffish->fishes++;
+        }
+      if (ffish->fishes == 3)
+        return 1;
+    }
+
+  return 0;
+}
+
+static int
+find_memcpy_fish (Babl *item, 
+                  void *data)
+{
+  BablFindFish *ffish = (BablFindFish *) data;
+  if ((item->fish.source == ffish->source) &&
+      (item->fish.destination == ffish->destination))
+    {
+      if ((item->fish.source == item->fish.destination) &&
+          (item->instance.class_type == BABL_FISH_REFERENCE))
+        {
+          ffish->fish_ref = item;
+          return 1;
+        }  
+    }
+
+  return 0;
+}
 
 static int
 match_conversion (Babl *conversion,
@@ -47,34 +128,26 @@ babl_conversion_find (const void *source,
   return data;
 }
 
+int
+babl_fish_get_id (const Babl *source,
+                  const Babl *destination)
+{
+  /* value of 'id' will be used as argument for hash function,
+   * substraction serves as simple combination of 
+   * source/destination values. */
+  int id = (int) source - (int) destination;
+  /* instances with id 0 won't be inserted into database */
+  if (id == 0)
+    id = 1;
+  return id;
+}
+
 BablDb *
 babl_fish_db (void)
 {
   if (!db)
     db = babl_db_init ();
   return db;
-}
-
-static inline Babl *
-go_fishing (const Babl *source,
-            const Babl *destination)
-{
-  BablDb *db = babl_fish_db ();
-  int i;
-
-  for (i = 0; i < db->babl_list->count; i++)
-    {
-      Babl *item = db->babl_list->items[i];
-      if ((void *) source == (void *) item->fish.source &&
-          (void *) destination == (void *) item->fish.destination &&
-          (item->class_type == BABL_FISH_PATH || /* accept only paths */
-           source == destination)                /* or memcpy */
-          )
-        {
-          return item;
-        }
-    }
-  return NULL;
 }
 
 Babl *
@@ -89,14 +162,10 @@ babl_fish (const void *source,
   babl_assert (destination);
 
   if (BABL_IS_BABL (source))
-    {
-      source_format = source;
-    }
+    source_format = source;
 
   if (!source_format)
-    {
-      source_format = babl_format ((char *) source);
-    }
+    source_format = babl_format ((char *) source);
 
   if (!source_format)
     {
@@ -105,14 +174,10 @@ babl_fish (const void *source,
     }
 
   if (BABL_IS_BABL (destination))
-    {
-      destination_format = destination;
-    }
+    destination_format = destination;
 
   if (!destination_format)
-    {
-      destination_format = babl_format ((char *) destination);
-    }
+    destination_format = babl_format ((char *) destination);
 
   if (!destination_format)
     {
@@ -121,41 +186,90 @@ babl_fish (const void *source,
     }
 
   {
-    Babl *lucky;
-    lucky = go_fishing (source_format, destination_format);
-    if (lucky)
-      return lucky;
-  }
+    int            hashval;
+    BablHashTable *id_htable;
+    BablFindFish   ffish = {(Babl *) NULL, 
+                            (Babl *) NULL, 
+                            (Babl *) NULL, 
+                            0,
+                            source_format, 
+                            destination_format};
 
-  if (0) /* do not accept shortcut conversions, since there might be
-            a faster path, besides the shortcut conversion might
-            have a too large error, let's rely on the paths for
-            error checking.
-          */
-    {
-      Babl *shortcut_conversion;
+    id_htable = (babl_fish_db ())->id_hash;
+    hashval = babl_hash_by_int (id_htable, babl_fish_get_id (source_format, destination_format));
 
-      shortcut_conversion = babl_conversion_find (
-        source_format, destination_format);
-
-      if (shortcut_conversion)
-        {
-          return babl_fish_simple (&(shortcut_conversion->conversion));
-        }
-    }
-
-  {
-    Babl *fish_path;
-
-    fish_path = babl_fish_path (source_format, destination_format);
-
-    if (fish_path)
+    if (source_format == destination_format)
       {
-        return fish_path;
+        /* In the case of equal source and destination formats
+         * we will search through the fish database for reference fish 
+         * to handle the memcpy */
+        id_htable->find_func = find_memcpy_fish;
+        babl_hash_table_find (id_htable, hashval, (void *) &ffish);
+      }
+    else 
+      {
+        /* In the case of different source and destination formats
+         * we will search through the fish database for appropriate fish path
+         * to handle the conversion. In the case that preexistent
+         * fish path is found, we'll return it. In the case BABL_FISH
+         * instance with the same source/destination is found, we'll
+         * return reference fish. 
+         * In the case neither fish path nor BABL_FISH path are found, 
+         * we'll try to construct new fish path for requested 
+         * source/destination. In the case new fish path is found, we'll
+         * return it, otherwise we'll create dummy BABL_FISH instance and
+         * insert it into the fish database to indicate non-existent fish
+         * path.
+         */
+        id_htable->find_func = find_fish_path;
+        babl_hash_table_find (id_htable, hashval, (void *) &ffish);
+
+        if (ffish.fish_path)
+          {
+            /* we have found suitable fish path in the database */
+            return ffish.fish_path;
+          }  
+        if (!ffish.fish_fish)
+          {
+            /* we haven't tried to search for suitable path yet */
+            Babl *fish_path = babl_fish_path (source_format, destination_format);
+
+            if (fish_path)
+              {
+                return fish_path;
+              }
+            else 
+              {
+                /* there isn't a suitable path for requested formats,
+                 * let's create a dummy BABL_FISH instance and insert
+                 * it into the fish database to indicate that such path
+                 * does not exist.
+                 */
+                char *name = "X"; /* name does not matter */
+                Babl *fish = babl_calloc (1, sizeof (BablFish) + strlen (name) + 1);
+                
+                fish->class_type                = BABL_FISH;
+                fish->instance.id               = babl_fish_get_id (source_format, destination_format);
+                fish->instance.name             = ((char *) fish) + sizeof (BablFish);
+                strcpy (fish->instance.name, name);
+                fish->fish.source               = source_format;
+                fish->fish.destination          = destination_format;
+                babl_db_insert (babl_fish_db (), fish);
+              }
+          }
+      }
+
+    if (ffish.fish_ref)
+      {
+        /* we have already found suitable reference fish */
+        return ffish.fish_ref;
+      }
+    else 
+      {
+        /* we have to create new reference fish */
+        return babl_fish_reference (source_format, destination_format);
       }
   }
-
-  return babl_fish_reference (source_format, destination_format);
 }
 
 long
@@ -164,7 +278,7 @@ babl_fish_process (Babl *babl,
                    void *destination,
                    long  n)
 {
-  long       ret               = 0;
+  long ret = 0;
 
   switch (babl->class_type)
     {

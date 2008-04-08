@@ -33,7 +33,6 @@ babl_fish_simple (BablConversion *conversion)
   babl_assert (BABL_IS_BABL (conversion));
 
   name = create_name (conversion);
-
   babl = babl_db_exist_by_name (babl_fish_db (), name);
   if (babl) 
     {
@@ -46,7 +45,7 @@ babl_fish_simple (BablConversion *conversion)
   babl = babl_malloc (sizeof (BablFishSimple) +
                       strlen (name) + 1);
   babl->class_type    = BABL_FISH_SIMPLE;
-  babl->instance.id   = 0;
+  babl->instance.id   = babl_fish_get_id (conversion->source, conversion->destination);
   babl->instance.name = ((char *) babl) + sizeof (BablFishSimple);
   strcpy (babl->instance.name, name);
   babl->fish.source      = conversion->source;
