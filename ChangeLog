@@ -1,3 +1,23 @@
+2008-04-13  Øyvind Kolås  <pippin@gimp.org>
+
+	Applied patch from Jan Heller.
+
+	* babl/babl-fish-path.c: (get_conversion_path), (babl_fish_path),
+	(test_create), (init_path_instrumentation), 
+	(destroy_path_instrumentation), (get_path_instrumentation): Improved
+	fish path instrumentation during the search for a new one to optimize
+	for speed. Added logic to disallow creation of a fish path that is
+	actually slower than appropriate reference fish.
+
+	* babl/babl-util.[ch]: (babl_process_cost): New function for unified
+	timing formula for babl processings.
+
+	* babl/babl-conversion.c: (babl_conversion_error): Make use of the
+	new babl_process_cost function.
+
+	* extensions/gimp-8bit.c: Added a function declaration to prevent
+	compiler warning.
+
 2008-04-08  Øyvind Kolås  <pippin@gimp.org>
 
 	Applied patch from Jan Heller that improves logic of go_fishing code

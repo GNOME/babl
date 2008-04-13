@@ -296,6 +296,7 @@ conv_g8_gamma_2_2_rgbaF_linear (unsigned char *src,
   return samples;
 }
 
+int init (void);
 
 int
 init (void)

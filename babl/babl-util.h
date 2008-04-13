@@ -22,6 +22,10 @@
 long
 babl_ticks     (void);
 
+long
+babl_process_cost (long ticks_start,
+                   long ticks_end);
+
 double
 babl_rel_avg_error (double *imgA,
                     double *imgB,
