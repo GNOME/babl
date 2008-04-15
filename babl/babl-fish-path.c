@@ -23,15 +23,15 @@
 #define BABL_MAX_COST_VALUE 2000000
 
 static void
-init_path_instrumentation (Babl *fmt_source, 
+init_path_instrumentation (Babl *fmt_source,
                            Babl *fmt_destination);
 
 static void
 destroy_path_instrumentation (void);
 
 static void
-get_path_instrumentation (BablList *path, 
-                          double   *path_cost, 
+get_path_instrumentation (BablList *path,
+                          double   *path_cost,
                           double   *ref_cost,
                           double   *path_error);
 
@@ -43,7 +43,7 @@ process_conversion_path (BablList *path,
 
 static void
 get_conversion_path (Babl *current_format,
-                     int current_length, 
+                     int current_length,
                      int max_length);
 
 static double *
@@ -99,13 +99,13 @@ static int max_path_length (void)
 /* The task of BablFishPath construction is to compute
  * the shortest path in a graph where formats are the vertices
  * and conversions are the edges. However, there is an additional
- * constraint to the shortest path, that limits conversion error 
+ * constraint to the shortest path, that limits conversion error
  * introduced by such a path to be less than BABL_ERROR. This
- * prohibits usage of any reasonable shortest path construction 
+ * prohibits usage of any reasonable shortest path construction
  * algorithm such as Dijkstra's algorithm. The shortest path is
- * constructed by enumerating all available paths that are less 
- * than BABL_PATH_LENGTH long, computing their costs and 
- * conversion errors and backtracking. The backtracking is 
+ * constructed by enumerating all available paths that are less
+ * than BABL_PATH_LENGTH long, computing their costs and
+ * conversion errors and backtracking. The backtracking is
  * implemented by recursive function get_conversion_path ().
  */
 
@@ -115,10 +115,10 @@ static BablList *current_path;
 
 static void
 get_conversion_path (Babl *current_format,
-                     int current_length, 
+                     int current_length,
                      int max_length)
 {
-  if (current_length > max_length) 
+  if (current_length > max_length)
     {
       /* We have reached the maximum recursion
        * depth, let's bail out */
@@ -126,7 +126,7 @@ get_conversion_path (Babl *current_format,
     }
   else if ((current_length > 0) && (current_format == to_format))
     {
-       /* We have found a candidate path, let's 
+       /* We have found a candidate path, let's
         * see about it's properties */
       double path_cost  = 0.0;
       double ref_cost   = 0.0;
@@ -138,14 +138,14 @@ get_conversion_path (Babl *current_format,
           path_error *= (1.0 + babl_conversion_error ((BablConversion *) current_path->items[i]));
         }
 
-      if (path_error - 1.0 <= legal_error ()) /* check this before the next; 
+      if (path_error - 1.0 <= legal_error ()) /* check this before the next;
                                                  which does a more accurate
                                                  measurement of the error */
         {
           get_path_instrumentation (current_path, &path_cost, &ref_cost, &path_error);
 
           if ((path_cost < ref_cost) && /* do not use paths that took longer to compute than reference */
-              (path_cost < fish_path->fish_path.cost) && 
+              (path_cost < fish_path->fish_path.cost) &&
               (path_error <= legal_error ()))
             {
               /* We have found the best path so far,
@@ -156,9 +156,9 @@ get_conversion_path (Babl *current_format,
             }
         }
     }
-  else 
+  else
     {
-      /* 
+      /*
        * Bummer, we have to search deeper... */
       BablList *list;
       int i;
@@ -184,7 +184,7 @@ get_conversion_path (Babl *current_format,
             }
 
           /* Remove the current format from current path */
-          current_format->format.visited = 0;  
+          current_format->format.visited = 0;
         }
       }
 }
@@ -211,7 +211,7 @@ babl_fish_path (const Babl *source,
 
   name = create_name (source, destination, 1);
   babl = babl_db_exist_by_name (babl_fish_db (), name);
-  if (babl) 
+  if (babl)
     {
       /* There is an instance already registered by the required name,
        * returning the preexistent one instead.
@@ -236,7 +236,7 @@ babl_fish_path (const Babl *source,
   babl->fish_path.loss            = BABL_MAX_COST_VALUE;
   babl->fish_path.conversion_list = babl_list_init_with_size (BABL_HARD_MAX_PATH_LENGTH);
 
-  current_path = babl_list_init_with_size (BABL_HARD_MAX_PATH_LENGTH); 
+  current_path = babl_list_init_with_size (BABL_HARD_MAX_PATH_LENGTH);
   fish_path = babl;
   to_format = (Babl *) destination;
 
@@ -293,14 +293,14 @@ process_conversion_path (BablList *path,
                                destination_buffer,
                                n);
     }
-  else 
+  else
     {
       void *aux1_buffer = babl_malloc (n * sizeof (double) * 5);
       void *aux2_buffer = NULL;
       void *swap_buffer = NULL;
       int   i;
 
-      if (conversions > 2) 
+      if (conversions > 2)
         {
           /* We'll need one more auxiliary buffer */
           aux2_buffer = babl_malloc (n * sizeof (double) * 5);
@@ -312,7 +312,7 @@ process_conversion_path (BablList *path,
                                aux1_buffer,
                                n);
 
-      /* Process, if any, conversions between the first and the last 
+      /* Process, if any, conversions between the first and the last
        * conversion in the path, in a loop */
       for (i = 1; i < conversions - 1; i++)
         {
@@ -386,7 +386,7 @@ static double reference_cost;
 static int    init_instrumentation_done = 0;
 
 static void
-init_path_instrumentation (Babl *fmt_source, 
+init_path_instrumentation (Babl *fmt_source,
                            Babl *fmt_destination)
 {
   long   ticks_start = 0;
@@ -435,7 +435,7 @@ init_path_instrumentation (Babl *fmt_source,
                 source, ref_destination, NUM_TEST_PIXELS);
   ticks_end = babl_ticks ();
   reference_cost = babl_process_cost (ticks_start, ticks_end);
-  
+
   /* transform the reference destination buffer to RGBA */
   babl_process (fish_destination_to_rgba,
                 ref_destination, ref_destination_rgba_double, NUM_TEST_PIXELS);
@@ -444,7 +444,7 @@ init_path_instrumentation (Babl *fmt_source,
 static void
 destroy_path_instrumentation (void)
 {
-  if (init_instrumentation_done) 
+  if (init_instrumentation_done)
     {
       babl_free (source);
       babl_free (destination);
@@ -458,8 +458,8 @@ destroy_path_instrumentation (void)
 }
 
 static void
-get_path_instrumentation (BablList *path, 
-                          double   *path_cost, 
+get_path_instrumentation (BablList *path,
+                          double   *path_cost,
                           double   *ref_cost,
                           double   *path_error)
 {
@@ -468,7 +468,7 @@ get_path_instrumentation (BablList *path,
 
   if (!init_instrumentation_done)
     {
-      /* this initialization can be done only once since the 
+      /* this initialization can be done only once since the
        * source and destination formats do not change during
        * the search */
       Babl *fmt_source = (Babl *) BABL (babl_list_get_first (path))->conversion.source;

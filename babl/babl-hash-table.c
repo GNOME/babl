@@ -16,7 +16,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-/* Implementation of hash table data structure based on coalesced hashing. 
+/* Implementation of hash table data structure based on coalesced hashing.
  * Copyright (C) 2008, Jan Heller
  */
 
@@ -25,20 +25,20 @@
 #define BABL_HASH_TABLE_INITIAL_MASK   0x7F
 
 /* static functions declarations */
-static inline int 
+static inline int
 hash_insert (BablHashTable *htab,
              Babl          *item);
 
-static void 
+static void
 hash_rehash (BablHashTable *htab);
 
 
-inline int 
+inline int
 babl_hash_by_str (BablHashTable *htab,
                   const char    *str)
 {
   int   hash = 0;
-  
+
   while (*str)
   {
     hash += *str++;
@@ -52,13 +52,13 @@ babl_hash_by_str (BablHashTable *htab,
   return (hash & htab->mask);
 }
 
-inline int 
-babl_hash_by_int (BablHashTable *htab, 
+inline int
+babl_hash_by_int (BablHashTable *htab,
                   int           id)
 {
   int   hash = 0;
   int   i;
-  
+
   for (i = 0; i < sizeof (int); i++)
   {
     hash +=  id & 0xFF;
@@ -73,7 +73,7 @@ babl_hash_by_int (BablHashTable *htab,
   return (hash & htab->mask);
 }
 
-static inline int 
+static inline int
 hash_insert (BablHashTable *htab,
              Babl          *item)
 {
@@ -84,31 +84,31 @@ hash_insert (BablHashTable *htab,
       /* create new chain */
       htab->data_table[hash] = item;
     }
-  else 
+  else
     {
       int it, oit, cursor = 0;
 
       while ((cursor < (htab->mask + 1)) && (htab->data_table[cursor] != NULL))
         ++cursor;
-      
+
       htab->data_table[cursor] = item;
 
       for (oit = hash, it = htab->chain_table[oit]; it != -1; oit = it, it = htab->chain_table[oit])
         ;
-      htab->chain_table[oit] = cursor; 
+      htab->chain_table[oit] = cursor;
     }
 
   htab->count++;
   return 0;
 }
 
-static void 
+static void
 hash_rehash (BablHashTable *htab)
 {
   Babl *item;
   int  i;
   BablHashTable *nhtab = babl_calloc (sizeof (BablHashTable), 1);
-  
+
   nhtab->data_table = NULL;
   nhtab->chain_table = NULL;
   nhtab->mask = (htab->mask << 1) + 1;
@@ -121,7 +121,7 @@ hash_rehash (BablHashTable *htab)
       nhtab->chain_table = babl_malloc (sizeof (int *) * babl_hash_table_size(nhtab));
       memset (nhtab->chain_table, -1, sizeof (int) * babl_hash_table_size(nhtab));
     }
-  
+
   for (i = 0; i < babl_hash_table_size (htab); i++)
     {
       item = htab->data_table[i];
@@ -143,11 +143,11 @@ babl_hash_table_size (BablHashTable *htab)
 }
 
 BablHashTable *
-babl_hash_table_init (BablHashValFunction  hfunc, 
+babl_hash_table_init (BablHashValFunction  hfunc,
                       BablHashFindFunction ffunc)
 {
   BablHashTable *htab;
-  
+
   babl_assert(hfunc);
   babl_assert(ffunc);
 
@@ -166,7 +166,7 @@ babl_hash_table_init (BablHashValFunction  hfunc,
       htab->chain_table = babl_malloc (sizeof (int *) * babl_hash_table_size(htab));
       memset (htab->chain_table, -1, sizeof (int) * babl_hash_table_size(htab));
   }
-  
+
   return htab;
 }
 
@@ -187,7 +187,7 @@ babl_hash_table_insert (BablHashTable *htab,
   babl_assert (htab);
   babl_assert (BABL_IS_BABL(item));
 
-  if (babl_hash_table_size (htab) < htab->count + 1) 
+  if (babl_hash_table_size (htab) < htab->count + 1)
     hash_rehash (htab);
   return hash_insert (htab, item);
 }
@@ -207,7 +207,7 @@ babl_hash_table_find (BablHashTable *htab,
 
   if (!item)
     return NULL;
-  
+
   for (;;)
     {
       if (htab->find_func (item, data))
@@ -217,7 +217,7 @@ babl_hash_table_find (BablHashTable *htab,
         break;
       item = htab->data_table[it];
     }
-    
+
   return NULL;
 }
 

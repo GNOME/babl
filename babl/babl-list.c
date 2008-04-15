@@ -16,7 +16,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-/* Implementation of list data structure. 
+/* Implementation of list data structure.
  * Copyright (C) 2008, Jan Heller
  */
 
@@ -42,7 +42,7 @@ babl_list_init_with_size (int initial_size)
   list->size = initial_size;
   list->count = 0;
   list->items = NULL;
-  if (list->size) 
+  if (list->size)
     {
       list->items = babl_calloc (sizeof (BablInstance *), list->size);
     }
@@ -114,7 +114,7 @@ babl_list_get_last (BablList *list)
   return (list->items[list->count - 1]);
 }
 
-inline void 
+inline void
 babl_list_copy (BablList *from,
                 BablList *to)
 {
@@ -144,7 +144,7 @@ babl_list_each (BablList         *list,
 
   babl_assert(list);
   babl_assert(each_fun);
- 
+
   for (i = 0; i < list->count; i++)
     {
       if (list->items[i])

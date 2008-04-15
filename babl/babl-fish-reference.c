@@ -52,7 +52,7 @@ babl_fish_reference (const Babl *source,
   char *name = create_name (source, destination, 1);
 
   babl = babl_db_exist_by_name (babl_fish_db (), name);
-  if (babl) 
+  if (babl)
     {
       /* There is an instance already registered by the required name,
        * returning the preexistent one instead.

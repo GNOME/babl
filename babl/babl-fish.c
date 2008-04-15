@@ -38,11 +38,11 @@ match_conversion (Babl *conversion,
                   void *inout);
 
 static int
-find_fish_path (Babl *item, 
+find_fish_path (Babl *item,
                 void *data);
 
 static int
-find_memcpy_fish (Babl *item, 
+find_memcpy_fish (Babl *item,
                   void *data);
 
 static int
@@ -54,7 +54,7 @@ each_babl_fish_destroy (Babl *babl,
 
 
 static int
-find_fish_path (Babl *item, 
+find_fish_path (Babl *item,
                 void *data)
 {
   BablFindFish *ffish = (BablFindFish *) data;
@@ -65,7 +65,7 @@ find_fish_path (Babl *item,
         {
           ffish->fish_ref = item;
           ffish->fishes++;
-        }  
+        }
       else if (item->instance.class_type == BABL_FISH_PATH)
         {
           ffish->fish_path = item;
@@ -84,7 +84,7 @@ find_fish_path (Babl *item,
 }
 
 static int
-find_memcpy_fish (Babl *item, 
+find_memcpy_fish (Babl *item,
                   void *data)
 {
   BablFindFish *ffish = (BablFindFish *) data;
@@ -96,7 +96,7 @@ find_memcpy_fish (Babl *item,
         {
           ffish->fish_ref = item;
           return 1;
-        }  
+        }
     }
 
   return 0;
@@ -133,7 +133,7 @@ babl_fish_get_id (const Babl *source,
                   const Babl *destination)
 {
   /* value of 'id' will be used as argument for hash function,
-   * substraction serves as simple combination of 
+   * substraction serves as simple combination of
    * source/destination values. */
   int id = (int) source - (int) destination;
   /* instances with id 0 won't be inserted into database */
@@ -188,11 +188,11 @@ babl_fish (const void *source,
   {
     int            hashval;
     BablHashTable *id_htable;
-    BablFindFish   ffish = {(Babl *) NULL, 
-                            (Babl *) NULL, 
-                            (Babl *) NULL, 
+    BablFindFish   ffish = {(Babl *) NULL,
+                            (Babl *) NULL,
+                            (Babl *) NULL,
                             0,
-                            source_format, 
+                            source_format,
                             destination_format};
 
     id_htable = (babl_fish_db ())->id_hash;
@@ -201,21 +201,21 @@ babl_fish (const void *source,
     if (source_format == destination_format)
       {
         /* In the case of equal source and destination formats
-         * we will search through the fish database for reference fish 
+         * we will search through the fish database for reference fish
          * to handle the memcpy */
         id_htable->find_func = find_memcpy_fish;
         babl_hash_table_find (id_htable, hashval, (void *) &ffish);
       }
-    else 
+    else
       {
         /* In the case of different source and destination formats
          * we will search through the fish database for appropriate fish path
          * to handle the conversion. In the case that preexistent
          * fish path is found, we'll return it. In the case BABL_FISH
          * instance with the same source/destination is found, we'll
-         * return reference fish. 
-         * In the case neither fish path nor BABL_FISH path are found, 
-         * we'll try to construct new fish path for requested 
+         * return reference fish.
+         * In the case neither fish path nor BABL_FISH path are found,
+         * we'll try to construct new fish path for requested
          * source/destination. In the case new fish path is found, we'll
          * return it, otherwise we'll create dummy BABL_FISH instance and
          * insert it into the fish database to indicate non-existent fish
@@ -228,7 +228,7 @@ babl_fish (const void *source,
           {
             /* we have found suitable fish path in the database */
             return ffish.fish_path;
-          }  
+          }
         if (!ffish.fish_fish)
           {
             /* we haven't tried to search for suitable path yet */
@@ -238,7 +238,7 @@ babl_fish (const void *source,
               {
                 return fish_path;
               }
-            else 
+            else
               {
                 /* there isn't a suitable path for requested formats,
                  * let's create a dummy BABL_FISH instance and insert
@@ -247,7 +247,7 @@ babl_fish (const void *source,
                  */
                 char *name = "X"; /* name does not matter */
                 Babl *fish = babl_calloc (1, sizeof (BablFish) + strlen (name) + 1);
-                
+
                 fish->class_type                = BABL_FISH;
                 fish->instance.id               = babl_fish_get_id (source_format, destination_format);
                 fish->instance.name             = ((char *) fish) + sizeof (BablFish);
@@ -264,7 +264,7 @@ babl_fish (const void *source,
         /* we have already found suitable reference fish */
         return ffish.fish_ref;
       }
-    else 
+    else
       {
         /* we have to create new reference fish */
         return babl_fish_reference (source_format, destination_format);

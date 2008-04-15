@@ -39,18 +39,18 @@ typedef struct _BablDb
 BablDb *
 babl_db_init (void);
 
-void 
+void
 babl_db_destroy (BablDb *db);
 
-void 
-babl_db_each (BablDb           *db, 
+void
+babl_db_each (BablDb           *db,
               BablEachFunction  each_fun,
               void             *user_data);
 
 int
 babl_db_count (BablDb *db);
 
-Babl * 
+Babl *
 babl_db_insert (BablDb *db,
                 Babl   *entry);
 
@@ -59,7 +59,7 @@ babl_db_exist (BablDb     *db,
                int        id,
                const char *name);
 
-Babl * 
+Babl *
 babl_db_exist_by_name (BablDb     *db,
                        const char *name);
 Babl *

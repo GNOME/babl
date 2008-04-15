@@ -56,9 +56,9 @@ format_new (const char     *name,
             {
               component_found = 1;
               break;
-            }  
+            }
         }
-      if (!component_found) 
+      if (!component_found)
         {
           component_found = 0;
           babl_fatal ("matching source component for %s in model %s not found",
@@ -297,18 +297,18 @@ babl_format_new (void *first_arg,
 
   va_end (varg);
 
-  if (!name) 
+  if (!name)
     name = create_name (model, components, component, type);
 
   babl = babl_db_exist (db, id, name);
-  if (babl) 
+  if (babl)
     {
       /* There is an instance already registered by the required id/name,
        * returning the preexistent one instead.
        */
       return babl;
     }
-    
+
   babl = format_new (name,
                      id,
                      planar, components, model,

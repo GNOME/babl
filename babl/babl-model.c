@@ -165,7 +165,7 @@ babl_model_new (void *first_argument,
   name = create_name (name, components, component);
 
   babl = babl_db_exist (db, id, name);
-  if (babl) 
+  if (babl)
     {
       /* There is an instance already registered by the required id/name,
        * returning the preexistent one instead.

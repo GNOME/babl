@@ -32,7 +32,7 @@
     assert(*dst);           \
     assert(n>0);            \
     assert(*src_pitch);     \
-  } 
+  }
 
 #define BABL_PLANAR_STEP          \
   {                               \

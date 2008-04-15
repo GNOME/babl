@@ -28,7 +28,7 @@
   #define RGB_LUMA_RED         (0.299)
   #define RGB_LUMA_GREEN       (0.587)
   #define RGB_LUMA_BLUE        (0.114)
-  #define RGB_LUMINANCE_RED    RGB_LUMA_RED   
-  #define RGB_LUMINANCE_GREEN  RGB_LUMA_GREEN 
+  #define RGB_LUMINANCE_RED    RGB_LUMA_RED
+  #define RGB_LUMINANCE_GREEN  RGB_LUMA_GREEN
   #define RGB_LUMINANCE_BLUE   RGB_LUMA_BLUE
 #endif

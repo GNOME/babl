@@ -34,7 +34,7 @@ babl_fish_simple (BablConversion *conversion)
 
   name = create_name (conversion);
   babl = babl_db_exist_by_name (babl_fish_db (), name);
-  if (babl) 
+  if (babl)
     {
       /* There is an instance already registered by the required name,
        * returning the preexistent one instead.

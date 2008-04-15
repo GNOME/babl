@@ -86,7 +86,7 @@ item_conversions_introspect (Babl *babl)
   BablList *list;
 
   list = babl->type.from_list;
-  if (list) 
+  if (list)
     {
       babl_log ("\t\tconversions from %s: %i",
                 babl->instance.name, babl_list_size (list));

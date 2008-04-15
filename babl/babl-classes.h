@@ -168,7 +168,7 @@ typedef struct
   int              components;
   BablComponent  **component;
   BablType       **type;
-  void            *image_template; /* image template for use with 
+  void            *image_template; /* image template for use with
                                        linear (non-planer) images */
 
   BablSampling   **sampling;
@@ -177,7 +177,7 @@ typedef struct
   int              planar;
   double           loss; /*< average relative error when converting
                              from and to RGBA double */
-  int              visited; /* for convenience in code while searching 
+  int              visited; /* for convenience in code while searching
                                for conversion paths */
 } BablFormat;
 

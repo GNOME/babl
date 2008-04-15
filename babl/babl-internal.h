@@ -129,7 +129,7 @@ real_babl_log (const char *file,
 {
   Babl *extender = babl_extender();
   va_list  varg;
-  
+
 
   if (extender != babl_extension_quiet_log())
     {
@@ -261,7 +261,7 @@ BABL_DEFINE_INIT           (type_name)                        \
 BABL_DEFINE_DESTROY        (type_name)                        \
 BABL_DEFINE_LOOKUP_BY_NAME (type_name)                        \
 BABL_DEFINE_EACH           (type_name)                        \
-BABL_DEFINE_LOOKUP_BY_ID   (type_name)               
+BABL_DEFINE_LOOKUP_BY_ID   (type_name)
 
 #define BABL(obj)  ((Babl*)(obj))
 

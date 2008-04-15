@@ -1,5 +1,10 @@
 2008-04-15  Sven Neumann  <sven@gimp.org>
 
+	* extensions/util.h
+	* babl/*.[ch]: removed trailing whitespace.
+
+2008-04-15  Sven Neumann  <sven@gimp.org>
+
 	* babl/babl-fish-path.c (init_path_instrumentation): this function
 	has no return value, declare it as void.
 

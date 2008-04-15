@@ -16,7 +16,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-/* Reimplementation of database code using redundant hash tables 
+/* Reimplementation of database code using redundant hash tables
  * for faster searching by id/name and using list for fast item enumeration.
  * Copyright (C) 2008, Jan Heller
  */
@@ -26,7 +26,7 @@
 #include <string.h>
 #include "babl-internal.h"
 
-static int 
+static int
 db_find_by_name (Babl *item, void *data)
 {
   if (!strcmp (item->instance.name, (char *) data))
@@ -34,7 +34,7 @@ db_find_by_name (Babl *item, void *data)
   return 0;
 }
 
-static int 
+static int
 db_find_by_id (Babl *item, void *data)
 {
   if (item->instance.id == *((int *) data))
@@ -63,14 +63,14 @@ babl_db_init (void)
   db->id_hash = babl_hash_table_init (db_hash_by_id, db_find_by_id);
   db->babl_list = babl_list_init ();
 
-  return db; 
+  return db;
 }
 
 void
 babl_db_destroy (BablDb *db)
 {
   babl_assert (db);
- 
+
   babl_hash_table_destroy (db->name_hash);
   babl_hash_table_destroy (db->id_hash);
   babl_list_destroy (db->babl_list);
@@ -120,7 +120,7 @@ babl_db_exist (BablDb     *db,
                int        id,
                const char *name)
 {
-  if (id) 
+  if (id)
     return babl_hash_table_find (db->id_hash, babl_hash_by_int (db->id_hash, id), &id);
   return babl_hash_table_find (db->name_hash, babl_hash_by_str (db->name_hash, name), (void *) name);
 }

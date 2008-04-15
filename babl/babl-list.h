@@ -60,7 +60,7 @@ babl_list_get_first (BablList *list);
 inline Babl *
 babl_list_get_last (BablList *list);
 
-inline void 
+inline void
 babl_list_copy (BablList *from,
                 BablList *to);
 

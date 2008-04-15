@@ -95,7 +95,7 @@ babl_image_from_linear (char *buffer,
                                                       up subsequent use of linear buffers
                                                       for subsequent accesses
                                                     */
-          { 
+          {
             babl = format->format.image_template;
             format->format.image_template = NULL;
             for (i = 0; i < components; i++)

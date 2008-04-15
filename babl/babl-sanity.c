@@ -114,7 +114,7 @@ int
 babl_sanity (void)
 {
   OK=1;
-  
+
   babl_type_each         (id_sanity, NULL);
   babl_component_each    (id_sanity, NULL);
   babl_model_each        (id_sanity, NULL);

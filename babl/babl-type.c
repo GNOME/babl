@@ -130,7 +130,7 @@ babl_type_new (void *first_arg,
   va_end (varg);
 
   babl = babl_db_exist (db, id, first_arg);
-  if (babl) 
+  if (babl)
     {
       /* There is an instance already registered by the required id/name,
        * returning the preexistent one instead.

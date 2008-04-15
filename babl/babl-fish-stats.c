@@ -72,9 +72,9 @@ table_destination_each (Babl *babl,
                 {
                   fprintf (output_file, "<tr>");
                   fprintf (output_file, "<td>%s</td>", BABL (fish->fish_path.conversion_list->items[i])->instance.name);
-                  fprintf (output_file, "<td class='r'>%li</td>", 
+                  fprintf (output_file, "<td class='r'>%li</td>",
                     babl_conversion_cost (&BABL (fish->fish_path.conversion_list->items[i])->conversion));
-                  fprintf (output_file, "<td class='r'>%e</td>", 
+                  fprintf (output_file, "<td class='r'>%e</td>",
                     babl_conversion_error (&BABL (fish->fish_path.conversion_list->items[i])->conversion));
                   fprintf (output_file, "</tr>");
                 }

@@ -41,15 +41,15 @@ typedef struct _BablHashTable
 
 
 BablHashTable *
-babl_hash_table_init (BablHashValFunction  hfunc, 
+babl_hash_table_init (BablHashValFunction  hfunc,
                       BablHashFindFunction ffunc);
 
-inline int 
+inline int
 babl_hash_by_str (BablHashTable *htab,
                   const char    *str);
 
-inline int 
-babl_hash_by_int (BablHashTable *htab, 
+inline int
+babl_hash_by_int (BablHashTable *htab,
                   int           id);
 
 inline int
