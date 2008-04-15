@@ -22,7 +22,7 @@
 #define BABL_LEGAL_ERROR    0.000001
 #define BABL_MAX_COST_VALUE 2000000
 
-static double
+static void
 init_path_instrumentation (Babl *fmt_source, 
                            Babl *fmt_destination);
 
@@ -385,7 +385,7 @@ static Babl   *fish_destination_to_rgba;
 static double reference_cost;
 static int    init_instrumentation_done = 0;
 
-static double
+static void
 init_path_instrumentation (Babl *fmt_source, 
                            Babl *fmt_destination)
 {
