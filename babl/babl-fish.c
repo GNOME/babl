@@ -20,6 +20,7 @@
 #include <string.h>
 #include <stdarg.h>
 
+
 typedef struct _BablFindFish BablFindFish;
 
 typedef struct _BablFindFish
@@ -152,8 +153,7 @@ babl_fish_db (void)
 
 Babl *
 babl_fish (const void *source,
-           const void *destination,
-           ...)
+           const void *destination)
 {
   const Babl *source_format      = NULL;
   const Babl *destination_format = NULL;
@@ -323,6 +323,8 @@ babl_fish_process (Babl *babl,
   return ret;
 }
 
+
+
 static int
 each_babl_fish_destroy (Babl *babl,
                         void *data)
@@ -333,6 +335,4 @@ each_babl_fish_destroy (Babl *babl,
   return 0;  /* continue iterating */
 }
 
-BABL_DEFINE_INIT (fish)
-BABL_DEFINE_DESTROY (fish)
-BABL_DEFINE_EACH (fish)
+BABL_CLASS_MINIMAL (fish);

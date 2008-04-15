@@ -32,7 +32,6 @@ c_sources =				\
 	babl-hash-table.c
 
 h_sources  =             		\
-	babl-classes.h			\
 	babl-db.h			\
 	babl-ids.h			\
 	babl-internal.h			\
@@ -44,8 +43,7 @@ h_sources  =             		\
 
 library_includedir=$(includedir)/babl-$(BABL_API_VERSION)/babl
 library_include_HEADERS =		\
-	babl.h                          \
-        babl-classes.h
+	babl.h
 
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/babl/base
 

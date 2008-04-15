@@ -19,8 +19,8 @@
 #ifndef _DB_H
 #define _DB_H
 
-#ifndef _BABL_CLASSES_H
-#error  babl-db.h is only to be included after babl-classes.h
+#ifndef _BABL_H
+#error  babl-db.h is only to be included after babl.h
 #endif
 
 #include "babl-list.h"

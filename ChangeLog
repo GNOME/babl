@@ -1,3 +1,27 @@
+2008-04-15  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/Makefile.am: removed babl-classes.h
+	* babl/babl-classes.h: removed and mostly folded into ...
+	* babl/babl.h:  .. this file, which has been reorganized to contain
+	each separate class by itself.
+	* babl/babl-internal.h: simplified code renamed BABL_CLASS_TEMPLATE to
+	be just BABL_CLASS or BABL_CLASS_MINIMAL.
+
+	* babl/babl-fish.c: (babl_fish): do not accept varargs, use use
+	BABL_CLASS_MINIMAL.
+
+	* babl/babl-component.c:
+	* babl/babl-conversion.c:
+	* babl/babl-extension.c:
+	* babl/babl-format.c:
+	* babl/babl-model.c:
+	* babl/babl-type.c: use BABL_CLASS instead of BABL_CLASS_TEMPLATE
+
+	* babl/babl-hash-table.h:
+	* babl/babl-list.h:
+	* babl/babl-db.h: changed include warning since babl-classes doesn't
+	exist anymore.
+
 2008-04-15  Sven Neumann  <sven@gimp.org>
 
 	* extensions/util.h

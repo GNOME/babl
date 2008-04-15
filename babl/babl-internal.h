@@ -32,8 +32,6 @@
 #include <string.h>
 #include "assert.h"
 
-
-#include "babl-classes.h"
 #undef  _BABL_INTERNAL_H
 #include "babl.h"
 #define _BABL_INTERNAL_H
@@ -177,49 +175,10 @@ while(0)
 
 extern int   babl_hmpf_on_name_lookups;
 
-const char  *babl_class_name     (BablClassType klass);
+const char  *babl_class_name       (BablClassType klass);
 void         babl_internal_init    (void);
 void         babl_internal_destroy (void);
 
-#define BABL_DEFINE_EACH(type_name)                           \
-void                                                          \
-babl_##type_name##_each (BablEachFunction  each_fun,          \
-                         void             *user_data)         \
-{                                                             \
-  babl_db_each (db, each_fun, user_data);                     \
-}                                                             \
-
-#define BABL_DEFINE_LOOKUP_BY_ID(type_name)                   \
-Babl *                                                        \
-babl_##type_name##_id (int id)                                \
-{                                                             \
-  Babl *babl;                                                 \
-  babl = babl_db_exist_by_id (db, id);                        \
-  if (!babl)                                                  \
-    {                                                         \
-      babl_fatal ("%s(%i): not found", __func__, id);         \
-    }                                                         \
-  return babl;                                                \
-}
-
-#define BABL_DEFINE_LOOKUP_BY_NAME(type_name)                   \
-Babl *                                                          \
-babl_##type_name (const char *name)                             \
-{                                                               \
-  Babl *babl;                                                   \
-                                                                \
-  if (babl_hmpf_on_name_lookups)                                \
-    {                                                           \
-      babl_log ("%s(\"%s\"): hmpf!", __func__, name);           \
-    }                                                           \
-  babl = babl_db_exist_by_name (db, name);                      \
-                                                                \
-  if (!babl)                                                    \
-    {                                                           \
-      babl_fatal ("%s(\"%s\"): not found", __func__, name);     \
-    }                                                           \
-  return babl;                                                  \
-}
 
 #ifndef BABL_INIT_HOOK
 #define BABL_INIT_HOOK
@@ -234,34 +193,70 @@ babl_##type_name (const char *name)                             \
 #define BABL_DESTROY_PRE_HOOK
 #endif
 
-#define BABL_DEFINE_INIT(type_name)                           \
-                                                              \
-                                                              \
+/* this template is expanded in the files including babl-internal.h,
+ * generating code, the declarations for these functions are found in
+ * the BABL_CLASS expansions done in babl.h as well, thus babl.h needs
+ * to be kept in sync with the C files.
+ */
+
+#define BABL_CLASS_MINIMAL(klass)                             \
 void                                                          \
-babl_##type_name##_init (void)                                \
+babl_##klass##_init (void)                                    \
 {                                                             \
   BABL_PRE_INIT_HOOK;                                         \
   if (!db)                                                    \
     db=babl_db_init ();                                       \
   BABL_INIT_HOOK;                                             \
-}
-
-#define BABL_DEFINE_DESTROY(type_name)                        \
+}                                                             \
+                                                              \
 void                                                          \
-babl_##type_name##_destroy (void)                             \
+babl_##klass##_destroy (void)                                 \
 {                                                             \
   BABL_DESTROY_PRE_HOOK;                                      \
-  babl_db_each (db,each_babl_##type_name##_destroy, NULL);    \
+  babl_db_each (db,each_babl_##klass##_destroy, NULL);        \
   babl_db_destroy (db);                                       \
   BABL_DESTROY_HOOK;                                          \
-}
+}                                                             \
+                                                              \
+void                                                          \
+babl_##klass##_each (BablEachFunction  each_fun,              \
+                     void             *user_data)             \
+{                                                             \
+  babl_db_each (db, each_fun, user_data);                     \
+}                                                             \
 
-#define BABL_CLASS_TEMPLATE(type_name)                        \
-BABL_DEFINE_INIT           (type_name)                        \
-BABL_DEFINE_DESTROY        (type_name)                        \
-BABL_DEFINE_LOOKUP_BY_NAME (type_name)                        \
-BABL_DEFINE_EACH           (type_name)                        \
-BABL_DEFINE_LOOKUP_BY_ID   (type_name)
+#define BABL_CLASS(klass)                                     \
+BABL_CLASS_MINIMAL(klass)                                     \
+                                                              \
+Babl *                                                        \
+babl_##klass (const char *name)                               \
+{                                                             \
+  Babl *babl;                                                 \
+                                                              \
+  if (babl_hmpf_on_name_lookups)                              \
+    {                                                         \
+      babl_log ("%s(\"%s\"): hmpf!", __func__, name);         \
+    }                                                         \
+  babl = babl_db_exist_by_name (db, name);                    \
+                                                              \
+  if (!babl)                                                  \
+    {                                                         \
+      babl_fatal ("%s(\"%s\"): not found", __func__, name);   \
+    }                                                         \
+  return babl;                                                \
+}                                                             \
+                                                              \
+Babl *                                                        \
+babl_##klass##_id (int id)                                    \
+{                                                             \
+  Babl *babl;                                                 \
+  babl = babl_db_exist_by_id (db, id);                        \
+  if (!babl)                                                  \
+    {                                                         \
+      babl_fatal ("%s(%i): not found", __func__, id);         \
+    }                                                         \
+  return babl;                                                \
+}
 
 #define BABL(obj)  ((Babl*)(obj))
 

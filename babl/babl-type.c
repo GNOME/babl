@@ -252,4 +252,4 @@ babl_type_is_symmetric (Babl *babl)
   return is_symmetrical;
 }
 
-BABL_CLASS_TEMPLATE (type)
+BABL_CLASS (type)

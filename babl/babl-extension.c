@@ -357,4 +357,4 @@ each_babl_extension_destroy (Babl *babl,
   return 0;  /* continue iterating */
 }
 
-BABL_CLASS_TEMPLATE (extension)
+BABL_CLASS (extension)

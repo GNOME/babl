@@ -19,11 +19,11 @@
 #ifndef _BABL_LIST_H
 #define _BABL_LIST_H
 
-#ifndef _BABL_CLASSES_H
-/* babl-classes.h contains forward declaration
+#ifndef _BABL_H
+/* babl.h contains forward declaration
  * typedef struct _BablList BablList;
  */
-#error  babl-list.h is only to be included after babl-classes.h
+#error  babl-list.h is only to be included after babl.h
 #endif
 
 

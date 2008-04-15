@@ -435,4 +435,4 @@ babl_format_loss (Babl *babl)
   return loss;
 }
 
-BABL_CLASS_TEMPLATE (format)
+BABL_CLASS (format)

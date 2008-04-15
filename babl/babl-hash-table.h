@@ -19,8 +19,8 @@
 #ifndef _BABL_HASH_TABLE_H
 #define _BABL_HASH_TABLE_H
 
-#ifndef _BABL_CLASSES_H
-#error  babl-hash-table.h is only to be included after babl-classes.h
+#ifndef _BABL_H
+#error  babl-hash-table.h is only to be included after babl.h
 #endif
 
 
