@@ -1,5 +1,5 @@
 /* babl - dynamically extendable universal pixel conversion library.
- * Copyright (C) 2005, Øyvind Kolås.
+ * Copyright (C) 2005-2008, Øyvind Kolås.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -100,7 +100,7 @@ void   babl_##klass##_init    (void);                        \
 void   babl_##klass##_destroy (void);                        \
 Babl * babl_##klass##_id      (int id);                      \
 void   babl_##klass##_each    (BablEachFunction  each_fun,   \
-                              void             *user_data)
+                               void             *user_data)
 
 /* creates a class that has a specific name connected to it, that
  * also allows defining a new instance. These classes share common
@@ -113,7 +113,7 @@ void   babl_##klass##_each    (BablEachFunction  each_fun,   \
 BABL_CLASS (klass);                                          \
 Babl * babl_##klass           (const char       *name);      \
 Babl * babl_##klass##_new     (void             *first_arg,  \
-                              ...) BABL_ARG_NULL_TERMINATED
+                               ...) BABL_ARG_NULL_TERMINATED
 
 
 
@@ -137,8 +137,9 @@ typedef struct
  *
  * Returns: a name describing the instance.
  */
-const char *babl_name       (const Babl *babl);
-void        babl_introspect (Babl *babl); /* introspect a given BablObject     */
+const char * babl_name       (const Babl *babl);
+
+void         babl_introspect (Babl       *babl); /* introspect a given BablObject     */
 
 #include "babl-type.h"
 #include "babl-sampling.h"
