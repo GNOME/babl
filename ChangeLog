@@ -1,3 +1,20 @@
+2008-04-16  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/babl.h: split up into ...
+	Separate header files.
+
+	* babl/babl-component.h:
+	* babl/babl-conversion.h:
+	* babl/babl-extension.h:
+	* babl/babl-fish.h:
+	* babl/babl-format.h:
+	* babl/babl-image.h:
+	* babl/babl-model.h:
+	* babl/babl-sampling.h:
+	* babl/babl-type.h:
+
+	* babl/Makefile.am: install new headers.
+
 2008-04-15  Øyvind Kolås  <pippin@gimp.org>
 
 	* babl/Makefile.am: removed babl-classes.h

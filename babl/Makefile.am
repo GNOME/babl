@@ -43,7 +43,16 @@ h_sources  =             		\
 
 library_includedir=$(includedir)/babl-$(BABL_API_VERSION)/babl
 library_include_HEADERS =		\
-	babl.h
+	babl.h				\
+	babl-component.h		\
+	babl-conversion.h		\
+	babl-extension.h		\
+	babl-fish.h			\
+	babl-format.h			\
+	babl-image.h			\
+	babl-model.h			\
+	babl-sampling.h 		\
+	babl-type.h
 
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/babl/base
 
