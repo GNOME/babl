@@ -103,6 +103,7 @@ format_new (const char     *name,
   }
 
   babl->format.loss = -1.0;
+  babl->format.visited = 0;
   babl->format.image_template = NULL;
 
   return babl;

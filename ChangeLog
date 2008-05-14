@@ -1,3 +1,10 @@
+2008-05-14  Sven Neumann  <sven@gimp.org>
+
+	* babl/babl-format.c (format_new): initialize format.visited.
+
+	* babl/babl-format.h
+	* babl/babl-fish-path.c: formatting.
+
 2008-04-16  Sven Neumann  <sven@gimp.org>
 
 	* babl/babl.h: formatting.

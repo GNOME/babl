@@ -17,7 +17,7 @@
  */
 
 #ifndef _BABL_H
-#error  this file is only to be included by babl.h 
+#error  this file is only to be included by babl.h
 #endif
 
 /****************************************************************/
@@ -42,10 +42,10 @@ BABL_NAMED_CLASS (format);
  */
 Babl *babl_format_id     (int id);
 void  babl_format_each   (BablEachFunction  each_fun,
-                        void             *user_data);
+                          void             *user_data);
 Babl * babl_format       (const char       *name);
 Babl * babl_format_new   (void             *first_arg,
-                        ...) BABL_ARG_NULL_TERMINATED;
+                          ...) BABL_ARG_NULL_TERMINATED;
 
 typedef struct
 {
@@ -54,8 +54,8 @@ typedef struct
   int              components;
   BablComponent  **component;
   BablType       **type;
-  void            *image_template; /* image template for use with 
-                                       linear (non-planer) images */
+  void            *image_template; /* image template for use with
+                                      linear (non-planer) images */
 
   BablSampling   **sampling;
   BablModel       *model;
@@ -63,6 +63,6 @@ typedef struct
   int              planar;
   double           loss; /*< average relative error when converting
                              from and to RGBA double */
-  int              visited; /* for convenience in code while searching 
+  int              visited; /* for convenience in code while searching
                                for conversion paths */
 } BablFormat;

@@ -152,7 +152,8 @@ get_conversion_path (Babl *current_format,
                * let's copy it into our new fish */
               fish_path->fish_path.cost = path_cost;
               fish_path->fish.error  = path_error;
-              babl_list_copy (current_path, fish_path->fish_path.conversion_list);
+              babl_list_copy (current_path,
+                              fish_path->fish_path.conversion_list);
             }
         }
     }
@@ -169,7 +170,7 @@ get_conversion_path (Babl *current_format,
           /* Mark the current format in conversion path as visited */
           current_format->format.visited = 1;
 
-           /* Iterate through unvisited formats from the current format ...*/
+          /* Iterate through unvisited formats from the current format ...*/
           for (i = 0; i < babl_list_size (list); i++)
             {
               Babl *next_conversion = BABL (list->items[i]);
@@ -372,7 +373,7 @@ test_create (void)
 
 // FishPath instrumentation
 
-static Babl *fmt_rgba_double = NULL;
+static Babl   *fmt_rgba_double = NULL;
 static double *test = NULL;
 static void   *source;
 static void   *destination;
@@ -382,8 +383,8 @@ static double *ref_destination_rgba_double;
 static Babl   *fish_rgba_to_source;
 static Babl   *fish_reference;
 static Babl   *fish_destination_to_rgba;
-static double reference_cost;
-static int    init_instrumentation_done = 0;
+static double  reference_cost;
+static int     init_instrumentation_done = 0;
 
 static void
 init_path_instrumentation (Babl *fmt_source,
