@@ -1,3 +1,9 @@
+2008-05-20  Jan Heller  <jheller@svn.gnome.org>
+
+	* extensions/gimp-8bit.c (conv_rgbaF_linear_rgb8_linear),
+	(conv_rgbaF_linear_rgba8_linear), (init): added naive versions
+	of respective conversions.
+
 2008-05-14  Sven Neumann  <sven@gimp.org>
 
 	* babl/babl-format.c (format_new): initialize format.visited.

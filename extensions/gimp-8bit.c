@@ -296,6 +296,59 @@ conv_g8_gamma_2_2_rgbaF_linear (unsigned char *src,
   return samples;
 }
 
+static INLINE long
+conv_rgbaF_linear_rgb8_linear (unsigned char *src, 
+                               unsigned char *dst, 
+                               long           samples)
+{
+  float *fsrc = (float *) src;
+  long n = samples;
+  long int v;
+
+  while (n--)
+    {
+      v = rint (*fsrc++ * 255.0);
+      *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
+
+      v = rint (*fsrc++ * 255.0);
+      *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
+     
+      v = rint (*fsrc++ * 255.0);
+      *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
+
+      fsrc++;
+    }
+
+  return samples;
+}
+
+static INLINE long
+conv_rgbaF_linear_rgba8_linear (unsigned char *src, 
+                                unsigned char *dst, 
+                                long           samples)
+{
+  float *fsrc = (float *) src;
+  long n = samples;
+  long int v;
+
+  while (n--)
+    {
+      v = rint (*fsrc++ * 255.0);
+      *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
+
+      v = rint (*fsrc++ * 255.0);
+      *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
+     
+      v = rint (*fsrc++ * 255.0);
+      *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
+
+      v = rint (*fsrc++ * 255.0);
+      *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
+    }
+
+  return samples;
+}
+
 int init (void);
 
 int
@@ -402,5 +455,9 @@ init (void)
   o (g8_gamma_2_2, gF_linear);
   o (g8_linear, rgbaF_linear);
   o (g8_gamma_2_2, rgbaF_linear);
+
+  o (rgbaF_linear, rgb8_linear);
+  o (rgbaF_linear, rgba8_linear);
+
   return 0;
 }
