@@ -22,6 +22,13 @@
 #include <assert.h>
 #include <math.h>
 
+#include "config.h"
+
+#ifndef HAVE_RINT
+# define rint(f)  ((long) floor (((double) f) + 0.5))
+#endif
+
+
 #define BABL_PLANAR_SANITY  \
   {                         \
     assert(src_bands>0);    \

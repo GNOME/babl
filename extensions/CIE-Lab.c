@@ -16,12 +16,11 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "config.h"
-
 #include <math.h>
 #include <string.h>
 
 #include "babl.h"
+#include "extensions/util.h"
 
 
 int init (void);

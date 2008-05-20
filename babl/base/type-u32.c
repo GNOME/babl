@@ -21,8 +21,7 @@
 #include <assert.h>
 #include <math.h>
 
-#include "babl.h"
-#include "babl-ids.h"
+#include "babl-internal.h"
 #include "babl-base.h"
 
 static inline long

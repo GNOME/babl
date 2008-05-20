@@ -39,11 +39,10 @@
  * TODO: error diffusion,
  */
 
-#include "config.h"
-
 #include "babl.h"
 
 #include "base/util.h"
+#include "extensions/util.h"
 
 
 #define INLINE    inline

@@ -20,8 +20,7 @@
 #include <assert.h>
 #include <stdint.h>
 
-#include "babl.h"
-#include "babl-ids.h"
+#include "babl-internal.h"
 #include "babl-base.h"
 
 #include <math.h>

@@ -247,8 +247,10 @@ AM_CONDITIONAL(OS_UNIX, test "$os_win32" != "yes")
 dnl ===========================================================================
 
 AC_SEARCH_LIBS([dlopen], [dl])
+AC_SEARCH_LIBS([rint], [m])
 
 AC_REPLACE_FUNCS(gettimeofday)
+AC_CHECK_FUNCS(rint)
 
 #BABL_PATH_SEPARATOR must be defined as a character.
 #BABL_DIR_SEPARATOR must be defined as a string.

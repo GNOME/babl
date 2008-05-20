@@ -1,3 +1,19 @@
+2008-05-21  Jan Heller  <jheller@svn.gnome.org>
+
+	* babl/babl-internal.h:
+	* babl/base/type-u16.c:
+	* babl/base/type-u32.c:
+	* babl/base/type-u8.c:
+	* extensions/CIE-Lab.c:
+	* extensions/gegl-fixups.c:
+	* extensions/gggl-lies.c:
+	* extensions/gggl.c:
+	* extensions/gimp-8bit.c:
+	* extensions/util.h: fallback to floor function when rint function
+	is not available.
+
+	* configure.ac: added check for rint function.
+
 2008-05-20  Jan Heller  <jheller@svn.gnome.org>
 
 	* extensions/gimp-8bit.c (conv_rgbaF_linear_rgb8_linear),

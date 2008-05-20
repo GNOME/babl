@@ -23,12 +23,11 @@
  *  Copyright 2003, 2004, 2005 Øyvind Kolås <pippin@gimp.org>
  */
 
-#include "config.h"
-
 #include <math.h>
 #include <string.h>
 
 #include "babl.h"
+#include "extensions/util.h"
 
 
 #define INLINE    inline

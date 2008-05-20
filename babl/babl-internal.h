@@ -30,11 +30,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include "assert.h"
 
 #undef  _BABL_INTERNAL_H
 #include "babl.h"
 #define _BABL_INTERNAL_H
+
+#include "config.h"
 
 #include "babl-list.h"
 #include "babl-hash-table.h"
@@ -48,6 +51,13 @@
 #define srandom srand
 #define random  rand
 #endif
+
+/* fallback to floor function when rint is not around */
+#ifndef HAVE_RINT
+# define rint(f)  ((long) floor (((double) f) + 0.5))
+#endif
+
+
 
 Babl * babl_conversion_find       (const void     *source,
                                          const void     *destination);

@@ -19,13 +19,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include "config.h"
-
 #include <stdio.h>
 
 #include "babl.h"
 
 #include "base/util.h"
+#include "extensions/util.h"
 
 #define INLINE    inline
 
