@@ -25,7 +25,7 @@
 #include "config.h"
 
 #ifndef HAVE_RINT
-# define rint(f)  ((long) floor (((double) f) + 0.5))
+# define rint(f)  (floor (((double) (f)) + 0.5))
 #endif
 
 
