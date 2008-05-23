@@ -119,6 +119,8 @@ int init (void);
 int
 init (void)
 {
+#if defined(__GNUC__) && (__GNUC__ >= 4) && defined(USE_SSE) && defined(USE_MMX)
+
   Babl *rgbaF_linear = babl_format_new (
     babl_model ("RGBA"),
     babl_type ("float"),
@@ -142,8 +144,6 @@ init (void)
     babl_component ("G"),
     babl_component ("B"),
     NULL);
-
-#if defined(__GNUC__) && (__GNUC__ >= 4) && defined(USE_SSE) && defined(USE_MMX)
 
   if ((babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_MMX) &&
       (babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_SSE))

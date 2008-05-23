@@ -1,5 +1,9 @@
 2008-05-23  Jan Heller  <jheller@svn.gnome.org>
 
+	* extensions/sse-fixups.c (init): Fixed conditionally compiled code.
+
+2008-05-23  Jan Heller  <jheller@svn.gnome.org>
+
 	Added support for CPU acceleration, RGBA float -> RGB u8 and 
 	RGBA float -> RGBA u8 SSE accelerated conversions.
 
