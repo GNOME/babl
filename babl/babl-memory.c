@@ -47,9 +47,9 @@ typedef struct
   size_t size;
 } BablAllocInfo;
 
-#define OFFSET    (sizeof (BablAllocInfo))
-
-#define BAI(ptr)       ((BablAllocInfo *) (((char *) ptr) - OFFSET))
+#define BABL_ALIGN     16
+#define BABL_ALLOC     (sizeof (BablAllocInfo) + sizeof (void *))
+#define BAI(ptr)       ((BablAllocInfo *) *((void **) ptr - 1))
 #define IS_BAI(ptr)    (BAI (ptr)->signature == signature)
 
 /* runtime statistics: */
@@ -96,18 +96,23 @@ void *
 babl_malloc (size_t size)
 {
   char *ret;
+  int  offset;
 
   babl_assert (size);
 
   functions_sanity ();
-  ret = malloc_f (size + OFFSET);
+  ret = malloc_f (BABL_ALLOC + BABL_ALIGN + size);
   if (!ret)
     babl_fatal ("args=(%i): failed", size);
 
-  BAI (ret + OFFSET)->signature = signature;
-  BAI (ret + OFFSET)->size      = size;
+  offset = BABL_ALIGN - ((unsigned int) ret + BABL_ALLOC) % BABL_ALIGN;
+  ret = ret + BABL_ALLOC + offset;
+
+  *((void **) ret - 1) = ret - BABL_ALLOC - offset;
+  BAI (ret)->signature = signature;
+  BAI (ret)->size      = size;
   mallocs++;
-  return (void *) (ret + OFFSET);
+  return (void *) (ret);
 }
 
 /* Create a duplicate allocation of the same size, note

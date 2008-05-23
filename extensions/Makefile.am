@@ -38,6 +38,9 @@ endif
 
 CIE-Lab$(SHREXT): CIE-Lab.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
+
+sse-fixups$(SHREXT): sse-fixups.c
+	$(CC) $(CFLAGS) $(MMX_EXTRA_CFLAGS) $(SSE_EXTRA_CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
 #lcms$(SHREXT): lcms.c
 #	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config lcms --cflags --libs`
 #############################################################################

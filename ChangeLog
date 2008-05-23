@@ -1,3 +1,27 @@
+2008-05-23  Jan Heller  <jheller@svn.gnome.org>
+
+	Added support for CPU acceleration, RGBA float -> RGB u8 and 
+	RGBA float -> RGBA u8 SSE accelerated conversions.
+
+	* babl/Makefile.am: Added babl-cpuaccel.[ch].
+	* babl/babl-cpuaccel.h:
+	* babl/babl-cpuaccel.c (babl_cpu_accel_get_support),
+	(babl_cpu_accel_set_use), (arch_get_vendor), (arch_accel_intel),
+	(arch_accel_amd), (arch_accel_centaur), (arch_accel_cyrix),
+	(sigill_handler), (arch_accel_sse_os_support), (arch_accel),
+	(cpu_accel): Runtime CPU detection code. Ported from GIMP.
+	* babl/babl-internal.h: Include babl-cpuaccel.h.
+	* babl/babl-memory.c (babl_malloc): Make babl_malloc align memory to
+	BABL_ALIGN==16 boundaries.
+	* babl/babl.c (babl_init): Enabled CPU acceleration.
+	* configure.ac: Added compile time MMX/SSE/AltiVec detection. Ported
+	from GIMP.
+	* extensions/Makefile.am: Added SSE_EXTRA_CFLAGS for sse-fixups.c
+	compilation.
+	* extensions/sse-fixups.c (conv_rgbaF_linear_rgb8_linear),
+	(conv_rgbaF_linear_rgba8_linear), (init): Added RGBA float -> RGB u8
+	and RGBA float -> RGBA u8 SSE accelerated conversions.
+
 2008-05-22  Jan Heller  <jheller@svn.gnome.org>
 
 	* extensions/util.h: changed fallback macro to have the

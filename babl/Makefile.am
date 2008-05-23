@@ -29,7 +29,8 @@ c_sources =				\
 	babl-type.c			\
 	babl-util.c			\
 	babl-list.c			\
-	babl-hash-table.c
+	babl-hash-table.c               \
+	babl-cpuaccel.c
 
 h_sources  =             		\
 	babl-db.h			\
@@ -39,7 +40,8 @@ h_sources  =             		\
 	babl-util.h			\
 	babl.h				\
 	babl-list.h			\
-	babl-hash-table.h
+	babl-hash-table.h               \
+	babl-cpuaccel.h
 
 library_includedir=$(includedir)/babl-$(BABL_API_VERSION)/babl
 library_include_HEADERS =		\

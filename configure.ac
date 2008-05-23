@@ -244,6 +244,125 @@ AC_SUBST(MATH_LIB)
 AM_CONDITIONAL(OS_WIN32, test "$os_win32" = "yes")
 AM_CONDITIONAL(OS_UNIX, test "$os_win32" != "yes")
 
+
+dnl ===========================================================================
+
+
+########################
+# Check for MMX assembly
+########################
+
+AC_ARG_ENABLE(mmx,
+  [  --enable-mmx            enable MMX support (default=auto)],,
+  enable_mmx=$have_x86)
+
+AC_ARG_ENABLE(sse,
+  [  --enable-sse            enable SSE support (default=auto)],,
+  enable_sse=$enable_mmx)
+
+if test "x$enable_mmx" = xyes; then
+  BABL_DETECT_CFLAGS(MMX_EXTRA_CFLAGS, '-mmmx')
+  SSE_EXTRA_CFLAGS=
+
+  AC_MSG_CHECKING(whether we can compile MMX code)
+
+  mmx_save_CFLAGS="$CFLAGS"
+  CFLAGS="$mmx_save_CFLAGS $MMX_EXTRA_CFLAGS"
+
+  AC_COMPILE_IFELSE([asm ("movq 0, %mm0");],
+
+    AC_DEFINE(USE_MMX, 1, [Define to 1 if MMX assembly is available.])
+    AC_MSG_RESULT(yes)
+
+    if test "x$enable_sse" = xyes; then
+      BABL_DETECT_CFLAGS(sse_flag, '-msse')
+      SSE_EXTRA_CFLAGS="$MMX_EXTRA_CFLAGS $sse_flag"
+
+      AC_MSG_CHECKING(whether we can compile SSE code)
+
+      CFLAGS="$CFLAGS $sse_flag"
+
+      AC_COMPILE_IFELSE([asm ("movntps %xmm0, 0");],
+        AC_DEFINE(USE_SSE, 1, [Define to 1 if SSE assembly is available.])
+        AC_MSG_RESULT(yes)
+      ,
+        enable_sse=no
+        AC_MSG_RESULT(no)
+        AC_MSG_WARN([The assembler does not support the SSE command set.])
+      )
+
+    fi
+  ,
+    enable_mmx=no
+    AC_MSG_RESULT(no)
+    AC_MSG_WARN([The assembler does not support the MMX command set.])
+  )
+
+  CFLAGS="$mmx_save_CFLAGS"
+
+  AC_SUBST(MMX_EXTRA_CFLAGS)
+  AC_SUBST(SSE_EXTRA_CFLAGS)
+fi
+
+
+############################
+# Check for AltiVec assembly
+############################
+
+AC_ARG_ENABLE(altivec,
+  [  --enable-altivec        enable AltiVec support (default=auto)],,
+  enable_altivec=$have_ppc)
+
+if test "x$enable_altivec" = xyes; then
+
+  BABL_DETECT_CFLAGS(altivec_flag, '-faltivec' '-maltivec -mabi=altivec')
+
+  ALTIVEC_EXTRA_CFLAGS=
+  case "$altivec_flag" in
+    -maltivec*)
+      altivec_save_CPPFLAGS="$CPPFLAGS"
+      CPPFLAGS="$altivec_save_CPPFLAGS $altivec_flag"
+      AC_CHECK_HEADERS(altivec.h, [ALTIVEC_EXTRA_CFLAGS="$altivec_flag"])
+      CPPFLAGS="$altivec_save_CPPFLAGS"
+      ;;
+    *)
+      ALTIVEC_EXTRA_CFLAGS="$altivec_flag"
+      ;;
+  esac
+  AC_SUBST(ALTIVEC_EXTRA_CFLAGS)
+
+  AC_MSG_CHECKING(whether we can compile AltiVec code)
+
+  can_use_altivec=no
+  if test -z "$ALTIVEC_EXTRA_CFLAGS"; then
+    AC_MSG_RESULT(no)
+    AC_MSG_WARN([The compiler does not support the AltiVec command set.])
+  else
+    case "$target_or_host" in
+      *-*-darwin*)
+        can_use_altivec=yes
+        AC_DEFINE(HAVE_ALTIVEC_SYSCTL, 1,
+         [Define to 1 if the altivec runtime test should use a sysctl.])
+        ;;
+      *)
+        AC_COMPILE_IFELSE([asm ("vand %v0, %v0, %v0");],
+          can_use_altivec=yes, can_use_altivec=no)
+        ;;
+    esac
+    AC_MSG_RESULT($can_use_altivec)
+
+    if test "x$can_use_altivec" = "xyes"; then
+      AC_DEFINE(USE_ALTIVEC, 1, [Define to 1 if AltiVec support is available.])
+    else
+      enable_altivec=no
+      AC_MSG_WARN([The assembler does not support the AltiVec command set.])
+    fi
+  fi
+
+  enable_altivec="$can_use_altivec"
+fi
+
+
 dnl ===========================================================================
 
 AC_SEARCH_LIBS([dlopen], [dl])

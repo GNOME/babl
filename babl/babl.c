@@ -23,6 +23,8 @@ static int ref_count = 0;
 void
 babl_init (void)
 {
+  babl_cpu_accel_set_use (1);
+
   if (ref_count++ == 0)
     {
       babl_internal_init ();
