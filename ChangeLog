@@ -1,5 +1,9 @@
 2008-06-03  Jan Heller  <jheller@svn.gnome.org>
 
+	* INSTALL.in: Updated download link.
+
+2008-06-03  Jan Heller  <jheller@svn.gnome.org>
+
 	babl_get_version () moved into separate source file.
 
 	* babl/Makefile.am: Added babl-version.c.
