@@ -54,7 +54,8 @@ library_include_HEADERS =		\
 	babl-image.h			\
 	babl-model.h			\
 	babl-sampling.h 		\
-	babl-type.h
+	babl-type.h                     \
+	babl-version.h
 
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/babl/base
 

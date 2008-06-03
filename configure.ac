@@ -386,6 +386,7 @@ AC_CONFIG_FILES(
 Makefile
 babl.pc
 babl/Makefile
+babl/babl-version.h
 babl/base/Makefile
 docs/Makefile
 docs/index-static.html

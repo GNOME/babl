@@ -1,3 +1,14 @@
+2008-06-03  Jan Heller  <jheller@svn.gnome.org>
+
+	Added babl_get_version () to the public API.
+
+	* babl/Makefile.am: Added babl-version.h to library_include_HEADERS.
+	* babl/babl-version.h.in: Added macros to expand to babl version
+	information.
+	* babl/babl.c (babl_get_version): Implemented.
+	* babl/babl.h: Include babl-version.h, declare babl_get_version ().
+	* configure.ac: Added babl-version.h to AC_CONFIG_FILES.
+
 2008-05-23  Jan Heller  <jheller@svn.gnome.org>
 
 	* extensions/sse-fixups.c (init): Fixed conditionally compiled code.
