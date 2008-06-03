@@ -1,5 +1,9 @@
 2008-06-03  Jan Heller  <jheller@svn.gnome.org>
 
+	* babl/babl-version.h.in: Added.
+
+2008-06-03  Jan Heller  <jheller@svn.gnome.org>
+
 	Added babl_get_version () to the public API.
 
 	* babl/Makefile.am: Added babl-version.h to library_include_HEADERS.
