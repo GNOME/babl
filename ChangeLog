@@ -1,5 +1,15 @@
 2008-06-03  Jan Heller  <jheller@svn.gnome.org>
 
+	babl_get_version () moved into separate source file.
+
+	* babl/Makefile.am: Added babl-version.c.
+	* babl/babl-version.c (babl_get_version): Implemented.
+	* babl/babl-version.h.in: Added babl_get_version () declaration.
+	* babl/babl.c (babl_destroy):  Removed babl_get_version ().
+	* babl/babl.h: Removed babl_get_version () declaration.
+
+2008-06-03  Jan Heller  <jheller@svn.gnome.org>
+
 	* babl/babl-version.h.in: Added.
 
 2008-06-03  Jan Heller  <jheller@svn.gnome.org>

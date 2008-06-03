@@ -16,24 +16,20 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _BABL_VERSION_H
-#define _BABL_VERSION_H
+#include "babl-internal.h"
 
-/***
- * babl version information
- *
- * These macros tell the version of babl you are compiling against.
- * babl's version number consists of three parts: major, minor and
- * micro.
- */
 
-#define BABL_MAJOR_VERSION @BABL_MAJOR_VERSION@
-#define BABL_MINOR_VERSION @BABL_MINOR_VERSION@
-#define BABL_MICRO_VERSION @BABL_MICRO_VERSION@
-
-/** Get the version information on the babl library */
-void   babl_get_version (int *major,
-                         int *minor,
-                         int *micro);
-
-#endif
+void     
+babl_get_version (int *major,   
+                  int *minor,   
+                  int *micro)   
+{       
+  if (major != NULL)    
+    *major = BABL_MAJOR_VERSION;        
+                 
+  if (minor != NULL)    
+    *minor = BABL_MINOR_VERSION;        
+                 
+  if (micro != NULL)    
+    *micro = BABL_MICRO_VERSION;        
+}

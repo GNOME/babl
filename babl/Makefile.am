@@ -30,7 +30,8 @@ c_sources =				\
 	babl-util.c			\
 	babl-list.c			\
 	babl-hash-table.c               \
-	babl-cpuaccel.c
+	babl-cpuaccel.c                 \
+	babl-version.c
 
 h_sources  =             		\
 	babl-db.h			\

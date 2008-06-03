@@ -81,11 +81,6 @@ void   babl_init       (void);
  */
 void   babl_destroy    (void);
 
-/** Get the version information on the babl library */
-void   babl_get_version (int *major,
-                         int *minor,
-                         int *micro);
-
 #if     __GNUC__ >= 4
 #define BABL_ARG_NULL_TERMINATED __attribute__((__sentinel__))
 #else
