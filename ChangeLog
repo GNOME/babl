@@ -1,3 +1,9 @@
+=========================== 0.0.20 released =============================
+
+2008-02-27  Øyvind Kolås  <pippin@gimp.org>
+
+	* configure.ac: incremented version.
+
 2008-06-12  Øyvind Kolås  <pippin@gimp.org>
 
 	* docs/index-static.html.in: moved the babl directory overview here
