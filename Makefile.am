@@ -18,6 +18,7 @@ EXTRA_DIST = \
 	COPYING.LESSER		\
 	INSTALL			\
 	NEWS			\
+	TODO			\
 	ChangeLog		\
 	autogen.sh		\
 	babl.pc.in

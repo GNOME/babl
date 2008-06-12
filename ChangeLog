@@ -1,5 +1,12 @@
 2008-06-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* Makefile.am: added TODO
+	* docs/index-static.html.in: moved TODO list from here
+	* TODO: to here, also edited it a bit.
+	* docs/Makefile.am: include TODO in result.
+
+2008-06-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* docs/index-static.html.in: reindented code, documented BABL_ERROR.
 
 2008-06-12  Øyvind Kolås  <pippin@gimp.org>

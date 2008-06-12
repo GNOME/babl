@@ -48,6 +48,7 @@ BablFishPath.txt: $(babl_fish_path_fitness)
 index.html: index-static.html                    \
 	    $(babl_html_dump) 			 \
 	    $(top_srcdir)/AUTHORS                \
+	    $(top_srcdir)/TODO                   \
 	    $(top_srcdir)/NEWS                   \
 	    BablFishPath.txt			 \
 	    Makefile.am
@@ -61,6 +62,7 @@ index.html: index-static.html                    \
 
 	$(top_srcdir)/docs/tools/xml_insert.sh $@ BablFishPath BablFishPath.txt
 	$(top_srcdir)/docs/tools/xml_insert.sh $@ AUTHORS $(top_srcdir)/AUTHORS
+	$(top_srcdir)/docs/tools/xml_insert.sh $@ TODO $(top_srcdir)/TODO
 	$(top_srcdir)/docs/tools/xml_insert.sh $@ NEWS $(top_srcdir)/NEWS
 	echo " [OK]"
 

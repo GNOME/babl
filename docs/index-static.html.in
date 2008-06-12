@@ -350,21 +350,7 @@ lab_buffer  = malloc (pixel_count * 3 * 4);
         -->
 
         <a name='TODO'></a>
-        <h2>TODO</h2>
-        
-        <ul>
-          <li>Validate that a created BablFishPath is actually faster than the
-          BablFishReference it is a replacement for.</li>
-          <li>Compile-time instead of runtime profiling / storage of profiling
-          and loss data.. <em>(The speed of conversions
-            is bound to 'wobble', according to architecture, compiler flags,
-            concurrently running processes and phase of moon.)</em></li>
-          <li class='unstable'>Horizontal chroma subsampling (4:2:2 and 4:1:1)</li>
-          <li>Thread safety (locking) for mutations of the type system.</li>
-          <li>Support for conversions between formats that have higher dimensionality than RGBA.</li>
-          <li>Support for datatypes that are not a multiple of 8bit.</li>
-          <li>dithering</li>
-        </ul>
+<!--TODO-->          
 
         <a name='Copyright'></a>
         <h2>Copyright</h2>
