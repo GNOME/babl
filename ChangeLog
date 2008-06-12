@@ -1,5 +1,10 @@
 2008-06-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* docs/index-static.html.in: moved the BABL_TOLERANCE documentation
+	paragraph in under Environment heading.
+
+2008-06-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* docs/index-static.html.in: removed markup mistake that introduced
 	horizontal scrolling in gecko.
 

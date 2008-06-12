@@ -265,10 +265,6 @@ lab_buffer  = malloc (pixel_count * 3 * 4);
 </pre>
 -->
 
-    <p>Through the environment variable <em>BABL_TOLERANCE</em> you can control
-    a speed/performance trade off that by default is set very low (0.000001)
-    values in the range 0.01-0.1 can provide reasonable preview performance
-    by allowing lower numerical accuracy</p>.
 
     <a name='Vocabulary'></a>
     <h3 style='margin-bottom:0em;'>Vocabulary</h3>
@@ -297,7 +293,10 @@ lab_buffer  = malloc (pixel_count * 3 * 4);
     <a name='Shortcut_coverage'></a>
     <h3>Shortcut coverage</h3>
     <p>The diagram shown below visualizes the coverage of current shortcut
-    conversions. A <a href='BablFishPath.html'>DHTML version</a> is also available.
+    conversions. Dots indicate a direct conversion is provided for, the height
+    of the bar indicates the number of conversions steps needed in a chain of
+    conversions. 
+    A <a href='BablFishPath.html'>DHTML version</a> is also available.
     </p>
 <pre style='font-size:50%;height:30em;overflow:scroll'>
 <!--BablFishPath-->
@@ -313,6 +312,11 @@ lab_buffer  = malloc (pixel_count * 3 * 4);
             href='#Extending'>extensions</a> might be created or improved to
         make babl do it's job faster.
         </p>
+
+    <p>Through the environment variable <tt>BABL_TOLERANCE</tt> you can control
+    a speed/performance trade off that by default is set very low (0.000001)
+    values in the range 0.01-0.1 can provide reasonable preview performance
+    by allowing lower numerical accuracy</p>.
 
 
         <a name='Extending'></a>
