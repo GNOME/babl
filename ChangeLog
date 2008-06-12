@@ -1,5 +1,10 @@
 2008-06-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* docs/index-static.html.in: removed markup mistake that introduced
+	horizontal scrolling in gecko.
+
+2008-06-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-fish-path.c: (legal_error): s/BABL_TOLERANCE/
 	* docs/index-static.html.in: s/BABL_ACCURACY/BABL_TOLERANCE/
 

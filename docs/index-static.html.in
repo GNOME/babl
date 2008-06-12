@@ -214,10 +214,10 @@
         of pixels, with different pixel formats.
         </p>
 
-        <pre
+        <pre>
 int width = 123, height = 581, pixel_count = width * height;
 
->const Babl *srgb            = <span class='function'>babl_format</span> <span class='paren'>(</span><span class='string'>"R'G'B' u8"</span><span class='paren'>)</span>;
+const Babl *srgb            = <span class='function'>babl_format</span> <span class='paren'>(</span><span class='string'>"R'G'B' u8"</span><span class='paren'>)</span>;
 const Babl *lab             = <span class='function'>babl_format</span> <span class='paren'>(</span><span class='string'>"CIE Lab float"</span><span class='paren'>)</span>;
 const Babl *rgb_to_lab_fish = </span><span class='function'>babl_fish</span> <span class='paren'>(</span> srgb, lab);
 
