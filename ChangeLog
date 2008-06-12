@@ -1,3 +1,9 @@
+2008-06-12  Jan Heller  <jheller@svn.gnome.org>
+
+	* extensions/sse-fixups.c (conv_rgbaF_linear_rgb8_linear),
+	(conv_rgbaF_linear_rgba8_linear): Added fallback non-SSE routine 
+	if the input buffer is not aligned to 16 bytes.
+
 2008-06-05  Jan Heller  <jheller@svn.gnome.org>
 
 	* AUTHORS: Updated contact info.

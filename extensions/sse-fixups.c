@@ -25,6 +25,7 @@
 
 #include "babl.h"
 #include "babl-cpuaccel.h"
+#include "extensions/util.h"
 
 #define INLINE inline
 
@@ -49,28 +50,53 @@ conv_rgbaF_linear_rgb8_linear (unsigned char *src,
                                long           samples)
 {
   long n = samples;
-  g4float *g4src = (g4float *) src;
-  g4float v;
 
-  union {
-   g2int si; 
-   unsigned char c[8];
-  } u;
-
-  while (n--)
+  if ((int) src & 0xF)
     {
-       v = *g4src++ * g4float_ff;
-       v = g4float_min(v, g4float_ff);
-       v = g4float_max(v, g4float_zero);
-       u.si = g4float_cvt2pi (v);
-       *dst++  = u.c[0];
-       *dst++  = u.c[4];
-       v = g4float_movhl (v, v);
-       u.si = g4float_cvt2pi (v);  
-       *dst++  = u.c[0];
-    }
+      // nonaligned buffers, we have to use fallback x87 code
+      float *fsrc = (float *) src;
+      int v;
 
-  g4float_emms ();
+      while (n--)
+        {
+          v = rint (*fsrc++ * 255.0);
+          *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
+
+          v = rint (*fsrc++ * 255.0);
+          *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
+         
+          v = rint (*fsrc++ * 255.0);
+          *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
+
+          fsrc++;
+        }
+    }
+  else   
+    {
+      // all is well, buffers are SSE compatible
+      g4float *g4src = (g4float *) src;
+      g4float v;
+
+      union {
+       g2int si; 
+       unsigned char c[8];
+      } u;
+
+      while (n--)
+        {
+           v = *g4src++ * g4float_ff;
+           v = g4float_min(v, g4float_ff);
+           v = g4float_max(v, g4float_zero);
+           u.si = g4float_cvt2pi (v);
+           *dst++  = u.c[0];
+           *dst++  = u.c[4];
+           v = g4float_movhl (v, v);
+           u.si = g4float_cvt2pi (v);  
+           *dst++  = u.c[0];
+        }
+
+      g4float_emms ();
+    }
 
   return samples;
 }
@@ -82,29 +108,54 @@ conv_rgbaF_linear_rgba8_linear (unsigned char *src,
                                 long           samples)
 {
   long n = samples;
-  g4float *g4src = (g4float *) src;
-  g4float v;
-
-  union {
-   g2int si; 
-   unsigned char c[8];
-  } u;
-
-  while (n--)
+  if ((int) src & 0xF)
     {
-       v = *g4src++ * g4float_ff;
-       v = g4float_min(v, g4float_ff);
-       v = g4float_max(v, g4float_zero);
-       u.si = g4float_cvt2pi (v);
-       *dst++  = u.c[0];
-       *dst++  = u.c[4];
-       v = g4float_movhl (v, v);
-       u.si = g4float_cvt2pi (v);  
-       *dst++  = u.c[0];
-       *dst++  = u.c[4];
-    }
+      // nonaligned buffers, we have to use fallback x87 code
+      float *fsrc = (float *) src;
+      int v;
 
-  g4float_emms ();
+      while (n--)
+        {
+          v = rint (*fsrc++ * 255.0);
+          *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
+
+          v = rint (*fsrc++ * 255.0);
+          *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
+         
+          v = rint (*fsrc++ * 255.0);
+          *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
+
+          v = rint (*fsrc++ * 255.0);
+          *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
+        }
+    }
+  else   
+    {
+      // all is well, buffers are SSE compatible
+      g4float *g4src = (g4float *) src;
+      g4float v;
+
+      union {
+       g2int si; 
+       unsigned char c[8];
+      } u;
+
+      while (n--)
+        {
+           v = *g4src++ * g4float_ff;
+           v = g4float_min(v, g4float_ff);
+           v = g4float_max(v, g4float_zero);
+           u.si = g4float_cvt2pi (v);
+           *dst++  = u.c[0];
+           *dst++  = u.c[4];
+           v = g4float_movhl (v, v);
+           u.si = g4float_cvt2pi (v);  
+           *dst++  = u.c[0];
+           *dst++  = u.c[4];
+        }
+
+      g4float_emms ();
+    }
 
   return samples;
 }
