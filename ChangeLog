@@ -1,3 +1,9 @@
+2008-06-12  Øyvind Kolås  <pippin@gimp.org>
+
+	* AUTHORS: updated.
+	* NEWS: updated.
+	* docs/index-static.html.in: improved introduction and feature list.
+
 2008-06-12  Jan Heller  <jheller@svn.gnome.org>
 
 	* extensions/sse-fixups.c (conv_rgbaF_linear_rgb8_linear),

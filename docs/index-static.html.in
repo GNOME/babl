@@ -94,14 +94,21 @@
   <div class='content'>
 
     <!--<h1>Babl</h1>-->
-    <p>Babl is a <em>dynamic, any to any, pixel format conversion
-      library</em>. It provides conversions between the myriad of buffer
-    types images can be stored in. Babl doesn't only help with existing
-    pixel formats, but also facilitates creation of new and uncommon
-    ones.</p>
+    <p>
+    <br/> <!-- FIXME: should be in CSS -->
+    <strong>babl is a dynamic, any to any, pixel format translation library</strong>.
+    <br/>
+    </p>
+    
+    <p>It allows converting between different methods of storing <a href='http://en.wikipedia.org/wiki/Pixel'>pixels</a> known as <em>pixel formats</em> that have
+    with different bitdepths and other data representations, color models and
+    component permutations.
+      
+    <p> A vocabulary to formulate new <em>pixel formats</em> from existing
+    primitives is provided as well as the framework to add new color models and
+    data types.
+    </p>
 
-    <p><a href='http://www.gegl.org/'>GEGL</a> uses babl both for enumeration
-    of pixel formats as well as conversions between them.</p>
 
 
     <!--<a name='Background'></a>
@@ -125,14 +132,21 @@
     <h2>Features</h2>
 
     <ul>
-      <li class='frozen'>Tiny API in normal use.</li>
-      <li class='stable'>Planar and linear buffers.</li>
+      <li class='frozen'>Stable, small API.</li>
       <li class='stable'>Thread safe processing.</li>
-      <li class='unstable'>Extendable <!--and <a href='http://pippin.gimp.org/babl/introspect.txt'>introspectable</a> -->formats,
-      color models, components and datatypes</li>
-      <li class='unstable'>Reference 64bit floating point conversions for
-      data types and color models.</li>
+      <li class='stable'>Self profiling and optimizing.</li>
+      <li class='stable'>Extendable format, color models, components and
+                         datatypes</li>
+      <li class='stable'>Reference 64bit floating point conversions for datatypes and color models.
+      <li class='stable'>ANSI C, works on win32, linux and mac, 32bit and 64bit
+      systems.</li>
     </ul>
+
+    <p><a href='http://www.gegl.org/'>GEGL</a> through <a
+    href='http://www.gegl.org/api.html#GeglBuffer'>GeglBuffer</a> provides
+    tiled buffers with on disk storage as well as linear buffers with accessor
+    functions for efficient data access transparently using babl fishes for
+    translation to the desired pixel formats.</p>
 
     <a name='Download'></a>
     <h2>Download</h2>
@@ -191,9 +205,28 @@
         buffers represented by an existing BablPixelFormat.
         </p>
         <pre
-><span class='function'>babl_process</span> <span class='paren'>(</span><span class='function'>babl_fish</span> <span class='paren'>(</span><span class='function'>babl_format</span> <span class='paren'>(</span><span class='string'>"srgb"</span><span class='paren'>)</span>, <span class='function'>babl_format</span> <span class='paren'>(</span><span class='string'>"CIE Lab float"</span><span class='paren'>)</span><span class='paren'>)</span>,
-              srgb_buffer, lab_buffer,
-              pixel_count<span class='paren'>);</span></pre>
+>const Babl *srgb            = <span class='function'>babl_format</span> <span class='paren'>(</span><span class='string'>"R'G'B' u8"</span><span class='paren'>)</span>;
+const Babl *lab             = <span class='function'>babl_format</span> <span class='paren'>(</span><span class='string'>"CIE Lab float"</span><span class='paren'>)</span>;
+const Babl *rgb_to_lab_fish = </span><span class='function'>babl_fish</span> <span class='paren'>(</span> srgb, lab);
+int width = 123, height = 581, pixel_count = width * height;
+float         *lab_buffer;
+unsigned char *srgb_buffer;
+
+srgb_buffer = malloc (pixel_count * srgb-&gt;format.bytes_per_pixel);
+
+/* load data into srgb_buffer */
+
+lab_buffer  = malloc (pixel_count * 3 * 4);
+
+<span class='function'>babl_process</span> <span class='paren'>(</span>bablfish, srgb_buffer, lab_buffer, pixel_count<span class='paren'>);</span>
+
+/* do operation in lab space */
+<span class='function'>babl_process</span> <span class='paren'>(</span><span class='function'>babl_fish</span><span class='paren'>(</span>lab, srgb</span><span class='paren'>)</span>,
+                lab_buffer, srgb_buffer, pixel_count<span class='paren'>);</span></pre>
+
+/* the data has now been transformed back to srgb data */
+
+</pre>
         
         <p>If the existing pixel formats are not sufficient for your conversion
         needs, new ones can be created on the fly. The constructor
