@@ -135,8 +135,8 @@
       <li class='frozen'>Stable, small API.</li>
       <li class='stable'>Thread safe processing.</li>
       <li class='stable'>Self profiling and optimizing.</li>
-      <li class='stable'>Extendable format, color models, components and
-                         datatypes</li>
+      <li class='stable'>Extendable with new formats, color models, components
+      and datatypes</li>
       <li class='stable'>Reference 64bit floating point conversions for datatypes and color models.
       <li class='stable'>ANSI C, works on win32, linux and mac, 32bit and 64bit
       systems.</li>
