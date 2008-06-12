@@ -1,5 +1,12 @@
 2008-06-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-fish-path.c: (legal_error): s/BABL_ERROR/BABL_ACCURACY/
+	* docs/index-static.html.in: s/BABL_ERROR/BABL_ACCURACY/
+
+	* AUTHORS: added a missing space.
+
+2008-06-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* NEWS: added a html comment shortening the news shown.
 	* docs/index-static.html.in: assed link to changelog in svn after
 	news. Updated urls with s/viewcvs/viewvc/.

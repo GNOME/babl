@@ -14,7 +14,7 @@
         <dd>Portability fixes.</dd>
   <dt>Jan Heller <em>jheller at svn.gnome.org</em></dt>
   	<dd>Optimizations, refactoring and documentation.</dd>
-  <dt>Mukund Sivaraman<em>muks at mukund.org</em></dt>
+  <dt>Mukund Sivaraman <em>muks at mukund.org</em></dt>
   	<dd><em>Sparse</em> fixes and sanity.</dd>
   <dt><em>dmacks at netspace.org</em></dt>
         <dd>Build sanity</dd>

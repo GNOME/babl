@@ -265,7 +265,7 @@ lab_buffer  = malloc (pixel_count * 3 * 4);
 </pre>
 -->
 
-    <p>Through the environment variable <em>BABL_ERROR</em> you can control
+    <p>Through the environment variable <em>BABL_ACCURACY</em> you can control
     a speed/performance trade off that by default is set very low (0.000001)
     values in the range 0.01-0.1 can provide reasonable preview performance
     by allowing lower numerical accuracy</p>.
