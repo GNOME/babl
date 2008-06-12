@@ -186,7 +186,7 @@
     created during BablCore bootstrap is <em>RGBA</em> (linear light RGB,
     0.0 - 1.0, with a linear 0.0 - 1.0 opacity channel) backed by the
     <em>double</em> datatype. Defined similarily to <a
-    href='http://en.wikipedia.org/wiki/ScRGB_color_space'>scRGB'</a> using
+    href='http://en.wikipedia.org/wiki/ScRGB_color_space'>scRGB</a> using
     64bit floating point.
     </p>
 
@@ -219,7 +219,7 @@ int width = 123, height = 581, pixel_count = width * height;
 
 const Babl *srgb            = <span class='function'>babl_format</span> <span class='paren'>(</span><span class='string'>"R'G'B' u8"</span><span class='paren'>)</span>;
 const Babl *lab             = <span class='function'>babl_format</span> <span class='paren'>(</span><span class='string'>"CIE Lab float"</span><span class='paren'>)</span>;
-const Babl *rgb_to_lab_fish = </span><span class='function'>babl_fish</span> <span class='paren'>(</span> srgb, lab);
+const Babl *rgb_to_lab_fish = </span><span class='function'>babl_fish</span> <span class='paren'>(</span>srgb, lab);
 
 float         *lab_buffer;
 unsigned char *srgb_buffer;
