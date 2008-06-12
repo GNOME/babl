@@ -1,5 +1,9 @@
 2008-06-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* docs/index-static.html.in: reindented code, documented BABL_ERROR.
+
+2008-06-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* AUTHORS: updated.
 	* NEWS: updated.
 	* docs/index-static.html.in: improved introduction and feature list.

@@ -183,8 +183,10 @@
     internal consistency is governed by reference conversions that operate
     on <em>double</em> (64 bit floating point values). The only color model
     created during BablCore bootstrap is <em>RGBA</em> (linear light RGB,
-    0.0 - 1.0, with a linear 0.0 - 1.0 opacity channel) backed by
-    the <em>double</em> datatype.
+    0.0 - 1.0, with a linear 0.0 - 1.0 opacity channel) backed by the
+    <em>double</em> datatype. Defined similarily to <a
+    href='http://en.wikipedia.org/wiki/ScRGB_color_space'>scRGB'</a> using
+    64bit floating point.
     </p>
 
     <p>If babls conversion isn't fast enough, you can provide
@@ -201,48 +203,51 @@
         <a name='Usage'></a>
         <h3>Usage</h3>
 
-        <p>The simplest scenario for using babl is converting between linear
-        buffers represented by an existing BablPixelFormat.
-        </p>
         <pre
+><span class='function'>babl_process</span> <span class='paren'>(</span><span class='function'>babl_fish</span> <span class='paren'>(</span>source_format, destination_format<span class='paren'>)</span>,
+              source_buffer, destination_buffer,
+              pixel_count<span class='paren'>);</span></pre>
+
+        <p>The processing operation that babl performs is copying including
+        conversions if needed between linear buffers containing the same count 
+        of pixels, with different pixel formats.
+        </p>
+
+        <pre
+int width = 123, height = 581, pixel_count = width * height;
+
 >const Babl *srgb            = <span class='function'>babl_format</span> <span class='paren'>(</span><span class='string'>"R'G'B' u8"</span><span class='paren'>)</span>;
 const Babl *lab             = <span class='function'>babl_format</span> <span class='paren'>(</span><span class='string'>"CIE Lab float"</span><span class='paren'>)</span>;
 const Babl *rgb_to_lab_fish = </span><span class='function'>babl_fish</span> <span class='paren'>(</span> srgb, lab);
-int width = 123, height = 581, pixel_count = width * height;
+
 float         *lab_buffer;
 unsigned char *srgb_buffer;
 
 srgb_buffer = malloc (pixel_count * srgb-&gt;format.bytes_per_pixel);
-
-/* load data into srgb_buffer */
-
 lab_buffer  = malloc (pixel_count * 3 * 4);
+
+...... load data into srgb_buffer .......
 
 <span class='function'>babl_process</span> <span class='paren'>(</span>bablfish, srgb_buffer, lab_buffer, pixel_count<span class='paren'>);</span>
 
-/* do operation in lab space */
+...... do operation in lab space ........
+
 <span class='function'>babl_process</span> <span class='paren'>(</span><span class='function'>babl_fish</span><span class='paren'>(</span>lab, srgb</span><span class='paren'>)</span>,
-                lab_buffer, srgb_buffer, pixel_count<span class='paren'>);</span></pre>
+              lab_buffer, srgb_buffer, pixel_count<span class='paren'>);</span>
 
-/* the data has now been transformed back to srgb data */
-
-</pre>
+/* the data has now been transformed back to srgb data */</pre>
         
         <p>If the existing pixel formats are not sufficient for your conversion
         needs, new ones can be created on the fly. The constructor
         will provide the prior created one if duplicates are registered. </p>
         <pre
->format = <span class='function'>babl_format_new</span> <span class='paren'>(</span><span class='function'>babl_model</span> <span class='paren'>(</span><span class='string'>"R'G'B'"</span><span class='paren'>)</span>,
-                          <span class='function'>babl_type</span> <span class='paren'>(</span><span class='string'>"u8"</span><span class='paren'>)</span>,
-                          <span class='function'>babl_component</span> <span class='paren'>(</span><span class='string'>"B'"</span><span class='paren'>)</span>,
-                          <span class='function'>babl_component</span> <span class='paren'>(</span><span class='string'>"G'"</span><span class='paren'>)</span>,
-                          <span class='function'>babl_component</span> <span class='paren'>(</span><span class='string'>"R'"</span><span class='paren'>)</span>,
-                          <span class='NULL'>NULL</span><span class='paren'>);</span></pre>
+>const Babl *format = <span class='function'>babl_format_new</span> <span class='paren'>(</span><span class='function'>babl_model</span> <span class='paren'>(</span><span class='string'>"R'G'B'"</span><span class='paren'>)</span>,
+                                      <span class='function'>babl_type</span> <span class='paren'>(</span><span class='string'>"u16"</span><span class='paren'>)</span>,
+                                      <span class='function'>babl_component</span> <span class='paren'>(</span><span class='string'>"B'"</span><span class='paren'>)</span>,
+                                      <span class='function'>babl_component</span> <span class='paren'>(</span><span class='string'>"G'"</span><span class='paren'>)</span>,
+                                      <span class='function'>babl_component</span> <span class='paren'>(</span><span class='string'>"R'"</span><span class='paren'>)</span>,
+                                      <span class='NULL'>NULL</span><span class='paren'>);</span></pre>
 
-        <pre
-><span class='function'>babl_process</span> <span class='paren'>(</span><span class='function'>babl_fish</span> <span class='paren'>(</span>source_format, destination_format<span class='paren'>)</span>,
-              source_buffer, destination_buffer,
-              pixel_count<span class='paren'>);</span></pre>
 
 <!--
         <p>Instead of a linear buffer you can an image descriptor which desribes the start of the memory segment, the pitch in bytes between samples, and the rowstride (not used yet,
@@ -259,6 +264,10 @@ lab_buffer  = malloc (pixel_count * 3 * 4);
 </pre>
 -->
 
+    <p>Through the environment variable <em>BABL_ERROR</em> you can control
+    a speed/performance trade off that by default is set very low (0.000001)
+    values in the range 0.01-0.1 can provide reasonable preview performance
+    by allowing lower numerical accuracy</p>.
 
     <a name='Vocabulary'></a>
     <h3 style='margin-bottom:0em;'>Vocabulary</h3>
