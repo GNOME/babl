@@ -67,7 +67,7 @@ static double legal_error (void)
   if (error != 0.0)
     return error;
 
-  env = getenv ("BABL_ACCURACY");
+  env = getenv ("BABL_TOLERANCE");
   if (env)
     error = atof (env);
   else
@@ -100,7 +100,7 @@ static int max_path_length (void)
  * the shortest path in a graph where formats are the vertices
  * and conversions are the edges. However, there is an additional
  * constraint to the shortest path, that limits conversion error
- * introduced by such a path to be less than BABL_ACCURACY. This
+ * introduced by such a path to be less than BABL_TOLERANCE. This
  * prohibits usage of any reasonable shortest path construction
  * algorithm such as Dijkstra's algorithm. The shortest path is
  * constructed by enumerating all available paths that are less

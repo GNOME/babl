@@ -1,5 +1,10 @@
 2008-06-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-fish-path.c: (legal_error): s/BABL_TOLERANCE/
+	* docs/index-static.html.in: s/BABL_ACCURACY/BABL_TOLERANCE/
+
+2008-06-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* babl/babl-fish-path.c: (legal_error): s/BABL_ERROR/BABL_ACCURACY/
 	* docs/index-static.html.in: s/BABL_ERROR/BABL_ACCURACY/
 
