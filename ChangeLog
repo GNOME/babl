@@ -1,5 +1,10 @@
 2008-06-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* docs/index-static.html.in: moved the babl directory overview here
+	from the GEGL site.
+
+2008-06-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* docs/index-static.html.in: fixed indentation and misplaced ' spotted
 	by Jan Heller.
 
