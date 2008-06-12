@@ -1,5 +1,11 @@
 2008-06-12  Øyvind Kolås  <pippin@gimp.org>
 
+	* NEWS: added a html comment shortening the news shown.
+	* docs/index-static.html.in: assed link to changelog in svn after
+	news. Updated urls with s/viewcvs/viewvc/.
+
+2008-06-12  Øyvind Kolås  <pippin@gimp.org>
+
 	* Makefile.am: added TODO
 	* docs/index-static.html.in: moved TODO list from here
 	* TODO: to here, also edited it a bit.

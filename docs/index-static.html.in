@@ -132,14 +132,14 @@
     <h2>Features</h2>
 
     <ul>
-      <li class='frozen'>Stable, small API.</li>
-      <li class='stable'>Thread safe processing.</li>
-      <li class='stable'>Self profiling and optimizing.</li>
-      <li class='stable'>Extendable with new formats, color models, components
-      and datatypes</li>
-      <li class='stable'>Reference 64bit floating point conversions for datatypes and color models.
-      <li class='stable'>ANSI C, works on win32, linux and mac, 32bit and 64bit
-      systems.</li>
+      <li>Fast.</li>
+      <li>Accurate.</li>
+      <li>Stable, small API.</li>
+      <li>Self profiling and optimizing.</li>
+      <li>ANSI C, works on win32, linux and mac, 32bit and 64bit systems.</li>
+      <li>Extendable with new formats, color models, components
+      and datatypes.</li>
+      <li>Reference 64bit floating point conversions for datatypes and color models.
     </ul>
 
     <p><a href='http://www.gegl.org/'>GEGL</a> through <a
@@ -156,7 +156,7 @@
     </p>
 
     <p>Babl development happens in GNOME Subversion in the <tt>babl</tt> module.
-    It can be <a href='http://svn.gnome.org/viewcvs/babl/trunk/'>browsed online</a> and checked out with:
+    It can be <a href='http://svn.gnome.org/viewvc/babl/trunk/'>browsed online</a> and checked out with:
     </p>
     <pre>svn co http://svn.gnome.org/svn/babl/trunk/ babl</pre>
 
@@ -166,6 +166,7 @@
     to the GEGL release.</p>
 
     <!--NEWS-->
+    For more news see the current <a href='http://svn.gnome.org/viewvc/babl/trunk/ChangeLog?view=markup'>ChangeLog</a> in subversion.
 
     <a name='Documentation'></a>
     <h2>Documentation</h2>
