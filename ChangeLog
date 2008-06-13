@@ -1,10 +1,18 @@
-2008-02-27  Øyvind Kolås  <pippin@gimp.org>
+2008-06-13  Øyvind Kolås  <pippin@gimp.org>
+
+	* extensions/frequency.c: added dummy model "frequency" and dummy
+	format "frequency float" to be used purely for creating, storing,
+	accessing but not converting to and from normal tristimulus spaces.
+	can be used by GeglBuffer to create frequency domain buffers that
+	are processed in a similar manner to normal buffers.
+
+2008-06-12  Øyvind Kolås  <pippin@gimp.org>
 
 	* configure.ac: post release increment of version to 0.0.23
 
 =========================== 0.0.22 released =============================
 
-2008-02-27  Øyvind Kolås  <pippin@gimp.org>
+2008-06-12  Øyvind Kolås  <pippin@gimp.org>
 
 	* configure.ac: incremented version.
 
