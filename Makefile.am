@@ -31,12 +31,10 @@ DISTCLEANFILES = \
 
 
 if HAVE_W3M
-dist-check-w3m:
-
 README: all docs/index.html
 	$(W3M) -cols 72 -dump docs/index.html > $@
 else
-dist-check-w3m:
+README:
 	@echo "*** w3m must be available in order to make dist"
 	@false
 endif
@@ -51,4 +49,3 @@ distclean-local:
 		rm -f $(BUILT_EXTRA_DIST);	\
 	fi
 
-dist-hook: dist-check-w3m

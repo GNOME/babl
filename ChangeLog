@@ -1,3 +1,8 @@
+2008-06-16  Sam Hocevar  <sam@zoy.org>
+
+	* Makefile.am: ensure that the "w3m must be available" message is
+	properly displayed: dist-hook is only called after builddir is filled.
+
 2008-06-13  Øyvind Kolås  <pippin@gimp.org>
 
 	* extensions/frequency.c: added dummy model "frequency" and dummy
