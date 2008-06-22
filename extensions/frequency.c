@@ -98,6 +98,21 @@ init (void)
     NULL
   );
 
+    babl_format_new (
+    "name", "frequency double",
+    babl_model ("frequency"),
+    babl_type ("double"),
+    babl_component ("Rr"),
+    babl_component ("Gr"),
+    babl_component ("Br"),
+    babl_component ("Ar"),
+    babl_component ("Ri"),
+    babl_component ("Gi"),
+    babl_component ("Bi"),
+    babl_component ("Ai"),
+    NULL
+  );
+    
   return 0;
 }
 
