@@ -59,12 +59,12 @@ init (void)
   babl_model_new (
     "name", "frequency",
     babl_component ("Rr"),
-    babl_component ("Gr"),
-    babl_component ("Br"),
-    babl_component ("Ar"),
     babl_component ("Ri"),
+    babl_component ("Gr"),
     babl_component ("Gi"),
+    babl_component ("Br"),
     babl_component ("Bi"),
+    babl_component ("Ar"),
     babl_component ("Ai"),
     NULL
   );
@@ -88,12 +88,12 @@ init (void)
     babl_model ("frequency"),
     babl_type ("float"),
     babl_component ("Rr"),
-    babl_component ("Gr"),
-    babl_component ("Br"),
-    babl_component ("Ar"),
     babl_component ("Ri"),
+    babl_component ("Gr"),
     babl_component ("Gi"),
+    babl_component ("Br"),
     babl_component ("Bi"),
+    babl_component ("Ar"),
     babl_component ("Ai"),
     NULL
   );
@@ -103,12 +103,12 @@ init (void)
     babl_model ("frequency"),
     babl_type ("double"),
     babl_component ("Rr"),
-    babl_component ("Gr"),
-    babl_component ("Br"),
-    babl_component ("Ar"),
     babl_component ("Ri"),
+    babl_component ("Gr"),
     babl_component ("Gi"),
+    babl_component ("Br"),
     babl_component ("Bi"),
+    babl_component ("Ar"),
     babl_component ("Ai"),
     NULL
   );

@@ -1,5 +1,9 @@
 2008-06-22  Zhang Junbo  <zhangjb@svn.gnome.org>
 
+	* extensions/frequency.c: changed RrGrBr... into RrRiGrGiBrBiArAi.
+
+2008-06-22  Zhang Junbo  <zhangjb@svn.gnome.org>
+
 	* extensions/frequency.c: added the format "frequency double".
 
 2008-06-16  Sam Hocevar  <sam@zoy.org>
