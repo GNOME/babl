@@ -141,20 +141,17 @@ frequency_to_rgba (char *src,
       double Gi = ((double *) src)[3];
       double Br = ((double *) src)[4];
       double Bi = ((double *) src)[5];
-      double Ar = ((double *) src)[6];
-      double Ai = ((double *) src)[7];
 
-      double red, green, blue, alpha;
+      double red, green, blue;
 
       red = log(1+sqrt(Rr*Rr + Ri*Ri));
       green = log(1+sqrt(Gr*Gr + Gi*Gi));
       blue = log(1+sqrt(Br*Br + Bi*Bi));
-      alpha = log(1+sqrt(Ar*Ar + Ai*Ai));
 
       ((double *) dst)[0] = red;
       ((double *) dst)[1] = green;
       ((double *) dst)[2] = blue;
-      ((double *) dst)[3] = alpha;   
+      ((double *) dst)[3] = 1;   
 
       src += sizeof (double) * 8;
       dst += sizeof (double) * 4;

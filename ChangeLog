@@ -1,6 +1,10 @@
 2008-06-27  Zhang Junbo  <zhangjb@svn.gnome.org>
 
-	* extensions/frequency.c: implenmented frequency_to_rgba.
+	* extensions/frequency.c: some work on frequency_to_rgba.
+
+2008-06-27  Zhang Junbo  <zhangjb@svn.gnome.org>
+
+	* extensions/frequency.c: implemented frequency_to_rgba.
 
 2008-06-22  Zhang Junbo  <zhangjb@svn.gnome.org>
 
