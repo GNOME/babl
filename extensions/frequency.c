@@ -57,61 +57,61 @@ init (void)
   babl_component_new ("Ai", NULL);
 
   babl_model_new (
-    "name", "frequency",
-    babl_component ("Rr"),
-    babl_component ("Ri"),
-    babl_component ("Gr"),
-    babl_component ("Gi"),
-    babl_component ("Br"),
-    babl_component ("Bi"),
-    babl_component ("Ar"),
-    babl_component ("Ai"),
-    NULL
-  );
+                  "name", "frequency",
+                  babl_component ("Rr"),
+                  babl_component ("Ri"),
+                  babl_component ("Gr"),
+                  babl_component ("Gi"),
+                  babl_component ("Br"),
+                  babl_component ("Bi"),
+                  babl_component ("Ar"),
+                  babl_component ("Ai"),
+                  NULL
+                  );
 
   babl_conversion_new (
-    babl_model ("RGBA"),
-    babl_model ("frequency"),
-    "linear", rgba_to_frequency,
-    NULL
-  );
+                       babl_model ("RGBA"),
+                       babl_model ("frequency"),
+                       "linear", rgba_to_frequency,
+                       NULL
+                       );
 
   babl_conversion_new (
-    babl_model ("frequency"),
-    babl_model ("RGBA"),
-    "linear", frequency_to_rgba,
-    NULL
-  );
+                       babl_model ("frequency"),
+                       babl_model ("RGBA"),
+                       "linear", frequency_to_rgba,
+                       NULL
+                       );
 
   babl_format_new (
-    "name", "frequency float",
-    babl_model ("frequency"),
-    babl_type ("float"),
-    babl_component ("Rr"),
-    babl_component ("Ri"),
-    babl_component ("Gr"),
-    babl_component ("Gi"),
-    babl_component ("Br"),
-    babl_component ("Bi"),
-    babl_component ("Ar"),
-    babl_component ("Ai"),
-    NULL
-  );
+                   "name", "frequency float",
+                   babl_model ("frequency"),
+                   babl_type ("float"),
+                   babl_component ("Rr"),
+                   babl_component ("Ri"),
+                   babl_component ("Gr"),
+                   babl_component ("Gi"),
+                   babl_component ("Br"),
+                   babl_component ("Bi"),
+                   babl_component ("Ar"),
+                   babl_component ("Ai"),
+                   NULL
+                   );
 
-    babl_format_new (
-    "name", "frequency double",
-    babl_model ("frequency"),
-    babl_type ("double"),
-    babl_component ("Rr"),
-    babl_component ("Ri"),
-    babl_component ("Gr"),
-    babl_component ("Gi"),
-    babl_component ("Br"),
-    babl_component ("Bi"),
-    babl_component ("Ar"),
-    babl_component ("Ai"),
-    NULL
-  );
+  babl_format_new (
+                   "name", "frequency double",
+                   babl_model ("frequency"),
+                   babl_type ("double"),
+                   babl_component ("Rr"),
+                   babl_component ("Ri"),
+                   babl_component ("Gr"),
+                   babl_component ("Gi"),
+                   babl_component ("Br"),
+                   babl_component ("Bi"),
+                   babl_component ("Ar"),
+                   babl_component ("Ai"),
+                   NULL
+                   );
     
   return 0;
 }
@@ -133,8 +133,31 @@ frequency_to_rgba (char *src,
                    char *dst,
                    long  n)
 {
-  /* we don't do any conversion, which will be registered as the only valid conversion in babl to go to RGB, it won't work though and
-   * the buffer is left untouched without complaints from babl.
-   */
+  while (n--)
+    {
+      double Rr = ((double *) src)[0];
+      double Ri = ((double *) src)[1];
+      double Gr = ((double *) src)[2];
+      double Gi = ((double *) src)[3];
+      double Br = ((double *) src)[4];
+      double Bi = ((double *) src)[5];
+      double Ar = ((double *) src)[6];
+      double Ai = ((double *) src)[7];
+
+      double red, green, blue, alpha;
+
+      red = log(1+sqrt(Rr*Rr + Ri*Ri));
+      green = log(1+sqrt(Gr*Gr + Gi*Gi));
+      blue = log(1+sqrt(Br*Br + Bi*Bi));
+      alpha = log(1+sqrt(Ar*Ar + Ai*Ai));
+
+      ((double *) dst)[0] = red;
+      ((double *) dst)[1] = green;
+      ((double *) dst)[2] = blue;
+      ((double *) dst)[3] = alpha;   
+
+      src += sizeof (double) * 8;
+      dst += sizeof (double) * 4;
+    }
   return n;
 }
