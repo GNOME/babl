@@ -1,3 +1,7 @@
+2008-06-28  Zhang Junbo  <zhangjb@svn.gnome.org>
+
+	* extensions/frequency.c: changed RrRiG... back to RrGrBrArRiGiBiAi.
+
 2008-06-27  Zhang Junbo  <zhangjb@svn.gnome.org>
 
 	* extensions/frequency.c: some work on frequency_to_rgba.

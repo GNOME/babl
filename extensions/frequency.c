@@ -17,13 +17,14 @@
  */
 
 /*
- * This file contains a pseudo model and format for storing frequency domain buffers,
- * the main purpose is registering a fully decorated introspectable format. It currently
- * provides nop conversions when registering when conversions to or from this conversion
- * is requested nothing is done.
+ * This file contains a pseudo model and format for storing frequency domain
+ * buffers,
+ * the main purpose is registering a fully decorated introspectable format.
+ * It currently provides nop conversions when registering when conversions to
+ * or from this conversion is requested nothing is done.
  *
- * Added as a potential aid for summer of code project adding frequency domain processing
- * to GEGL
+ * Added as a potential aid for summer of code project adding frequency domain
+ * processing to GEGL
  */
 
 #include "config.h"
@@ -59,12 +60,12 @@ init (void)
   babl_model_new (
                   "name", "frequency",
                   babl_component ("Rr"),
-                  babl_component ("Ri"),
                   babl_component ("Gr"),
-                  babl_component ("Gi"),
                   babl_component ("Br"),
-                  babl_component ("Bi"),
                   babl_component ("Ar"),
+                  babl_component ("Ri"),
+                  babl_component ("Gi"),
+                  babl_component ("Bi"),
                   babl_component ("Ai"),
                   NULL
                   );
@@ -86,14 +87,13 @@ init (void)
   babl_format_new (
                    "name", "frequency float",
                    babl_model ("frequency"),
-                   babl_type ("float"),
                    babl_component ("Rr"),
-                   babl_component ("Ri"),
                    babl_component ("Gr"),
-                   babl_component ("Gi"),
                    babl_component ("Br"),
-                   babl_component ("Bi"),
                    babl_component ("Ar"),
+                   babl_component ("Ri"),
+                   babl_component ("Gi"),
+                   babl_component ("Bi"),
                    babl_component ("Ai"),
                    NULL
                    );
@@ -103,12 +103,12 @@ init (void)
                    babl_model ("frequency"),
                    babl_type ("double"),
                    babl_component ("Rr"),
-                   babl_component ("Ri"),
                    babl_component ("Gr"),
-                   babl_component ("Gi"),
                    babl_component ("Br"),
-                   babl_component ("Bi"),
                    babl_component ("Ar"),
+                   babl_component ("Ri"),
+                   babl_component ("Gi"),
+                   babl_component ("Bi"),
                    babl_component ("Ai"),
                    NULL
                    );
@@ -122,8 +122,9 @@ rgba_to_frequency (char *src,
                    char *dst,
                    long  n)
 {
-  /* we don't do any conversion, which will be registered as the only valid conversion in babl to go to RGB, it won't work though and
-   * the buffer is left untouched without complaints from babl.
+  /* we don't do any conversion, which will be registered as the only valid
+   * conversion in babl to go to RGB, it won't work though and the buffer is
+   * left untouched without complaints from babl.
    */
   return n;
 }
@@ -136,17 +137,17 @@ frequency_to_rgba (char *src,
   while (n--)
     {
       double Rr = ((double *) src)[0];
-      double Ri = ((double *) src)[1];
-      double Gr = ((double *) src)[2];
-      double Gi = ((double *) src)[3];
-      double Br = ((double *) src)[4];
-      double Bi = ((double *) src)[5];
+      double Gr = ((double *) src)[1];
+      double Br = ((double *) src)[2];
+      double Ri = ((double *) src)[4];
+      double Gi = ((double *) src)[5];
+      double Bi = ((double *) src)[6];
 
       double red, green, blue;
 
-      red = log(1+sqrt(Rr*Rr + Ri*Ri));
-      green = log(1+sqrt(Gr*Gr + Gi*Gi));
-      blue = log(1+sqrt(Br*Br + Bi*Bi));
+      red = sqrt(Rr*Rr + Ri*Ri);
+      green = sqrt(Gr*Gr + Gi*Gi);
+      blue = sqrt(Br*Br + Bi*Bi);
 
       ((double *) dst)[0] = red;
       ((double *) dst)[1] = green;
