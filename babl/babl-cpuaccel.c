@@ -39,6 +39,7 @@ typedef unsigned int gboolean;
 typedef unsigned int guint32;
 typedef int gint;
 typedef char gchar;
+typedef size_t gsize;
 #define TRUE  1
 #define FALSE 0
 #define G_GNUC_CONST

@@ -1,5 +1,10 @@
 2008-07-01  Øyvind Kolås  <pippin@gimp.org>
 
+	* babl/babl-cpuaccel.c: added typedef size_t gsize to the set of
+	gtypes lifted from glib. spotted by Marianne Gagnon.
+
+2008-07-01  Øyvind Kolås  <pippin@gimp.org>
+
 	* extensions/Makefile.am: applied patch from dmacks at netspace.org
 	cleaning up some of the build system.
 
