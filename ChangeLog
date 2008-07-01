@@ -1,3 +1,8 @@
+2008-07-01  Øyvind Kolås  <pippin@gimp.org>
+
+	* extensions/Makefile.am: applied patch from dmacks at netspace.org
+	cleaning up some of the build system.
+
 2008-06-28  Zhang Junbo  <zhangjb@svn.gnome.org>
 
 	* extensions/frequency.c: changed RrRiG... back to RrGrBrArRiGiBiAi.

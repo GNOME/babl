@@ -13,11 +13,11 @@ EXTRA_DIST      = $(wildcard *.[ch])
 
 all-local: $(SOBJS)
 
-CFLAGS += \
-	-I $(top_builddir)		\
-	-I $(top_srcdir)		\
-	-I $(top_srcdir)/babl		\
-	-I $(top_srcdir)/extensions	\
+AM_CPPFLAGS = \
+	-I$(top_builddir)		\
+	-I$(top_srcdir)			\
+	-I$(top_srcdir)/babl		\
+	-I$(top_srcdir)/extensions	\
 	-fPIC
 
 LDFLAGS += $(DYNAMICLIB)
@@ -29,7 +29,7 @@ LDADD    = $(top_builddir)/babl/.libs/libbabl-$(BABL_API_VERSION)$(SHREXT) $(MAT
 endif
 
 %$(SHREXT): %.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
+	$(CC) $(AM_CPPFLAGS) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
 
 # if extension needing external libraries are to be # compiled with this make
 # file, each of them can be added according to the this pattern:
@@ -37,12 +37,13 @@ endif
 #	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<  [own compile and link flags]
 
 CIE-Lab$(SHREXT): CIE-Lab.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
+	$(CC) $(AM_CPPFLAGS) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
 
 sse-fixups$(SHREXT): sse-fixups.c
 	$(CC) $(CFLAGS) $(MMX_EXTRA_CFLAGS) $(SSE_EXTRA_CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
 #lcms$(SHREXT): lcms.c
-#	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config lcms --cflags --libs`
+
+#	$(CC) $(AM_CPPFLAGS) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config lcms --cflags --libs`
 #############################################################################
 
 clean-local:
