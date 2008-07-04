@@ -34,13 +34,13 @@ endif
 # if extension needing external libraries are to be # compiled with this make
 # file, each of them can be added according to the this pattern:
 # extra$(SHREXT): extra.c
-#	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $<  [own compile and link flags]
+#	$(CC) $(AM_CPPFLAGS) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $<  [own compile and link flags]
 
 CIE-Lab$(SHREXT): CIE-Lab.c
 	$(CC) $(AM_CPPFLAGS) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
 
 sse-fixups$(SHREXT): sse-fixups.c
-	$(CC) $(CFLAGS) $(MMX_EXTRA_CFLAGS) $(SSE_EXTRA_CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
+	$(CC) $(AM_CPPFLAGS) $(CPPFLAGS) $(CFLAGS) $(MMX_EXTRA_CFLAGS) $(SSE_EXTRA_CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
 #lcms$(SHREXT): lcms.c
 
 #	$(CC) $(AM_CPPFLAGS) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config lcms --cflags --libs`

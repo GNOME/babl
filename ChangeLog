@@ -1,3 +1,8 @@
+2008-07-04  Sven Neumann  <sven@gimp.org>
+
+	* extensions/Makefile.am: also use AM_CPPFLAGS and CPPFLAGS for
+	building sse-fixups.
+
 2008-07-01  Øyvind Kolås  <pippin@gimp.org>
 
 	* babl/babl-cpuaccel.c: added typedef size_t gsize to the set of
