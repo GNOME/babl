@@ -1,3 +1,7 @@
+2008-07-09  Sven Neumann  <sven@gimp.org>
+
+	* babl/base/Makefile.am: `:='-style assignments are not portable
+
 2008-07-04  Sven Neumann  <sven@gimp.org>
 
 	* extensions/Makefile.am: also use AM_CPPFLAGS and CPPFLAGS for

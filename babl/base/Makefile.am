@@ -18,7 +18,7 @@ INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/babl
 noinst_LTLIBRARIES= libbase.la
 libbase_la_SOURCES= $(h_sources) $(c_sources) 
 
-EXTRA_DIST := 		\
+EXTRA_DIST = 		\
 	rgb-constants.h	\
 	util.h
 
