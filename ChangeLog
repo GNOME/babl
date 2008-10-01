@@ -1,3 +1,8 @@
+2008-10-01  Øyvind Kolås  <pippin@gimp.org>
+
+	* COPYING.LESSER: renamed to ..
+	* COPYING: 
+
 2008-07-09  Sven Neumann  <sven@gimp.org>
 
 	* babl/base/Makefile.am: `:='-style assignments are not portable
