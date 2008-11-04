@@ -439,6 +439,30 @@ conv_bgrA8_rgba8 (unsigned char *srcc,
 }
 
 
+static long
+conv_rgbaF_rgbAF (unsigned char *srcc,
+                  unsigned char *dstc,
+                  long           samples)
+{
+  float *src = (void *) srcc;
+  float *dst = (void *) dstc;
+  long           n   = samples;
+
+  while (n--)
+    {
+      float alpha = src[3];
+      dst[0] = src[0] * alpha;
+      dst[1] = src[1] * alpha;
+      dst[2] = src[2] * alpha;
+      dst[3] = alpha;
+      src   += 4;
+      dst   += 4;
+    }
+  return samples;
+}
+
+
+
 #define conv_rgb8_rgbAF    conv_rgb8_rgbaF
 
 int init (void);
@@ -501,6 +525,7 @@ init (void)
 #define o(src, dst) \
   babl_conversion_new (src, dst, "linear", conv_ ## src ## _ ## dst, NULL)
 
+  o (rgbaF, rgbAF);
   o (rgb8, rgbaF);
   o (rgb8, rgbAF);
   o (rgba8, rgbaF);

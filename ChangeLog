@@ -1,3 +1,8 @@
+2008-11-04  Øyvind Kolås  <pippin@gimp.org>
+
+	* extensions/gegl-fixups.c: (conv_rgbaF_rgbAF), (init): added missing,
+	needed conversion.
+
 2008-10-01  Øyvind Kolås  <pippin@gimp.org>
 
 	* COPYING.LESSER: renamed to ..
