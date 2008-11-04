@@ -462,6 +462,54 @@ conv_rgbaF_rgbAF (unsigned char *srcc,
 }
 
 
+static long
+conv_rgbAF_rgbaF (unsigned char *srcc,
+                  unsigned char *dstc,
+                  long           samples)
+{
+  float *src = (void *) srcc;
+  float *dst = (void *) dstc;
+  long           n   = samples;
+
+  while (n--)
+    {
+      float alpha = src[3];
+      float recip = 1.0/alpha;
+      dst[0] = src[0] * recip;
+      dst[1] = src[1] * recip;
+      dst[2] = src[2] * recip;
+      dst[3] = alpha;
+      src   += 4;
+      dst   += 4;
+    }
+  return samples;
+}
+
+
+static long
+conv_rgbAF_lrgba8 (unsigned char *srcc,
+                   unsigned char *dstc,
+                   long           samples)
+{
+  float *src = (void *) srcc;
+  unsigned char *dst = (void *) dstc;
+  long           n   = samples;
+
+  while (n--)
+    {
+      float alpha = src[3];
+      float recip = (1.0/alpha)*255.0;
+      dst[0] = (src[0] * recip);
+      dst[1] = (src[1] * recip);
+      dst[2] = (src[2] * recip);
+      dst[3] = alpha*255.0;
+      src   += 4;
+      dst   += 4;
+    }
+  return samples;
+}
+
+
 
 #define conv_rgb8_rgbAF    conv_rgb8_rgbaF
 
@@ -486,6 +534,16 @@ init (void)
     babl_component ("Ba"),
     babl_component ("A"),
     NULL);
+
+  Babl *lrgba8 = babl_format_new (
+    babl_model ("RGBA"),
+    babl_type ("u8"),
+    babl_component ("R"),
+    babl_component ("G"),
+    babl_component ("B"),
+    babl_component ("A"),
+    NULL);
+
   Babl *rgba8 = babl_format_new (
     babl_model ("R'G'B'A"),
     babl_type ("u8"),
@@ -526,6 +584,8 @@ init (void)
   babl_conversion_new (src, dst, "linear", conv_ ## src ## _ ## dst, NULL)
 
   o (rgbaF, rgbAF);
+  o (rgbAF, rgbaF);
+  o (rgbAF, lrgba8);
   o (rgb8, rgbaF);
   o (rgb8, rgbAF);
   o (rgba8, rgbaF);

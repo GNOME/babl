@@ -1,5 +1,10 @@
 2008-11-04  Øyvind Kolås  <pippin@gimp.org>
 
+	* extensions/gegl-fixups.c: (conv_rgbAF_rgbaF),
+	(conv_rgbAF_lrgba8), (init): added some more missing conversions.
+
+2008-11-04  Øyvind Kolås  <pippin@gimp.org>
+
 	* extensions/gegl-fixups.c: (conv_rgbaF_rgbAF), (init): added missing,
 	needed conversion.
 
