@@ -1,3 +1,8 @@
+2008-11-06  Øyvind Kolås  <pippin@gimp.org>
+
+	* extensions/gegl-fixups.c: (conv_rgbAF_rgbaF),
+	(conv_rgbAF_lrgba8): make all components 0.0 when alpha < 0.00001.
+
 2008-11-04  Øyvind Kolås  <pippin@gimp.org>
 
 	* extensions/gegl-fixups.c: (conv_rgbAF_rgbaF),

@@ -475,6 +475,8 @@ conv_rgbAF_rgbaF (unsigned char *srcc,
     {
       float alpha = src[3];
       float recip = 1.0/alpha;
+      if (alpha < 0.00001)
+        recip = 0.0;
       dst[0] = src[0] * recip;
       dst[1] = src[1] * recip;
       dst[2] = src[2] * recip;
@@ -499,6 +501,8 @@ conv_rgbAF_lrgba8 (unsigned char *srcc,
     {
       float alpha = src[3];
       float recip = (1.0/alpha)*255.0;
+      if (alpha < 0.00001)
+        recip = 0.0;
       dst[0] = (src[0] * recip);
       dst[1] = (src[1] * recip);
       dst[2] = (src[2] * recip);
