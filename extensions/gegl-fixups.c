@@ -488,6 +488,7 @@ conv_rgbAF_rgbaF (unsigned char *srcc,
 }
 
 
+
 static long
 conv_rgbAF_lrgba8 (unsigned char *srcc,
                    unsigned char *dstc,
@@ -500,13 +501,18 @@ conv_rgbAF_lrgba8 (unsigned char *srcc,
   while (n--)
     {
       float alpha = src[3];
-      float recip = (1.0/alpha)*255.0;
+      float recip = (1.0/alpha);
       if (alpha < 0.00001)
-        recip = 0.0;
-      dst[0] = (src[0] * recip);
-      dst[1] = (src[1] * recip);
-      dst[2] = (src[2] * recip);
-      dst[3] = alpha*255.0;
+        {
+          dst[0] = dst[1] = dst[2] = dst[3] = 0;
+        }
+      else
+        {
+          dst[0] = table_F_8[gggl_float_to_index16 (src[0] * recip)];
+          dst[1] = table_F_8[gggl_float_to_index16 (src[1] * recip)];
+          dst[2] = table_F_8[gggl_float_to_index16 (src[2] * recip)];
+          dst[3] = table_F_8[gggl_float_to_index16 (alpha)];
+        }
       src   += 4;
       dst   += 4;
     }

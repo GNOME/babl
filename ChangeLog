@@ -1,3 +1,8 @@
+2008-11-08  Øyvind Kolås  <pippin@gimp.org>
+
+	* extensions/gegl-fixups.c: (conv_rgbAF_lrgba8): use the lookup tables
+	to speed up the conversion 8still error of 0.002677 though).
+
 2008-11-06  Øyvind Kolås  <pippin@gimp.org>
 
 	* extensions/gegl-fixups.c: (conv_rgbAF_rgbaF),
