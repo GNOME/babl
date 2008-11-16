@@ -68,7 +68,7 @@ static double legal_error (void)
     return error;
 
   env = getenv ("BABL_TOLERANCE");
-  if (env)
+  if (env && env[0] != '\0')
     error = atof (env);
   else
     error = BABL_LEGAL_ERROR;

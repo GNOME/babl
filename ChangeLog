@@ -1,5 +1,11 @@
 2008-11-16  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* babl/babl-fish-path.c: Use the default babl tolerance level if
+	BABL_TOLERANCE is the empty string so that we don't get a
+	tolerance level of 0.0 in that case.
+
+2008-11-16  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* babl/babl.h: Add #define BABL_ALPHA_THRESHOLD which is the alpha
 	threshold used in the reference implementation for
 	un-pre-multiplication of color data.
