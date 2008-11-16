@@ -1,3 +1,9 @@
+2008-11-16  Øyvind Kolås  <pippin@gimp.org>
+
+	* babl/babl-fish-stats.c: (legal_error), (each_conv): show in red the
+	conversions that are worse than the current BABL_TOLERANCE instead of
+	the earlier arbitrary 0.01.
+
 2008-11-16  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* babl/babl-fish-path.c: Use the default babl tolerance level if

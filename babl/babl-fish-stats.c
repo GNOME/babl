@@ -202,6 +202,24 @@ table_source_each (Babl *babl,
   return 0;
 }
 
+/* copied from babl-fish-path.c */
+#define BABL_LEGAL_ERROR    0.000001
+static double legal_error (void)
+{
+  static double error = 0.0;
+  const char   *env;
+
+  if (error != 0.0)
+    return error;
+
+  env = getenv ("BABL_TOLERANCE");
+  if (env && env[0] != '\0')
+    error = atof (env);
+  else
+    error = BABL_LEGAL_ERROR;
+  return error;
+}
+
 static int
 each_conv (Babl *babl,
            void *data)
@@ -214,7 +232,7 @@ each_conv (Babl *babl,
   error = babl_conversion_error (&babl->conversion);
   cost  = babl_conversion_cost (&babl->conversion);
 
-  if (error > 0.01)
+  if (error > legal_error ())
     {
       fprintf (output_file, "<dt style='background-color: #fcc;'>%s</dt>", babl->instance.name);
       fprintf (output_file, "<dd style='background-color: #fcc;'>");
