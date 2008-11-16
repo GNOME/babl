@@ -1,3 +1,10 @@
+2008-11-16  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* extensions/gegl-fixups.c (conv_rgbAF_sdl32)
+	* babl/base/model-gray.c (premultiplied_to_non_premultiplied):
+	Make un-pre-multiplication with close-to-zero alpha values result
+	in complete black instead of a bit brigher than black.
+
 2008-11-08  Øyvind Kolås  <pippin@gimp.org>
 
 	* extensions/gegl-fixups.c: (conv_rgbAF_lrgba8): use the lookup tables

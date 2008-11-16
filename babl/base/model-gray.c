@@ -414,7 +414,7 @@ premultiplied_to_non_premultiplied (int    src_bands,
             }
           else
             {
-              *(double *) dst[band] = 0.001;
+              *(double *) dst[band] = 0.0;
             }
         }
       *(double *) dst[dst_bands - 1] = alpha;

@@ -333,18 +333,14 @@ conv_rgbAF_sdl32 (unsigned char *srcc,
     {
       int   i;
       float alpha = src[3];
-      if (alpha < 0.0001)
-        alpha = 0.0001;
       for (i = 0; i < 3; i++)
         {
           float ca = src[i];
-          float c;
           int   ret;
-          c = ca / alpha;
-          if (alpha == 0.0)
+          if (alpha < 0.0001)
             ret = 0;
           else
-            ret = table_F_8g[gggl_float_to_index16 (c)];
+            ret = table_F_8g[gggl_float_to_index16 (ca / alpha)];
           if (ret <= 0)
             dst[i] = 0;
           else if (ret > 255)
