@@ -337,7 +337,7 @@ conv_rgbAF_sdl32 (unsigned char *srcc,
         {
           float ca = src[i];
           int   ret;
-          if (alpha < 0.0001)
+          if (alpha < BABL_ALPHA_THRESHOLD)
             ret = 0;
           else
             ret = table_F_8g[gggl_float_to_index16 (ca / alpha)];
@@ -393,7 +393,7 @@ conv_rgbAF_rgb8 (unsigned char *srcc,
   while (n--)
     {
       float alpha = src[3];
-      if (alpha < 0.00001)
+      if (alpha < BABL_ALPHA_THRESHOLD)
         {
           dst[0] = 0;
           dst[1] = 0;
@@ -471,7 +471,7 @@ conv_rgbAF_rgbaF (unsigned char *srcc,
     {
       float alpha = src[3];
       float recip = 1.0/alpha;
-      if (alpha < 0.00001)
+      if (alpha < BABL_ALPHA_THRESHOLD)
         recip = 0.0;
       dst[0] = src[0] * recip;
       dst[1] = src[1] * recip;
@@ -498,7 +498,7 @@ conv_rgbAF_lrgba8 (unsigned char *srcc,
     {
       float alpha = src[3];
       float recip = (1.0/alpha);
-      if (alpha < 0.00001)
+      if (alpha < BABL_ALPHA_THRESHOLD)
         {
           dst[0] = dst[1] = dst[2] = dst[3] = 0;
         }

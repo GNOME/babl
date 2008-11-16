@@ -1,5 +1,16 @@
 2008-11-16  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* babl/babl.h: Add #define BABL_ALPHA_THRESHOLD which is the alpha
+	threshold used in the reference implementation for
+	un-pre-multiplication of color data.
+
+	* babl/base/model-rgb.c
+	* babl/base/model-gray.c
+	* extensions/gegl-fixups.c: Use the define, a consistent alpha
+	threshold improves accurucy of conversions.
+
+2008-11-16  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* extensions/gegl-fixups.c (conv_rgbAF_sdl32)
 	* babl/base/model-gray.c (premultiplied_to_non_premultiplied):
 	Make un-pre-multiplication with close-to-zero alpha values result

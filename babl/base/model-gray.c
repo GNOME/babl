@@ -308,7 +308,7 @@ gray_alpha_premultiplied_to_rgba (int    src_bands,
       double luminance = *(double *) src[0];
       double alpha     = *(double *) src[1];
 
-      if (alpha > 0.00001)
+      if (alpha > BABL_ALPHA_THRESHOLD)
         {
           luminance = luminance / alpha;
         }
@@ -408,7 +408,7 @@ premultiplied_to_non_premultiplied (int    src_bands,
       alpha = *(double *) src[src_bands - 1];
       for (band = 0; band < src_bands - 1; band++)
         {
-          if (alpha > 0.001)
+          if (alpha > BABL_ALPHA_THRESHOLD)
             {
               *(double *) dst[band] = *(double *) src[band] / alpha;
             }

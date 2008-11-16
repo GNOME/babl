@@ -283,7 +283,7 @@ premultiplied_to_non_premultiplied (int    src_bands,
       alpha = *(double *) src[src_bands - 1];
       for (band = 0; band < src_bands - 1; band++)
         {
-          if (alpha > 0.001)
+          if (alpha > BABL_ALPHA_THRESHOLD)
             {
               *(double *) dst[band] = *(double *) src[band] / alpha;
             }
@@ -332,7 +332,7 @@ rgba_gamma_2_2_premultiplied2rgba (char *src,
   while (n--)
     {
       double alpha = ((double *) src)[3];
-      if (alpha > 0.0001)
+      if (alpha > BABL_ALPHA_THRESHOLD)
         {
           ((double *) dst)[0] = gamma_2_2_to_linear (((double *) src)[0] / alpha);
           ((double *) dst)[1] = gamma_2_2_to_linear (((double *) src)[1] / alpha);

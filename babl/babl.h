@@ -45,6 +45,11 @@ typedef struct _BablList BablList;
  */
 #define BABL_MAGIC   0xbAb100
 
+/* Alpha threshold used in the reference implementation for
+ * un-pre-multiplication of color data.
+ */
+#define BABL_ALPHA_THRESHOLD 0.0001
+
 enum {
   BABL_INSTANCE = BABL_MAGIC,
   BABL_TYPE,
