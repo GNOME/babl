@@ -167,12 +167,12 @@ real_babl_log (const char *file,
 while(0)
 
 
-#define babl_assert(expr) do{ \
-  if(!(expr))                 \
-    {                         \
-      babl_fatal("Eeeeek");   \
-      assert(expr);           \
-    }                         \
+#define babl_assert(expr) do{                              \
+  if(!(expr))                                              \
+    {                                                      \
+      babl_fatal("Eeeeek! Assertion failed: `" #expr "`"); \
+      assert(expr);                                        \
+    }                                                      \
 }while(0)
 /***** LOGGER (end)**/
 

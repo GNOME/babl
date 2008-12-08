@@ -1,3 +1,8 @@
+2008-12-08  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* babl/babl-internal.h (babl_assert): Don't just eek when an
+	assertion fails, also say exactly what failed.
+
 2008-11-16  Øyvind Kolås  <pippin@gimp.org>
 
 	* babl/babl-fish-stats.c: (legal_error), (each_conv): show in red the
