@@ -1,5 +1,9 @@
 2009-01-14  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* babl/babl.h: Use a lowercase 'a' in 0xbab100.
+
+2009-01-14  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* babl/babl.h: Don't document forward declarations and move them
 	down a bit to make them less eminent.
 

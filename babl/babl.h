@@ -34,7 +34,7 @@
  * differentiation in polymorphic functions. (as well as manual
  * type check assertions).
  */
-#define BABL_MAGIC   0xbAb100
+#define BABL_MAGIC   0xbab100
 
 /* Alpha threshold used in the reference implementation for
  * un-pre-multiplication of color data:
