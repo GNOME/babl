@@ -1,3 +1,9 @@
+2009-01-14  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* babl/babl.h (BABL_ALPHA_THRESHOLD): Instead of an arbitrary
+	threshold, use one hundredth of the channel intensity resolution
+	when using 16 bit integers i.e. 0.01 / (2^16 - 1).
+
 2008-12-08  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* babl/babl-internal.h (babl_assert): Don't just eek when an
