@@ -24,7 +24,6 @@
 #endif
 
 #define BABL_MAX_COMPONENTS       32
-#define BABL_HARD_MAX_PATH_LENGTH  8
 #define BABL_CONVERSIONS           5
 
 #include <stdlib.h>

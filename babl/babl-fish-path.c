@@ -19,8 +19,9 @@
 #include <math.h>
 #include "babl-internal.h"
 
-#define BABL_LEGAL_ERROR    0.000001
-#define BABL_MAX_COST_VALUE 2000000
+#define BABL_LEGAL_ERROR           0.000001
+#define BABL_MAX_COST_VALUE        2000000
+#define BABL_HARD_MAX_PATH_LENGTH  8
 
 static void
 init_path_instrumentation (Babl *fmt_source,

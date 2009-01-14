@@ -1,5 +1,14 @@
 2009-01-14  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* babl/babl.h:
+	* babl/babl-internal.h: Remove BABL_HARD_MAX_PATH_LENGTH from
+	here, it's only for internal use.
+
+	* babl/babl-fish-path.c: #define BABL_HARD_MAX_PATH_LENGTH locally
+	here.
+
+2009-01-14  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* babl/babl.h (BABL_ALPHA_THRESHOLD): Instead of an arbitrary
 	threshold, use one hundredth of the channel intensity resolution
 	when using 16 bit integers i.e. 0.01 / (2^16 - 1).

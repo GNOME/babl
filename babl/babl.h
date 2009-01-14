@@ -35,10 +35,6 @@ typedef union _Babl Babl;
 
 typedef struct _BablList BablList;
 
-#ifndef BABL_HARD_MAX_PATH_LENGTH
-#define BABL_HARD_MAX_PATH_LENGTH 16
-#endif
-
 /* magic number used at the start of all babl objects, used to do
  * differentiation in polymorphic functions. (as well as manual
  * type check assertions).
