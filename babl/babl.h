@@ -30,11 +30,6 @@
 #error babl.h included after babl-internal.h
 #endif
 
-typedef union _Babl Babl;
-/* Union used for quick convenient access to any field of any BablInstance */
-
-typedef struct _BablList BablList;
-
 /* magic number used at the start of all babl objects, used to do
  * differentiation in polymorphic functions. (as well as manual
  * type check assertions).
@@ -74,6 +69,10 @@ enum {
   BABL_SKY
 };
 typedef unsigned int BablClassType;
+
+typedef union _Babl Babl;
+
+typedef struct _BablList BablList;
 
 /** Initialize the babl library */
 void   babl_init       (void);
