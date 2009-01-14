@@ -1,5 +1,10 @@
 2009-01-14  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* babl/babl.h: Make BablClassType an enum instead of an unsigned
+	int contaning enum values.
+
+2009-01-14  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* babl/babl.h: Use a lowercase 'a' in 0xbab100.
 
 2009-01-14  Martin Nordholts  <martinn@svn.gnome.org>
