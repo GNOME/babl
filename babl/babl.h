@@ -43,7 +43,7 @@
  */
 #define BABL_ALPHA_THRESHOLD 0.000000152590219
 
-typedef enum {
+enum {
   BABL_INSTANCE = BABL_MAGIC,
   BABL_TYPE,
   BABL_TYPE_INTEGER,
@@ -67,7 +67,8 @@ typedef enum {
   BABL_EXTENSION,
 
   BABL_SKY
-} BablClassType;
+};
+typedef int BablClassType;
 
 typedef union _Babl Babl;
 
