@@ -57,35 +57,35 @@
 	BABL_CLASS_IMPLEMENT(). This enables further refactorisation of
 	the babl.h header.
 
-	* babl.h: Do the name changes and remove the unpleasant #undefs at
-	the bottom.
+	* babl/babl.h: Do the name changes and remove the unpleasant
+	#undefs at the bottom.
 
-	* babl-internal.h: Do the name changes.
+	* babl/babl-internal.h: Do the name changes.
 
-	* babl-component.[ch]
-	* babl-conversion.[ch]
-	* babl-extension.[ch]
-	* babl-fish.[ch]
-	* babl-format.[ch]
-	* babl-image.h
-	* babl-model.[ch]
-	* babl-sampling.h
-	* babl-type.[ch]: Adjust to changes.
+	* babl/babl-component.[ch]
+	* babl/babl-conversion.[ch]
+	* babl/babl-extension.[ch]
+	* babl/babl-fish.[ch]
+	* babl/babl-format.[ch]
+	* babl/babl-image.h
+	* babl/babl-model.[ch]
+	* babl/babl-sampling.h
+	* babl/babl-type.[ch]: Adjust to changes.
 
 2009-01-17  Martin Nordholts  <martinn@svn.gnome.org>
 
 	Don't redeclare functions declared with the BABL_CLASS() or
 	BABL_NAMED_CLASS() macros.
 
-	* babl-component.h
-	* babl-conversion.h
-	* babl-extension.h
-	* babl-fish.h
-	* babl-format.h
-	* babl-image.h
-	* babl-model.h
-	* babl-sampling.h
-	* babl-type.h
+	* babl/babl-component.h
+	* babl/babl-conversion.h
+	* babl/babl-extension.h
+	* babl/babl-fish.h
+	* babl/babl-format.h
+	* babl/babl-image.h
+	* babl/babl-model.h
+	* babl/babl-sampling.h
+	* babl/babl-type.h
 
 2009-01-17  Martin Nordholts  <martinn@svn.gnome.org>
 
