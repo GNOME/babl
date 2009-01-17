@@ -101,9 +101,9 @@ convert_to_double (BablFormat *source_fmt,
   BablImage *src_img;
   BablImage *dst_img;
 
-  src_img = (BablImage *) babl_image (
+  src_img = (BablImage *) babl_image_new (
     babl_component_from_id (BABL_LUMINANCE), NULL, 1, 0, NULL);
-  dst_img = (BablImage *) babl_image (
+  dst_img = (BablImage *) babl_image_new (
     babl_component_from_id (BABL_LUMINANCE), NULL, 1, 0, NULL);
 
   dst_img->type[0]  = (BablType *) babl_type_from_id (BABL_DOUBLE);
@@ -158,9 +158,9 @@ convert_from_double (BablFormat *destination_fmt,
   BablImage *src_img;
   BablImage *dst_img;
 
-  src_img = (BablImage *) babl_image (
+  src_img = (BablImage *) babl_image_new (
     babl_component_from_id (BABL_LUMINANCE), NULL, 1, 0, NULL);
-  dst_img = (BablImage *) babl_image (
+  dst_img = (BablImage *) babl_image_new (
     babl_component_from_id (BABL_LUMINANCE), NULL, 1, 0, NULL);
 
   src_img->type[0]   = (BablType *) babl_type_from_id (BABL_DOUBLE);

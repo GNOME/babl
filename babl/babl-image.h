@@ -30,18 +30,18 @@ BABL_CLASS_DECLARE (image);
  * needed for this since the polymorphism cannot be trusted to work on linear
  * buffers that originate outside babl's control.
  * 
- * Babl * babl_image (BablComponent *component1,
- *                    void          *data,
- *                    int            pitch,
- *                    int            stride,
- *                   [BablComponent *component1,
- *                    void          *data,
- *                    int            pitch,
- *                    int            stride,
- *                    ...]
- *                    NULL);
+ * Babl * babl_image_new (BablComponent *component1,
+ *                        void          *data,
+ *                        int            pitch,
+ *                        int            stride,
+ *                       [BablComponent *component1,
+ *                        void          *data,
+ *                        int            pitch,
+ *                        int            stride,
+ *                        ...]
+ *                        NULL);
  */
-Babl * babl_image      (void *first_component,
+Babl * babl_image_new  (void *first_component,
                         ...) BABL_ARG_NULL_TERMINATED;
 
 typedef struct

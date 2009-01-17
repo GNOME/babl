@@ -1,5 +1,13 @@
 2009-01-17  Martin Nordholts  <martinn@svn.gnome.org>
 
+	s/babl_image/babl_image_new/
+
+	* babl/babl-fish-reference.c
+	* babl/babl-image.c
+	* babl/babl-image.h
+
+2009-01-17  Martin Nordholts  <martinn@svn.gnome.org>
+
 	s/babl_foo_init/babl_foo_class_init/
 	s/babl_foo_destroy/babl_foo_class_destroy/
 	s/babl_foo_each/babl_foo_class_for_each/

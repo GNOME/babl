@@ -156,8 +156,8 @@ babl_image_from_linear (char *buffer,
 }
 
 Babl *
-babl_image (void *first,
-            ...)
+babl_image_new (void *first,
+                ...)
 {
   va_list        varg;
   Babl          *babl;
