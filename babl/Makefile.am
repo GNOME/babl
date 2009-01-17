@@ -34,6 +34,7 @@ c_sources =				\
 	babl-version.c
 
 h_sources  =             		\
+	babl-class.h			\
 	babl-db.h			\
 	babl-ids.h			\
 	babl-internal.h			\
@@ -49,6 +50,7 @@ h_sources  =             		\
 library_includedir=$(includedir)/babl-$(BABL_API_VERSION)/babl
 library_include_HEADERS =		\
 	babl.h				\
+	babl-class.h			\
 	babl-component.h		\
 	babl-conversion.h		\
 	babl-extension.h		\
