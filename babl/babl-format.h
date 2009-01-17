@@ -40,12 +40,6 @@ BABL_NAMED_CLASS (format);
  * components as well. If no name is provided a (long) descriptive
  * name is used.
  */
-Babl *babl_format_id     (int id);
-void  babl_format_each   (BablEachFunction  each_fun,
-                          void             *user_data);
-Babl * babl_format       (const char       *name);
-Babl * babl_format_new   (void             *first_arg,
-                          ...) BABL_ARG_NULL_TERMINATED;
 
 typedef struct
 {

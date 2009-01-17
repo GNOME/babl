@@ -43,9 +43,7 @@ BABL_CLASS (image);
  */
 Babl * babl_image      (void *first_component,
                         ...) BABL_ARG_NULL_TERMINATED;
-Babl *babl_image_id     (int id);
-void  babl_image_each   (BablEachFunction  each_fun,
-                        void             *user_data);
+
 typedef struct
 {
   BablInstance    instance;

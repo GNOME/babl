@@ -30,12 +30,6 @@ BABL_NAMED_CLASS (conversion);
  *                             <"linear"|"planar">, BablConversionFunc conv_func,
  *                              NULL);
  */
-Babl *babl_conversion_id     (int id);
-void  babl_conversion_each   (BablEachFunction  each_fun,
-                        void             *user_data);
-Babl * babl_conversion       (const char       *name);
-Babl * babl_conversion_new   (void             *first_arg,
-                        ...) BABL_ARG_NULL_TERMINATED;
 
 /* Type and Format */
 typedef long (*BablFuncLinear)    (char  *src,

@@ -34,12 +34,6 @@ BABL_NAMED_CLASS (type);
  *                         ["max_val", double max_val,]
  *                         NULL);
  */
-Babl *babl_type_id     (int id);
-void  babl_type_each   (BablEachFunction  each_fun,
-                        void             *user_data);
-Babl * babl_type       (const char       *name);
-Babl * babl_type_new   (void             *first_arg,
-                        ...) BABL_ARG_NULL_TERMINATED;
 
 typedef struct
 {

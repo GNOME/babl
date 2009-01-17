@@ -26,12 +26,6 @@ BABL_NAMED_CLASS (extension);
 /*
  * BablExtension objects are only used internally in babl.
  */
-Babl *babl_extension_id     (int id);
-void  babl_extension_each   (BablEachFunction  each_fun,
-                        void             *user_data);
-Babl * babl_extension       (const char       *name);
-Babl * babl_extension_new   (void             *first_arg,
-                        ...) BABL_ARG_NULL_TERMINATED;
 
 typedef struct
 {

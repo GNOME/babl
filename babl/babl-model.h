@@ -33,12 +33,6 @@ BABL_NAMED_CLASS (model);
  * name of all the involved components.
  *
  */
-Babl *babl_model_id     (int id);
-void  babl_model_each   (BablEachFunction  each_fun,
-                        void             *user_data);
-Babl * babl_model       (const char       *name);
-Babl * babl_model_new   (void             *first_arg,
-                        ...) BABL_ARG_NULL_TERMINATED;
 
 typedef struct
 {

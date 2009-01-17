@@ -28,12 +28,6 @@ BABL_NAMED_CLASS (component);
  * Babl * babl_component_new (const char *name,
  *                            NULL);
  */
-Babl *babl_component_id     (int id);
-void  babl_component_each   (BablEachFunction  each_fun,
-                        void             *user_data);
-Babl * babl_component       (const char       *name);
-Babl * babl_component_new   (void             *first_arg,
-                        ...) BABL_ARG_NULL_TERMINATED;
 
 typedef struct
 {

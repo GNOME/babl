@@ -26,9 +26,6 @@ BABL_CLASS (sampling);
 /**/
 Babl * babl_sampling       (int horizontal,
                             int vertical);
-Babl *babl_sampling_id     (int id);
-void  babl_sampling_each   (BablEachFunction  each_fun,
-                            void             *user_data);
 typedef struct
 {
   BablInstance     instance;

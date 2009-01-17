@@ -38,10 +38,6 @@ long   babl_process    (Babl *babl_fish,
                         void *destination,
                         long  n);
 
-Babl *babl_fish_id     (int id);
-void  babl_fish_each   (BablEachFunction  each_fun,
-                        void             *user_data);
-
 /* BablFish, common base class for various fishes.
  */
 typedef struct
