@@ -22,6 +22,13 @@
 #include <assert.h>
 #include <math.h>
 
+/* Alpha threshold used in the reference implementation for
+ * un-pre-multiplication of color data:
+ *
+ * 0.01 / (2^16 - 1)
+ */
+#define BABL_ALPHA_THRESHOLD 0.000000152590219
+
 #define BABL_PLANAR_SANITY  \
   {                         \
     assert(src_bands>0);    \

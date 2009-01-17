@@ -39,13 +39,6 @@
  */
 #define BABL_MAGIC   0xbab100
 
-/* Alpha threshold used in the reference implementation for
- * un-pre-multiplication of color data:
- *
- * 0.01 / (2^16 - 1)
- */
-#define BABL_ALPHA_THRESHOLD 0.000000152590219
-
 enum {
   BABL_INSTANCE = BABL_MAGIC,
   BABL_TYPE,

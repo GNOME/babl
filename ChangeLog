@@ -1,5 +1,11 @@
 2009-01-17  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* babl/babl.h: Don't have BABL_ALPHA_THRESHOLD public yet.
+
+	* babl/base/util.h: Put it here for now instead.
+
+2009-01-17  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Instead of having BABL_CLASS() plus variants and making the macros
 	expand to different things depending on if they are used in a
 	header or a .c file, have two versions: BABL_CLASS_DECLARE() and
