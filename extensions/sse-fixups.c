@@ -23,6 +23,8 @@
 
 #if defined(__GNUC__) && (__GNUC__ >= 4) && defined(USE_SSE) && defined(USE_MMX)
 
+#include <stdlib.h>
+
 #include "babl.h"
 #include "babl-cpuaccel.h"
 #include "extensions/util.h"

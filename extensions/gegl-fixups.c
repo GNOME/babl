@@ -39,6 +39,8 @@
  * TODO: error diffusion,
  */
 
+#include <stdlib.h>
+
 #include "babl.h"
 
 #include "base/util.h"
