@@ -60,17 +60,17 @@ models (void)
 {
   babl_model_new (
     "id", BABL_YCBCR,
-    babl_component_id (BABL_LUMA),
-    babl_component_id (BABL_CB),
-    babl_component_id (BABL_CR),
+    babl_component_from_id (BABL_LUMA),
+    babl_component_from_id (BABL_CB),
+    babl_component_from_id (BABL_CR),
     NULL);
 
   babl_model_new (
     "id", BABL_YCBCR_ALPHA,
-    babl_component_id (BABL_LUMA),
-    babl_component_id (BABL_CB),
-    babl_component_id (BABL_CR),
-    babl_component_id (BABL_ALPHA),
+    babl_component_from_id (BABL_LUMA),
+    babl_component_from_id (BABL_CB),
+    babl_component_from_id (BABL_CR),
+    babl_component_from_id (BABL_ALPHA),
     NULL);
 }
 
@@ -209,26 +209,26 @@ static void
 conversions (void)
 {
   babl_conversion_new (
-    babl_model_id (BABL_RGBA),
-    babl_model_id (BABL_YCBCR),
+    babl_model_from_id (BABL_RGBA),
+    babl_model_from_id (BABL_YCBCR),
     "linear", rgba_to_ycbcr,
     NULL
   );
   babl_conversion_new (
-    babl_model_id (BABL_YCBCR),
-    babl_model_id (BABL_RGBA),
+    babl_model_from_id (BABL_YCBCR),
+    babl_model_from_id (BABL_RGBA),
     "linear", ycbcr_to_rgba,
     NULL
   );
   babl_conversion_new (
-    babl_model_id (BABL_RGBA),
-    babl_model_id (BABL_YCBCR_ALPHA),
+    babl_model_from_id (BABL_RGBA),
+    babl_model_from_id (BABL_YCBCR_ALPHA),
     "linear", rgba_to_ycbcra,
     NULL
   );
   babl_conversion_new (
-    babl_model_id (BABL_YCBCR_ALPHA),
-    babl_model_id (BABL_RGBA),
+    babl_model_from_id (BABL_YCBCR_ALPHA),
+    babl_model_from_id (BABL_RGBA),
     "linear", ycbcra_to_rgba,
     NULL
   );
@@ -241,15 +241,15 @@ formats (void)
     "name", "Y'CbCr u8",
     "id", BABL_YCBCR420,
     "planar",
-    babl_model_id (BABL_YCBCR),
-    babl_type_id (BABL_U8_LUMA),
+    babl_model_from_id (BABL_YCBCR),
+    babl_type_from_id (BABL_U8_LUMA),
     babl_sampling (1, 1),
-    babl_component_id (BABL_LUMA),
-    babl_type_id (BABL_U8_CHROMA),
+    babl_component_from_id (BABL_LUMA),
+    babl_type_from_id (BABL_U8_CHROMA),
     babl_sampling (2, 2),
-    babl_component_id (BABL_CB),
+    babl_component_from_id (BABL_CB),
     babl_sampling (2, 2),
-    babl_component_id (BABL_CR),
+    babl_component_from_id (BABL_CR),
     NULL);
   return;
 
@@ -257,15 +257,15 @@ formats (void)
     "name", "y'cbcr420",
     "id", BABL_YCBCR420,
     "planar",
-    babl_model_id (BABL_YCBCR),
-    babl_type_id (BABL_U8_LUMA),
+    babl_model_from_id (BABL_YCBCR),
+    babl_type_from_id (BABL_U8_LUMA),
     babl_sampling (1, 1),
-    babl_component_id (BABL_LUMA),
-    babl_type_id (BABL_U8_CHROMA),
+    babl_component_from_id (BABL_LUMA),
+    babl_type_from_id (BABL_U8_CHROMA),
     babl_sampling (2, 2),
-    babl_component_id (BABL_CB),
+    babl_component_from_id (BABL_CB),
     babl_sampling (2, 2),
-    babl_component_id (BABL_CR),
+    babl_component_from_id (BABL_CR),
     NULL);
 
 
@@ -273,29 +273,29 @@ formats (void)
     "name", "y'cbcr422",
     "id", BABL_YCBCR422,
     "planar",
-    babl_model_id (BABL_YCBCR),
-    babl_type_id (BABL_U8_LUMA),
+    babl_model_from_id (BABL_YCBCR),
+    babl_type_from_id (BABL_U8_LUMA),
     babl_sampling (1, 1),
-    babl_component_id (BABL_LUMA),
-    babl_type_id (BABL_U8_CHROMA),
+    babl_component_from_id (BABL_LUMA),
+    babl_type_from_id (BABL_U8_CHROMA),
     babl_sampling (2, 1),
-    babl_component_id (BABL_CB),
+    babl_component_from_id (BABL_CB),
     babl_sampling (2, 1),
-    babl_component_id (BABL_CR),
+    babl_component_from_id (BABL_CR),
     NULL);
 
   babl_format_new (
     "name", "y'cbcr411",
     "id", BABL_YCBCR411,
     "planar",
-    babl_model_id (BABL_YCBCR),
-    babl_type_id (BABL_U8_LUMA),
+    babl_model_from_id (BABL_YCBCR),
+    babl_type_from_id (BABL_U8_LUMA),
     babl_sampling (1, 1),
-    babl_component_id (BABL_LUMA),
-    babl_type_id (BABL_U8_CHROMA),
+    babl_component_from_id (BABL_LUMA),
+    babl_type_from_id (BABL_U8_CHROMA),
     babl_sampling (4, 1),
-    babl_component_id (BABL_CB),
+    babl_component_from_id (BABL_CB),
     babl_sampling (4, 1),
-    babl_component_id (BABL_CR),
+    babl_component_from_id (BABL_CR),
     NULL);
 }

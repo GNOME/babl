@@ -111,40 +111,40 @@ models (void)
 {
   babl_model_new (
     "id", BABL_RGB,
-    babl_component_id (BABL_RED),
-    babl_component_id (BABL_GREEN),
-    babl_component_id (BABL_BLUE),
+    babl_component_from_id (BABL_RED),
+    babl_component_from_id (BABL_GREEN),
+    babl_component_from_id (BABL_BLUE),
     NULL);
 
   babl_model_new (
     "id", BABL_RGBA_PREMULTIPLIED,
-    babl_component_id (BABL_RED_MUL_ALPHA),
-    babl_component_id (BABL_GREEN_MUL_ALPHA),
-    babl_component_id (BABL_BLUE_MUL_ALPHA),
-    babl_component_id (BABL_ALPHA),
+    babl_component_from_id (BABL_RED_MUL_ALPHA),
+    babl_component_from_id (BABL_GREEN_MUL_ALPHA),
+    babl_component_from_id (BABL_BLUE_MUL_ALPHA),
+    babl_component_from_id (BABL_ALPHA),
     NULL);
 
   babl_model_new (
     "id", BABL_RGB_GAMMA_2_2,
-    babl_component_id (BABL_RED_GAMMA_2_2),
-    babl_component_id (BABL_GREEN_GAMMA_2_2),
-    babl_component_id (BABL_BLUE_GAMMA_2_2),
+    babl_component_from_id (BABL_RED_GAMMA_2_2),
+    babl_component_from_id (BABL_GREEN_GAMMA_2_2),
+    babl_component_from_id (BABL_BLUE_GAMMA_2_2),
     NULL);
 
   babl_model_new (
     "id", BABL_RGBA_GAMMA_2_2,
-    babl_component_id (BABL_RED_GAMMA_2_2),
-    babl_component_id (BABL_GREEN_GAMMA_2_2),
-    babl_component_id (BABL_BLUE_GAMMA_2_2),
-    babl_component_id (BABL_ALPHA),
+    babl_component_from_id (BABL_RED_GAMMA_2_2),
+    babl_component_from_id (BABL_GREEN_GAMMA_2_2),
+    babl_component_from_id (BABL_BLUE_GAMMA_2_2),
+    babl_component_from_id (BABL_ALPHA),
     NULL);
 
   babl_model_new (
     "id", BABL_RGBA_GAMMA_2_2_PREMULTIPLIED,
-    babl_component_id (BABL_RED_GAMMA_2_2_MUL_ALPHA),
-    babl_component_id (BABL_GREEN_GAMMA_2_2_MUL_ALPHA),
-    babl_component_id (BABL_BLUE_GAMMA_2_2_MUL_ALPHA),
-    babl_component_id (BABL_ALPHA),
+    babl_component_from_id (BABL_RED_GAMMA_2_2_MUL_ALPHA),
+    babl_component_from_id (BABL_GREEN_GAMMA_2_2_MUL_ALPHA),
+    babl_component_from_id (BABL_BLUE_GAMMA_2_2_MUL_ALPHA),
+    babl_component_from_id (BABL_ALPHA),
     NULL);
 }
 
@@ -401,73 +401,73 @@ static void
 conversions (void)
 {
   babl_conversion_new (
-    babl_model_id (BABL_RGBA),
-    babl_model_id (BABL_RGBA),
+    babl_model_from_id (BABL_RGBA),
+    babl_model_from_id (BABL_RGBA),
     "planar", copy_strip_1,
     NULL
   );
 
 
   babl_conversion_new (
-    babl_model_id (BABL_RGB),
-    babl_model_id (BABL_RGBA),
+    babl_model_from_id (BABL_RGB),
+    babl_model_from_id (BABL_RGBA),
     "planar", copy_strip_1,
     NULL
   );
 
   babl_conversion_new (
-    babl_model_id (BABL_RGBA),
-    babl_model_id (BABL_RGB),
+    babl_model_from_id (BABL_RGBA),
+    babl_model_from_id (BABL_RGB),
     "planar", copy_strip_1,
     NULL
   );
 
   babl_conversion_new (
-    babl_model_id (BABL_RGBA),
-    babl_model_id (BABL_RGBA_PREMULTIPLIED),
+    babl_model_from_id (BABL_RGBA),
+    babl_model_from_id (BABL_RGBA_PREMULTIPLIED),
     "planar", non_premultiplied_to_premultiplied,
     NULL
   );
 
   babl_conversion_new (
-    babl_model_id (BABL_RGBA_PREMULTIPLIED),
-    babl_model_id (BABL_RGBA),
+    babl_model_from_id (BABL_RGBA_PREMULTIPLIED),
+    babl_model_from_id (BABL_RGBA),
     "planar", premultiplied_to_non_premultiplied,
     NULL
   );
 
   babl_conversion_new (
-    babl_model_id (BABL_RGBA),
-    babl_model_id (BABL_RGB_GAMMA_2_2),
+    babl_model_from_id (BABL_RGBA),
+    babl_model_from_id (BABL_RGB_GAMMA_2_2),
     "planar", g3_gamma_2_2,
     NULL
   );
   babl_conversion_new (
-    babl_model_id (BABL_RGB_GAMMA_2_2),
-    babl_model_id (BABL_RGBA),
+    babl_model_from_id (BABL_RGB_GAMMA_2_2),
+    babl_model_from_id (BABL_RGBA),
     "planar", g3_inv_gamma_2_2,
     NULL
   );
 
   babl_conversion_new (
-    babl_model_id (BABL_RGBA),
-    babl_model_id (BABL_RGBA_GAMMA_2_2),
+    babl_model_from_id (BABL_RGBA),
+    babl_model_from_id (BABL_RGBA_GAMMA_2_2),
     "linear", rgba2rgba_gamma_2_2,
     NULL);
   babl_conversion_new (
-    babl_model_id (BABL_RGBA_GAMMA_2_2),
-    babl_model_id (BABL_RGBA),
+    babl_model_from_id (BABL_RGBA_GAMMA_2_2),
+    babl_model_from_id (BABL_RGBA),
     "linear", rgba_gamma_2_22rgba,
     NULL);
 
   babl_conversion_new (
-    babl_model_id (BABL_RGBA),
-    babl_model_id (BABL_RGBA_GAMMA_2_2_PREMULTIPLIED),
+    babl_model_from_id (BABL_RGBA),
+    babl_model_from_id (BABL_RGBA_GAMMA_2_2_PREMULTIPLIED),
     "linear", rgba2rgba_gamma_2_2_premultiplied,
     NULL);
   babl_conversion_new (
-    babl_model_id (BABL_RGBA_GAMMA_2_2_PREMULTIPLIED),
-    babl_model_id (BABL_RGBA),
+    babl_model_from_id (BABL_RGBA_GAMMA_2_2_PREMULTIPLIED),
+    babl_model_from_id (BABL_RGBA),
     "linear", rgba_gamma_2_2_premultiplied2rgba,
     NULL);
 }
@@ -478,49 +478,49 @@ formats (void)
   babl_format_new (
     //"name", "srgb",
     "id", BABL_SRGB,
-    babl_model_id (BABL_RGB_GAMMA_2_2),
-    babl_type_id (BABL_U8),
-    babl_component_id (BABL_RED_GAMMA_2_2),
-    babl_component_id (BABL_GREEN_GAMMA_2_2),
-    babl_component_id (BABL_BLUE_GAMMA_2_2),
+    babl_model_from_id (BABL_RGB_GAMMA_2_2),
+    babl_type_from_id (BABL_U8),
+    babl_component_from_id (BABL_RED_GAMMA_2_2),
+    babl_component_from_id (BABL_GREEN_GAMMA_2_2),
+    babl_component_from_id (BABL_BLUE_GAMMA_2_2),
     NULL);
 
   babl_format_new (
     "id", BABL_SRGBA,
-    babl_model_id (BABL_RGBA_GAMMA_2_2),
-    babl_type_id (BABL_U8),
-    babl_component_id (BABL_RED_GAMMA_2_2),
-    babl_component_id (BABL_GREEN_GAMMA_2_2),
-    babl_component_id (BABL_BLUE_GAMMA_2_2),
-    babl_component_id (BABL_ALPHA),
+    babl_model_from_id (BABL_RGBA_GAMMA_2_2),
+    babl_type_from_id (BABL_U8),
+    babl_component_from_id (BABL_RED_GAMMA_2_2),
+    babl_component_from_id (BABL_GREEN_GAMMA_2_2),
+    babl_component_from_id (BABL_BLUE_GAMMA_2_2),
+    babl_component_from_id (BABL_ALPHA),
     NULL);
 
   babl_format_new (
     "id", BABL_RGBA_FLOAT,
-    babl_model_id (BABL_RGBA),
-    babl_type_id (BABL_FLOAT),
-    babl_component_id (BABL_RED),
-    babl_component_id (BABL_GREEN),
-    babl_component_id (BABL_BLUE),
-    babl_component_id (BABL_ALPHA),
+    babl_model_from_id (BABL_RGBA),
+    babl_type_from_id (BABL_FLOAT),
+    babl_component_from_id (BABL_RED),
+    babl_component_from_id (BABL_GREEN),
+    babl_component_from_id (BABL_BLUE),
+    babl_component_from_id (BABL_ALPHA),
     NULL);
 
   babl_format_new (
     "id", BABL_RGB_FLOAT,
-    babl_model_id (BABL_RGB),
-    babl_type_id (BABL_FLOAT),
-    babl_component_id (BABL_RED),
-    babl_component_id (BABL_GREEN),
-    babl_component_id (BABL_BLUE),
+    babl_model_from_id (BABL_RGB),
+    babl_type_from_id (BABL_FLOAT),
+    babl_component_from_id (BABL_RED),
+    babl_component_from_id (BABL_GREEN),
+    babl_component_from_id (BABL_BLUE),
     NULL);
 
 #ifdef XXXX
   babl_format_new (
     "id", BABL_RGB565,
-    babl_model_id (BABL_RGB),
-    babl_component_id (BABL_RED),
-    babl_component_id (BABL_GREEN),
-    babl_component_id (BABL_BLUE),
+    babl_model_from_id (BABL_RGB),
+    babl_component_from_id (BABL_RED),
+    babl_component_from_id (BABL_GREEN),
+    babl_component_from_id (BABL_BLUE),
 
   );
 #endif

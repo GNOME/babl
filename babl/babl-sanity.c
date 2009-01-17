@@ -45,7 +45,7 @@ type_sanity (Babl *babl,
     {
       for (i = 0; i < babl_list_size (list); i++)
         {
-          if (babl_conversion_destination ((Babl *) list->items[i]) == babl_type_id (BABL_DOUBLE))
+          if (babl_conversion_destination ((Babl *) list->items[i]) == babl_type_from_id (BABL_DOUBLE))
             {
               ok = 1;
               break;
@@ -78,7 +78,7 @@ model_sanity (Babl *babl,
     {
       for (i = 0; i < babl_list_size (list); i++)
         {
-          if (babl_conversion_destination ((Babl *) list->items[i]) == babl_model_id (BABL_RGBA))
+          if (babl_conversion_destination ((Babl *) list->items[i]) == babl_model_from_id (BABL_RGBA))
             {
               ok = 1;
               break;
@@ -115,17 +115,17 @@ babl_sanity (void)
 {
   OK=1;
 
-  babl_type_each         (id_sanity, NULL);
-  babl_component_each    (id_sanity, NULL);
-  babl_model_each        (id_sanity, NULL);
-  babl_format_each       (id_sanity, NULL);
+  babl_type_class_for_each         (id_sanity, NULL);
+  babl_component_class_for_each    (id_sanity, NULL);
+  babl_model_class_for_each        (id_sanity, NULL);
+  babl_format_class_for_each       (id_sanity, NULL);
 
-  babl_type_each         (type_sanity, NULL);
-  babl_sampling_each     (foo, NULL);
-  babl_component_each    (foo, NULL);
-  babl_model_each        (model_sanity, NULL);
-  babl_format_each       (foo, NULL);
-  babl_conversion_each   (foo, NULL);
+  babl_type_class_for_each         (type_sanity, NULL);
+  babl_sampling_class_for_each     (foo, NULL);
+  babl_component_class_for_each    (foo, NULL);
+  babl_model_class_for_each        (model_sanity, NULL);
+  babl_format_class_for_each       (foo, NULL);
+  babl_conversion_class_for_each   (foo, NULL);
 
   return OK;
 }

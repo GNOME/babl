@@ -165,7 +165,7 @@ babl_fish (const void *source,
     source_format = source;
 
   if (!source_format)
-    source_format = babl_format ((char *) source);
+    source_format = babl_format_from_name ((char *) source);
 
   if (!source_format)
     {
@@ -177,7 +177,7 @@ babl_fish (const void *source,
     destination_format = destination;
 
   if (!destination_format)
-    destination_format = babl_format ((char *) destination);
+    destination_format = babl_format_from_name ((char *) destination);
 
   if (!destination_format)
     {

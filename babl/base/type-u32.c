@@ -118,15 +118,15 @@ babl_base_type_u32 (void)
     NULL);
 
   babl_conversion_new (
-    babl_type_id (BABL_U32),
-    babl_type_id (BABL_DOUBLE),
+    babl_type_from_id (BABL_U32),
+    babl_type_from_id (BABL_DOUBLE),
     "plane", convert_u32_double,
     NULL
   );
 
   babl_conversion_new (
-    babl_type_id (BABL_DOUBLE),
-    babl_type_id (BABL_U32),
+    babl_type_from_id (BABL_DOUBLE),
+    babl_type_from_id (BABL_U32),
     "plane", convert_double_u32,
     NULL
   );

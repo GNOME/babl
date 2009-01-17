@@ -28,19 +28,19 @@ babl_init (void)
   if (ref_count++ == 0)
     {
       babl_internal_init ();
-      babl_type_init ();
-      babl_sampling_init ();
-      babl_component_init ();
-      babl_model_init ();
-      babl_format_init ();
-      babl_conversion_init ();
+      babl_type_class_init ();
+      babl_sampling_class_init ();
+      babl_component_class_init ();
+      babl_model_class_init ();
+      babl_format_class_init ();
+      babl_conversion_class_init ();
       babl_core_init ();
       babl_sanity ();
       babl_extension_base ();
       babl_sanity ();
-      babl_extension_init ();
+      babl_extension_class_init ();
       babl_sanity ();
-      babl_fish_init ();
+      babl_fish_class_init ();
       babl_sanity ();
     }
 }
@@ -62,14 +62,14 @@ babl_destroy (void)
             }
         }
 
-      babl_extension_destroy ();
-      babl_fish_destroy ();
-      babl_conversion_destroy ();
-      babl_format_destroy ();
-      babl_model_destroy ();
-      babl_component_destroy ();
-      babl_sampling_destroy ();
-      babl_type_destroy ();
+      babl_extension_class_destroy ();
+      babl_fish_class_destroy ();
+      babl_conversion_class_destroy ();
+      babl_format_class_destroy ();
+      babl_model_class_destroy ();
+      babl_component_class_destroy ();
+      babl_sampling_class_destroy ();
+      babl_type_class_destroy ();
       babl_internal_destroy ();
       babl_memory_sanity ();
     }

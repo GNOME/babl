@@ -102,18 +102,18 @@ convert_to_double (BablFormat *source_fmt,
   BablImage *dst_img;
 
   src_img = (BablImage *) babl_image (
-    babl_component_id (BABL_LUMINANCE), NULL, 1, 0, NULL);
+    babl_component_from_id (BABL_LUMINANCE), NULL, 1, 0, NULL);
   dst_img = (BablImage *) babl_image (
-    babl_component_id (BABL_LUMINANCE), NULL, 1, 0, NULL);
+    babl_component_from_id (BABL_LUMINANCE), NULL, 1, 0, NULL);
 
-  dst_img->type[0]  = (BablType *) babl_type_id (BABL_DOUBLE);
+  dst_img->type[0]  = (BablType *) babl_type_from_id (BABL_DOUBLE);
   dst_img->pitch[0] =
     (dst_img->type[0]->bits / 8) * source_fmt->model->components;
   dst_img->stride[0] = 0;
 
 
   src_img->data[0]   = source_buf;
-  src_img->type[0]   = (BablType *) babl_type_id (BABL_DOUBLE);
+  src_img->type[0]   = (BablType *) babl_type_from_id (BABL_DOUBLE);
   src_img->pitch[0]  = source_fmt->bytes_per_pixel;
   src_img->stride[0] = 0;
 
@@ -159,16 +159,16 @@ convert_from_double (BablFormat *destination_fmt,
   BablImage *dst_img;
 
   src_img = (BablImage *) babl_image (
-    babl_component_id (BABL_LUMINANCE), NULL, 1, 0, NULL);
+    babl_component_from_id (BABL_LUMINANCE), NULL, 1, 0, NULL);
   dst_img = (BablImage *) babl_image (
-    babl_component_id (BABL_LUMINANCE), NULL, 1, 0, NULL);
+    babl_component_from_id (BABL_LUMINANCE), NULL, 1, 0, NULL);
 
-  src_img->type[0]   = (BablType *) babl_type_id (BABL_DOUBLE);
+  src_img->type[0]   = (BablType *) babl_type_from_id (BABL_DOUBLE);
   src_img->pitch[0]  = (src_img->type[0]->bits / 8) * destination_fmt->model->components;
   src_img->stride[0] = 0;
 
   dst_img->data[0]  = destination_buf;
-  dst_img->type[0]  = (BablType *) babl_type_id (BABL_DOUBLE);
+  dst_img->type[0]  = (BablType *) babl_type_from_id (BABL_DOUBLE);
   dst_img->pitch[0] = destination_fmt->bytes_per_pixel;
   dst_img->stride[0] = 0;
 
@@ -272,7 +272,7 @@ babl_fish_reference_process (Babl      *babl,
   source_image = babl_image_from_linear (
     source_double_buf, BABL (BABL ((babl->fish.source))->format.model));
   rgba_image = babl_image_from_linear (
-    rgba_double_buf, babl_model_id (BABL_RGBA));
+    rgba_double_buf, babl_model_from_id (BABL_RGBA));
   destination_image = babl_image_from_linear (
     destination_double_buf, BABL (BABL ((babl->fish.destination))->format.model));
 
@@ -288,7 +288,7 @@ babl_fish_reference_process (Babl      *babl,
     Babl *conv =
       assert_conversion_find (
       BABL (babl->fish.source)->format.model,
-      babl_model_id (BABL_RGBA)
+      babl_model_from_id (BABL_RGBA)
       );
     if (conv->class_type == BABL_CONVERSION_PLANAR)
       {
@@ -310,7 +310,7 @@ babl_fish_reference_process (Babl      *babl,
   {
     Babl *conv =
       assert_conversion_find (
-      babl_model_id (BABL_RGBA),
+      babl_model_from_id (BABL_RGBA),
       BABL (babl->fish.destination)->format.model);
     if (conv->class_type == BABL_CONVERSION_PLANAR)
       {

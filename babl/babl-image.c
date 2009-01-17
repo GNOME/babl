@@ -135,7 +135,7 @@ babl_image_from_linear (char *buffer,
         for (i = 0; i < components; i++)
           {
             sampling[i] = (BablSampling *) babl_sampling (1, 1);
-            type[i]     = (BablType *) babl_type_id (BABL_DOUBLE);
+            type[i]     = (BablType *) babl_type_from_id (BABL_DOUBLE);
             pitch[i]    = calc_pitch;
             stride[i]   = 0;
             data[i]     = buffer + offset;
@@ -198,7 +198,7 @@ babl_image (void *first,
         }
       else
         {
-          new_component = (BablComponent *) babl_component (arg);
+          new_component = (BablComponent *) babl_component_from_name (arg);
         }
 
       /* FIXME: add error checking */
@@ -226,13 +226,13 @@ babl_image (void *first,
 }
 
 void
-babl_image_destroy (void)
+babl_image_class_destroy (void)
 {
   /* nothing to do */
 }
 
 void
-babl_image_init (void)
+babl_image_class_init (void)
 {
   /* nothing to do */
 }

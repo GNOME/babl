@@ -397,12 +397,12 @@ init_path_instrumentation (Babl *fmt_source,
   if (!fmt_rgba_double)
     {
       fmt_rgba_double = babl_format_new (
-        babl_model ("RGBA"),
-        babl_type ("double"),
-        babl_component ("R"),
-        babl_component ("G"),
-        babl_component ("B"),
-        babl_component ("A"),
+        babl_model_from_name ("RGBA"),
+        babl_type_from_name ("double"),
+        babl_component_from_name ("R"),
+        babl_component_from_name ("G"),
+        babl_component_from_name ("B"),
+        babl_component_from_name ("A"),
         NULL);
     }
 

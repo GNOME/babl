@@ -28,7 +28,7 @@ int main (void)
   babl_init ();
 
   babl_set_extender (babl_extension_quiet_log ());
-  babl_conversion_each (each_conversion, NULL);
+  babl_conversion_class_for_each (each_conversion, NULL);
 
   babl_destroy ();
 

@@ -63,7 +63,7 @@ static int source_no = 0;
 static int source_each (Babl *babl,
                         void *userdata)
 {
-  babl_format_each (destination_each, babl);
+  babl_format_class_for_each (destination_each, babl);
   printf ("──%2i %s\n", source_no++, babl->instance.name);
   return 0;
 }
@@ -74,7 +74,7 @@ int main (void)
   test_init ();
 
   babl_set_extender (babl_extension_quiet_log ());
-  babl_format_each (source_each, NULL);
+  babl_format_class_for_each (source_each, NULL);
   {
     int i;
 

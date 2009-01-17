@@ -114,19 +114,19 @@ conversion_new (const char    *name,
     {
       Babl *src_format = NULL;
       Babl *dst_format = NULL;
-      if (BABL (babl->conversion.source) == babl_model_id (BABL_RGBA))
+      if (BABL (babl->conversion.source) == babl_model_from_id (BABL_RGBA))
         {
-          src_format = babl_format_id (BABL_RGBA_DOUBLE);
+          src_format = babl_format_from_id (BABL_RGBA_DOUBLE);
           dst_format = babl_format_with_model_as_type (
             BABL (babl->conversion.destination),
-            babl_type_id (BABL_DOUBLE));
+            babl_type_from_id (BABL_DOUBLE));
         }
-      else if (BABL (babl->conversion.destination) == babl_model_id (BABL_RGBA))
+      else if (BABL (babl->conversion.destination) == babl_model_from_id (BABL_RGBA))
         {
           src_format = babl_format_with_model_as_type (
             BABL (babl->conversion.source),
-            babl_type_id (BABL_DOUBLE));
-          dst_format = babl_format_id (BABL_RGBA_DOUBLE);
+            babl_type_from_id (BABL_DOUBLE));
+          dst_format = babl_format_from_id (BABL_RGBA_DOUBLE);
         }
       else
         {
@@ -450,12 +450,12 @@ babl_conversion_error (BablConversion *conversion)
   Babl *fmt_source;
   Babl *fmt_destination;
 
-  Babl *fmt_rgba_double = babl_format_new (babl_model ("RGBA"),
-                                           babl_type ("double"),
-                                           babl_component ("R"),
-                                           babl_component ("G"),
-                                           babl_component ("B"),
-                                           babl_component ("A"),
+  Babl *fmt_rgba_double = babl_format_new (babl_model_from_name ("RGBA"),
+                                           babl_type_from_name ("double"),
+                                           babl_component_from_name ("R"),
+                                           babl_component_from_name ("G"),
+                                           babl_component_from_name ("B"),
+                                           babl_component_from_name ("A"),
                                            NULL);
 
   double  error       = 0.0;

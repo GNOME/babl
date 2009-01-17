@@ -65,15 +65,15 @@ babl_base_type_float (void)
     NULL);
 
   babl_conversion_new (
-    babl_type_id (BABL_FLOAT),
-    babl_type_id (BABL_DOUBLE),
+    babl_type_from_id (BABL_FLOAT),
+    babl_type_from_id (BABL_DOUBLE),
     "plane", convert_float_double,
     NULL
   );
 
   babl_conversion_new (
-    babl_type_id (BABL_DOUBLE),
-    babl_type_id (BABL_FLOAT),
+    babl_type_from_id (BABL_DOUBLE),
+    babl_type_from_id (BABL_FLOAT),
     "plane", convert_double_float,
     NULL
   );

@@ -211,7 +211,7 @@ void         babl_internal_destroy (void);
 
 #define BABL_CLASS_MINIMAL_IMPLEMENT(klass)                   \
 void                                                          \
-babl_##klass##_init (void)                                    \
+babl_##klass##_class_init (void)                              \
 {                                                             \
   BABL_PRE_INIT_HOOK;                                         \
   if (!db)                                                    \
@@ -220,7 +220,7 @@ babl_##klass##_init (void)                                    \
 }                                                             \
                                                               \
 void                                                          \
-babl_##klass##_destroy (void)                                 \
+babl_##klass##_class_destroy (void)                           \
 {                                                             \
   BABL_DESTROY_PRE_HOOK;                                      \
   babl_db_each (db,each_babl_##klass##_destroy, NULL);        \
@@ -229,8 +229,8 @@ babl_##klass##_destroy (void)                                 \
 }                                                             \
                                                               \
 void                                                          \
-babl_##klass##_each (BablEachFunction  each_fun,              \
-                     void             *user_data)             \
+babl_##klass##_class_for_each (BablEachFunction  each_fun,    \
+                               void             *user_data)   \
 {                                                             \
   babl_db_each (db, each_fun, user_data);                     \
 }                                                             \
@@ -239,7 +239,7 @@ babl_##klass##_each (BablEachFunction  each_fun,              \
 BABL_CLASS_MINIMAL_IMPLEMENT(klass)                           \
                                                               \
 Babl *                                                        \
-babl_##klass (const char *name)                               \
+babl_##klass##_from_name (const char *name)                   \
 {                                                             \
   Babl *babl;                                                 \
                                                               \
@@ -257,7 +257,7 @@ babl_##klass (const char *name)                               \
 }                                                             \
                                                               \
 Babl *                                                        \
-babl_##klass##_id (int id)                                    \
+babl_##klass##_from_id (int id)                               \
 {                                                             \
   Babl *babl;                                                 \
   babl = babl_db_exist_by_id (db, id);                        \

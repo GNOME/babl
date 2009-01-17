@@ -44,34 +44,34 @@ init (void)
 
   babl_model_new (
     "name", "CMYK",
-    babl_component ("cyan"),
-    babl_component ("magenta"),
-    babl_component ("yellow"),
-    babl_component ("key"),
+    babl_component_from_name ("cyan"),
+    babl_component_from_name ("magenta"),
+    babl_component_from_name ("yellow"),
+    babl_component_from_name ("key"),
     NULL
   );
 
   babl_conversion_new (
-    babl_model ("RGBA"),
-    babl_model ("CMYK"),
+    babl_model_from_name ("RGBA"),
+    babl_model_from_name ("CMYK"),
     "linear", rgba_to_cmyk,
     NULL
   );
 
   babl_conversion_new (
-    babl_model ("CMYK"),
-    babl_model ("RGBA"),
+    babl_model_from_name ("CMYK"),
+    babl_model_from_name ("RGBA"),
     "linear", cmyk_to_rgba,
     NULL
   );
   babl_format_new (
     "name", "CMYK float",
-    babl_model ("CMYK"),
-    babl_type ("float"),
-    babl_component ("cyan"),
-    babl_component ("yellow"),
-    babl_component ("magenta"),
-    babl_component ("key"),
+    babl_model_from_name ("CMYK"),
+    babl_type_from_name ("float"),
+    babl_component_from_name ("cyan"),
+    babl_component_from_name ("yellow"),
+    babl_component_from_name ("magenta"),
+    babl_component_from_name ("key"),
     NULL
   );
 

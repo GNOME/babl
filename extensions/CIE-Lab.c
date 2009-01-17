@@ -55,17 +55,17 @@ models (void)
 {
   babl_model_new (
     "name", "CIE Lab",
-    babl_component ("CIE L"),
-    babl_component ("CIE a"),
-    babl_component ("CIE b"),
+    babl_component_from_name ("CIE L"),
+    babl_component_from_name ("CIE a"),
+    babl_component_from_name ("CIE b"),
     NULL);
 
   babl_model_new (
     "name", "CIE Lab alpha",
-    babl_component ("CIE L"),
-    babl_component ("CIE a"),
-    babl_component ("CIE b"),
-    babl_component ("A"),
+    babl_component_from_name ("CIE L"),
+    babl_component_from_name ("CIE a"),
+    babl_component_from_name ("CIE b"),
+    babl_component_from_name ("A"),
     NULL);
 }
 
@@ -232,26 +232,26 @@ static void
 conversions (void)
 {
   babl_conversion_new (
-    babl_model ("RGBA"),
-    babl_model ("CIE Lab"),
+    babl_model_from_name ("RGBA"),
+    babl_model_from_name ("CIE Lab"),
     "linear", rgba_to_lab,
     NULL
   );
   babl_conversion_new (
-    babl_model ("CIE Lab"),
-    babl_model ("RGBA"),
+    babl_model_from_name ("CIE Lab"),
+    babl_model_from_name ("RGBA"),
     "linear", lab_to_rgba,
     NULL
   );
   babl_conversion_new (
-    babl_model ("RGBA"),
-    babl_model ("CIE Lab alpha"),
+    babl_model_from_name ("RGBA"),
+    babl_model_from_name ("CIE Lab alpha"),
     "linear", rgba_to_laba,
     NULL
   );
   babl_conversion_new (
-    babl_model ("CIE Lab alpha"),
-    babl_model ("RGBA"),
+    babl_model_from_name ("CIE Lab alpha"),
+    babl_model_from_name ("RGBA"),
     "linear", laba_to_rgba,
     NULL
   );
@@ -264,47 +264,47 @@ formats (void)
 {
   babl_format_new (
     "name", "CIE Lab float",
-    babl_model ("CIE Lab"),
+    babl_model_from_name ("CIE Lab"),
 
-    babl_type ("float"),
-    babl_component ("CIE L"),
-    babl_component ("CIE a"),
-    babl_component ("CIE b"),
+    babl_type_from_name ("float"),
+    babl_component_from_name ("CIE L"),
+    babl_component_from_name ("CIE a"),
+    babl_component_from_name ("CIE b"),
     NULL);
 
   babl_format_new (
     "name", "CIE Lab alpha float",
-    babl_model ("CIE Lab alpha"),
+    babl_model_from_name ("CIE Lab alpha"),
 
-    babl_type ("double"),
-    babl_component ("CIE L"),
-    babl_component ("CIE a"),
-    babl_component ("CIE b"),
-    babl_component ("A"),
+    babl_type_from_name ("double"),
+    babl_component_from_name ("CIE L"),
+    babl_component_from_name ("CIE a"),
+    babl_component_from_name ("CIE b"),
+    babl_component_from_name ("A"),
     NULL);
 
   babl_format_new (
     "name", "CIE Lab u8",
-    babl_model ("CIE Lab"),
+    babl_model_from_name ("CIE Lab"),
 
-    babl_type ("CIE u8 L"),
-    babl_component ("CIE L"),
-    babl_type ("CIE u8 ab"),
-    babl_component ("CIE a"),
-    babl_type ("CIE u8 ab"),
-    babl_component ("CIE b"),
+    babl_type_from_name ("CIE u8 L"),
+    babl_component_from_name ("CIE L"),
+    babl_type_from_name ("CIE u8 ab"),
+    babl_component_from_name ("CIE a"),
+    babl_type_from_name ("CIE u8 ab"),
+    babl_component_from_name ("CIE b"),
     NULL);
 
   babl_format_new (
     "name", "CIE Lab u16",
-    babl_model ("CIE Lab"),
+    babl_model_from_name ("CIE Lab"),
 
-    babl_type ("CIE u16 L"),
-    babl_component ("CIE L"),
-    babl_type ("CIE u16 ab"),
-    babl_component ("CIE a"),
-    babl_type ("CIE u16 ab"),
-    babl_component ("CIE b"),
+    babl_type_from_name ("CIE u16 L"),
+    babl_component_from_name ("CIE L"),
+    babl_type_from_name ("CIE u16 ab"),
+    babl_component_from_name ("CIE a"),
+    babl_type_from_name ("CIE u16 ab"),
+    babl_component_from_name ("CIE b"),
     NULL);
 }
 
@@ -423,27 +423,27 @@ types_u8 (void)
   );
 
   babl_conversion_new (
-    babl_type ("CIE u8 L"),
-    babl_type ("double"),
+    babl_type_from_name ("CIE u8 L"),
+    babl_type_from_name ("double"),
     "plane", convert_u8_l_double,
     NULL
   );
   babl_conversion_new (
-    babl_type ("double"),
-    babl_type ("CIE u8 L"),
+    babl_type_from_name ("double"),
+    babl_type_from_name ("CIE u8 L"),
     "plane", convert_double_u8_l,
     NULL
   );
 
   babl_conversion_new (
-    babl_type ("CIE u8 ab"),
-    babl_type ("double"),
+    babl_type_from_name ("CIE u8 ab"),
+    babl_type_from_name ("double"),
     "plane", convert_u8_ab_double,
     NULL
   );
   babl_conversion_new (
-    babl_type ("double"),
-    babl_type ("CIE u8 ab"),
+    babl_type_from_name ("double"),
+    babl_type_from_name ("CIE u8 ab"),
     "plane", convert_double_u8_ab,
     NULL
   );
@@ -562,27 +562,27 @@ types_u16 (void)
 
 
   babl_conversion_new (
-    babl_type ("CIE u16 L"),
-    babl_type ("double"),
+    babl_type_from_name ("CIE u16 L"),
+    babl_type_from_name ("double"),
     "plane", convert_u16_l_double,
     NULL
   );
   babl_conversion_new (
-    babl_type ("double"),
-    babl_type ("CIE u16 L"),
+    babl_type_from_name ("double"),
+    babl_type_from_name ("CIE u16 L"),
     "plane", convert_double_u16_l,
     NULL
   );
 
   babl_conversion_new (
-    babl_type ("CIE u16 ab"),
-    babl_type ("double"),
+    babl_type_from_name ("CIE u16 ab"),
+    babl_type_from_name ("double"),
     "plane", convert_u16_ab_double,
     NULL
   );
   babl_conversion_new (
-    babl_type ("double"),
-    babl_type ("CIE u16 ab"),
+    babl_type_from_name ("double"),
+    babl_type_from_name ("CIE u16 ab"),
     "plane", convert_double_u16_ab,
     NULL
   );

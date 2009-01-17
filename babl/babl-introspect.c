@@ -49,28 +49,28 @@ babl_introspect (Babl *babl)
 
   babl_log ("");
   babl_log ("Data Types:");
-  babl_type_each (each_introspect, NULL);
+  babl_type_class_for_each (each_introspect, NULL);
   babl_log ("");
   babl_log ("Sampling (chroma subsampling) factors:");
-  babl_sampling_each (each_introspect, NULL);
+  babl_sampling_class_for_each (each_introspect, NULL);
   babl_log ("");
   babl_log ("Components:");
-  babl_component_each (each_introspect, NULL);
+  babl_component_class_for_each (each_introspect, NULL);
   babl_log ("");
   babl_log ("Models (of components):");
-  babl_model_each (each_introspect, NULL);
+  babl_model_class_for_each (each_introspect, NULL);
   babl_log ("");
   babl_log ("Pixel formats:");
-  babl_format_each (each_introspect, NULL);
+  babl_format_class_for_each (each_introspect, NULL);
   babl_log ("");
   babl_log ("conversions:");
-  babl_conversion_each (each_introspect, NULL);
+  babl_conversion_class_for_each (each_introspect, NULL);
   babl_log ("");
   babl_log ("extensions:");
-  babl_extension_each (each_introspect, NULL);
+  babl_extension_class_for_each (each_introspect, NULL);
   babl_log ("");
   babl_log ("fishes");
-  babl_fish_each (each_introspect, NULL);
+  babl_fish_class_for_each (each_introspect, NULL);
   babl_log ("");
 
   babl_set_extender (extender_backup);

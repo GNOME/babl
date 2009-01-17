@@ -354,82 +354,82 @@ int
 init (void)
 {
   Babl *rgbaF_linear = babl_format_new (
-    babl_model ("RGBA"),
-    babl_type ("float"),
-    babl_component ("R"),
-    babl_component ("G"),
-    babl_component ("B"),
-    babl_component ("A"),
+    babl_model_from_name ("RGBA"),
+    babl_type_from_name ("float"),
+    babl_component_from_name ("R"),
+    babl_component_from_name ("G"),
+    babl_component_from_name ("B"),
+    babl_component_from_name ("A"),
     NULL);
   Babl *rgba8_linear = babl_format_new (
-    babl_model ("RGBA"),
-    babl_type ("u8"),
-    babl_component ("R"),
-    babl_component ("G"),
-    babl_component ("B"),
-    babl_component ("A"),
+    babl_model_from_name ("RGBA"),
+    babl_type_from_name ("u8"),
+    babl_component_from_name ("R"),
+    babl_component_from_name ("G"),
+    babl_component_from_name ("B"),
+    babl_component_from_name ("A"),
     NULL);
   Babl *rgba8_gamma_2_2 = babl_format_new (
-    babl_model ("R'G'B'A"),
-    babl_type ("u8"),
-    babl_component ("R'"),
-    babl_component ("G'"),
-    babl_component ("B'"),
-    babl_component ("A"),
+    babl_model_from_name ("R'G'B'A"),
+    babl_type_from_name ("u8"),
+    babl_component_from_name ("R'"),
+    babl_component_from_name ("G'"),
+    babl_component_from_name ("B'"),
+    babl_component_from_name ("A"),
     NULL);
   Babl *rgbF_linear = babl_format_new (
-    babl_model ("RGB"),
-    babl_type ("float"),
-    babl_component ("R"),
-    babl_component ("G"),
-    babl_component ("B"),
+    babl_model_from_name ("RGB"),
+    babl_type_from_name ("float"),
+    babl_component_from_name ("R"),
+    babl_component_from_name ("G"),
+    babl_component_from_name ("B"),
     NULL);
   Babl *rgb8_linear = babl_format_new (
-    babl_model ("RGB"),
-    babl_type ("u8"),
-    babl_component ("R"),
-    babl_component ("G"),
-    babl_component ("B"),
+    babl_model_from_name ("RGB"),
+    babl_type_from_name ("u8"),
+    babl_component_from_name ("R"),
+    babl_component_from_name ("G"),
+    babl_component_from_name ("B"),
     NULL);
   Babl *rgb8_gamma_2_2 = babl_format_new (
-    babl_model ("R'G'B'"),
-    babl_type ("u8"),
-    babl_component ("R'"),
-    babl_component ("G'"),
-    babl_component ("B'"),
+    babl_model_from_name ("R'G'B'"),
+    babl_type_from_name ("u8"),
+    babl_component_from_name ("R'"),
+    babl_component_from_name ("G'"),
+    babl_component_from_name ("B'"),
     NULL);
   Babl *gaF_linear = babl_format_new (
-    babl_model ("YA"),
-    babl_type ("float"),
-    babl_component ("Y"),
-    babl_component ("A"),
+    babl_model_from_name ("YA"),
+    babl_type_from_name ("float"),
+    babl_component_from_name ("Y"),
+    babl_component_from_name ("A"),
     NULL);
   Babl *ga8_linear = babl_format_new (
-    babl_model ("YA"),
-    babl_type ("u8"),
-    babl_component ("Y"),
-    babl_component ("A"),
+    babl_model_from_name ("YA"),
+    babl_type_from_name ("u8"),
+    babl_component_from_name ("Y"),
+    babl_component_from_name ("A"),
     NULL);
   Babl *ga8_gamma_2_2 = babl_format_new (
-    babl_model ("Y'A"),
-    babl_type ("u8"),
-    babl_component ("Y'"),
-    babl_component ("A"),
+    babl_model_from_name ("Y'A"),
+    babl_type_from_name ("u8"),
+    babl_component_from_name ("Y'"),
+    babl_component_from_name ("A"),
     NULL);
   Babl *gF_linear = babl_format_new (
-    babl_model ("Y"),
-    babl_type ("float"),
-    babl_component ("Y"),
+    babl_model_from_name ("Y"),
+    babl_type_from_name ("float"),
+    babl_component_from_name ("Y"),
     NULL);
   Babl *g8_linear = babl_format_new (
-    babl_model ("Y"),
-    babl_type ("u8"),
-    babl_component ("Y"),
+    babl_model_from_name ("Y"),
+    babl_type_from_name ("u8"),
+    babl_component_from_name ("Y"),
     NULL);
   Babl *g8_gamma_2_2 = babl_format_new (
-    babl_model ("Y'"),
-    babl_type ("u8"),
-    babl_component ("Y'"),
+    babl_model_from_name ("Y'"),
+    babl_type_from_name ("u8"),
+    babl_component_from_name ("Y'"),
     NULL);
 
   tables_init ();

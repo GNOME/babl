@@ -126,41 +126,41 @@ babl_core_init (void)
 
   babl_model_new (
     "id", BABL_RGBA,
-    babl_component_id (BABL_RED),
-    babl_component_id (BABL_GREEN),
-    babl_component_id (BABL_BLUE),
-    babl_component_id (BABL_ALPHA),
+    babl_component_from_id (BABL_RED),
+    babl_component_from_id (BABL_GREEN),
+    babl_component_from_id (BABL_BLUE),
+    babl_component_from_id (BABL_ALPHA),
     NULL);
 
   babl_format_new (
     "id", BABL_RGBA_DOUBLE,
-    babl_model_id (BABL_RGBA),
-    babl_type_id (BABL_DOUBLE),
-    babl_component_id (BABL_RED),
-    babl_component_id (BABL_GREEN),
-    babl_component_id (BABL_BLUE),
-    babl_component_id (BABL_ALPHA),
+    babl_model_from_id (BABL_RGBA),
+    babl_type_from_id (BABL_DOUBLE),
+    babl_component_from_id (BABL_RED),
+    babl_component_from_id (BABL_GREEN),
+    babl_component_from_id (BABL_BLUE),
+    babl_component_from_id (BABL_ALPHA),
     NULL);
 
   /*
      babl_conversion_new (
-     babl_model_id (BABL_RGBA),
-     babl_model_id (BABL_RGBA),
+     babl_model_from_id (BABL_RGBA),
+     babl_model_from_id (BABL_RGBA),
      "planar",      copy_strip_1,
      NULL
      );
    */
 
   babl_conversion_new (
-    babl_type_id (BABL_DOUBLE),
-    babl_type_id (BABL_DOUBLE),
+    babl_type_from_id (BABL_DOUBLE),
+    babl_type_from_id (BABL_DOUBLE),
     "plane", convert_double_double,
     NULL
   );
 
   babl_conversion_new (
-    babl_model_id (BABL_RGBA),
-    babl_model_id (BABL_RGBA),
+    babl_model_from_id (BABL_RGBA),
+    babl_model_from_id (BABL_RGBA),
     "linear", rgba_to_rgba,
     NULL
   );

@@ -1,5 +1,55 @@
 2009-01-17  Martin Nordholts  <martinn@svn.gnome.org>
 
+	s/babl_foo_init/babl_foo_class_init/
+	s/babl_foo_destroy/babl_foo_class_destroy/
+	s/babl_foo_each/babl_foo_class_for_each/
+	s/babl_foo/babl_foo_from_name/
+	s/babl_foo_id/babl_foo_from_id/
+
+	* babl/babl-class.h
+	* babl/babl-conversion.c
+	* babl/babl-core.c
+	* babl/babl-fish-path.c
+	* babl/babl-fish-reference.c
+	* babl/babl-fish-stats.c
+	* babl/babl-fish.c
+	* babl/babl-format.c
+	* babl/babl-image.c
+	* babl/babl-internal.h
+	* babl/babl-introspect.c
+	* babl/babl-model.c
+	* babl/babl-sampling.c
+	* babl/babl-sanity.c
+	* babl/babl-type.c
+	* babl/babl.c
+	* babl/base/formats.c
+	* babl/base/model-gray.c
+	* babl/base/model-rgb.c
+	* babl/base/model-ycbcr.c
+	* babl/base/type-float.c
+	* babl/base/type-u16.c
+	* babl/base/type-u32.c
+	* babl/base/type-u8.c
+	* extensions/CIE-Lab.c
+	* extensions/frequency.c
+	* extensions/gegl-fixups.c
+	* extensions/gggl-lies.c
+	* extensions/gggl.c
+	* extensions/gimp-8bit.c
+	* extensions/naive-CMYK.c
+	* extensions/sse-fixups.c
+	* tests/babl-html-dump.c
+	* tests/babl_fish_path_fitness.c
+	* tests/conversions.c
+	* tests/formats.c
+	* tests/grayscale_to_rgb.c
+	* tests/models.c
+	* tests/rgb_to_bgr.c
+	* tests/rgb_to_ycbcr.c
+	* tests/types.c
+
+2009-01-17  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* babl/babl-class.h: Remove babl_name() and babl_introspect()
 	which slipped in here.
 

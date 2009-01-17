@@ -52,8 +52,8 @@ each_babl_sampling_destroy (Babl *babl,
 }
 
 void
-babl_sampling_each (BablEachFunction each_fun,
-                    void            *user_data)
+babl_sampling_class_for_each (BablEachFunction each_fun,
+                              void            *user_data)
 {
   int horizontal;
   int vertical;
@@ -69,13 +69,13 @@ babl_sampling_each (BablEachFunction each_fun,
 
 
 void
-babl_sampling_destroy (void)
+babl_sampling_class_destroy (void)
 {
-  babl_sampling_each (each_babl_sampling_destroy, NULL);
+  babl_sampling_class_for_each (each_babl_sampling_destroy, NULL);
 }
 
 void
-babl_sampling_init (void)
+babl_sampling_class_init (void)
 {
   int horizontal;
   int vertical;

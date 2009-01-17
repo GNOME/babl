@@ -119,15 +119,15 @@ babl_base_type_u16 (void)
     NULL);
 
   babl_conversion_new (
-    babl_type_id (BABL_U16),
-    babl_type_id (BABL_DOUBLE),
+    babl_type_from_id (BABL_U16),
+    babl_type_from_id (BABL_DOUBLE),
     "plane", convert_u16_double,
     NULL
   );
 
   babl_conversion_new (
-    babl_type_id (BABL_DOUBLE),
-    babl_type_id (BABL_U16),
+    babl_type_from_id (BABL_DOUBLE),
+    babl_type_from_id (BABL_U16),
     "plane", convert_double_u16,
     NULL
   );

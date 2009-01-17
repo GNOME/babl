@@ -39,36 +39,36 @@ main (void)
 
   printf ("<br/><a href='javascript:");
   printf ("show(\"x_types\");show(\"x_models\");show(\"x_formats\");show(\"x_conversions\");");
-  babl_type_each (show_item, NULL);
-  babl_model_each (show_item, NULL);
-  babl_format_each (show_item, NULL);
+  babl_type_class_for_each (show_item, NULL);
+  babl_model_class_for_each (show_item, NULL);
+  babl_format_class_for_each (show_item, NULL);
 /*  babl_conversion_each (show_item, NULL);*/
   printf ("'>+</a>");
 
   printf ("<a href='javascript:");
   printf ("hide(\"x_types\");hide(\"x_models\");hide(\"x_formats\");hide(\"x_conversions\");");
-  babl_type_each (hide_item, NULL);
-  babl_model_each (hide_item, NULL);
-  babl_format_each (hide_item, NULL);
+  babl_type_class_for_each (hide_item, NULL);
+  babl_model_class_for_each (hide_item, NULL);
+  babl_format_class_for_each (hide_item, NULL);
   /*babl_conversion_each (hide_item, NULL);*/
   printf ("'>-</a>");
 
   printf ("<div class='expander'>");
   printf ("<div class='expander_title'><a style='font-size:110%%' name='Data-types' href='javascript:toggle_visible(\"x_types\")'>Data types</a></div><div class='expander_content' id='x_types'>\n");
-  babl_type_each (each_item, NULL);
+  babl_type_class_for_each (each_item, NULL);
   printf ("</div>\n");
   printf ("</div>\n");
 
   printf ("<div class='expander'>");
   printf ("<div class='expander_title'><a style='font-size:110%%' name='Color-models' href='javascript:toggle_visible(\"x_models\")'>Color models</a></div><div class='expander_content' id='x_models'>\n");
-  babl_model_each (each_item, NULL);
+  babl_model_class_for_each (each_item, NULL);
   printf ("</div>\n");
   printf ("</div>\n");
 
 
   printf ("<div class='expander'>");
   printf ("<div class='expander_title'><a style='font-size:110%%' name='Pixel-formats' href='javascript:toggle_visible(\"x_formats\")'>Pixel formats</a></div><div class='expander_content' id='x_formats'>\n");
-  babl_format_each (each_item, NULL);
+  babl_format_class_for_each (each_item, NULL);
   printf ("</div>\n");
   printf ("</div>\n");
 

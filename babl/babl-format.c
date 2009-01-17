@@ -194,7 +194,7 @@ babl_format_new (void *first_arg,
   BablType      *type      [BABL_MAX_COMPONENTS];
 
   BablSampling  *current_sampling = (BablSampling *) babl_sampling (1, 1);
-  BablType      *current_type     = (BablType *) babl_type_id (BABL_DOUBLE);
+  BablType      *current_type     = (BablType *) babl_type_from_id (BABL_DOUBLE);
   char          *name             = NULL;
   void          *arg              = first_arg;
 
@@ -393,12 +393,12 @@ babl_format_loss (Babl *babl)
   Babl   *fish_from;
 
   ref_fmt = babl_format_new (
-    babl_model ("RGBA"),
-    babl_type ("double"),
-    babl_component ("R"),
-    babl_component ("G"),
-    babl_component ("B"),
-    babl_component ("A"),
+    babl_model_from_name ("RGBA"),
+    babl_type_from_name ("double"),
+    babl_component_from_name ("R"),
+    babl_component_from_name ("G"),
+    babl_component_from_name ("B"),
+    babl_component_from_name ("A"),
     NULL);
 
   if (babl->format.loss != -1.0)

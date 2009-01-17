@@ -196,7 +196,7 @@ table_source_each (Babl *babl,
   }
 
   fprintf (output_file, "</a></td>");
-  babl_format_each (table_destination_each, babl);
+  babl_format_class_for_each (table_destination_each, babl);
   fprintf (output_file, "</tr>\n");
   source_no++;
   return 0;
@@ -252,7 +252,7 @@ static void
 conversions (void)
 {
   fprintf (output_file, "<h2>Conversions</h2><dl>\n");
-  babl_conversion_each (each_conv, NULL);
+  babl_conversion_class_for_each (each_conv, NULL);
   fprintf (output_file, "</dl>\n");
 }
 
@@ -380,7 +380,7 @@ babl_fish_stats (FILE *file)
 
   fprintf (output_file, "<table cellspacing='0'><tr><td>Source format</td><td colspan='32'>Destination formats</td></tr>\n");
 
-  babl_format_each (table_source_each, NULL);
+  babl_format_class_for_each (table_source_each, NULL);
 
   fprintf (output_file, "</table>");
 
