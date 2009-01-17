@@ -1,5 +1,13 @@
 2009-01-17  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* babl/babl.h: Don't #include <stdlib.h>
+
+	* babl/base/formats.c
+	* babl/base/model-gray.c
+	* babl/base/model-rgb.c: #include <stdlib.h>
+
+2009-01-17  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Make babl.h look clean.
 
 	* babl/babl-introspect.h: New installed header for babl_name() and

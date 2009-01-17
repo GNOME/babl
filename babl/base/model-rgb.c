@@ -16,7 +16,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include <stdlib.h>
 #include <math.h>
+
 #include "babl.h"
 #include "babl-ids.h"
 #include "util.h"
