@@ -1,3 +1,13 @@
+2009-01-17  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* babl/babl-macros.h: New installed header file that contains
+	portability macros.
+
+	* babl/babl.h: Include it and don't define portability macros
+	here.
+
+	* babl/Makefile.am: Add it.
+
 2009-01-15  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* babl/babl.h: Make BablClassType an int again, it doesn't make

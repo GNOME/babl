@@ -30,6 +30,8 @@
 #error babl.h included after babl-internal.h
 #endif
 
+#include "babl-macros.h"
+
 /* magic number used at the start of all babl objects, used to do
  * differentiation in polymorphic functions. (as well as manual
  * type check assertions).
@@ -82,12 +84,6 @@ void   babl_init       (void);
  *  babl_init()
  */
 void   babl_destroy    (void);
-
-#if     __GNUC__ >= 4
-#define BABL_ARG_NULL_TERMINATED __attribute__((__sentinel__))
-#else
-#define BABL_ARG_NULL_TERMINATED
-#endif
 
 typedef int  (*BablEachFunction) (Babl *entry,
                                   void *data);
