@@ -33,6 +33,8 @@
 #include "babl-macros.h"
 #include "babl-main.h"
 
+typedef struct _BablList BablList;
+
 /* magic number used at the start of all babl objects, used to do
  * differentiation in polymorphic functions. (as well as manual
  * type check assertions).
@@ -67,8 +69,6 @@ enum {
 typedef int BablClassType;
 
 typedef union _Babl Babl;
-
-typedef struct _BablList BablList;
 
 typedef int  (*BablEachFunction) (Babl *entry,
                                   void *data);

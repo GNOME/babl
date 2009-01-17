@@ -1,5 +1,11 @@
 2009-01-17  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* babl/babl.h: Move up forward declaration of BablList.
+
+	* babl/babl-list.h: Completely rely on that declaration.
+
+2009-01-17  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* babl/babl.h: Don't have BABL_ALPHA_THRESHOLD public yet.
 
 	* babl/base/util.h: Put it here for now instead.

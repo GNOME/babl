@@ -20,20 +20,15 @@
 #define _BABL_LIST_H
 
 #ifndef _BABL_H
-/* babl.h contains forward declaration
- * typedef struct _BablList BablList;
- */
 #error  babl-list.h is only to be included after babl.h
 #endif
 
-
-typedef struct _BablList
+struct _BablList
 {
   int  count;
   int  size;
   Babl **items;
-} _BablList;
-
+};
 
 BablList *
 babl_list_init (void);
