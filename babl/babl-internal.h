@@ -59,7 +59,7 @@
 
 
 
-Babl * babl_conversion_find       (const void     *source,
+Babl *   babl_conversion_find           (const void     *source,
                                          const void     *destination);
 double   babl_conversion_error          (BablConversion *conversion);
 long     babl_conversion_cost           (BablConversion *conversion);
@@ -109,10 +109,10 @@ void     babl_die                       (void);
 int      babl_sanity                    (void);
 
 void     babl_core_init                 (void);
-Babl   * babl_format_with_model_as_type (Babl *model,
-                                         Babl *type);
-int      babl_formats_count             (void);  /* should maybe be templated? */
-int      babl_type_is_symmetric         (Babl *babl);
+Babl   * babl_format_with_model_as_type (Babl           *model,
+                                         Babl           *type);
+int      babl_formats_count             (void);                                     /* should maybe be templated? */
+int      babl_type_is_symmetric         (Babl           *babl);
 
 /* FIXME: nasty,. including the symbol even in files where it is
  * not needed,. and a dummy function to use it in those cases
