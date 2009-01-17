@@ -1,5 +1,10 @@
 2009-01-17  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* babl/babl-class.h: Remove babl_name() and babl_introspect()
+	which slipped in here.
+
+2009-01-17  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* babl/babl.h: Don't #include <stdlib.h>
 
 	* babl/base/formats.c
