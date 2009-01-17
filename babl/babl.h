@@ -30,10 +30,10 @@
 #error babl.h included after babl-internal.h
 #endif
 
+typedef struct _BablList BablList;
+
 #include "babl-macros.h"
 #include "babl-main.h"
-
-typedef struct _BablList BablList;
 
 /* magic number used at the start of all babl objects, used to do
  * differentiation in polymorphic functions. (as well as manual
