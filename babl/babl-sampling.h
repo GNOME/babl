@@ -22,7 +22,7 @@
 
 /****************************************************************/
 /* BablSampling */
-BABL_CLASS (sampling);
+BABL_CLASS_DECLARE (sampling);
 /**/
 Babl * babl_sampling       (int horizontal,
                             int vertical);

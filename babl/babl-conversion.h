@@ -22,7 +22,7 @@
 
 /****************************************************************/
 /* BablConversion */
-BABL_NAMED_CLASS (conversion);
+BABL_NAMED_CLASS_DECLARE (conversion);
 /*
  * Babl * babl_conversion_new (<BablFormat *source, BablFormat *destination|
  *                              BablModel  *source, BablModel  *destination|

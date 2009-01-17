@@ -22,7 +22,7 @@
 
 /****************************************************************/
 /* BablFish */
-BABL_CLASS (fish);
+BABL_CLASS_DECLARE (fish);
 /*  Create a babl fish capable of converting from source_format to
  *  destination_format, source and destination can be
  *  either strings with the names of the formats or BablFormat objects.

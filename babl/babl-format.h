@@ -22,7 +22,7 @@
 
 /****************************************************************/
 /* BablFormat */
-BABL_NAMED_CLASS (format);
+BABL_NAMED_CLASS_DECLARE (format);
 /*
  * Babl * babl_format_new (["name", const char *name,]
  *                          BablModel          *model,

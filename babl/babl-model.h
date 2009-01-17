@@ -22,7 +22,7 @@
 
 /****************************************************************/
 /* BablModel */
-BABL_NAMED_CLASS (model);
+BABL_NAMED_CLASS_DECLARE (model);
 /*
  * Babl * babl_model_new (["name", const char *name,]
  *                        BablComponent *component1,

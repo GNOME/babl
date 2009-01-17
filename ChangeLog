@@ -1,5 +1,28 @@
 2009-01-17  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Instead of having BABL_CLASS() plus variants and making the macros
+	expand to different things depending on if they are used in a
+	header or a .c file, have two versions: BABL_CLASS_DECLARE() and
+	BABL_CLASS_IMPLEMENT(). This enables further refactorisation of
+	the babl.h header.
+
+	* babl.h: Do the name changes and remove the unpleasant #undefs at
+	the bottom.
+
+	* babl-internal.h: Do the name changes.
+
+	* babl-component.[ch]
+	* babl-conversion.[ch]
+	* babl-extension.[ch]
+	* babl-fish.[ch]
+	* babl-format.[ch]
+	* babl-image.h
+	* babl-model.[ch]
+	* babl-sampling.h
+	* babl-type.[ch]: Adjust to changes.
+
+2009-01-17  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Don't redeclare functions declared with the BABL_CLASS() or
 	BABL_NAMED_CLASS() macros.
 

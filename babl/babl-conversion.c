@@ -555,4 +555,4 @@ babl_conversion_error (BablConversion *conversion)
   return error;
 }
 
-BABL_CLASS (conversion)
+BABL_CLASS_IMPLEMENT (conversion)

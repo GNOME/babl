@@ -84,7 +84,7 @@ typedef int  (*BablEachFunction) (Babl *entry,
  * to be iterated over, common functionality is defined through these
  * macros.
  */
-#define BABL_CLASS(klass)                                    \
+#define BABL_CLASS_DECLARE(klass)                            \
                                                              \
 void   babl_##klass##_init    (void);                        \
 void   babl_##klass##_destroy (void);                        \
@@ -98,9 +98,9 @@ void   babl_##klass##_each    (BablEachFunction  each_fun,   \
  * the means to lookup by name, as well as to create new named objects
  * that later can be looked up.
  */
-#define BABL_NAMED_CLASS(klass)                              \
+#define BABL_NAMED_CLASS_DECLARE(klass)                      \
                                                              \
-BABL_CLASS (klass);                                          \
+BABL_CLASS_DECLARE (klass);                                  \
 Babl * babl_##klass           (const char       *name);      \
 Babl * babl_##klass##_new     (void             *first_arg,  \
                                ...) BABL_ARG_NULL_TERMINATED
@@ -162,8 +162,5 @@ typedef union _Babl
   BablFishPath      fish_path;
   BablExtension     extension;
 } _Babl;
-
-#undef BABL_CLASS
-#undef BABL_NAMED_CLASS
 
 #endif

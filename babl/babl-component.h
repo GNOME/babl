@@ -23,7 +23,7 @@
 
 /****************************************************************/
 /* BablComponent */
-BABL_NAMED_CLASS (component);
+BABL_NAMED_CLASS_DECLARE (component);
 /*
  * Babl * babl_component_new (const char *name,
  *                            NULL);

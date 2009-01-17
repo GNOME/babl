@@ -22,7 +22,7 @@
 
 /****************************************************************/
 /* BablImage */
-BABL_CLASS (image);
+BABL_CLASS_DECLARE (image);
 /*
  * Babl images can be used for planar buffers instead of linear buffers for
  * babl_process(), BablImages are still experimental, for now BablImages can be

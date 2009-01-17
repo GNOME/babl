@@ -22,7 +22,7 @@
 
 /****************************************************************/
 /* BablType */
-BABL_NAMED_CLASS (type);
+BABL_NAMED_CLASS_DECLARE (type);
 /*
  * A data type that babl can have in it's buffers, requires
  * conversions to and from "double" to be registered before

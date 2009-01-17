@@ -127,4 +127,4 @@ babl_component_new (void *first_arg,
   return babl;
 }
 
-BABL_CLASS (component)
+BABL_CLASS_IMPLEMENT (component)

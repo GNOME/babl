@@ -335,4 +335,4 @@ each_babl_fish_destroy (Babl *babl,
   return 0;  /* continue iterating */
 }
 
-BABL_CLASS_MINIMAL (fish);
+BABL_CLASS_MINIMAL_IMPLEMENT (fish);

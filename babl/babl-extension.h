@@ -22,7 +22,7 @@
 
 /****************************************************************/
 /* BablExtension */
-BABL_NAMED_CLASS (extension);
+BABL_NAMED_CLASS_DECLARE (extension);
 /*
  * BablExtension objects are only used internally in babl.
  */

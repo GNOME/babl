@@ -209,7 +209,7 @@ void         babl_internal_destroy (void);
  * to be kept in sync with the C files.
  */
 
-#define BABL_CLASS_MINIMAL(klass)                             \
+#define BABL_CLASS_MINIMAL_IMPLEMENT(klass)                   \
 void                                                          \
 babl_##klass##_init (void)                                    \
 {                                                             \
@@ -235,8 +235,8 @@ babl_##klass##_each (BablEachFunction  each_fun,              \
   babl_db_each (db, each_fun, user_data);                     \
 }                                                             \
 
-#define BABL_CLASS(klass)                                     \
-BABL_CLASS_MINIMAL(klass)                                     \
+#define BABL_CLASS_IMPLEMENT(klass)                           \
+BABL_CLASS_MINIMAL_IMPLEMENT(klass)                           \
                                                               \
 Babl *                                                        \
 babl_##klass (const char *name)                               \

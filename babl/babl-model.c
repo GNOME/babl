@@ -327,4 +327,4 @@ babl_model_is_symmetric (Babl *babl)
   return symmetric;
 }
 
-BABL_CLASS (model)
+BABL_CLASS_IMPLEMENT (model)
