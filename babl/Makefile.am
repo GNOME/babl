@@ -38,6 +38,7 @@ h_sources  =             		\
 	babl-ids.h			\
 	babl-internal.h			\
 	babl-macros.h			\
+	babl-main.h			\
 	babl-memory.h			\
 	babl-util.h			\
 	babl.h				\
@@ -55,6 +56,7 @@ library_include_HEADERS =		\
 	babl-format.h			\
 	babl-image.h			\
 	babl-macros.h			\
+	babl-main.h			\
 	babl-model.h			\
 	babl-sampling.h 		\
 	babl-type.h                     \

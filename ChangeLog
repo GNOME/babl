@@ -1,5 +1,14 @@
 2009-01-17  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* babl/babl-main.h: New installed file with babl_init() and
+	babl_destroy() declarations.
+
+	* babl/babl.h: Include it.
+
+	* babl/Makefile.am: Add it.
+
+2009-01-17  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* babl/babl-macros.h: New installed header file that contains
 	portability macros.
 

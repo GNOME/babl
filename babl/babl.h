@@ -31,6 +31,7 @@
 #endif
 
 #include "babl-macros.h"
+#include "babl-main.h"
 
 /* magic number used at the start of all babl objects, used to do
  * differentiation in polymorphic functions. (as well as manual
@@ -75,15 +76,6 @@ typedef int BablClassType;
 typedef union _Babl Babl;
 
 typedef struct _BablList BablList;
-
-/** Initialize the babl library */
-void   babl_init       (void);
-
-/** Deinitialize the babl library (frees any resources used, if the number
- *  of calls to babl_destroy() is is equal to the number of calls to
- *  babl_init()
- */
-void   babl_destroy    (void);
 
 typedef int  (*BablEachFunction) (Babl *entry,
                                   void *data);
