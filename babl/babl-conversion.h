@@ -31,6 +31,8 @@ BABL_NAMED_CLASS_DECLARE (conversion);
  *                              NULL);
  */
 
+#define babl_conversion babl_conversion_from_name
+
 /* Type and Format */
 typedef long (*BablFuncLinear)    (char  *src,
                                    char  *dst,

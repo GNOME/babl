@@ -34,6 +34,8 @@ BABL_NAMED_CLASS_DECLARE (model);
  *
  */
 
+#define babl_model babl_model_from_name
+
 typedef struct
 {
   BablInstance     instance;

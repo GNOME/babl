@@ -29,6 +29,8 @@ BABL_NAMED_CLASS_DECLARE (component);
  *                            NULL);
  */
 
+#define babl_component babl_component_from_name
+
 typedef struct
 {
   BablInstance     instance;

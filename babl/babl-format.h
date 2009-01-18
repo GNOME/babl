@@ -41,6 +41,8 @@ BABL_NAMED_CLASS_DECLARE (format);
  * name is used.
  */
 
+#define babl_format babl_format_from_name
+
 typedef struct
 {
   BablInstance     instance;

@@ -35,6 +35,8 @@ BABL_NAMED_CLASS_DECLARE (type);
  *                         NULL);
  */
 
+#define babl_type babl_type_from_name
+
 typedef struct
 {
   BablInstance     instance;
