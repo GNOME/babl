@@ -1,3 +1,15 @@
+2009-01-18  Sven Neumann  <sven@gimp.org>
+
+	* babl/babl-component.h
+	* babl/babl-conversion.h
+	* babl/babl-extension.h
+	* babl/babl-format.h
+	* babl/babl-model.h
+	* babl/babl-type.h: allow to disable the defines that were added
+	for backward compatibility by definining BABL_DISABLE_DEPRECATED.
+
+	* babl/babl-image.h: removed trailing whitespace.
+
 2009-01-17  Martin Nordholts  <martinn@svn.gnome.org>
 
 	Add #define babl_foo babl_foo_from_name macros, that should fix

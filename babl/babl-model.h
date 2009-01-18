@@ -17,7 +17,7 @@
  */
 
 #ifndef _BABL_H
-#error  this file is only to be included by babl.h 
+#error  this file is only to be included by babl.h
 #endif
 
 /****************************************************************/
@@ -34,7 +34,12 @@ BABL_NAMED_CLASS_DECLARE (model);
  *
  */
 
+#ifndef BABL_DISABLE_DEPRECATED
+
 #define babl_model babl_model_from_name
+
+#endif /* BABL_DISABLE_DEPRECATED */
+
 
 typedef struct
 {
@@ -42,5 +47,6 @@ typedef struct
   BablList         *from_list;
   int              components;
   BablComponent  **component;
-  BablType       **type; /*< must be doubles, used here for convenience in code */
+  BablType       **type; /*< must be doubles,
+                             used here for convenience in code */
 } BablModel;

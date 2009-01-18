@@ -17,7 +17,7 @@
  */
 
 #ifndef _BABL_H
-#error  this file is only to be included by babl.h 
+#error  this file is only to be included by babl.h
 #endif
 
 
@@ -29,7 +29,12 @@ BABL_NAMED_CLASS_DECLARE (component);
  *                            NULL);
  */
 
+#ifndef BABL_DISABLE_DEPRECATED
+
 #define babl_component babl_component_from_name
+
+#endif /* BABL_DISABLE_DEPRECATED */
+
 
 typedef struct
 {

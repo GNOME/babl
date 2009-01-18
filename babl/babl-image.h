@@ -17,7 +17,7 @@
  */
 
 #ifndef _BABL_H
-#error  this file is only to be included by babl.h 
+#error  this file is only to be included by babl.h
 #endif
 
 /****************************************************************/
@@ -29,7 +29,7 @@ BABL_CLASS_DECLARE (image);
  * passed to babl_process, two different babl_process() functions will be
  * needed for this since the polymorphism cannot be trusted to work on linear
  * buffers that originate outside babl's control.
- * 
+ *
  * Babl * babl_image_new (BablComponent *component1,
  *                        void          *data,
  *                        int            pitch,
