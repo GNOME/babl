@@ -16,8 +16,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _DB_H
-#define _DB_H
+#ifndef _BABL_DB_H
+#define _BABL_DB_H
 
 #ifndef _BABL_H
 #error  babl-db.h is only to be included after babl.h

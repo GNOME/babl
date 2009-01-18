@@ -1,5 +1,9 @@
 2009-01-18  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* babl/babl-db.h: Namespace the include guard.
+
+2009-01-18  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Do a s/babl_destroy/babl_exit since 'destroy' is better paired
 	with a 'create' and other libraries also use the 'init'/'exit'
 	pair, including GEGL. Keep a define for babl_destroy unless
