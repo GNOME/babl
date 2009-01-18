@@ -16,6 +16,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _BABL_CONVERSION_H
+#define _BABL_CONVERSION_H
+
 #ifndef _BABL_H
 #error  this file is only to be included by babl.h
 #endif
@@ -77,3 +80,5 @@ BablConversion {
   int                    processings;
   long                   pixels;
 } BablConversion;
+
+#endif

@@ -16,6 +16,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _BABL_IMAGE_H
+#define _BABL_IMAGE_H
+
 #ifndef _BABL_H
 #error  this file is only to be included by babl.h
 #endif
@@ -57,3 +60,5 @@ typedef struct
   int            *pitch;
   int            *stride;
 } BablImage;
+
+#endif

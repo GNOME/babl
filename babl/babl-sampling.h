@@ -16,6 +16,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _BABL_SAMPLING_H
+#define _BABL_SAMPLING_H
+
 #ifndef _BABL_H
 #error  this file is only to be included by babl.h 
 #endif
@@ -34,3 +37,5 @@ typedef struct
   int              vertical;
   char             name[4];
 } BablSampling;
+
+#endif

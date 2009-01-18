@@ -16,6 +16,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _BABL_MODEL_H
+#define _BABL_MODEL_H
+
 #ifndef _BABL_H
 #error  this file is only to be included by babl.h
 #endif
@@ -50,3 +53,5 @@ typedef struct
   BablType       **type; /*< must be doubles,
                              used here for convenience in code */
 } BablModel;
+
+#endif

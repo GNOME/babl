@@ -16,6 +16,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _BABL_TYPE_H
+#define _BABL_TYPE_H
+
 #ifndef _BABL_H
 #error  this file is only to be included by babl.h
 #endif
@@ -67,3 +70,5 @@ typedef struct
    * biased_exponent
    * mantissa */
 } BablTypeFloat;
+
+#endif

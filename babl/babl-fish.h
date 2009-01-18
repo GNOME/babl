@@ -16,6 +16,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _BABL_FISH_H
+#define _BABL_FISH_H
+
 #ifndef _BABL_H
 #error  this file is only to be included by babl.h 
 #endif
@@ -101,3 +104,5 @@ typedef struct
 {
   BablFish         fish;
 } BablFishReference;
+
+#endif

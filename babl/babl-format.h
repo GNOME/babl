@@ -16,6 +16,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _BABL_FORMAT_H
+#define _BABL_FORMAT_H
+
 #ifndef _BABL_H
 #error  this file is only to be included by babl.h
 #endif
@@ -67,3 +70,5 @@ typedef struct
   int              visited; /* for convenience in code while searching
                                for conversion paths */
 } BablFormat;
+
+#endif

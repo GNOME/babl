@@ -16,6 +16,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _BABL_COMPONENT_H
+#define _BABL_COMPONENT_H
+
 #ifndef _BABL_H
 #error  this file is only to be included by babl.h
 #endif
@@ -43,3 +46,5 @@ typedef struct
   int              chroma;
   int              alpha;
 } BablComponent;
+
+#endif

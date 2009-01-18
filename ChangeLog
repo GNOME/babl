@@ -1,5 +1,19 @@
 2009-01-18  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Add include guards.
+
+	* babl/babl-component.h
+	* babl/babl-conversion.h
+	* babl/babl-extension.h
+	* babl/babl-fish.h
+	* babl/babl-format.h
+	* babl/babl-image.h
+	* babl/babl-model.h
+	* babl/babl-sampling.h
+	* babl/babl-type.h
+
+2009-01-18  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* babl/babl-db.h: Namespace the include guard.
 
 2009-01-18  Martin Nordholts  <martinn@svn.gnome.org>
