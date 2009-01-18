@@ -1,3 +1,17 @@
+2009-01-18  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* babl/babl-classes.h: New file collecting the type constants,
+	includes and the union for the babl classes. When adding a new
+	class this is the only installed header file that requires
+	modification.
+
+	* babl/babl-class.h: Move the class type enums to the new file.
+
+	* babl/babl.h: Include babl-classes.h instead of each class on its
+	own, and move the Babl union to the new file.
+
+	* babl/Makefile.am: Add the new file.
+
 2009-01-18  Sven Neumann  <sven@gimp.org>
 
 	* babl/babl-component.h

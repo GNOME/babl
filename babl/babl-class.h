@@ -23,38 +23,6 @@
 #error  this file is only to be included by babl.h
 #endif
 
-
-/* magic number used at the start of all babl objects, used to do
- * differentiation in polymorphic functions. (as well as manual
- * type check assertions).
- */
-#define BABL_MAGIC   0xbab100
-
-enum {
-  BABL_INSTANCE = BABL_MAGIC,
-  BABL_TYPE,
-  BABL_TYPE_INTEGER,
-  BABL_TYPE_FLOAT,
-  BABL_SAMPLING,
-  BABL_COMPONENT,
-  BABL_MODEL,
-  BABL_FORMAT,
-
-  BABL_CONVERSION,
-  BABL_CONVERSION_LINEAR,
-  BABL_CONVERSION_PLANE,
-  BABL_CONVERSION_PLANAR,
-
-  BABL_FISH,
-  BABL_FISH_REFERENCE,
-  BABL_FISH_SIMPLE,
-  BABL_FISH_PATH,
-  BABL_IMAGE,
-
-  BABL_EXTENSION,
-
-  BABL_SKY
-};
 typedef int BablClassType;
 
 typedef union _Babl Babl;

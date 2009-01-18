@@ -28,6 +28,7 @@
 #error babl.h included after babl-internal.h
 #endif
 
+
 typedef struct _BablList BablList;
 
 #include "babl-macros.h"
@@ -35,35 +36,7 @@ typedef struct _BablList BablList;
 #include "babl-class.h"
 #include "babl-introspect.h"
 #include "babl-version.h"
-#include "babl-type.h"
-#include "babl-sampling.h"
-#include "babl-component.h"
-#include "babl-model.h"
-#include "babl-format.h"
-#include "babl-image.h"
-#include "babl-conversion.h"
-#include "babl-fish.h"
-#include "babl-extension.h"
+#include "babl-classes.h"
 
-/* This union can be used for convenient access to any field without the need
- * to case if the variable already is of the type Babl *
- */
-typedef union _Babl
-{
-  BablClassType     class_type;
-  BablInstance      instance;
-  BablType          type;
-  BablSampling      sampling;
-  BablComponent     component;
-  BablModel         model;
-  BablFormat        format;
-  BablConversion    conversion;
-  BablImage         image;
-  BablFish          fish;
-  BablFishReference fish_reference;
-  BablFishSimple    fish_simple;
-  BablFishPath      fish_path;
-  BablExtension     extension;
-} _Babl;
 
 #endif
