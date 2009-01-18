@@ -23,6 +23,6 @@ main (int    argc,
       char **argv)
 {
   babl_init ();
-  babl_destroy ();
+  babl_exit ();
   return 0;
 }

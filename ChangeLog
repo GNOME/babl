@@ -1,5 +1,30 @@
 2009-01-18  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Do a s/babl_destroy/babl_exit since 'destroy' is better paired
+	with a 'create' and other libraries also use the 'init'/'exit'
+	pair, including GEGL. Keep a define for babl_destroy unless
+	BABL_DISABLE_DEPRECATED is defined.
+
+	* babl/babl-main.h
+	* babl/babl.c
+	* tests/babl-html-dump.c
+	* tests/babl_class_name.c
+	* tests/babl_fish_path_dhtml.c
+	* tests/babl_fish_path_fitness.c
+	* tests/conversions.c
+	* tests/formats.c
+	* tests/grayscale_to_rgb.c
+	* tests/introspect.c
+	* tests/models.c
+	* tests/nop.c
+	* tests/rgb_to_bgr.c
+	* tests/rgb_to_ycbcr.c
+	* tests/sanity.c
+	* tests/srgb_to_lab_u8.c
+	* tests/types.c
+
+2009-01-18  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* babl/babl-classes.h: New file collecting the type constants,
 	includes and the union for the babl classes. When adding a new
 	class this is the only installed header file that requires

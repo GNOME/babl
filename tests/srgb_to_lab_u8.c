@@ -71,6 +71,6 @@ main (int    argc,
   babl_init ();
   if (test ())
     return -1;
-  babl_destroy ();
+  babl_exit ();
   return 0;
 }

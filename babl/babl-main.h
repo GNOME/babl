@@ -23,13 +23,24 @@
 #error  this file is only to be included by babl.h
 #endif
 
-/** Initialize the babl library */
+/**
+ * Initialize the babl library
+ */
 void   babl_init       (void);
 
-/** Deinitialize the babl library (frees any resources used, if the number
- *  of calls to babl_destroy() is is equal to the number of calls to
- *  babl_init()
+/**
+ * Deinitialize the babl library (frees any resources used, if the
+ * number of calls to babl_exit() is is equal to the number of calls
+ * to babl_init()
  */
-void   babl_destroy    (void);
+void   babl_exit       (void);
+
+
+#ifndef BABL_DISABLE_DEPRECATED
+
+#define babl_destroy babl_exit
+
+#endif /* BABL_DISABLE_DEPRECATED */
+
 
 #endif

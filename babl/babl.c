@@ -46,7 +46,7 @@ babl_init (void)
 }
 
 void
-babl_destroy (void)
+babl_exit (void)
 {
   if (!-- ref_count)
     {

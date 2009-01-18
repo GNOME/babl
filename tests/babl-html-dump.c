@@ -79,7 +79,7 @@ main (void)
    printf ("</div>\n");
    printf ("</div>\n");
  */
-  babl_destroy ();
+  babl_exit ();
 
   return 0;
 }

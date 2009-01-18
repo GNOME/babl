@@ -25,6 +25,6 @@ main (int    argc,
   babl_init ();
   if (!babl_sanity ())
     return -1;
-  babl_destroy ();
+  babl_exit ();
   return 0;
 }

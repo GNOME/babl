@@ -89,7 +89,7 @@ int main (void)
   /*printf ("ok / total : %i %i %f\n", ok, total, (1.0*ok) / total);
    */
 
-  babl_destroy ();
+  babl_exit ();
 
   return 0;
 }
