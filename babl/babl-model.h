@@ -37,12 +37,6 @@ BABL_NAMED_CLASS_DECLARE (model);
  *
  */
 
-#ifndef BABL_DISABLE_DEPRECATED
-
-#define babl_model babl_model_from_name
-
-#endif /* BABL_DISABLE_DEPRECATED */
-
 
 typedef struct
 {

@@ -182,9 +182,9 @@ static Babl *double_vector_format (void)
 
   if (!self)
     self = babl_format_new (
-      babl_model_from_name ("Y"),
-      babl_type_from_name ("double"),
-      babl_component_from_name ("Y"),
+      babl_model ("Y"),
+      babl_type ("double"),
+      babl_component ("Y"),
       NULL);
   return self;
 }
@@ -206,9 +206,9 @@ babl_type_is_symmetric (Babl *babl)
   test_init (0.0, 182.0);
 
   ref_fmt = double_vector_format ();
-  fmt     = babl_format_new (babl_model_from_name ("Y"),
+  fmt     = babl_format_new (babl_model ("Y"),
                              babl,
-                             babl_component_from_name ("Y"),
+                             babl_component ("Y"),
                              NULL);
   fish_to   = babl_fish_reference (ref_fmt, fmt);
   fish_from = babl_fish_reference (fmt, ref_fmt);

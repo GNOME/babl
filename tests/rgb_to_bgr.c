@@ -44,19 +44,19 @@ test (void)
 
   fish = babl_fish (
     babl_format_new (
-      babl_model_from_name ("RGB"),
-      babl_type_from_name ("u8"),
-      babl_component_from_name ("R"),
-      babl_component_from_name ("G"),
-      babl_component_from_name ("B"),
+      babl_model ("RGB"),
+      babl_type ("u8"),
+      babl_component ("R"),
+      babl_component ("G"),
+      babl_component ("B"),
       NULL
     ),
     babl_format_new (
-      babl_model_from_name ("RGB"),
-      babl_type_from_name ("u8"),
-      babl_component_from_name ("B"),
-      babl_component_from_name ("G"),
-      babl_component_from_name ("R"),
+      babl_model ("RGB"),
+      babl_type ("u8"),
+      babl_component ("B"),
+      babl_component ("G"),
+      babl_component ("R"),
       NULL
     )
          );

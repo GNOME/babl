@@ -198,7 +198,7 @@ babl_image_new (void *first,
         }
       else
         {
-          new_component = (BablComponent *) babl_component_from_name (arg);
+          new_component = (BablComponent *) babl_component (arg);
         }
 
       /* FIXME: add error checking */

@@ -527,63 +527,63 @@ int
 init (void)
 {
   Babl *rgbaF = babl_format_new (
-    babl_model_from_name ("RGBA"),
-    babl_type_from_name ("float"),
-    babl_component_from_name ("R"),
-    babl_component_from_name ("G"),
-    babl_component_from_name ("B"),
-    babl_component_from_name ("A"),
+    babl_model ("RGBA"),
+    babl_type ("float"),
+    babl_component ("R"),
+    babl_component ("G"),
+    babl_component ("B"),
+    babl_component ("A"),
     NULL);
   Babl *rgbAF = babl_format_new (
-    babl_model_from_name ("RaGaBaA"),
-    babl_type_from_name ("float"),
-    babl_component_from_name ("Ra"),
-    babl_component_from_name ("Ga"),
-    babl_component_from_name ("Ba"),
-    babl_component_from_name ("A"),
+    babl_model ("RaGaBaA"),
+    babl_type ("float"),
+    babl_component ("Ra"),
+    babl_component ("Ga"),
+    babl_component ("Ba"),
+    babl_component ("A"),
     NULL);
 
   Babl *lrgba8 = babl_format_new (
-    babl_model_from_name ("RGBA"),
-    babl_type_from_name ("u8"),
-    babl_component_from_name ("R"),
-    babl_component_from_name ("G"),
-    babl_component_from_name ("B"),
-    babl_component_from_name ("A"),
+    babl_model ("RGBA"),
+    babl_type ("u8"),
+    babl_component ("R"),
+    babl_component ("G"),
+    babl_component ("B"),
+    babl_component ("A"),
     NULL);
 
   Babl *rgba8 = babl_format_new (
-    babl_model_from_name ("R'G'B'A"),
-    babl_type_from_name ("u8"),
-    babl_component_from_name ("R'"),
-    babl_component_from_name ("G'"),
-    babl_component_from_name ("B'"),
-    babl_component_from_name ("A"),
+    babl_model ("R'G'B'A"),
+    babl_type ("u8"),
+    babl_component ("R'"),
+    babl_component ("G'"),
+    babl_component ("B'"),
+    babl_component ("A"),
     NULL);
   Babl *bgrA8 = babl_format_new (
     "name", "B'aG'aR'aA u8",
-    babl_model_from_name ("R'aG'aB'aA"),
-    babl_type_from_name ("u8"),
-    babl_component_from_name ("B'a"),
-    babl_component_from_name ("G'a"),
-    babl_component_from_name ("R'a"),
-    babl_component_from_name ("A"),
+    babl_model ("R'aG'aB'aA"),
+    babl_type ("u8"),
+    babl_component ("B'a"),
+    babl_component ("G'a"),
+    babl_component ("R'a"),
+    babl_component ("A"),
     NULL);
   Babl *rgb8 = babl_format_new (
-    babl_model_from_name ("R'G'B'"),
-    babl_type_from_name ("u8"),
-    babl_component_from_name ("R'"),
-    babl_component_from_name ("G'"),
-    babl_component_from_name ("B'"),
+    babl_model ("R'G'B'"),
+    babl_type ("u8"),
+    babl_component ("R'"),
+    babl_component ("G'"),
+    babl_component ("B'"),
     NULL);
   Babl *sdl32 = babl_format_new (
     "name", "B'aG'aR'aPAD u8",
-    babl_model_from_name ("R'G'B'"),
-    babl_type_from_name ("u8"),
-    babl_component_from_name ("B'"),
-    babl_component_from_name ("G'"),
-    babl_component_from_name ("R'"),
-    babl_component_from_name ("PAD"),
+    babl_model ("R'G'B'"),
+    babl_type ("u8"),
+    babl_component ("B'"),
+    babl_component ("G'"),
+    babl_component ("R'"),
+    babl_component ("PAD"),
     NULL);
 
   table_init ();

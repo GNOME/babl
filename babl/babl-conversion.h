@@ -34,12 +34,6 @@ BABL_NAMED_CLASS_DECLARE (conversion);
  *                              NULL);
  */
 
-#ifndef BABL_DISABLE_DEPRECATED
-
-#define babl_conversion babl_conversion_from_name
-
-#endif /* BABL_DISABLE_DEPRECATED */
-
 
 /* Type and Format */
 typedef long (*BablFuncLinear)    (char  *src,

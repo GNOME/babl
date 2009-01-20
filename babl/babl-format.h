@@ -44,12 +44,6 @@ BABL_NAMED_CLASS_DECLARE (format);
  * name is used.
  */
 
-#ifndef BABL_DISABLE_DEPRECATED
-
-#define babl_format babl_format_from_name
-
-#endif /* BABL_DISABLE_DEPRECATED */
-
 
 typedef struct
 {

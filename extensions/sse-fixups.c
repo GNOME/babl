@@ -175,27 +175,27 @@ init (void)
 #if defined(__GNUC__) && (__GNUC__ >= 4) && defined(USE_SSE) && defined(USE_MMX)
 
   Babl *rgbaF_linear = babl_format_new (
-    babl_model_from_name ("RGBA"),
-    babl_type_from_name ("float"),
-    babl_component_from_name ("R"),
-    babl_component_from_name ("G"),
-    babl_component_from_name ("B"),
-    babl_component_from_name ("A"),
+    babl_model ("RGBA"),
+    babl_type ("float"),
+    babl_component ("R"),
+    babl_component ("G"),
+    babl_component ("B"),
+    babl_component ("A"),
     NULL);
   Babl *rgba8_linear = babl_format_new (
-    babl_model_from_name ("RGBA"),
-    babl_type_from_name ("u8"),
-    babl_component_from_name ("R"),
-    babl_component_from_name ("G"),
-    babl_component_from_name ("B"),
-    babl_component_from_name ("A"),
+    babl_model ("RGBA"),
+    babl_type ("u8"),
+    babl_component ("R"),
+    babl_component ("G"),
+    babl_component ("B"),
+    babl_component ("A"),
     NULL);
   Babl *rgb8_linear = babl_format_new (
-    babl_model_from_name ("RGB"),
-    babl_type_from_name ("u8"),
-    babl_component_from_name ("R"),
-    babl_component_from_name ("G"),
-    babl_component_from_name ("B"),
+    babl_model ("RGB"),
+    babl_type ("u8"),
+    babl_component ("R"),
+    babl_component ("G"),
+    babl_component ("B"),
     NULL);
 
   if ((babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_MMX) &&

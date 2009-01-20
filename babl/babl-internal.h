@@ -239,7 +239,7 @@ babl_##klass##_class_for_each (BablEachFunction  each_fun,    \
 BABL_CLASS_MINIMAL_IMPLEMENT(klass)                           \
                                                               \
 Babl *                                                        \
-babl_##klass##_from_name (const char *name)                   \
+babl_##klass (const char *name)                               \
 {                                                             \
   Babl *babl;                                                 \
                                                               \

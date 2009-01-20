@@ -38,12 +38,6 @@ BABL_NAMED_CLASS_DECLARE (type);
  *                         NULL);
  */
 
-#ifndef BABL_DISABLE_DEPRECATED
-
-#define babl_type babl_type_from_name
-
-#endif /* BABL_DISABLE_DEPRECATED */
-
 
 typedef struct
 {

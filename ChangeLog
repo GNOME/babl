@@ -1,5 +1,38 @@
 2009-01-18  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Since babl_foo_from_id() will not be part of the public API we can
+	revert to having the short variant babl_foo() instead of
+	babl_foo_from_name().
+
+	* babl/babl-class.h
+	* babl/babl-component.h
+	* babl/babl-conversion.c
+	* babl/babl-conversion.h
+	* babl/babl-extension.h
+	* babl/babl-fish-path.c
+	* babl/babl-fish.c
+	* babl/babl-format.c
+	* babl/babl-format.h
+	* babl/babl-image.c
+	* babl/babl-internal.h
+	* babl/babl-model.c
+	* babl/babl-model.h
+	* babl/babl-type.c
+	* babl/babl-type.h
+	* extensions/CIE-Lab.c
+	* extensions/frequency.c
+	* extensions/gegl-fixups.c
+	* extensions/gggl-lies.c
+	* extensions/gggl.c
+	* extensions/gimp-8bit.c
+	* extensions/naive-CMYK.c
+	* extensions/sse-fixups.c
+	* tests/grayscale_to_rgb.c
+	* tests/rgb_to_bgr.c
+	* tests/rgb_to_ycbcr.c
+
+2009-01-18  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Add include guards.
 
 	* babl/babl-component.h

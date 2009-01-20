@@ -59,57 +59,57 @@ init (void)
 
   babl_model_new (
                   "name", "frequency",
-                  babl_component_from_name ("Rr"),
-                  babl_component_from_name ("Gr"),
-                  babl_component_from_name ("Br"),
-                  babl_component_from_name ("Ar"),
-                  babl_component_from_name ("Ri"),
-                  babl_component_from_name ("Gi"),
-                  babl_component_from_name ("Bi"),
-                  babl_component_from_name ("Ai"),
+                  babl_component ("Rr"),
+                  babl_component ("Gr"),
+                  babl_component ("Br"),
+                  babl_component ("Ar"),
+                  babl_component ("Ri"),
+                  babl_component ("Gi"),
+                  babl_component ("Bi"),
+                  babl_component ("Ai"),
                   NULL
                   );
 
   babl_conversion_new (
-                       babl_model_from_name ("RGBA"),
-                       babl_model_from_name ("frequency"),
+                       babl_model ("RGBA"),
+                       babl_model ("frequency"),
                        "linear", rgba_to_frequency,
                        NULL
                        );
 
   babl_conversion_new (
-                       babl_model_from_name ("frequency"),
-                       babl_model_from_name ("RGBA"),
+                       babl_model ("frequency"),
+                       babl_model ("RGBA"),
                        "linear", frequency_to_rgba,
                        NULL
                        );
 
   babl_format_new (
                    "name", "frequency float",
-                   babl_model_from_name ("frequency"),
-                   babl_component_from_name ("Rr"),
-                   babl_component_from_name ("Gr"),
-                   babl_component_from_name ("Br"),
-                   babl_component_from_name ("Ar"),
-                   babl_component_from_name ("Ri"),
-                   babl_component_from_name ("Gi"),
-                   babl_component_from_name ("Bi"),
-                   babl_component_from_name ("Ai"),
+                   babl_model ("frequency"),
+                   babl_component ("Rr"),
+                   babl_component ("Gr"),
+                   babl_component ("Br"),
+                   babl_component ("Ar"),
+                   babl_component ("Ri"),
+                   babl_component ("Gi"),
+                   babl_component ("Bi"),
+                   babl_component ("Ai"),
                    NULL
                    );
 
   babl_format_new (
                    "name", "frequency double",
-                   babl_model_from_name ("frequency"),
-                   babl_type_from_name ("double"),
-                   babl_component_from_name ("Rr"),
-                   babl_component_from_name ("Gr"),
-                   babl_component_from_name ("Br"),
-                   babl_component_from_name ("Ar"),
-                   babl_component_from_name ("Ri"),
-                   babl_component_from_name ("Gi"),
-                   babl_component_from_name ("Bi"),
-                   babl_component_from_name ("Ai"),
+                   babl_model ("frequency"),
+                   babl_type ("double"),
+                   babl_component ("Rr"),
+                   babl_component ("Gr"),
+                   babl_component ("Br"),
+                   babl_component ("Ar"),
+                   babl_component ("Ri"),
+                   babl_component ("Gi"),
+                   babl_component ("Bi"),
+                   babl_component ("Ai"),
                    NULL
                    );
     

@@ -51,7 +51,7 @@ void   babl_##klass##_class_for_each (BablEachFunction  each_fun,  \
 #define BABL_NAMED_CLASS_DECLARE(klass)                        \
                                                                \
 BABL_CLASS_DECLARE (klass);                                    \
-Babl * babl_##klass##_from_name (const char       *name);      \
+Babl * babl_##klass             (const char       *name);      \
 Babl * babl_##klass##_new       (void             *first_arg,  \
                                   ...) BABL_ARG_NULL_TERMINATED
 
