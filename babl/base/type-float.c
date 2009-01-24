@@ -20,6 +20,7 @@
 #include <assert.h>
 
 #include "babl.h"
+#include "babl-classes.h"
 #include "babl-ids.h"
 #include "babl-base.h"
 

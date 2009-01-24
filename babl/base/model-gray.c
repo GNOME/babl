@@ -18,6 +18,7 @@
 
 #include <stdlib.h>
 
+#include "babl-classes.h"
 #include "babl.h"
 #include "babl-ids.h"
 #include "util.h"

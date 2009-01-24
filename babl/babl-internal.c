@@ -132,7 +132,7 @@ babl_internal_destroy (void)
 
 
 const char *
-babl_name (const Babl *babl)
+babl_get_name (const Babl *babl)
 {
   babl_assert (BABL_IS_BABL (babl));
   return babl->instance.name;

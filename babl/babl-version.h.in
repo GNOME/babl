@@ -19,6 +19,11 @@
 #ifndef _BABL_VERSION_H
 #define _BABL_VERSION_H
 
+#ifndef BABL_INSIDE_BABL_H
+#error "babl-version.h must not be included directly, include babl.h instead."
+#endif
+
+
 /***
  * babl version information
  *

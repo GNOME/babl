@@ -19,31 +19,7 @@
 #ifndef _BABL_FORMAT_H
 #define _BABL_FORMAT_H
 
-#ifndef _BABL_H
-#error  this file is only to be included by babl.h
-#endif
-
-/****************************************************************/
-/* BablFormat */
 BABL_NAMED_CLASS_DECLARE (format);
-/*
- * Babl * babl_format_new (["name", const char *name,]
- *                          BablModel          *model,
- *                         [BablType           *type,]
- *                         [BablSampling,      *sampling,]
- *                          BablComponent      *component1,
- *                        [[BablType           *type,]
- *                         [BablSampling       *sampling,]
- *                          BablComponent      *componentN,
- *                        ...]
- *                          ["planar",]
- *                          NULL);
- *
- * Provided BablType and|or BablSampling is valid for the following
- * components as well. If no name is provided a (long) descriptive
- * name is used.
- */
-
 
 typedef struct
 {

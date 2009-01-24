@@ -19,16 +19,8 @@
 #ifndef _BABL_SAMPLING_H
 #define _BABL_SAMPLING_H
 
-#ifndef _BABL_H
-#error  this file is only to be included by babl.h 
-#endif
-
-/****************************************************************/
-/* BablSampling */
 BABL_CLASS_DECLARE (sampling);
-/**/
-Babl * babl_sampling       (int horizontal,
-                            int vertical);
+
 typedef struct
 {
   BablInstance     instance;

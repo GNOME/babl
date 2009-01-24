@@ -41,8 +41,8 @@ h_sources  =             		\
 	babl-internal.h			\
 	babl-introspect.h		\
 	babl-macros.h			\
-	babl-main.h			\
 	babl-memory.h			\
+	babl-types.h                    \
 	babl-util.h			\
 	babl.h				\
 	babl-list.h			\
@@ -51,22 +51,10 @@ h_sources  =             		\
 
 library_includedir=$(includedir)/babl-$(BABL_API_VERSION)/babl
 library_include_HEADERS =		\
-	babl.h				\
-	babl-class.h			\
-	babl-classes.h			\
-	babl-component.h		\
-	babl-conversion.h		\
-	babl-extension.h		\
-	babl-fish.h			\
-	babl-format.h			\
-	babl-image.h			\
-	babl-introspect.h		\
 	babl-macros.h			\
-	babl-main.h			\
-	babl-model.h			\
-	babl-sampling.h 		\
-	babl-type.h                     \
-	babl-version.h
+	babl-types.h                    \
+	babl-version.h			\
+	babl.h
 
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/babl/base
 

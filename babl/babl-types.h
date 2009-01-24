@@ -16,18 +16,34 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _BABL_MACROS_H
-#define _BABL_MACROS_H
+#ifndef _BABL_TYPES_H
+#define _BABL_TYPES_H
 
 #ifndef BABL_INSIDE_BABL_H
 #error "babl-version.h must not be included directly, include babl.h instead."
 #endif
 
 
-#if     __GNUC__ >= 4
-#define BABL_ARG_NULL_TERMINATED __attribute__((__sentinel__))
-#else
-#define BABL_ARG_NULL_TERMINATED
-#endif
+/**
+ * The babl API is based around polymorphism and almost everything is
+ * a Babl object.
+ */
+typedef union _Babl Babl;
+
+/* Conversion function between linear data of a either a data types or
+ * color formats.
+ */
+typedef long (*BablFuncLinear)    (char  *src,
+                                   char  *dst,
+                                   long   n);
+
+/* TypePlanar,ModelPlanar and FormatPlanar */
+typedef long (*BablFuncPlanar)    (int    src_bands,
+                                   char  *src[],
+                                   int    src_pitch[],
+                                   int    dst_bands,
+                                   char  *dst[],
+                                   int    dst_pitch[],
+                                   long   n);
 
 #endif

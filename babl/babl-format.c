@@ -328,6 +328,59 @@ babl_formats_count (void)
   return babl_db_count (db);
 }
 
+int
+babl_format_has_alpha (const Babl *format)
+{
+  int i;
+  int has_alpha = 0;
+
+  for (i = 0; i < babl_format_get_num_of_components (format); i++)
+    {
+      if (format->format.component[i]->alpha)
+        {
+          has_alpha = 1;
+          break;
+        }
+    }
+
+  return has_alpha;
+}
+
+int
+babl_format_get_bytes_per_pixel (const Babl *format)
+{
+  if (format->class_type == BABL_FORMAT)
+    {
+      return format->format.bytes_per_pixel;
+    }
+
+  return 0;
+}
+
+int
+babl_format_get_num_of_components (const Babl *format)
+{
+  if (format->class_type == BABL_FORMAT)
+    {
+      return format->format.components;
+    }
+
+  return 0;
+}
+
+Babl *
+babl_format_get_type (const Babl *format,
+                      int         component_index)
+{
+  if (format->class_type == BABL_FORMAT &&
+      component_index >= 0 &&
+      component_index < format->format.components)
+    {
+      return (Babl *)format->format.type[component_index];
+    }
+
+  return NULL;
+}
 
 Babl *
 babl_format_with_model_as_type (Babl *model,

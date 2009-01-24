@@ -1,3 +1,70 @@
+2009-01-24  Martin Nordholts  <martinn@svn.gnome.org>
+
+	Do a complete overhaul of the babl API.
+
+	* babl/babl.h: Instead of including subsystem headers, declare the
+	functions part of the API directly in the header. The public
+	types, macros and the version header is still pulled in as
+	includes but with inclusion guards that prevent them from being
+	included separately by clients. Notable things removed from the
+	API is internal class functions and the class instance structs.
+
+	(babl_format_has_alpha)
+	(babl_format_get_bytes_per_pixel)
+	(babl_format_get_num_of_components)
+	(babl_format_get_type): New getters to allow the Babl union to
+	become opaque for clients.
+
+	* babl/babl-types.h: New file with public types. Currently only
+	the opaque Babl union and the linear and planar conversion
+	function prototypes (which are not used in the API due to the use
+	of varags but still part of the API for reference) are there. Make
+	sure it's only included indirectly through babl.h.
+
+	* babl/babl-macros.h
+	* babl/babl-version.h.in: Make sure these are not included
+	directly, only indirectly through babl.h.
+
+	* babl/babl-main.h: Removed, function declarations are in babl.h
+	now.
+
+	* babl/babl-internal.h: Include the headers we now consider
+	internal, mostly the different class headers.
+
+	* babl/babl-class.h: The "named class" function declarations are
+	now in the public header so move them away from this internal
+	header.
+
+	* babl/babl-image.h
+	* babl/babl-format.h
+	* babl/babl-fish.h
+	* babl/babl-extension.h
+	* babl/babl-conversion.h
+	* babl/babl-component.h
+	* babl/babl-classes.h
+	* babl/babl-introspect.h
+	* babl/babl-sampling.h
+	* babl/babl-model.h
+	* babl/babl-type.h: Adapt to above changes, move relevant things to babl.h
+
+	* babl/base/formats.c
+	* babl/base/model-gray.c
+	* babl/base/model-rgb.c
+	* babl/base/model-ycbcr.c
+	* babl/base/type-float.c: Explicitly #include "babl-classes.h".
+
+	* babl/babl-internal.c: s/babl_name/babl_get_name/
+
+	* babl/babl-format.c
+	(babl_format_has_alpha)
+	(babl_format_get_bytes_per_pixel)
+	(babl_format_get_num_of_components)
+	(babl_format_get_type): Implement these.
+
+	* babl/Makefile.am: Don't install the now internal headers and
+	add, remove and install the other headers according to above
+	changes.
+
 2009-01-18  Martin Nordholts  <martinn@svn.gnome.org>
 
 	Since babl_foo_from_id() will not be part of the public API we can

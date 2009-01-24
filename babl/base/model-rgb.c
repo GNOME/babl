@@ -20,6 +20,7 @@
 #include <math.h>
 
 #include "babl.h"
+#include "babl-classes.h"
 #include "babl-ids.h"
 #include "util.h"
 #include "babl-base.h"

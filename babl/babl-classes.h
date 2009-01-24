@@ -19,10 +19,7 @@
 #ifndef _BABL_CLASSES_H
 #define _BABL_CLASSES_H
 
-#ifndef _BABL_H
-#error  this file is only to be included by babl.h
-#endif
-
+#include "babl-class.h"
 
 /* magic number used at the start of all babl objects, used to do
  * differentiation in polymorphic functions. (as well as manual type

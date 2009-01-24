@@ -19,9 +19,6 @@
 #ifndef _BABL_IMAGE_H
 #define _BABL_IMAGE_H
 
-#ifndef _BABL_H
-#error  this file is only to be included by babl.h
-#endif
 
 /****************************************************************/
 /* BablImage */

@@ -19,9 +19,6 @@
 #ifndef _BABL_EXTENSION_H
 #define _BABL_EXTENSION_H
 
-#ifndef _BABL_H
-#error  this file is only to be included by babl.h
-#endif
 
 /****************************************************************/
 /* BablExtension */
@@ -29,6 +26,8 @@ BABL_NAMED_CLASS_DECLARE (extension);
 /*
  * BablExtension objects are only used internally in babl.
  */
+
+Babl * babl_extension (const char *name);
 
 
 typedef struct

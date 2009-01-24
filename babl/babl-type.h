@@ -19,25 +19,7 @@
 #ifndef _BABL_TYPE_H
 #define _BABL_TYPE_H
 
-#ifndef _BABL_H
-#error  this file is only to be included by babl.h
-#endif
-
-/****************************************************************/
-/* BablType */
 BABL_NAMED_CLASS_DECLARE (type);
-/*
- * A data type that babl can have in it's buffers, requires
- * conversions to and from "double" to be registered before
- * passing sanity.
- *
- * Babl * babl_type_new (  const char *name,
- *                         "bits",     int bits,
- *                         ["min_val", double min_val,]
- *                         ["max_val", double max_val,]
- *                         NULL);
- */
-
 
 typedef struct
 {

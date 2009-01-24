@@ -19,20 +19,6 @@
 #ifndef _BABL_INTROSPECT_H
 #define _BABL_INTROSPECT_H
 
-#ifndef _BABL_H
-#error  this file is only to be included by babl.h
-#endif
-
-
-/**
- * babl_name:
- *
- * Return a string decsribing a BablInstance, might work better than
- * babl->instance.name when a good human readable name is desired.
- *
- * Returns: a name describing the instance.
- */
-const char * babl_name       (const Babl *babl);
 
 void         babl_introspect (Babl       *babl); /* introspect a given BablObject     */
 

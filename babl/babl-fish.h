@@ -19,27 +19,10 @@
 #ifndef _BABL_FISH_H
 #define _BABL_FISH_H
 
-#ifndef _BABL_H
-#error  this file is only to be included by babl.h 
-#endif
 
 /****************************************************************/
 /* BablFish */
 BABL_CLASS_DECLARE (fish);
-/*  Create a babl fish capable of converting from source_format to
- *  destination_format, source and destination can be
- *  either strings with the names of the formats or BablFormat objects.
- */
-Babl * babl_fish       (const void *source_format,
-                        const void *destination_format);
-
-/** Process n pixels from source to destination using babl_fish,
- *  returns number of pixels converted. 
- */
-long   babl_process    (Babl *babl_fish,
-                        void *source,
-                        void *destination,
-                        long  n);
 
 /* BablFish, common base class for various fishes.
  */

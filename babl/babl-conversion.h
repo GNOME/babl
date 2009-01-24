@@ -19,26 +19,11 @@
 #ifndef _BABL_CONVERSION_H
 #define _BABL_CONVERSION_H
 
-#ifndef _BABL_H
-#error  this file is only to be included by babl.h
-#endif
-
-/****************************************************************/
-/* BablConversion */
 BABL_NAMED_CLASS_DECLARE (conversion);
-/*
- * Babl * babl_conversion_new (<BablFormat *source, BablFormat *destination|
- *                              BablModel  *source, BablModel  *destination|
- *                              BablType   *source, BablType   *destination>,
- *                             <"linear"|"planar">, BablConversionFunc conv_func,
- *                              NULL);
- */
+
+Babl * babl_conversion (const char *name);
 
 
-/* Type and Format */
-typedef long (*BablFuncLinear)    (char  *src,
-                                   char  *dst,
-                                   long   n);
 
 /* Signature of functions registered for reference type
  * conversions,
@@ -49,14 +34,6 @@ typedef long (*BablFuncPlane)     (char  *src,
                                    int    dst_pitch,
                                    long   n);
 
-/* TypePlanar,ModelPlanar and FormatPlanar */
-typedef long (*BablFuncPlanar)    (int    src_bands,
-                                   char  *src[],
-                                   int    src_pitch[],
-                                   int    dst_bands,
-                                   char  *dst[],
-                                   int    dst_pitch[],
-                                   long   n);
 
 typedef struct
 BablConversion {

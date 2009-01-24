@@ -19,13 +19,12 @@
 #ifndef _BABL_CLASS_H
 #define _BABL_CLASS_H
 
-#ifndef _BABL_H
-#error  this file is only to be included by babl.h
-#endif
+#include "babl.h"
+
+
+typedef struct _BablList BablList;
 
 typedef int BablClassType;
-
-typedef union _Babl Babl;
 
 typedef int  (*BablEachFunction) (Babl *entry,
                                   void *data);
@@ -42,18 +41,17 @@ void   babl_##klass##_class_destroy  (void);                       \
 void   babl_##klass##_class_for_each (BablEachFunction  each_fun,  \
                                       void             *user_data)
 
-/* creates a class that has a specific name connected to it, that
- * also allows defining a new instance. These classes share common
- * functionality with the non_name classes but have two extra methods,
- * the means to lookup by name, as well as to create new named objects
- * that later can be looked up.
+/* If a class is declared as a "named class" it means it is a class
+ * that has a specific name connected to it, that also allows defining
+ * a new instance. These classes share common functionality with the
+ * non_name classes but have two extra methods, the means to lookup by
+ * name, as well as to create new named objects that later can be
+ * looked up. These methods are babl_klass() babl_klass_new() but they
+ * are declared outside of this macro.
  */
-#define BABL_NAMED_CLASS_DECLARE(klass)                        \
-                                                               \
-BABL_CLASS_DECLARE (klass);                                    \
-Babl * babl_##klass             (const char       *name);      \
-Babl * babl_##klass##_new       (void             *first_arg,  \
-                                  ...) BABL_ARG_NULL_TERMINATED
+#define BABL_NAMED_CLASS_DECLARE(klass) \
+BABL_CLASS_DECLARE (klass)
+
 
 /* common header for any item inserted into database, the actual
  * implementation of babl-instance is in babl-internal

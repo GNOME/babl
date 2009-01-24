@@ -38,6 +38,9 @@
 
 #include "config.h"
 
+#include "babl-class.h"
+#include "babl-classes.h"
+#include "babl-introspect.h"
 #include "babl-list.h"
 #include "babl-hash-table.h"
 #include "babl-db.h"

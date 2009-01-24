@@ -19,18 +19,10 @@
 #ifndef _BABL_COMPONENT_H
 #define _BABL_COMPONENT_H
 
-#ifndef _BABL_H
-#error  this file is only to be included by babl.h
-#endif
-
 
 /****************************************************************/
 /* BablComponent */
 BABL_NAMED_CLASS_DECLARE (component);
-/*
- * Babl * babl_component_new (const char *name,
- *                            NULL);
- */
 
 
 typedef struct
