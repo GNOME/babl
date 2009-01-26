@@ -1,3 +1,10 @@
+2009-01-26  Sven Neumann  <sven@gimp.org>
+
+	* babl/babl.h
+	* babl/babl-format.c: renamed babl_format_get_num_of_components()
+	to babl_format_get_n_components().
+	(babl_format_has_alpha): changed accordingly.
+
 2009-01-24  Martin Nordholts  <martinn@svn.gnome.org>
 
 	Do a complete overhaul of the babl API.

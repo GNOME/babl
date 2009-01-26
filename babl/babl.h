@@ -103,7 +103,7 @@ int          babl_format_get_bytes_per_pixel   (const Babl *format);
 /**
  * Returns the number of components for the given @format.
  */
-int          babl_format_get_num_of_components (const Babl *format);
+int          babl_format_get_n_components      (const Babl *format);
 
 /**
  * Returns the type in the given @format for the given

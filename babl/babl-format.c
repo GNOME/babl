@@ -331,19 +331,18 @@ babl_formats_count (void)
 int
 babl_format_has_alpha (const Babl *format)
 {
+  int n = babl_format_get_n_components (format);
   int i;
-  int has_alpha = 0;
 
-  for (i = 0; i < babl_format_get_num_of_components (format); i++)
+  for (i = 0; i < n; i++)
     {
       if (format->format.component[i]->alpha)
         {
-          has_alpha = 1;
-          break;
+          return 1;
         }
     }
 
-  return has_alpha;
+  return 0;
 }
 
 int
@@ -358,7 +357,7 @@ babl_format_get_bytes_per_pixel (const Babl *format)
 }
 
 int
-babl_format_get_num_of_components (const Babl *format)
+babl_format_get_n_components (const Babl *format)
 {
   if (format->class_type == BABL_FORMAT)
     {
