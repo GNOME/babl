@@ -1,3 +1,7 @@
+2009-02-20  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* babl/babl.h: Include headers in babl.h as system headers
+
 2009-01-26  Sven Neumann  <sven@gimp.org>
 
 	* babl/babl.h

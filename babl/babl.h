@@ -20,9 +20,9 @@
 #define _BABL_H
 
 #define BABL_INSIDE_BABL_H
-#include "babl-version.h"
-#include "babl-macros.h"
-#include "babl-types.h"
+#include <babl/babl-macros.h>
+#include <babl/babl-types.h>
+#include <babl/babl-version.h>
 #undef BABL_INSIDE_BABL_H
 
 
