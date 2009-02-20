@@ -1,0 +1,7 @@
+/Makefile
+/Makefile.in
+/.deps
+/*.lo
+/*.la
+/.libs
+/babl-version.h
