@@ -28,7 +28,6 @@
  */
 
 #include "config.h"
-
 #include <string.h>
 #include <signal.h>
 #include <setjmp.h>

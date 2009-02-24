@@ -16,6 +16,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include "config.h"
 #include "babl-base.h"
 
 extern int babl_hmpf_on_name_lookups;

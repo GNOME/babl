@@ -19,6 +19,10 @@
 #ifndef _BABL_INTERNAL_H
 #define _BABL_INTERNAL_H
 
+#ifndef BABL_LIBRARY
+#error "config.h must be included prior to babl-internal.h"
+#endif
+
 #ifdef _BABL_H
 #error babl-internal.h included after babl.h
 #endif
@@ -35,8 +39,6 @@
 #undef  _BABL_INTERNAL_H
 #include "babl.h"
 #define _BABL_INTERNAL_H
-
-#include "config.h"
 
 #include "babl-class.h"
 #include "babl-classes.h"

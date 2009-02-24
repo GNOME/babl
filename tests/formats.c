@@ -1,6 +1,7 @@
 /* perform a symmetricality of conversion test on a set of randomized
  * RGBA data */
 
+#include "config.h"
 #include <stdlib.h>
 #include <math.h>
 #include "babl-internal.h"

@@ -1,3 +1,12 @@
+2009-02-24  Sven Neumann  <sven@gimp.org>
+
+	* */*.c: based on a patch from Gary V. Vaughan, include "config.h"
+	before any other header file from all .c files.
+
+	* babl/babl-internal.h
+	* extensions/util.h: instead of including config.h from here, bail
+	out if it wasn't included beforehand.
+
 2009-02-20  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* babl/babl.h: Include headers in babl.h as system headers

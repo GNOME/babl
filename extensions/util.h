@@ -22,7 +22,9 @@
 #include <assert.h>
 #include <math.h>
 
-#include "config.h"
+#ifndef BABL_LIBRARY
+#error "config.h must be included prior to util.h"
+#endif
 
 #ifndef HAVE_RINT
 # define rint(f)  (floor (((double) (f)) + 0.5))

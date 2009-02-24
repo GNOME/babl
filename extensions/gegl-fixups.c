@@ -41,6 +41,7 @@
 
 #include <stdlib.h>
 
+#include "config.h"
 #include "babl.h"
 
 #include "base/util.h"

@@ -21,6 +21,7 @@
 #define VERTICAL_MIN      1
 #define VERTICAL_MAX      4
 
+#include "config.h"
 #include "babl-internal.h"
 
 static BablSampling sampling_db[(HORIZONTAL_MAX - HORIZONTAL_MIN + 1) *

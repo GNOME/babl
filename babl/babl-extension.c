@@ -18,9 +18,7 @@
 
 #define BABL_DYNAMIC_EXTENSIONS
 
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
 
 #define BABL_PATH              LIBDIR BABL_DIR_SEPARATOR BABL_LIBRARY
 

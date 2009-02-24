@@ -16,6 +16,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include "config.h"
 #include "babl-internal.h"
 
 static int ref_count = 0;

@@ -20,6 +20,7 @@
  * Copyright (C) 2008, Jan Heller
  */
 
+#include "config.h"
 #include "babl-internal.h"
 
 #define BABL_HASH_TABLE_INITIAL_MASK   0x7F

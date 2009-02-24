@@ -23,6 +23,7 @@
 
 #define _BABL_DB_C
 
+#include "config.h"
 #include <string.h>
 #include "babl-internal.h"
 

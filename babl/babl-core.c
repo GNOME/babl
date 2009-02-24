@@ -15,6 +15,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include "config.h"
 #include <string.h>
 #include "babl-internal.h"
 #include "babl-ids.h"

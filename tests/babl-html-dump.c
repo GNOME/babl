@@ -17,6 +17,7 @@
  *
  */
 
+#include "config.h"
 #include "babl-internal.h"    /* needed for babl_log */
 
 static void model_html (Babl *babl);

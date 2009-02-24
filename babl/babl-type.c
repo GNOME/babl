@@ -16,6 +16,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include "config.h"
 #include <string.h>
 #include <stdarg.h>
 #include <math.h>

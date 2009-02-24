@@ -6,6 +6,7 @@
  * By Wu Yongwei
  *
  */
+#include "config.h"
 
 #ifdef _WIN32
 
