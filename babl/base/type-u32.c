@@ -107,7 +107,7 @@ convert_u32_double_scaled (double   min_val,
                                       src, dst, src_pitch, dst_pitch, n); \
   }
 
-MAKE_CONVERSIONS (u32, 0.0, 1.0, 0, UINT32_MAX);
+MAKE_CONVERSIONS (u32, 0.0, 1.0, 0, UINT32_MAX)
 
 void
 babl_base_type_u32 (void)

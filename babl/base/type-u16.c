@@ -108,7 +108,7 @@ convert_u16_double_scaled (double   min_val,
                                       src, dst, src_pitch, dst_pitch, n); \
   }
 
-MAKE_CONVERSIONS (u16, 0.0, 1.0, 0, UINT16_MAX);
+MAKE_CONVERSIONS (u16, 0.0, 1.0, 0, UINT16_MAX)
 
 void
 babl_base_type_u16 (void)

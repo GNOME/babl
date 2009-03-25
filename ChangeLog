@@ -1,5 +1,15 @@
 2009-03-25  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Patch from Gary V. Vaughan. NULL-statements caused by trailing
+	commas are non-portable.
+
+	* babl/base/type-u16.c
+	* babl/base/type-u32.c
+	* babl/base/type-u8.c
+	* extensions/CIE-Lab.c
+
+2009-03-25  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Apply patch from Gary V. Vaughan that adds configure time checks
 	for variadic macros and adapts the definitions of such macros
 	in-code accordingly so that babl can be compiled on more

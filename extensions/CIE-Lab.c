@@ -395,8 +395,8 @@ convert_u8_double_scaled (double        min_val,
 
 /* source ICC.1:2004-10 */
 
-MAKE_CONVERSIONS (u8_l, 0.0, 100.0, 0x00, 0xff);
-MAKE_CONVERSIONS (u8_ab, -128.0, 127.0, 0x00, 0xff);
+MAKE_CONVERSIONS (u8_l, 0.0, 100.0, 0x00, 0xff)
+MAKE_CONVERSIONS (u8_ab, -128.0, 127.0, 0x00, 0xff)
 
 #undef MAKE_CONVERSIONS
 
@@ -532,8 +532,8 @@ convert_u16_double_scaled (double         min_val,
                                       src, dst, src_pitch, dst_pitch, n); \
   }
 
-MAKE_CONVERSIONS (u16_l, 0.0, 100.0, 0x00, 0xffff);
-MAKE_CONVERSIONS (u16_ab, -128.0, 127.0, 0x00, 0xffff);
+MAKE_CONVERSIONS (u16_l, 0.0, 100.0, 0x00, 0xffff)
+MAKE_CONVERSIONS (u16_ab, -128.0, 127.0, 0x00, 0xffff)
 
 #undef MAKE_CONVERSIONS
 

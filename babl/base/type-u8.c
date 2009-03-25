@@ -108,9 +108,9 @@ convert_u8_double_scaled (double        min_val,
                                      src, dst, src_pitch, dst_pitch, n); \
   }
 
-MAKE_CONVERSIONS (u8, 0.0, 1.0, 0x00, UINT8_MAX);
-MAKE_CONVERSIONS (u8_luma, 0.0, 1.0, 16, 235);
-MAKE_CONVERSIONS (u8_chroma, 0.0, 1.0, 16, 240);
+MAKE_CONVERSIONS (u8, 0.0, 1.0, 0x00, UINT8_MAX)
+MAKE_CONVERSIONS (u8_luma, 0.0, 1.0, 16, 235)
+MAKE_CONVERSIONS (u8_chroma, 0.0, 1.0, 16, 240)
 
 void
 babl_base_type_u8 (void)
