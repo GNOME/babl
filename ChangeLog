@@ -1,5 +1,15 @@
 2009-03-25  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Apply patch from Gary V. Vaughan that adds configure time checks
+	for variadic macros and adapts the definitions of such macros
+	in-code accordingly so that babl can be compiled on more
+	platforms.
+
+	* acinclude.m4
+	* babl/babl-internal.h
+	* configure.ac
+
+2009-03-25  Martin Nordholts  <martinn@svn.gnome.org>
 	* babl/babl-fish.c: Patch from Gary V. Vaughan. Some vendor
 	compilers can't compile non-constant elements of compound struct
 	initializers

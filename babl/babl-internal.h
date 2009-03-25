@@ -162,19 +162,57 @@ real_babl_log (const char *file,
   hack_hack ();
 }
 
+#if defined(__cplusplus) && defined(BABL_ISO_CXX_VARIADIC_MACROS)
+#  define BABL_ISO_VARIADIC_MACROS 1
+#endif
+
+#if defined(BABL_ISO_VARIADIC_MACROS)
+
+#define babl_log(...)                                       \
+  real_babl_log(__FILE__, __LINE__, __func__, __VA_ARGS__)
+
+#define babl_fatal(...) do{                         	    \
+  real_babl_log(__FILE__, __LINE__, __func__, __VA_ARGS__); \
+  babl_die();}                                              \
+while(0)
+
+#elif defined(BABL_GNUC_VARIADIC_MACROS)
+
 #define babl_log(args...)                               \
   real_babl_log(__FILE__, __LINE__, __func__, args)
 
 #define babl_fatal(args...) do{                         \
-  real_babl_log(__FILE__, __LINE__, __func__, args);\
+  real_babl_log(__FILE__, __LINE__, __func__, args);    \
   babl_die();}                                          \
 while(0)
+
+#else
+
+static inline void
+babl_log (const char *format, ...)
+{
+  va_list args;
+  va_start (args, format);
+  real_babl_log (__FILE__, __LINE__, __func__, format, args);
+  va_end (args);
+}
+static inline void
+babl_fatal (const char *format, ...)
+{
+  va_list args;
+  va_start (args, format);
+  real_babl_log (__FILE__, __LINE__, __func__, format, args);
+  va_end (args);
+  babl_die();
+}
+
+#endif
 
 
 #define babl_assert(expr) do{                              \
   if(!(expr))                                              \
     {                                                      \
-      babl_fatal("Eeeeek! Assertion failed: `" #expr "`"); \
+      real_babl_log(__FILE__, __LINE__, __func__, "Eeeeek! Assertion failed: `" #expr "`"); \
       assert(expr);                                        \
     }                                                      \
 }while(0)
