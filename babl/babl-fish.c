@@ -193,8 +193,14 @@ babl_fish (const void *source,
                             (Babl *) NULL,
                             (Babl *) NULL,
                             0,
-                            source_format,
-                            destination_format};
+                            (Babl *) NULL,
+                            (Babl *) NULL};
+
+    /* some vendor compilers can't compile non-constant elements of
+     * compound struct initializers
+     */
+    ffish.source = source_format;
+    ffish.destination = destination_format;
 
     id_htable = (babl_fish_db ())->id_hash;
     hashval = babl_hash_by_int (id_htable, babl_fish_get_id (source_format, destination_format));

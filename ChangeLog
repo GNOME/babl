@@ -1,5 +1,11 @@
 2009-03-25  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* babl/babl-fish.c: Patch from Gary V. Vaughan. Some vendor
+	compilers can't compile non-constant elements of compound struct
+	initializers
+
+2009-03-25  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Patch from Gary V. Vaughan. Some vendor C compilers choke on C++
 	comments.
 
