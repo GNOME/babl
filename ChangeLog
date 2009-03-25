@@ -1,5 +1,10 @@
 2009-03-25  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* babl/babl-cpuaccel.h: Patch from Gary V. Vaughan. enum values
+	must be less than INT_MAX (sign bit is illegal)
+
+2009-03-25  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* babl/babl-ids.h: Patch from Gary V. Vaughan. Remove trailing
 	comma in enum declaration.
 
