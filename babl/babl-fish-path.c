@@ -373,7 +373,7 @@ test_create (void)
   return test;
 }
 
-// FishPath instrumentation
+/* FishPath instrumentation */
 
 static Babl   *fmt_rgba_double = NULL;
 static double *test = NULL;

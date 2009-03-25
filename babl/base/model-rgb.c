@@ -478,7 +478,7 @@ static void
 formats (void)
 {
   babl_format_new (
-    //"name", "srgb",
+    /*"name", "srgb",*/
     "id", BABL_SRGB,
     babl_model_from_id (BABL_RGB_GAMMA_2_2),
     babl_type_from_id (BABL_U8),

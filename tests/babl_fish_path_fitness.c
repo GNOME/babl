@@ -26,9 +26,11 @@ test_init (void)
 static int   qux = 0;
 
 static char *utf8_bar[] = { " ", "·", "▁", "▂", "▃", "▄", "▅", "▆", "▇", "█" };
-//static char *utf8_bar[]=  {"!","▁","▃","▅","▇","█","!","!","!"};
-//static char *utf8_bar[]={"·", "█", "▇", "▆", "▅", "▄", "▃", "▂", "▁", };
-//static char *utf8_bar[]={" ","1","2","3","4","5","6","7","8"};
+/*
+static char *utf8_bar[]=  {"!","▁","▃","▅","▇","█","!","!","!"};
+static char *utf8_bar[]={"·", "█", "▇", "▆", "▅", "▄", "▃", "▂", "▁", };
+static char *utf8_bar[]={" ","1","2","3","4","5","6","7","8"};
+*/
 
 static int destination_each (Babl *babl,
                              void *userdata)

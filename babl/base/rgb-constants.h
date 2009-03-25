@@ -16,7 +16,9 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-//#define CONTEMPORARY_MONITOR
+#if 0
+#define CONTEMPORARY_MONITOR
+#endif
 
 #ifdef CONTEMPORARY_MONITOR
   /* source: http://www.poynton.com/ColorFAQ.html */

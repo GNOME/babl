@@ -1,5 +1,16 @@
 2009-03-25  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Patch from Gary V. Vaughan. Some vendor C compilers choke on C++
+	comments.
+
+	* babl/babl-fish-path.c
+	* babl/babl-fish-stats.c
+	* babl/base/model-rgb.c
+	* babl/base/rgb-constants.h
+	* tests/babl_fish_path_fitness.c
+
+2009-03-25  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* babl/babl-cpuaccel.h: Patch from Gary V. Vaughan. enum values
 	must be less than INT_MAX (sign bit is illegal)
 
