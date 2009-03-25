@@ -1,5 +1,10 @@
 2009-03-25  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* babl/babl-ids.h: Patch from Gary V. Vaughan. Remove trailing
+	comma in enum declaration.
+
+2009-03-25  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Apply patch from Gary V. Vaughan that includes config.h in some
 	files that missed it.
 
