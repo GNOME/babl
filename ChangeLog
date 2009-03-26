@@ -1,3 +1,8 @@
+2009-03-26  Manish Singh  <yosh@gimp.org>
+
+	* configure.ac: BABL_VARIADIC_MACROS needs to be called before
+	the libtool stuff (which implicitly calls AC_PROG_CXX)
+
 2009-03-25  Martin Nordholts  <martinn@svn.gnome.org>
 
 	Patch from Gary V. Vaughan. NULL-statements caused by trailing

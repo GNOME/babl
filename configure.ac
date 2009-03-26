@@ -89,6 +89,8 @@ dnl ==========================================================================
 AM_INIT_AUTOMAKE(no-define)
 AM_CONFIG_HEADER(config.h)
 
+BABL_VARIADIC_MACROS
+
 AC_DISABLE_STATIC
 AC_PROG_CC
 AC_LIBTOOL_WIN32_DLL
@@ -99,8 +101,6 @@ AM_MAINTAINER_MODE
 
 AC_STDC_HEADERS
 AM_SANITY_CHECK
-
-BABL_VARIADIC_MACROS
 
 WEBSITE_HOST=pippin.gimp.org
 AC_SUBST(WEBSITE_HOST)
