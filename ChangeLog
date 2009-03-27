@@ -1,3 +1,10 @@
+2008-03-27  Kevin Cozens  <kcozens@cvs.gnome.org>
+
+	* configure.ac: 
+	* docs/graphics/Makefile.am: Applied patch from Matteo 'Peach'
+	Pescarin which makes build use rsvg binary instead of inkscape
+	to create pngs. Fixes bug 571516.
+
 2009-03-26  Manish Singh  <yosh@gimp.org>
 
 	* configure.ac: BABL_VARIADIC_MACROS needs to be called before

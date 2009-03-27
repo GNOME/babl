@@ -134,8 +134,8 @@ BABL_DETECT_CFLAGS(extra_warnings, '-Wold-style-definition')
 CFLAGS="$CFLAGS $extra_warnings"
 
 
-AC_PATH_PROG(INKSCAPE, inkscape, no)
-AM_CONDITIONAL(HAVE_INKSCAPE, test "x$INKSCAPE" != "xno")
+AC_PATH_PROG(RSVG, rsvg, no)
+AM_CONDITIONAL(HAVE_RSVG, test "x$RSVG" != "xno")
 
 AC_PATH_PROG(W3M, w3m, no)
 AM_CONDITIONAL(HAVE_W3M, test "x$W3M" != "xno")

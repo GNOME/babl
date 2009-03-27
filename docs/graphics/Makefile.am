@@ -1,6 +1,6 @@
 .SILENT:
 
-if HAVE_INKSCAPE
+if HAVE_RSVG
 PNG_FILES = 			\
 	babl-a4poster.png	\
 	babl-16x16.png 		\
@@ -21,18 +21,18 @@ MAINTAINERCLEANFILES = $(PNG_FILES)
 
 all: $(MAINTAINERCLEANFILES)
 
-INKSCAPE_CMD = echo -n " SVG: $@" ;\
-  $(INKSCAPE) -e $@ $< 2&>/dev/null\
+RSVG_CMD = echo -n " SVG: $@" ;\
+  $(RSVG) $< $@\
     &&\
       echo " [OK]"\
     ||\
       echo " FAIL"
 
-if HAVE_INKSCAPE
-dist-check-inkscape:
+if HAVE_RSVG
+dist-check-rsvg:
 
 %.png: %.svg
-	$(INKSCAPE_CMD)
+	$(RSVG_CMD)
 #-e $@ $< 2>/dev/null
 
 # the png version of the a4 poster is used as a webgraphic
@@ -40,16 +40,16 @@ dist-check-inkscape:
 # 0.0
 babl-a4poster.png: babl-a4poster.svg
 	echo -n " SVG: $@" ;\
-	$(INKSCAPE) -e $@ $< -w 256 -y 0 2&>/dev/null\
+	$(RSVG) -w 256 $< $@\
 	  &&\
 	    echo " [OK]"\
 	  ||\
 	    echo " FAIL"
 else
-dist-check-inkscape:
-	@echo "*** inkscape must be available in order to make dist"
+dist-check-rsvg:
+	@echo "*** rsvg must be available in order to make dist"
 	@false
 endif
 
 
-dist-hook: dist-check-inkscape
+dist-hook: dist-check-rsvg
