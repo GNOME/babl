@@ -1,5 +1,10 @@
 2009-03-31  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* babl/babl-internal.h: Patch from Gary V. Vaughan. Avoid the need
+	for define __func__ "unknown" on some vendor compilers
+
+2009-03-31  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* configure.ac: Patch from Gary V. Vaughan. Don't try to pass gcc
 	flags to vendor compilers
 

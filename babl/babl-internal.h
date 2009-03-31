@@ -162,6 +162,17 @@ real_babl_log (const char *file,
   hack_hack ();
 }
 
+/* Provide a string identifying the current function, non-concatenatable */
+#ifndef G_STRFUNC
+#if defined (__GNUC__)
+#  define G_STRFUNC     ((const char*) (__PRETTY_FUNCTION__))
+#elif defined (G_HAVE_ISO_VARARGS)
+#  define G_STRFUNC     ((const char*) (__func__))
+#else
+#  define G_STRFUNC     ((const char*) ("???"))
+#endif
+#endif
+
 #if defined(__cplusplus) && defined(BABL_ISO_CXX_VARIADIC_MACROS)
 #  define BABL_ISO_VARIADIC_MACROS 1
 #endif
@@ -169,20 +180,20 @@ real_babl_log (const char *file,
 #if defined(BABL_ISO_VARIADIC_MACROS)
 
 #define babl_log(...)                                       \
-  real_babl_log(__FILE__, __LINE__, __func__, __VA_ARGS__)
+  real_babl_log(__FILE__, __LINE__, G_STRFUNC, __VA_ARGS__)
 
 #define babl_fatal(...) do{                         	    \
-  real_babl_log(__FILE__, __LINE__, __func__, __VA_ARGS__); \
+  real_babl_log(__FILE__, __LINE__, G_STRFUNC, __VA_ARGS__); \
   babl_die();}                                              \
 while(0)
 
 #elif defined(BABL_GNUC_VARIADIC_MACROS)
 
 #define babl_log(args...)                               \
-  real_babl_log(__FILE__, __LINE__, __func__, args)
+  real_babl_log(__FILE__, __LINE__, G_STRFUNC, args)
 
 #define babl_fatal(args...) do{                         \
-  real_babl_log(__FILE__, __LINE__, __func__, args);    \
+  real_babl_log(__FILE__, __LINE__, G_STRFUNC, args);    \
   babl_die();}                                          \
 while(0)
 
@@ -193,7 +204,7 @@ babl_log (const char *format, ...)
 {
   va_list args;
   va_start (args, format);
-  real_babl_log (__FILE__, __LINE__, __func__, format, args);
+  real_babl_log (__FILE__, __LINE__, G_STRFUNC, format, args);
   va_end (args);
 }
 static inline void
@@ -201,7 +212,7 @@ babl_fatal (const char *format, ...)
 {
   va_list args;
   va_start (args, format);
-  real_babl_log (__FILE__, __LINE__, __func__, format, args);
+  real_babl_log (__FILE__, __LINE__, G_STRFUNC, format, args);
   va_end (args);
   babl_die();
 }
@@ -212,7 +223,7 @@ babl_fatal (const char *format, ...)
 #define babl_assert(expr) do{                              \
   if(!(expr))                                              \
     {                                                      \
-      real_babl_log(__FILE__, __LINE__, __func__, "Eeeeek! Assertion failed: `" #expr "`"); \
+      real_babl_log(__FILE__, __LINE__, G_STRFUNC, "Eeeeek! Assertion failed: `" #expr "`"); \
       assert(expr);                                        \
     }                                                      \
 }while(0)
@@ -288,13 +299,13 @@ babl_##klass (const char *name)                               \
                                                               \
   if (babl_hmpf_on_name_lookups)                              \
     {                                                         \
-      babl_log ("%s(\"%s\"): hmpf!", __func__, name);         \
+      babl_log ("%s(\"%s\"): hmpf!", G_STRFUNC, name);        \
     }                                                         \
   babl = babl_db_exist_by_name (db, name);                    \
                                                               \
   if (!babl)                                                  \
     {                                                         \
-      babl_fatal ("%s(\"%s\"): not found", __func__, name);   \
+      babl_fatal ("%s(\"%s\"): not found", G_STRFUNC, name);  \
     }                                                         \
   return babl;                                                \
 }                                                             \
@@ -306,7 +317,7 @@ babl_##klass##_from_id (int id)                               \
   babl = babl_db_exist_by_id (db, id);                        \
   if (!babl)                                                  \
     {                                                         \
-      babl_fatal ("%s(%i): not found", __func__, id);         \
+      babl_fatal ("%s(%i): not found", G_STRFUNC, id);        \
     }                                                         \
   return babl;                                                \
 }
