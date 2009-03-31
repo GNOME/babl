@@ -1,5 +1,13 @@
 2009-03-25  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Patch from Gary V. Vaughan. Rewrite xml-insert.sh in portable
+	bourne-shell
+
+	* docs/Makefile.am
+	* docs/tools/xml_insert.sh
+
+2009-03-25  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Patch from Gary V. Vaughan. Don't use depecrated features or
 	reduntant declarations in Makefile.am
 

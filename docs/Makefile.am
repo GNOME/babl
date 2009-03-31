@@ -54,16 +54,16 @@ index.html: index-static.html                    \
 	    Makefile.am
 	echo -n "HTML: $@"
 	cp $< $@ 
-	(which mktemp > /dev/null&& TMPFILE=`mktemp` || TMPFILE="/tmp/babl_build_tempfile" ;\
+	(which mktemp > /dev/null 2>&1 && TMPFILE=`mktemp` || TMPFILE="/tmp/babl_build_tempfile" ;\
 	export BABL_PATH="$(top_builddir)/extensions"; $(babl_html_dump) > $$TMPFILE;\
-	$(top_srcdir)/docs/tools/xml_insert.sh $@ BablBase $$TMPFILE;\
+	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ BablBase $$TMPFILE;\
 	rm -f $$TMPFILE )
 	echo -n "."
 
-	$(top_srcdir)/docs/tools/xml_insert.sh $@ BablFishPath BablFishPath.txt
-	$(top_srcdir)/docs/tools/xml_insert.sh $@ AUTHORS $(top_srcdir)/AUTHORS
-	$(top_srcdir)/docs/tools/xml_insert.sh $@ TODO $(top_srcdir)/TODO
-	$(top_srcdir)/docs/tools/xml_insert.sh $@ NEWS $(top_srcdir)/NEWS
+	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ BablFishPath BablFishPath.txt
+	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ AUTHORS $(top_srcdir)/AUTHORS
+	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ TODO $(top_srcdir)/TODO
+	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ NEWS $(top_srcdir)/NEWS
 	echo " [OK]"
 
 distclean-local:
