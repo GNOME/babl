@@ -177,22 +177,22 @@ case "$target_or_host" in
 esac
 
 
-####################################################
-# Check how to generate plug-ins (with gcc at least)
-####################################################
+############################
+# Check how to find plug-ins
+############################
 
 AC_MSG_CHECKING([for some Win32 platform])
 case "$target_or_host" in 
   *-*-darwin*)                 # darwin
     shrext=.dylib
-    dynamiclib=-dynamiclib
+    ;;
+  hppa*-hpux*)		       # HP/UX
+    shrext=.sl
     ;;
   *-*-mingw* | *-*-cygwin*)    # windows
     shrext=.dll
-    dynamiclib=-shared
     ;;
   *)                           # linux (and BSD?)
-    dynamiclib=-shared
     shrext=.so
     ;;
 esac
@@ -200,10 +200,6 @@ esac
 SHREXT=$shrext
 AC_SUBST(SHREXT)
 AC_DEFINE_UNQUOTED(SHREXT,     "$shrext",     [File extension for shared libraries])
-
-DYNAMICLIB=$dynamiclib
-AC_SUBST(DYNAMICLIB)
-AC_DEFINE_UNQUOTED(DYNAMICLIB, "$dynamiclib", [Dynamic shared library])
 
 dnl ===========================================================================
 
@@ -366,6 +362,8 @@ fi
 
 
 dnl ===========================================================================
+
+AC_CHECK_HEADERS(dl.h)
 
 AC_SEARCH_LIBS([dlopen], [dl])
 AC_SEARCH_LIBS([rint], [m])

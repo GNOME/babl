@@ -1,3 +1,4 @@
+/*.so
+/.deps
 /Makefile
 /Makefile.in
-/*.so

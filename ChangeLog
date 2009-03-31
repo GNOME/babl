@@ -1,3 +1,13 @@
+2009-03-25  Martin Nordholts  <martinn@svn.gnome.org>
+
+	Patch from Gary V. Vaughan. Support hpux use of shl load/unload
+	and dsos with .sl suffixes
+
+	* babl/babl-extension.c
+	* configure.ac
+	* extensions/Makefile.am
+	* tests/Makefile.am
+
 2008-03-27  Kevin Cozens  <kcozens@cvs.gnome.org>
 
 	* configure.ac: 
@@ -32,6 +42,7 @@
 	* configure.ac
 
 2009-03-25  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* babl/babl-fish.c: Patch from Gary V. Vaughan. Some vendor
 	compilers can't compile non-constant elements of compound struct
 	initializers

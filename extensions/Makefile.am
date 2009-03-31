@@ -1,61 +1,25 @@
-# General minimalistic compile file for self contained single
-# file babl_extensions
-
 if OS_WIN32
-no_undefined = -no-undefined
-libbabldlla=$(top_builddir)/babl/.libs/libbabl-$(BABL_API_VERSION).dll.a
+AM_LDFLAGS = -module -no-undefined
+else
+AM_LDFLAGS = -module
 endif
-
-CFILES          = $(wildcard $(srcdir)/*.c)
-SOBJS           = $(subst $(srcdir)/,,$(CFILES:.c=$(SHREXT)))
-INSTALLED_ITEMS = $(subst $(srcdir),$(ext_dir),$(CFILES:.c=$(SHREXT)))
-EXTRA_DIST      = $(wildcard *.[ch])
-
-all-local: $(SOBJS)
 
 AM_CPPFLAGS = \
 	-I$(top_builddir)		\
 	-I$(top_srcdir)			\
 	-I$(top_srcdir)/babl		\
-	-I$(top_srcdir)/extensions	\
-	-fPIC
+	-I$(top_srcdir)/extensions
 
-LDFLAGS += $(DYNAMICLIB)
+extdir = $(DESTDIR)$(libdir)/babl-@BABL_API_VERSION@
+ext_LTLIBRARIES = \
+	CIE-Lab.la      \
+	gegl-fixups.la  \
+	gggl-lies.la    \
+	gggl.la         \
+	gimp-8bit.la    \
+	naive-CMYK.la   \
+	sse-fixups.la
 
-if OS_WIN32
-LDADD    = $(no-undefined) $(libbabldlla) $(MATH_LIB)
-else
-LDADD    = $(top_builddir)/babl/.libs/libbabl-$(BABL_API_VERSION)$(SHREXT) $(MATH_LIB)
-endif
+LIBS = $(top_builddir)/babl/libbabl-@BABL_API_VERSION@.la $(MATH_LIB)
 
-%$(SHREXT): %.c
-	$(CC) $(AM_CPPFLAGS) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
-
-# if extension needing external libraries are to be # compiled with this make
-# file, each of them can be added according to the this pattern:
-# extra$(SHREXT): extra.c
-#	$(CC) $(AM_CPPFLAGS) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $<  [own compile and link flags]
-
-CIE-Lab$(SHREXT): CIE-Lab.c
-	$(CC) $(AM_CPPFLAGS) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
-
-sse-fixups$(SHREXT): sse-fixups.c
-	$(CC) $(AM_CPPFLAGS) $(CPPFLAGS) $(CFLAGS) $(MMX_EXTRA_CFLAGS) $(SSE_EXTRA_CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)
-#lcms$(SHREXT): lcms.c
-
-#	$(CC) $(AM_CPPFLAGS) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD) `pkg-config lcms --cflags --libs`
-#############################################################################
-
-clean-local:
-	rm -f $(SOBJS)
-
-ext_dir = $(DESTDIR)$(libdir)/babl-@BABL_API_VERSION@
-
-install-exec-local: all-local
-	$(INSTALL) -d $(ext_dir)
-	$(INSTALL) $(SOBJS) $(ext_dir)
-
-uninstall-local:
-	rm -f $(INSTALLED_ITEMS)
-
-check-local: all-local
+sse_fixups_la_CFLAGS = $(MMX_EXTRA_CFLAGS) $(SSE_EXTRA_CFLAGS)

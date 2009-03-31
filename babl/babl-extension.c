@@ -133,8 +133,31 @@ destroy_hook (void)
 #include <unistd.h>
 
 #ifdef HAVE_DLFCN_H
+
 #include <dlfcn.h>
 #define HLIB    void *
+
+#elif HAVE_DL_H
+
+#include <dl.h>
+#include <errno.h>
+#if !defined(DYNAMIC_PATH)
+#  define DYNAMIC_PATH          0
+#endif
+#if !defined(BIND_RESTRICTED)
+#  define BIND_RESTRICTED       0
+#endif
+#define RTLD_NOW		(BIND_IMMEDIATE|BIND_NONFATAL|DYNAMIC_PATH)
+#define HLIB   shl_t
+#define dlopen(path, flags)    shl_load (path, flags, 0L)
+#define dlclose(handle)                shl_unload (handle)
+#define dlerror()              strerror (errno)
+static void *dlsym (HLIB handle, const char *name) {
+  void *address = 0;
+  shl_findsym(&handle, name, TYPE_UNDEFINED, &address);
+  return address;
+}
+
 #endif
 
 #ifndef RTLD_NOW
