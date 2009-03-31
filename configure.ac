@@ -113,7 +113,6 @@ if eval "test x$GCC = xyes"; then
   *[\ \	]-Wall[\ \	]*) ;;
   *) CFLAGS="$CFLAGS -Wall" ;;
   esac
-fi
 
 BABL_DETECT_CFLAGS(extra_warnings, '-Wdeclaration-after-statement')
 CFLAGS="$CFLAGS $extra_warnings"
@@ -133,6 +132,7 @@ CFLAGS="$CFLAGS $extra_warnings"
 BABL_DETECT_CFLAGS(extra_warnings, '-Wold-style-definition')
 CFLAGS="$CFLAGS $extra_warnings"
 
+fi
 
 AC_PATH_PROG(RSVG, rsvg, no)
 AM_CONDITIONAL(HAVE_RSVG, test "x$RSVG" != "xno")

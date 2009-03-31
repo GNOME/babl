@@ -1,3 +1,8 @@
+2009-03-31  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* configure.ac: Patch from Gary V. Vaughan. Don't try to pass gcc
+	flags to vendor compilers
+
 2009-03-25  Martin Nordholts  <martinn@svn.gnome.org>
 
 	Patch from Gary V. Vaughan. Rewrite xml-insert.sh in portable
