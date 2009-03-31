@@ -56,9 +56,10 @@ library_include_HEADERS =		\
 	babl-version.h			\
 	babl.h
 
-INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/babl/base
-
-AM_CPPFLAGS = -DLIBDIR=\""$(libdir)"\"
+AM_CPPFLAGS = \
+	-DLIBDIR=\""$(libdir)"\"	\
+	-I$(top_srcdir)			\
+	-I$(top_srcdir)/babl/base
 
 lib_LTLIBRARIES= libbabl-@BABL_API_VERSION@.la
 libbabl_@BABL_API_VERSION@_la_SOURCES= $(h_sources) $(c_sources)

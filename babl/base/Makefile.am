@@ -13,13 +13,13 @@ c_sources =			\
 	model-gray.c		\
 	model-ycbcr.c
 
-INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/babl
+AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/babl
 
 noinst_LTLIBRARIES= libbase.la
 libbase_la_SOURCES= $(h_sources) $(c_sources) 
+libbase_la_LIBADD = $(MATH_LIB)
 
 EXTRA_DIST = 		\
 	rgb-constants.h	\
 	util.h
 
-LDADD = $(MATH_LIB)

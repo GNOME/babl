@@ -1,5 +1,15 @@
 2009-03-25  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Patch from Gary V. Vaughan. Don't use depecrated features or
+	reduntant declarations in Makefile.am
+
+	* babl/Makefile.am
+	* babl/base/Makefile.am
+	* docs/Makefile.am
+	* tests/Makefile.am
+
+2009-03-25  Martin Nordholts  <martinn@svn.gnome.org>
+
 	Patch from Gary V. Vaughan. Support hpux use of shl load/unload
 	and dsos with .sl suffixes
 

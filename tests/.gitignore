@@ -1,7 +1,8 @@
-/Makefile
-/Makefile.in
 /.deps
 /.libs
+/Makefile
+/Makefile.in
+/babl-html-dump
 /babl_class_name
 /babl_fish_path_dhtml
 /babl_fish_path_fitness
