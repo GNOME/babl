@@ -6,6 +6,13 @@ the news section both in the README and the webpage.
                                                                           -->
 
 
+2009-04-xx babl-0.1.0                                               </dt><dd>
+Support for RGBA representation in the frequency domain,
+un-pre-multiply close-to-zero alpha values to complete black instead
+of slightly brighter than black, add a BABL_ALPHA_THRESHOLD constant
+to the API, do a complete overhaul of the babl API and adapt for
+building on a wide range of systems.
+                                                                    </dd><dt>
 2008-06-12 babl-0.0.22                                              </dt><dd>
 Speed improvements due to: coalesced hashing, early bail out upon creation of
 duplicate formats, caching of non existing paths. Large amounts of the core has
