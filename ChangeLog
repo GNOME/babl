@@ -1,5 +1,10 @@
 2009-04-04  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* extensions/Makefile.am: extensions: util.h is part of the
+	source. make distcheck passes now.
+
+2009-04-04  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* babl/Makefile.am: babl/Makefile.am: Add forgotten header files
 	that needs to be distributed with a release.
 

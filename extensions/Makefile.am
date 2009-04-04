@@ -4,6 +4,8 @@ else
 AM_LDFLAGS = -module
 endif
 
+noinst_HEADERS = util.h
+
 AM_CPPFLAGS = \
 	-I$(top_builddir)		\
 	-I$(top_srcdir)			\
