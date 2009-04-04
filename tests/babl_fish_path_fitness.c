@@ -38,7 +38,8 @@ static int destination_each (Babl *babl,
   Babl *source      = userdata;
   Babl *destination = babl;
 
-  if ((qux++) % babl_formats_count () == qux / babl_formats_count ())
+  qux++;
+  if (qux % babl_formats_count () == qux / babl_formats_count ())
     printf (" ");
   else
     {

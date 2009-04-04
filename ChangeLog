@@ -1,5 +1,14 @@
 2009-04-04  Martin Nordholts  <martinn@svn.gnome.org>
 
+	Bug 568576 – [PATCH] undefined operation fix
+
+	Patch from Stanislav Brabec
+
+	* babl/babl-fish-stats.c
+	* tests/babl_fish_path_fitness.c
+
+2009-04-04  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* AUTHORS: Update for 0.1.0 release.
 
 2009-04-04  Martin Nordholts  <martinn@svn.gnome.org>
@@ -9,12 +18,12 @@
 
 2009-04-04  Martin Nordholts  <martinn@svn.gnome.org>
 
-	* babl/Makefile.am: babl/Makefile.am: Add forgotten header files
-	that needs to be distributed with a release.
+	* babl/Makefile.am: Add forgotten header files that needs to be
+	distributed with a release.
 
 2009-04-04  Martin Nordholts  <martinn@svn.gnome.org>
 
-	* Makefile.am: Makefile.am: We don't have a COPYING.LESSER anymore
+	* Makefile.am: We don't have a COPYING.LESSER anymore
 
 2009-04-03  Martin Nordholts  <martinn@svn.gnome.org>
 
