@@ -15,7 +15,6 @@ EXTRA_DIST = \
 	$(built_dist_files)	\
 	AUTHORS			\
 	COPYING			\
-	COPYING.LESSER		\
 	INSTALL			\
 	NEWS			\
 	TODO			\
