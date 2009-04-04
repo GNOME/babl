@@ -18,4 +18,12 @@
   	<dd><em>Sparse</em> fixes and sanity.</dd>
   <dt><em>dmacks at netspace.org</em></dt>
         <dd>Build sanity</dd>
+  <dt>Sam Hocevar</dt>
+        <dd>Build sanity.</dd>
+  <dt>Zhang Junbo</dt>
+        <dd>Frequency domain color model.</dd>
+  <dt>Martin Nordholts</dt>
+        <dd>Optimizations and API overhaul.</dd>
+  <dt>Gary V. Vaughan</dt>
+        <dd>Multiplatform build support.</dd>
 </dl>

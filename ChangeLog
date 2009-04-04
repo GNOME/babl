@@ -1,5 +1,9 @@
 2009-04-04  Martin Nordholts  <martinn@svn.gnome.org>
 
+	* AUTHORS: Update for 0.1.0 release.
+
+2009-04-04  Martin Nordholts  <martinn@svn.gnome.org>
+
 	* extensions/Makefile.am: extensions: util.h is part of the
 	source. make distcheck passes now.
 
