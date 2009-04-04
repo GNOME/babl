@@ -1,3 +1,7 @@
+2009-04-03  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* NEWS: Updated for 0.1.0
+
 2009-03-31  Martin Nordholts  <martinn@svn.gnome.org>
 
 	* babl/babl-internal.h: Patch from Gary V. Vaughan. Avoid the need
