@@ -19,6 +19,10 @@
 #ifndef _BABL_H
 #define _BABL_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define BABL_INSIDE_BABL_H
 #include <babl/babl-macros.h>
 #include <babl/babl-types.h>
@@ -191,5 +195,9 @@ Babl * babl_conversion_new (void *first_arg,
 #define babl_destroy babl_exit
 #endif
 
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
