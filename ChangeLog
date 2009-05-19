@@ -1,7 +1,14 @@
+2009-05-19  Martin Nordholts  <martinn@src.gnome.org>
+
+	Update for 0.1.0 release.
+
+	* AUTHORS
+	* NEWS
+
 2009-05-16  Hubert Figuiere  <hub@figuiere.net>
 
 	Add extern "C" to the header for C++ friendliness.
-	
+
 	* babl/babl.h
 
 2009-04-04  Martin Nordholts  <martinn@svn.gnome.org>
