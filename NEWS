@@ -6,7 +6,7 @@ the news section both in the README and the webpage.
                                                                           -->
 
 
-2009-04-xx babl-0.1.0                                               </dt><dd>
+2009-05-20 babl-0.1.0                                               </dt><dd>
 Support for RGBA representation in the frequency domain,
 un-pre-multiply close-to-zero alpha values to complete black instead
 of slightly brighter than black, add a BABL_ALPHA_THRESHOLD constant
