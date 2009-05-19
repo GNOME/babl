@@ -27,7 +27,7 @@
   <dt>Gary V. Vaughan</dt>
         <dd>Multiplatform build support.</dd>
   <dt>Stanislav Brabec</dt>
-        <dd>Multiplatform build support.</dd>
+        <dd>Portability patch.</dd>
   <dt>Hubert Figuiere</dt>
-        <dd>Multiplatform build support.</dd>
+        <dd>C++ friendliness patch.</dd>
 </dl>
