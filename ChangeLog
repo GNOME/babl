@@ -1,3 +1,9 @@
+2009-05-20  Martin Nordholts  <martinn@svn.gnome.org>
+
+	* docs/Makefile.am: Also add .libs directories to the BABL_PATHs
+	so that e.g. the BablFishPath introspection chart is properly
+	generated when doing a build, at least on Linux.
+
 2009-05-20  Martin Nordholts  <martinn@src.gnome.org>
 
 	* docs/index-static.html.in: Convert SVN references to git

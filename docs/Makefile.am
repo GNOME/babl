@@ -35,13 +35,13 @@ all: $(HTML_FILES) rss
 BablFishPath.html: $(babl_fish_path_dhtml)
 	echo -n "HTML:"
 	echo -n " $@"
-	export BABL_PATH="$(top_builddir)/extensions"; $< > $@ &&\
+	export BABL_PATH="$(top_builddir)/extensions:$(top_builddir)/extensions/.libs"; $< > $@ &&\
 	echo " [OK]" || echo " Fail"
 
 BablFishPath.txt: $(babl_fish_path_fitness)
 	echo -n "UTF8:"
 	echo -n " $@"
-	export BABL_PATH="$(top_builddir)/extensions"; $< > $@ &&\
+	export BABL_PATH="$(top_builddir)/extensions:$(top_builddir)/extensions/.libs"; $< > $@ &&\
 	echo " [OK]" || echo " Fail"
 	if [ "x"$$CRUCIBLE_ID != "x" ] ;then echo;echo;cat $@;echo;echo;fi
 
@@ -55,7 +55,7 @@ index.html: index-static.html                    \
 	echo -n "HTML: $@"
 	cp $< $@ 
 	(which mktemp > /dev/null 2>&1 && TMPFILE=`mktemp` || TMPFILE="/tmp/babl_build_tempfile" ;\
-	export BABL_PATH="$(top_builddir)/extensions"; $(babl_html_dump) > $$TMPFILE;\
+	export BABL_PATH="$(top_builddir)/extensions:$(top_builddir)/extensions/.libs"; $(babl_html_dump) > $$TMPFILE;\
 	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ BablBase $$TMPFILE;\
 	rm -f $$TMPFILE )
 	echo -n "."
