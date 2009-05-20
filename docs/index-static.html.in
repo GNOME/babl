@@ -156,10 +156,10 @@
     <a href='ftp://ftp.gtk.org/pub/babl/'>ftp://ftp.gtk.org/pub/babl/</a>.
     </p>
 
-    <p>Babl development happens in GNOME Subversion in the <tt>babl</tt> module.
-    It can be <a href='http://svn.gnome.org/viewvc/babl/trunk/'>browsed online</a> and checked out with:
+    <p>Babl uses git. The main repository is hosted by GNOME.
+    It can be <a href='http://git.gnome.org/cgit/babl'>browsed online</a> and cloned with:
     </p>
-    <pre>svn co http://svn.gnome.org/svn/babl/trunk/ babl</pre>
+    <pre>git clone git://git.gnome.org/babl</pre>
 
     <p>The following is a list of the major changes that have gone into
     each babl release. If there are significant improvements to babl when
@@ -167,7 +167,7 @@
     to the GEGL release.</p>
 
     <!--NEWS-->
-    For more news see the current <a href='http://svn.gnome.org/viewvc/babl/trunk/ChangeLog?view=markup'>ChangeLog</a> in subversion.
+    For more news see git log.
 
     <a name='Documentation'></a>
     <h2>Documentation</h2>
@@ -324,7 +324,7 @@ lab_buffer  = malloc (pixel_count * 3 * 4);
     <h2>Extending</h2>
     
     <p>For samples of how the current internal API specification of
-    data types, color models, and conversions look in the <tt><a href='http://svn.gnome.org/viewcvs/babl/trunk/extensions/'>extensions/</a></tt>
+    data types, color models, and conversions look in the <tt><a href='http://git.gnome.org/cgit/babl/tree/extensions'>extensions/</a></tt>
     directory. The tables in this HTML file is directly generated
     based on the data registered by BablCore (double and RGBA), BablBase
     (core datatypes, and RGB models), extensions (CIE Lab, naive CMYK,

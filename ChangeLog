@@ -1,3 +1,7 @@
+2009-05-20  Martin Nordholts  <martinn@src.gnome.org>
+
+	* docs/index-static.html.in: Convert SVN references to git
+
 2009-05-19  Martin Nordholts  <martinn@src.gnome.org>
 
 	Update for 0.1.0 release.
