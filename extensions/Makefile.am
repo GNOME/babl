@@ -12,7 +12,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/babl		\
 	-I$(top_srcdir)/extensions
 
-extdir = $(DESTDIR)$(libdir)/babl-@BABL_API_VERSION@
+extdir = $(libdir)/babl-@BABL_API_VERSION@
 ext_LTLIBRARIES = \
 	CIE-Lab.la      \
 	gegl-fixups.la  \
