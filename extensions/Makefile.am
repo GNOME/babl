@@ -1,7 +1,7 @@
 if OS_WIN32
 AM_LDFLAGS = -module -no-undefined
 else
-AM_LDFLAGS = -module
+AM_LDFLAGS = -module -avoid-version
 endif
 
 noinst_HEADERS = util.h
