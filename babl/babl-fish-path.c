@@ -23,19 +23,39 @@
 #define BABL_LEGAL_ERROR           0.000001
 #define BABL_MAX_COST_VALUE        2000000
 #define BABL_HARD_MAX_PATH_LENGTH  8
+#define BABL_MAX_NAME_LEN          1024
+
+
+typedef struct _FishPathInstrumentation {
+ Babl   *fmt_rgba_double;
+ double *test;
+ void   *source;
+ void   *destination;
+ void   *ref_destination;
+ double *destination_rgba_double;
+ double *ref_destination_rgba_double;
+ Babl   *fish_rgba_to_source;
+ Babl   *fish_reference;
+ Babl   *fish_destination_to_rgba;
+ double  reference_cost;
+ int     init_instrumentation_done;
+} FishPathInstrumentation;
+
 
 static void
-init_path_instrumentation (Babl *fmt_source,
-                           Babl *fmt_destination);
+init_path_instrumentation (FishPathInstrumentation *fpi,
+                           Babl                    *fmt_source,
+                           Babl                    *fmt_destination);
 
 static void
-destroy_path_instrumentation (void);
+destroy_path_instrumentation (FishPathInstrumentation *fpi);
 
 static void
-get_path_instrumentation (BablList *path,
-                          double   *path_cost,
-                          double   *ref_cost,
-                          double   *path_error);
+get_path_instrumentation (FishPathInstrumentation *fpi,
+                          BablList                *path,
+                          double                  *path_cost,
+                          double                  *ref_cost,
+                          double                  *path_error);
 
 static long
 process_conversion_path (BablList *path,
@@ -52,7 +72,8 @@ static double *
 test_create (void);
 
 static char *
-create_name (const Babl *source,
+create_name (char       *buf,
+             const Babl *source,
              const Babl *destination,
              int         is_reference);
 
@@ -144,7 +165,9 @@ get_conversion_path (Babl *current_format,
                                                  which does a more accurate
                                                  measurement of the error */
         {
-          get_path_instrumentation (current_path, &path_cost, &ref_cost, &path_error);
+          FishPathInstrumentation fpi;
+          memset (&fpi, 0, sizeof (fpi));
+          get_path_instrumentation (&fpi, current_path, &path_cost, &ref_cost, &path_error);
 
           if ((path_cost < ref_cost) && /* do not use paths that took longer to compute than reference */
               (path_cost < fish_path->fish_path.cost) &&
@@ -157,6 +180,8 @@ get_conversion_path (Babl *current_format,
               babl_list_copy (current_path,
                               fish_path->fish_path.conversion_list);
             }
+
+          destroy_path_instrumentation (&fpi);
         }
     }
   else
@@ -192,15 +217,14 @@ get_conversion_path (Babl *current_format,
       }
 }
 
-static char buf[1024];
-
 static char *
-create_name (const Babl *source,
+create_name (char       *buf,
+             const Babl *source,
              const Babl *destination,
              int         is_reference)
 {
   /* fish names are intentionally kept short */
-  snprintf (buf, 1024, "%s %p %p", "",
+  snprintf (buf, BABL_MAX_NAME_LEN, "%s %p %p", "",
             source, destination);
   return buf;
 }
@@ -210,9 +234,9 @@ babl_fish_path (const Babl *source,
                 const Babl *destination)
 {
   Babl *babl = NULL;
-  char *name;
+  char name[BABL_MAX_NAME_LEN];
 
-  name = create_name (source, destination, 1);
+  create_name (name, source, destination, 1);
   babl = babl_db_exist_by_name (babl_fish_db (), name);
   if (babl)
     {
@@ -244,7 +268,6 @@ babl_fish_path (const Babl *source,
   to_format = (Babl *) destination;
 
   get_conversion_path ((Babl *) source, 0, max_path_length ());
-  destroy_path_instrumentation ();
 
   babl_list_destroy (current_path);
 
@@ -373,31 +396,17 @@ test_create (void)
   return test;
 }
 
-/* FishPath instrumentation */
-
-static Babl   *fmt_rgba_double = NULL;
-static double *test = NULL;
-static void   *source;
-static void   *destination;
-static void   *ref_destination;
-static double *destination_rgba_double;
-static double *ref_destination_rgba_double;
-static Babl   *fish_rgba_to_source;
-static Babl   *fish_reference;
-static Babl   *fish_destination_to_rgba;
-static double  reference_cost;
-static int     init_instrumentation_done = 0;
-
 static void
-init_path_instrumentation (Babl *fmt_source,
-                           Babl *fmt_destination)
+init_path_instrumentation (FishPathInstrumentation *fpi,
+                           Babl                    *fmt_source,
+                           Babl                    *fmt_destination)
 {
   long   ticks_start = 0;
   long   ticks_end   = 0;
 
-  if (!fmt_rgba_double)
+  if (!fpi->fmt_rgba_double)
     {
-      fmt_rgba_double = babl_format_new (
+      fpi->fmt_rgba_double = babl_format_new (
         babl_model ("RGBA"),
         babl_type ("double"),
         babl_component ("R"),
@@ -407,102 +416,103 @@ init_path_instrumentation (Babl *fmt_source,
         NULL);
     }
 
-  if (!test)
-    test = test_create ();
+  if (!fpi->test)
+    fpi->test = test_create (); // <- test_create utiliza var static dentro de la función
 
-  fish_rgba_to_source      = babl_fish_reference (fmt_rgba_double,
+  fpi->fish_rgba_to_source      = babl_fish_reference (fpi->fmt_rgba_double,
                                                   fmt_source);
-  fish_reference           = babl_fish_reference (fmt_source,
+  fpi->fish_reference           = babl_fish_reference (fmt_source,
                                                   fmt_destination);
-  fish_destination_to_rgba = babl_fish_reference (fmt_destination,
-                                                  fmt_rgba_double);
+  fpi->fish_destination_to_rgba = babl_fish_reference (fmt_destination,
+                                                  fpi->fmt_rgba_double);
 
-  source                      = babl_calloc (NUM_TEST_PIXELS,
+  fpi->source                      = babl_calloc (NUM_TEST_PIXELS,
                                              fmt_source->format.bytes_per_pixel);
-  destination                 = babl_calloc (NUM_TEST_PIXELS,
+  fpi->destination                 = babl_calloc (NUM_TEST_PIXELS,
                                              fmt_destination->format.bytes_per_pixel);
-  ref_destination             = babl_calloc (NUM_TEST_PIXELS,
+  fpi->ref_destination             = babl_calloc (NUM_TEST_PIXELS,
                                              fmt_destination->format.bytes_per_pixel);
-  destination_rgba_double     = babl_calloc (NUM_TEST_PIXELS,
-                                             fmt_rgba_double->format.bytes_per_pixel);
-  ref_destination_rgba_double = babl_calloc (NUM_TEST_PIXELS,
-                                             fmt_rgba_double->format.bytes_per_pixel);
+  fpi->destination_rgba_double     = babl_calloc (NUM_TEST_PIXELS,
+                                             fpi->fmt_rgba_double->format.bytes_per_pixel);
+  fpi->ref_destination_rgba_double = babl_calloc (NUM_TEST_PIXELS,
+                                             fpi->fmt_rgba_double->format.bytes_per_pixel);
 
   /* create sourcebuffer from testbuffer in the correct format */
-  babl_process (fish_rgba_to_source,
-                test, source, NUM_TEST_PIXELS);
+  babl_process (fpi->fish_rgba_to_source,
+                fpi->test, fpi->source, NUM_TEST_PIXELS);
 
   /* calculate the reference buffer of how it should be */
   ticks_start = babl_ticks ();
-  babl_process (fish_reference,
-                source, ref_destination, NUM_TEST_PIXELS);
+  babl_process (fpi->fish_reference,
+                fpi->source, fpi->ref_destination, NUM_TEST_PIXELS);
   ticks_end = babl_ticks ();
-  reference_cost = babl_process_cost (ticks_start, ticks_end);
+  fpi->reference_cost = babl_process_cost (ticks_start, ticks_end);
 
   /* transform the reference destination buffer to RGBA */
-  babl_process (fish_destination_to_rgba,
-                ref_destination, ref_destination_rgba_double, NUM_TEST_PIXELS);
+  babl_process (fpi->fish_destination_to_rgba,
+                fpi->ref_destination, fpi->ref_destination_rgba_double, NUM_TEST_PIXELS);
 }
 
 static void
-destroy_path_instrumentation (void)
+destroy_path_instrumentation (FishPathInstrumentation *fpi)
 {
-  if (init_instrumentation_done)
+  if (fpi->init_instrumentation_done)
     {
-      babl_free (source);
-      babl_free (destination);
-      babl_free (destination_rgba_double);
-      babl_free (ref_destination);
-      babl_free (ref_destination_rgba_double);
+      babl_free (fpi->source);
+      babl_free (fpi->destination);
+      babl_free (fpi->destination_rgba_double);
+      babl_free (fpi->ref_destination);
+      babl_free (fpi->ref_destination_rgba_double);
 
       /* nulify the flag for potential new search */
-      init_instrumentation_done = 0;
+      fpi->init_instrumentation_done = 0;
   }
 }
 
 static void
-get_path_instrumentation (BablList *path,
-                          double   *path_cost,
-                          double   *ref_cost,
-                          double   *path_error)
+get_path_instrumentation (FishPathInstrumentation *fpi,
+                          BablList                *path,
+                          double                  *path_cost,
+                          double                  *ref_cost,
+                          double                  *path_error)
 {
   long   ticks_start = 0;
   long   ticks_end   = 0;
 
-  if (!init_instrumentation_done)
+  if (!fpi->init_instrumentation_done)
     {
       /* this initialization can be done only once since the
        * source and destination formats do not change during
        * the search */
       Babl *fmt_source = (Babl *) BABL (babl_list_get_first (path))->conversion.source;
       Babl *fmt_destination = (Babl *) BABL (babl_list_get_last (path))->conversion.destination;
-      init_path_instrumentation (fmt_source, fmt_destination);
-      init_instrumentation_done = 1;
+      init_path_instrumentation (fpi, fmt_source, fmt_destination);
+      fpi->init_instrumentation_done = 1;
     }
 
   /* calculate this path's view of what the result should be */
   ticks_start = babl_ticks ();
-  process_conversion_path (path, source, destination, NUM_TEST_PIXELS);
+  process_conversion_path (path, fpi->source, fpi->destination, NUM_TEST_PIXELS);
   ticks_end = babl_ticks ();
   *path_cost = babl_process_cost (ticks_start, ticks_end);
 
   /* transform the reference and the actual destination buffers to RGBA
    * for comparison with each other
    */
-  babl_process (fish_destination_to_rgba,
-                destination, destination_rgba_double, NUM_TEST_PIXELS);
+  babl_process (fpi->fish_destination_to_rgba,
+                fpi->destination, fpi->destination_rgba_double, NUM_TEST_PIXELS);
 
-  *path_error = babl_rel_avg_error (destination_rgba_double,
-                                    ref_destination_rgba_double,
+  *path_error = babl_rel_avg_error (fpi->destination_rgba_double,
+                                    fpi->ref_destination_rgba_double,
                                     NUM_TEST_PIXELS * 4);
 
-  fish_rgba_to_source->fish.processings--;
-  fish_reference->fish.processings--;
-  fish_destination_to_rgba->fish.processings -= 2;
+  fpi->fish_rgba_to_source->fish.processings--;
+  fpi->fish_reference->fish.processings--;
+  fpi->fish_destination_to_rgba->fish.processings -= 2;
 
-  fish_rgba_to_source->fish.pixels      -= NUM_TEST_PIXELS;
-  fish_reference->fish.pixels           -= NUM_TEST_PIXELS;
-  fish_destination_to_rgba->fish.pixels -= 2 * NUM_TEST_PIXELS;
+  fpi->fish_rgba_to_source->fish.pixels      -= NUM_TEST_PIXELS;
+  fpi->fish_reference->fish.pixels           -= NUM_TEST_PIXELS;
+  fpi->fish_destination_to_rgba->fish.pixels -= 2 * NUM_TEST_PIXELS;
 
-  *ref_cost = reference_cost;
+  *ref_cost = fpi->reference_cost;
 }
