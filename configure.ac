@@ -38,6 +38,11 @@ m4_define([babl_stable],
 AC_INIT(babl, babl_major_version.babl_minor_version.babl_micro_version)
 AC_CONFIG_SRCDIR(babl/babl.h)
 
+# Enable silent build rules by default, requires at least
+# Automake-1.11. Disable by either passing --disable-silent-rules to
+# configure or passing V=1 to make
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+
 BABL_MAJOR_VERSION=babl_major_version
 BABL_MINOR_VERSION=babl_minor_version
 BABL_MICRO_VERSION=babl_micro_version
