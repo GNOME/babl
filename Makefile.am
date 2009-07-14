@@ -13,6 +13,7 @@ built_dist_files = README
 
 EXTRA_DIST = \
 	$(built_dist_files)	\
+	ChangeLog.pre-0-1	\
 	AUTHORS			\
 	COPYING			\
 	INSTALL			\
@@ -48,3 +49,25 @@ distclean-local:
 		rm -f $(BUILT_EXTRA_DIST);	\
 	fi
 
+
+
+### ChangeLog generation
+
+CHANGELOG_START = BABL_0_1_0
+
+ChangeLog: $(srcdir)/ChangeLog
+$(srcdir)/ChangeLog:
+	@echo Creating $@
+	@if test -d "$(srcdir)/.git"; then \
+	  (GIT_DIR=$(top_srcdir)/.git ./missing --run \
+	   git log $(CHANGELOG_START)^.. --stat) | fmt --split-only > $@.tmp \
+	  && mv -f $@.tmp $@ \
+	  || ($(RM) $@.tmp; \
+	      echo Failed to generate ChangeLog, your ChangeLog may be outdated >&2; \
+	      (test -f $@ || echo git-log is required to generate this file >> $@)); \
+	else \
+	  test -f $@ || \
+	  (echo A git checkout and git-log is required to generate ChangeLog >&2 && \
+	  echo A git checkout and git-log is required to generate this file >> $@); \
+	fi
+.PHONY: $(srcdir)/ChangeLog

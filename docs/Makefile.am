@@ -29,7 +29,7 @@ BUILT_EXTRA_DIST = index.html BablFishPath.html BablFishPath.txt
 CLEANFILES = README changelog.rss
 DISTCLEANFILES = index-static.html $(BUILT_EXTRA_DIST)
 
-all: $(HTML_FILES) rss
+all: $(HTML_FILES)
 
 
 BablFishPath.html: $(babl_fish_path_dhtml)
@@ -70,14 +70,6 @@ distclean-local:
 	if test $(srcdir) = .; then :; else 	\
 		rm -f $(BUILT_EXTRA_DIST);	\
 	fi
-
-rss: changelog.rss
-
-changelog.rss: ../ChangeLog
-	echo -n " RSS:"
-	echo -n " $@"
-	tools/changelog2rss $< > $@ && \
-	echo " [OK]" || echo " Fail"
 
 web: all graphics
 	echo -n " WEB: "

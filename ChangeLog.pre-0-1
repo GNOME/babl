@@ -1,14 +1,4 @@
 
-
-
-
-	NOTE: After the migration to git this ChangeLog is no longer used
-	during development. Instead, it will be updated prior to every
-	release based on the git log.
-
-
-
-
 =========================== 0.1.0 released =============================
 
 2009-05-20  Martin Nordholts  <martinn@src.gnome.org>
