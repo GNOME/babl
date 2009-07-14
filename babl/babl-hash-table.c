@@ -34,7 +34,7 @@ static void
 hash_rehash (BablHashTable *htab);
 
 
-inline int
+int
 babl_hash_by_str (BablHashTable *htab,
                   const char    *str)
 {
@@ -53,7 +53,7 @@ babl_hash_by_str (BablHashTable *htab,
   return (hash & htab->mask);
 }
 
-inline int
+int
 babl_hash_by_int (BablHashTable *htab,
                   int           id)
 {
@@ -137,7 +137,7 @@ hash_rehash (BablHashTable *htab)
   babl_free (nhtab);
 }
 
-inline int
+int
 babl_hash_table_size (BablHashTable *htab)
 {
     return htab->mask + 1;

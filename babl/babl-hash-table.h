@@ -44,15 +44,15 @@ BablHashTable *
 babl_hash_table_init (BablHashValFunction  hfunc,
                       BablHashFindFunction ffunc);
 
-inline int
+int
 babl_hash_by_str (BablHashTable *htab,
                   const char    *str);
 
-inline int
+int
 babl_hash_by_int (BablHashTable *htab,
                   int           id);
 
-inline int
+int
 babl_hash_table_size (BablHashTable *htab);
 
 int
