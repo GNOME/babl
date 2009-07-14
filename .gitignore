@@ -1,8 +1,13 @@
+/*.tar.bz2
+/*.tar.gz
+/INSTALL
 /Makefile
 /Makefile.in
+/README
 /aclocal.m4
 /autom4te.cache
 /babl.pc
+/compile
 /config.cache
 /config.guess
 /config.h
@@ -16,10 +21,7 @@
 /libtool
 /ltmain.sh
 /missing
+/mkinstalldirs
 /stamp-h
-/stamp-h1
 /stamp-h.in
-/INSTALL
-/README
-/*.tar.gz
-/*.tar.bz2
+/stamp-h1
