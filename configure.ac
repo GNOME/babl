@@ -25,7 +25,7 @@ m4_define([babl_binary_age],
           [m4_eval(100 * babl_minor_version + babl_micro_version)])
 
 # This is the X.Y used in -lbabl-X.Y
-m4_define([babl_api_version], [babl_major_version.0])
+m4_define([babl_api_version], [babl_major_version.babl_minor_version])
 
 m4_define([stability_version_number],
           m4_if(m4_eval(babl_major_version || babl_minor_version), [0],
