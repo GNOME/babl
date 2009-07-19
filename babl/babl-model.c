@@ -34,24 +34,19 @@ each_babl_model_destroy (Babl *babl,
   return 0;  /* continue iterating */
 }
 
-static char buf[512] = "";
-
-static const char *
-create_name (const char     *name,
-             int             components,
-             BablComponent **component)
+static char *
+babl_model_create_name (int             components,
+                        BablComponent **component)
 {
-  char *p = buf;
+  char *p = NULL;
 
-  if (name)
-    return name;
   while (components--)
     {
-      sprintf (p, (*component)->instance.name);
-      p += strlen ((*component)->instance.name);
+      p = babl_strcat(p, (*component)->instance.name);
       component++;
     }
-  return buf;
+
+  return p;
 }
 
 static Babl *
@@ -84,10 +79,11 @@ babl_model_new (void *first_argument,
 {
   va_list        varg;
   Babl          *babl;
-  int            id         = 0;
-  int            components = 0;
-  const char    *arg        = first_argument;
-  const char    *name       = NULL;
+  int            id            = 0;
+  int            components    = 0;
+  const char    *arg           = first_argument;
+  const char    *assigned_name = NULL;
+  char          *name          = NULL;
   BablComponent *component [BABL_MAX_COMPONENTS];
 
   va_start (varg, first_argument);
@@ -107,7 +103,7 @@ babl_model_new (void *first_argument,
                 if (components >= BABL_MAX_COMPONENTS)
                   {
                     babl_log ("maximum number of components (%i) exceeded for %s",
-                              BABL_MAX_COMPONENTS, name);
+                              BABL_MAX_COMPONENTS, assigned_name);
                   }
                 break;
 
@@ -148,12 +144,12 @@ babl_model_new (void *first_argument,
 
       else if (!strcmp (arg, "name"))
         {
-          name = va_arg (varg, char *);
+          assigned_name = va_arg (varg, char *);
         }
 
       else
         {
-          babl_fatal ("unhandled argument '%s' for babl_model '%s'", arg, name);
+          babl_fatal ("unhandled argument '%s' for babl_model '%s'", arg, assigned_name);
         }
 
       arg = va_arg (varg, char *);
@@ -163,23 +159,25 @@ babl_model_new (void *first_argument,
 
   va_end (varg);
 
-  name = create_name (name, components, component);
+  if (assigned_name)
+    name = babl_strdup(assigned_name);
+  else
+    name = babl_model_create_name (components, component);
 
   babl = babl_db_exist (db, id, name);
-  if (babl)
+
+  if (! babl)
     {
-      /* There is an instance already registered by the required id/name,
-       * returning the preexistent one instead.
-       */
-      return babl;
+      babl = model_new (name, id, components, component);
+      babl_db_insert (db, babl);
+    }
+  else
+    {
+      babl_log ("Warning: BablModel '%s' already registered!", name);
     }
 
-  babl = model_new (name, id, components, component);
+  babl_free (name);
 
-  /* Since there is not an already registered instance by the required
-   * id/name, inserting newly created class into database.
-   */
-  babl_db_insert (db, babl);
   return babl;
 }
 
