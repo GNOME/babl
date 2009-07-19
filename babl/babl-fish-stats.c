@@ -132,7 +132,7 @@ table_destination_each (Babl *babl,
             break;
 
           default:
-            babl_assert (0);
+            babl_fatal ("Unknown fish type");
             break;
         }
     }
