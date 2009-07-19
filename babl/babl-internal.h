@@ -132,7 +132,7 @@ static void hack_hack (void)
 /**** LOGGER ****/
 #include <stdarg.h>
 
-void babl_backtrack (void);
+int babl_backtrack (void);
 
 static inline void
 real_babl_log (const char *file,
