@@ -18,6 +18,7 @@
 
 #include "config.h"
 #include "babl-internal.h"
+#include <stddef.h>
 #include <string.h>
 #include <stdarg.h>
 
@@ -137,7 +138,7 @@ babl_fish_get_id (const Babl *source,
   /* value of 'id' will be used as argument for hash function,
    * substraction serves as simple combination of
    * source/destination values. */
-  int id = (int) source - (int) destination;
+  ptrdiff_t id = source - destination;
   /* instances with id 0 won't be inserted into database */
   if (id == 0)
     id = 1;

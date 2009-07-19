@@ -17,6 +17,7 @@
  */
 
 #include "config.h"
+#include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -106,7 +107,7 @@ babl_malloc (size_t size)
   if (!ret)
     babl_fatal ("args=(%i): failed", size);
 
-  offset = BABL_ALIGN - ((unsigned int) ret + BABL_ALLOC) % BABL_ALIGN;
+  offset = BABL_ALIGN - ((uintptr_t) ret + BABL_ALLOC) % BABL_ALIGN;
   ret = ret + BABL_ALLOC + offset;
 
   *((void **) ret - 1) = ret - BABL_ALLOC - offset;

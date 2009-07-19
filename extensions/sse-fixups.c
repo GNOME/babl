@@ -23,6 +23,7 @@
 
 #if defined(__GNUC__) && (__GNUC__ >= 4) && defined(USE_SSE) && defined(USE_MMX)
 
+#include <stdint.h>
 #include <stdlib.h>
 
 #include "babl.h"
@@ -53,7 +54,7 @@ conv_rgbaF_linear_rgb8_linear (unsigned char *src,
 {
   long n = samples;
 
-  if ((int) src & 0xF)
+  if ((intptr_t) src & 0xF)
     {
       // nonaligned buffers, we have to use fallback x87 code
       float *fsrc = (float *) src;
@@ -110,7 +111,7 @@ conv_rgbaF_linear_rgba8_linear (unsigned char *src,
                                 long           samples)
 {
   long n = samples;
-  if ((int) src & 0xF)
+  if ((intptr_t) src & 0xF)
     {
       // nonaligned buffers, we have to use fallback x87 code
       float *fsrc = (float *) src;
