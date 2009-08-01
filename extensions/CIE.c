@@ -688,26 +688,10 @@ types (void)
    APPROX: speeds up the conversion from RGB to the colourspace by
    assuming that the RGB values passed in are integral and definitely
    in the range 0->255
-
-   SRGB: assumes that the RGB values being passed in (and out) are
-   destined for an sRGB-alike display device (a typical modern monitor)
-   -- if you change this then you'll probably want to change ASSUMED_GAMMA,
-   the phosphor colours and the white point definition.
  */
 
 /* #define SANITY */
 /* #define APPROX */
-/* #define SRGB   */
-
-
-#ifdef SRGB
-#define ASSUMED_GAMMA    (2.2F)
-#else
-/*#define ASSUMED_GAMMA (2.591F)*/
-#define ASSUMED_GAMMA    (1.0F)
-#endif
-
-#define REV_GAMMA        ((1.0F / ASSUMED_GAMMA))
 
 
 /* define characteristics of the source RGB space (and the space
@@ -763,37 +747,10 @@ static const double LRAMP = 7.99959199F;
 
 static double xnn, znn;
 
-static double powtable[256];
-
 
 #ifndef CLAMP
 #define CLAMP(x, l, u)    ((x) < (l) ? (l) : ((x) > (u) ? (u) : (x)))
 #endif
-
-
-static void
-init_powtable (const double gamma)
-{
-  int i;
-
-#ifndef SRGB
-  /* pure gamma function */
-  for (i = 0; i < 256; i++)
-    {
-      powtable[i] = pow ((i) / 255.0F, gamma);
-    }
-#else
-  /* sRGB gamma curve */
-  for (i = 0; i < 11 /* 0.03928 * 255 */; i++)
-    {
-      powtable[i] = (i) / (255.0F * 12.92F);
-    }
-  for (; i < 256; i++)
-    {
-      powtable[i] = pow ((((i) / 255.0F) + 0.055F) / 1.055F, 2.4F);
-    }
-#endif
-}
 
 
 typedef double CMatrix[3][3];
@@ -846,7 +803,10 @@ Minvert (CMatrix src, CMatrix dest)
 static void
 rgbxyzrgb_init (void)
 {
-  init_powtable (ASSUMED_GAMMA);
+  /* The gamma related code has been removed since we do our
+   * calculations in linear light. To revice that code, use version
+   * control means
+   */
 
   xnn = lxn / lyn;
   /* ynn taken as 1.0 */
@@ -1082,35 +1042,6 @@ cpercep_rgb_to_space (double  inr,
   )
     abort ();
 #endif /* SANITY */
-  inr = powtable[(int) inr];
-  ing = powtable[(int) ing];
-  inb = powtable[(int) inb];
-#else
-#ifdef SRGB
-  /* sRGB gamma curve */
-  if (inr <= (0.03928F * 255.0F))
-    inr = inr / (255.0F * 12.92F);
-  else
-    inr = pow ((inr + (0.055F * 255.0F)) / (1.055F * 255.0F), 2.4F);
-
-  if (ing <= (0.03928F * 255.0F))
-    ing = ing / (255.0F * 12.92F);
-  else
-    ing = pow ((ing + (0.055F * 255.0F)) / (1.055F * 255.0F), 2.4F);
-
-  if (inb <= (0.03928F * 255.0F))
-    inb = inb / (255.0F * 12.92F);
-  else
-    inb = pow ((inb + (0.055F * 255.0F)) / (1.055F * 255.0F), 2.4F);
-#else
-  /* pure gamma function */
-
-  /*  babl uses normalized RGB
-     inr = pow((inr)/255.0F, ASSUMED_GAMMA);
-     ing = pow((ing)/255.0F, ASSUMED_GAMMA);
-     inb = pow((inb)/255.0F, ASSUMED_GAMMA);
-   */
-#endif /* SRGB */
 #endif /* APPROX */
 
 #ifdef SANITY
@@ -1170,29 +1101,6 @@ cpercep_space_to_rgb (double  inr,
   inr = CLAMP (inr, 0.0F, 1.0F);
   ing = CLAMP (ing, 0.0F, 1.0F);
   inb = CLAMP (inb, 0.0F, 1.0F);
-
-#ifdef SRGB
-  if (inr <= 0.0030402477F)
-    inr = inr * (12.92F * 255.0F);
-  else
-    inr = pow (inr, 1.0F / 2.4F) * (1.055F * 255.0F) - (0.055F * 255.0F);
-
-  if (ing <= 0.0030402477F)
-    ing = ing * (12.92F * 255.0F);
-  else
-    ing = pow (ing, 1.0F / 2.4F) * (1.055F * 255.0F) - (0.055F * 255.0F);
-
-  if (inb <= 0.0030402477F)
-    inb = inb * (12.92F * 255.0F);
-  else
-    inb = pow (inb, 1.0F / 2.4F) * (1.055F * 255.0F) - (0.055F * 255.0F);
-#else
-  /* babl uses normalized RGB values
-     inr = 255.0F * pow(inr, REV_GAMMA);
-     ing = 255.0F * pow(ing, REV_GAMMA);
-     inb = 255.0F * pow(inb, REV_GAMMA);
-   */
-#endif
 
   *outr = inr;
   *outg = ing;
