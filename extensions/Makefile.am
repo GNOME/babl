@@ -14,7 +14,7 @@ AM_CPPFLAGS = \
 
 extdir = $(libdir)/babl-@BABL_API_VERSION@
 ext_LTLIBRARIES = \
-	CIE-Lab.la      \
+	CIE.la          \
 	gegl-fixups.la  \
 	gggl-lies.la    \
 	gggl.la         \
@@ -22,7 +22,7 @@ ext_LTLIBRARIES = \
 	naive-CMYK.la   \
 	sse-fixups.la
 
-CIE_Lab_la_SOURCES = CIE-Lab.c
+CIE_la_SOURCES = CIE.c
 gegl_fixups_la_SOURCES = gegl-fixups.c
 gggl_lies_la_SOURCES = gggl-lies.c
 gggl_la_SOURCES = gggl.c
