@@ -1,5 +1,6 @@
 /* babl - dynamically extendable universal pixel conversion library.
  * Copyright (C) 2005, Øyvind Kolås.
+ * Copyright (C) 2009, Martin Nordholts
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,6 +24,8 @@
 #include "babl.h"
 #include "extensions/util.h"
 
+#define DEGREES_PER_RADIAN (180 / 3.14159265358979323846)
+#define RADIANS_PER_DEGREE (1 / DEGREES_PER_RADIAN)
 
 int init (void);
 
@@ -49,6 +52,8 @@ components (void)
   babl_component_new ("CIE L", NULL);
   babl_component_new ("CIE a", "chroma", NULL);
   babl_component_new ("CIE b", "chroma", NULL);
+  babl_component_new ("CIE C(ab)", "chroma", NULL);
+  babl_component_new ("CIE H(ab)", "chroma", NULL);
 }
 
 static void
@@ -66,6 +71,21 @@ models (void)
     babl_component ("CIE L"),
     babl_component ("CIE a"),
     babl_component ("CIE b"),
+    babl_component ("A"),
+    NULL);
+
+  babl_model_new (
+    "name", "CIE LCH(ab)",
+    babl_component ("CIE L"),
+    babl_component ("CIE C(ab)"),
+    babl_component ("CIE H(ab)"),
+    NULL);
+
+  babl_model_new (
+    "name", "CIE LCH(ab) alpha",
+    babl_component ("CIE L"),
+    babl_component ("CIE C(ab)"),
+    babl_component ("CIE H(ab)"),
     babl_component ("A"),
     NULL);
 }
@@ -121,6 +141,15 @@ static void  cpercep_space_to_rgb (double  inr,
                                    double *outg,
                                    double *outb);
 
+static void  ab_to_chab           (double  a,
+                                   double  b,
+                                   double *C,
+                                   double *H);
+
+static void  chab_to_ab           (double  C,
+                                   double  H,
+                                   double *a,
+                                   double *b);
 
 
 static long
@@ -229,6 +258,115 @@ laba_to_rgba (char *src,
   return n;
 }
 
+
+
+
+static long
+rgba_to_lchab (char *src,
+               char *dst,
+               long  n)
+{
+  while (n--)
+    {
+      double red   = ((double *) src)[0];
+      double green = ((double *) src)[1];
+      double blue  = ((double *) src)[2];
+      double L, a, b, C, H;
+
+      cpercep_rgb_to_space (red, green, blue, &L, &a, &b);
+      ab_to_chab (a, b, &C, &H);
+
+      ((double *) dst)[0] = L;
+      ((double *) dst)[1] = C;
+      ((double *) dst)[2] = H;
+
+      src += sizeof (double) * 4;
+      dst += sizeof (double) * 3;
+    }
+  return n;
+}
+
+static long
+lchab_to_rgba (char *src,
+               char *dst,
+               long  n)
+{
+  while (n--)
+    {
+      double L = ((double *) src)[0];
+      double C = ((double *) src)[1];
+      double H = ((double *) src)[2];
+      double a, b, red, green, blue;
+
+      chab_to_ab (C, H, &a, &b);
+      cpercep_space_to_rgb (L, a, b, &red, &green, &blue);
+
+      ((double *) dst)[0] = red;
+      ((double *) dst)[1] = green;
+      ((double *) dst)[2] = blue;
+      ((double *) dst)[3] = 1.0;
+
+      src += sizeof (double) * 3;
+      dst += sizeof (double) * 4;
+    }
+  return n;
+}
+
+
+static long
+rgba_to_lchaba (char *src,
+                char *dst,
+                long  n)
+{
+  while (n--)
+    {
+      double red   = ((double *) src)[0];
+      double green = ((double *) src)[1];
+      double blue  = ((double *) src)[2];
+      double alpha = ((double *) src)[3];
+      double L, a, b, C, H;
+
+      cpercep_rgb_to_space (red, green, blue, &L, &a, &b);
+      ab_to_chab (a, b, &C, &H);
+
+      ((double *) dst)[0] = L;
+      ((double *) dst)[1] = C;
+      ((double *) dst)[2] = H;
+      ((double *) dst)[3] = alpha;
+
+      src += sizeof (double) * 4;
+      dst += sizeof (double) * 4;
+    }
+  return n;
+}
+
+static long
+lchaba_to_rgba (char *src,
+                char *dst,
+                long  n)
+{
+  while (n--)
+    {
+      double L     = ((double *) src)[0];
+      double C     = ((double *) src)[1];
+      double H     = ((double *) src)[2];
+      double alpha = ((double *) src)[3];
+      double a, b, red, green, blue;
+
+      chab_to_ab (C, H, &a, &b);
+      cpercep_space_to_rgb (L, a, b, &red, &green, &blue);
+
+      ((double *) dst)[0] = red;
+      ((double *) dst)[1] = green;
+      ((double *) dst)[2] = blue;
+      ((double *) dst)[3] = alpha;
+
+      src += sizeof (double) * 4;
+      dst += sizeof (double) * 4;
+    }
+  return n;
+}
+
 static void
 conversions (void)
 {
@@ -254,6 +392,31 @@ conversions (void)
     babl_model ("CIE Lab alpha"),
     babl_model ("RGBA"),
     "linear", laba_to_rgba,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_model ("RGBA"),
+    babl_model ("CIE LCH(ab)"),
+    "linear", rgba_to_lchab,
+    NULL
+  );
+  babl_conversion_new (
+    babl_model ("CIE LCH(ab)"),
+    babl_model ("RGBA"),
+    "linear", lchab_to_rgba,
+    NULL
+  );
+  babl_conversion_new (
+    babl_model ("RGBA"),
+    babl_model ("CIE LCH(ab) alpha"),
+    "linear", rgba_to_lchaba,
+    NULL
+  );
+  babl_conversion_new (
+    babl_model ("CIE LCH(ab) alpha"),
+    babl_model ("RGBA"),
+    "linear", lchaba_to_rgba,
     NULL
   );
 
@@ -306,6 +469,28 @@ formats (void)
     babl_component ("CIE a"),
     babl_type ("CIE u16 ab"),
     babl_component ("CIE b"),
+    NULL);
+
+
+  babl_format_new (
+    "name", "CIE LCH(ab) float",
+    babl_model ("CIE LCH(ab)"),
+
+    babl_type ("float"),
+    babl_component ("CIE L"),
+    babl_component ("CIE C(ab)"),
+    babl_component ("CIE H(ab)"),
+    NULL);
+
+  babl_format_new (
+    "name", "CIE LCH(ab) alpha float",
+    babl_model ("CIE LCH(ab) alpha"),
+
+    babl_type ("float"),
+    babl_component ("CIE L"),
+    babl_component ("CIE C(ab)"),
+    babl_component ("CIE H(ab)"),
+    babl_component ("A"),
     NULL);
 }
 
@@ -1105,6 +1290,30 @@ cpercep_space_to_rgb (double  inr,
   *outr = inr;
   *outg = ing;
   *outb = inb;
+}
+
+static void
+ab_to_chab (double  a,
+            double  b,
+            double *C,
+            double *H)
+{
+  *C = sqrt (a * a + b * b);
+  *H = atan2 (b, a) * DEGREES_PER_RADIAN;
+
+  /* Keep H within the range 0-360 */
+  if (*H < 0.0)
+    *H += 360;
+}
+
+static void
+chab_to_ab (double  C,
+            double  H,
+            double *a,
+            double *b)
+{
+  *a = cos (H * RADIANS_PER_DEGREE) * C;
+  *b = sin (H * RADIANS_PER_DEGREE) * C;
 }
 
 
