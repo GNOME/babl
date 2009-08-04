@@ -133,11 +133,14 @@ destroy_hook (void)
 #include <unistd.h>
 
 #ifdef HAVE_DLFCN_H
+#ifndef WIN32
 
 #include <dlfcn.h>
 #define HLIB    void *
 
+#endif /* WIN32 */
 #elif HAVE_DL_H
+
 
 #include <dl.h>
 #include <errno.h>
@@ -175,6 +178,10 @@ static void *dlsym (HLIB handle, const char *name) {
 #define dlerror()       GetLastError ()
 #endif
 
+typedef int  (*BablExtensionInitFunc)   (void);
+typedef void (*BablExtensionDestroyFunc)(void);
+
+
 static Babl *
 load_failed (Babl *babl)
 {
@@ -193,8 +200,8 @@ babl_extension_load (const char *path)
   /* do the actual loading thing */
   HLIB  dl_handle = NULL;
 
-  int   (*init)(void)    = NULL;
-  void  (*destroy)(void) = NULL;
+  BablExtensionInitFunc init = NULL;
+  BablExtensionDestroyFunc destroy = NULL;
 
   dl_handle = dlopen (path, RTLD_NOW);
   if (!dl_handle)
@@ -202,7 +209,7 @@ babl_extension_load (const char *path)
       babl_log ("dlopen() failed:\n\t%s", dlerror ());
       return load_failed (babl);
     }
-  init = dlsym (dl_handle, "init");
+  init = (BablExtensionInitFunc) dlsym (dl_handle, "init");
   if (!init)
     {
       babl_log ("\n\tint babl_extension_init() function not found in extension '%s'", path);
@@ -210,7 +217,7 @@ babl_extension_load (const char *path)
       return load_failed (babl);
     }
 
-  destroy = dlsym (dl_handle, "destroy");
+  destroy = (BablExtensionDestroyFunc) dlsym (dl_handle, "destroy");
   babl    = extension_new (path,
                            dl_handle,
                            destroy);
