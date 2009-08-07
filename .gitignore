@@ -20,6 +20,7 @@
 /install-sh
 /libtool
 /ltmain.sh
+/mingw32-config.cache
 /missing
 /mkinstalldirs
 /stamp-h
