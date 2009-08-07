@@ -1,7 +1,7 @@
 # programs used for doc creation
-babl_fish_path_dhtml   = $(top_builddir)/tests/babl_fish_path_dhtml
-babl_fish_path_fitness = $(top_builddir)/tests/babl_fish_path_fitness
-babl_html_dump         = $(top_builddir)/tests/babl-html-dump
+babl_fish_path_dhtml   = $(top_builddir)/tests/babl_fish_path_dhtml$(EXEEXT)
+babl_fish_path_fitness = $(top_builddir)/tests/babl_fish_path_fitness$(EXEEXT)
+babl_html_dump         = $(top_builddir)/tests/babl-html-dump$(EXEEXT)
 
 .SILENT:
 SUBDIRS=      graphics
