@@ -1,6 +1,6 @@
 ## Source directory
 
-if OS_WIN32
+if PLATFORM_WIN32
 no_undefined = -no-undefined
 endif
 

@@ -1,5 +1,5 @@
-if OS_WIN32
-AM_LDFLAGS = -module -no-undefined
+if PLATFORM_WIN32
+AM_LDFLAGS = -module -avoid-version -no-undefined
 else
 AM_LDFLAGS = -module -avoid-version
 endif
