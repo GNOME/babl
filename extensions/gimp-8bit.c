@@ -65,6 +65,28 @@ u8_linear_to_float_linear (unsigned char *src,
   return samples;
 }
 
+
+static INLINE long
+u8_linear_to_float_linear_premul (unsigned char *src,
+                                  unsigned char *dst,
+                                  long           samples)
+{
+  float *d = (float *) dst;
+  long   n = samples;
+
+  while (n--)
+    {
+      float alpha = lut_linear[src[3]];
+      d[0] = lut_linear[src[0]] * alpha;
+      d[1] = lut_linear[src[1]] * alpha;
+      d[2] = lut_linear[src[2]] * alpha;
+      d[3] = alpha;
+      src += 4;
+      d += 4;
+    }
+  return samples;
+}
+
 static INLINE long
 u8_gamma_2_2_to_float_linear (unsigned char *src,
                               unsigned char *dst,
@@ -88,6 +110,17 @@ conv_rgba8_linear_rgbaF_linear (unsigned char *src,
 
   return samples;
 }
+
+static INLINE long
+conv_rgba8_linear_ragabaaF_linear (unsigned char *src,
+                                unsigned char *dst,
+                                long           samples)
+{
+  u8_linear_to_float_linear_premul (src, dst, samples);
+
+  return samples;
+}
+
 
 static INLINE long
 conv_rgba8_gamma_2_2_rgbaF_linear (unsigned char *src,
@@ -146,6 +179,8 @@ conv_rgb8_linear_rgbaF_linear (unsigned char *src,
 
   return samples;
 }
+
+#define conv_rgb8_linear_ragabaaF_linear conv_rgb8_linear_rgbaF_linear
 
 static INLINE long
 conv_rgb8_gamma_2_2_rgbaF_linear (unsigned char *src,
@@ -354,6 +389,14 @@ int init (void);
 int
 init (void)
 {
+  Babl *ragabaaF_linear = babl_format_new (
+    babl_model ("RaGaBaA"),
+    babl_type ("float"),
+    babl_component ("Ra"),
+    babl_component ("Ga"),
+    babl_component ("Ba"),
+    babl_component ("A"),
+    NULL);
   Babl *rgbaF_linear = babl_format_new (
     babl_model ("RGBA"),
     babl_type ("float"),
@@ -438,12 +481,14 @@ init (void)
 #define o(src, dst) \
   babl_conversion_new (src, dst, "linear", conv_ ## src ## _ ## dst, NULL)
 
+  o (rgba8_linear, ragabaaF_linear);
   o (rgba8_linear, rgbaF_linear);
   o (rgba8_gamma_2_2, rgbaF_linear);
 
   o (rgb8_linear, rgbF_linear);
   o (rgb8_gamma_2_2, rgbF_linear);
   o (rgb8_linear, rgbaF_linear);
+  o (rgb8_linear, ragabaaF_linear);
   o (rgb8_gamma_2_2, rgbaF_linear);
 
   o (ga8_linear, gaF_linear);
