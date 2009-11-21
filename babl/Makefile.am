@@ -27,6 +27,7 @@ c_sources =				\
 	babl-list.c			\
 	babl-memory.c			\
 	babl-model.c			\
+	babl-mutex.c			\
 	babl-sampling.c			\
 	babl-sanity.c			\
 	babl-type.c			\
@@ -53,6 +54,7 @@ h_sources  =				\
 	babl-macros.h			\
 	babl-memory.h			\
 	babl-model.h			\
+	babl-mutex.h			\
 	babl-sampling.h			\
 	babl-type.h			\
 	babl-types.h			\

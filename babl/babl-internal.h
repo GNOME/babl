@@ -49,6 +49,7 @@
 #include "babl-ids.h"
 #include "babl-util.h"
 #include "babl-memory.h"
+#include "babl-mutex.h"
 #include "babl-cpuaccel.h"
 
 /* redefining some functions for the win32 platform */
