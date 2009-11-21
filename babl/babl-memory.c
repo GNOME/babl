@@ -118,9 +118,9 @@ babl_malloc (size_t size)
   BAI (ret)->signature = signature;
   BAI (ret)->size      = size;
 #if BABL_DEBUG_MEM
-  babl_mutex_lock (babl_format_mutex); 
+  babl_mutex_lock (babl_debug_mutex); 
   mallocs++;
-  babl_mutex_unlock (babl_format_mutex); 
+  babl_mutex_unlock (babl_debug_mutex); 
 #endif
   return (void *) (ret);
 }
@@ -140,11 +140,11 @@ babl_dup (void *ptr)
   memcpy (ret, ptr, BAI (ptr)->size);
 
 #if BABL_DEBUG_MEM
-  babl_mutex_lock (babl_format_mutex); 
+  babl_mutex_lock (babl_debug_mutex); 
   dups++;
   mallocs--;
+  babl_mutex_unlock (babl_debug_mutex); 
 #endif
-  babl_mutex_unlock (babl_format_mutex); 
   return NULL;
 }
 
@@ -193,9 +193,9 @@ babl_free (void *ptr,
                 BAI (format->image_template)->signature = NULL;
                 free_f (BAI (format->image_template));
 #if BABL_DEBUG_MEM
-                babl_mutex_lock (babl_format_mutex); 
+                babl_mutex_lock (babl_debug_mutex); 
                 frees++;
-                babl_mutex_unlock (babl_format_mutex); 
+                babl_mutex_unlock (babl_debug_mutex); 
 #endif
               }
             format->image_template = NULL;
@@ -213,9 +213,9 @@ babl_free (void *ptr,
   BAI (ptr)->signature = NULL;
   free_f (BAI (ptr));
 #if BABL_DEBUG_MEM
-  babl_mutex_lock (babl_format_mutex); 
+  babl_mutex_lock (babl_debug_mutex); 
   frees++;
-  babl_mutex_unlock (babl_format_mutex); 
+  babl_mutex_unlock (babl_debug_mutex); 
 #endif
 }
 
@@ -258,9 +258,9 @@ babl_realloc (void  *ptr,
       memcpy (ret, ptr, babl_sizeof (ptr));
       babl_free (ptr);
 #if BABL_DEBUG_MEM
-      babl_mutex_lock (babl_format_mutex); 
+      babl_mutex_lock (babl_debug_mutex); 
       reallocs++;
-      babl_mutex_unlock (babl_format_mutex); 
+      babl_mutex_unlock (babl_debug_mutex); 
 #endif
       return ret;
     }
@@ -284,10 +284,10 @@ babl_calloc (size_t nmemb,
   memset (ret, 0, nmemb * size);
 
 #if BABL_DEBUG_MEM
-  babl_mutex_lock (babl_format_mutex); 
+  babl_mutex_lock (babl_debug_mutex); 
   callocs++;
   mallocs--;
-  babl_mutex_unlock (babl_format_mutex); 
+  babl_mutex_unlock (babl_debug_mutex); 
 #endif
   return ret;
 }
@@ -315,10 +315,10 @@ babl_strdup (const char *s)
   strcpy (ret, s);
 
 #if BABL_DEBUG_MEM
-  babl_mutex_lock (babl_format_mutex); 
+  babl_mutex_lock (babl_debug_mutex); 
   strdups++;
   mallocs--;
-  babl_mutex_unlock (babl_format_mutex); 
+  babl_mutex_unlock (babl_debug_mutex); 
 #endif
   return ret;
 }
