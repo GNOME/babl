@@ -25,6 +25,8 @@
 
 #include "babl-list.h"
 #include "babl-hash-table.h"
+#include "babl-memory.h"
+#include "babl-mutex.h"
 
 typedef struct _BablDb BablDb;
 
@@ -33,6 +35,7 @@ typedef struct _BablDb
   BablHashTable *name_hash;
   BablHashTable *id_hash;
   BablList      *babl_list;
+  BablMutex     *mutex;
 } _BablDb;
 
 

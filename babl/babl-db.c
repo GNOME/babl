@@ -63,6 +63,7 @@ babl_db_init (void)
   db->name_hash = babl_hash_table_init (db_hash_by_name, db_find_by_name);
   db->id_hash = babl_hash_table_init (db_hash_by_id, db_find_by_id);
   db->babl_list = babl_list_init ();
+  db->mutex = babl_mutex_new ();
 
   return db;
 }
@@ -72,6 +73,7 @@ babl_db_destroy (BablDb *db)
 {
   babl_assert (db);
 
+  babl_mutex_destroy (db->mutex);
   babl_hash_table_destroy (db->name_hash);
   babl_hash_table_destroy (db->id_hash);
   babl_list_destroy (db->babl_list);
@@ -82,24 +84,21 @@ Babl *
 babl_db_find (BablDb     *db,
               const char *name)
 {
-  Babl *ret;
-  ret = babl_hash_table_find (db->name_hash, babl_hash_by_str (db->name_hash, name),
+  return babl_hash_table_find (db->name_hash, babl_hash_by_str (db->name_hash, name),
                               NULL, (void *) name);
-  return ret;
 }
 
 int
 babl_db_count (BablDb *db)
 {
-  int ret;
-  ret = db->babl_list->count;
-  return ret;
+  return db->babl_list->count;
 }
 
 Babl *
 babl_db_insert (BablDb *db,
                 Babl   *item)
 {
+  babl_mutex_lock (db->mutex);
   if (item->instance.id)
     babl_hash_table_insert (db->id_hash, item);
   babl_hash_table_insert (db->name_hash, item);
@@ -108,6 +107,7 @@ babl_db_insert (BablDb *db,
   /* this point all registered items pass through, a nice
   * place to brand them with where the item came from. */
   item->instance.creator = babl_extender ();
+  babl_mutex_unlock (db->mutex);
   return item;
 }
 
