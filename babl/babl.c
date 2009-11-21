@@ -72,6 +72,8 @@ babl_exit (void)
       babl_sampling_class_destroy ();
       babl_type_class_destroy ();
       babl_internal_destroy ();
+#if BABL_DEBUG_MEM
       babl_memory_sanity ();
+#endif
     }
 }

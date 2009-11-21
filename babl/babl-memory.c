@@ -54,6 +54,8 @@ typedef struct
 #define BAI(ptr)       ((BablAllocInfo *) *((void **) ptr - 1))
 #define IS_BAI(ptr)    (BAI (ptr)->signature == signature)
 
+#if BABL_DEBUG_MEM
+
 /* runtime statistics: */
 static int mallocs  = 0;
 static int frees    = 0;
@@ -71,6 +73,8 @@ mem_stats (void)
            mallocs, callocs, strdups, dups, mallocs + callocs + strdups + dups, frees, reallocs);
   return buf;
 }
+
+#endif
 
 static void
 functions_sanity (void)
@@ -113,7 +117,11 @@ babl_malloc (size_t size)
   *((void **) ret - 1) = ret - BABL_ALLOC - offset;
   BAI (ret)->signature = signature;
   BAI (ret)->size      = size;
+#if BABL_DEBUG_MEM
+  babl_mutex_lock (babl_format_mutex); 
   mallocs++;
+  babl_mutex_unlock (babl_format_mutex); 
+#endif
   return (void *) (ret);
 }
 
@@ -131,8 +139,12 @@ babl_dup (void *ptr)
   ret = babl_malloc (BAI (ptr)->size);
   memcpy (ret, ptr, BAI (ptr)->size);
 
+#if BABL_DEBUG_MEM
+  babl_mutex_lock (babl_format_mutex); 
   dups++;
   mallocs--;
+#endif
+  babl_mutex_unlock (babl_format_mutex); 
   return NULL;
 }
 
@@ -180,7 +192,11 @@ babl_free (void *ptr,
               {
                 BAI (format->image_template)->signature = NULL;
                 free_f (BAI (format->image_template));
+#if BABL_DEBUG_MEM
+                babl_mutex_lock (babl_format_mutex); 
                 frees++;
+                babl_mutex_unlock (babl_format_mutex); 
+#endif
               }
             format->image_template = NULL;
           }
@@ -196,7 +212,11 @@ babl_free (void *ptr,
   functions_sanity ();
   BAI (ptr)->signature = NULL;
   free_f (BAI (ptr));
+#if BABL_DEBUG_MEM
+  babl_mutex_lock (babl_format_mutex); 
   frees++;
+  babl_mutex_unlock (babl_format_mutex); 
+#endif
 }
 
 /* reallocate allocation to be in size instead, contents of
@@ -237,7 +257,11 @@ babl_realloc (void  *ptr,
 #endif
       memcpy (ret, ptr, babl_sizeof (ptr));
       babl_free (ptr);
+#if BABL_DEBUG_MEM
+      babl_mutex_lock (babl_format_mutex); 
       reallocs++;
+      babl_mutex_unlock (babl_format_mutex); 
+#endif
       return ret;
     }
 
@@ -259,8 +283,12 @@ babl_calloc (size_t nmemb,
 
   memset (ret, 0, nmemb * size);
 
+#if BABL_DEBUG_MEM
+  babl_mutex_lock (babl_format_mutex); 
   callocs++;
   mallocs--;
+  babl_mutex_unlock (babl_format_mutex); 
+#endif
   return ret;
 }
 
@@ -286,8 +314,12 @@ babl_strdup (const char *s)
     babl_log ("args=(%s): failed", s);
   strcpy (ret, s);
 
+#if BABL_DEBUG_MEM
+  babl_mutex_lock (babl_format_mutex); 
   strdups++;
   mallocs--;
+  babl_mutex_unlock (babl_format_mutex); 
+#endif
   return ret;
 }
 
@@ -332,6 +364,7 @@ babl_strcat (char       *dest,
   return ret;
 }
 
+#if BABL_DEBUG_MEM
 /* performs a sanity check on memory, (checks if number of
  * allocations and frees on babl memory evens out to zero).
  */
@@ -348,3 +381,4 @@ babl_memory_sanity (void)
     }
   return 0;
 }
+#endif

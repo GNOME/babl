@@ -240,6 +240,11 @@ babl_fatal (const char *format, ...)
 
 extern int   babl_hmpf_on_name_lookups;
 
+#define BABL_DEBUG_MEM 1
+#if BABL_DEBUG_MEM
+extern BablMutex *babl_debug_mutex;
+#endif
+
 const char  *babl_class_name       (BablClassType klass);
 void         babl_internal_init    (void);
 void         babl_internal_destroy (void);
