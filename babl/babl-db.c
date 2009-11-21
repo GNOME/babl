@@ -82,13 +82,18 @@ Babl *
 babl_db_find (BablDb     *db,
               const char *name)
 {
-  return babl_hash_table_find (db->name_hash, babl_hash_by_str (db->name_hash, name), (void *) name);
+  Babl *ret;
+  ret = babl_hash_table_find (db->name_hash, babl_hash_by_str (db->name_hash, name),
+                              NULL, (void *) name);
+  return ret;
 }
 
 int
 babl_db_count (BablDb *db)
 {
-  return db->babl_list->count;
+  int ret;
+  ret = db->babl_list->count;
+  return ret;
 }
 
 Babl *
@@ -104,7 +109,6 @@ babl_db_insert (BablDb *db,
   * place to brand them with where the item came from. */
   item->instance.creator = babl_extender ();
   return item;
-
 }
 
 void
@@ -121,22 +125,29 @@ babl_db_exist (BablDb     *db,
                int        id,
                const char *name)
 {
+  Babl *ret;
   if (id)
-    return babl_hash_table_find (db->id_hash, babl_hash_by_int (db->id_hash, id), &id);
-  return babl_hash_table_find (db->name_hash, babl_hash_by_str (db->name_hash, name), (void *) name);
+    ret = babl_hash_table_find (db->id_hash, babl_hash_by_int (db->id_hash, id), NULL, &id);
+  else 
+    ret = babl_hash_table_find (db->name_hash, babl_hash_by_str (db->name_hash, name), NULL, (void *) name);
+  return ret;
 }
 
 Babl *
 babl_db_exist_by_id (BablDb *db,
                      int    id)
 {
-  return  babl_hash_table_find (db->id_hash, babl_hash_by_int (db->id_hash, id),  &id);
+  Babl *ret;
+  ret = babl_hash_table_find (db->id_hash, babl_hash_by_int (db->id_hash, id), NULL, &id);
+  return ret;
 }
 
 Babl *
 babl_db_exist_by_name (BablDb     *db,
                        const char *name)
 {
-  return  babl_hash_table_find (db->name_hash, babl_hash_by_str (db->name_hash, name), (void *) name);
+  Babl *ret;
+  ret = babl_hash_table_find (db->name_hash, babl_hash_by_str (db->name_hash, name),
+                              NULL, (void *) name);
+  return ret;
 }
-

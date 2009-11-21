@@ -194,9 +194,10 @@ babl_hash_table_insert (BablHashTable *htab,
 }
 
 Babl *
-babl_hash_table_find (BablHashTable *htab,
-                      int           hash,
-                      void          *data)
+babl_hash_table_find (BablHashTable       *htab,
+                      int                  hash,
+                      BablHashFindFunction find_func,
+                      void                *data)
 {
   int  it;
   Babl *item;
@@ -211,7 +212,12 @@ babl_hash_table_find (BablHashTable *htab,
 
   for (;;)
     {
-      if (htab->find_func (item, data))
+      if (find_func)
+        {
+          if (find_func (item, data))
+            return item;
+        }
+      else if (htab->find_func (item, data))
         return item;
       it = htab->chain_table[it];
       if (it == -1)

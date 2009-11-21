@@ -60,9 +60,10 @@ babl_hash_table_insert (BablHashTable *htab,
                         Babl          *item);
 
 Babl *
-babl_hash_table_find (BablHashTable *htab,
-                      int           hash,
-                      void          *data);
+babl_hash_table_find (BablHashTable       *htab,
+                      int                  hash,
+                      BablHashFindFunction find_func,
+                      void                *data);
 
 void
 babl_hash_table_destroy (BablHashTable *htab);

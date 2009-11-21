@@ -211,8 +211,7 @@ babl_fish (const void *source,
         /* In the case of equal source and destination formats
          * we will search through the fish database for reference fish
          * to handle the memcpy */
-        id_htable->find_func = find_memcpy_fish;
-        babl_hash_table_find (id_htable, hashval, (void *) &ffish);
+        babl_hash_table_find (id_htable, hashval, find_memcpy_fish, (void *) &ffish);
       }
     else
       {
@@ -229,8 +228,7 @@ babl_fish (const void *source,
          * insert it into the fish database to indicate non-existent fish
          * path.
          */
-        id_htable->find_func = find_fish_path;
-        babl_hash_table_find (id_htable, hashval, (void *) &ffish);
+        babl_hash_table_find (id_htable, hashval, find_fish_path, (void *) &ffish);
 
         if (ffish.fish_path)
           {
