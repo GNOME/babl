@@ -121,6 +121,7 @@ babl_process (Babl *babl,
   return -1;
 }
 
+BablMutex *babl_format_mutex;
 #if BABL_DEBUG_MEM
 BablMutex *babl_debug_mutex;
 #endif
@@ -130,6 +131,7 @@ babl_internal_init (void)
 {
   babl_set_malloc (malloc);
   babl_set_free (free);
+  babl_format_mutex = babl_mutex_new ();
 #if BABL_DEBUG_MEM
   babl_debug_mutex = babl_mutex_new ();
 #endif
@@ -138,6 +140,7 @@ babl_internal_init (void)
 void
 babl_internal_destroy (void)
 {
+  babl_mutex_destroy (babl_format_mutex);
 #if BABL_DEBUG_MEM
   babl_mutex_destroy (babl_debug_mutex);
 #endif

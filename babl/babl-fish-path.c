@@ -26,21 +26,27 @@
 #define BABL_MAX_NAME_LEN          1024
 
 
-typedef struct _FishPathInstrumentation {
- Babl   *fmt_rgba_double;
- double *test;
- void   *source;
- void   *destination;
- void   *ref_destination;
- double *destination_rgba_double;
- double *ref_destination_rgba_double;
- Babl   *fish_rgba_to_source;
- Babl   *fish_reference;
- Babl   *fish_destination_to_rgba;
- double  reference_cost;
- int     init_instrumentation_done;
+typedef struct _FishPathInstrumentation
+{
+  Babl   *fmt_rgba_double;
+  double *test;
+  void   *source;
+  void   *destination;
+  void   *ref_destination;
+  double *destination_rgba_double;
+  double *ref_destination_rgba_double;
+  Babl   *fish_rgba_to_source;
+  Babl   *fish_reference;
+  Babl   *fish_destination_to_rgba;
+  double  reference_cost;
+  int     init_instrumentation_done;
 } FishPathInstrumentation;
 
+typedef struct PathContext {
+  Babl     *fish_path;
+  Babl     *to_format;
+  BablList *current_path;
+} PathContext;
 
 static void
 init_path_instrumentation (FishPathInstrumentation *fpi,
@@ -64,7 +70,8 @@ process_conversion_path (BablList *path,
                          long     n);
 
 static void
-get_conversion_path (Babl *current_format,
+get_conversion_path (PathContext *pc,
+                     Babl *current_format,
                      int current_length,
                      int max_length);
 
@@ -132,14 +139,12 @@ static int max_path_length (void)
  * implemented by recursive function get_conversion_path ().
  */
 
-static Babl *fish_path;
-static Babl *to_format;
-static BablList *current_path;
 
 static void
-get_conversion_path (Babl *current_format,
-                     int current_length,
-                     int max_length)
+get_conversion_path (PathContext *pc,
+                     Babl        *current_format,
+                     int          current_length,
+                     int          max_length)
 {
   if (current_length > max_length)
     {
@@ -147,7 +152,7 @@ get_conversion_path (Babl *current_format,
        * depth, let's bail out */
       return;
     }
-  else if ((current_length > 0) && (current_format == to_format))
+  else if ((current_length > 0) && (current_format == pc->to_format))
     {
        /* We have found a candidate path, let's
         * see about it's properties */
@@ -156,9 +161,9 @@ get_conversion_path (Babl *current_format,
       double path_error = 1.0;
       int    i;
 
-      for (i = 0; i < babl_list_size (current_path); i++)
+      for (i = 0; i < babl_list_size (pc->current_path); i++)
         {
-          path_error *= (1.0 + babl_conversion_error ((BablConversion *) current_path->items[i]));
+          path_error *= (1.0 + babl_conversion_error ((BablConversion *) pc->current_path->items[i]));
         }
 
       if (path_error - 1.0 <= legal_error ()) /* check this before the next;
@@ -167,18 +172,18 @@ get_conversion_path (Babl *current_format,
         {
           FishPathInstrumentation fpi;
           memset (&fpi, 0, sizeof (fpi));
-          get_path_instrumentation (&fpi, current_path, &path_cost, &ref_cost, &path_error);
+          get_path_instrumentation (&fpi, pc->current_path, &path_cost, &ref_cost, &path_error);
 
           if ((path_cost < ref_cost) && /* do not use paths that took longer to compute than reference */
-              (path_cost < fish_path->fish_path.cost) &&
+              (path_cost < pc->fish_path->fish_path.cost) &&
               (path_error <= legal_error ()))
             {
               /* We have found the best path so far,
                * let's copy it into our new fish */
-              fish_path->fish_path.cost = path_cost;
-              fish_path->fish.error  = path_error;
-              babl_list_copy (current_path,
-                              fish_path->fish_path.conversion_list);
+              pc->fish_path->fish_path.cost = path_cost;
+              pc->fish_path->fish.error  = path_error;
+              babl_list_copy (pc->current_path,
+                              pc->fish_path->fish_path.conversion_list);
             }
 
           destroy_path_instrumentation (&fpi);
@@ -187,9 +192,11 @@ get_conversion_path (Babl *current_format,
   else
     {
       /*
-       * Bummer, we have to search deeper... */
+       * Bummer, we have to search deeper... 
+       */
       BablList *list;
       int i;
+
 
       list = current_format->format.from_list;
       if (list)
@@ -205,16 +212,16 @@ get_conversion_path (Babl *current_format,
               if (!next_format->format.visited)
                 {
                   /* next_format is not in the current path, we can pay a visit */
-                  babl_list_insert_last (current_path, next_conversion);
-                  get_conversion_path (next_format, current_length + 1, max_length);
-                  babl_list_remove_last (current_path);
+                  babl_list_insert_last (pc->current_path, next_conversion);
+                  get_conversion_path (pc, next_format, current_length + 1, max_length);
+                  babl_list_remove_last (pc->current_path);
                 }
             }
 
           /* Remove the current format from current path */
           current_format->format.visited = 0;
         }
-      }
+   }
 }
 
 static char *
@@ -263,13 +270,23 @@ babl_fish_path (const Babl *source,
   babl->fish_path.loss            = BABL_MAX_COST_VALUE;
   babl->fish_path.conversion_list = babl_list_init_with_size (BABL_HARD_MAX_PATH_LENGTH);
 
-  current_path = babl_list_init_with_size (BABL_HARD_MAX_PATH_LENGTH);
-  fish_path = babl;
-  to_format = (Babl *) destination;
+  {
+    PathContext pc;
+    pc.current_path = babl_list_init_with_size (BABL_HARD_MAX_PATH_LENGTH);
+    pc.fish_path = babl;
+    pc.to_format = (Babl *) destination;
 
-  get_conversion_path ((Babl *) source, 0, max_path_length ());
+    babl_mutex_lock (babl_format_mutex);
+    /* we hold a global lock whilerunning get_conversion_path since
+     * it depends on keeping the various format.visited members in
+     * a consistent state, this code path is not performance critical
+     * since created fishes are cached.
+     */
 
-  babl_list_destroy (current_path);
+    get_conversion_path (&pc, (Babl *) source, 0, max_path_length ());
+    babl_mutex_unlock (babl_format_mutex);
+    babl_list_destroy (pc.current_path);
+  }
 
   if (babl_list_size (babl->fish_path.conversion_list) == 0)
     {
@@ -506,6 +523,7 @@ get_path_instrumentation (FishPathInstrumentation *fpi,
                                     fpi->ref_destination_rgba_double,
                                     NUM_TEST_PIXELS * 4);
 
+#if 0
   fpi->fish_rgba_to_source->fish.processings--;
   fpi->fish_reference->fish.processings--;
   fpi->fish_destination_to_rgba->fish.processings -= 2;
@@ -513,6 +531,7 @@ get_path_instrumentation (FishPathInstrumentation *fpi,
   fpi->fish_rgba_to_source->fish.pixels      -= NUM_TEST_PIXELS;
   fpi->fish_reference->fish.pixels           -= NUM_TEST_PIXELS;
   fpi->fish_destination_to_rgba->fish.pixels -= 2 * NUM_TEST_PIXELS;
+#endif
 
   *ref_cost = fpi->reference_cost;
 }

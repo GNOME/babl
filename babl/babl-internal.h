@@ -239,6 +239,7 @@ babl_fatal (const char *format, ...)
 )
 
 extern int   babl_hmpf_on_name_lookups;
+extern BablMutex *babl_format_mutex;
 
 #define BABL_DEBUG_MEM 1
 #if BABL_DEBUG_MEM
