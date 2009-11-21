@@ -24,7 +24,6 @@
 #include <time.h>
 
 static struct timeval start_time;
-static struct timeval measure_time;
 
 #define usecs(time)    ((time.tv_sec - start_time.tv_sec) * 1000000 + time.tv_usec)
 
@@ -42,6 +41,7 @@ init_ticks (void)
 long
 babl_ticks (void)
 {
+  struct timeval measure_time;
   init_ticks ();
   gettimeofday (&measure_time, NULL);
   return usecs (measure_time) - usecs (start_time);
