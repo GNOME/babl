@@ -27,7 +27,7 @@
 #endif
 
 #ifdef WIN32
-  typedef  CriticalSection   BablMutex;
+  typedef  CRITICAL_SECTION   BablMutex;
 #else
   typedef  pthread_mutex_t   BablMutex;
 #endif
