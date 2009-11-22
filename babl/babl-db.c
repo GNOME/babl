@@ -62,7 +62,7 @@ babl_db_init (void)
 
   db->name_hash = babl_hash_table_init (db_hash_by_name, db_find_by_name);
   db->id_hash = babl_hash_table_init (db_hash_by_id, db_find_by_id);
-  db->babl_list = babl_list_init ();
+  db->babl_list = babl_list_init_with_size (512);
   db->mutex = babl_mutex_new ();
 
   return db;
