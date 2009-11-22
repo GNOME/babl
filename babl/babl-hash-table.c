@@ -23,7 +23,7 @@
 #include "config.h"
 #include "babl-internal.h"
 
-#define BABL_HASH_TABLE_INITIAL_MASK   0x7F
+#define BABL_HASH_TABLE_INITIAL_MASK   0x1FF  /* 511 */
 
 /* static functions declarations */
 static inline int
