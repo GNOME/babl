@@ -111,7 +111,6 @@ format_new (const char     *name,
 }
 
 
-static char buf[512] = "";
 
 static char *
 create_name (BablModel      *model,
@@ -119,6 +118,7 @@ create_name (BablModel      *model,
              BablComponent **component,
              BablType      **type)
 {
+  char            buf[512] = "";
   char           *p = &buf[0];
   int             i;
   int             same_types = 1;
@@ -162,7 +162,7 @@ create_name (BablModel      *model,
   if (same_types)
     {
       sprintf (p, "%s", first_type->instance.name);
-      return buf;
+      return babl_strdup (buf);
     }
 
   i = components;
@@ -177,7 +177,7 @@ create_name (BablModel      *model,
       component++;
       type++;
     }
-  return buf;
+  return babl_strdup (buf);
 }
 
 Babl *
@@ -274,7 +274,7 @@ babl_format_new (void *first_arg,
 
       else if (!strcmp (arg, "name"))
         {
-          name = va_arg (varg, char *);
+          name = babl_strdup (va_arg (varg, char *));
         }
 
       else if (!strcmp (arg, "packed"))
@@ -308,6 +308,7 @@ babl_format_new (void *first_arg,
       /* There is an instance already registered by the required id/name,
        * returning the preexistent one instead.
        */
+      babl_free (name);
       return babl;
     }
 
@@ -320,6 +321,7 @@ babl_format_new (void *first_arg,
    * id/name, inserting newly created class into database.
    */
   babl_db_insert (db, babl);
+  babl_free (name);
   return babl;
 }
 
