@@ -301,23 +301,97 @@ babl_fish_path (const Babl *source,
   return babl;
 }
 
-long
+static long
 babl_fish_path_process (Babl *babl,
                         void *source,
                         void *destination,
                         long  n)
 {
-  long ret;
-
-  babl_assert (source);
-  babl_assert (destination);
-
-  ret = process_conversion_path (babl->fish_path.conversion_list,
+  return process_conversion_path (babl->fish_path.conversion_list,
                                  source,
                                  destination,
                                  n);
 
+}
+
+
+static long
+babl_fish_process (Babl *babl,
+                   void *source,
+                   void *destination,
+                   long  n)
+{
+  long ret = 0;
+
+  switch (babl->class_type)
+    {
+      case BABL_FISH_REFERENCE:
+        if (babl->fish.source == babl->fish.destination)
+          { /* XXX: we're assuming linear buffers */
+            memcpy (destination, source, n * babl->fish.source->format.bytes_per_pixel);
+            ret = n;
+          }
+        else
+          {
+            ret = babl_fish_reference_process (babl, source, destination, n);
+          }
+        break;
+
+      case BABL_FISH_SIMPLE:
+        if (BABL (babl->fish_simple.conversion)->class_type == BABL_CONVERSION_LINEAR)
+          {
+            ret = babl_conversion_process (BABL (babl->fish_simple.conversion),
+                                           source, destination, n);
+          }
+        else
+          {
+            babl_fatal ("Cannot use a simple fish to process without a linear conversion");
+          }
+        break;
+
+      case BABL_FISH_PATH:
+        ret = babl_fish_path_process (babl, source, destination, n);
+        break;
+
+      default:
+        babl_log ("NYI");
+        ret = -1;
+        break;
+    }
+
   return ret;
+}
+
+long
+babl_process (Babl *babl,
+              void *source,
+              void *destination,
+              long  n)
+{
+  babl_assert (babl);
+  babl_assert (source);
+  babl_assert (destination);
+  babl_assert (BABL_IS_BABL (babl));
+  if (n == 0)
+    return 0;
+  babl_assert (n > 0);
+
+  /* first check if it is a fish since that is out fast path */
+  if (babl->class_type >= BABL_FISH ||
+      babl->class_type <= BABL_FISH_PATH)
+    {
+      babl->fish.processings++;
+      return babl->fish.pixels +=
+             babl_fish_process (babl, source, destination, n);
+    }
+
+  /* matches all conversion classes */
+  if (babl->class_type >= BABL_CONVERSION &&
+      babl->class_type <= BABL_CONVERSION_PLANAR)
+    return babl_conversion_process (babl, source, destination, n);
+
+  babl_fatal ("eek");
+  return -1;
 }
 
 static long

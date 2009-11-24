@@ -75,40 +75,6 @@ babl_die (void)
   exit (-1);
 }
 
-long
-babl_process (Babl *babl,
-              void *source,
-              void *destination,
-              long  n)
-{
-  babl_assert (babl);
-  babl_assert (source);
-  babl_assert (destination);
-  babl_assert (BABL_IS_BABL (babl));
-  if (n == 0)
-    return 0;
-  babl_assert (n > 0);
-
-  /* matches all conversion classes */
-  if (babl->class_type >= BABL_CONVERSION &&
-      babl->class_type <= BABL_CONVERSION_PLANAR)
-    return babl_conversion_process (babl, source, destination, n);
-
-  if (babl->class_type == BABL_FISH ||
-      babl->class_type == BABL_FISH_REFERENCE ||
-      babl->class_type == BABL_FISH_PATH ||
-      babl->class_type == BABL_FISH_SIMPLE)
-    {
-      long ret;
-      ret = babl_fish_process (babl, source, destination, n);
-      babl->fish.processings++;
-      babl->fish.pixels += ret;
-      return ret;
-    }
-
-  babl_fatal ("eek");
-  return -1;
-}
 
 BablMutex *babl_format_mutex;
 #if BABL_DEBUG_MEM
@@ -123,7 +89,6 @@ babl_internal_init (void)
   babl_format_mutex = babl_mutex_new ();
 #if BABL_DEBUG_MEM
   babl_debug_mutex = babl_mutex_new ();
-  fprintf (stderr, "%p %p\n", babl_debug_mutex, babl_format_mutex);
 #endif
 }
 

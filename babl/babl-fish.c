@@ -278,53 +278,6 @@ babl_fish (const void *source,
   }
 }
 
-long
-babl_fish_process (Babl *babl,
-                   void *source,
-                   void *destination,
-                   long  n)
-{
-  long ret = 0;
-
-  switch (babl->class_type)
-    {
-      case BABL_FISH_REFERENCE:
-        if (babl->fish.source == babl->fish.destination)
-          { /* XXX: we're assuming linear buffers */
-            memcpy (destination, source, n * babl->fish.source->format.bytes_per_pixel);
-            ret = n;
-          }
-        else
-          {
-            ret = babl_fish_reference_process (babl, source, destination, n);
-          }
-        break;
-
-      case BABL_FISH_SIMPLE:
-        if (BABL (babl->fish_simple.conversion)->class_type == BABL_CONVERSION_LINEAR)
-          {
-            ret = babl_conversion_process (BABL (babl->fish_simple.conversion),
-                                           source, destination, n);
-          }
-        else
-          {
-            babl_fatal ("Cannot use a simple fish to process without a linear conversion");
-          }
-        break;
-
-      case BABL_FISH_PATH:
-        ret = babl_fish_path_process (babl, source, destination, n);
-        break;
-
-      default:
-        babl_log ("NYI");
-        ret = -1;
-        break;
-    }
-
-  return ret;
-}
-
 
 
 static int

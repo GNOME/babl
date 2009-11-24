@@ -81,10 +81,6 @@ void     babl_set_extender              (Babl           *new_extender);
 
 Babl   * babl_extension_quiet_log       (void);
 
-long     babl_fish_process              (Babl           *babl,
-                                         void           *source,
-                                         void           *destination,
-                                         long            n);
 long     babl_fish_reference_process    (Babl           *babl,
                                          BablImage      *source,
                                          BablImage      *destination,
@@ -98,10 +94,6 @@ void     babl_fish_stats                (FILE           *file);
 Babl   * babl_fish_path                 (const Babl     *source,
                                          const Babl     *destination);
 
-long     babl_fish_path_process         (Babl           *babl,
-                                         void           *source,
-                                         void           *destination,
-                                         long            n);
 int      babl_fish_get_id               (const Babl     *source,
                                          const Babl     *destination);
 
