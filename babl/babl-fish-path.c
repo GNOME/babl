@@ -264,7 +264,6 @@ babl_fish_path (const Babl *source,
   babl->fish.destination          = destination;
   babl->fish.processings          = 0;
   babl->fish.pixels               = 0;
-  babl->fish.usecs                = 0;
   babl->fish.error                = BABL_MAX_COST_VALUE;
   babl->fish_path.cost            = BABL_MAX_COST_VALUE;
   babl->fish_path.loss            = BABL_MAX_COST_VALUE;

@@ -60,7 +60,6 @@ table_destination_each (Babl *babl,
               fprintf (output_file, "<h3><span class='g'>path</span> %s <span class='g'>to</span> %s</h3>", source->instance.name, destination->instance.name);
               if (fish->fish.processings > 0)
                 {
-                  fprintf (output_file, "<span class='g'>usecs:</span>%li<br/>", fish->fish.usecs);
                   fprintf (output_file, "<span class='g'>Processings:</span>%i<br/>", fish->fish.processings);
                   fprintf (output_file, "<span class='g'>Pixels:</span>%li<br/>", fish->fish.pixels);
                 }
@@ -102,7 +101,6 @@ table_destination_each (Babl *babl,
 
             if (fish->fish.processings > 0)
               {
-                fprintf (output_file, "<span class='g'>usecs:</span>%li<br/>", fish->fish.usecs);
                 fprintf (output_file, "<span class='g'>Processings:</span>%i<br/>", fish->fish.processings);
                 fprintf (output_file, "<span class='g'>Pixels:</span>%li<br/>", fish->fish.pixels);
               }
@@ -123,7 +121,6 @@ table_destination_each (Babl *babl,
 
             if (fish->fish.processings > 0)
               {
-                fprintf (output_file, "<span class='g'>usecs:</span>%li<br/>", fish->fish.usecs);
                 fprintf (output_file, "<span class='g'>Processings:</span>%i<br/>", fish->fish.processings);
                 fprintf (output_file, "<span class='g'>Pixels:</span>%li<br/>", fish->fish.pixels);
               }

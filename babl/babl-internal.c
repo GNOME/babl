@@ -75,8 +75,6 @@ babl_die (void)
   exit (-1);
 }
 
-long babl_total_usecs = 0;
-
 long
 babl_process (Babl *babl,
               void *source,
@@ -102,18 +100,9 @@ babl_process (Babl *babl,
       babl->class_type == BABL_FISH_SIMPLE)
     {
       long ret;
-      /* long ticks = babl_ticks (); */
       ret = babl_fish_process (babl, source, destination, n);
-
-      /* XX:
-      ticks -= babl_ticks ();
-      ticks *= -1L;
-
-      babl_total_usecs += ticks;
-      babl->fish.usecs += ticks;
       babl->fish.processings++;
       babl->fish.pixels += ret;
-      */
       return ret;
     }
 
@@ -134,6 +123,7 @@ babl_internal_init (void)
   babl_format_mutex = babl_mutex_new ();
 #if BABL_DEBUG_MEM
   babl_debug_mutex = babl_mutex_new ();
+  fprintf (stderr, "%p %p\n", babl_debug_mutex, babl_format_mutex);
 #endif
 }
 
