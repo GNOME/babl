@@ -377,7 +377,7 @@ babl_process (Babl *babl,
   babl_assert (n > 0);
 
   /* first check if it is a fish since that is out fast path */
-  if (babl->class_type >= BABL_FISH ||
+  if (babl->class_type >= BABL_FISH &&
       babl->class_type <= BABL_FISH_PATH)
     {
       babl->fish.processings++;
