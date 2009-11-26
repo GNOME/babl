@@ -60,14 +60,6 @@ babl_list_destroy (BablList *list)
     babl_free (list);
 }
 
-int
-babl_list_size (BablList *list)
-{
-    babl_assert (list);
-
-    return list->count;
-}
-
 void
 babl_list_insert_last (BablList *list,
                        Babl     *item)
@@ -95,24 +87,6 @@ babl_list_remove_last (BablList *list)
   babl_assert (list->count > 0);
 
   list->count--;
-}
-
-Babl *
-babl_list_get_first (BablList *list)
-{
-  babl_assert (list);
-  babl_assert (list->count > 0);
-
-  return (list->items[0]);
-}
-
-Babl *
-babl_list_get_last (BablList *list)
-{
-  babl_assert (list);
-  babl_assert (list->count > 0);
-
-  return (list->items[list->count - 1]);
 }
 
 void

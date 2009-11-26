@@ -49,11 +49,9 @@ babl_list_insert_last (BablList *list,
 void
 babl_list_remove_last (BablList *list);
 
-Babl *
-babl_list_get_first (BablList *list);
-
-Babl *
-babl_list_get_last (BablList *list);
+#define babl_list_get_first(list) (list->items[0])
+#define babl_list_get_last(list)  (list->items[list->count-1])
+#define babl_list_size(list)      (list->count)
 
 void
 babl_list_copy (BablList *from,
