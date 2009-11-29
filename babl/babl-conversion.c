@@ -420,18 +420,23 @@ babl_conversion_process (Babl *babl,
 
 #define test_pixels    512
 
+
 static double *
 test_create (void)
 {
-  double *test;
-  int     i;
+  static double test[sizeof (double) * test_pixels * 4];
+  int           i;
+  static int done = 0;
+
+  if (done)
+    return test;
 
   srandom (20050728);
 
-  test = babl_malloc (sizeof (double) * test_pixels * 4);
-
   for (i = 0; i < test_pixels * 4; i++)
     test [i] = (double) random () / RAND_MAX;
+
+  done = 1;
   return test;
 }
 
@@ -548,7 +553,6 @@ babl_conversion_error (BablConversion *conversion)
   babl_free (destination_rgba_double);
   babl_free (ref_destination);
   babl_free (ref_destination_rgba_double);
-  babl_free (test);
 
   conversion->error = error;
   conversion->cost  = babl_process_cost (ticks_start, ticks_end);

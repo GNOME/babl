@@ -465,6 +465,10 @@ test_create (void)
 {
   static double test[sizeof (double) * NUM_TEST_PIXELS * 4];
   int           i, j;
+  static int    done = 0;
+
+  if (done)
+    return test;
 
   /* There is no need to generate the test
    * more times ... */
@@ -483,6 +487,7 @@ test_create (void)
   for (j = 0; j < 16 * 4; i++, j++)
     test [i] = 1.0 + (double) random () / RAND_MAX;
 
+  done = 1;
   return test;
 }
 
