@@ -6,6 +6,10 @@ the news section both in the README and the webpage.
                                                                           -->
 
 
+
+2010-01-15 babl-0.1.2                                               </dt><dd>
+Made babl mostly threadsafe (sufficient for GIMP/GEGLs needs). Streamlined core functionality, reducing number of function calls and removing overeager instrumentation.
+                                                                    </dd><dt>
 2009-05-20 babl-0.1.0                                               </dt><dd>
 Support for RGBA representation in the frequency domain,
 un-pre-multiply close-to-zero alpha values to complete black instead

@@ -30,4 +30,11 @@
         <dd>Portability patch.</dd>
   <dt>Hubert Figuiere</dt>
         <dd>C++ friendliness patch.</dd>
+  <dt>Danny Robson</dt>
+        <dd>Code cleanups.</dd>
+  <dt>Fryderyk Dziarmagowski <em>freetz at gmx.net</em></dt>
+        <dd>Code cleanups.</dd>
+  <dt>Daniel Paredes García <em>danipga at gmail.com</em></dt>
+        <dd>Initial work to make babl threadsafe</dd>
+
 </dl>
