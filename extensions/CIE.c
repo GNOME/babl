@@ -440,7 +440,7 @@ formats (void)
     "name", "CIE Lab alpha float",
     babl_model ("CIE Lab alpha"),
 
-    babl_type ("double"),
+    babl_type ("float"),
     babl_component ("CIE L"),
     babl_component ("CIE a"),
     babl_component ("CIE b"),
