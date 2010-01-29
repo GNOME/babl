@@ -27,7 +27,7 @@ BablMutex  *
 babl_mutex_new (void)
 {
   BablMutex *mutex = malloc (sizeof (BablMutex));
-#ifdef WIN32
+#ifdef _WIN32
   InitializeCriticalSection (mutex);
 #else
   pthread_mutex_init (mutex, NULL);
@@ -38,7 +38,7 @@ babl_mutex_new (void)
 void
 babl_mutex_destroy (BablMutex *mutex)
 {
-#ifdef WIN32
+#ifdef _WIN32
   DeleteCriticalSection (mutex);
 #else
   pthread_mutex_destroy(mutex);
@@ -49,7 +49,7 @@ babl_mutex_destroy (BablMutex *mutex)
 void
 babl_mutex_lock (BablMutex *mutex)
 {
-#ifdef WIN32
+#ifdef _WIN32
   EnterCriticalSection (mutex);
 #else
   pthread_mutex_lock (mutex);
@@ -59,7 +59,7 @@ babl_mutex_lock (BablMutex *mutex)
 void
 babl_mutex_unlock (BablMutex *mutex)
 {
-#ifdef WIN32
+#ifdef _WIN32
   LeaveCriticalSection (mutex);
 #else
   pthread_mutex_unlock (mutex);
