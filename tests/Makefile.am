@@ -1,3 +1,7 @@
+if OS_UNIX
+CONCURRENCY_STRESS_TEST = concurrency-stress-test 
+endif
+
 TESTS =				\
 	grayscale_to_rgb	\
 	rgb_to_bgr       	\
@@ -7,12 +11,14 @@ TESTS =				\
 	babl_class_name		\
 	types			\
 	models			\
-	concurrency-stress-test 
+	$(CONCURRENCY_STRESS_TEST)
 
 TESTS_ENVIRONMENT = BABL_PATH=$(top_builddir)/extensions/.libs
 
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/babl
+if OS_UNIX
 AM_LDFLAGS  = -pthread
+endif
 
 LDADD = $(top_builddir)/babl/libbabl-@BABL_API_VERSION@.la \
 	$(MATH_LIB)
