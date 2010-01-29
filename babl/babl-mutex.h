@@ -19,14 +19,14 @@
 #ifndef _BABL_MUTEX_H
 #define _BABL_MUTEX_H
 
-#ifndef WIN32
+#ifndef _WIN32
 #define __USE_GNU 1
 #include <pthread.h>
 #else
 #include <windows.h>
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
   typedef  CRITICAL_SECTION   BablMutex;
 #else
   typedef  pthread_mutex_t   BablMutex;
