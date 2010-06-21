@@ -31,7 +31,7 @@ RSVG_CMD = echo -n " SVG: $@" ;\
 if HAVE_RSVG
 dist-check-rsvg:
 
-%.png: %.svg
+.svg.png:
 	$(RSVG_CMD)
 #-e $@ $< 2>/dev/null
 
