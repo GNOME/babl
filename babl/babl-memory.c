@@ -47,6 +47,7 @@ typedef struct
 {
   char  *signature;
   size_t size;
+  int  (*destructor)(void *ptr);
 } BablAllocInfo;
 
 #define BABL_ALIGN     16
@@ -117,12 +118,23 @@ babl_malloc (size_t size)
   *((void **) ret - 1) = ret - BABL_ALLOC - offset;
   BAI (ret)->signature = signature;
   BAI (ret)->size      = size;
+  BAI (ret)->destructor = NULL;
 #if BABL_DEBUG_MEM
   babl_mutex_lock (babl_debug_mutex); 
   mallocs++;
   babl_mutex_unlock (babl_debug_mutex); 
 #endif
   return (void *) (ret);
+}
+
+/* set a callback to be called when the segment is freed.
+ */
+void
+babl_set_destructor (void  *ptr,
+                     int (*destructor)(void *ptr))
+{
+  babl_assert (IS_BAI (ptr));
+  BAI(ptr)->destructor = destructor;
 }
 
 /* Create a duplicate allocation of the same size, note
@@ -158,58 +170,16 @@ void
 babl_free (void *ptr,
            ...)
 {
-  /* XXX:
-   *  Extra logic to make the bookeeping of BablImage cached
-   *  templates work out correctly, by using a babl_image_destroy
-   *  and custom destroy functions for babl_format this would be
-   *  avoided and the extra overhead not needed for non image/format
-   *  typed allocations.
-   */
-  if (BABL_IS_BABL (ptr))
-    {
-      switch (BABL (ptr)->instance.class_type)
-        {
-        case BABL_IMAGE:
-          {
-            BablFormat *format = BABL(ptr)->image.format;
-            if (format)
-              {
-                if (format->image_template == NULL)
-                  {
-                    format->image_template = ptr;
-                    return;
-                  }
-                else
-                  {
-                  }
-              }
-          }
-          break;
-        case BABL_FORMAT:
-          {
-            BablFormat *format = ptr;
-            if (format->image_template != NULL)
-              {
-                BAI (format->image_template)->signature = NULL;
-                free_f (BAI (format->image_template));
-#if BABL_DEBUG_MEM
-                babl_mutex_lock (babl_debug_mutex); 
-                frees++;
-                babl_mutex_unlock (babl_debug_mutex); 
-#endif
-              }
-            format->image_template = NULL;
-          }
-          break;
-          default:
-          break;
-        }
-    }
+  functions_sanity ();
   if (!ptr)
     return;
   if (!IS_BAI (ptr))
     babl_fatal ("memory not allocated by babl allocator");
-  functions_sanity ();
+
+  if (BAI (ptr)->destructor)
+    if (BAI (ptr)->destructor (ptr))
+      return; /* bail out on non 0 return from destructor */
+
   BAI (ptr)->signature = NULL;
   free_f (BAI (ptr));
 #if BABL_DEBUG_MEM

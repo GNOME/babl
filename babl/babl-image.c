@@ -22,6 +22,17 @@
 
 #include "babl-internal.h"
 
+static int babl_image_destruct (void *babl)
+{
+  BablFormat *format = BABL (babl)->image.format;
+  if (format && format->image_template == NULL)
+    {
+      format->image_template = babl;
+      return -1; /* this should avoid freeing images created for formats,. */
+    }
+  return 0;
+}
+
 static Babl *
 image_new (BablFormat     *format,
            BablModel      *model,
@@ -43,6 +54,7 @@ image_new (BablFormat     *format,
                        sizeof (void*)          * (components) +
                        sizeof (int)            * (components) +
                        sizeof (int)            * (components));
+  babl_set_destructor (babl, babl_image_destruct);
   babl->image.component = (void*)(((char *)babl)                  + sizeof (BablImage));
   babl->image.sampling  = (void*)(((char *)babl->image.component) + sizeof (BablComponent*) * (components));
   babl->image.type      = (void*)(((char *)babl->image.sampling)  + sizeof (BablSampling*)  * (components));

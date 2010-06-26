@@ -24,6 +24,19 @@
 #include "babl-internal.h"
 #include "babl-db.h"
 
+static int babl_format_destruct (void *babl)
+{
+  BablFormat *format = babl;
+  if (format->image_template != NULL)
+    {
+      babl_set_destructor (format->image_template, NULL);
+      /* with no destructor set, the circular reference is no problem */
+      babl_free (format->image_template);
+      format->image_template = NULL;
+    }
+  return 0;
+}
+
 static int
 each_babl_format_destroy (Babl *babl,
                           void *data)
@@ -75,6 +88,7 @@ format_new (const char     *name,
                       sizeof (BablType *) * (components) +
                       sizeof (int) * (components) +
                       sizeof (int) * (components));
+  babl_set_destructor (babl, babl_format_destruct);
 
   babl->format.from_list = NULL;
   babl->format.component = (void *) (((char *) babl) + sizeof (BablFormat));
