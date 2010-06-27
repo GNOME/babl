@@ -153,7 +153,7 @@ Babl * babl_model_new      (void *first_arg,
                             ...) BABL_ARG_NULL_TERMINATED;
 
 /**
- * Defines a new color format in babl. Provided BablType and|or
+ * Defines a new pixel format in babl. Provided BablType and|or
  * BablSampling is valid for the following components as well. If no
  * name is provided a (long) descriptive name is used.
  *
@@ -171,6 +171,16 @@ Babl * babl_model_new      (void *first_arg,
  */
 Babl * babl_format_new     (void *first_arg,
                             ...) BABL_ARG_NULL_TERMINATED;
+
+/*
+ * Defines a new pixel format in babl. With the specified data storage
+ * type and the given number of components. At the moment behavior of 
+ * conversions are only well defined to other babl_format_n derived formats
+ * with the same number of components.
+ */
+Babl *
+babl_format_n (Babl *type,
+               int   components);
 
 /**
  * Defines a new conversion between either two formats, two models or

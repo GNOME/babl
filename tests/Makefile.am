@@ -10,6 +10,7 @@ TESTS =				\
 	sanity			\
 	babl_class_name		\
 	types			\
+	n_components		\
 	models			\
 	$(CONCURRENCY_STRESS_TEST)
 

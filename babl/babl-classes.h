@@ -67,7 +67,7 @@ enum {
 
 
 /* This union can be used for convenient access to any field without
- * the need to case if the variable already is of the type Babl*
+ * the need to cast if the variable already is of the type Babl*
  */
 typedef union _Babl
 {

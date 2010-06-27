@@ -116,7 +116,6 @@ format_new (const char     *name,
 }
 
 
-
 static char *
 create_name (BablModel      *model,
              int             components,
@@ -183,6 +182,58 @@ create_name (BablModel      *model,
       type++;
     }
   return babl_strdup (buf);
+}
+
+
+static char *
+ncomponents_create_name (Babl *type,
+                         int   components)
+{
+  char buf[512];
+  sprintf (buf, "%s[%i] ", type->instance.name, components);
+  return babl_strdup (buf);
+}
+
+Babl *
+babl_format_n (Babl *btype,
+               int   components)
+{
+  int            i;
+  Babl          *babl;
+  int            id         = 0;
+  int            planar     = 0;
+  BablModel     *model      = (BablModel *)babl_model ("Y");
+  BablComponent *component [components];
+  BablSampling  *sampling  [components];
+  BablType      *type      [components];
+  char          *name       = NULL;
+
+  for (i = 0; i<components; i++)
+    {
+      component[i] = model->component[0];
+      type[i] = &btype->type;
+      sampling[i] = (BablSampling *) babl_sampling (1, 1);
+    }
+
+  name = ncomponents_create_name (btype, components);
+  babl = babl_db_exist (db, id, name);
+  if (babl)
+    {
+      /* There is an instance already registered by the required id/name,
+       * returning the preexistent one instead.
+       */
+      babl_free (name);
+      return babl;
+    }
+
+  babl = format_new (name,
+                     id,
+                     planar, components, model,
+                     component, sampling, type);
+
+  babl_db_insert (db, babl);
+  babl_free (name);
+  return babl;
 }
 
 Babl *
@@ -322,9 +373,6 @@ babl_format_new (void *first_arg,
                      planar, components, model,
                      component, sampling, type);
 
-  /* Since there is not an already registered instance by the required
-   * id/name, inserting newly created class into database.
-   */
   babl_db_insert (db, babl);
   babl_free (name);
   return babl;

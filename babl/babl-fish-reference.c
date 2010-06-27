@@ -201,6 +201,79 @@ convert_from_double (BablFormat *destination_fmt,
 }
 
 
+static void
+ncomponent_convert_to_double (BablFormat *source_fmt,
+                              BablImage  *source,
+                              char       *source_buf,
+                              char       *source_double_buf,
+                              int         n)
+{
+  BablImage *src_img;
+  BablImage *dst_img;
+
+  src_img = (BablImage *) babl_image_new (
+    babl_component_from_id (BABL_LUMINANCE), NULL, 1, 0, NULL);
+  dst_img = (BablImage *) babl_image_new (
+    babl_component_from_id (BABL_LUMINANCE), NULL, 1, 0, NULL);
+
+  dst_img->type[0]  = (BablType *) babl_type_from_id (BABL_DOUBLE);
+  dst_img->pitch[0] = (dst_img->type[0]->bits / 8);
+  dst_img->stride[0] = 0;
+
+  src_img->data[0]   = source_buf;
+  src_img->type[0] = source_fmt->type[0];
+  src_img->pitch[0] = source_fmt->type[0]->bits / 8;
+  src_img->stride[0] = 0;
+
+  dst_img->data[0] = source_double_buf;
+
+  babl_process (
+    assert_conversion_find (src_img->type[0], dst_img->type[0]),
+    src_img, dst_img,
+    n * source_fmt->components);
+  babl_free (src_img);
+  babl_free (dst_img);
+}
+
+static void
+ncomponent_convert_from_double (BablFormat *destination_fmt,
+                                char       *destination_double_buf,
+                                BablImage  *destination,
+                                char       *destination_buf,
+                                int         n)
+{
+  BablImage *src_img;
+  BablImage *dst_img;
+
+  src_img = (BablImage *) babl_image_new (
+    babl_component_from_id (BABL_LUMINANCE), NULL, 1, 0, NULL);
+  dst_img = (BablImage *) babl_image_new (
+    babl_component_from_id (BABL_LUMINANCE), NULL, 1, 0, NULL);
+
+  src_img->type[0]   = (BablType *) babl_type_from_id (BABL_DOUBLE);
+  src_img->pitch[0]  = (src_img->type[0]->bits / 8);
+  src_img->stride[0] = 0;
+
+  dst_img->data[0]  = destination_buf;
+  dst_img->type[0]  = (BablType *) babl_type_from_id (BABL_DOUBLE);
+  dst_img->pitch[0] = destination_fmt->type[0]->bits/8;
+  dst_img->stride[0] = 0;
+
+  dst_img->type[0] = destination_fmt->type[0];
+  src_img->data[0] = destination_double_buf;
+
+  babl_process (
+    assert_conversion_find (src_img->type[0], dst_img->type[0]),
+    src_img, dst_img,
+    n * destination_fmt->components);
+
+  dst_img->data[0] += dst_img->type[0]->bits / 8;
+  babl_free (src_img);
+  babl_free (dst_img);
+}
+
+
+
 static int
 process_same_model (Babl      *babl,
                     BablImage *source,
@@ -217,24 +290,51 @@ process_same_model (Babl      *babl,
     }
 
   double_buf = babl_malloc (sizeof (double) * n *
-                            BABL (babl->fish.source)->format.model->components);
+                            BABL (babl->fish.source)->format.components);
 
-  convert_to_double (
-    (BablFormat *) BABL (babl->fish.source),
-    BABL_IS_BABL (source) ? source : NULL,
-    BABL_IS_BABL (source) ? NULL : (char *) source,
-    double_buf,
-    n
-  );
+  if (
+      (BABL (babl->fish.source)->format.components ==
+       BABL (babl->fish.destination)->format.components)
+      && (BABL (babl->fish.source)->format.model->components !=
+          BABL (babl->fish.source)->format.components))
+    {
+      /* FIXME: should recursively invoke babl and look up an appropriate fish
+       * for the conversion and multiply n by the number of components.
+       */
+      ncomponent_convert_to_double (
+        (BablFormat *) BABL (babl->fish.source),
+        BABL_IS_BABL (source) ? source : NULL,
+        BABL_IS_BABL (source) ? NULL : (char *) source,
+        double_buf,
+        n
+      );
 
-  convert_from_double (
-    (BablFormat *) BABL (babl->fish.destination),
-    double_buf,
-    BABL_IS_BABL (destination) ? destination : NULL,
-    BABL_IS_BABL (destination) ? NULL : (char *) destination,
-    n
-  );
+      ncomponent_convert_from_double (
+        (BablFormat *) BABL (babl->fish.destination),
+        double_buf,
+        BABL_IS_BABL (destination) ? destination : NULL,
+        BABL_IS_BABL (destination) ? NULL : (char *) destination,
+        n
+      );
+    }
+  else
+    {
+      convert_to_double (
+        (BablFormat *) BABL (babl->fish.source),
+        BABL_IS_BABL (source) ? source : NULL,
+        BABL_IS_BABL (source) ? NULL : (char *) source,
+        double_buf,
+        n
+      );
 
+      convert_from_double (
+        (BablFormat *) BABL (babl->fish.destination),
+        double_buf,
+        BABL_IS_BABL (destination) ? destination : NULL,
+        BABL_IS_BABL (destination) ? NULL : (char *) destination,
+        n
+      );
+    }
   babl_free (double_buf);
   return 0;
 }
@@ -251,6 +351,7 @@ babl_fish_reference_process (Babl      *babl,
   Babl *source_image;
   Babl *rgba_image;
   Babl *destination_image;
+
 
   if (BABL (babl->fish.source)->format.model ==
       BABL (babl->fish.destination)->format.model)
