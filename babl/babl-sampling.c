@@ -42,14 +42,6 @@ babl_sampling (int horizontal,
   return NULL;
 }
 
-
-static int
-each_babl_sampling_destroy (Babl *babl,
-                            void *data)
-{
-  return 0; 
-}
-
 void
 babl_sampling_class_for_each (BablEachFunction each_fun,
                               void            *user_data)
@@ -64,13 +56,6 @@ babl_sampling_class_for_each (BablEachFunction each_fun,
         if (each_fun (BABL (&sampling_db[index]), user_data))
           return;
       }
-}
-
-
-void
-babl_sampling_class_destroy (void)
-{
-  babl_sampling_class_for_each (each_babl_sampling_destroy, NULL);
 }
 
 void
