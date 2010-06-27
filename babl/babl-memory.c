@@ -232,6 +232,8 @@ babl_realloc (void  *ptr,
       ret = babl_malloc (size);
 #endif
       memcpy (ret, ptr, babl_sizeof (ptr));
+      BAI (ret)->destructor = BAI (ptr)->destructor;
+      BAI (ptr)->destructor = NULL;
       babl_free (ptr);
 #if BABL_DEBUG_MEM
       babl_mutex_lock (babl_debug_mutex); 
