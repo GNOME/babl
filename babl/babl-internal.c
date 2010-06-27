@@ -64,7 +64,7 @@ babl_backtrack (void)
   char buf[512];
 
   sprintf (buf, "echo bt>/tmp/babl.gdb;"
-           "gdb -q --batch -x /tmp/babl.gdb --pid=%i 2>/dev/null", getpid ());
+           "gdb -q --batch -x /tmp/babl.gdb --pid=%i | grep 'in ''babl_die' -A40", getpid ());
   return system (buf);
 }
 
