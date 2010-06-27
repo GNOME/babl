@@ -41,7 +41,8 @@ babl_set_free (BablFreeFunc free_function)
   free_f = free_function;
 }
 
-static char *signature = "So long and thanks for all the fish.";
+static char *signature = "babl-memory";
+static char *freed = "So long and thanks for all the fish.";
 
 typedef struct
 {
@@ -174,13 +175,18 @@ babl_free (void *ptr,
   if (!ptr)
     return;
   if (!IS_BAI (ptr))
-    babl_fatal ("memory not allocated by babl allocator");
+    {
+      #define IS_BAI(ptr)    (BAI (ptr)->signature == signature)
+      if (freed)
+        babl_fatal ("\nbabl:double free detected\n------------------------");
+      babl_fatal ("memory not allocated by babl allocator");
+    }
 
   if (BAI (ptr)->destructor)
     if (BAI (ptr)->destructor (ptr))
       return; /* bail out on non 0 return from destructor */
 
-  BAI (ptr)->signature = NULL;
+  BAI (ptr)->signature = freed;
   free_f (BAI (ptr));
 #if BABL_DEBUG_MEM
   babl_mutex_lock (babl_debug_mutex); 
