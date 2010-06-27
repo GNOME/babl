@@ -33,25 +33,12 @@ typedef int  (*BablEachFunction) (Babl *entry,
  * to be iterated over, common functionality is defined through these
  * macros.
  */
-#define BABL_CLASS_DECLARE(klass)                                  \
-                                                                   \
-Babl * babl_##klass##_from_id        (int id);                     \
-void   babl_##klass##_class_init     (void);                       \
-void   babl_##klass##_class_destroy  (void);                       \
-void   babl_##klass##_class_for_each (BablEachFunction  each_fun,  \
-                                      void             *user_data)
-
-/* If a class is declared as a "named class" it means it is a class
- * that has a specific name connected to it, that also allows defining
- * a new instance. These classes share common functionality with the
- * non_name classes but have two extra methods, the means to lookup by
- * name, as well as to create new named objects that later can be
- * looked up. These methods are babl_klass() babl_klass_new() but they
- * are declared outside of this macro.
- */
-#define BABL_NAMED_CLASS_DECLARE(klass) \
-BABL_CLASS_DECLARE (klass)
-
+#define BABL_CLASS_DECLARE(klass)                                    \
+                                                                     \
+BablDb * babl_##klass##_db (void);                                   \
+Babl   * babl_##klass##_from_id        (int id);                     \
+void     babl_##klass##_class_for_each (BablEachFunction  each_fun,  \
+                                        void             *user_data)
 
 /* common header for any item inserted into database, the actual
  * implementation of babl-instance is in babl-internal

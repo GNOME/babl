@@ -19,7 +19,7 @@
 #ifndef _BABL_CONVERSION_H
 #define _BABL_CONVERSION_H
 
-BABL_NAMED_CLASS_DECLARE (conversion);
+BABL_CLASS_DECLARE (conversion);
 
 Babl * babl_conversion (const char *name);
 

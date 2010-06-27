@@ -22,7 +22,7 @@
 
 /****************************************************************/
 /* BablComponent */
-BABL_NAMED_CLASS_DECLARE (component);
+BABL_CLASS_DECLARE (component);
 
 
 typedef struct

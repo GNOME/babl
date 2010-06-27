@@ -24,10 +24,12 @@ BABL_CLASS_DECLARE (sampling);
 typedef struct
 {
   BablInstance     instance;
-  BablList         *from_list;
   int              horizontal;
   int              vertical;
   char             name[4];
 } BablSampling;
+
+void
+babl_sampling_class_init (void);
 
 #endif

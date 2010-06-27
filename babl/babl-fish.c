@@ -22,7 +22,6 @@
 #include <string.h>
 #include <stdarg.h>
 
-
 typedef struct _BablFindFish BablFindFish;
 
 typedef struct _BablFindFish
@@ -47,14 +46,6 @@ find_fish_path (Babl *item,
 static int
 find_memcpy_fish (Babl *item,
                   void *data);
-
-static int
-each_babl_fish_destroy (Babl *babl,
-                        void *data);
-
-
-/* ====================================== */
-
 
 static int
 find_fish_path (Babl *item,
@@ -143,14 +134,6 @@ babl_fish_get_id (const Babl *source,
   if (id == 0)
     id = 1;
   return id;
-}
-
-BablDb *
-babl_fish_db (void)
-{
-  if (!db)
-    db = babl_db_init ();
-  return db;
 }
 
 Babl *
@@ -276,18 +259,6 @@ babl_fish (const void *source,
         return babl_fish_reference (source_format, destination_format);
       }
   }
-}
-
-
-
-static int
-each_babl_fish_destroy (Babl *babl,
-                        void *data)
-{
-  if (babl->class_type == BABL_FISH_PATH)
-    babl_list_destroy (babl->fish_path.conversion_list);
-  babl_free (babl);
-  return 0;  /* continue iterating */
 }
 
 BABL_CLASS_MINIMAL_IMPLEMENT (fish);

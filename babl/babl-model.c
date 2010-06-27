@@ -23,15 +23,13 @@
 #include "babl-internal.h"
 #include "babl-db.h"
 
-
 static int
-each_babl_model_destroy (Babl *babl,
-                         void *data)
+babl_model_destroy (void *data)
 {
+  Babl *babl = data;
   if (babl->model.from_list)
-    babl_list_destroy (babl->model.from_list);
-  babl_free (babl);
-  return 0;  /* continue iterating */
+    babl_free (babl->model.from_list);
+  return 0; 
 }
 
 static char *
@@ -60,6 +58,7 @@ model_new (const char     *name,
   babl = babl_malloc (sizeof (BablModel) +
                       sizeof (BablComponent *) * (components) +
                       strlen (name) + 1);
+  babl_set_destructor (babl, babl_model_destroy);
   babl->model.component = (void *) (((char *) babl) + sizeof (BablModel));
   babl->instance.name   = (void *) (((char *) babl->model.component) + sizeof (BablComponent *) * (components));
 

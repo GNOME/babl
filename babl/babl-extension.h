@@ -22,13 +22,13 @@
 
 /****************************************************************/
 /* BablExtension */
-BABL_NAMED_CLASS_DECLARE (extension);
+BABL_CLASS_DECLARE (extension);
 /*
  * BablExtension objects are only used internally in babl.
  */
 
 Babl * babl_extension (const char *name);
-
+void   babl_extension_load_dir_list (const char *dir_list);
 
 typedef struct
 {

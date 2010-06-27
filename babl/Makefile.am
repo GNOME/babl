@@ -11,7 +11,6 @@ c_sources =				\
 	babl-component.c		\
 	babl-conversion.c		\
 	babl-core.c			\
-	babl-cpuaccel.c			\
 	babl-db.c			\
 	babl-extension.c		\
 	babl-fish-path.c		\
@@ -32,6 +31,7 @@ c_sources =				\
 	babl-sanity.c			\
 	babl-type.c			\
 	babl-util.c			\
+	babl-cpuaccel.c			\
 	babl-version.c
 
 h_sources  =				\

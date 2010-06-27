@@ -20,10 +20,6 @@
 
 #include "config.h"
 
-#define BABL_PATH              LIBDIR BABL_DIR_SEPARATOR BABL_LIBRARY
-
-#define BABL_INIT_HOOK         init_hook ();
-#define BABL_DESTROY_HOOK      destroy_hook ();
 
 #ifdef BABL_DYNAMIC_EXTENSIONS
 /* must be defined before inclusion of babl-internal.h */
@@ -36,8 +32,6 @@
 #include "babl-base.h"
 #include <string.h>
 #include <stdarg.h>
-
-static int   each_babl_extension_destroy (Babl *babl, void *data);
 
 static Babl *babl_extension_current_extender = NULL;
 
@@ -55,6 +49,9 @@ babl_set_extender (Babl *new_extender)
   babl_extension_current_extender = new_extender;
 }
 
+static int
+babl_extension_destroy (void *data);
+
 static Babl *
 extension_new (const char *path,
                void       *dl_handle,
@@ -63,6 +60,7 @@ extension_new (const char *path,
   Babl *babl;
 
   babl                = babl_malloc (sizeof (BablExtension) + strlen (path) + 1);
+  babl_set_destructor (babl, babl_extension_destroy);
   babl->instance.name = (char *) babl + sizeof (BablExtension);
   strcpy (babl->instance.name, path);
   babl->instance.id         = 0;
@@ -93,7 +91,11 @@ babl_extension_base (void)
   void  (*destroy)(void) = NULL;
 
   if (!db)
-    db = babl_db_init ();
+    {
+      babl_extension_quiet_log ();
+      babl_set_extender (NULL);
+      db = babl_db_init ();
+    }
   babl = extension_new ("BablBase",
                         dl_handle,
                         destroy);
@@ -111,15 +113,7 @@ babl_extension_base (void)
   return babl;
 }
 
-static void
-init_hook (void)
-{
-  babl_extension_quiet_log ();
-  babl_set_extender (NULL);
-}
-
-static void
-destroy_hook (void)
+void babl_extension_deinit (void)
 {
   babl_free (babl_quiet);
   babl_quiet = NULL;
@@ -187,7 +181,7 @@ load_failed (Babl *babl)
 {
   if (babl)
     {
-      each_babl_extension_destroy (babl, NULL);
+      babl_free (babl);
     }
   babl_set_extender (NULL);
   return NULL;
@@ -278,17 +272,6 @@ babl_extension_load_dir (const char *base_path)
     }
 }
 
-static const char *
-babl_dir_list (void)
-{
-  const char *ret;
-
-  ret = getenv ("BABL_PATH");
-  if (!ret)
-    ret = BABL_PATH;
-  return ret;
-}
-
 static char *
 expand_path (char *path)
 {
@@ -325,7 +308,7 @@ expand_path (char *path)
 
 /*  parse the provided colon seperated list of paths to search
  */
-static void
+void
 babl_extension_load_dir_list (const char *dir_list)
 {
   int         eos = 0;
@@ -364,25 +347,18 @@ babl_extension_load_dir_list (const char *dir_list)
   babl_free (path);
 }
 
-static void
-dynamic_init_hook (void)
-{
-  babl_extension_load_dir_list (babl_dir_list ());
-}
-
 #endif
 
+
 static int
-each_babl_extension_destroy (Babl *babl,
-                             void *data)
+babl_extension_destroy (void *data)
 {
+  Babl *babl = data;
   if (babl->extension.destroy)
     babl->extension.destroy ();
   if (babl->extension.dl_handle)
     dlclose (babl->extension.dl_handle);
-
-  babl_free (babl);
-  return 0;  /* continue iterating */
+  return 0;
 }
 
 BABL_CLASS_IMPLEMENT (extension)

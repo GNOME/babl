@@ -237,15 +237,3 @@ babl_image_new (void *first,
   babl = image_new (format, model, components, component, sampling, type, data, pitch, stride);
   return babl;
 }
-
-void
-babl_image_class_destroy (void)
-{
-  /* nothing to do */
-}
-
-void
-babl_image_class_init (void)
-{
-  /* nothing to do */
-}

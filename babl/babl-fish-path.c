@@ -236,6 +236,16 @@ create_name (char       *buf,
   return buf;
 }
 
+static int
+babl_fish_path_destroy (void *data)
+{
+  Babl *babl=data;
+  if (babl->fish_path.conversion_list)
+    babl_free (babl->fish_path.conversion_list);
+  babl->fish_path.conversion_list = NULL;
+  return 0;
+}
+
 Babl *
 babl_fish_path (const Babl *source,
                 const Babl *destination)
@@ -255,6 +265,7 @@ babl_fish_path (const Babl *source,
 
   babl = babl_calloc (1, sizeof (BablFishPath) +
                       strlen (name) + 1);
+  babl_set_destructor (babl, babl_fish_path_destroy);
 
   babl->class_type                = BABL_FISH_PATH;
   babl->instance.id               = babl_fish_get_id (source, destination);
@@ -284,12 +295,11 @@ babl_fish_path (const Babl *source,
 
     get_conversion_path (&pc, (Babl *) source, 0, max_path_length ());
     babl_mutex_unlock (babl_format_mutex);
-    babl_list_destroy (pc.current_path);
+    babl_free (pc.current_path);
   }
 
   if (babl_list_size (babl->fish_path.conversion_list) == 0)
     {
-      babl_list_destroy (babl->fish_path.conversion_list);
       babl_free (babl);
       return NULL;
     }

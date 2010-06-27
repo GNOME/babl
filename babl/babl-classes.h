@@ -20,6 +20,7 @@
 #define _BABL_CLASSES_H
 
 #include "babl-class.h"
+#include "babl-db.h"
 
 /* magic number used at the start of all babl objects, used to do
  * differentiation in polymorphic functions. (as well as manual type
@@ -53,7 +54,6 @@ enum {
 
   BABL_SKY
 };
-
 
 #include "babl-type.h"
 #include "babl-sampling.h"

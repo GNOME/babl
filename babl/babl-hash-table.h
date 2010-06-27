@@ -65,8 +65,4 @@ babl_hash_table_find (BablHashTable       *htab,
                       BablHashFindFunction find_func,
                       void                *data);
 
-void
-babl_hash_table_destroy (BablHashTable *htab);
-
-
 #endif

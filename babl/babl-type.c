@@ -24,17 +24,14 @@
 #include "babl-internal.h"
 #include "babl-db.h"
 
-
 static int
-each_babl_type_destroy (Babl *babl,
-                        void *data)
+babl_type_destroy (void *data)
 {
+  Babl *babl = data;
   if (babl->type.from_list)
-    babl_list_destroy (babl->type.from_list);
-  babl_free (babl);
-  return 0;  /* continue iterating */
+    babl_free (babl->type.from_list);
+  return 0; 
 }
-
 
 static Babl *
 type_new (const char *name,
@@ -47,6 +44,7 @@ type_new (const char *name,
   babl_assert (bits % 8 == 0);
 
   babl                 = babl_malloc (sizeof (BablType) + strlen (name) + 1);
+  babl_set_destructor (babl, babl_type_destroy);
   babl->instance.name  = (void *) ((char *) babl + sizeof (BablType));
   babl->class_type     = BABL_TYPE;
   babl->instance.id    = id;

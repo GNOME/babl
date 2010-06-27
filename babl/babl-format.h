@@ -19,7 +19,7 @@
 #ifndef _BABL_FORMAT_H
 #define _BABL_FORMAT_H
 
-BABL_NAMED_CLASS_DECLARE (format);
+BABL_CLASS_DECLARE (format);
 
 typedef struct
 {

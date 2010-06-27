@@ -36,9 +36,6 @@ babl_list_init (void);
 BablList *
 babl_list_init_with_size (int initial_size);
 
-void
-babl_list_destroy (BablList *list);
-
 int
 babl_list_size (BablList *list);
 

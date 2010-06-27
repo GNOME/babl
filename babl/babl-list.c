@@ -31,12 +31,20 @@ babl_list_init (void)
   return babl_list_init_with_size (BABL_LIST_INITIAL_SIZE);
 }
 
+static int
+babl_list_destroy (void *data)
+{
+  BablList *list = data;
+  babl_free (list->items);
+  return 0;
+}
+
 BablList *
 babl_list_init_with_size (int initial_size)
 {
   BablList *list = babl_calloc (sizeof (BablList), 1);
 
-  babl_assert (list);
+  babl_set_destructor (list, babl_list_destroy);
 
   if (initial_size == 0)
     initial_size = 1;
@@ -49,15 +57,6 @@ babl_list_init_with_size (int initial_size)
     }
 
   return list;
-}
-
-void
-babl_list_destroy (BablList *list)
-{
-    babl_assert (list);
-
-    babl_free (list->items);
-    babl_free (list);
 }
 
 void

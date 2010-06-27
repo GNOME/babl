@@ -21,6 +21,19 @@
 
 static int ref_count = 0;
 
+#define BABL_PATH              LIBDIR BABL_DIR_SEPARATOR BABL_LIBRARY
+
+static const char *
+babl_dir_list (void)
+{
+  const char *ret;
+
+  ret = getenv ("BABL_PATH");
+  if (!ret)
+    ret = BABL_PATH;
+  return ret;
+}
+
 void
 babl_init (void)
 {
@@ -29,20 +42,20 @@ babl_init (void)
   if (ref_count++ == 0)
     {
       babl_internal_init ();
-      babl_type_class_init ();
       babl_sampling_class_init ();
-      babl_component_class_init ();
-      babl_model_class_init ();
-      babl_format_class_init ();
-      babl_conversion_class_init ();
+      babl_type_db ();
+      babl_component_db ();
+      babl_model_db ();
+      babl_format_db ();
+      babl_conversion_db ();
+      babl_extension_db ();
+      babl_fish_db ();
       babl_core_init ();
       babl_sanity ();
       babl_extension_base ();
       babl_sanity ();
-      babl_extension_class_init ();
-      babl_sanity ();
-      babl_fish_class_init ();
-      babl_sanity ();
+
+      babl_extension_load_dir_list (babl_dir_list ());
     }
 }
 
@@ -63,14 +76,15 @@ babl_exit (void)
             }
         }
 
-      babl_extension_class_destroy ();
-      babl_fish_class_destroy ();
-      babl_conversion_class_destroy ();
-      babl_format_class_destroy ();
-      babl_model_class_destroy ();
-      babl_component_class_destroy ();
-      babl_sampling_class_destroy ();
-      babl_type_class_destroy ();
+      babl_extension_deinit ();
+      babl_free (babl_extension_db ());;
+      babl_free (babl_fish_db ());;
+      babl_free (babl_conversion_db ());;
+      babl_free (babl_format_db ());;
+      babl_free (babl_model_db ());;
+      babl_free (babl_component_db ());;
+      babl_free (babl_type_db ());;
+
       babl_internal_destroy ();
 #if BABL_DEBUG_MEM
       babl_memory_sanity ();

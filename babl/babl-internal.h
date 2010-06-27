@@ -40,9 +40,9 @@
 #include "babl.h"
 #define _BABL_INTERNAL_H
 
-#include "babl-class.h"
 #include "babl-classes.h"
 #include "babl-introspect.h"
+#include "babl-class.h"
 #include "babl-list.h"
 #include "babl-hash-table.h"
 #include "babl-db.h"
@@ -80,13 +80,13 @@ Babl   * babl_extender                  (void);
 void     babl_set_extender              (Babl           *new_extender);
 
 Babl   * babl_extension_quiet_log       (void);
+void     babl_extension_deinit          (void);
 
 long     babl_fish_reference_process    (Babl           *babl,
                                          BablImage      *source,
                                          BablImage      *destination,
                                          long            n);
 
-BablDb * babl_fish_db                   (void);
 Babl   * babl_fish_reference            (const Babl     *source,
                                          const Babl     *destination);
 Babl   * babl_fish_simple               (BablConversion *conversion);
@@ -243,19 +243,6 @@ void         babl_internal_init    (void);
 void         babl_internal_destroy (void);
 
 
-#ifndef BABL_INIT_HOOK
-#define BABL_INIT_HOOK
-#endif
-#ifndef BABL_PRE_INIT_HOOK
-#define BABL_PRE_INIT_HOOK
-#endif
-#ifndef BABL_DESTROY_HOOK
-#define BABL_DESTROY_HOOK
-#endif
-#ifndef BABL_DESTROY_PRE_HOOK
-#define BABL_DESTROY_PRE_HOOK
-#endif
-
 /* this template is expanded in the files including babl-internal.h,
  * generating code, the declarations for these functions are found in
  * the BABL_CLASS expansions done in babl.h as well, thus babl.h needs
@@ -263,22 +250,13 @@ void         babl_internal_destroy (void);
  */
 
 #define BABL_CLASS_MINIMAL_IMPLEMENT(klass)                   \
-void                                                          \
-babl_##klass##_class_init (void)                              \
+                                                              \
+BablDb *                                                      \
+babl_##klass##_db (void)                                      \
 {                                                             \
-  BABL_PRE_INIT_HOOK;                                         \
   if (!db)                                                    \
     db=babl_db_init ();                                       \
-  BABL_INIT_HOOK;                                             \
-}                                                             \
-                                                              \
-void                                                          \
-babl_##klass##_class_destroy (void)                           \
-{                                                             \
-  BABL_DESTROY_PRE_HOOK;                                      \
-  babl_db_each (db,each_babl_##klass##_destroy, NULL);        \
-  babl_db_destroy (db);                                       \
-  BABL_DESTROY_HOOK;                                          \
+  return db;                                                  \
 }                                                             \
                                                               \
 void                                                          \
@@ -319,7 +297,7 @@ babl_##klass##_from_id (int id)                               \
       babl_fatal ("%s(%i): not found", G_STRFUNC, id);        \
     }                                                         \
   return babl;                                                \
-}
+} \
 
 #define BABL(obj)  ((Babl*)(obj))
 

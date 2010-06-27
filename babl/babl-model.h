@@ -19,7 +19,7 @@
 #ifndef _BABL_MODEL_H
 #define _BABL_MODEL_H
 
-BABL_NAMED_CLASS_DECLARE (model);
+BABL_CLASS_DECLARE (model);
 
 typedef struct
 {

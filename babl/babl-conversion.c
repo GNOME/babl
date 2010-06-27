@@ -24,14 +24,6 @@
 #include "babl-internal.h"
 #include "babl-db.h"
 
-static int
-each_babl_conversion_destroy (Babl *babl,
-                              void *data)
-{
-  babl_free (babl);
-  return 0;  /* continue iterating */
-}
-
 static Babl *
 conversion_new (const char    *name,
                 int            id,

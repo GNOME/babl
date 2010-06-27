@@ -23,15 +23,6 @@
 
 #include <stdarg.h>
 
-
-static int
-each_babl_component_destroy (Babl *babl,
-                             void *data)
-{
-  babl_free (babl);
-  return 0;  /* continue iterating */
-}
-
 static Babl *
 component_new (const char *name,
                int         id,

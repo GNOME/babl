@@ -55,10 +55,33 @@ db_hash_by_id (BablHashTable *htab, Babl *item)
   return babl_hash_by_int (htab, item->instance.id);
 }
 
+static int
+each_free (Babl *data,
+           void *foo)
+{
+  babl_free (data);
+  return 0;
+}
+
+static int
+babl_db_destroy (void *data)
+{
+  BablDb *db = data;
+  babl_assert (db);
+
+  babl_db_each (db, each_free, NULL);
+  babl_mutex_destroy (db->mutex);
+  babl_free (db->name_hash);
+  babl_free (db->id_hash);
+  babl_free (db->babl_list);
+  return 0;
+}
+
 BablDb *
 babl_db_init (void)
 {
   BablDb *db = babl_calloc (sizeof (BablDb), 1);
+  babl_set_destructor (db, babl_db_destroy);
 
   db->name_hash = babl_hash_table_init (db_hash_by_name, db_find_by_name);
   db->id_hash = babl_hash_table_init (db_hash_by_id, db_find_by_id);
@@ -68,17 +91,6 @@ babl_db_init (void)
   return db;
 }
 
-void
-babl_db_destroy (BablDb *db)
-{
-  babl_assert (db);
-
-  babl_mutex_destroy (db->mutex);
-  babl_hash_table_destroy (db->name_hash);
-  babl_hash_table_destroy (db->id_hash);
-  babl_list_destroy (db->babl_list);
-  babl_free (db);
-}
 
 Babl *
 babl_db_find (BablDb     *db,

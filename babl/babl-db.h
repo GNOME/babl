@@ -43,9 +43,6 @@ BablDb *
 babl_db_init (void);
 
 void
-babl_db_destroy (BablDb *db);
-
-void
 babl_db_each (BablDb           *db,
               BablEachFunction  each_fun,
               void             *user_data);

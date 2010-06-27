@@ -143,6 +143,17 @@ babl_hash_table_size (BablHashTable *htab)
     return htab->mask + 1;
 }
 
+
+static int
+babl_hash_table_destroy (void *data)
+{
+  BablHashTable *htab = data;
+  babl_free (htab->data_table);
+  babl_free (htab->chain_table);
+  return 0;
+}
+
+
 BablHashTable *
 babl_hash_table_init (BablHashValFunction  hfunc,
                       BablHashFindFunction ffunc)
@@ -153,7 +164,7 @@ babl_hash_table_init (BablHashValFunction  hfunc,
   babl_assert(ffunc);
 
   htab = babl_calloc (sizeof (BablHashTable), 1);
-  babl_assert (htab);
+  babl_set_destructor (htab, babl_hash_table_destroy);
 
   htab->data_table = NULL;
   htab->chain_table = NULL;
@@ -169,16 +180,6 @@ babl_hash_table_init (BablHashValFunction  hfunc,
   }
 
   return htab;
-}
-
-void
-babl_hash_table_destroy (BablHashTable *htab)
-{
-  babl_assert (htab);
-
-  babl_free (htab->data_table);
-  babl_free (htab->chain_table);
-  babl_free (htab);
 }
 
 int

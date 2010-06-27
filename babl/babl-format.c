@@ -34,18 +34,9 @@ static int babl_format_destruct (void *babl)
       babl_free (format->image_template);
       format->image_template = NULL;
     }
+  if (format->from_list)
+    babl_free (format->from_list);
   return 0;
-}
-
-static int
-each_babl_format_destroy (Babl *babl,
-                          void *data)
-{
-  if (babl->format.from_list)
-    babl_list_destroy (babl->format.from_list);
-  babl_free (babl);
-
-  return 0;  /* continue iterating */
 }
 
 static Babl *
