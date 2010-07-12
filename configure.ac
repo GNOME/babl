@@ -37,6 +37,7 @@ m4_define([babl_stable],
 
 AC_INIT(babl, babl_major_version.babl_minor_version.babl_micro_version)
 AC_CONFIG_SRCDIR(babl/babl.h)
+AC_CONFIG_MACRO_DIR([m4])
 
 # Enable silent build rules by default, requires at least
 # Automake-1.11. Disable by either passing --disable-silent-rules to
@@ -63,6 +64,8 @@ AC_SUBST(BABL_API_VERSION)
 BABL_RELEASE=babl_api_version
 AC_SUBST(BABL_RELEASE)
 
+# GObject Introspection
+GOBJECT_INTROSPECTION_CHECK([0.6.8])
 
 dnl The symbol BABL_UNSTABLE is defined above for substitution in
 dnl Makefiles and conditionally defined here as a preprocessor symbol

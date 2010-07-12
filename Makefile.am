@@ -1,3 +1,5 @@
+ACLOCAL_AMFLAGS = -I m4
+DISTCHECK_CONFIGURE_FLAGS = --enable-introspection
 AUTOMAKE_OPTIONS = foreign dist-bzip2
 
 SUBDIRS = \
@@ -21,7 +23,8 @@ EXTRA_DIST = \
 	TODO			\
 	ChangeLog		\
 	autogen.sh		\
-	babl.pc.in
+	babl.pc.in		\
+	m4/introspection.m4
 
 DISTCLEANFILES = \
 	$(built_dist_files)	\

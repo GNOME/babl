@@ -81,3 +81,41 @@ libbabl_@BABL_API_VERSION@_la_LIBADD=\
 libbabl_@BABL_API_VERSION@_la_LDFLAGS= 		\
 	${no_undefined} $(MATH_LIB)	\
 	-version-info $(BABL_LIBRARY_VERSION)
+
+# GObject Introspection
+-include $(INTROSPECTION_MAKEFILE)
+INTROSPECTION_GIRS =
+INTROSPECTION_SCANNER_ARGS = --add-include-path=$(srcdir)
+INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
+
+if HAVE_INTROSPECTION
+Babl-$(BABL_API_VERSION).gir: $(G_IR_SCANNER)
+	$(INTROSPECTION_SCANNER) -v --namespace Babl --nsversion=$(BABL_API_VERSION) \
+            --add-include-path=$(srcdir) --add-include-path=. \
+            --library=babl-$(BABL_API_VERSION) \
+            --libtool="$(LIBTOOL)" \
+            --output $@ \
+            --pkg babl \
+	    -I$(top_srcdir) \
+	    -I$(top_builddir) \
+	    $(library_include_HEADERS) \
+	    $(c_sources)
+
+girdir = $(INTROSPECTION_TYPELIBDIR)
+gir_DATA = Babl-$(BABL_API_VERSION).gir
+
+typelibsdir = $(INTROSPECTION_TYPELIBDIR)
+typelibs_DATA = Babl-$(BABL_API_VERSION).typelib
+
+EXTRA_DIST = $(gir_DATA)
+CLEANFILES = $(gir_DATA) $(typelibs_DATA)
+
+%.typelib: %.gir
+	LD_LIBRARY_PATH=$${LD_LIBRARY_PATH:+$$LD_LIBRARY_PATH:}. $(INTROSPECTION_COMPILER) \
+        --includedir=$(srcdir) \
+        --includedir=$(top_builddir)/babl \
+        $(G_IR_COMPILER_OPTS) \
+        $< -o $@
+
+
+endif # HAVE_INTROSPECTION
