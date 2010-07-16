@@ -75,7 +75,7 @@ if test "x$BABL_UNSTABLE" = "xyes"; then
   AC_DEFINE(BABL_UNSTABLE, 1,
             [Define to 1 if this is an unstable version of BABL])
 fi
-AM_CONDITIONAL(BABL_UNSTABLE, test "x$GEGL_UNSTABLE" = "xyes")
+AM_CONDITIONAL(BABL_UNSTABLE, test "x$BABL_UNSTABLE" = "xyes")
 AC_SUBST(BABL_UNSTABLE)
 
 

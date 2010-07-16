@@ -165,6 +165,7 @@ if test -z "$*"; then
 fi
 
 
+ACLOCAL_FLAGS="$ACLOCAL_FLAGS -I m4"
 if test -z "$ACLOCAL_FLAGS"; then
 
     acdir=`$ACLOCAL --print-ac-dir`
