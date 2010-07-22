@@ -101,10 +101,10 @@ Babl-$(BABL_API_VERSION).gir: $(G_IR_SCANNER)
 	    $(library_include_HEADERS) \
 	    $(c_sources)
 
-girdir = $(INTROSPECTION_TYPELIBDIR)
+girdir = $(datadir)/gir-1.0
 gir_DATA = Babl-$(BABL_API_VERSION).gir
 
-typelibsdir = $(INTROSPECTION_TYPELIBDIR)
+typelibsdir = $(libdir)/girepository-1.0
 typelibs_DATA = Babl-$(BABL_API_VERSION).typelib
 
 EXTRA_DIST = $(gir_DATA)
