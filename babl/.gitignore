@@ -1,7 +1,9 @@
+/*.la
+/*.lo
+/.deps
+/.libs
+/Babl-0.1.gir
+/Babl-0.1.typelib
 /Makefile
 /Makefile.in
-/.deps
-/*.lo
-/*.la
-/.libs
 /babl-version.h

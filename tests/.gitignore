@@ -13,6 +13,7 @@
 /grayscale_to_rgb*
 /introspect*
 /models*
+/n_components*
 /nop*
 /rgb_to_bgr*
 /rgb_to_lab_to_rgb
