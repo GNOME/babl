@@ -12,9 +12,9 @@ AC_PREREQ(2.54)
 #    set BABL_BINARY_AGE _and_ BABL_INTERFACE_AGE to 0.
 
 
-m4_define([babl_major_version], 0)
-m4_define([babl_minor_version], 1)
-m4_define([babl_micro_version], 3)
+m4_define([babl_major_version], [0])
+m4_define([babl_minor_version], [1])
+m4_define([babl_micro_version], [3])
 m4_define([babl_real_version],
           [babl_major_version.babl_minor_version.babl_micro_version])
 m4_define([babl_version], [babl_real_version])
