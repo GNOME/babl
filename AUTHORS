@@ -5,7 +5,7 @@
         <dd>Build sanity and optimizations.</dd>
   <dt>Michael Natterer <em>mitch at gimp.org</em></dt>
         <dd>Build sanity.</dd>
-  <dt>Kevin Cozens <kcozens at cvs.gnome.org></dt>
+  <dt>Kevin Cozens <em>kcozens at cvs.gnome.org</em></dt>
         <dd>Build sanity.</dd>
   <dt>Tim Mooney</dt>
         <dd>Portability fixes.</dd>

@@ -80,7 +80,7 @@
         <li><a href='#Pixel-formats'>&nbsp;&nbsp;&nbsp;&nbsp;Pixel formats</a></li>-->
 
         <li><a href='#Shortcut_coverage'>&nbsp;&nbsp;Shortcut&nbsp;Coverage</a></li>
-        <li><a href='#Environment'>&nbsp;&nbsp;Environment</a></li
+        <li><a href='#Environment'>&nbsp;&nbsp;Environment</a></li>
         <li><a href='#Extending'>&nbsp;&nbsp;Extending</a></li>
         <li><a href='#DirectoryOverview'>&nbsp;&nbsp;Directory Overview</a></li>
         <!--<li><a href='#ColorManagement'>Color Management</a></li>-->
@@ -90,7 +90,7 @@
       </ul>
     </div>
 
-<a name='Babl'></a>
+<div><a name='Babl'></a></div>
     <div class='paper'>
   <div class='content'>
 
@@ -103,7 +103,7 @@
     
     <p>It allows converting between different methods of storing <a href='http://en.wikipedia.org/wiki/Pixel'>pixels</a> known as <em>pixel formats</em> that have
     with different bitdepths and other data representations, color models and
-    component permutations.
+    component permutations.</p>
       
     <p> A vocabulary to formulate new <em>pixel formats</em> from existing
     primitives is provided as well as the framework to add new color models and
@@ -140,7 +140,7 @@
       <li>ANSI C, works on win32, linux and mac, 32bit and 64bit systems.</li>
       <li>Extendable with new formats, color models, components
       and datatypes.</li>
-      <li>Reference 64bit floating point conversions for datatypes and color models.
+      <li>Reference 64bit floating point conversions for datatypes and color models.</li>
     </ul>
 
     <p><a href='http://www.gegl.org/'>GEGL</a> through <a
@@ -220,7 +220,7 @@ int width = 123, height = 581, pixel_count = width * height;
 
 const Babl *srgb            = <span class='function'>babl_format</span> <span class='paren'>(</span><span class='string'>"R'G'B' u8"</span><span class='paren'>)</span>;
 const Babl *lab             = <span class='function'>babl_format</span> <span class='paren'>(</span><span class='string'>"CIE Lab float"</span><span class='paren'>)</span>;
-const Babl *rgb_to_lab_fish = </span><span class='function'>babl_fish</span> <span class='paren'>(</span>srgb, lab);
+const Babl *rgb_to_lab_fish = <span class='function'>babl_fish</span> <span class='paren'>(</span>srgb, lab);
 
 float         *lab_buffer;
 unsigned char *srgb_buffer;
@@ -234,7 +234,7 @@ lab_buffer  = malloc (pixel_count * 3 * 4);
 
 ...... do operation in lab space ........
 
-<span class='function'>babl_process</span> <span class='paren'>(</span><span class='function'>babl_fish</span><span class='paren'>(</span>lab, srgb</span><span class='paren'>)</span>,
+<span class='function'>babl_process</span> <span class='paren'>(</span><span class='function'>babl_fish</span><span class='paren'>(</span>lab, srgb<span class='paren'>)</span>,
               lab_buffer, srgb_buffer, pixel_count<span class='paren'>);</span>
 
 /* the data has now been transformed back to srgb data */</pre>
