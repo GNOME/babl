@@ -30,12 +30,13 @@ assert_conversion_find (void *source,
   return ret;
 }
 
-static char buf[1024];
 static char *
 create_name (const Babl *source,
              const Babl *destination,
              int   is_reference)
 {
+  static char buf[1024];
+
   /* fish names are intentionally kept short */
   snprintf (buf, 1024, "%s %p %p",
             is_reference ? "ref "
