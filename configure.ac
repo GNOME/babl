@@ -94,7 +94,7 @@ AC_SUBST(PACKAGE_NAME)
 
 dnl ==========================================================================
 
-AM_INIT_AUTOMAKE(no-define)
+AM_INIT_AUTOMAKE(no-define no-dist-gzip)
 AM_CONFIG_HEADER(config.h)
 
 BABL_VARIADIC_MACROS
