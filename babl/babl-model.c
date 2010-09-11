@@ -23,6 +23,8 @@
 #include "babl-internal.h"
 #include "babl-db.h"
 
+static Babl *construct_double_format (Babl *model);
+
 static int
 babl_model_destroy (void *data)
 {
@@ -169,6 +171,7 @@ babl_model_new (void *first_argument,
     {
       babl = model_new (name, id, components, component);
       babl_db_insert (db, babl);
+      construct_double_format (babl);
     }
   else
     {
@@ -224,7 +227,7 @@ static Babl *construct_double_format (Babl *model)
   int   i;
 
   argument[args++] = model;
-  argument[args++] = babl_type ("double");
+  argument[args++] = babl_type_from_id (BABL_DOUBLE);
 
   for (i = 0; i < model->model.components; i++)
     {
