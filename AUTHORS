@@ -36,5 +36,7 @@
         <dd>Code cleanups.</dd>
   <dt>Daniel Paredes García <em>danipga at gmail.com</em></dt>
         <dd>Initial work to make babl threadsafe</dd>
+  <dt>Rupert Weber <em>gimp at leguanease.org</em></dt>
+        <dd>Documentation and other improvements</dd>
 
 </dl>
