@@ -133,16 +133,6 @@ babl_core_init (void)
     babl_component_from_id (BABL_ALPHA),
     NULL);
 
-  babl_format_new (
-    "id", BABL_RGBA_DOUBLE,
-    babl_model_from_id (BABL_RGBA),
-    babl_type_from_id (BABL_DOUBLE),
-    babl_component_from_id (BABL_RED),
-    babl_component_from_id (BABL_GREEN),
-    babl_component_from_id (BABL_BLUE),
-    babl_component_from_id (BABL_ALPHA),
-    NULL);
-
   /*
      babl_conversion_new (
      babl_model_from_id (BABL_RGBA),

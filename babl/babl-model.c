@@ -244,10 +244,15 @@ static Babl *reference_format (void)
 
 static Babl *construct_double_format (Babl *model)
 {
-  void *argument[42 + 1];
+  void *argument[44 + 1];
   int   args = 0;
   int   i;
 
+  if (model == babl_model_from_id (BABL_RGBA))
+    {
+      argument[args++] = "id";
+      argument[args++] = (void*) BABL_RGBA_DOUBLE;
+    }
   argument[args++] = model;
   argument[args++] = babl_type_from_id (BABL_DOUBLE);
 
