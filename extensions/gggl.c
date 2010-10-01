@@ -2017,10 +2017,13 @@ init (void)
     NULL);
   Babl *yuv8 = babl_format_new (
     "name", "Y'CbCr u8",
+    "planar",
     babl_model ("Y'CbCr"),
     babl_type ("u8-luma"),
+    babl_sampling (1, 1),
     babl_component ("Y'"),
     babl_type ("u8-chroma"),
+    babl_sampling (2, 2),
     babl_component ("Cb"),
     babl_component ("Cr"),
     NULL);

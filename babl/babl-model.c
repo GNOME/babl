@@ -74,6 +74,24 @@ model_new (const char     *name,
   return babl;
 }
 
+static int
+is_model_duplicate (Babl *babl, int components, BablComponent **component)
+{
+  int   i;
+
+  if (babl->model.components != components)
+    return 0;
+
+  for (i = 0; i < components; i++)
+    {
+      if (babl->model.component[i] != component[i])
+        return 0;
+    }
+
+  return 1;
+}
+
+
 Babl *
 babl_model_new (void *first_argument,
                 ...)
@@ -166,6 +184,8 @@ babl_model_new (void *first_argument,
     name = babl_model_create_name (components, component);
 
   babl = babl_db_exist (db, id, name);
+  if (id && !babl && babl_db_exist (db, 0, name))
+    babl_fatal ("Trying to reregister BablModel '%s' with different id!", name);
 
   if (! babl)
     {
@@ -175,7 +195,9 @@ babl_model_new (void *first_argument,
     }
   else
     {
-      babl_log ("Warning: BablModel '%s' already registered!", name);
+      if (!is_model_duplicate (babl, components, component))
+        babl_fatal ("BablModel '%s' already registered "
+                    "with different components!", name);
     }
 
   babl_free (name);

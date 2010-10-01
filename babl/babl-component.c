@@ -44,6 +44,19 @@ component_new (const char *name,
   return babl;
 }
 
+
+static int
+is_component_duplicate (Babl *babl, int luma, int chroma, int alpha)
+{
+  if (babl->component.luma   != luma   ||
+      babl->component.chroma != chroma ||
+      babl->component.alpha  != alpha)
+    return 0;
+
+  return 1;
+}
+
+
 Babl *
 babl_component_new (void *first_arg,
                     ...)
@@ -54,7 +67,8 @@ babl_component_new (void *first_arg,
   int         luma   = 0;
   int         chroma = 0;
   int         alpha  = 0;
-  const char *arg    = (char *) first_arg;
+  const char *name   = first_arg;
+  const char *arg;
 
   va_start (varg, first_arg);
 
@@ -95,22 +109,29 @@ babl_component_new (void *first_arg,
 
       else
         {
-          babl_fatal ("unhandled argument '%s' for format '%s'", arg, first_arg);
+          babl_fatal ("unhandled argument '%s' for component '%s'", arg, name);
         }
     }
 
   va_end (varg);
 
-  babl = babl_db_exist (db, id, first_arg);
+  babl = babl_db_exist (db, id, name);
+  if (id && !babl && babl_db_exist (db, 0, name))
+    babl_fatal ("Trying to reregister BablComponent '%s' with different id!",
+                name);
+
   if (babl)
     {
       /* There is an instance already registered by the required id/name,
-       * returning the preexistent one instead.
+       * returning the preexistent one instead if it doesn't differ.
        */
+      if (!is_component_duplicate (babl, luma, chroma, alpha))
+        babl_fatal ("BablComponent '%s' already registered "
+                    "with different attributes!", name);
       return babl;
     }
 
-  babl = component_new (first_arg, id, luma, chroma, alpha);
+  babl = component_new (name, id, luma, chroma, alpha);
 
   /* Since there is not an already registered instance by the required
    * id/name, inserting newly created class into database.

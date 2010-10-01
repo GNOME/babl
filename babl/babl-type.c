@@ -55,6 +55,15 @@ type_new (const char *name,
   return babl;
 }
 
+static int
+is_type_duplicate (Babl *babl, int bits)
+{
+  if (babl->type.bits != bits)
+    return 0;
+
+  return 1;
+}
+
 Babl *
 babl_type_new (void *first_arg,
                ...)
@@ -68,8 +77,8 @@ babl_type_new (void *first_arg,
   long        max        = 255;
   double      min_val    = 0.0;
   double      max_val    = 0.0;
-
-  const char *arg = first_arg;
+  const char *name = first_arg;
+  const char *arg;
 
   va_start (varg, first_arg);
 
@@ -122,22 +131,30 @@ babl_type_new (void *first_arg,
 
       else
         {
-          babl_fatal ("unhandled argument '%s' for format '%s'", arg, first_arg);
+          babl_fatal ("unhandled argument '%s' for format '%s'", arg, name);
         }
     }
 
   va_end (varg);
 
-  babl = babl_db_exist (db, id, first_arg);
+  babl = babl_db_exist (db, id, name);
+  if (id && !babl && babl_db_exist (db, 0, name))
+    babl_fatal ("Trying to reregister BablType '%s' with different id!", name);
+
   if (babl)
     {
       /* There is an instance already registered by the required id/name,
-       * returning the preexistent one instead.
+       * returning the preexistent one instead if it doesn't differ.
        */
+
+      if (!is_type_duplicate (babl, bits))
+        babl_fatal ("BablType '%s' already registered "
+                    "as different type!", name);
+
       return babl;
     }
 
-  babl = type_new (first_arg, id, bits);
+  babl = type_new (name, id, bits);
 
   /* Since there is not an already registered instance by the required
    * id/name, inserting newly created class into database.

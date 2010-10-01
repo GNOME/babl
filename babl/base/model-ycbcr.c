@@ -242,7 +242,6 @@ formats (void)
 {
   babl_format_new (
     "name", "Y'CbCr u8",
-    "id", BABL_YCBCR420,
     "planar",
     babl_model_from_id (BABL_YCBCR),
     babl_type_from_id (BABL_U8_LUMA),

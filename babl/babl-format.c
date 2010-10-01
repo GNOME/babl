@@ -51,7 +51,7 @@ format_new (const char     *name,
 {
   Babl *babl;
 
-  /* i is desintation position */
+  /* i is destination position */
   int i, j, component_found = 0;
   for (i = 0; i < model->components; i++)
     {
@@ -236,6 +236,32 @@ babl_format_n (Babl *btype,
   return babl;
 }
 
+static int
+is_format_duplicate (Babl           *babl,
+                     int             planar,
+                     int             components,
+                     BablModel      *model,
+                     BablComponent **component,
+                     BablSampling  **sampling,
+                     BablType      **type)
+{
+  int i;
+
+  if (babl->format.planar     != planar     ||
+      babl->format.components != components ||
+      babl->format.model      != model)
+    return 0;
+
+  for (i = 0; i < components; i++)
+    {
+      if (babl->format.component[i] != component[i] ||
+          babl->format.sampling[i]  != sampling[i]  ||
+          babl->format.type[i]      != type[i])
+        return 0;
+    }
+  return 1;
+}
+
 Babl *
 babl_format_new (void *first_arg,
                  ...)
@@ -359,11 +385,19 @@ babl_format_new (void *first_arg,
     name = create_name (model, components, component, type);
 
   babl = babl_db_exist (db, id, name);
+  if (id && !babl && babl_db_exist (db, 0, name))
+    babl_fatal ("Trying to reregister BablFormat '%s' with different id!", name);
+
   if (babl)
     {
       /* There is an instance already registered by the required id/name,
-       * returning the preexistent one instead.
+       * returning the preexistent one instead if it doesn't differ.
        */
+      if (!is_format_duplicate (babl, planar, components, model,
+                                component, sampling, type))
+        babl_fatal ("BablFormat '%s' already registered "
+                    "with different content!", name);
+
       babl_free (name);
       return babl;
     }

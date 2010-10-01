@@ -155,13 +155,21 @@ babl_formats_init (void)
     babl_type_from_id (BABL_U8),
     babl_component_from_id (BABL_LUMA),
     NULL);
+
+  /* overriding name, since the generated name would be wrong due
+   * to differing types
+   */
   babl_format_new (
     "name", "Y'CbCr u8",
+    "planar",
     babl_model_from_id (BABL_YCBCR),
     babl_type_from_id (BABL_U8_LUMA),
+    babl_sampling (1, 1),
     babl_component_from_id (BABL_LUMA),
     babl_type_from_id (BABL_U8_CHROMA),
+    babl_sampling (2, 2),
     babl_component_from_id (BABL_CB),
+    babl_sampling (2, 2),
     babl_component_from_id (BABL_CR),
     NULL);
   babl_format_new (
@@ -310,18 +318,6 @@ babl_formats_init (void)
     babl_component_from_id (BABL_LUMINANCE),
     NULL);
 
-  /* overriding name, since the generated name would be wrong due
-   * to differing types
-   */
-  babl_format_new (
-    "name", "Y'CbCr u8",
-    babl_model_from_id (BABL_YCBCR),
-    babl_type_from_id (BABL_U8_LUMA),
-    babl_component_from_id (BABL_LUMA),
-    babl_type_from_id (BABL_U8_CHROMA),
-    babl_component_from_id (BABL_CB),
-    babl_component_from_id (BABL_CR),
-    NULL);
   babl_format_new (
     babl_model_from_id (BABL_YCBCR),
     babl_type_from_id (BABL_FLOAT),
