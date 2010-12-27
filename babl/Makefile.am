@@ -89,7 +89,7 @@ INTROSPECTION_SCANNER_ARGS = --add-include-path=$(srcdir)
 INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
 
 if HAVE_INTROSPECTION
-Babl-$(BABL_API_VERSION).gir: $(G_IR_SCANNER)
+Babl-$(BABL_API_VERSION).gir: $(G_IR_SCANNER) $(library_include_HEADERS) $(c_sources) $(srcdir)/Makefile.am
 	$(INTROSPECTION_SCANNER) -v --namespace Babl --nsversion=$(BABL_API_VERSION) \
             --add-include-path=$(srcdir) --add-include-path=. \
             --library=babl-$(BABL_API_VERSION) \
