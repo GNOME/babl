@@ -19,7 +19,7 @@
 #ifndef _BABL_TYPES_H
 #define _BABL_TYPES_H
 
-#ifndef BABL_INSIDE_BABL_H
+#if !defined(BABL_INSIDE_BABL_H) && !defined(BABL_IS_BEING_COMPILED)
 #error "babl-version.h must not be included directly, include babl.h instead."
 #endif
 
