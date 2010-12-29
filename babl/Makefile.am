@@ -99,8 +99,8 @@ Babl-$(BABL_API_VERSION).gir: $(G_IR_SCANNER) $(library_include_HEADERS) $(c_sou
             -DBABL_IS_BEING_COMPILED \
 	    -I$(top_srcdir) \
 	    -I$(top_builddir) \
-	    $(library_include_HEADERS) \
-	    $(c_sources)
+	    $(addprefix $(srcdir)/, $(library_include_HEADERS)) \
+	    $(addprefix $(srcdir)/, $(c_sources))
 
 girdir = $(datadir)/gir-1.0
 gir_DATA = Babl-$(BABL_API_VERSION).gir
