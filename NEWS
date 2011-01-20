@@ -5,8 +5,11 @@ the news section both in the README and the webpage.
 
                                                                           -->
 
+2011-01-20 babl-0.1.4                                               </dt><dd>
+Improved cross platform build ability, added code to handle n-component formats,
+remove extraenous runtime profiling that impacted performance.
 
-
+                                                                    </dd><dt>
 2010-01-15 babl-0.1.2                                               </dt><dd>
 Made babl mostly threadsafe (sufficient for GIMP/GEGLs needs). Streamlined core functionality, reducing number of function calls and removing overeager instrumentation.
                                                                     </dd><dt>
