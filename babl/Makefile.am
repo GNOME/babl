@@ -61,11 +61,14 @@ h_sources  =				\
 	babl-util.h
 
 library_includedir=$(includedir)/babl-$(BABL_API_VERSION)/babl
-library_include_HEADERS =		\
-	babl-macros.h			\
-	babl-types.h                    \
-	babl-version.h			\
+libinc_hdrs = \
+	babl-macros.h           \
+	babl-types.h            \
 	babl.h
+libinc_generated_hdrs = \
+	babl-version.h
+library_include_HEADERS = \
+	$(libinc_hdrs) $(libinc_generated_hdrs)
 
 AM_CPPFLAGS = \
 	-DLIBDIR=\""$(libdir)"\"	\
@@ -99,7 +102,8 @@ Babl-$(BABL_API_VERSION).gir: $(G_IR_SCANNER) $(library_include_HEADERS) $(c_sou
             -DBABL_IS_BEING_COMPILED \
 	    -I$(top_srcdir) \
 	    -I$(top_builddir) \
-	    $(addprefix $(srcdir)/, $(library_include_HEADERS)) \
+	    $(addprefix $(srcdir)/, $(libinc_hdrs)) \
+	    $(addprefix $(builddir)/, $(libinc_generated_hdrs)) \
 	    $(addprefix $(srcdir)/, $(c_sources))
 
 girdir = $(datadir)/gir-1.0
