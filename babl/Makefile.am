@@ -98,7 +98,6 @@ Babl-$(BABL_API_VERSION).gir: $(G_IR_SCANNER) $(library_include_HEADERS) $(c_sou
             --library=babl-$(BABL_API_VERSION) \
             --libtool="$(LIBTOOL)" \
             --output $@ \
-            --pkg babl \
             -DBABL_IS_BEING_COMPILED \
 	    -I$(top_srcdir) \
 	    -I$(top_builddir) \
