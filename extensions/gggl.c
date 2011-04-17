@@ -626,49 +626,6 @@ conv_rgbAF_rgbaF (unsigned char *src, unsigned char *dst, long samples)
 
 
 static INLINE long
-conv_rgbAF_rgbF (unsigned char *src, unsigned char *dst, long samples)
-{
-  long n = samples;
-
-  while (n--)
-    {
-      float alpha = (((float *) src)[3]);
-      if (alpha >= 1.0)
-        {
-          register int c;
-          for (c = 0; c < 3; c++)
-            {
-              *(float *) dst = *(float *) src;
-              dst           += 4;
-              src           += 4;
-            }
-        }
-      else if (alpha <= 0.0)
-        {
-          register int c;
-          for (c = 0; c < 3; c++)
-            {
-              *(float *) dst = 0;
-              dst           += 4;
-              src           += 4;
-            }
-        }
-      else
-        {
-          register int c;
-          for (c = 0; c < 3; c++)
-            {
-              *(float *) dst = ((*(float *) src) / alpha);
-              dst           += 4;
-              src           += 4;
-            }
-        }
-      src += 4;
-    }
-  return samples;
-}
-
-static INLINE long
 conv_rgbaF_rgbAF (unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
@@ -788,10 +745,8 @@ conv_gF_gaF (unsigned char *src, unsigned char *dst, long samples)
   return samples;
 }
 
-#define conv_gAF_gF        conv_gaF_gF
 #define conv_gF_gAF        conv_gF_gaF
 
-#define conv_rgbAF_rgbF    conv_rgbaF_rgbF
 #define conv_rgbF_rgbAF    conv_rgbF_rgbaF
 
 /* colorchannel dropping and adding */
@@ -811,28 +766,6 @@ conv_gF_rgbF (unsigned char *src, unsigned char *dst, long samples)
           dst             += 4;
         }
       src += 4;
-    }
-  return samples;
-}
-
-static INLINE long
-conv_rgbF_gF (unsigned char *src, unsigned char *dst, long samples)
-{
-  long n = samples;
-
-  while (n--)
-    {
-      int   c;
-      float sum = 0;
-
-      for (c = 0; c < 3; c++)
-        {
-          sum += (*(float *) src);
-          src += 4;
-        }
-      sum             /= 3.0;
-      (*(float *) dst) = sum;
-      dst             += 4;
     }
   return samples;
 }
@@ -859,57 +792,10 @@ conv_gaF_rgbaF (unsigned char *src, unsigned char *dst, long samples)
   return samples;
 }
 
-static INLINE long
-conv_rgbaF_gaF (unsigned char *src, unsigned char *dst, long samples)
-{
-  long n = samples;
-
-  while (n--)
-    {
-      float gray = 0;
-
-      gray            += (*(float *) src) * 0.212671;
-      src             += 4;
-      gray            += (*(float *) src) * 0.715160;
-      src             += 4;
-      gray            += (*(float *) src) * 0.072169;
-      src             += 4;
-      (*(float *) dst) = gray;
-      dst             += 4;
-      (*(int *) dst)   = (*(int *) src);
-      dst             += 4;
-      src             += 4;
-    }
-  return samples;
-}
-
 #define conv_gAF_rgbAF    conv_gaF_rgbaF
-#define conv_rgbAF_gAF    conv_rgbaF_gaF
 
 /* other conversions coded for some optimisation reason or sumthin */
 
-static INLINE long
-conv_rgbA8_rgbaF (unsigned char *src, unsigned char *dst, long samples)
-{
-  long n = samples;
-
-  while (n--)
-    {
-      float alpha = (*(unsigned char *) src + (3)) / 255.0;
-      int   c;
-
-      for (c = 0; c < 3; c++)
-        {
-          (*(float *) dst) = (*(unsigned char *) src / 255.0) / alpha;
-          dst             += 4;
-          src             += 1;
-        }
-      *(float *) dst = alpha;
-      dst           += 4;
-      src           += 1;
-    }
-  return samples;
-}
 
 static INLINE long
 conv_rgbaF_rgbA8 (unsigned char *src, unsigned char *dst, long samples)
@@ -983,28 +869,6 @@ conv_rgbaF_rgb8 (unsigned char *src, unsigned char *dst, long samples)
   return samples;
 }
 #endif
-
-static INLINE long
-conv_rgbaF_g8 (unsigned char *src, unsigned char *dst, long samples)
-{
-  long n = samples;
-
-  while (n--)
-    {
-      int   c;
-      float sum = 0;
-
-      for (c = 0; c < 3; c++)
-        {
-          sum += (*(float *) src);
-          src += 4;
-        }
-      *(unsigned char *) dst = sum * 255.0 / 3;
-      dst++;
-      src += 4;
-    }
-  return samples;
-}
 
 static INLINE long
 conv_rgbaF_rgb16 (unsigned char *src, unsigned char *dst, long samples)
@@ -1351,29 +1215,6 @@ conv_rgb8_Prgb8 (unsigned char *src, unsigned char *dst, long samples)
 }
 
 static INLINE long
-conv_rgbA16_rgba16 (unsigned char *src, unsigned char *dst, long samples)
-{
-  long n = samples;
-
-  while (n--)
-    {
-      if (src[3])
-        {
-          ((unsigned short *) dst)[0] =
-            (((unsigned short *) src)[0] * 65535) / src[3];
-          ((unsigned short *) dst)[1] =
-            (((unsigned short *) src)[1] * 65535) / src[3];
-          ((unsigned short *) dst)[2] =
-            (((unsigned short *) src)[2] * 65535) / src[3];
-        }
-      ((unsigned short *) dst)[3] = ((unsigned short *) src)[3];
-      dst                        += 8;
-      src                        += 8;
-    }
-  return samples;
-}
-
-static INLINE long
 conv_rgb8_rgbP8 (unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
@@ -1523,76 +1364,9 @@ conv_rgbA8_rgb8 (unsigned char *src, unsigned char *dst, long samples)
       byteclamp (V); \
     } while (0)
 
-static INLINE long
-conv_yuv8_rgb8 (unsigned char *src, unsigned char *dst, long samples)
-{
-  long n = samples;
 
-  while (n--)
-    {
-      int R, G, B;
 
-      YUV82RGB8 (src[0], src[1], src[2], R, G, B);
-      dst[0] = R;
-      dst[1] = G;
-      dst[2] = B;
-      src   += 3;
-      dst   += 3;
-    }
-  return samples;
-}
-
-static INLINE long
-conv_rgb8_yuv8 (unsigned char *src, unsigned char *dst, long samples)
-{
-  long n = samples;
-
-  while (n--)
-    {
-      int Y, U, V;
-
-      YUV82RGB8 (src[0], src[1], src[2], Y, U, V);
-      dst[0] = Y;
-      dst[1] = U;
-      dst[2] = V;
-      src   += 3;
-      dst   += 3;
-    }
-  return samples;
-}
-
-static INLINE long
-conv_rgbaF_yuvaF (unsigned char *src, unsigned char *dst, long samples)
-{
-  float *src_f = (float *) src;
-  float *dst_f = (float *) dst;
-  long   n     = samples;
-
-  while (n--)
-    {
-      float R, G, B;
-      float Y, U, V;
-
-      R = src_f[0];
-      G = src_f[1];
-      B = src_f[2];
-
-      Y = 0.299 * R + 0.587 * B + 0.114 * B;
-      U = (-0.1687) * R - 0.3313 * G + 0.5 * B /* +0.5 */;
-      V = 0.5 * R - 0.4187 * G - 0.0813 * B /* +0.5 */;
-
-      dst_f[0] = Y;
-      dst_f[1] = U;
-      dst_f[2] = V;
-      dst_f[3] = src_f[3];
-
-      dst_f += 4;
-      src_f += 4;
-    }
-  return samples;
-}
-
-static INLINE long
+  static INLINE long
 conv_yuvaF_rgbaF (unsigned char *src, unsigned char *dst, long samples)
 {
   float *src_f = (float *) src;
@@ -1623,37 +1397,6 @@ conv_yuvaF_rgbaF (unsigned char *src, unsigned char *dst, long samples)
   return samples;
 }
 
-
-
-static INLINE long
-conv_rgbF_yuvF (unsigned char *src, unsigned char *dst, long samples)
-{
-  float *src_f = (float *) src;
-  float *dst_f = (float *) dst;
-  long   n     = samples;
-
-  while (n--)
-    {
-      float R, G, B;
-      float Y, U, V;
-
-      R = src_f[0];
-      G = src_f[1];
-      B = src_f[2];
-
-      Y = 0.299 * R + 0.587 * B + 0.114 * B;
-      U = (-0.1687) * R - 0.3313 * G + 0.5 * B /* +0.5 */;
-      V = 0.5 * R - 0.4187 * G - 0.0813 * B /* +0.5 */;
-
-      dst_f[0] = Y;
-      dst_f[1] = U;
-      dst_f[2] = V;
-
-      dst_f += 3;
-      src_f += 3;
-    }
-  return samples;
-}
 
 static INLINE long
 conv_yuvF_rgbF (unsigned char *src, unsigned char *dst, long samples)
@@ -2015,18 +1758,6 @@ init (void)
     babl_type ("u8"),
     babl_component ("Y'"),
     NULL);
-  Babl *yuv8 = babl_format_new (
-    "name", "Y'CbCr u8",
-    "planar",
-    babl_model ("Y'CbCr"),
-    babl_type ("u8-luma"),
-    babl_sampling (1, 1),
-    babl_component ("Y'"),
-    babl_type ("u8-chroma"),
-    babl_sampling (2, 2),
-    babl_component ("Cb"),
-    babl_component ("Cr"),
-    NULL);
   Babl *yuvF = babl_format_new (
     babl_model ("Y'CbCr"),
     babl_type ("float"),
@@ -2082,10 +1813,7 @@ init (void)
   o (g16, g8);
   o (rgbaF, rgbAF);
   o (rgbAF, rgbaF);
-  o (yuv8, rgb8);
-  o (rgb8, yuv8);
   o (yuvF, rgbF);
-  o (rgbF, yuvF);
   o (yuvaF, rgbaF);
   o (rgbA8, rgbA16);
   o (rgb8, rgb16);
@@ -2109,47 +1837,33 @@ init (void)
   o (gaF, gAF);
   o (gAF, gaF);
   o (rgbaF, rgbF);
-  o (rgbAF, rgbF);
   o (gaF, gF);
-  o (gAF, gF);
   o (rgbF, rgbaF);
   o (rgbF, rgbAF);
   o (gF, gaF);
   o (gF, gAF);
-  o (rgbF, gF);
   o (gF, rgbF);
-  o (rgbaF, gaF);
   o (gaF, rgbaF);
-  o (rgbAF, gAF);
   o (gAF, rgbAF);
   o (rgbaF, rgb8);
-  o (rgbA8, rgbaF);
   o (rgbA8, rgbAF);
   o (ga8, gaF);
   o (gA8, gAF);
   o (rgbA8, rgba8);
   o (rgba8, rgbA8);
-  o (rgbA16, rgba16);
   o (gAF, rgbAF);
-  o (rgbaF, g8);
   o (rgbaF, rgb16);
   o (rgb8, rgba8);
   o (rgb8, rgbA8);
   o (rgbA8, rgb8);
   o (rgba8, rgb8);
   o (rgbaF, rgbA8);
-  o (rgbaF, rgbA16);
   o (rgbA16, rgbaF);
-  o (yuv8, rgb8);
-  o (rgb8, yuv8);
   o (yuvF, rgbF);
-  o (rgbF, yuvF);
   o (yuvaF, rgbaF);
-  o (rgbaF, yuvaF);
   o (rgbaF, rgbaD);
   o (rgbaD, rgbaF);
   o (rgbaF, rgb8);
-  o (rgbAF, rgbF);
 #if 0
   o (rgbF, xyzF);
   o (xyzF, rgbF);
