@@ -62,7 +62,7 @@ table_sum_processings_calc (void)
   babl_format_class_for_each (table_source_sum_each, NULL);
 }
 
-#define LIMIT 0.001
+#define LIMIT 0.03
 
 static int
 table_destination_each (Babl *babl,
