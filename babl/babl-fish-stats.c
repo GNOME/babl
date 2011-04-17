@@ -29,6 +29,41 @@ static char *utf8_bar[]={"·", "█", "▇", "▆", "▅", "▄", "▃", "▂", 
 static char *utf8_bar[]={" ","1","2","3","4","5","6","7","8"};
 */
 
+static double sum_pixels = 0.0;
+
+static int
+table_destination_sum_each (Babl *babl,
+                            void *userdata)
+{
+  Babl *source      = userdata;
+  Babl *destination = babl;
+
+  if (source != destination)
+    {
+      Babl *fish = babl_fish (source, destination);
+      babl_assert (fish);
+      sum_pixels += fish->fish.pixels;
+    }
+  return 0;
+}
+
+static int
+table_source_sum_each (Babl *babl,
+                       void *userdata)
+{
+  babl_format_class_for_each (table_destination_sum_each, babl);
+  return 0;
+}
+
+static void
+table_sum_processings_calc (void)
+{
+  sum_pixels = 0;
+  babl_format_class_for_each (table_source_sum_each, NULL);
+}
+
+#define LIMIT 0.001
+
 static int
 table_destination_each (Babl *babl,
                         void *userdata)
@@ -51,7 +86,7 @@ table_destination_each (Babl *babl,
           case BABL_FISH_PATH:
 
             fprintf (output_file, "<td class='cell'%s><a href='javascript:o()'>%s",
-                     fish->fish.processings > 0 ? " style='background-color: #69f'" : "",
+                     fish->fish.pixels / sum_pixels > LIMIT ? " style='background-color: #69f'" : "",
                      utf8_bar[babl_list_size (fish->fish_path.conversion_list)]);
 
             {
@@ -95,11 +130,11 @@ table_destination_each (Babl *babl,
 
           case BABL_FISH_REFERENCE:
             fprintf (output_file, "<td class='cell'%s><a href='javascript:o()'>&nbsp",
-                     fish->fish.processings > 0 ? " style='background-color: #f99'" : "");
+                     fish->fish.pixels / sum_pixels > LIMIT ? " style='background-color: #f99'" : "");
             fprintf (output_file, "<div class='tooltip'>");
             fprintf (output_file, "<h3><span class='g'>Reference</span> %s <span class='g'>to</span> %s</h3>", source->instance.name, destination->instance.name);
 
-            if (fish->fish.processings > 0)
+            if (fish->fish.processings > 1)
               {
                 fprintf (output_file, "<span class='g'>Processings:</span>%i<br/>", fish->fish.processings);
                 fprintf (output_file, "<span class='g'>Pixels:</span>%li<br/>", fish->fish.pixels);
@@ -110,7 +145,7 @@ table_destination_each (Babl *babl,
 
           case BABL_FISH_SIMPLE:
             fprintf (output_file, "<td class='cell'%s><a href='javascript:o()'>&middot;",
-                     fish->fish.processings > 1 ? " style='background-color: #69f'" : "");
+                     fish->fish.pixels / sum_pixels > LIMIT ? " style='background-color: #69f'" : "");
             fprintf (output_file, "<div class='tooltip'>");
             fprintf (output_file, "<h3><span class='g'>Simple</span> %s <span class='g'>to</span> %s</h3>", source->instance.name, destination->instance.name);
 
@@ -137,6 +172,8 @@ table_destination_each (Babl *babl,
 }
 
 static int source_no = 0;
+
+
 
 static int
 table_source_each (Babl *babl,
@@ -264,6 +301,7 @@ babl_fish_stats (FILE *file)
 {
   output_file = file;
 
+  table_sum_processings_calc ();
   fprintf (output_file,
            "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
            "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
