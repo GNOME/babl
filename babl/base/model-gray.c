@@ -143,12 +143,11 @@ rgba_to_gray (char *src,
   while (n--)
     {
       double red, green, blue;
-      double luminance, alpha;
+      double luminance;
 
       red   = ((double *) src)[0];
       green = ((double *) src)[1];
       blue  = ((double *) src)[2];
-      alpha = ((double *) src)[3];
 
       luminance = red * RGB_LUMINANCE_RED +
                   green * RGB_LUMINANCE_GREEN +
