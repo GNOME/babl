@@ -137,13 +137,15 @@ conversion_new (const char    *name,
 }
 
 static char buf[512] = "";
+static int collisions = 0;
 static char *
 create_name (Babl *source, Babl *destination, int type)
 {
   if (babl_extender ())
     {
-      snprintf (buf, 512 - 1, "%s : %s%s to %s",
+      snprintf (buf, 512 - 1, "%s %i: %s%s to %s",
                 BABL (babl_extender ())->instance.name,
+                collisions,
                 type == BABL_CONVERSION_LINEAR ? "" :
                 type == BABL_CONVERSION_PLANE ? "plane " :
                 type == BABL_CONVERSION_PLANAR ? "planar " : "Eeeek! ",
@@ -253,15 +255,18 @@ babl_conversion_new (void *first_arg,
       type = BABL_CONVERSION_PLANAR;
     }
 
+  collisions = 0;
   name = create_name (source, destination, type);
 
   babl = babl_db_exist (db, id, name);
-  if (babl)
+  while (babl)
     {
-      /* There is an instance already registered by the required id/name,
-       * returning the preexistent one instead.
+      /* we allow multiple conversions to be registered per extender, each
+         of them ending up with their own unique name
        */
-      return babl;
+      collisions++;
+      name = create_name (source, destination, type);
+      babl = babl_db_exist (db, id, name);
     }
 
   babl = conversion_new (name, id, source, destination, linear, plane, planar);
