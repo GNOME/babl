@@ -326,6 +326,7 @@ babl_extension_load_dir_list (const char *dir_list)
         {
           case '\0':
             eos = 1;
+            /* don't break here, the path needs to be processed */
 
           case BABL_PATH_SEPARATOR:
           {
