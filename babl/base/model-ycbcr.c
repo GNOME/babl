@@ -253,8 +253,10 @@ formats (void)
     babl_sampling (2, 2),
     babl_component_from_id (BABL_CR),
     NULL);
-  return;
 
+/* deactivate these for now */
+if (0)
+{
   babl_format_new (
     "name", "y'cbcr420",
     "id", BABL_YCBCR420,
@@ -300,4 +302,5 @@ formats (void)
     babl_sampling (4, 1),
     babl_component_from_id (BABL_CR),
     NULL);
+}
 }
