@@ -119,7 +119,7 @@ hash_rehash (BablHashTable *htab)
   if (nhtab->mask)
     {
       nhtab->data_table = babl_calloc (sizeof (BablInstance *), babl_hash_table_size(nhtab));
-      nhtab->chain_table = babl_malloc (sizeof (int *) * babl_hash_table_size(nhtab));
+      nhtab->chain_table = babl_malloc (sizeof (int) * babl_hash_table_size(nhtab));
       memset (nhtab->chain_table, -1, sizeof (int) * babl_hash_table_size(nhtab));
     }
 
@@ -175,7 +175,7 @@ babl_hash_table_init (BablHashValFunction  hfunc,
   if (htab->mask)
   {
       htab->data_table = babl_calloc (sizeof (BablInstance *), babl_hash_table_size(htab));
-      htab->chain_table = babl_malloc (sizeof (int *) * babl_hash_table_size(htab));
+      htab->chain_table = babl_malloc (sizeof (int) * babl_hash_table_size(htab));
       memset (htab->chain_table, -1, sizeof (int) * babl_hash_table_size(htab));
   }
 
