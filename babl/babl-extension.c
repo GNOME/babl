@@ -27,6 +27,7 @@
 #define BABL_INIT_HOOK    init_hook (); dynamic_init_hook ();
 #endif
 
+#define NEEDS_BABL_DB
 #include "babl-internal.h"
 #include "babl-db.h"
 #include "babl-base.h"

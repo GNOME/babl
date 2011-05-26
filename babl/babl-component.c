@@ -17,6 +17,7 @@
  */
 
 #include "config.h"
+#define NEEDS_BABL_DB
 #include "babl-internal.h"
 #include "babl-db.h"
 #include <string.h>

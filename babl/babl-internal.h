@@ -112,16 +112,6 @@ Babl   * babl_format_with_model_as_type (Babl           *model,
 int      babl_formats_count             (void);                                     /* should maybe be templated? */
 int      babl_type_is_symmetric         (Babl           *babl);
 
-/* FIXME: nasty,. including the symbol even in files where it is
- * not needed,. and a dummy function to use it in those cases
- */
-static BablDb *db=NULL;
-static void hack_hack (void)
-{
-  if (db==NULL)
-    db=NULL;
-}
-
 /**** LOGGER ****/
 #include <stdarg.h>
 
@@ -152,7 +142,6 @@ real_babl_log (const char *file,
   fprintf (stdout, "\n");
   fflush (NULL);
   return;
-  hack_hack ();
 }
 
 /* Provide a string identifying the current function, non-concatenatable */

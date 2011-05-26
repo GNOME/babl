@@ -20,6 +20,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <math.h>
+#define NEEDS_BABL_DB
 #include "babl-internal.h"
 #include "babl-db.h"
 
