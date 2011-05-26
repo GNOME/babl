@@ -183,6 +183,13 @@ babl_model_new (void *first_argument,
   else
     name = babl_model_create_name (components, component);
 
+  if (!components)
+    {
+      babl_log("no components specified for model '%s'", name);
+      babl_free(name);
+      return NULL;
+    }
+
   babl = babl_db_exist (db, id, name);
   if (id && !babl && babl_db_exist (db, 0, name))
     babl_fatal ("Trying to reregister BablModel '%s' with different id!", name);

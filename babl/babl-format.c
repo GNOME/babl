@@ -384,6 +384,20 @@ babl_format_new (void *first_arg,
   if (!name)
     name = create_name (model, components, component, type);
 
+  if (!model)
+    {
+      babl_log ("no model specified for format '%s'", name);
+      babl_free(name);
+      return NULL;
+    }
+
+  if (!components)
+    {
+      babl_log ("no components specified for format '%s'", name);
+      babl_free(name);
+      return NULL;
+    }
+
   babl = babl_db_exist (db, id, name);
   if (id && !babl && babl_db_exist (db, 0, name))
     babl_fatal ("Trying to reregister BablFormat '%s' with different id!", name);
