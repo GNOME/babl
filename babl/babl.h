@@ -174,7 +174,7 @@ Babl * babl_format_new     (void *first_arg,
 
 /*
  * Defines a new pixel format in babl. With the specified data storage
- * type and the given number of components. At the moment behavior of 
+ * type and the given number of components. At the moment behavior of
  * conversions are only well defined to other babl_format_n derived formats
  * with the same number of components.
  */
