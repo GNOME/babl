@@ -125,7 +125,7 @@ if HAVE_VALA
 babl-$(BABL_API_VERSION).vapi: Babl-$(BABL_API_VERSION).gir
 	$(VAPIGEN) --library=babl-$(BABL_API_VERSION) Babl-$(BABL_API_VERSION).gir
 
-vapidir=@vapidir@
+vapidir=$(datadir)/vala/vapi
 vapi_DATA = babl-$(BABL_API_VERSION).vapi
 
 endif # HAVE_VALA

@@ -85,9 +85,6 @@ fi
 have_vala=$have_vapigen
 AM_CONDITIONAL(HAVE_VALA, test "$have_vala" = "yes")
 
-vapidir=$(pkg-config --variable vapidir vala-1.0)
-AC_SUBST(vapidir)
-
 dnl The symbol BABL_UNSTABLE is defined above for substitution in
 dnl Makefiles and conditionally defined here as a preprocessor symbol
 dnl and automake conditional.
