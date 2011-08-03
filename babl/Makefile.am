@@ -121,5 +121,13 @@ CLEANFILES = $(gir_DATA) $(typelibs_DATA)
         $(G_IR_COMPILER_OPTS) \
         $< -o $@
 
+if HAVE_VALA
+babl-$(BABL_API_VERSION).vapi: Babl-$(BABL_API_VERSION).gir
+	$(VAPIGEN) --library=babl-$(BABL_API_VERSION) Babl-$(BABL_API_VERSION).gir
+
+vapidir=@vapidir@
+vapi_DATA = babl-$(BABL_API_VERSION).vapi
+
+endif # HAVE_VALA
 
 endif # HAVE_INTROSPECTION

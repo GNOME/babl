@@ -4,6 +4,7 @@
 /.libs
 /Babl-0.1.gir
 /Babl-0.1.typelib
+/*.vapi
 /Makefile
 /Makefile.in
 /babl-version.h

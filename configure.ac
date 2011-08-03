@@ -67,6 +67,27 @@ AC_SUBST(BABL_RELEASE)
 # GObject Introspection
 GOBJECT_INTROSPECTION_CHECK([0.6.8])
 
+# Vala
+AC_ARG_WITH(vala, [  --without-vala         build without Vala support])
+
+have_vapigen="no"
+if test "x$with_vala" != "xno"; then
+
+  AC_PATH_PROG(VAPIGEN, vapigen, no)
+  if test "$VAPIGEN" = "no"; then
+    have_vapigen="no  (vapigen executable not found)"
+    AC_MSG_RESULT([*** Check for vapigen failed.])
+  else
+    have_vapigen="yes"
+  fi
+fi
+
+have_vala=$have_vapigen
+AM_CONDITIONAL(HAVE_VALA, test "$have_vala" = "yes")
+
+vapidir=$(pkg-config --variable vapidir vala-1.0)
+AC_SUBST(vapidir)
+
 dnl The symbol BABL_UNSTABLE is defined above for substitution in
 dnl Makefiles and conditionally defined here as a preprocessor symbol
 dnl and automake conditional.
