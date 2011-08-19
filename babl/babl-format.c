@@ -112,6 +112,7 @@ format_new (const char     *name,
   babl->format.loss = -1.0;
   babl->format.visited = 0;
   babl->format.image_template = NULL;
+  babl->format.format_n = 0;
 
   return babl;
 }
@@ -195,6 +196,15 @@ ncomponents_create_name (Babl *type,
   return babl_strdup (buf);
 }
 
+static void
+babl_format_set_is_format_n (Babl *format)
+{
+  if (format->class_type == BABL_FORMAT)
+    {
+      format->format.format_n = 1;
+    }
+}
+
 Babl *
 babl_format_n (Babl *btype,
                int   components)
@@ -232,10 +242,24 @@ babl_format_n (Babl *btype,
                      planar, components, model,
                      component, sampling, type);
 
+  babl_format_set_is_format_n (babl);
+
   babl_db_insert (db, babl);
   babl_free (name);
   return babl;
 }
+
+int
+babl_format_is_format_n (Babl *format)
+{
+  if (format->class_type == BABL_FORMAT)
+    {
+      return format->format.format_n;
+    }
+
+  return 0;
+}
+
 
 static int
 is_format_duplicate (Babl           *babl,

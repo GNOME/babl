@@ -183,6 +183,11 @@ babl_format_n (Babl *type,
                int   components);
 
 /**
+ * Returns whether the @format is a format_n type.
+ */
+int babl_format_is_format_n (Babl *format);
+
+/**
  * Defines a new conversion between either two formats, two models or
  * two types in babl.
  *

@@ -39,6 +39,7 @@ typedef struct
                              from and to RGBA double */
   int              visited; /* for convenience in code while searching
                                for conversion paths */
+  int              format_n; /* whether the format is a format_n type or not */
 } BablFormat;
 
 #endif
