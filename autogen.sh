@@ -154,7 +154,7 @@ fi
 echo
 echo "I am going to run ./configure with the following arguments:"
 echo
-echo "  --enable-maintainer-mode $AUTOGEN_CONFIGURE_ARGS $@"
+echo "  $AUTOGEN_CONFIGURE_ARGS $@"
 echo
 
 if test -z "$*"; then
@@ -209,7 +209,7 @@ echo
 echo "Running ./configure..."
 echo
 
-$srcdir/configure --enable-maintainer-mode $AUTOGEN_CONFIGURE_ARGS "$@"
+$srcdir/configure $AUTOGEN_CONFIGURE_ARGS "$@"
 RC=$?
 if test $RC -ne 0; then
   echo
