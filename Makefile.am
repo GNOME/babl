@@ -22,6 +22,7 @@ EXTRA_DIST = \
 	TODO			\
 	ChangeLog		\
 	autogen.sh		\
+	m4/introspection.m4	\
 	babl.pc.in
 
 DISTCLEANFILES = \
