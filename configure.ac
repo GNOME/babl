@@ -105,7 +105,7 @@ AC_SUBST(BABL_CURRENT_MINUS_AGE)
 
 dnl ==========================================================================
 
-AM_INIT_AUTOMAKE(no-define no-dist-gzip -Wno-portability)
+AM_INIT_AUTOMAKE([1.10 foreign no-define dist-bzip2 no-dist-gzip -Wno-portability])
 
 # Enable silent build rules by default, requires at least
 # Automake-1.11. Disable by either passing --disable-silent-rules to
