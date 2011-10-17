@@ -108,10 +108,6 @@ BABL_CURRENT_MINUS_AGE=m4_eval(lt_current - lt_age)
 AC_SUBST(BABL_LIBRARY_VERSION)
 AC_SUBST(BABL_CURRENT_MINUS_AGE)
 
-PACKAGE_NAME=babl
-AC_SUBST(PACKAGE_NAME)
-
-
 dnl ==========================================================================
 
 AM_INIT_AUTOMAKE(no-define no-dist-gzip -Wno-portability)
