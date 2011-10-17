@@ -36,6 +36,8 @@ m4_define([babl_stable],
           m4_if(m4_eval(stability_version_number % 2), [0], [yes], [no]))
 
 AC_INIT(babl, babl_major_version.babl_minor_version.babl_micro_version)
+
+AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_SRCDIR(babl/babl.h)
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -113,7 +115,6 @@ AC_SUBST(PACKAGE_NAME)
 dnl ==========================================================================
 
 AM_INIT_AUTOMAKE(no-define no-dist-gzip -Wno-portability)
-AM_CONFIG_HEADER(config.h)
 
 BABL_VARIADIC_MACROS
 
