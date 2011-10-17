@@ -62,7 +62,7 @@ BABL_RELEASE=babl_api_version
 AC_SUBST(BABL_RELEASE)
 
 # GObject Introspection
-GOBJECT_INTROSPECTION_CHECK([0.6.8])
+GOBJECT_INTROSPECTION_CHECK([0.10])
 
 # Vala
 AC_ARG_WITH(vala, [  --without-vala         build without Vala support])
