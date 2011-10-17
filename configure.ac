@@ -114,10 +114,12 @@ m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 BABL_VARIADIC_MACROS
 
-AC_DISABLE_STATIC
+# Check for programs
 AC_PROG_CC
-AC_LIBTOOL_WIN32_DLL
-AM_PROG_LIBTOOL
+
+# Initialize libtool
+LT_PREREQ([2.2])
+LT_INIT([disable-static win32-dll])
 
 dnl Initialize maintainer mode
 AM_MAINTAINER_MODE([enable])
