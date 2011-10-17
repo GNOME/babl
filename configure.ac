@@ -124,7 +124,7 @@ LT_INIT([disable-static win32-dll])
 dnl Initialize maintainer mode
 AM_MAINTAINER_MODE([enable])
 
-AC_STDC_HEADERS
+AC_HEADER_STDC
 AM_SANITY_CHECK
 
 WEBSITE_HOST=pippin.gimp.org
