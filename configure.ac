@@ -41,11 +41,6 @@ AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_SRCDIR(babl/babl.h)
 AC_CONFIG_MACRO_DIR([m4])
 
-# Enable silent build rules by default, requires at least
-# Automake-1.11. Disable by either passing --disable-silent-rules to
-# configure or passing V=1 to make
-m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
-
 BABL_MAJOR_VERSION=babl_major_version
 BABL_MINOR_VERSION=babl_minor_version
 BABL_MICRO_VERSION=babl_micro_version
@@ -111,6 +106,11 @@ AC_SUBST(BABL_CURRENT_MINUS_AGE)
 dnl ==========================================================================
 
 AM_INIT_AUTOMAKE(no-define no-dist-gzip -Wno-portability)
+
+# Enable silent build rules by default, requires at least
+# Automake-1.11. Disable by either passing --disable-silent-rules to
+# configure or passing V=1 to make
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 BABL_VARIADIC_MACROS
 
