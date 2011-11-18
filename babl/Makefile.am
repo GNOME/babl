@@ -111,9 +111,6 @@ gir_DATA = Babl-$(BABL_API_VERSION).gir
 typelibsdir = $(libdir)/girepository-1.0
 typelibs_DATA = Babl-$(BABL_API_VERSION).typelib
 
-EXTRA_DIST = $(gir_DATA)
-CLEANFILES = $(gir_DATA) $(typelibs_DATA)
-
 %.typelib: %.gir
 	LD_LIBRARY_PATH=$${LD_LIBRARY_PATH:+$$LD_LIBRARY_PATH:}. $(INTROSPECTION_COMPILER) \
         --includedir=$(srcdir) \
@@ -131,3 +128,6 @@ vapi_DATA = babl-$(BABL_API_VERSION).vapi
 endif # HAVE_VALA
 
 endif # HAVE_INTROSPECTION
+
+EXTRA_DIST = $(gir_DATA)
+CLEANFILES = $(gir_DATA) $(typelibs_DATA) $(vapi_DATA)
