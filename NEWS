@@ -5,6 +5,12 @@ the news section both in the README and the webpage.
 
                                                                           -->
 
+2011-11-18 babl-0.1.6                                               </dt><dd>
+Build improvements, remove blatantly wrong conversions from extensions,
+made it possible to distinguish format_n formats from others, improvements
+to vala/gobject introspection support.
+
+                                                                    </dd><dt>
 2011-01-20 babl-0.1.4                                               </dt><dd>
 Improved cross platform build ability, added code to handle n-component formats,
 remove extraenous runtime profiling that impacted performance.
