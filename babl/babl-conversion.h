@@ -28,11 +28,11 @@ Babl * babl_conversion (const char *name);
 /* Signature of functions registered for reference type
  * conversions,
  */
-typedef long (*BablFuncPlane)     (char  *src,
-                                   char  *dst,
-                                   int    src_pitch,
-                                   int    dst_pitch,
-                                   long   n);
+typedef long (*BablFuncPlane)     (const char  *src,
+                                   char        *dst,
+                                   int          src_pitch,
+                                   int          dst_pitch,
+                                   long         n);
 
 
 typedef struct

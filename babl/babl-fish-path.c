@@ -64,10 +64,10 @@ get_path_instrumentation (FishPathInstrumentation *fpi,
                           double                  *path_error);
 
 static long
-process_conversion_path (BablList *path,
-                         void     *source_buffer,
-                         void     *destination_buffer,
-                         long     n);
+process_conversion_path (BablList   *path,
+                         const void *source_buffer,
+                         void       *destination_buffer,
+                         long        n);
 
 static void
 get_conversion_path (PathContext *pc,
@@ -312,24 +312,23 @@ babl_fish_path (const Babl *source,
 }
 
 static long
-babl_fish_path_process (Babl *babl,
-                        void *source,
-                        void *destination,
-                        long  n)
+babl_fish_path_process (Babl       *babl,
+                        const void *source,
+                        void       *destination,
+                        long        n)
 {
   return process_conversion_path (babl->fish_path.conversion_list,
-                                 source,
-                                 destination,
-                                 n);
+                                  source,
+                                  destination,
+                                  n);
 
 }
 
-
 static long
-babl_fish_process (Babl *babl,
-                   void *source,
-                   void *destination,
-                   long  n)
+babl_fish_process (Babl       *babl,
+                   const void *source,
+                   void       *destination,
+                   long        n)
 {
   long ret = 0;
 
@@ -373,10 +372,10 @@ babl_fish_process (Babl *babl,
 }
 
 long
-babl_process (Babl *babl,
-              void *source,
-              void *destination,
-              long  n)
+babl_process (Babl       *babl,
+              const void *source,
+              void       *destination,
+              long        n)
 {
   babl_assert (babl);
   babl_assert (source);
@@ -405,10 +404,10 @@ babl_process (Babl *babl,
 }
 
 static long
-process_conversion_path (BablList *path,
-                         void     *source_buffer,
-                         void     *destination_buffer,
-                         long     n)
+process_conversion_path (BablList   *path,
+                         const void *source_buffer,
+                         void       *destination_buffer,
+                         long        n)
 {
   int conversions = babl_list_size (path);
 

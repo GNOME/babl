@@ -92,11 +92,11 @@ babl_fish_reference (const Babl *source,
 
 
 static void
-convert_to_double (BablFormat *source_fmt,
-                   BablImage  *source,
-                   char       *source_buf,
-                   char       *source_double_buf,
-                   int         n)
+convert_to_double (BablFormat      *source_fmt,
+                   const BablImage *source,
+                   char            *source_buf,
+                   char            *source_double_buf,
+                   int              n)
 {
   int        i;
 
@@ -203,11 +203,11 @@ convert_from_double (BablFormat *destination_fmt,
 
 
 static void
-ncomponent_convert_to_double (BablFormat *source_fmt,
-                              BablImage  *source,
-                              char       *source_buf,
-                              char       *source_double_buf,
-                              int         n)
+ncomponent_convert_to_double (BablFormat       *source_fmt,
+                              const BablImage  *source,
+                              char             *source_buf,
+                              char             *source_double_buf,
+                              int               n)
 {
   BablImage *src_img;
   BablImage *dst_img;
@@ -276,10 +276,10 @@ ncomponent_convert_from_double (BablFormat *destination_fmt,
 
 
 static int
-process_same_model (Babl      *babl,
-                    BablImage *source,
-                    BablImage *destination,
-                    long       n)
+process_same_model (Babl            *babl,
+                    const BablImage *source,
+                    BablImage       *destination,
+                    long             n)
 {
   void *double_buf;
 
@@ -341,10 +341,10 @@ process_same_model (Babl      *babl,
 }
 
 long
-babl_fish_reference_process (Babl      *babl,
-                             BablImage *source,
-                             BablImage *destination,
-                             long       n)
+babl_fish_reference_process (Babl            *babl,
+                             const BablImage *source,
+                             BablImage       *destination,
+                             long             n)
 {
   void *source_double_buf;
   void *rgba_double_buf;

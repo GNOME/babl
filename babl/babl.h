@@ -84,7 +84,7 @@ Babl *       babl_fish      (const void *source_format,
  *  returns number of pixels converted.
  */
 long         babl_process   (Babl *babl_fish,
-                             void *source,
+                             const void *source,
                              void *destination,
                              long  n);
 

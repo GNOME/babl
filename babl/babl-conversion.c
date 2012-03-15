@@ -284,7 +284,7 @@ babl_conversion_new (void *first_arg,
 
 static long
 babl_conversion_linear_process (BablConversion *conversion,
-                                void           *source,
+                                const void     *source,
                                 void           *destination,
                                 long            n)
 {
@@ -293,7 +293,7 @@ babl_conversion_linear_process (BablConversion *conversion,
 
 static long
 babl_conversion_plane_process (BablConversion *conversion,
-                               void           *source,
+                               const void     *source,
                                void           *destination,
                                int             src_pitch,
                                int             dst_pitch,
@@ -311,10 +311,10 @@ babl_conversion_planar_process (BablConversion *conversion,
                                 long            n)
 {
 #ifdef USE_ALLOCA
-  char **src_data = alloca (sizeof (void *) * source->components);
+  const char **src_data = alloca (sizeof (void *) * source->components);
   char **dst_data = alloca (sizeof (void *) * destination->components);
 #else
-  char  *src_data[BABL_MAX_COMPONENTS];
+  const char  *src_data[BABL_MAX_COMPONENTS];
   char  *dst_data[BABL_MAX_COMPONENTS];
 #endif
 
@@ -331,10 +331,10 @@ babl_conversion_planar_process (BablConversion *conversion,
 }
 
 long
-babl_conversion_process (Babl *babl,
-                         char *source,
-                         char *destination,
-                         long  n)
+babl_conversion_process (Babl       *babl,
+                         const char *source,
+                         char       *destination,
+                         long        n)
 {
   BablConversion *conversion = (BablConversion *) babl;
 
@@ -344,7 +344,7 @@ babl_conversion_process (Babl *babl,
     {
       case BABL_CONVERSION_PLANE:
       {
-        void *src_data  = NULL;
+        const void *src_data  = NULL;
         void *dst_data  = NULL;
         int   src_pitch = 0;
         int   dst_pitch = 0;
