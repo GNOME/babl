@@ -10,6 +10,8 @@ TESTS =				\
 	sanity			\
 	babl_class_name		\
 	types			\
+	extract \
+	nop \
 	n_components		\
 	models			\
 	$(CONCURRENCY_STRESS_TEST)
@@ -31,5 +33,6 @@ noinst_PROGRAMS =		\
 	babl-html-dump		\
 	conversions		\
 	formats			\
+	extract \
 	nop			\
 	$(TESTS)

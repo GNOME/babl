@@ -67,8 +67,10 @@ format_new (const char     *name,
       if (!component_found)
         {
           component_found = 0;
-          babl_fatal ("matching source component for %s in model %s not found",
+#if 0 /* since babl does the right thing, let it happen */
+          babl_fatal("matching source component for %s in model %s not found",
                       model->component[i]->instance.name, model->instance.name);
+#endif
         }
     }
 
