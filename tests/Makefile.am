@@ -10,6 +10,7 @@ TESTS =				\
 	sanity			\
 	babl_class_name		\
 	types			\
+	palette \
 	extract \
 	nop \
 	n_components		\
@@ -33,6 +34,4 @@ noinst_PROGRAMS =		\
 	babl-html-dump		\
 	conversions		\
 	formats			\
-	extract \
-	nop			\
 	$(TESTS)

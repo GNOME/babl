@@ -27,6 +27,7 @@ c_sources =				\
 	babl-memory.c			\
 	babl-model.c			\
 	babl-mutex.c			\
+	babl-palette.c    \
 	babl-sampling.c			\
 	babl-sanity.c			\
 	babl-type.c			\

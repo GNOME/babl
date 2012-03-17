@@ -200,6 +200,27 @@ int babl_format_is_format_n (Babl *format);
 Babl * babl_conversion_new (void *first_arg,
                             ...) BABL_ARG_NULL_TERMINATED;
 
+/**
+ * create a new palette based format, name is optional pass in NULL to get
+ * an anonymous format.
+ */
+Babl *babl_new_palette         (const char *name);
+
+/**
+ * Assign a palette to a palette format, the data is a single span of pixels
+ * representing the colors of the palette.
+ */
+void  babl_palette_set_palette (Babl              *babl,
+                                Babl              *format,
+                                void              *data,
+                                int                count);
+
+/**
+ * reset a palette to initial state.
+ */
+void  babl_palette_reset       (Babl              *babl);
+
+
 
 /*
  * Backwards compatibility stuff

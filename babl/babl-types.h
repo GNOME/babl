@@ -35,7 +35,9 @@ typedef union _Babl Babl;
  */
 typedef long (*BablFuncLinear)    (const char  *src,
                                    char  *dst,
-                                   long   n);
+                                   long   n,
+                                   void  *src_model_data,
+                                   void  *dst_model_data);
 
 /* TypePlanar,ModelPlanar and FormatPlanar */
 typedef long (*BablFuncPlanar)    (int    src_bands,
@@ -44,6 +46,8 @@ typedef long (*BablFuncPlanar)    (int    src_bands,
                                    int    dst_bands,
                                    char  *dst[],
                                    int    dst_pitch[],
-                                   long   n);
+                                   long   n,
+                                   void  *src_model_data,
+                                   void  *dst_model_data);
 
 #endif

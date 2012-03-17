@@ -28,6 +28,7 @@ void babl_base_type_u8     (void);
 void babl_base_type_u16    (void);
 void babl_base_type_u32    (void);
 
+void babl_base_model_pal   (void);
 void babl_base_model_rgb   (void);
 void babl_base_model_gray  (void);
 void babl_base_model_ycbcr (void);
