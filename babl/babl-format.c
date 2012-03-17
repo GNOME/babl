@@ -619,4 +619,18 @@ babl_format_loss (Babl *babl)
   return loss;
 }
 
+
+void *
+babl_get_user_data (Babl *babl)
+{
+  return babl->format.model->data;
+}
+
+void
+babl_set_user_data (Babl *babl, void *data)
+{
+  babl->format.model_data = data;
+  babl->format.model->data = babl->format.model_data;
+}
+
 BABL_CLASS_IMPLEMENT (format)

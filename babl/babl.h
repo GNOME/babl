@@ -202,9 +202,10 @@ Babl * babl_conversion_new (void *first_arg,
 
 /**
  * create a new palette based format, name is optional pass in NULL to get
- * an anonymous format.
+ * an anonymous format. If you pass in with_alpha the format also gets
+ * an 8bit alpha channel.
  */
-Babl *babl_new_palette         (const char *name);
+Babl *babl_new_palette         (const char *name, int with_alpha);
 
 /**
  * Assign a palette to a palette format, the data is a single span of pixels
@@ -219,6 +220,19 @@ void  babl_palette_set_palette (Babl              *babl,
  * reset a palette to initial state.
  */
 void  babl_palette_reset       (Babl              *babl);
+
+
+/**
+ * associate a data pointer with a format/model, this data can be accessed and
+ * used from the conversion functions, encoding color profiles, palettes or
+ * similar with the data.
+ */
+void   babl_set_user_data     (Babl *babl, void *data);
+
+/**
+ * get data set with babl_set_user_data
+ */
+void * babl_get_user_data     (Babl *babl);
 
 
 
