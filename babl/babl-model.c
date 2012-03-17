@@ -204,8 +204,8 @@ babl_model_new (void *first_argument,
   else
     {
       if (!is_model_duplicate (babl, components, component))
-        babl_fatal ("BablModel '%s' already registered "
-                    "with different components!", name);
+              babl_fatal ("BablModel '%s' already registered "
+                          "with different components!", name);
     }
 
   babl_free (name);

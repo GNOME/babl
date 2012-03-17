@@ -32,7 +32,9 @@ typedef long (*BablFuncPlane)     (const char  *src,
                                    char        *dst,
                                    int          src_pitch,
                                    int          dst_pitch,
-                                   long         n);
+                                   long         n,
+                                   void        *src_model_data,
+                                   void        *dst_model_data);
 
 
 typedef struct

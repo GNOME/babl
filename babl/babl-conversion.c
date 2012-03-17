@@ -288,7 +288,9 @@ babl_conversion_linear_process (BablConversion *conversion,
                                 void           *destination,
                                 long            n)
 {
-  return conversion->function.linear (source, destination, n);
+  return conversion->function.linear (source, destination, n,
+                              conversion->source->model.data,
+                              conversion->destination->model.data);
 }
 
 static long
@@ -301,7 +303,9 @@ babl_conversion_plane_process (BablConversion *conversion,
 {
   return conversion->function.plane (source, destination,
                                      src_pitch, dst_pitch,
-                                     n);
+                                     n,
+                                     conversion->source->model.data,
+                                     conversion->destination->model.data);
 }
 
 static long
@@ -327,7 +331,9 @@ babl_conversion_planar_process (BablConversion *conversion,
                                       destination->components,
                                       dst_data,
                                       destination->pitch,
-                                      n);
+                                      n,
+                                      conversion->source->model.data,
+                                      conversion->destination->model.data);
 }
 
 long

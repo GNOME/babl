@@ -25,6 +25,7 @@
 #define BABL_HARD_MAX_PATH_LENGTH  8
 #define BABL_MAX_NAME_LEN          1024
 
+int   babl_in_fish_path = 0;
 
 typedef struct _FishPathInstrumentation
 {
@@ -292,8 +293,11 @@ babl_fish_path (const Babl *source,
      * a consistent state, this code path is not performance critical
      * since created fishes are cached.
      */
+    babl_in_fish_path++;
 
     get_conversion_path (&pc, (Babl *) source, 0, max_path_length ());
+
+    babl_in_fish_path--;
     babl_mutex_unlock (babl_format_mutex);
     babl_free (pc.current_path);
   }

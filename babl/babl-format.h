@@ -28,6 +28,10 @@ typedef struct
   int              components;
   BablComponent  **component;
   BablType       **type;
+  void            *model_data;     /* replicated at same offset as in
+                                      BablModel, permitting assuming
+                                      that it is available for both
+                                    */
   void            *image_template; /* image template for use with
                                       linear (non-planer) images */
 
