@@ -26,6 +26,7 @@ typedef struct BablPalette
   int         count; /* number of palette entries */
   const Babl *format;/* the pixel format the palette is stored in */
   void       *data;  /* one linear segment of all the pixels representing the palette, in   order */
+  void       *data_double;
 } BablPalette;
 
 
@@ -37,10 +38,23 @@ static BablPalette *make_pal (Babl *format, void *data, int count)
   pal->count = count;
   pal->format = format;
   pal->data = malloc (bpp * count);
+  pal->data_double = malloc (4 * sizeof(double) * count);
   memcpy (pal->data, data, bpp * count);
+  babl_process (babl_fish (format, babl_format ("RGBA double")),
+                pal->data, pal->data_double, count);
   return pal;
 }
 
+static void babl_palette_free (BablPalette *pal)
+{
+  free (pal->data);
+  free (pal->data_double);
+  free (pal);
+}
+
+/* A default palette, containing standard ANSI / EGA colors
+ *
+ */
 static unsigned char defpal_data[4*16] = 
 {  
 0  ,0  ,0  ,255,
@@ -60,6 +74,8 @@ static unsigned char defpal_data[4*16] =
 0  ,255,255,255,
 255,255,255,255,
 };
+static double defpal_double[4*8*16];
+
 static BablPalette *default_palette (void)
 {
   static BablPalette pal;
@@ -73,6 +89,9 @@ static BablPalette *default_palette (void)
                                            not be fully static.
                                          */
   pal.data = defpal_data;
+  pal.data_double = defpal_double;
+  babl_process (babl_fish (pal.format, babl_format ("RGBA double")),
+                pal.data, pal.data_double, pal.count);
   return &pal;
 }
 
@@ -84,14 +103,7 @@ rgba_to_pal (char *src,
              void *dst_model_data)
 {
   BablPalette *pal = dst_model_data;
-  Babl        *fish;
-  int bpp;
   
-  fish = babl_fish (
-      pal->format,
-      babl_format ("RGBA double"));
-
-  bpp = babl_format_get_bytes_per_pixel (pal->format);
   while (n--)
     {
       int idx;
@@ -105,11 +117,7 @@ rgba_to_pal (char *src,
       for (idx = 0; idx<pal->count; idx++)
         {
           double diff;
-          double palpx[4];
-
-          /* oh horror, at least cache the format */
-          babl_process (fish, ((char*)pal->data) + idx * bpp,
-                palpx, 1);
+          double *palpx = ((double *)pal->data_double) + idx * 4;
 
           diff = (palpx[0] - srcf[0]) * (palpx[0] - srcf[0]) +
                  (palpx[1] - srcf[1]) * (palpx[1] - srcf[1]) +
@@ -138,15 +146,7 @@ rgba_to_pala (char *src,
               void *dst_model_data)
 {
   BablPalette *pal = dst_model_data;
-  Babl        *fish;
-  int bpp;
   
-  fish = babl_fish (
-      pal->format,
-      babl_format ("RGBA double"));
-
-  bpp = babl_format_get_bytes_per_pixel (pal->format);
-
   while (n--)
     {
       int idx;
@@ -162,11 +162,7 @@ rgba_to_pala (char *src,
       for (idx = 0; idx<pal->count; idx++)
         {
           double diff;
-          double palpx[4];
-
-          /* oh horror, at least cache the format */
-          babl_process (fish, ((char*)pal->data) + idx * bpp,
-                palpx, 1);
+          double *palpx = ((double *)pal->data_double) + idx * 4;
 
           diff = (palpx[0] - srcf[0]) * (palpx[0] - srcf[0]) +
                  (palpx[1] - srcf[1]) * (palpx[1] - srcf[1]) +
@@ -195,22 +191,16 @@ pal_to_rgba (char *src,
              void *foo)
 {
   BablPalette *pal = src_model_data;
-  Babl        *fish = babl_fish (
-      pal->format,
-      babl_format ("RGBA double"));
-  int bpp = babl_format_get_bytes_per_pixel (pal->format);
-
   while (n--)
     {
-      int idx      = (((double *) src)[0]) * 256.0;
-
+      int idx = (((double *) src)[0]) * 256.0;
+      double *palpx;
 
       if (idx < 0) idx = 0;
       if (idx >= pal->count) idx = pal->count-1;
 
-      babl_process (fish, 
-            ((char*)pal->data) + idx * bpp,
-            dst, 1);
+      palpx = ((double *)pal->data_double) + idx * 4;
+      memcpy (dst, palpx, sizeof(double)*4);
 
       src += sizeof (double) * 1;
       dst += sizeof (double) * 4;
@@ -227,23 +217,19 @@ pala_to_rgba (char *src,
               void *foo)
 {
   BablPalette *pal = src_model_data;
-  Babl        *fish = babl_fish (
-      pal->format,
-      babl_format ("RGBA double"));
-  int bpp = babl_format_get_bytes_per_pixel (pal->format);
 
   while (n--)
     {
       int idx      = (((double *) src)[0]) * 256.0;
       double alpha = (((double *) src)[1]);
+      double *palpx;
 
 
       if (idx < 0) idx = 0;
       if (idx >= pal->count) idx = pal->count-1;
 
-      babl_process (fish, 
-            ((char*)pal->data) + idx * bpp,
-            dst, 1);
+      palpx = ((double *)pal->data_double) + idx * 4;
+      memcpy (dst, palpx, sizeof(double)*4);
 
       ((double *)dst)[3] *= alpha; 
 
@@ -344,9 +330,7 @@ babl_palette_reset (Babl *babl)
 {
   if (babl_get_user_data (babl) != default_palette ())
     {
-      BablPalette *pal = babl_get_user_data (babl);
-      free (pal->data);
-      free (pal);
+      babl_palette_free ( babl_get_user_data (babl));
     }
   babl_set_user_data (babl, default_palette ());
 }
