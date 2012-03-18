@@ -279,38 +279,34 @@ pala_to_rgba (char *src,
 
 #include "base/util.h"
 
-static long
-copy_strip_1 (int    src_bands,
-              char **src,
-              int   *src_pitch,
-              int    dst_bands,
-              char **dst,
-              int   *dst_pitch,
-              long   samples)
+static inline long
+conv_pal8_pala8 (unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
 
-  BABL_PLANAR_SANITY
   while (n--)
     {
-      int i;
-
-      for (i = 0; i < dst_bands; i++)
-        {
-          double foo;
-          if (i < src_bands)
-            foo = *(double *) src[i];
-          else
-            foo = 1.0;
-          *(double *) dst[i] = foo;
-        }
-
-      BABL_PLANAR_STEP
+      dst[0] = src[0];
+      dst[1] = 255;
+      src   += 1;
+      dst   += 2;
     }
-  printf (".");
   return samples;
 }
 
+static inline long
+conv_pala8_pal8 (unsigned char *src, unsigned char *dst, long samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      dst[0] = src[0];
+      src   += 2;
+      dst   += 1;
+    }
+  return samples;
+}
 
 /* should return the BablModel, permitting to fetch
  * other formats out of it?
@@ -322,6 +318,8 @@ void babl_new_palette (const char *name, const Babl **format_u8,
   const Babl *model_no_alpha;
   const Babl *f_pal_u8;
   const Babl *f_pal_a_u8;
+  const Babl *component;
+  const Babl *alpha;
   BablPalette **palptr;
 
   char  cname[64];
@@ -339,34 +337,27 @@ void babl_new_palette (const char *name, const Babl **format_u8,
     }
 
   /* re-registering is a no-op */
-  babl_component_new (
+  component = babl_component_new (
     "I",
     "luma",
     "chroma",
     "alpha",
     NULL);
+  alpha = babl_component ("A");
   
-  model = babl_model_new ("name", name,
-                          babl_component ("I"),
-                          babl_component ("A"),
-                          NULL);
+  model = babl_model_new ("name", name, component, alpha, NULL);
   palptr = malloc (sizeof (void*));
   *palptr = default_palette ();;
   cname[0] = 'v';
-  model_no_alpha = babl_model_new ("name", name,
-                                   babl_component ("I"),
-                                   NULL);
-
+  model_no_alpha = babl_model_new ("name", name, component, NULL);
   cname[0] = 'x';
   f_pal_a_u8 = babl_format_new ("name", name, model,
                                 babl_type ("u8"),
-                                babl_component ("I"),
-                                babl_component ("A"),
-                              NULL);
+                                component, alpha, NULL);
   cname[0] = 'y';
   f_pal_u8  = babl_format_new ("name", name, model_no_alpha,
                                babl_type ("u8"),
-                               babl_component ("I"), NULL);
+                               component, NULL);
 
   babl_conversion_new (
      model,
@@ -393,16 +384,16 @@ void babl_new_palette (const char *name, const Babl **format_u8,
   );
 
   babl_conversion_new (
-     model_no_alpha,
-     model,
-     "planar", copy_strip_1,
+     f_pal_u8,
+     f_pal_a_u8,
+     "linear", conv_pal8_pala8,
      NULL
   );
 
   babl_conversion_new (
-     model,
-     model_no_alpha,
-     "planar", copy_strip_1,
+     f_pal_a_u8,
+     f_pal_u8,
+     "linear", conv_pala8_pal8,
      NULL
   );
 
