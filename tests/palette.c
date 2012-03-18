@@ -54,7 +54,6 @@ main (int    argc,
 {
   int OK = 1;
   babl_init ();
-
   {
     unsigned char in[][1]   = {{        0},{          1},{          2},{15}};
     unsigned char out[][4]  = {{0,0,0,255},{127,0,0,255},{0,127,0,255},{255,255,255,255}};
@@ -64,6 +63,7 @@ main (int    argc,
     CHECK_CONV("pal to rgba", unsigned char,
         palA, babl_format("RGBA u8"),
         in, out);
+
 
     CHECK_CONV("pal to rgba", unsigned char,
         palB, babl_format("RGBA u8"),
@@ -92,7 +92,7 @@ main (int    argc,
          in, out);
   }
 
-  /* check with a custom floating point palette */
+  /* check with a custom floating point palette, _and_ alpha component  */
   {
     float palette[] = {
       0.5,  1.0,
@@ -100,17 +100,18 @@ main (int    argc,
       1.0,  0.2
     };
 
-    unsigned char in[][1]   = {{              0},{          1},{          2}};
-    unsigned char out[][4]  = {{128,128,128,255},{59,59,59,107},{255,255,255,51}};
+    unsigned char in[][2]   = {{          0,255},{0,127},{       1,255},{         2,255}};
+    unsigned char out[][4]  = {{128,128,128,255},{128,128,128,127},{59,59,59,107},{255,255,255,51}};
 
-    Babl *pal = babl_new_palette (NULL, 0);
+    Babl *pal = babl_new_palette (NULL, 1);
 
     babl_palette_set_palette (pal, babl_format ("YA float"), palette, 3);
 
-    CHECK_CONV("rgba to YA float pal", unsigned char,
+    CHECK_CONV("rgba to YA float pal+alpha", unsigned char,
          pal, babl_format("RGBA u8"),
          in, out);
   }
+
 
   /* check with a custom floating point palette, _and_ alpha component  */
   {
@@ -128,6 +129,26 @@ main (int    argc,
     babl_palette_set_palette (pal, babl_format ("YA float"), palette, 3);
 
     CHECK_CONV("rgba to YA float pal+alpha", unsigned char,
+         pal, babl_format("RGBA u8"),
+         in, out);
+  }
+
+  /* check with a custom floating point palette */
+  {
+    float palette[] = {
+      0.5,  1.0,
+      0.23, 0.42,
+      1.0,  0.2
+    };
+
+    unsigned char in[][1]   = {{              0},{          1},{          2}};
+    unsigned char out[][4]  = {{128,128,128,255},{59,59,59,107},{255,255,255,51}};
+
+    Babl *pal = babl_new_palette (NULL, 0);
+
+    babl_palette_set_palette (pal, babl_format ("YA float"), palette, 3);
+
+    CHECK_CONV("rgba to float pal", unsigned char,
          pal, babl_format("RGBA u8"),
          in, out);
   }

@@ -44,6 +44,8 @@ static BablPalette *make_pal (Babl *format, void *data, int count)
   memcpy (pal->data, data, bpp * count);
   babl_process (babl_fish (format, babl_format ("RGBA double")),
                 pal->data, pal->data_double, count);
+  babl_process (babl_fish (format, babl_format ("RGBA u8")),
+                pal->data, pal->data_u8, count);
   return pal;
 }
 
@@ -108,7 +110,6 @@ rgba_to_pal (char *src,
              void *dst_model_data)
 {
   BablPalette *pal = dst_model_data;
-  
   while (n--)
     {
       int idx;
@@ -343,6 +344,7 @@ Babl *babl_new_palette (const char *name, int with_alpha)
                                 babl_type ("u8"),
                                 babl_component ("I"), NULL);
 
+if(1)
       babl_conversion_new (
           format,
           babl_format ("RGBA u8"),
