@@ -114,7 +114,6 @@ rgba_to_pal (char *src,
 {
   BablPalette **palptr = dst_model_data;
   BablPalette *pal = *palptr;
-  assert(pal);
   while (n--)
     {
       int idx;
@@ -278,6 +277,41 @@ pala_to_rgba (char *src,
   return n;
 }
 
+#include "base/util.h"
+
+static long
+copy_strip_1 (int    src_bands,
+              char **src,
+              int   *src_pitch,
+              int    dst_bands,
+              char **dst,
+              int   *dst_pitch,
+              long   samples)
+{
+  long n = samples;
+
+  BABL_PLANAR_SANITY
+  while (n--)
+    {
+      int i;
+
+      for (i = 0; i < dst_bands; i++)
+        {
+          double foo;
+          if (i < src_bands)
+            foo = *(double *) src[i];
+          else
+            foo = 1.0;
+          *(double *) dst[i] = foo;
+        }
+
+      BABL_PLANAR_STEP
+    }
+  printf (".");
+  return samples;
+}
+
+
 /* should return the BablModel, permitting to fetch
  * other formats out of it?
  */
@@ -336,14 +370,14 @@ void babl_new_palette (const char *name, Babl **format_u8,
 
   babl_conversion_new (
      model,
-     babl_model  ("RGBA"),
+     babl_model ("RGBA"),
      "linear", pala_to_rgba,
      "data", palptr,
      NULL
   );
 
   babl_conversion_new (
-     babl_model  ("RGBA"),
+     babl_model ("RGBA"),
      model,
      "linear", rgba_to_pala,
      "data", palptr,
@@ -352,14 +386,28 @@ void babl_new_palette (const char *name, Babl **format_u8,
 
   babl_conversion_new (
      model_no_alpha,
-     babl_model  ("RGBA"),
+     babl_model ("RGBA"),
      "linear", pal_to_rgba,
      "data", palptr,
      NULL
   );
 
   babl_conversion_new (
-     babl_model  ("RGBA"),
+     model_no_alpha,
+     model,
+     "planar", copy_strip_1,
+     NULL
+  );
+
+  babl_conversion_new (
+     model,
+     model_no_alpha,
+     "planar", copy_strip_1,
+     NULL
+  );
+
+  babl_conversion_new (
+     babl_model ("RGBA"),
      model_no_alpha,
      "linear", rgba_to_pal,
      "data", palptr,
