@@ -46,7 +46,7 @@ float destination_buf [PIXELS * 3];
 static int
 test (void)
 {
-  Babl *fish;
+  const Babl *fish;
   int   i;
   int   OK = 1;
 

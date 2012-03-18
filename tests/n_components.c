@@ -77,9 +77,9 @@ test (void)
 
   for (components = 1; components < 2048; components ++)
   {
-    Babl *fish;
-    Babl *src_fmt;
-    Babl *dst_fmt;
+    const Babl *fish;
+    const Babl *src_fmt;
+    const Babl *dst_fmt;
     int   i;
 
     src_fmt = babl_format_n (babl_type ("float"), components);

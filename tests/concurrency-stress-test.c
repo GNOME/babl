@@ -39,7 +39,7 @@ babl_fish_path_stress_test_thread_func (void *not_used)
       /* Try to get a fish with an as complex conversion path as
        * possible
        */
-      Babl *fish = babl_fish ("R'G'B'A u16", "YA double");
+      const Babl *fish = babl_fish ("R'G'B'A u16", "YA double");
 
       /* Just do something random with the fish */
       babl_get_name (fish);

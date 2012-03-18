@@ -25,7 +25,7 @@
 
 #define CHECK_CONV(test_name, componenttype, src_fmt, dst_fmt, src_pix, expected_pix) \
   {       \
-  Babl *fish;       \
+  const Babl *fish;       \
   int i;       \
   fish = babl_fish (src_fmt, dst_fmt);       \
   if (!fish)       \
@@ -58,7 +58,7 @@ main (int    argc,
   if(1){
     unsigned char in[][1]   = {{        0},{          1},{          2},{15}};
     unsigned char out[][4]  = {{0,0,0,255},{127,0,0,255},{0,127,0,255},{255,255,255,255}};
-    Babl *palA;// = babl_new_palette (NULL, 0);
+    const Babl *palA;// = babl_new_palette (NULL, 0);
     //Babl *palB = babl_new_palette (NULL, 0);
     //
     babl_new_palette (NULL, &palA, NULL);
@@ -71,7 +71,7 @@ main (int    argc,
   if(0){
     unsigned char in[][2]   = {{    0,255},{      1,255},{      2,255},{15,200}};
     unsigned char out[][4]  = {{0,0,0,255},{127,0,0,255},{0,127,0,255},{255,255,255,255}};
-    Babl *palA;// = babl_new_palette (NULL, 0);
+    const Babl *palA;// = babl_new_palette (NULL, 0);
     //Babl *palB = babl_new_palette (NULL, 0);
     //
     babl_new_palette (NULL, NULL, &palA);

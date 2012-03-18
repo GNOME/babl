@@ -25,7 +25,7 @@
 
 #define CHECK_CONV(test_name, componenttype, src_fmt, dst_fmt, src_pix, expected_pix) \
   {       \
-  Babl *fish;       \
+  const Babl *fish;       \
   int i;       \
   fish = babl_fish (src_fmt, dst_fmt);       \
   if (!fish)       \
