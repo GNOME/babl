@@ -21,6 +21,9 @@
 #include <stdio.h>
 #include <assert.h>
 #include "babl.h"
+#include "babl-memory.h"
+
+void babl_sanity (void);
 
 typedef struct BablPalette
 {
@@ -107,7 +110,6 @@ static long
 rgba_to_pal (char *src,
              char *dst,
              long  n,
-             void *foo,
              void *dst_model_data)
 {
   BablPalette **palptr = dst_model_data;
@@ -150,7 +152,6 @@ static long
 rgba_to_pala (char *src,
               char *dst,
               long  n,
-              void *foo,
               void *dst_model_data)
 {
   BablPalette **palptr = dst_model_data;
@@ -197,8 +198,7 @@ static long
 pal_to_rgba (char *src,
              char *dst,
              long  n,
-             void *src_model_data,
-             void *foo)
+             void *src_model_data)
 {
   BablPalette **palptr = src_model_data;
   BablPalette *pal = *palptr;
@@ -224,12 +224,11 @@ static long
 pal_u8_to_rgba_u8 (char *src,
                    char *dst,
                    long  n,
-                   void *src_model_data,
-                   void *foo)
+                   void *src_model_data)
 {
   BablPalette **palptr = src_model_data;
-  assert(palptr);
   BablPalette *pal;
+  assert (palptr);
   pal = *palptr;
   assert(pal);
   while (n--)
@@ -253,8 +252,7 @@ static long
 pala_to_rgba (char *src,
               char *dst,
               long  n,
-              void *src_model_data,
-              void *foo)
+              void *src_model_data)
 {
   BablPalette **palptr = src_model_data;
   BablPalette *pal = *palptr;
@@ -288,7 +286,6 @@ void babl_new_palette (const char *name, Babl **format_u8,
 {
   Babl *model;
   Babl *model_no_alpha;
-  Babl *f_pal_double;
   Babl *f_pal_u8;
   Babl *f_pal_a_u8;
   BablPalette **palptr;
@@ -341,6 +338,7 @@ void babl_new_palette (const char *name, Babl **format_u8,
      model,
      babl_model  ("RGBA"),
      "linear", pala_to_rgba,
+     "data", palptr,
      NULL
   );
 
@@ -348,6 +346,7 @@ void babl_new_palette (const char *name, Babl **format_u8,
      babl_model  ("RGBA"),
      model,
      "linear", rgba_to_pala,
+     "data", palptr,
      NULL
   );
 
@@ -355,6 +354,7 @@ void babl_new_palette (const char *name, Babl **format_u8,
      model_no_alpha,
      babl_model  ("RGBA"),
      "linear", pal_to_rgba,
+     "data", palptr,
      NULL
   );
 
@@ -362,6 +362,7 @@ void babl_new_palette (const char *name, Babl **format_u8,
      babl_model  ("RGBA"),
      model_no_alpha,
      "linear", rgba_to_pal,
+     "data", palptr,
      NULL
   );
 
@@ -369,6 +370,7 @@ void babl_new_palette (const char *name, Babl **format_u8,
      f_pal_u8,
      babl_format ("RGBA u8"),
      "linear", pal_u8_to_rgba_u8,
+     "data", palptr,
      NULL);
 
   babl_set_user_data (model, palptr);

@@ -32,7 +32,8 @@ conversion_new (const char    *name,
                 Babl          *destination,
                 BablFuncLinear linear,
                 BablFuncPlane  plane,
-                BablFuncPlanar planar)
+                BablFuncPlanar planar,
+                void          *user_data)
 {
   Babl *babl = NULL;
 
@@ -103,6 +104,8 @@ conversion_new (const char    *name,
   babl->conversion.pixels      = 0;
   babl->conversion.processings = 0;
 
+  babl->conversion.data = user_data;
+
   if (babl->class_type == BABL_CONVERSION_LINEAR &&
       BABL (babl->conversion.source)->class_type == BABL_MODEL)
     {
@@ -130,6 +133,7 @@ conversion_new (const char    *name,
         src_format,
         dst_format,
         "linear", linear,
+        "data", user_data,
         NULL);
       babl->conversion.error = 0.0;
     }
@@ -181,6 +185,7 @@ babl_conversion_new (void *first_arg,
   int            type     = 0;
   int            got_func = 0;
   const char    *arg      = first_arg;
+  void          *user_data= NULL;
 
   Babl          *source;
   Babl          *destination;
@@ -201,6 +206,11 @@ babl_conversion_new (void *first_arg,
       if (!strcmp (arg, "id"))
         {
           id = va_arg (varg, int);
+        }
+
+      else if (!strcmp (arg, "data"))
+        {
+          user_data = va_arg (varg, void*);
         }
 
       else if (!strcmp (arg, "linear"))
@@ -270,7 +280,8 @@ babl_conversion_new (void *first_arg,
       babl = babl_db_exist (db, id, name);
     }
 
-  babl = conversion_new (name, id, source, destination, linear, plane, planar);
+  babl = conversion_new (name, id, source, destination, linear, plane, planar, 
+                         user_data);
 
   /* Since there is not an already registered instance by the required
    * id/name, inserting newly created class into database.
@@ -288,21 +299,7 @@ babl_conversion_linear_process (BablConversion *conversion,
                                 void           *destination,
                                 long            n)
 {
-  void *source_data;
-  void *destination_data;
-
-  if (conversion->source->instance.class_type == BABL_MODEL)
-    {
-      source_data = conversion->source->model.data;
-      destination_data = conversion->destination->model.data;
-    }
-  else
-    {
-      source_data = conversion->source->format.model->data;
-      destination_data = conversion->destination->format.model->data;
-    }
-  return conversion->function.linear (source, destination, n, source_data,
-                                      destination_data);
+  return conversion->function.linear (source, destination, n, conversion->data);
 }
 
 static long
@@ -316,8 +313,7 @@ babl_conversion_plane_process (BablConversion *conversion,
   return conversion->function.plane (source, destination,
                                      src_pitch, dst_pitch,
                                      n,
-                                     conversion->source->model.data,
-                                     conversion->destination->model.data);
+                                     conversion->data);
 }
 
 static long
@@ -344,8 +340,7 @@ babl_conversion_planar_process (BablConversion *conversion,
                                       dst_data,
                                       destination->pitch,
                                       n,
-                                      conversion->source->model.data,
-                                      conversion->destination->model.data);
+                                      conversion->data);
 }
 
 long
@@ -562,7 +557,6 @@ babl_conversion_error (BablConversion *conversion)
   fish_rgba_to_source->fish.pixels      -= test_pixels;
   fish_reference->fish.pixels           -= test_pixels;
   fish_destination_to_rgba->fish.pixels -= 2 * test_pixels;
-
 
   babl_free (source);
   babl_free (destination);

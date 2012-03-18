@@ -33,8 +33,7 @@ typedef long (*BablFuncPlane)     (const char  *src,
                                    int          src_pitch,
                                    int          dst_pitch,
                                    long         n,
-                                   void        *src_model_data,
-                                   void        *dst_model_data);
+                                   void        *user_data);
 
 
 typedef struct
@@ -50,6 +49,7 @@ BablConversion {
       BablFuncPlane      plane;
       BablFuncPlanar     planar;
     } function;
+  void                  *data;  /* user data */
   int                    processings;
   long                   pixels;
 } BablConversion;
