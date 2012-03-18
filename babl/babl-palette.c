@@ -27,6 +27,7 @@ typedef struct BablPalette
   const Babl *format;/* the pixel format the palette is stored in */
   void       *data;  /* one linear segment of all the pixels representing the palette, in   order */
   void       *data_double;
+  void       *data_u8;
 } BablPalette;
 
 
@@ -39,6 +40,7 @@ static BablPalette *make_pal (Babl *format, void *data, int count)
   pal->format = format;
   pal->data = malloc (bpp * count);
   pal->data_double = malloc (4 * sizeof(double) * count);
+  pal->data_u8 = malloc (4 * sizeof(char) * count);
   memcpy (pal->data, data, bpp * count);
   babl_process (babl_fish (format, babl_format ("RGBA double")),
                 pal->data, pal->data_double, count);
@@ -49,6 +51,7 @@ static void babl_palette_free (BablPalette *pal)
 {
   free (pal->data);
   free (pal->data_double);
+  free (pal->data_u8);
   free (pal);
 }
 
@@ -90,6 +93,8 @@ static BablPalette *default_palette (void)
                                          */
   pal.data = defpal_data;
   pal.data_double = defpal_double;
+  pal.data_u8 = defpal_data;
+
   babl_process (babl_fish (pal.format, babl_format ("RGBA double")),
                 pal.data, pal.data_double, pal.count);
   return &pal;
@@ -208,6 +213,30 @@ pal_to_rgba (char *src,
   return n;
 }
 
+static long
+pal_u8_to_rgba_u8 (char *src,
+                   char *dst,
+                   long  n,
+                   void *src_model_data,
+                   void *foo)
+{
+  BablPalette *pal = src_model_data;
+  while (n--)
+    {
+      int idx = (((unsigned char *) src)[0]);
+      unsigned char *palpx;
+
+      if (idx < 0) idx = 0;
+      if (idx >= pal->count) idx = pal->count-1;
+
+      palpx = ((unsigned char*)pal->data_u8) + idx * 4;
+      memcpy (dst, palpx, sizeof(char)*4);
+
+      src += sizeof (char) * 1;
+      dst += sizeof (char) * 4;
+    }
+  return n;
+}
 
 static long
 pala_to_rgba (char *src,
@@ -251,6 +280,11 @@ Babl *babl_new_palette (const char *name, int with_alpha)
       sprintf (cname, "_babl-int-%i", cnt++);
       name = cname;
     }
+  else
+    {
+      strcpy (cname, name);
+      name = cname;
+    }
 
   /* re-registering is a no-op */
   babl_component_new (
@@ -259,7 +293,6 @@ Babl *babl_new_palette (const char *name, int with_alpha)
     "chroma",
     "alpha",
     NULL);
-  
   
   if (with_alpha)
     {
@@ -305,9 +338,16 @@ Babl *babl_new_palette (const char *name, int with_alpha)
         "linear", rgba_to_pal,
         NULL
       );
+
       format = babl_format_new ("name", name, model,
                                 babl_type ("u8"),
                                 babl_component ("I"), NULL);
+
+      babl_conversion_new (
+          format,
+          babl_format ("RGBA u8"),
+          "linear", pal_u8_to_rgba_u8,
+          NULL);
     }
 
   babl_set_user_data (format, default_palette ());
