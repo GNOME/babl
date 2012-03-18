@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <assert.h>
 #include "babl.h"
 
 typedef struct BablPalette
@@ -35,12 +36,12 @@ static BablPalette *make_pal (Babl *format, void *data, int count)
 {
   BablPalette *pal = NULL;
   int bpp = babl_format_get_bytes_per_pixel (format);
-  pal = malloc (sizeof (BablPalette));
+  pal = babl_malloc (sizeof (BablPalette));
   pal->count = count;
   pal->format = format;
-  pal->data = malloc (bpp * count);
-  pal->data_double = malloc (4 * sizeof(double) * count);
-  pal->data_u8 = malloc (4 * sizeof(char) * count);
+  pal->data = babl_malloc (bpp * count);
+  pal->data_double = babl_malloc (4 * sizeof(double) * count);
+  pal->data_u8 = babl_malloc (4 * sizeof(char) * count);
   memcpy (pal->data, data, bpp * count);
   babl_process (babl_fish (format, babl_format ("RGBA double")),
                 pal->data, pal->data_double, count);
@@ -51,10 +52,10 @@ static BablPalette *make_pal (Babl *format, void *data, int count)
 
 static void babl_palette_free (BablPalette *pal)
 {
-  free (pal->data);
-  free (pal->data_double);
-  free (pal->data_u8);
-  free (pal);
+  babl_free (pal->data);
+  babl_free (pal->data_double);
+  babl_free (pal->data_u8);
+  babl_free (pal);
 }
 
 /* A default palette, containing standard ANSI / EGA colors
@@ -109,7 +110,9 @@ rgba_to_pal (char *src,
              void *foo,
              void *dst_model_data)
 {
-  BablPalette *pal = dst_model_data;
+  BablPalette **palptr = dst_model_data;
+  BablPalette *pal = *palptr;
+  assert(pal);
   while (n--)
     {
       int idx;
@@ -151,8 +154,10 @@ rgba_to_pala (char *src,
               void *foo,
               void *dst_model_data)
 {
-  BablPalette *pal = dst_model_data;
+  BablPalette **palptr = dst_model_data;
+  BablPalette *pal = *palptr;
   
+  assert(pal);
   while (n--)
     {
       int idx;
@@ -196,7 +201,9 @@ pal_to_rgba (char *src,
              void *src_model_data,
              void *foo)
 {
-  BablPalette *pal = src_model_data;
+  BablPalette **palptr = src_model_data;
+  BablPalette *pal = *palptr;
+  assert(pal);
   while (n--)
     {
       int idx = (((double *) src)[0]) * 256.0;
@@ -221,7 +228,11 @@ pal_u8_to_rgba_u8 (char *src,
                    void *src_model_data,
                    void *foo)
 {
-  BablPalette *pal = src_model_data;
+  BablPalette **palptr = src_model_data;
+  assert(palptr);
+  BablPalette *pal;
+  pal = *palptr;
+  assert(pal);
   while (n--)
     {
       int idx = (((unsigned char *) src)[0]);
@@ -246,14 +257,15 @@ pala_to_rgba (char *src,
               void *src_model_data,
               void *foo)
 {
-  BablPalette *pal = src_model_data;
+  BablPalette **palptr = src_model_data;
+  BablPalette *pal = *palptr;
 
+  assert(pal);
   while (n--)
     {
       int idx      = (((double *) src)[0]) * 256.0;
-      double alpha = (((double *) src)[1]);
+      double alpha = 255;//(((double *) src)[1]);
       double *palpx;
-
 
       if (idx < 0) idx = 0;
       if (idx >= pal->count) idx = pal->count-1;
@@ -269,10 +281,19 @@ pala_to_rgba (char *src,
   return n;
 }
 
-Babl *babl_new_palette (const char *name, int with_alpha)
+/* should return the BablModel, permitting to fetch
+ * other formats out of it?
+ */
+void babl_new_palette (const char *name, Babl **format_u8,
+                                         Babl **format_u8_with_alpha)
 {
   Babl *model;
-  Babl *format;
+  Babl *model_no_alpha;
+  Babl *f_pal_double;
+  Babl *f_pal_u8;
+  Babl *f_pal_a_u8;
+  BablPalette **palptr;
+
   char  cname[64];
 
   if (!name)
@@ -295,66 +316,76 @@ Babl *babl_new_palette (const char *name, int with_alpha)
     "alpha",
     NULL);
   
-  if (with_alpha)
-    {
-      model = babl_model_new ("name", name,
-                              babl_component ("I"),
-                              babl_component ("A"),
-                              NULL);
-      format = babl_format_new ("name", name, model,
+  model = babl_model_new ("name", name,
+                          babl_component ("I"),
+                          babl_component ("A"),
+                          NULL);
+  palptr = malloc (sizeof (void*));
+  *palptr = default_palette ();;
+  cname[0] = 'v';
+  model_no_alpha = babl_model_new ("name", name,
+                                   babl_component ("I"),
+                                   NULL);
+
+  cname[0] = 'x';
+  f_pal_a_u8 = babl_format_new ("name", name, model,
                                 babl_type ("u8"),
                                 babl_component ("I"),
                                 babl_component ("A"),
-                                NULL);
-
-      babl_conversion_new (
-        model,
-        babl_model  ("RGBA"),
-        "linear", pala_to_rgba,
-        NULL
-      );
-
-      babl_conversion_new (
-        babl_model  ("RGBA"),
-        model,
-        "linear", rgba_to_pala,
-        NULL
-      );
-    }
-  else
-    {
-      model = babl_model_new ("name", name,
-                              babl_component ("I"),
                               NULL);
-      babl_conversion_new (
-        model,
-        babl_model ("RGBA"),
-        "linear", pal_to_rgba,
-        NULL
-      );
+  cname[0] = 'y';
+  f_pal_u8  = babl_format_new ("name", name, model_no_alpha,
+                               babl_type ("u8"),
+                               babl_component ("I"), NULL);
 
-      babl_conversion_new (
-        babl_model ("RGBA"),
-        model,
-        "linear", rgba_to_pal,
-        NULL
-      );
+#if 0
+  cname[0] = 'z';
+  f_pal_double = babl_format_new ("name", name, model,
+                                  babl_type ("double"),
+                                  babl_component ("I"), NULL);
+#endif
+  babl_conversion_new (
+     model,
+     babl_model  ("RGBA"),
+     "linear", pala_to_rgba,
+     NULL
+  );
 
-      format = babl_format_new ("name", name, model,
-                                babl_type ("u8"),
-                                babl_component ("I"), NULL);
+  babl_conversion_new (
+     babl_model  ("RGBA"),
+     model,
+     "linear", rgba_to_pala,
+     NULL
+  );
 
-if(1)
-      babl_conversion_new (
-          format,
-          babl_format ("RGBA u8"),
-          "linear", pal_u8_to_rgba_u8,
-          NULL);
-    }
+  babl_conversion_new (
+     model_no_alpha,
+     babl_model  ("RGBA"),
+     "linear", pal_to_rgba,
+     NULL
+  );
 
-  babl_set_user_data (format, default_palette ());
+  babl_conversion_new (
+     babl_model  ("RGBA"),
+     model_no_alpha,
+     "linear", rgba_to_pal,
+     NULL
+  );
+
+  babl_conversion_new (
+     f_pal_u8,
+     babl_format ("RGBA u8"),
+     "linear", pal_u8_to_rgba_u8,
+     NULL);
+
+  babl_set_user_data (model, palptr);
+  babl_set_user_data (model_no_alpha, palptr);
+
+  if (format_u8)
+    *format_u8 = f_pal_u8;
+  if (format_u8_with_alpha)
+    *format_u8_with_alpha = f_pal_a_u8;
   babl_sanity ();
-  return format;
 }
 
 void
@@ -363,16 +394,18 @@ babl_palette_set_palette (Babl *babl,
                           void *data,
                           int   count)
 {
+  BablPalette **palptr = babl_get_user_data (babl);
   babl_palette_reset (babl);
-  babl_set_user_data (babl, make_pal (format, data, count));
+  *palptr = make_pal (format, data, count);
 }
 
 void
 babl_palette_reset (Babl *babl)
 {
-  if (babl_get_user_data (babl) != default_palette ())
+  BablPalette **palptr = babl_get_user_data (babl);
+  if (*palptr != default_palette ())
     {
-      babl_palette_free ( babl_get_user_data (babl));
+      babl_palette_free (*palptr);
     }
-  babl_set_user_data (babl, default_palette ());
+  *palptr = default_palette ();
 }

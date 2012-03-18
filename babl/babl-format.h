@@ -24,14 +24,11 @@ BABL_CLASS_DECLARE (format);
 typedef struct
 {
   BablInstance     instance;
-  BablList         *from_list;
+  BablList        *from_list;
   int              components;
   BablComponent  **component;
   BablType       **type;
-  void            *model_data;     /* replicated at same offset as in
-                                      BablModel, permitting assuming
-                                      that it is available for both
-                                    */
+  void            *model_data;
   void            *image_template; /* image template for use with
                                       linear (non-planer) images */
 

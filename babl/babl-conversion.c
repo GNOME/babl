@@ -288,9 +288,21 @@ babl_conversion_linear_process (BablConversion *conversion,
                                 void           *destination,
                                 long            n)
 {
-  return conversion->function.linear (source, destination, n,
-                              conversion->source->model.data,
-                              conversion->destination->model.data);
+  void *source_data;
+  void *destination_data;
+
+  if (conversion->source->instance.class_type == BABL_MODEL)
+    {
+      source_data = conversion->source->model.data;
+      destination_data = conversion->destination->model.data;
+    }
+  else
+    {
+      source_data = conversion->source->format.model->data;
+      destination_data = conversion->destination->format.model->data;
+    }
+  return conversion->function.linear (source, destination, n, source_data,
+                                      destination_data);
 }
 
 static long

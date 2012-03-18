@@ -623,14 +623,33 @@ babl_format_loss (Babl *babl)
 void *
 babl_get_user_data (Babl *babl)
 {
-  return babl->format.model->data;
+  switch (babl->instance.class_type)
+    {
+      case BABL_MODEL:
+        return babl->model.data;
+      case BABL_FORMAT:
+        return babl->format.model->data;
+      default:
+        babl_fatal ("babl_get_user_data called on non-model/format");
+    }
+  babl_fatal ("eeeek");
+  return NULL;
 }
 
 void
 babl_set_user_data (Babl *babl, void *data)
 {
-  babl->format.model_data = data;
-  babl->format.model->data = babl->format.model_data;
+  switch (babl->instance.class_type)
+    {
+      case BABL_MODEL:
+        babl->model.data = data;
+        break;
+      case BABL_FORMAT:
+        babl->format.model->data = data;
+        break;
+      default:
+        babl_fatal ("babl_set_user_data called on non-model/format");
+    }
 }
 
 BABL_CLASS_IMPLEMENT (format)

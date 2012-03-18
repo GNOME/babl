@@ -205,7 +205,8 @@ Babl * babl_conversion_new (void *first_arg,
  * an anonymous format. If you pass in with_alpha the format also gets
  * an 8bit alpha channel.
  */
-Babl *babl_new_palette         (const char *name, int with_alpha);
+void babl_new_palette (const char *name, Babl **format_u8,
+                                         Babl **format_u8_with_alpha);
 
 /**
  * Assign a palette to a palette format, the data is a single span of pixels
