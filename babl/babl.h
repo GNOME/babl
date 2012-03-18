@@ -45,45 +45,45 @@ void         babl_exit      (void);
  * Returns the babl object representing the data type given by @name
  * such as for example "u8", "u16" or "float".
  */
-Babl *       babl_type      (const char *name);
+const Babl * babl_type      (const char *name);
 
 /**
  * Returns the babl object representing the @horizontal and @vertical
  * sampling such as for example 2, 2 for the chroma components in
  * YCbCr.
  */
-Babl *       babl_sampling  (int horizontal,
+const Babl * babl_sampling  (int horizontal,
                              int vertical);
 
 /**
  * Returns the babl object representing the color component given by
  * @name such as for example "R", "cyan" or "CIE L".
  */
-Babl *       babl_component (const char *name);
+const Babl * babl_component (const char *name);
 
 /**
  * Returns the babl object representing the color model given by @name
  * such as for example "RGB", "CMYK" or "CIE Lab".
  */
-Babl *       babl_model     (const char *name);
+const Babl * babl_model     (const char *name);
 
 /**
  * Returns the babl object representing the color format given by
  * @name such as for example "RGB u8", "CMYK float" or "CIE Lab u16".
  */
-Babl *       babl_format    (const char *name);
+const Babl * babl_format    (const char *name);
 
 /*  Create a babl fish capable of converting from source_format to
  *  destination_format, source and destination can be either strings
  *  with the names of the formats or Babl-format objects.
  */
-Babl *       babl_fish      (const void *source_format,
+const Babl * babl_fish      (const void *source_format,
                              const void *destination_format);
 
 /** Process n pixels from source to destination using babl_fish,
  *  returns number of pixels converted.
  */
-long         babl_process   (Babl *babl_fish,
+long         babl_process   (const Babl *babl_fish,
                              const void *source,
                              void *destination,
                              long  n);
@@ -113,7 +113,7 @@ int          babl_format_get_n_components      (const Babl *format);
  * Returns the type in the given @format for the given
  * @component_index.
  */
-Babl *       babl_format_get_type              (const Babl *format,
+const Babl * babl_format_get_type              (const Babl *format,
                                                 int         component_index);
 
 
@@ -128,7 +128,7 @@ Babl *       babl_format_get_type              (const Babl *format,
  *                          ["max_val", double max_val,]
  *                          NULL);
  */
-Babl * babl_type_new       (void *first_arg,
+const Babl * babl_type_new (void *first_arg,
                             ...) BABL_ARG_NULL_TERMINATED;
 
 /**
@@ -137,8 +137,8 @@ Babl * babl_type_new       (void *first_arg,
  *     babl_component_new  (const char *name,
  *                          NULL);
  */
-Babl * babl_component_new  (void *first_arg,
-                            ...) BABL_ARG_NULL_TERMINATED;
+const Babl * babl_component_new  (void *first_arg,
+                                  ...) BABL_ARG_NULL_TERMINATED;
 
 /**
  * Defines a new color model in babl. If no name is provided a name is
@@ -149,7 +149,7 @@ Babl * babl_component_new  (void *first_arg,
  *                          [BablComponent *componentN, ...]
  *                          NULL);
  */
-Babl * babl_model_new      (void *first_arg,
+const Babl * babl_model_new (void *first_arg,
                             ...) BABL_ARG_NULL_TERMINATED;
 
 /**
@@ -169,8 +169,8 @@ Babl * babl_model_new      (void *first_arg,
  *                          ["planar",]
  *                          NULL);
  */
-Babl * babl_format_new     (void *first_arg,
-                            ...) BABL_ARG_NULL_TERMINATED;
+const Babl * babl_format_new (const void *first_arg,
+                              ...) BABL_ARG_NULL_TERMINATED;
 
 /*
  * Defines a new pixel format in babl. With the specified data storage
@@ -178,14 +178,14 @@ Babl * babl_format_new     (void *first_arg,
  * conversions are only well defined to other babl_format_n derived formats
  * with the same number of components.
  */
-Babl *
-babl_format_n (Babl *type,
+const Babl *
+babl_format_n (const Babl *type,
                int   components);
 
 /**
  * Returns whether the @format is a format_n type.
  */
-int babl_format_is_format_n (Babl *format);
+int babl_format_is_format_n (const Babl *format);
 
 /**
  * Defines a new conversion between either two formats, two models or
@@ -197,30 +197,30 @@ int babl_format_is_format_n (Babl *format);
  *                          <"linear"|"planar">, <BablFuncLinear | BablFuncPlanar> conv_func,
  *                          NULL);
  */
-Babl * babl_conversion_new (void *first_arg,
-                            ...) BABL_ARG_NULL_TERMINATED;
+const Babl * babl_conversion_new (const void *first_arg,
+                                  ...) BABL_ARG_NULL_TERMINATED;
 
 /**
  * create a new palette based format, name is optional pass in NULL to get
  * an anonymous format. If you pass in with_alpha the format also gets
  * an 8bit alpha channel.
  */
-void babl_new_palette (const char *name, Babl **format_u8,
-                                         Babl **format_u8_with_alpha);
+void babl_new_palette (const char *name, const Babl **format_u8,
+                                         const Babl **format_u8_with_alpha);
 
 /**
  * Assign a palette to a palette format, the data is a single span of pixels
  * representing the colors of the palette.
  */
-void  babl_palette_set_palette (Babl              *babl,
-                                Babl              *format,
+void  babl_palette_set_palette (const Babl        *babl,
+                                const Babl        *format,
                                 void              *data,
                                 int                count);
 
 /**
  * reset a palette to initial state.
  */
-void  babl_palette_reset       (Babl              *babl);
+void  babl_palette_reset       (const Babl        *babl);
 
 
 /**
@@ -228,12 +228,12 @@ void  babl_palette_reset       (Babl              *babl);
  * used from the conversion functions, encoding color profiles, palettes or
  * similar with the data.
  */
-void   babl_set_user_data     (Babl *babl, void *data);
+void   babl_set_user_data     (const Babl *babl, void *data);
 
 /**
  * get data set with babl_set_user_data
  */
-void * babl_get_user_data     (Babl *babl);
+void * babl_get_user_data     (const Babl *babl);
 
 
 

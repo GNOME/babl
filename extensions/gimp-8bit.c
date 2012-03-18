@@ -389,7 +389,7 @@ int init (void);
 int
 init (void)
 {
-  Babl *ragabaaF_linear = babl_format_new (
+  const Babl *ragabaaF_linear = babl_format_new (
     babl_model ("RaGaBaA"),
     babl_type ("float"),
     babl_component ("Ra"),
@@ -397,7 +397,7 @@ init (void)
     babl_component ("Ba"),
     babl_component ("A"),
     NULL);
-  Babl *rgbaF_linear = babl_format_new (
+  const Babl *rgbaF_linear = babl_format_new (
     babl_model ("RGBA"),
     babl_type ("float"),
     babl_component ("R"),
@@ -405,7 +405,7 @@ init (void)
     babl_component ("B"),
     babl_component ("A"),
     NULL);
-  Babl *rgba8_linear = babl_format_new (
+  const Babl *rgba8_linear = babl_format_new (
     babl_model ("RGBA"),
     babl_type ("u8"),
     babl_component ("R"),
@@ -413,7 +413,7 @@ init (void)
     babl_component ("B"),
     babl_component ("A"),
     NULL);
-  Babl *rgba8_gamma_2_2 = babl_format_new (
+  const Babl *rgba8_gamma_2_2 = babl_format_new (
     babl_model ("R'G'B'A"),
     babl_type ("u8"),
     babl_component ("R'"),
@@ -421,56 +421,56 @@ init (void)
     babl_component ("B'"),
     babl_component ("A"),
     NULL);
-  Babl *rgbF_linear = babl_format_new (
+  const Babl *rgbF_linear = babl_format_new (
     babl_model ("RGB"),
     babl_type ("float"),
     babl_component ("R"),
     babl_component ("G"),
     babl_component ("B"),
     NULL);
-  Babl *rgb8_linear = babl_format_new (
+  const Babl *rgb8_linear = babl_format_new (
     babl_model ("RGB"),
     babl_type ("u8"),
     babl_component ("R"),
     babl_component ("G"),
     babl_component ("B"),
     NULL);
-  Babl *rgb8_gamma_2_2 = babl_format_new (
+  const Babl *rgb8_gamma_2_2 = babl_format_new (
     babl_model ("R'G'B'"),
     babl_type ("u8"),
     babl_component ("R'"),
     babl_component ("G'"),
     babl_component ("B'"),
     NULL);
-  Babl *gaF_linear = babl_format_new (
+  const Babl *gaF_linear = babl_format_new (
     babl_model ("YA"),
     babl_type ("float"),
     babl_component ("Y"),
     babl_component ("A"),
     NULL);
-  Babl *ga8_linear = babl_format_new (
+  const Babl *ga8_linear = babl_format_new (
     babl_model ("YA"),
     babl_type ("u8"),
     babl_component ("Y"),
     babl_component ("A"),
     NULL);
-  Babl *ga8_gamma_2_2 = babl_format_new (
+  const Babl *ga8_gamma_2_2 = babl_format_new (
     babl_model ("Y'A"),
     babl_type ("u8"),
     babl_component ("Y'"),
     babl_component ("A"),
     NULL);
-  Babl *gF_linear = babl_format_new (
+  const Babl *gF_linear = babl_format_new (
     babl_model ("Y"),
     babl_type ("float"),
     babl_component ("Y"),
     NULL);
-  Babl *g8_linear = babl_format_new (
+  const Babl *g8_linear = babl_format_new (
     babl_model ("Y"),
     babl_type ("u8"),
     babl_component ("Y"),
     NULL);
-  Babl *g8_gamma_2_2 = babl_format_new (
+  const Babl *g8_gamma_2_2 = babl_format_new (
     babl_model ("Y'"),
     babl_type ("u8"),
     babl_component ("Y'"),

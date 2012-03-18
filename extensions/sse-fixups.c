@@ -175,7 +175,7 @@ init (void)
 {
 #if defined(__GNUC__) && (__GNUC__ >= 4) && defined(USE_SSE) && defined(USE_MMX)
 
-  Babl *rgbaF_linear = babl_format_new (
+  const Babl *rgbaF_linear = babl_format_new (
     babl_model ("RGBA"),
     babl_type ("float"),
     babl_component ("R"),
@@ -183,7 +183,7 @@ init (void)
     babl_component ("B"),
     babl_component ("A"),
     NULL);
-  Babl *rgba8_linear = babl_format_new (
+  const Babl *rgba8_linear = babl_format_new (
     babl_model ("RGBA"),
     babl_type ("u8"),
     babl_component ("R"),
@@ -191,7 +191,7 @@ init (void)
     babl_component ("B"),
     babl_component ("A"),
     NULL);
-  Babl *rgb8_linear = babl_format_new (
+  const Babl *rgb8_linear = babl_format_new (
     babl_model ("RGB"),
     babl_type ("u8"),
     babl_component ("R"),

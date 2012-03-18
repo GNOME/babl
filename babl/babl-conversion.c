@@ -109,8 +109,8 @@ conversion_new (const char    *name,
   if (babl->class_type == BABL_CONVERSION_LINEAR &&
       BABL (babl->conversion.source)->class_type == BABL_MODEL)
     {
-      Babl *src_format = NULL;
-      Babl *dst_format = NULL;
+      const Babl *src_format = NULL;
+      const Babl *dst_format = NULL;
       if (BABL (babl->conversion.source) == babl_model_from_id (BABL_RGBA))
         {
           src_format = babl_format_from_id (BABL_RGBA_DOUBLE);
@@ -171,8 +171,8 @@ create_name (Babl *source, Babl *destination, int type)
   return buf;
 }
 
-Babl *
-babl_conversion_new (void *first_arg,
+const Babl *
+babl_conversion_new (const void *first_arg,
                      ...)
 {
   va_list        varg;
@@ -344,7 +344,7 @@ babl_conversion_planar_process (BablConversion *conversion,
 }
 
 long
-babl_conversion_process (Babl       *babl,
+babl_conversion_process (const Babl *babl,
                          const char *source,
                          char       *destination,
                          long        n)
@@ -467,13 +467,13 @@ babl_conversion_error (BablConversion *conversion)
   Babl *fmt_source;
   Babl *fmt_destination;
 
-  Babl *fmt_rgba_double = babl_format_new (babl_model ("RGBA"),
-                                           babl_type ("double"),
-                                           babl_component ("R"),
-                                           babl_component ("G"),
-                                           babl_component ("B"),
-                                           babl_component ("A"),
-                                           NULL);
+  const Babl *fmt_rgba_double = babl_format_new (babl_model ("RGBA"),
+                                                 babl_type ("double"),
+                                                 babl_component ("R"),
+                                                 babl_component ("G"),
+                                                 babl_component ("B"),
+                                                 babl_component ("A"),
+                                                 NULL);
 
   double  error       = 0.0;
   long    ticks_start = 0;

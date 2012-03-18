@@ -58,7 +58,7 @@ is_component_duplicate (Babl *babl, int luma, int chroma, int alpha)
 }
 
 
-Babl *
+const Babl *
 babl_component_new (void *first_arg,
                     ...)
 {

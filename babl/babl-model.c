@@ -24,7 +24,7 @@
 #include "babl-internal.h"
 #include "babl-db.h"
 
-static Babl *construct_double_format (Babl *model);
+static const Babl *construct_double_format (const Babl *model);
 
 static int
 babl_model_destroy (void *data)
@@ -93,7 +93,7 @@ is_model_duplicate (Babl *babl, int components, BablComponent **component)
 }
 
 
-Babl *
+const Babl *
 babl_model_new (void *first_argument,
                 ...)
 {
@@ -234,9 +234,9 @@ test_create (void)
   return test;
 }
 
-static Babl *reference_format (void)
+static const Babl *reference_format (void)
 {
-  static Babl *self = NULL;
+  static const Babl *self = NULL;
 
   if (!self)
     self = babl_format_new (
@@ -250,9 +250,9 @@ static Babl *reference_format (void)
   return self;
 }
 
-static Babl *construct_double_format (Babl *model)
+static const Babl *construct_double_format (const Babl *model)
 {
-  void *argument[44 + 1];
+  const void *argument[44 + 1];
   int   args = 0;
   int   i;
 
@@ -286,8 +286,9 @@ static Babl *construct_double_format (Babl *model)
 }
 
 double
-babl_model_is_symmetric (Babl *babl)
+babl_model_is_symmetric (const Babl *cbabl)
 {
+  Babl *babl = (Babl*)cbabl;
   double *test;
   void   *original;
   double *clipped;
@@ -295,10 +296,10 @@ babl_model_is_symmetric (Babl *babl)
   double *transformed;
   int     symmetric = 1;
 
-  Babl   *ref_fmt;
-  Babl   *fmt;
-  Babl   *fish_to;
-  Babl   *fish_from;
+  const Babl *ref_fmt;
+  const Babl *fmt;
+  Babl *fish_to;
+  Babl *fish_from;
 
   test      = test_create ();
   ref_fmt   = reference_format ();

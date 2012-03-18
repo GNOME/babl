@@ -35,7 +35,7 @@ typedef struct BablPalette
 } BablPalette;
 
 
-static BablPalette *make_pal (Babl *format, void *data, int count)
+static BablPalette *make_pal (const Babl *format, const void *data, int count)
 {
   BablPalette *pal = NULL;
   int bpp = babl_format_get_bytes_per_pixel (format);
@@ -315,13 +315,13 @@ copy_strip_1 (int    src_bands,
 /* should return the BablModel, permitting to fetch
  * other formats out of it?
  */
-void babl_new_palette (const char *name, Babl **format_u8,
-                                         Babl **format_u8_with_alpha)
+void babl_new_palette (const char *name, const Babl **format_u8,
+                                         const Babl **format_u8_with_alpha)
 {
-  Babl *model;
-  Babl *model_no_alpha;
-  Babl *f_pal_u8;
-  Babl *f_pal_a_u8;
+  const Babl *model;
+  const Babl *model_no_alpha;
+  const Babl *f_pal_u8;
+  const Babl *f_pal_a_u8;
   BablPalette **palptr;
 
   char  cname[64];
@@ -432,10 +432,10 @@ void babl_new_palette (const char *name, Babl **format_u8,
 }
 
 void
-babl_palette_set_palette (Babl *babl,
-                          Babl *format,
-                          void *data,
-                          int   count)
+babl_palette_set_palette (const Babl *babl,
+                          const Babl *format,
+                          void       *data,
+                          int         count)
 {
   BablPalette **palptr = babl_get_user_data (babl);
   babl_palette_reset (babl);
@@ -443,7 +443,7 @@ babl_palette_set_palette (Babl *babl,
 }
 
 void
-babl_palette_reset (Babl *babl)
+babl_palette_reset (const Babl *babl)
 {
   BablPalette **palptr = babl_get_user_data (babl);
   if (*palptr != default_palette ())

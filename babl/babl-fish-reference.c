@@ -20,8 +20,8 @@
 #include "babl-internal.h"
 
 static Babl *
-assert_conversion_find (void *source,
-                        void *destination)
+assert_conversion_find (const void *source,
+                        const void *destination)
 {
   Babl *ret = babl_conversion_find (source, destination);
 
@@ -276,7 +276,7 @@ ncomponent_convert_from_double (BablFormat *destination_fmt,
 
 
 static int
-process_same_model (Babl            *babl,
+process_same_model (const Babl      *babl,
                     const BablImage *source,
                     BablImage       *destination,
                     long             n)
@@ -341,7 +341,7 @@ process_same_model (Babl            *babl,
 }
 
 long
-babl_fish_reference_process (Babl            *babl,
+babl_fish_reference_process (const Babl      *babl,
                              const BablImage *source,
                              BablImage       *destination,
                              long             n)

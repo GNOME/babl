@@ -33,11 +33,11 @@ typedef int  (*BablEachFunction) (Babl *entry,
  * to be iterated over, common functionality is defined through these
  * macros.
  */
-#define BABL_CLASS_DECLARE(klass)                                    \
-                                                                     \
-BablDb * babl_##klass##_db (void);                                   \
-Babl   * babl_##klass##_from_id        (int id);                     \
-void     babl_##klass##_class_for_each (BablEachFunction  each_fun,  \
+#define BABL_CLASS_DECLARE(klass)                                          \
+                                                                           \
+BablDb       * babl_##klass##_db (void);                                   \
+const Babl   * babl_##klass##_from_id        (int id);                     \
+void           babl_##klass##_class_for_each (BablEachFunction  each_fun,  \
                                         void             *user_data)
 
 /* common header for any item inserted into database, the actual

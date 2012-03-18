@@ -29,16 +29,16 @@ int   babl_in_fish_path = 0;
 
 typedef struct _FishPathInstrumentation
 {
-  Babl   *fmt_rgba_double;
+  const Babl   *fmt_rgba_double;
   double *test;
   void   *source;
   void   *destination;
   void   *ref_destination;
   double *destination_rgba_double;
   double *ref_destination_rgba_double;
-  Babl   *fish_rgba_to_source;
-  Babl   *fish_reference;
-  Babl   *fish_destination_to_rgba;
+  const Babl   *fish_rgba_to_source;
+  const Babl   *fish_reference;
+  const Babl   *fish_destination_to_rgba;
   double  reference_cost;
   int     init_instrumentation_done;
 } FishPathInstrumentation;
@@ -378,11 +378,12 @@ babl_fish_process (Babl       *babl,
 }
 
 long
-babl_process (Babl       *babl,
+babl_process (const Babl *cbabl,
               const void *source,
               void       *destination,
               long        n)
 {
+  Babl *babl = (Babl*)cbabl;
   babl_assert (babl);
   babl_assert (source);
   babl_assert (destination);

@@ -65,7 +65,7 @@ is_type_duplicate (Babl *babl, int bits)
   return 1;
 }
 
-Babl *
+const Babl *
 babl_type_new (void *first_arg,
                ...)
 {
@@ -162,6 +162,9 @@ babl_type_new (void *first_arg,
    */
   babl_db_insert (db, babl);
   return babl;
+
+  if (min || max || is_integer || max_val || min_val)
+    return NULL;
 }
 
 
@@ -193,9 +196,9 @@ static void test_init (double min, double max)
 }
 
 
-static Babl *double_vector_format (void)
+static const Babl *double_vector_format (void)
 {
-  static Babl *self = NULL;
+  static const Babl *self = NULL;
 
   if (!self)
     self = babl_format_new (
@@ -207,7 +210,7 @@ static Babl *double_vector_format (void)
 }
 
 int
-babl_type_is_symmetric (Babl *babl)
+babl_type_is_symmetric (const Babl *babl)
 {
   int     is_symmetrical = 1;
   void   *original;
@@ -215,10 +218,10 @@ babl_type_is_symmetric (Babl *babl)
   void   *destination;
   double *transformed;
 
-  Babl   *ref_fmt;
-  Babl   *fmt;
-  Babl   *fish_to;
-  Babl   *fish_from;
+  const Babl *ref_fmt;
+  const Babl *fmt;
+  Babl       *fish_to;
+  Babl       *fish_from;
 
   test_init (0.0, 182.0);
 

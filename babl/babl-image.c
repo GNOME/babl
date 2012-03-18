@@ -79,9 +79,10 @@ image_new (BablFormat     *format,
 }
 
 Babl *
-babl_image_from_linear (char *buffer,
-                        Babl *format)
+babl_image_from_linear (char       *buffer,
+                        const Babl *cformat)
 {
+  Babl          *format = (Babl*) cformat;
   Babl          *babl;
   BablModel     *model      = NULL;
   int            components = 0;
@@ -169,7 +170,7 @@ babl_image_from_linear (char *buffer,
 }
 
 Babl *
-babl_image_new (void *first,
+babl_image_new (const void *first,
                 ...)
 {
   va_list        varg;

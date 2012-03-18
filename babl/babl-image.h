@@ -41,7 +41,7 @@ BABL_CLASS_DECLARE (image);
  *                        ...]
  *                        NULL);
  */
-Babl * babl_image_new  (void *first_component,
+Babl * babl_image_new  (const void *first_component,
                         ...) BABL_ARG_NULL_TERMINATED;
 
 typedef struct

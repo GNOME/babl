@@ -21,9 +21,7 @@
 
 BABL_CLASS_DECLARE (conversion);
 
-Babl * babl_conversion (const char *name);
-
-
+const Babl * babl_conversion (const char *name);
 
 /* Signature of functions registered for reference type
  * conversions,

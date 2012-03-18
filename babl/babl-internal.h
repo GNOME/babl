@@ -69,7 +69,7 @@ Babl *   babl_conversion_find           (const void     *source,
                                          const void     *destination);
 double   babl_conversion_error          (BablConversion *conversion);
 long     babl_conversion_cost           (BablConversion *conversion);
-long     babl_conversion_process        (Babl           *conversion,
+long     babl_conversion_process        (const Babl     *conversion,
                                          const char     *source,
                                          char           *destination,
                                          long            n);
@@ -82,7 +82,7 @@ void     babl_set_extender              (Babl           *new_extender);
 Babl   * babl_extension_quiet_log       (void);
 void     babl_extension_deinit          (void);
 
-long     babl_fish_reference_process    (Babl           *babl,
+long     babl_fish_reference_process    (const Babl     *babl,
                                          const BablImage*source,
                                          BablImage      *destination,
                                          long            n);
@@ -97,20 +97,20 @@ Babl   * babl_fish_path                 (const Babl     *source,
 int      babl_fish_get_id               (const Babl     *source,
                                          const Babl     *destination);
 
-double   babl_format_loss               (Babl           *babl);
+double   babl_format_loss               (const Babl     *babl);
 Babl   * babl_image_from_linear         (char           *buffer,
-                                         Babl           *format);
-Babl   * babl_image_double_from_image   (Babl           *source);
+                                         const Babl     *format);
+Babl   * babl_image_double_from_image   (const Babl     *source);
 
-double   babl_model_is_symmetric        (Babl           *babl);
+double   babl_model_is_symmetric        (const Babl     *babl);
 void     babl_die                       (void);
 int      babl_sanity                    (void);
 
 void     babl_core_init                 (void);
-Babl   * babl_format_with_model_as_type (Babl           *model,
-                                         Babl           *type);
+const Babl *babl_format_with_model_as_type (const Babl     *model,
+                                         const Babl     *type);
 int      babl_formats_count             (void);                                     /* should maybe be templated? */
-int      babl_type_is_symmetric         (Babl           *babl);
+int      babl_type_is_symmetric         (const Babl     *babl);
 
 /**** LOGGER ****/
 #include <stdarg.h>
@@ -259,7 +259,7 @@ babl_##klass##_class_for_each (BablEachFunction  each_fun,    \
 #define BABL_CLASS_IMPLEMENT(klass)                           \
 BABL_CLASS_MINIMAL_IMPLEMENT(klass)                           \
                                                               \
-Babl *                                                        \
+const Babl *                                                  \
 babl_##klass (const char *name)                               \
 {                                                             \
   Babl *babl;                                                 \
@@ -277,7 +277,7 @@ babl_##klass (const char *name)                               \
   return babl;                                                \
 }                                                             \
                                                               \
-Babl *                                                        \
+const Babl *                                                  \
 babl_##klass##_from_id (int id)                               \
 {                                                             \
   Babl *babl;                                                 \

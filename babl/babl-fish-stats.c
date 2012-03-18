@@ -35,12 +35,12 @@ static int
 table_destination_sum_each (Babl *babl,
                             void *userdata)
 {
-  Babl *source      = userdata;
-  Babl *destination = babl;
+  const Babl *source      = userdata;
+  const Babl *destination = babl;
 
   if (source != destination)
     {
-      Babl *fish = babl_fish (source, destination);
+      const Babl *fish = babl_fish (source, destination);
       babl_assert (fish);
       sum_pixels += fish->fish.pixels;
     }
@@ -76,7 +76,7 @@ table_destination_each (Babl *babl,
     fprintf (output_file, "<td class='cell'>&nbsp;</td>");
   else
     {
-      Babl *fish = babl_fish (source, destination);
+      const Babl *fish = babl_fish (source, destination);
 
       babl_assert (fish);
 

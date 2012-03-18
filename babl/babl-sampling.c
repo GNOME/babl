@@ -27,7 +27,7 @@
 static BablSampling sampling_db[(HORIZONTAL_MAX - HORIZONTAL_MIN + 1) *
                                 (VERTICAL_MAX - VERTICAL_MIN + 1)];
 
-Babl *
+const Babl *
 babl_sampling (int horizontal,
                int vertical)
 {

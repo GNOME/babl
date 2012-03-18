@@ -48,7 +48,7 @@ format_new (const char     *name,
             BablModel      *model,
             BablComponent **component,
             BablSampling  **sampling,
-            BablType      **type)
+            const BablType **type)
 {
   Babl *babl;
 
@@ -121,17 +121,17 @@ format_new (const char     *name,
 
 
 static char *
-create_name (BablModel      *model,
-             int             components,
-             BablComponent **component,
-             BablType      **type)
+create_name (const BablModel *model,
+             int              components,
+             BablComponent  **component,
+             const BablType **type)
 {
   char            buf[512] = "";
   char           *p = &buf[0];
   int             i;
   int             same_types = 1;
-  BablType      **t          = type;
-  BablType       *first_type = *type;
+  const BablType**t          = type;
+  const BablType *first_type = *type;
   BablComponent **c1         = component;
   BablComponent **c2         = model->component;
 
@@ -190,8 +190,8 @@ create_name (BablModel      *model,
 
 
 static char *
-ncomponents_create_name (Babl *type,
-                         int   components)
+ncomponents_create_name (const Babl *type,
+                         int         components)
 {
   char buf[512];
   sprintf (buf, "%s[%i] ", type->instance.name, components);
@@ -207,8 +207,8 @@ babl_format_set_is_format_n (Babl *format)
     }
 }
 
-Babl *
-babl_format_n (Babl *btype,
+const Babl *
+babl_format_n (const Babl *btype,
                int   components)
 {
   int            i;
@@ -218,7 +218,7 @@ babl_format_n (Babl *btype,
   BablModel     *model      = (BablModel *)babl_model ("Y");
   BablComponent *component [components];
   BablSampling  *sampling  [components];
-  BablType      *type      [components];
+  const BablType *type      [components];
   char          *name       = NULL;
 
   for (i = 0; i<components; i++)
@@ -252,7 +252,7 @@ babl_format_n (Babl *btype,
 }
 
 int
-babl_format_is_format_n (Babl *format)
+babl_format_is_format_n (const Babl *format)
 {
   if (format->class_type == BABL_FORMAT)
     {
@@ -264,13 +264,13 @@ babl_format_is_format_n (Babl *format)
 
 
 static int
-is_format_duplicate (Babl           *babl,
-                     int             planar,
-                     int             components,
-                     BablModel      *model,
-                     BablComponent **component,
-                     BablSampling  **sampling,
-                     BablType      **type)
+is_format_duplicate (Babl            *babl,
+                     int              planar,
+                     int              components,
+                     BablModel       *model,
+                     BablComponent  **component,
+                     BablSampling   **sampling,
+                     const BablType **type)
 {
   int i;
 
@@ -289,8 +289,8 @@ is_format_duplicate (Babl           *babl,
   return 1;
 }
 
-Babl *
-babl_format_new (void *first_arg,
+const Babl *
+babl_format_new (const void *first_arg,
                  ...)
 {
   va_list        varg;
@@ -301,12 +301,12 @@ babl_format_new (void *first_arg,
   BablModel     *model      = NULL;
   BablComponent *component [BABL_MAX_COMPONENTS];
   BablSampling  *sampling  [BABL_MAX_COMPONENTS];
-  BablType      *type      [BABL_MAX_COMPONENTS];
+  const BablType*type      [BABL_MAX_COMPONENTS];
 
   BablSampling  *current_sampling = (BablSampling *) babl_sampling (1, 1);
   BablType      *current_type     = (BablType *) babl_type_from_id (BABL_DOUBLE);
   char          *name             = NULL;
-  void          *arg              = first_arg;
+  const void    *arg              = first_arg;
 
   va_start (varg, first_arg);
 
@@ -498,7 +498,7 @@ babl_format_get_n_components (const Babl *format)
   return 0;
 }
 
-Babl *
+const Babl *
 babl_format_get_type (const Babl *format,
                       int         component_index)
 {
@@ -512,9 +512,9 @@ babl_format_get_type (const Babl *format,
   return NULL;
 }
 
-Babl *
-babl_format_with_model_as_type (Babl *model,
-                                Babl *type)
+const Babl *
+babl_format_with_model_as_type (const Babl *model,
+                                const Babl *type)
 {
   BablComponent *component[10];
   int            i;
@@ -561,7 +561,7 @@ test_create (void)
 }
 
 double
-babl_format_loss (Babl *babl)
+babl_format_loss (const Babl *babl)
 {
   double  loss = 0.0;
   double *test;
@@ -570,10 +570,10 @@ babl_format_loss (Babl *babl)
   void   *destination;
   double *transformed;
 
-  Babl   *ref_fmt;
-  Babl   *fmt;
-  Babl   *fish_to;
-  Babl   *fish_from;
+  const Babl *ref_fmt;
+  const Babl *fmt;
+  Babl       *fish_to;
+  Babl       *fish_from;
 
   ref_fmt = babl_format_new (
     babl_model ("RGBA"),
@@ -615,13 +615,13 @@ babl_format_loss (Babl *babl)
   babl_free (transformed);
   babl_free (test);
 
-  babl->format.loss = loss;
+  ((Babl*)babl)->format.loss = loss;
   return loss;
 }
 
 
 void *
-babl_get_user_data (Babl *babl)
+babl_get_user_data (const Babl *babl)
 {
   switch (babl->instance.class_type)
     {
@@ -637,9 +637,10 @@ babl_get_user_data (Babl *babl)
 }
 
 void
-babl_set_user_data (Babl *babl, void *data)
+babl_set_user_data (const Babl *cbabl, void *data)
 {
-  switch (babl->instance.class_type)
+  Babl *babl = (Babl*) cbabl;
+  switch (cbabl->instance.class_type)
     {
       case BABL_MODEL:
         babl->model.data = data;

@@ -138,7 +138,7 @@ babl_fish_get_id (const Babl *source,
   return id;
 }
 
-Babl *
+const Babl *
 babl_fish (const void *source,
            const void *destination)
 {

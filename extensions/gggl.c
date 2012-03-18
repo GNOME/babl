@@ -1630,7 +1630,7 @@ int init (void);
 int
 init (void)
 {
-  Babl *rgbaD = babl_format_new (
+  const Babl *rgbaD = babl_format_new (
     babl_model ("R'G'B'A"),
     babl_type ("double"),
     babl_component ("R'"),
@@ -1638,7 +1638,7 @@ init (void)
     babl_component ("B'"),
     babl_component ("A"),
     NULL);
-  Babl *rgbaF = babl_format_new (
+  const Babl *rgbaF = babl_format_new (
     babl_model ("R'G'B'A"),
     babl_type ("float"),
     babl_component ("R'"),
@@ -1646,7 +1646,7 @@ init (void)
     babl_component ("B'"),
     babl_component ("A"),
     NULL);
-  Babl *rgba16 = babl_format_new (
+  const Babl *rgba16 = babl_format_new (
     babl_model ("R'G'B'A"),
     babl_type ("u16"),
     babl_component ("R'"),
@@ -1654,7 +1654,7 @@ init (void)
     babl_component ("B'"),
     babl_component ("A"),
     NULL);
-  Babl *rgba8 = babl_format_new (
+  const Babl *rgba8 = babl_format_new (
     babl_model ("R'G'B'A"),
     babl_type ("u8"),
     babl_component ("R'"),
@@ -1662,7 +1662,7 @@ init (void)
     babl_component ("B'"),
     babl_component ("A"),
     NULL);
-  Babl *rgbAF = babl_format_new (
+  const Babl *rgbAF = babl_format_new (
     babl_model ("R'aG'aB'aA"),
     babl_type ("float"),
     babl_component ("R'a"),
@@ -1670,7 +1670,7 @@ init (void)
     babl_component ("B'a"),
     babl_component ("A"),
     NULL);
-  Babl *rgbA16 = babl_format_new (
+  const Babl *rgbA16 = babl_format_new (
     babl_model ("R'aG'aB'aA"),
     babl_type ("u16"),
     babl_component ("R'a"),
@@ -1678,7 +1678,7 @@ init (void)
     babl_component ("B'a"),
     babl_component ("A"),
     NULL);
-  Babl *rgbA8 = babl_format_new (
+  const Babl *rgbA8 = babl_format_new (
     babl_model ("R'aG'aB'aA"),
     babl_type ("u8"),
     babl_component ("R'a"),
@@ -1686,79 +1686,79 @@ init (void)
     babl_component ("B'a"),
     babl_component ("A"),
     NULL);
-  Babl *rgbF = babl_format_new (
+  const Babl *rgbF = babl_format_new (
     babl_model ("R'G'B'"),
     babl_type ("float"),
     babl_component ("R'"),
     babl_component ("G'"),
     babl_component ("B'"),
     NULL);
-  Babl *rgb16 = babl_format_new (
+  const Babl *rgb16 = babl_format_new (
     babl_model ("R'G'B'"),
     babl_type ("u16"),
     babl_component ("R'"),
     babl_component ("G'"),
     babl_component ("B'"),
     NULL);
-  Babl *rgb8 = babl_format_new (
+  const Babl *rgb8 = babl_format_new (
     babl_model ("R'G'B'"),
     babl_type ("u8"),
     babl_component ("R'"),
     babl_component ("G'"),
     babl_component ("B'"),
     NULL);
-  Babl *gaF = babl_format_new (
+  const Babl *gaF = babl_format_new (
     babl_model ("Y'A"),
     babl_type ("float"),
     babl_component ("Y'"),
     babl_component ("A"),
     NULL);
-  Babl *gAF = babl_format_new (
+  const Babl *gAF = babl_format_new (
     babl_model ("Y'aA"),
     babl_type ("float"),
     babl_component ("Y'a"),
     babl_component ("A"),
     NULL);
-  Babl *gF = babl_format_new (
+  const Babl *gF = babl_format_new (
     babl_model ("Y'"),
     babl_type ("float"),
     babl_component ("Y'"),
     NULL);
-  Babl *ga16 = babl_format_new (
+  const Babl *ga16 = babl_format_new (
     babl_model ("Y'A"),
     babl_type ("u16"),
     babl_component ("Y'"),
     babl_component ("A"),
     NULL);
-  Babl *gA16 = babl_format_new (
+  const Babl *gA16 = babl_format_new (
     babl_model ("Y'aA"),
     babl_type ("u16"),
     babl_component ("Y'a"),
     babl_component ("A"),
     NULL);
-  Babl *g16 = babl_format_new (
+  const Babl *g16 = babl_format_new (
     babl_model ("Y'"),
     babl_type ("u16"),
     babl_component ("Y'"),
     NULL);
-  Babl *ga8 = babl_format_new (
+  const Babl *ga8 = babl_format_new (
     babl_model ("Y'A"),
     babl_type ("u8"),
     babl_component ("Y'"),
     babl_component ("A"),
     NULL);
-  Babl *gA8 = babl_format_new (
+  const Babl *gA8 = babl_format_new (
     babl_model ("Y'aA"),
     babl_type ("u8"),
     babl_component ("Y'a"),
     babl_component ("A"),
     NULL);
-  Babl *g8 = babl_format_new (
+  const Babl *g8 = babl_format_new (
     babl_model ("Y'"),
     babl_type ("u8"),
     babl_component ("Y'"),
     NULL);
-  Babl *yuvF = babl_format_new (
+  const Babl *yuvF = babl_format_new (
     babl_model ("Y'CbCr"),
     babl_type ("float"),
     babl_component ("Y'"),
@@ -1766,7 +1766,7 @@ init (void)
     babl_component ("Cb"),
     babl_component ("Cr"),
     NULL);
-  Babl *yuvaF = babl_format_new (
+  const Babl *yuvaF = babl_format_new (
     babl_model ("Y'CbCrA"),
     babl_type ("float"),
     babl_component ("Y'"),
