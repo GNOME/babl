@@ -130,16 +130,15 @@ rgba_to_pal (char *src,
 
           diff = (palpx[0] - srcf[0]) * (palpx[0] - srcf[0]) +
                  (palpx[1] - srcf[1]) * (palpx[1] - srcf[1]) +
-                 (palpx[2] - srcf[2]) * (palpx[2] - srcf[2]) +
-                 (palpx[3] - srcf[3]) * (palpx[3] - srcf[3]);
-          if (diff < best_diff)
+                 (palpx[2] - srcf[2]) * (palpx[2] - srcf[2]);
+          if (diff <= best_diff)
             {
               best_diff = diff;
               best_idx = idx;
             }
         }
 
-      ((double *) dst)[0] = best_idx / 256.0;
+      ((double *) dst)[0] = best_idx / 255.5;
 
       src += sizeof (double) * 4;
       dst += sizeof (double) * 1;
@@ -178,14 +177,14 @@ rgba_to_pala (char *src,
           diff = (palpx[0] - srcf[0]) * (palpx[0] - srcf[0]) +
                  (palpx[1] - srcf[1]) * (palpx[1] - srcf[1]) +
                  (palpx[2] - srcf[2]) * (palpx[2] - srcf[2]);
-          if (diff < best_diff)
+          if (diff <= best_diff)
             {
               best_diff = diff;
               best_idx = idx;
             }
         }
 
-      ((double *) dst)[0] = best_idx / 256.0;
+      ((double *) dst)[0] = best_idx / 255.5;
       ((double *) dst)[1] = alpha;
 
       src += sizeof (double) * 4;
@@ -206,7 +205,7 @@ pal_to_rgba (char *src,
   assert(pal);
   while (n--)
     {
-      int idx = (((double *) src)[0]) * 256.0;
+      int idx = (((double *) src)[0]) * 255.5;
       double *palpx;
 
       if (idx < 0) idx = 0;
@@ -263,8 +262,8 @@ pala_to_rgba (char *src,
   assert(pal);
   while (n--)
     {
-      int idx      = (((double *) src)[0]) * 256.0;
-      double alpha = 255;//(((double *) src)[1]);
+      int idx      = (((double *) src)[0]) * 255.5;
+      double alpha = (((double *) src)[1]);
       double *palpx;
 
       if (idx < 0) idx = 0;
@@ -338,12 +337,6 @@ void babl_new_palette (const char *name, Babl **format_u8,
                                babl_type ("u8"),
                                babl_component ("I"), NULL);
 
-#if 0
-  cname[0] = 'z';
-  f_pal_double = babl_format_new ("name", name, model,
-                                  babl_type ("double"),
-                                  babl_component ("I"), NULL);
-#endif
   babl_conversion_new (
      model,
      babl_model  ("RGBA"),
