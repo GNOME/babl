@@ -19,47 +19,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <values.h>
 #include <assert.h>
 #include "babl.h"
 #include "babl-memory.h"
 
+#define HASH_TABLE_SIZE 1111
+
 void babl_sanity (void);
-
-typedef struct BablPalette
-{
-  int         count; /* number of palette entries */
-  const Babl *format;/* the pixel format the palette is stored in */
-  void       *data;  /* one linear segment of all the pixels representing the palette, in   order */
-  void       *data_double;
-  void       *data_u8;
-} BablPalette;
-
-
-static BablPalette *make_pal (const Babl *format, const void *data, int count)
-{
-  BablPalette *pal = NULL;
-  int bpp = babl_format_get_bytes_per_pixel (format);
-  pal = babl_malloc (sizeof (BablPalette));
-  pal->count = count;
-  pal->format = format;
-  pal->data = babl_malloc (bpp * count);
-  pal->data_double = babl_malloc (4 * sizeof(double) * count);
-  pal->data_u8 = babl_malloc (4 * sizeof(char) * count);
-  memcpy (pal->data, data, bpp * count);
-  babl_process (babl_fish (format, babl_format ("RGBA double")),
-                pal->data, pal->data_double, count);
-  babl_process (babl_fish (format, babl_format ("RGBA u8")),
-                pal->data, pal->data_u8, count);
-  return pal;
-}
-
-static void babl_palette_free (BablPalette *pal)
-{
-  babl_free (pal->data);
-  babl_free (pal->data_double);
-  babl_free (pal->data_u8);
-  babl_free (pal);
-}
 
 /* A default palette, containing standard ANSI / EGA colors
  *
@@ -85,12 +52,107 @@ static unsigned char defpal_data[4*16] =
 };
 static double defpal_double[4*8*16];
 
+
+typedef struct BablPalette
+{
+  int         count; /* number of palette entries */
+  const Babl *format;/* the pixel format the palette is stored in */
+  unsigned char *data;  /* one linear segment of all the pixels representing the palette, in   order */
+  double        *data_double;
+  unsigned char *data_u8;
+  int          hash[HASH_TABLE_SIZE];
+  unsigned int hashpx[HASH_TABLE_SIZE];
+} BablPalette;
+
+static void
+babl_palette_reset_hash (BablPalette *pal)
+{
+  int i;
+  for (i = 0; i < HASH_TABLE_SIZE; i++)
+    {
+      pal->hashpx[i] = ((255 << 16) | (255 << 8) | 255) + 11; /* non existant pixel */
+      pal->hash[i] = -1;
+    }
+}
+
+static int
+babl_palette_lookup (BablPalette *pal, int r, int g, int b, int a)
+{
+  unsigned int pixel      = (r << 16) | (g << 8) | b;
+  int          hash_index = pixel % HASH_TABLE_SIZE;
+  int          idx = pal->hash[hash_index];
+  
+  if (idx >= 0 &&
+      pal->hashpx[hash_index] == pixel)
+    {
+      return idx;
+    }
+  else
+    {
+      int best_idx = 0;
+      int best_diff = MAXINT;
+
+      for (idx = 0; idx < pal->count; idx++)
+        {
+          unsigned char *palpx = pal->data_u8 + idx * 4;
+          int pr = palpx[0];
+          int pg = palpx[1];
+          int pb = palpx[2];
+
+          int diff = (r - pr) * (r - pr) +
+                     (g - pg) * (g - pg) +
+                     (b - pb) * (b - pb);
+          if (diff < best_diff)
+            {
+              best_diff = diff;
+              best_idx  = idx;
+            }
+        }
+      pal->hash[hash_index] = best_idx;
+      pal->hashpx[hash_index] = pixel;
+      return best_idx;
+    }
+  return 0;
+}
+
+static BablPalette *make_pal (const Babl *format, const void *data, int count)
+{
+  BablPalette *pal = NULL;
+  int bpp = babl_format_get_bytes_per_pixel (format);
+
+  pal = babl_malloc (sizeof (BablPalette));
+  pal->count = count;
+  pal->format = format;
+  pal->data = babl_malloc (bpp * count);
+  pal->data_double = babl_malloc (4 * sizeof(double) * count);
+  pal->data_u8 = babl_malloc (4 * sizeof(char) * count);
+  memcpy (pal->data, data, bpp * count);
+
+  babl_process (babl_fish (format, babl_format ("RGBA double")),
+                data, pal->data_double, count);
+  babl_process (babl_fish (format, babl_format ("RGBA u8")),
+                data, pal->data_u8, count);
+
+  babl_palette_reset_hash (pal);
+
+  return pal;
+}
+
+static void babl_palette_free (BablPalette *pal)
+{
+  babl_free (pal->data);
+  babl_free (pal->data_double);
+  babl_free (pal->data_u8);
+  babl_free (pal);
+}
+
 static BablPalette *default_palette (void)
 {
   static BablPalette pal;
   static int inited = 0;
   if (inited)
     return &pal;
+  memset (&pal, 0, sizeof (pal));
   inited = 1;
   pal.count = 16;
   pal.format = babl_format ("RGBA u8"); /* dynamically generated, so
@@ -103,6 +165,8 @@ static BablPalette *default_palette (void)
 
   babl_process (babl_fish (pal.format, babl_format ("RGBA double")),
                 pal.data, pal.data_double, pal.count);
+
+  babl_palette_reset_hash (&pal);
   return &pal;
 }
 
@@ -220,34 +284,6 @@ pal_to_rgba (char *src,
 }
 
 static long
-pal_u8_to_rgba_u8 (char *src,
-                   char *dst,
-                   long  n,
-                   void *src_model_data)
-{
-  BablPalette **palptr = src_model_data;
-  BablPalette *pal;
-  assert (palptr);
-  pal = *palptr;
-  assert(pal);
-  while (n--)
-    {
-      int idx = (((unsigned char *) src)[0]);
-      unsigned char *palpx;
-
-      if (idx < 0) idx = 0;
-      if (idx >= pal->count) idx = pal->count-1;
-
-      palpx = ((unsigned char*)pal->data_u8) + idx * 4;
-      memcpy (dst, palpx, sizeof(char)*4);
-
-      src += sizeof (char) * 1;
-      dst += sizeof (char) * 4;
-    }
-  return n;
-}
-
-static long
 pala_to_rgba (char *src,
               char *dst,
               long  n,
@@ -276,6 +312,108 @@ pala_to_rgba (char *src,
     }
   return n;
 }
+
+static long
+rgba_u8_to_pal (unsigned char *src,
+                unsigned char *dst,
+                long  n,
+                void *src_model_data)
+{
+  BablPalette **palptr = src_model_data;
+  BablPalette *pal;
+  assert (palptr);
+  pal = *palptr;
+  assert(pal);
+  while (n--)
+    {
+      dst[0] = babl_palette_lookup (pal, src[0], src[1], src[2], src[3]);
+
+      src += sizeof (char) * 4;
+      dst += sizeof (char) * 1;
+    }
+
+  return n;
+}
+
+static long
+rgba_u8_to_pal_a (char *src,
+                  char *dst,
+                  long  n,
+                  void *src_model_data)
+{
+  BablPalette **palptr = src_model_data;
+  BablPalette *pal;
+  assert (palptr);
+  pal = *palptr;
+  assert(pal);
+  while (n--)
+    {
+      dst[0] = babl_palette_lookup (pal, src[0], src[1], src[2], src[3]);
+      dst[1] = src[3];
+
+      src += sizeof (char) * 4;
+      dst += sizeof (char) * 2;
+    }
+  return n;
+}
+
+static long
+pal_u8_to_rgba_u8 (char *src,
+                   char *dst,
+                   long  n,
+                   void *src_model_data)
+{
+  BablPalette **palptr = src_model_data;
+  BablPalette *pal;
+  assert (palptr);
+  pal = *palptr;
+  assert(pal);
+  while (n--)
+    {
+      int idx = (((unsigned char *) src)[0]);
+      unsigned char *palpx;
+
+      if (idx < 0) idx = 0;
+      if (idx >= pal->count) idx = pal->count-1;
+
+      palpx = ((unsigned char*)pal->data_u8) + idx * 4;
+      memcpy (dst, palpx, sizeof(char)*4);
+
+      src += sizeof (char) * 1;
+      dst += sizeof (char) * 4;
+    }
+  return n;
+}
+
+static long
+pala_u8_to_rgba_u8 (char *src,
+                    char *dst,
+                    long  n,
+                    void *src_model_data)
+{
+  BablPalette **palptr = src_model_data;
+  BablPalette *pal;
+  assert (palptr);
+  pal = *palptr;
+  assert(pal);
+  while (n--)
+    {
+      int idx = (((unsigned char *) src)[0]);
+      unsigned char *palpx;
+
+      if (idx < 0) idx = 0;
+      if (idx >= pal->count) idx = pal->count-1;
+
+      palpx = ((unsigned char*)pal->data_u8) + idx * 4;
+      memcpy (dst, palpx, sizeof(char)*4);
+      dst[3] = (dst[3] * src[1]) >> 8;
+
+      src += sizeof (char) * 2;
+      dst += sizeof (char) * 4;
+    }
+  return n;
+}
+
 
 #include "base/util.h"
 
@@ -382,6 +520,13 @@ void babl_new_palette (const char *name, const Babl **format_u8,
      "data", palptr,
      NULL
   );
+  babl_conversion_new (
+     babl_model ("RGBA"),
+     model_no_alpha,
+     "linear", rgba_to_pal,
+     "data", palptr,
+     NULL
+  );
 
   babl_conversion_new (
      f_pal_u8,
@@ -397,18 +542,32 @@ void babl_new_palette (const char *name, const Babl **format_u8,
      NULL
   );
 
-  babl_conversion_new (
-     babl_model ("RGBA"),
-     model_no_alpha,
-     "linear", rgba_to_pal,
-     "data", palptr,
-     NULL
-  );
 
   babl_conversion_new (
      f_pal_u8,
      babl_format ("RGBA u8"),
      "linear", pal_u8_to_rgba_u8,
+     "data", palptr,
+     NULL);
+
+
+  babl_conversion_new (
+     f_pal_a_u8,
+     babl_format ("RGBA u8"),
+     "linear", pala_u8_to_rgba_u8,
+     "data", palptr,
+     NULL);
+
+  babl_conversion_new (
+     babl_format ("RGBA u8"),
+     f_pal_a_u8,
+     "linear", rgba_u8_to_pal_a,
+     "data", palptr,
+     NULL);
+  babl_conversion_new (
+     babl_format ("RGBA u8"),
+     f_pal_u8,
+     "linear", rgba_u8_to_pal,
      "data", palptr,
      NULL);
 
