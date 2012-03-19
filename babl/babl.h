@@ -200,13 +200,15 @@ int babl_format_is_format_n (const Babl *format);
 const Babl * babl_conversion_new (const void *first_arg,
                                   ...) BABL_ARG_NULL_TERMINATED;
 
+
 /**
  * create a new palette based format, name is optional pass in NULL to get
  * an anonymous format. If you pass in with_alpha the format also gets
- * an 8bit alpha channel.
+ * an 8bit alpha channel. Returns the BablModel of the color model.
  */
-void babl_new_palette (const char *name, const Babl **format_u8,
-                                         const Babl **format_u8_with_alpha);
+const Babl *babl_new_palette (const char  *name,
+                              const Babl **format_u8,
+                              const Babl **format_u8_with_alpha);
 
 /**
  * Assign a palette to a palette format, the data is a single span of pixels

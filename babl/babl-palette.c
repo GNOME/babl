@@ -1,5 +1,5 @@
 /* babl - dynamically extendable universal pixel conversion library.
- * Copyright (C) 2005, Øyvind Kolås.
+ * Copyright (C) 2012, Øyvind Kolås.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -449,8 +449,9 @@ conv_pala8_pal8 (unsigned char *src, unsigned char *dst, long samples)
 /* should return the BablModel, permitting to fetch
  * other formats out of it?
  */
-void babl_new_palette (const char *name, const Babl **format_u8,
-                                         const Babl **format_u8_with_alpha)
+const Babl *babl_new_palette (const char  *name,
+                              const Babl **format_u8,
+                              const Babl **format_u8_with_alpha)
 {
   const Babl *model;
   const Babl *model_no_alpha;
@@ -579,6 +580,7 @@ void babl_new_palette (const char *name, const Babl **format_u8,
   if (format_u8_with_alpha)
     *format_u8_with_alpha = f_pal_a_u8;
   babl_sanity ();
+  return model;
 }
 
 void
