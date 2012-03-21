@@ -211,6 +211,11 @@ const Babl *babl_new_palette (const char  *name,
                               const Babl **format_u8_with_alpha);
 
 /**
+ * check whether a format is a palette backed format.
+ */
+int   babl_format_is_palette   (const Babl *format);
+
+/**
  * Assign a palette to a palette format, the data is a single span of pixels
  * representing the colors of the palette.
  */
@@ -220,15 +225,18 @@ void  babl_palette_set_palette (const Babl        *babl,
                                 int                count);
 
 /**
- * reset a palette to initial state.
+ * reset a palette to initial state, frees up some caches that optimize
+ * conversions.
  */
 void  babl_palette_reset       (const Babl        *babl);
+
 
 
 /**
  * associate a data pointer with a format/model, this data can be accessed and
  * used from the conversion functions, encoding color profiles, palettes or
- * similar with the data.
+ * similar with the data, perhaps this should be made internal API, not
+ * accesible at all from
  */
 void   babl_set_user_data     (const Babl *babl, void *data);
 

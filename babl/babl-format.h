@@ -41,6 +41,7 @@ typedef struct
   int              visited; /* for convenience in code while searching
                                for conversion paths */
   int              format_n; /* whether the format is a format_n type or not */
+  int              palette;
 } BablFormat;
 
 #endif

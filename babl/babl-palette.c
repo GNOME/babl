@@ -21,12 +21,12 @@
 #include <stdio.h>
 #include <values.h>
 #include <assert.h>
+#include "config.h"
+#include "babl-internal.h"
 #include "babl.h"
 #include "babl-memory.h"
 
 #define HASH_TABLE_SIZE 1111
-
-void babl_sanity (void);
 
 /* A default palette, containing standard ANSI / EGA colors
  *
@@ -446,6 +446,14 @@ conv_pala8_pal8 (unsigned char *src, unsigned char *dst, long samples)
   return samples;
 }
 
+int
+babl_format_is_palette (const Babl *format)
+{
+  if (format->class_type == BABL_FORMAT)
+    return format->format.palette;
+  return 0;
+}
+
 /* should return the BablModel, permitting to fetch
  * other formats out of it?
  */
@@ -455,8 +463,8 @@ const Babl *babl_new_palette (const char  *name,
 {
   const Babl *model;
   const Babl *model_no_alpha;
-  const Babl *f_pal_u8;
-  const Babl *f_pal_a_u8;
+  Babl *f_pal_u8;
+  Babl *f_pal_a_u8;
   const Babl *component;
   const Babl *alpha;
   BablPalette **palptr;
@@ -490,13 +498,16 @@ const Babl *babl_new_palette (const char  *name,
   cname[0] = 'v';
   model_no_alpha = babl_model_new ("name", name, component, NULL);
   cname[0] = 'x';
-  f_pal_a_u8 = babl_format_new ("name", name, model,
+  f_pal_a_u8 = (void*) babl_format_new ("name", name, model,
                                 babl_type ("u8"),
                                 component, alpha, NULL);
   cname[0] = 'y';
-  f_pal_u8  = babl_format_new ("name", name, model_no_alpha,
+  f_pal_u8  = (void*) babl_format_new ("name", name, model_no_alpha,
                                babl_type ("u8"),
                                component, NULL);
+
+  f_pal_a_u8->format.palette = 1;
+  f_pal_u8->format.palette = 1;
 
   babl_conversion_new (
      model,
