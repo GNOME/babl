@@ -90,7 +90,7 @@ babl_palette_lookup (BablPalette *pal, int r, int g, int b, int a)
   else
     {
       int best_idx = 0;
-      int best_diff = MAXINT;
+      int best_diff = INT_MAX;
 
       for (idx = 0; idx < pal->count; idx++)
         {
