@@ -488,7 +488,6 @@ const Babl *babl_new_palette (const char  *name,
     "I",
     "luma",
     "chroma",
-    "alpha",
     NULL);
   alpha = babl_component ("A");
   
