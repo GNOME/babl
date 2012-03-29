@@ -5,6 +5,10 @@ the news section both in the README and the webpage.
 
                                                                           -->
 
+
+2012-03-30 babl-0.1.8                                               </dt><dd>
+Added support for indexed/pallette based formats, constified API.
+                                                                    </dd><dt>
 2011-11-18 babl-0.1.6                                               </dt><dd>
 Build improvements, remove blatantly wrong conversions from extensions,
 made it possible to distinguish format_n formats from others, improvements
