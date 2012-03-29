@@ -481,6 +481,17 @@ const Babl *babl_new_palette (const char  *name,
     {
       strcpy (cname, name);
       name = cname;
+
+      if ((model = babl_db_exist_by_name (babl_model_db (), name)))
+        {
+          cname[0] = ')';
+          if (format_u8)
+            *format_u8 = babl_db_exist_by_name (babl_format_db (), name);
+          cname[0] = '\\';
+          if (format_u8_with_alpha)
+            *format_u8_with_alpha = babl_db_exist_by_name (babl_format_db (), name);
+          return model;
+        }
     }
 
   /* re-registering is a no-op */
@@ -496,11 +507,11 @@ const Babl *babl_new_palette (const char  *name,
   *palptr = default_palette ();;
   cname[0] = 'v';
   model_no_alpha = babl_model_new ("name", name, component, NULL);
-  cname[0] = 'x';
+  cname[0] = '\\';
   f_pal_a_u8 = (void*) babl_format_new ("name", name, model,
                                 babl_type ("u8"),
                                 component, alpha, NULL);
-  cname[0] = 'y';
+  cname[0] = ')';
   f_pal_u8  = (void*) babl_format_new ("name", name, model_no_alpha,
                                babl_type ("u8"),
                                component, NULL);

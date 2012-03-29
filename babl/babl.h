@@ -204,7 +204,9 @@ const Babl * babl_conversion_new (const void *first_arg,
 /**
  * create a new palette based format, name is optional pass in NULL to get
  * an anonymous format. If you pass in with_alpha the format also gets
- * an 8bit alpha channel. Returns the BablModel of the color model.
+ * an 8bit alpha channel. Returns the BablModel of the color model. If
+ * you pass in the same name the previous formats will be provided
+ * again.
  */
 const Babl *babl_new_palette (const char  *name,
                               const Babl **format_u8,
