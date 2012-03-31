@@ -285,16 +285,16 @@ premultiplied_to_non_premultiplied (int    src_bands,
       int    band;
 
       alpha = *(double *) src[src_bands - 1];
-      for (band = 0; band < src_bands - 1; band++)
+      if (alpha > BABL_ALPHA_THRESHOLD)
         {
-          if (alpha > BABL_ALPHA_THRESHOLD)
-            {
-              *(double *) dst[band] = *(double *) src[band] / alpha;
-            }
-          else
-            {
-              *(double *) dst[band] = 0.00;
-            }
+          double recip_alpha = 1.0 / alpha;
+          for (band = 0; band < src_bands - 1; band++)
+            *(double *) dst[band] = *(double *) src[band] * recip_alpha;
+        }
+      else
+        {
+          for (band = 0; band < src_bands - 1; band++)
+            *(double *) dst[band] = 0.0;
         }
       *(double *) dst[dst_bands - 1] = alpha;
 
