@@ -735,10 +735,8 @@ conv_gF_gaF (unsigned char *src, unsigned char *dst, long samples)
   return samples;
 }
 
-#define conv_gAF_gF        conv_gaF_gF
 #define conv_gF_gAF        conv_gF_gaF
 
-#define conv_rgbAF_rgbF    conv_rgbaF_rgbF
 #define conv_rgbF_rgbAF    conv_rgbF_rgbaF
 
 /* colorchannel dropping and adding */
@@ -836,29 +834,6 @@ conv_rgbaF_gaF (unsigned char *src, unsigned char *dst, long samples)
 /* other conversions coded for some optimisation reason or sumthin */
 
 static INLINE long
-conv_rgbA8_rgbaF (unsigned char *src, unsigned char *dst, long samples)
-{
-  long n = samples;
-
-  while (n--)
-    {
-      float alpha = (*(unsigned char *) src + (3)) / 255.0;
-      int   c;
-
-      for (c = 0; c < 3; c++)
-        {
-          (*(float *) dst) = (*(unsigned char *) src / 255.0) / alpha;
-          dst             += 4;
-          src             += 1;
-        }
-      *(float *) dst = alpha;
-      dst           += 4;
-      src           += 1;
-    }
-  return samples;
-}
-
-static INLINE long
 conv_rgbaF_rgbA8 (unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
@@ -877,29 +852,6 @@ conv_rgbaF_rgbA8 (unsigned char *src, unsigned char *dst, long samples)
       *(unsigned char *) dst = alpha * 255.0;
       dst++;
       src += 4;
-    }
-  return samples;
-}
-
-static INLINE long
-conv_rgbaF_rgbA16 (unsigned char *src, unsigned char *dst, long samples)
-{
-  long n = samples;
-
-  while (n--)
-    {
-      float alpha = (*(float *) src + (4 * 3));
-      int   c;
-
-      for (c = 0; c < 3; c++)
-        {
-          *(unsigned short *) dst = ((*(float *) src) * alpha) * 65535.0;
-          dst                    += 2;
-          src                    += 4;
-        }
-      *(unsigned short *) dst = alpha * 65535.0;
-      dst                    += 2;
-      src                    += 4;
     }
   return samples;
 }
@@ -1291,29 +1243,6 @@ conv_rgb8_Prgb8 (unsigned char *src, unsigned char *dst, long samples)
 }
 
 static INLINE long
-conv_rgbA16_rgba16 (unsigned char *src, unsigned char *dst, long samples)
-{
-  long n = samples;
-
-  while (n--)
-    {
-      if (src[3])
-        {
-          ((unsigned short *) dst)[0] =
-            (((unsigned short *) src)[0] * 65535) / src[3];
-          ((unsigned short *) dst)[1] =
-            (((unsigned short *) src)[1] * 65535) / src[3];
-          ((unsigned short *) dst)[2] =
-            (((unsigned short *) src)[2] * 65535) / src[3];
-        }
-      ((unsigned short *) dst)[3] = ((unsigned short *) src)[3];
-      dst                        += 8;
-      src                        += 8;
-    }
-  return samples;
-}
-
-static INLINE long
 conv_rgb8_rgbP8 (unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
@@ -1407,8 +1336,6 @@ conv_rgba8_rgb8 (unsigned char *src, unsigned char *dst, long samples)
   return samples;
 }
 
-#define conv_rgbA8_rgb8    conv_rgbP8_rgb8
-
 #ifndef byteclamp
 #define byteclamp(j)                   do { if (j < 0) j = 0;else if (j > 255) j = 255; } while (0)
 #endif
@@ -1430,169 +1357,6 @@ conv_rgba8_rgb8 (unsigned char *src, unsigned char *dst, long samples)
       byteclamp (U); \
       byteclamp (V); \
     } while (0)
-
-static INLINE long
-conv_yuv8_rgb8 (unsigned char *src, unsigned char *dst, long samples)
-{
-  long n = samples;
-
-  while (n--)
-    {
-      int R, G, B;
-
-      YUV82RGB8 (src[0], src[1], src[2], R, G, B);
-      dst[0] = R;
-      dst[1] = G;
-      dst[2] = B;
-      src   += 3;
-      dst   += 3;
-    }
-  return samples;
-}
-
-static INLINE long
-conv_rgb8_yuv8 (unsigned char *src, unsigned char *dst, long samples)
-{
-  long n = samples;
-
-  while (n--)
-    {
-      int Y, U, V;
-
-      YUV82RGB8 (src[0], src[1], src[2], Y, U, V);
-      dst[0] = Y;
-      dst[1] = U;
-      dst[2] = V;
-      src   += 3;
-      dst   += 3;
-    }
-  return samples;
-}
-
-static INLINE long
-conv_rgbaF_yuvaF (unsigned char *src, unsigned char *dst, long samples)
-{
-  float *src_f = (float *) src;
-  float *dst_f = (float *) dst;
-  long   n     = samples;
-
-  while (n--)
-    {
-      float R, G, B;
-      float Y, U, V;
-
-      R = src_f[0];
-      G = src_f[1];
-      B = src_f[2];
-
-      Y = 0.299 * R + 0.587 * B + 0.114 * B;
-      U = (-0.1687) * R - 0.3313 * G + 0.5 * B /* +0.5 */;
-      V = 0.5 * R - 0.4187 * G - 0.0813 * B /* +0.5 */;
-
-      dst_f[0] = Y;
-      dst_f[1] = U;
-      dst_f[2] = V;
-      dst_f[3] = src_f[3];
-
-      dst_f += 4;
-      src_f += 4;
-    }
-  return samples;
-}
-
-static INLINE long
-conv_yuvaF_rgbaF (unsigned char *src, unsigned char *dst, long samples)
-{
-  float *src_f = (float *) src;
-  float *dst_f = (float *) dst;
-  long   n     = samples;
-
-  while (n--)
-    {
-      float Y, U, V;
-      float R, G, B;
-
-      Y = src_f[0];
-      U = src_f[1];
-      V = src_f[2];
-
-      R = Y + 1.40200 * (V /*-0.5*/);
-      G = Y - 0.34414 * (U /*-0.5*/) -0.71414 * (V /*-0.5*/);
-      B = Y + 1.77200 * (U /*-0.5*/);
-
-      dst_f[0] = R;
-      dst_f[1] = G;
-      dst_f[2] = B;
-      dst_f[3] = src_f[3];
-
-      dst_f += 4;
-      src_f += 4;
-    }
-  return samples;
-}
-
-
-
-static INLINE long
-conv_rgbF_yuvF (unsigned char *src, unsigned char *dst, long samples)
-{
-  float *src_f = (float *) src;
-  float *dst_f = (float *) dst;
-  long   n     = samples;
-
-  while (n--)
-    {
-      float R, G, B;
-      float Y, U, V;
-
-      R = src_f[0];
-      G = src_f[1];
-      B = src_f[2];
-
-      Y = 0.299 * R + 0.587 * B + 0.114 * B;
-      U = (-0.1687) * R - 0.3313 * G + 0.5 * B /* +0.5 */;
-      V = 0.5 * R - 0.4187 * G - 0.0813 * B /* +0.5 */;
-
-      dst_f[0] = Y;
-      dst_f[1] = U;
-      dst_f[2] = V;
-
-      dst_f += 3;
-      src_f += 3;
-    }
-  return samples;
-}
-
-static INLINE long
-conv_yuvF_rgbF (unsigned char *src, unsigned char *dst, long samples)
-{
-  float *src_f = (float *) src;
-  float *dst_f = (float *) dst;
-  long   n     = samples;
-
-  while (n--)
-    {
-      float Y, U, V;
-      float R, G, B;
-
-      Y = src_f[0];
-      U = src_f[1];
-      V = src_f[2];
-
-      R = Y + 1.40200 * (V /*-0.5*/);
-      G = Y - 0.34414 * (U /*-0.5*/) -0.71414 * (V /*-0.5*/);
-      B = Y + 1.77200 * (U /*-0.5*/);
-
-      dst_f[0] = R;
-      dst_f[1] = G;
-      dst_f[2] = B;
-
-      dst_f += 3;
-      src_f += 3;
-    }
-  return samples;
-}
-
 
 /******* lab, xyz and rgb interaction, lifted from cpercep by adam d. moss */
 
@@ -1924,35 +1688,6 @@ init (void)
     babl_type ("u8"),
     babl_component ("Y"),
     NULL);
-  const Babl *yuv8 = babl_format_new (
-    "name", "Y'CbCr u8",
-    "planar",
-    babl_model ("Y'CbCr"),
-    babl_type ("u8-luma"),
-    babl_sampling (1, 1),
-    babl_component ("Y'"),
-    babl_type ("u8-chroma"),
-    babl_sampling (2, 2),
-    babl_component ("Cb"),
-    babl_component ("Cr"),
-    NULL);
-  const Babl *yuvF = babl_format_new (
-    babl_model ("Y'CbCr"),
-    babl_type ("float"),
-    babl_component ("Y'"),
-    babl_type ("float"),
-    babl_component ("Cb"),
-    babl_component ("Cr"),
-    NULL);
-  const Babl *yuvaF = babl_format_new (
-    babl_model ("Y'CbCrA"),
-    babl_type ("float"),
-    babl_component ("Y'"),
-    babl_type ("float"),
-    babl_component ("Cb"),
-    babl_component ("Cr"),
-    babl_component ("A"),
-    NULL);
 
 #define o(src, dst) \
   babl_conversion_new (src, dst, "linear", conv_ ## src ## _ ## dst, NULL)
@@ -1993,11 +1728,6 @@ init (void)
   o (g16, g8);
   o (rgbaF, rgbAF);
   o (rgbAF, rgbaF);
-  o (yuv8, rgb8);
-  o (rgb8, yuv8);
-  o (yuvF, rgbF);
-  o (rgbF, yuvF);
-  o (yuvaF, rgbaF);
   o (rgbA8, rgbA16);
   o (rgb8, rgb16);
   o (ga8, ga16);
@@ -2020,9 +1750,7 @@ init (void)
   o (gaF, gAF);
   o (gAF, gaF);
   o (rgbaF, rgbF);
-  o (rgbAF, rgbF);
   o (gaF, gF);
-  o (gAF, gF);
   o (rgbF, rgbaF);
   o (rgbF, rgbAF);
   o (gF, gaF);
@@ -2034,29 +1762,18 @@ init (void)
   o (rgbAF, gAF);
   o (gAF, rgbAF);
   o (rgbaF, rgb8);
-  o (rgbA8, rgbaF);
   o (rgbA8, rgbAF);
   o (ga8, gaF);
   o (gA8, gAF);
   o (rgbA8, rgba8);
   o (rgba8, rgbA8);
-  o (rgbA16, rgba16);
   o (gAF, rgbAF);
   o (rgbaF, g8);
   o (rgbaF, rgb16);
   o (rgb8, rgba8);
   o (rgb8, rgbA8);
-  o (rgbA8, rgb8);
   o (rgba8, rgb8);
   o (rgbaF, rgbA8);
-  o (rgbaF, rgbA16);
-  o (rgbA16, rgbaF);
-  o (yuv8, rgb8);
-  o (rgb8, yuv8);
-  o (yuvF, rgbF);
-  o (rgbF, yuvF);
-  o (yuvaF, rgbaF);
-  o (rgbaF, yuvaF);
 #if 0
   o (rgbF, xyzF);
   o (xyzF, rgbF);

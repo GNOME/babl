@@ -324,67 +324,6 @@ conv_rgb8_rgbaF (unsigned char *src, unsigned char *dst, long samples)
 }
 
 static long
-conv_rgbAF_sdl32 (unsigned char *srcc,
-                  unsigned char *dstc,
-                  long           samples)
-{
-  float         *src = (void *) srcc;
-  unsigned char *dst = (void *) dstc;
-  long           n   = samples;
-
-  while (n--)
-    {
-      int   i;
-      float alpha = src[3];
-      for (i = 0; i < 3; i++)
-        {
-          float ca = src[i];
-          int   ret;
-          if (alpha < BABL_ALPHA_THRESHOLD)
-            ret = 0;
-          else
-            ret = table_F_8g[gggl_float_to_index16 (ca / alpha)];
-          if (ret <= 0)
-            dst[i] = 0;
-          else if (ret > 255)
-            dst[i] = 255;
-          else
-            dst[i] = ret;
-        }
-      {
-        int t = dst[0];
-        dst[0] = dst[2];
-        dst[2] = t;
-        dst[3] = 255;
-      }
-      src += 4;
-      dst += 4;
-    }
-  return samples;
-}
-
-
-static long
-conv_rgbaF_sdl32 (unsigned char *srcc,
-                  unsigned char *dstc,
-                  long           samples)
-{
-  float         *src = (void *) srcc;
-  unsigned char *dst = (void *) dstc;
-  long           n   = samples;
-
-  while (n--)
-    {
-      dst[0] = table_F_8g[gggl_float_to_index16 (src[2])];
-      dst[1] = table_F_8g[gggl_float_to_index16 (src[1])];
-      dst[2] = table_F_8g[gggl_float_to_index16 (src[0])];
-      src   += 4;
-      dst   += 4;
-    }
-  return samples;
-}
-
-static long
 conv_rgbAF_rgb8 (unsigned char *srcc,
                  unsigned char *dstc,
                  long           samples)
@@ -577,15 +516,6 @@ init (void)
     babl_component ("G'"),
     babl_component ("B'"),
     NULL);
-  const Babl *sdl32 = babl_format_new (
-    "name", "B'aG'aR'aPAD u8",
-    babl_model ("R'G'B'"),
-    babl_type ("u8"),
-    babl_component ("B'"),
-    babl_component ("G'"),
-    babl_component ("R'"),
-    babl_component ("PAD"),
-    NULL);
 
   table_init ();
 
@@ -598,10 +528,8 @@ init (void)
   o (rgb8, rgbaF);
   o (rgb8, rgbAF);
   o (rgba8, rgbaF);
-  o (rgbaF, sdl32);
   o (rgbaF, rgb8);
   o (rgbAF, rgb8);
-  o (rgbAF, sdl32);
   o (bgrA8, rgba8);
 
   return 0;
