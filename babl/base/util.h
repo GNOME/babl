@@ -56,12 +56,29 @@
 
 #ifdef BABL_USE_SRGB_GAMMA
 
+/*  fast approximation of x ^ (5/12) from a response by David Hammen at
+ *  http://stackoverflow.com/questions/6475373/optimizations-for-pow-with-const-non-integer-exponent/6475516#6475516
+ *
+ */
+static inline double xpow512 (double x)
+{
+  double cbrtx = cbrt(x);
+  return cbrtx*sqrt(sqrt(cbrtx));
+}
+
+
 static inline double
 linear_to_gamma_2_2 (double value)
 {
+#if 0
   if (value > 0.0030402477F)
     return 1.055F * pow (value, (1.0F/2.4F)) - 0.055F;
   return 12.92F * value;
+#else
+  if (value > 0.0030402477F)
+    return 1.055F * xpow512 (value) - 0.055F;
+  return 12.92F * value;
+#endif
 }
 
 static inline double
