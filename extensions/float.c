@@ -29,100 +29,6 @@
 #define INLINE inline
 
 
-/*
-   optimized powf from:
-
-http://stackoverflow.com/questions/6475373/optimizations-for-pow-with-const-non-integer-exponent
-
-   by David Hammen
-*/
-
-// Returns x^(5/12) for x in [1,2), to within 3e-8 (relative error).
-// Want more precision? Add more Chebychev polynomial coefs.
-static INLINE double pow512norm (
-   double x)
-{
-   static const int N = 8;
-
-   // Chebychev polynomial terms.
-   // Non-zero terms calculated via
-   //   integrate (2/pi)*ChebyshevT[n,u]/sqrt(1-u^2)*((u+3)/2)^(5/12)
-   //   from -1 to 1
-   // Zeroth term is similar except it uses 1/pi rather than 2/pi.
-   static const double Cn[8] = { 
-       1.1758200232996901923,
-       0.16665763094889061230,
-      -0.0083154894939042125035,
-       0.00075187976780420279038,
-      // Wolfram alpha doesn't want to compute the remaining terms
-      // to more precision (it times out).
-      -0.0000832402,
-       0.0000102292,
-      -1.3401e-6,
-       1.83334e-7};
-
-   double Tn[N];
-
-   double u = 2.0*x - 3.0;
-   int i;
-   double y = 0.0;
-
-   Tn[0] = 1.0;
-   Tn[1] = u;
-   for (i = 2; i < N; ++i) {
-      Tn[i] = 2*u*Tn[i-1] - Tn[i-2];
-   }   
-
-   for (i = N-1; i >= 0; --i) {
-      y += Cn[i]*Tn[i];
-   }   
-
-   return y;
-}
-
-// Returns x^(5/12) to within 3e-8 (relative error).
-static INLINE double pow512 (
-   double x)
-{
-   static const double pow2_512[12] = {
-      1.0,
-      pow(2.0, 5.0/12.0),
-      pow(4.0, 5.0/12.0),
-      pow(8.0, 5.0/12.0),
-      pow(16.0, 5.0/12.0),
-      pow(32.0, 5.0/12.0),
-      pow(64.0, 5.0/12.0),
-      pow(128.0, 5.0/12.0),
-      pow(256.0, 5.0/12.0),
-      pow(512.0, 5.0/12.0),
-      pow(1024.0, 5.0/12.0),
-      pow(2048.0, 5.0/12.0)
-   };
-
-   double s;
-   int iexp;
-
-   s = frexp (x, &iexp);
-   s *= 2.0;
-   iexp -= 1;
-
-   div_t qr = div (iexp, 12);
-   if (qr.rem < 0) {
-      qr.quot -= 1;
-      qr.rem += 12;
-   }
-
-   return ldexp (pow512norm(s)*pow2_512[qr.rem], 5*qr.quot);
-}
-
-static inline double
-flinear_to_gamma_2_2 (double value)
-{
-  if (value > 0.0030402477F)
-    return 1.055F * pow512 (value) - 0.055F;
-  return 12.92F * value;
-}
-
 static INLINE long
 conv_rgbaF_linear_rgbAF_gamma (unsigned char *src, 
                                unsigned char *dst, 
@@ -135,9 +41,9 @@ conv_rgbaF_linear_rgbAF_gamma (unsigned char *src,
    while (n--)
      {
        float alpha = fsrc[3];
-       *fdst++ = flinear_to_gamma_2_2 (*fsrc++) * alpha;
-       *fdst++ = flinear_to_gamma_2_2 (*fsrc++) * alpha;
-       *fdst++ = flinear_to_gamma_2_2 (*fsrc++) * alpha;
+       *fdst++ = linear_to_gamma_2_2 (*fsrc++) * alpha;
+       *fdst++ = linear_to_gamma_2_2 (*fsrc++) * alpha;
+       *fdst++ = linear_to_gamma_2_2 (*fsrc++) * alpha;
        *fdst++ = *fsrc++;
      }
   return samples;
@@ -165,17 +71,17 @@ conv_rgbAF_linear_rgbAF_gamma (unsigned char *src,
          }
        else if (alpha >= 1.0)
          {
-           *fdst++ = flinear_to_gamma_2_2 (*fsrc++);
-           *fdst++ = flinear_to_gamma_2_2 (*fsrc++);
-           *fdst++ = flinear_to_gamma_2_2 (*fsrc++);
+           *fdst++ = linear_to_gamma_2_2 (*fsrc++);
+           *fdst++ = linear_to_gamma_2_2 (*fsrc++);
+           *fdst++ = linear_to_gamma_2_2 (*fsrc++);
            *fdst++ = *fsrc++;
          }
        else
          {
            float alpha_recip = 1.0 / alpha;
-           *fdst++ = flinear_to_gamma_2_2 (*fsrc++ * alpha_recip) * alpha;
-           *fdst++ = flinear_to_gamma_2_2 (*fsrc++ * alpha_recip) * alpha;
-           *fdst++ = flinear_to_gamma_2_2 (*fsrc++ * alpha_recip) * alpha;
+           *fdst++ = linear_to_gamma_2_2 (*fsrc++ * alpha_recip) * alpha;
+           *fdst++ = linear_to_gamma_2_2 (*fsrc++ * alpha_recip) * alpha;
+           *fdst++ = linear_to_gamma_2_2 (*fsrc++ * alpha_recip) * alpha;
            *fdst++ = *fsrc++;
          }
      }
@@ -193,9 +99,9 @@ conv_rgbaF_linear_rgbaF_gamma (unsigned char *src,
 
    while (n--)
      {
-       *fdst++ = flinear_to_gamma_2_2 (*fsrc++);
-       *fdst++ = flinear_to_gamma_2_2 (*fsrc++);
-       *fdst++ = flinear_to_gamma_2_2 (*fsrc++);
+       *fdst++ = linear_to_gamma_2_2 (*fsrc++);
+       *fdst++ = linear_to_gamma_2_2 (*fsrc++);
+       *fdst++ = linear_to_gamma_2_2 (*fsrc++);
        *fdst++ = *fsrc++;
      }
   return samples;
@@ -212,9 +118,9 @@ conv_rgbF_linear_rgbF_gamma (unsigned char *src,
 
    while (n--)
      {
-       *fdst++ = flinear_to_gamma_2_2 (*fsrc++);
-       *fdst++ = flinear_to_gamma_2_2 (*fsrc++);
-       *fdst++ = flinear_to_gamma_2_2 (*fsrc++);
+       *fdst++ = linear_to_gamma_2_2 (*fsrc++);
+       *fdst++ = linear_to_gamma_2_2 (*fsrc++);
+       *fdst++ = linear_to_gamma_2_2 (*fsrc++);
      }
   return samples;
 }
