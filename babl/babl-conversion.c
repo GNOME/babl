@@ -429,7 +429,7 @@ babl_conversion_process (const Babl *babl,
   return n;
 }
 
-#define test_pixels    2048
+#define test_pixels    128
 
 
 static double *
