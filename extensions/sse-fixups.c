@@ -163,6 +163,10 @@ conv_rgbaF_linear_rgba8_linear (unsigned char *src,
   return samples;
 }
 
+#define conv_rgbaF_gamma_rgba8_gamma conv_rgbaF_linear_rgba8_linear
+#define conv_rgbaF_gamma_rgb8_gamma conv_rgbaF_linear_rgb8_linear
+
+
 #endif
 
 #define o(src, dst) \
@@ -199,11 +203,37 @@ init (void)
     babl_component ("B"),
     NULL);
 
+  const Babl *rgbaF_gamma = babl_format_new (
+    babl_model ("R'G'B'A"),
+    babl_type ("float"),
+    babl_component ("R'"),
+    babl_component ("G'"),
+    babl_component ("B'"),
+    babl_component ("A"),
+    NULL);
+  const Babl *rgba8_gamma = babl_format_new (
+    babl_model ("R'G'B'A"),
+    babl_type ("u8"),
+    babl_component ("R'"),
+    babl_component ("G'"),
+    babl_component ("B'"),
+    babl_component ("A"),
+    NULL);
+  const Babl *rgb8_gamma = babl_format_new (
+    babl_model ("R'G'B'"),
+    babl_type ("u8"),
+    babl_component ("R'"),
+    babl_component ("G'"),
+    babl_component ("B'"),
+    NULL);
+
   if ((babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_MMX) &&
       (babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_SSE))
     {
       o (rgbaF_linear, rgb8_linear);
       o (rgbaF_linear, rgba8_linear);
+      o (rgbaF_gamma, rgb8_gamma);
+      o (rgbaF_gamma, rgba8_gamma);
     }
 
 #endif
