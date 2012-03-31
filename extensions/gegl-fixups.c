@@ -473,9 +473,11 @@ conv_rgbAF_rgbaF (unsigned char *srcc,
   while (n--)
     {
       float alpha = src[3];
-      float recip = 1.0/alpha;
+      float recip;
       if (alpha < BABL_ALPHA_THRESHOLD)
         recip = 0.0;
+      else
+        recip = 1.0/alpha;
       dst[0] = src[0] * recip;
       dst[1] = src[1] * recip;
       dst[2] = src[2] * recip;
@@ -517,8 +519,6 @@ conv_rgbAF_lrgba8 (unsigned char *srcc,
     }
   return samples;
 }
-
-
 
 #define conv_rgb8_rgbAF    conv_rgb8_rgbaF
 

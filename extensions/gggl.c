@@ -610,9 +610,10 @@ conv_rgbAF_rgbaF (unsigned char *src, unsigned char *dst, long samples)
         }
       else
         {
+          float alpha_recip = 1.0 / alpha;
           for (c = 0; c < 3; c++)
             {
-              *(float *) dst = ((*(float *) src) / alpha);
+              *(float *) dst = ((*(float *) src) * alpha_recip);
               dst           += 4;
               src           += 4;
             }
