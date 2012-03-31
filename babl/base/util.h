@@ -16,8 +16,8 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _UTIL_H
-#define _UTIL_H
+#ifndef _BASE_UTIL_H
+#define _BASE_UTIL_H
 
 #include <assert.h>
 #include <math.h>
