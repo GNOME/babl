@@ -28,6 +28,7 @@
 
 #define INLINE inline
 
+#define  LSHIFT 2
 
 typedef  float (* BablLookupFunction) (float  value,
                                        void  *data);
@@ -38,8 +39,8 @@ typedef struct BablLookup
   BablLookupFunction function;
   void              *data;
   int               shift;
-  unsigned int            positive_min, positive_max, negative_min, negative_max;
-  unsigned int            bitmask[babl_LOOKUP_MAX_ENTRIES/32];
+  uint32_t            positive_min, positive_max, negative_min, negative_max;
+  uint32_t            bitmask[babl_LOOKUP_MAX_ENTRIES/32];
   float             table[];
 } BablLookup;
 
@@ -61,12 +62,12 @@ babl_lookup (BablLookup *lookup,
   union
   {
     float   f;
-    unsigned int i;
+    uint32_t i;
   } u;
-  unsigned int i;
+  uint32_t i;
 
   u.f = number;
-  i = u.i >> lookup->shift;
+  i = (u.i << LSHIFT )>> lookup->shift;
 
   if (i > lookup->positive_min &&
       i < lookup->positive_max)
@@ -79,6 +80,13 @@ babl_lookup (BablLookup *lookup,
 
   if (!(lookup->bitmask[i/32] & (1<<(i & 31))))
     {
+      /* XXX: should look up the value in the middle of the range
+       *      that yields a given value,
+       *
+       *      potentially even do linear interpolation between
+       *      the two neighbour values to get away with a tiny
+       *      lookup table.. 
+       */
       lookup->table[i]= lookup->function (number, lookup->data);
       lookup->bitmask[i/32] |= (1<<(i & 31));
     }
@@ -97,7 +105,7 @@ babl_lookup_new (BablLookupFunction function,
   union
   {
     float   f;
-    unsigned int i;
+    uint32_t i;
   } u;
   int positive_min, positive_max, negative_min, negative_max;
   int shift;
@@ -136,31 +144,31 @@ babl_lookup_new (BablLookupFunction function,
       if (end < 0.0)
         {
           u.f = start;
-          positive_max = u.i >> shift;
+          positive_max = (u.i << LSHIFT) >> shift;
           u.f = end;
-          positive_min = u.i >> shift;
+          positive_min = (u.i << LSHIFT) >> shift;
           negative_min = positive_max;
           negative_max = positive_max;
         }
       else
         {
           u.f = 0 - precision;
-          positive_min = u.i >> shift;
+          positive_min = (u.i << LSHIFT) >> shift;
           u.f = start;
-          positive_max = u.i >> shift;
+          positive_max = (u.i << LSHIFT) >> shift;
 
           u.f = 0 + precision;
-          negative_min = u.i >> shift;
+          negative_min = (u.i << LSHIFT) >> shift;
           u.f = end;
-          negative_max = u.i >> shift;
+          negative_max = (u.i << LSHIFT) >> shift;
         }
     }
   else
     {
       u.f = start;
-      positive_min = u.i >> shift;
+      positive_min = (u.i << LSHIFT) >> shift;
       u.f = end;
-      positive_max = u.i >> shift;
+      positive_max = (u.i << LSHIFT) >> shift;
       negative_min = positive_max;
       negative_max = positive_max;
     }
