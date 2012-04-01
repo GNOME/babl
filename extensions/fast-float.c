@@ -199,11 +199,6 @@ babl_lookup_new (BablLookupFunction function,
                                                   ((positive_max-positive_min)+
                                                    (negative_max-negative_min)), 1);
 
-  printf ("%i\n",
-            sizeof (BablLookup) + sizeof (float) *
-                                                  ((positive_max-positive_min)+
-                                                   (negative_max-negative_min)));
-
   lookup->positive_min = positive_min;
   lookup->positive_max = positive_max;
   lookup->negative_min = negative_min;
@@ -446,7 +441,7 @@ init (void)
     fast_pow = babl_lookup_new (core_lookup, NULL, 0.0, 1.0,   0.0001);
     fast_rpow = babl_lookup_new (core_rlookup, NULL, 0.0, 1.0, 0.0001);
 
-    for (f = 0.0; f < 1.0; f+= 0.000001)
+    for (f = 0.0; f < 1.0; f+= 0.00001)
       {
         a = linear_to_gamma_2_2_lut (f);
         a = gamma_2_2_to_linear_lut (f);
