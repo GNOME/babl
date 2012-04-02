@@ -5,7 +5,9 @@ the news section both in the README and the webpage.
 
                                                                           -->
 
-
+2012-03-30 babl-0.1.8                                               </dt><dd>
+LUT based speedups for gamma correction / uncorrection.
+                                                                    </dd><dt>
 2012-03-30 babl-0.1.8                                               </dt><dd>
 Added support for indexed/pallette based formats, constified API.
                                                                     </dd><dt>
