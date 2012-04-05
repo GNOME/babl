@@ -20,6 +20,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <values.h>
+#include <limits.h>
 #include <assert.h>
 #include "config.h"
 #include "babl-internal.h"
