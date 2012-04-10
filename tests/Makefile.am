@@ -9,6 +9,7 @@ TESTS =				\
 	srgb_to_lab_u8		\
 	sanity			\
 	babl_class_name		\
+	extract \
 	types			\
 	palette \
 	extract \
