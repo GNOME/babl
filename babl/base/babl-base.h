@@ -23,6 +23,7 @@ void babl_base_init (void);
 void babl_base_destroy (void);
 void babl_formats_init (void);
 
+void babl_base_type_half   (void);
 void babl_base_type_float  (void);
 void babl_base_type_u8     (void);
 void babl_base_type_u16    (void);

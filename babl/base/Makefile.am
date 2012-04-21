@@ -6,6 +6,7 @@ c_sources =			\
 	babl-base.c		\
 	formats.c		\
 	type-float.c		\
+	type-half.c		\
 	type-u8.c		\
 	type-u16.c		\
 	type-u32.c		\
