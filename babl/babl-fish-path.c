@@ -410,16 +410,6 @@ babl_process (const Babl *cbabl,
   return -1;
 }
 
-#include <stdint.h>
-
-#define BABL_ALIGN 16
-static void inline *align_16 (unsigned char *ret)
-{
-  int offset = BABL_ALIGN - ((uintptr_t) ret) % BABL_ALIGN;
-  ret = ret + offset;
-  return ret;
-}
-
 static long
 process_conversion_path (BablList   *path,
                          const void *source_buffer,
@@ -437,7 +427,7 @@ process_conversion_path (BablList   *path,
     }
   else
     {
-      void *aux1_buffer = align_16 (alloca (n * sizeof (double) * 5 + 16));
+      void *aux1_buffer = babl_malloc (n * sizeof (double) * 5);
       void *aux2_buffer = NULL;
       void *swap_buffer = NULL;
       int   i;
@@ -445,7 +435,7 @@ process_conversion_path (BablList   *path,
       if (conversions > 2)
         {
           /* We'll need one more auxiliary buffer */
-          aux2_buffer = align_16 (alloca ((n * sizeof (double) * 5 + 16)));
+          aux2_buffer = babl_malloc (n * sizeof (double) * 5);
         }
 
       /* The first conversion goes from source_buffer to aux1_buffer */
@@ -473,6 +463,12 @@ process_conversion_path (BablList   *path,
                                aux1_buffer,
                                destination_buffer,
                                n);
+
+      /* Free auxiliary buffers */
+      if (aux1_buffer)
+        babl_free (aux1_buffer);
+      if (aux2_buffer)
+        babl_free (aux2_buffer);
   }
 
   return n;
