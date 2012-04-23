@@ -67,21 +67,20 @@ static inline double xpow512 (double x)
 }
 
 
-#if 0
 static inline double
 linear_to_gamma_2_2 (double value)
 {
+#if 0
   if (value > 0.0030402477F)
     return 1.055F * pow (value, (1.0F/2.4F)) - 0.055F;
   return 12.92F * value;
-}
 #else
-
-#define linear_to_gamma_2_2(value) \
-  ((value > 0.0030402477F)? 1.055F * xpow512 (value) - 0.055F: 12.92F * value)
+  if (value > 0.0030402477F)
+    return 1.055F * xpow512 (value) - 0.055F;
+  return 12.92F * value;
 #endif
+}
 
-#if 0
 static inline double
 gamma_2_2_to_linear (double value)
 {
@@ -89,10 +88,6 @@ gamma_2_2_to_linear (double value)
     return pow ((value + 0.055F) / 1.055F, 2.4F);
   return value / 12.92F;
 }
-#else
-#define gamma_2_2_to_linear(value) \
-  ((value > 0.03928F) ?  pow ((value + 0.055F) / 1.055F, 2.4F):value / 12.92F)
-#endif
 
 #else
   #define linear_to_gamma_2_2(value) (pow((value), (1.0F/2.2F)))
