@@ -78,7 +78,7 @@ linear_to_gamma_2_2 (double value)
 #else
 
 #define linear_to_gamma_2_2(value) \
-  ((value > 0.0030402477F)? 1.055F * xpow512 (value) - 0.055F: 12.92F * value)
+  (((value) > 0.0030402477F)? 1.055F * xpow512 ((value)) - 0.055F: 12.92F * (value))
 #endif
 
 #if 0
@@ -91,7 +91,7 @@ gamma_2_2_to_linear (double value)
 }
 #else
 #define gamma_2_2_to_linear(value) \
-  ((value > 0.03928F) ?  pow ((value + 0.055F) / 1.055F, 2.4F):value / 12.92F)
+  (((value) > 0.03928F) ?  pow (((value) + 0.055F) / 1.055F, 2.4F):(value) / 12.92F)
 #endif
 
 #else
