@@ -653,4 +653,16 @@ babl_set_user_data (const Babl *cbabl, void *data)
     }
 }
 
+const Babl *
+babl_format_get_model (const Babl *format)
+{
+  if (format->class_type == BABL_FORMAT)
+    {
+      return (Babl*)format->format.model;
+    }
+  return NULL;
+}
+
 BABL_CLASS_IMPLEMENT (format)
+
+

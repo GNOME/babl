@@ -105,6 +105,11 @@ int          babl_format_has_alpha             (const Babl *format);
 int          babl_format_get_bytes_per_pixel   (const Babl *format);
 
 /**
+ * Return the model used for constructing the format.
+ */
+const Babl * babl_format_get_model             (const Babl *format);
+
+/**
  * Returns the number of components for the given @format.
  */
 int          babl_format_get_n_components      (const Babl *format);
