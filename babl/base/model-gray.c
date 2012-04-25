@@ -30,12 +30,14 @@
 static void components (void);
 static void models (void);
 static void conversions (void);
+static void formats (void);
 
 void babl_base_model_gray (void)
 {
   components ();
   models ();
   conversions ();
+  formats ();
 }
 
 static void
@@ -584,4 +586,48 @@ conversions (void)
     "planar", rgba_to_gray_alpha_premultiplied,
     NULL
   );
+}
+
+static void
+formats (void)
+{
+  babl_format_new (
+    babl_model_from_id (BABL_GRAY_ALPHA),
+    babl_type_from_id (BABL_HALF),
+    babl_component_from_id (BABL_LUMINANCE),
+    babl_component_from_id (BABL_ALPHA),
+    NULL);
+
+  babl_format_new (
+    babl_model_from_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
+    babl_type_from_id (BABL_HALF),
+    babl_component_from_id (BABL_LUMINANCE_MUL_ALPHA),
+    babl_component_from_id (BABL_ALPHA),
+    NULL);
+
+  babl_format_new (
+    babl_model_from_id (BABL_GRAY),
+    babl_type_from_id (BABL_HALF),
+    babl_component_from_id (BABL_LUMINANCE),
+    NULL);
+
+  babl_format_new (
+    babl_model_from_id (BABL_GRAY_GAMMA_2_2_ALPHA),
+    babl_type_from_id (BABL_HALF),
+    babl_component_from_id (BABL_LUMA),
+    babl_component_from_id (BABL_ALPHA),
+    NULL);
+
+  babl_format_new (
+    babl_model_from_id (BABL_GRAY_GAMMA_2_2_ALPHA_PREMULTIPLIED),
+    babl_type_from_id (BABL_HALF),
+    babl_component_from_id (BABL_LUMA_MUL_ALPHA),
+    babl_component_from_id (BABL_ALPHA),
+    NULL);
+
+  babl_format_new (
+    babl_model_from_id (BABL_GRAY_GAMMA_2_2),
+    babl_type_from_id (BABL_HALF),
+    babl_component_from_id (BABL_LUMA),
+    NULL);
 }
