@@ -40,6 +40,7 @@
  */
 
 #include <stdlib.h>
+#include <stdint.h>
 
 #include "config.h"
 #include "babl.h"
@@ -54,8 +55,8 @@
 
 static float         table_8_F[1 << 8];
 static float         table_8g_F[1 << 8];
-static unsigned char table_F_8[1 << 16];
-static unsigned char table_F_8g[1 << 16];
+static unsigned char table_F_8[1 << 17];
+static unsigned char table_F_8g[1 << 17];
 
 static int           table_inited = 0;
 
@@ -80,51 +81,55 @@ table_init (void)
   {
     union
     {
-      float          f;
-      unsigned short s[2];
+      float    f;
+      uint32_t s;
     } u;
     u.f = 0.0;
 
-    u.s[0] = 0.0;
+    //u.s[0] = 0;
 
-    for (u.s[1] = 0; u.s[1] < 65535; u.s[1] += 1)
+    for (u.s = 0; u.s < 4294900000; u.s += 32768)
       {
-        unsigned char c;
-        unsigned char cg;
+        int c;
+        int cg;
 
         if (u.f <= 0.0)
           {
             c  = 0;
             cg = 0;
           }
-        else if (u.f >= 1.0)
-          {
-            c  = 255;
-            cg = 255;
-          }
         else
           {
-            c  = rint (u.f * 255.0);
-            cg = rint (linear_to_gamma_2_2 (u.f) * 255.0);
+            c  = (u.f * 255.165) + 0.5;
+            cg = (linear_to_gamma_2_2 (u.f) * 255.165) + 0.5;
+            if (cg > 255) cg = 255;
+            if (c > 255) c = 255;
           }
 
-        table_F_8[u.s[1]]  = c;
-        table_F_8g[u.s[1]] = cg;
+        table_F_8[(u.s >> 15) & ((1 << 17)-1)]  = c;
+        table_F_8g[(u.s >> 15) & ((1 << 17)-1)] = cg;
       }
   }
+#if 0
   /* fix tables to ensure 1:1 conversions back and forth */
   if (0)
     {
       int i;
       for (i = 0; i < 256; i++)
         {
-          float           f  = table_8_F[i];
+          float           f;
           unsigned short *hi = ((unsigned short *) (void *) &f);
           unsigned short *lo = ((unsigned short *) (void *) &f);
+
+          f = table_8_F[i];
           *lo              = 0;
-          table_F_8[(*hi)] = i;
+          table_F_8[*hi] = i;
+          f  = table_8g_F[i];
+          *lo              = 0;
+          table_F_8g[*hi] = i;
         }
     }
+#endif
 }
 
 /* function to find the index in table for a float */
@@ -134,10 +139,10 @@ gggl_float_to_index16 (float f)
   union
   {
     float          f;
-    unsigned short s[2];
+    uint32_t       s;
   } u;
   u.f = f;
-  return u.s[1];
+  return (u.s >> 15) & ((1 << 17)-1);
 }
 
 static INLINE long
