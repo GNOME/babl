@@ -100,8 +100,8 @@ table_init (void)
           }
         else
           {
-            c  = (u.f * 255.165) + 0.5;
-            cg = (linear_to_gamma_2_2 (u.f) * 255.165) + 0.5;
+            c  = (u.f * 255.1619) + 0.5;
+            cg = (linear_to_gamma_2_2 (u.f) * 255.1619) + 0.5;
             if (cg > 255) cg = 255;
             if (c > 255) c = 255;
           }
