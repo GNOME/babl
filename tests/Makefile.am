@@ -10,6 +10,7 @@ TESTS =				\
 	sanity			\
 	babl_class_name		\
 	extract \
+	floatclamp \
 	types			\
 	palette \
 	extract \
