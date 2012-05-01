@@ -56,8 +56,8 @@ main (int    argc,
   int OK = 1;
   babl_init ();
   {
-    float in[][4]   = {{ 0.21582, -0.55, -0.14, 1.0 }};
-    unsigned char out[][4]  = {{ 55, 0, 0, 255 }};
+    float in[][4]   = {{ 0.21582, -0.55, -0.14, 1.0 }, {0.0, 1.0, 2.0, 3.0}};
+    unsigned char out[][4]  = {{ 55, 0, 0, 255 }, {0,255,255,255}};
 
     CHECK_CONV("float -> u8", unsigned char,
         babl_format("R'G'B'A float"),
