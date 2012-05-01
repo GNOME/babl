@@ -597,37 +597,66 @@ formats (void)
     babl_component_from_id (BABL_LUMINANCE),
     babl_component_from_id (BABL_ALPHA),
     NULL);
-
   babl_format_new (
     babl_model_from_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
     babl_type_from_id (BABL_HALF),
     babl_component_from_id (BABL_LUMINANCE_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
     NULL);
-
   babl_format_new (
     babl_model_from_id (BABL_GRAY),
     babl_type_from_id (BABL_HALF),
     babl_component_from_id (BABL_LUMINANCE),
     NULL);
-
   babl_format_new (
     babl_model_from_id (BABL_GRAY_GAMMA_2_2_ALPHA),
     babl_type_from_id (BABL_HALF),
     babl_component_from_id (BABL_LUMA),
     babl_component_from_id (BABL_ALPHA),
     NULL);
-
   babl_format_new (
     babl_model_from_id (BABL_GRAY_GAMMA_2_2_ALPHA_PREMULTIPLIED),
     babl_type_from_id (BABL_HALF),
     babl_component_from_id (BABL_LUMA_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
     NULL);
-
   babl_format_new (
     babl_model_from_id (BABL_GRAY_GAMMA_2_2),
     babl_type_from_id (BABL_HALF),
+    babl_component_from_id (BABL_LUMA),
+    NULL);
+  babl_format_new (
+    babl_model_from_id (BABL_GRAY_ALPHA),
+    babl_type_from_id (BABL_U32),
+    babl_component_from_id (BABL_LUMINANCE),
+    babl_component_from_id (BABL_ALPHA),
+    NULL);
+  babl_format_new (
+    babl_model_from_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
+    babl_type_from_id (BABL_U32),
+    babl_component_from_id (BABL_LUMINANCE_MUL_ALPHA),
+    babl_component_from_id (BABL_ALPHA),
+    NULL);
+  babl_format_new (
+    babl_model_from_id (BABL_GRAY),
+    babl_type_from_id (BABL_U32),
+    babl_component_from_id (BABL_LUMINANCE),
+    NULL);
+  babl_format_new (
+    babl_model_from_id (BABL_GRAY_GAMMA_2_2_ALPHA),
+    babl_type_from_id (BABL_U32),
+    babl_component_from_id (BABL_LUMA),
+    babl_component_from_id (BABL_ALPHA),
+    NULL);
+  babl_format_new (
+    babl_model_from_id (BABL_GRAY_GAMMA_2_2_ALPHA_PREMULTIPLIED),
+    babl_type_from_id (BABL_U32),
+    babl_component_from_id (BABL_LUMA_MUL_ALPHA),
+    babl_component_from_id (BABL_ALPHA),
+    NULL);
+  babl_format_new (
+    babl_model_from_id (BABL_GRAY_GAMMA_2_2),
+    babl_type_from_id (BABL_U32),
     babl_component_from_id (BABL_LUMA),
     NULL);
 }
