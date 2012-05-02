@@ -61,6 +61,7 @@
 #include "config.h"
 #include <string.h>
 #include <assert.h>
+#include <stdint.h>
 
 #include "babl.h"
 #include "babl-classes.h"
@@ -69,10 +70,10 @@
 
 
 #define  mwSize              int
-#define  INT16_TYPE          short
-#define UINT16_TYPE unsigned short
-#define  INT32_TYPE          long
-#define UINT32_TYPE unsigned long
+#define  INT16_TYPE          int16_t
+#define UINT16_TYPE          uint16_t
+#define  INT32_TYPE          int32_t
+#define UINT32_TYPE          uint32_t
 
 static int next = 1; /* should be 0 for big endian */
 
