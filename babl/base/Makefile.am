@@ -8,6 +8,7 @@ c_sources =			\
 	type-float.c		\
 	type-half.c		\
 	type-u8.c		\
+	type-u15.c		\
 	type-u16.c		\
 	type-u32.c		\
 	model-rgb.c		\

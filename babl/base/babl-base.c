@@ -50,6 +50,7 @@ babl_base_destroy (void)
 static void
 types (void)
 {
+  babl_base_type_u15 ();
   babl_base_type_half ();
   babl_base_type_float ();
   babl_base_type_u8 ();
@@ -65,7 +66,9 @@ types (void)
 static void
 models (void)
 {
+  babl_hmpf_on_name_lookups--;
   babl_base_model_rgb ();
   babl_base_model_gray ();
+  babl_hmpf_on_name_lookups++;
   babl_base_model_ycbcr ();
 }
