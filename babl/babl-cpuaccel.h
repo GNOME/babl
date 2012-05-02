@@ -32,7 +32,8 @@ typedef enum
   BABL_CPU_ACCEL_X86_SSE3    = 0x02000000,
 
   /* powerpc accelerations */
-  BABL_CPU_ACCEL_PPC_ALTIVEC = 0x04000000
+  BABL_CPU_ACCEL_PPC_ALTIVEC = 0x04000000,
+  BABL_CPU_ACCEL_X86_64      = 0x00100000
 } BablCpuAccelFlags;
 
 

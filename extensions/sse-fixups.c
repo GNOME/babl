@@ -228,7 +228,8 @@ init (void)
     NULL);
 
   if ((babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_MMX) &&
-      (babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_SSE))
+      (babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_SSE) &&
+      !(babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_64))
     {
       o (rgbaF_linear, rgb8_linear);
       o (rgbaF_linear, rgba8_linear);

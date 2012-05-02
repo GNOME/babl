@@ -490,6 +490,10 @@ cpu_accel (void)
 
   accel = arch_accel ();
 
+#if defined(ARCH_X86_64)
+  accel |= BABL_CPU_ACCEL_X86;
+#endif
+
   return (BablCpuAccelFlags) accel;
 
 #else /* !HAVE_ACCEL */

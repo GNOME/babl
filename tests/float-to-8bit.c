@@ -31,7 +31,11 @@ main (int    argc,
 {
   int OK = 1;
   babl_init ();
+  int i = 0;
 
+  
+  for (i = 0; i < 400000; i++)
+  {
   {
     float in[][4]   = {{ 0.21582, -0.55, -0.14, 1.0 }, {0.2, 0.3, 0.5, 0.6}, {0.0, 1.0, 2.0, 3.0}};
     unsigned char out[][4]  = {{ 55, 0, 0, 255 }, {51,77,128,153}, {0,255,255,255}};
@@ -90,6 +94,7 @@ main (int    argc,
         babl_format("R'aG'aB'aA float"),
         babl_format("R'G'B'A u8"),
         in, out);
+  }
   }
 
   babl_exit ();
