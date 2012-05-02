@@ -11,6 +11,7 @@ TESTS =				\
 	babl_class_name		\
 	extract \
 	floatclamp \
+	float-to-8bit \
 	types			\
 	palette \
 	extract \
@@ -28,6 +29,8 @@ endif
 
 LDADD = $(top_builddir)/babl/libbabl-@BABL_API_VERSION@.la \
 	$(MATH_LIB)
+
+EXTRA_DIST=common.inc
 
 noinst_PROGRAMS =		\
 	introspect		\
