@@ -30,9 +30,9 @@ main (int    argc,
       char **argv)
 {
   int OK = 1;
-  babl_init ();
   int i = 0;
 
+  babl_init ();
   
   for (i = 0; i < 400000; i++)
   {
