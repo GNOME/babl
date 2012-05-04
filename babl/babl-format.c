@@ -115,6 +115,7 @@ format_new (const char     *name,
   babl->format.visited = 0;
   babl->format.image_template = NULL;
   babl->format.format_n = 0;
+  babl->format.palette = 0;
 
   return babl;
 }

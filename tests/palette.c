@@ -29,6 +29,7 @@ main (int    argc,
 {
   int OK = 1;
   babl_init ();
+  OK = ! babl_format_is_palette (babl_format_n (babl_type ("double"), 3));
   if(1){
     unsigned char in[][1]   = {{        0},{          1},{          2},{15}};
     unsigned char out[][4]  = {{0,0,0,255},{127,0,0,255},{0,127,0,255},{255,255,255,255}};
