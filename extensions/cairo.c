@@ -56,7 +56,7 @@ init (void)
     {
       babl_format_new (
         "name", "cairo-ARGB32",
-        babl_model ("R'G'B'A"),
+        babl_model ("R'aG'aB'aA"),
         babl_type ("u8"),
         babl_component ("A"),
         babl_component ("R'a"),
