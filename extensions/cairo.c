@@ -21,6 +21,54 @@
 
 int init (void);
 
+static inline long
+conv_rgba8_cairo24_le (unsigned char *src, unsigned char *dst, long samples)
+{
+  long n = samples;
+  while (n--)
+    {
+      dst[0] = src[2];
+      dst[1] = src[1];
+      dst[2] = src[0];
+      dst[3] = src[0];
+      src+=4;
+      dst+=4;
+    }
+  return samples;
+}
+
+static inline long
+conv_rgb8_cairo24_le (unsigned char *src, unsigned char *dst, long samples)
+{
+  long n = samples;
+  while (n--)
+    {
+      dst[0] = src[2];
+      dst[1] = src[1];
+      dst[2] = src[0];
+      dst[3] = src[0];
+      src+=3;
+      dst+=4;
+    }
+  return samples;
+}
+
+static inline long
+conv_rgbA8_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
+{
+  long n = samples;
+  while (n--)
+    {
+      dst[0] = src[2];
+      dst[1] = src[1];
+      dst[2] = src[0];
+      dst[3] = src[3];
+      src+=4;
+      dst+=4;
+    }
+  return samples;
+}
+
 int
 init (void)
 {
@@ -30,7 +78,7 @@ init (void)
 
   if (littleendian)
     {
-      babl_format_new (
+      const Babl *f32 = babl_format_new (
         "name", "cairo-ARGB32",
         babl_model ("R'aG'aB'aA"),
         babl_type ("u8"),
@@ -41,7 +89,7 @@ init (void)
         NULL
       );
 
-      babl_format_new (
+      const Babl *f24 = babl_format_new (
         "name", "cairo-RGB24",
         babl_model ("R'G'B'"),
         babl_type ("u8"),
@@ -51,6 +99,13 @@ init (void)
         babl_component ("PAD"),
         NULL
       );
+
+      babl_conversion_new (babl_format ("R'aG'aB'aA u8"), f32, "linear", 
+                           conv_rgbA8_cairo32_le, NULL);
+      babl_conversion_new (babl_format ("R'G'B'A u8"), f24, "linear", 
+                           conv_rgba8_cairo24_le, NULL);
+      babl_conversion_new (babl_format ("R'G'B' u8"), f24, "linear", 
+                           conv_rgb8_cairo24_le, NULL);
     }
   else
     {
