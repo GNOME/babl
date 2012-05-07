@@ -208,9 +208,6 @@ esac
 
 AC_MSG_CHECKING([for some Win32 platform])
 case "$target_or_host" in 
-  *-*-darwin*)                 # darwin
-    shrext=.dylib
-    ;;
   hppa*-hpux*)		       # HP/UX
     shrext=.sl
     ;;
