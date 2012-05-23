@@ -8,13 +8,16 @@
 /babl_fish_path_fitness*
 /concurrency-stress-test*
 /conversions*
-/float_to_u8
+/extract*
+/float-to-8bit*
+/floatclamp*
 /formats*
 /grayscale_to_rgb*
 /introspect*
 /models*
 /n_components*
 /nop*
+/palette*
 /rgb_to_bgr*
 /rgb_to_lab_to_rgb
 /rgb_to_ycbcr*
