@@ -27,3 +27,7 @@ EXTRA_DIST = 		\
 	util.h	\
 	pow-24.h
 
+noinst_PROGRAMS = test-pow
+
+test_pow_SOURCES = test-pow.c
+test_pow_LDADD = libbase.la $(MATH_LIB)
