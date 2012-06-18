@@ -21,6 +21,7 @@
 
 #include <assert.h>
 #include <math.h>
+#include "pow-24.h"
 
 /* Alpha threshold used in the reference implementation for
  * un-pre-multiplication of color data:
@@ -55,18 +56,6 @@
 #define BABL_USE_SRGB_GAMMA
 
 #ifdef BABL_USE_SRGB_GAMMA
-
-/*  fast approximation of x ^ (5/12) from a response by David Hammen at
- *  http://stackoverflow.com/questions/6475373/optimizations-for-pow-with-const-non-integer-exponent/6475516#6475516
- *
- */
-static inline double xpow512 (double x)
-{
-  double cbrtx = cbrt(x);
-  return cbrtx*sqrt(sqrt(cbrtx));
-}
-
-
 static inline double
 linear_to_gamma_2_2 (double value)
 {
@@ -76,7 +65,7 @@ linear_to_gamma_2_2 (double value)
   return 12.92F * value;
 #else
   if (value > 0.0030402477F)
-    return 1.055F * xpow512 (value) - 0.055F;
+    return 1.055F * babl_pow_1_24 (value) - 0.055F;
   return 12.92F * value;
 #endif
 }
@@ -84,9 +73,15 @@ linear_to_gamma_2_2 (double value)
 static inline double
 gamma_2_2_to_linear (double value)
 {
+#if 0
   if (value > 0.03928F)
     return pow ((value + 0.055F) / 1.055F, 2.4F);
   return value / 12.92F;
+#else
+  if (value > 0.03928F)
+    return babl_pow_24 ((value + 0.055F) / 1.055F);
+  return value / 12.92F;
+#endif
 }
 
 #else
