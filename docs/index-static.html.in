@@ -219,9 +219,9 @@
         <pre>
 int width = 123, height = 581, pixel_count = width * height;
 
-const Babl *srgb            = <span class='function'>babl_format</span> <span class='paren'>(</span><span class='string'>"R'G'B' u8"</span><span class='paren'>)</span>;
-const Babl *lab             = <span class='function'>babl_format</span> <span class='paren'>(</span><span class='string'>"CIE Lab float"</span><span class='paren'>)</span>;
-Babl       *rgb_to_lab_fish = <span class='function'>babl_fish</span> <span class='paren'>(</span>srgb, lab);
+const Babl *srgb             = <span class='function'>babl_format</span> <span class='paren'>(</span><span class='string'>"R'G'B' u8"</span><span class='paren'>)</span>;
+const Babl *lab              = <span class='function'>babl_format</span> <span class='paren'>(</span><span class='string'>"CIE Lab float"</span><span class='paren'>)</span>;
+const Babl *srgb_to_lab_fish = <span class='function'>babl_fish</span> <span class='paren'>(</span>srgb, lab);
 
 float         *lab_buffer;
 unsigned char *srgb_buffer;
@@ -233,7 +233,7 @@ lab_buffer  = malloc (pixel_count * 3 * sizeof (float));
 
 ...... load data into srgb_buffer .......
 
-<span class='function'>babl_process</span> <span class='paren'>(</span>rgb_to_lab_fish, srgb_buffer, lab_buffer, pixel_count<span class='paren'>);</span>
+<span class='function'>babl_process</span> <span class='paren'>(</span>srgb_to_lab_fish, srgb_buffer, lab_buffer, pixel_count<span class='paren'>);</span>
 
 ...... do operation in lab space ........
 
