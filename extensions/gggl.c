@@ -1035,9 +1035,10 @@ conv_rgba8_rgbA8 (unsigned char *src, unsigned char *dst, long samples)
         }
       else
         {
-          dst[0] = (src[0] * src[3]) >> 8;      /* FIXME: check if this faster */
-          dst[1] = (src[1] * src[3]) >> 8;      /*        version (>>8 vs /255) */
-          dst[2] = (src[2] * src[3]) >> 8;      /*        is accurate enough   */
+#define div_255(a) ((((a)+127)+(((a)+127)>>8))>>8)
+          dst[0] = div_255 (src[0] * src[3]);
+          dst[1] = div_255 (src[1] * src[3]);
+          dst[2] = div_255 (src[2] * src[3]);
           dst[3] = src[3];
         }
       dst += 4;
