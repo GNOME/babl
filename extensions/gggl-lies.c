@@ -342,7 +342,8 @@ conv_16_8 (unsigned char *src, unsigned char *dst, long samples)
 
   while (n--)
     {
-      (*(unsigned char *) dst) = (*(unsigned short *) src) >> 8;
+#define div_257(a) ((((a)+128)-(((a)+128)>>8))>>8)
+      (*(unsigned char *) dst) = div_257 (*(unsigned short *) src);
       dst                     += 1;
       src                     += 2;
     }
@@ -356,7 +357,7 @@ conv_8_16 (unsigned char *src, unsigned char *dst, long samples)
 
   while (n--)
     {
-      (*(unsigned short *) dst) = (*(unsigned char *) src) << 8;
+      (*(unsigned short *) dst) = ((*(unsigned char *) src) << 8) | *src;
       dst                      += 2;
       src                      += 1;
     }
