@@ -1095,10 +1095,10 @@ conv_rgbA8_rgba8 (unsigned char *src, unsigned char *dst, long samples)
         }
       else
         {
-          unsigned int aa = (255 << 16) / src[3];
-          *dst++ = (src[0] * aa) >> 16;
-          *dst++ = (src[1] * aa) >> 16;
-          *dst++ = (src[2] * aa) >> 16;
+          unsigned int aa = ((255 << 16) + (src[3] >> 1)) / src[3];
+          *dst++ = (src[0] * aa + 0x8000) >> 16;
+          *dst++ = (src[1] * aa + 0x8000) >> 16;
+          *dst++ = (src[2] * aa + 0x8000) >> 16;
           *dst++ = src[3];
         }
       src += 4;
