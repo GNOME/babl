@@ -18,6 +18,7 @@ TESTS =				\
 	nop \
 	n_components		\
 	models			\
+	cairo-RGB24		\
 	$(CONCURRENCY_STRESS_TEST)
 
 TESTS_ENVIRONMENT = BABL_PATH=$(top_builddir)/extensions/.libs
