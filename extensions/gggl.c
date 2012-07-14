@@ -213,6 +213,33 @@ conv_16_F (unsigned char *src, unsigned char *dst, long samples)
   return samples;
 }
 
+static INLINE long
+conv_rgbaF_rgb8 (unsigned char *src, unsigned char *dst, long samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      register float f = (*(float *) src);
+      *(unsigned char *) dst = table_F_8[gggl_float_to_index16 (f)];
+      src                   += 4;
+      dst                   += 1;
+
+      f                      = (*(float *) src);
+      *(unsigned char *) dst = table_F_8[gggl_float_to_index16 (f)];
+      src                   += 4;
+      dst                   += 1;
+
+      f                      = (*(float *) src);
+      *(unsigned char *) dst = table_F_8[gggl_float_to_index16 (f)];
+      src                   += 4;
+      dst                   += 1;
+
+      src += 4;
+    }
+  return samples;
+}
+
 #else
 
 static INLINE long
@@ -289,6 +316,31 @@ conv_16_F (unsigned char *src, unsigned char *dst, long samples)
   return samples;
 }
 
+static INLINE long
+conv_rgbaF_rgb8 (unsigned char *src, unsigned char *dst, long samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      int c;
+
+      for (c = 0; c < 3; c++)
+        {
+          int val = rint ((*(float *) src) * 255.0);
+          if (val < 0)
+            *(unsigned char *) dst = 0;
+          else if (val > 255)
+            *(unsigned char *) dst = 255;
+          else
+            *(unsigned char *) dst = val;
+          dst += 1;
+          src += 4;
+        }
+      src += 4;
+    }
+  return samples;
+}
 
 #endif
 
@@ -345,33 +397,6 @@ conv_8_16 (unsigned char *src, unsigned char *dst, long samples)
       (*(unsigned short *) dst) = (*(unsigned char *) src) << 8;
       dst                      += 2;
       src                      += 1;
-    }
-  return samples;
-}
-
-static INLINE long
-conv_rgbaF_rgb8 (unsigned char *src, unsigned char *dst, long samples)
-{
-  long n = samples;
-
-  while (n--)
-    {
-      register float f = (*(float *) src);
-      *(unsigned char *) dst = table_F_8[gggl_float_to_index16 (f)];
-      src                   += 4;
-      dst                   += 1;
-
-      f                      = (*(float *) src);
-      *(unsigned char *) dst = table_F_8[gggl_float_to_index16 (f)];
-      src                   += 4;
-      dst                   += 1;
-
-      f                      = (*(float *) src);
-      *(unsigned char *) dst = table_F_8[gggl_float_to_index16 (f)];
-      src                   += 4;
-      dst                   += 1;
-
-      src += 4;
     }
   return samples;
 }
@@ -843,33 +868,6 @@ conv_rgbaF_rgbA16 (unsigned char *src, unsigned char *dst, long samples)
     }
   return samples;
 }
-#if 0
-static INLINE long
-conv_rgbaF_rgb8 (unsigned char *src, unsigned char *dst, long samples)
-{
-  long n = samples;
-
-  while (n--)
-    {
-      int c;
-
-      for (c = 0; c < 3; c++)
-        {
-          int val = rint ((*(float *) src) * 255.0);
-          if (val < 0)
-            *(unsigned char *) dst = 0;
-          else if (val > 255)
-            *(unsigned char *) dst = 255;
-          else
-            *(unsigned char *) dst = val;
-          dst += 1;
-          src += 4;
-        }
-      src += 4;
-    }
-  return samples;
-}
-#endif
 
 static INLINE long
 conv_rgbaF_rgb16 (unsigned char *src, unsigned char *dst, long samples)
