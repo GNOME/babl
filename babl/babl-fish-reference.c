@@ -133,14 +133,14 @@ convert_to_double (BablFormat      *source_fmt,
             {
               dst_img->data[0] =
                 source_double_buf + (dst_img->type[0]->bits / 8) * j;
+
+              babl_process (assert_conversion_find (src_img->type[0],
+                                                    dst_img->type[0]),
+                            src_img, dst_img, n);
               break;
             }
         }
 
-      babl_process (
-        assert_conversion_find (src_img->type[0], dst_img->type[0]),
-        src_img, dst_img,
-        n);
       src_img->data[0] += src_img->type[0]->bits / 8;
     }
   babl_free (src_img);
@@ -187,14 +187,14 @@ convert_from_double (BablFormat *destination_fmt,
             {
               src_img->data[0] =
                 destination_double_buf + (src_img->type[0]->bits / 8) * j;
+
+              babl_process (assert_conversion_find (src_img->type[0],
+                                                    dst_img->type[0]),
+                            src_img, dst_img, n);
               break;
             }
         }
 
-      babl_process (
-        assert_conversion_find (src_img->type[0], dst_img->type[0]),
-        src_img, dst_img,
-        n);
       dst_img->data[0] += dst_img->type[0]->bits / 8;
     }
   babl_free (src_img);
