@@ -113,8 +113,8 @@ table_init (void)
           }
         else
           {
-            c = rint (u.f * 255.0);
-            s = rint (u.f * 65535.0);
+            c = lrint (u.f * 255.0);
+            s = lrint (u.f * 65535.0);
           }
 
         /*fprintf (stderr, "%2.3f=%03i %05i ", f, c, (*hi));
@@ -240,7 +240,7 @@ conv_F_8 (unsigned char *src, unsigned char *dst, long samples)
         }
       else
         {
-          *(unsigned char *) dst = rint (f * 255.0);
+          *(unsigned char *) dst = lrint (f * 255.0);
         }
       dst += 1;
       src += 4;
@@ -266,7 +266,7 @@ conv_F_16 (unsigned char *src, unsigned char *dst, long samples)
         }
       else
         {
-          *(unsigned short *) dst = rint (f * 65535.0);
+          *(unsigned short *) dst = lrint (f * 65535.0);
         }
       dst += 2;
       src += 4;
@@ -846,11 +846,11 @@ conv_rgbaF_rgbA8 (unsigned char *src, unsigned char *dst, long samples)
 
       for (c = 0; c < 3; c++)
         {
-          *(unsigned char *) dst = ((*(float *) src) * alpha) * 255.0;
+          *(unsigned char *) dst = lrint (((*(float *) src) * alpha) * 255.0);
           dst                   += 1;
           src                   += 4;
         }
-      *(unsigned char *) dst = alpha * 255.0;
+      *(unsigned char *) dst = lrint (alpha * 255.0);
       dst++;
       src += 4;
     }
@@ -868,7 +868,7 @@ conv_rgbaF_rgb8 (unsigned char *src, unsigned char *dst, long samples)
 
       for (c = 0; c < 3; c++)
         {
-          *(unsigned char *) dst = (*(float *) src) * 255.0;
+          *(unsigned char *) dst = lrint ((*(float *) src) * 255.0);
           dst                   += 1;
           src                   += 4;
         }
@@ -910,7 +910,7 @@ conv_rgbaF_rgb16 (unsigned char *src, unsigned char *dst, long samples)
 
       for (c = 0; c < 3; c++)
         {
-          *(unsigned short *) dst = (*(float *) src) * 65535.0;
+          *(unsigned short *) dst = lrint ((*(float *) src) * 65535.0);
           dst                    += 2;
           src                    += 4;
         }
