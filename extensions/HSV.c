@@ -1,5 +1,5 @@
 /* babl - dynamically extendable universal pixel conversion library.
- * Copyright (C) 2005, Øyvind Kolås.
+ * Copyright (C) 2012, Maxime Nicco <maxime.nicco@gmail.fr>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,8 +18,6 @@
 
  /*
  * Adding support for HSV colorspace
- *
- * Maxime Nicco <maxime.nicco@gmail.fr>
  */
 
 #include "config.h"
