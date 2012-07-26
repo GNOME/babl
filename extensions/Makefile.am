@@ -24,7 +24,7 @@ ext_LTLIBRARIES = \
 	float.la    \
 	fast-float.la    \
 	naive-CMYK.la   \
-	naive-HSV.la   \
+	HSV.la   \
 	sse-fixups.la
 
 cairo_la_SOURCES = cairo.c
@@ -34,7 +34,7 @@ gggl_lies_la_SOURCES = gggl-lies.c
 gggl_la_SOURCES = gggl.c
 gimp_8bit_la_SOURCES = gimp-8bit.c
 naive_CMYK_la_SOURCES = naive-CMYK.c
-naive_HSV_la_SOURCES = naive-HSV.c
+HSV_la_SOURCES = HSV.c
 sse_fixups_la_SOURCES = sse-fixups.c
 float_la_SOURCES = float.c
 fast_float_la_SOURCES = fast-float.c
