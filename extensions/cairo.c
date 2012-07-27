@@ -59,6 +59,22 @@ conv_rgbA8_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
   long n = samples;
   while (n--)
     {
+      dst[0] = src[2] * src[3];
+      dst[1] = src[1] * src[3];
+      dst[2] = src[0] * src[3];
+      dst[3] = src[3];
+      src+=4;
+      dst+=4;
+    }
+  return samples;
+}
+
+static inline long
+conv_rgbA8_premul_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
+{
+  long n = samples;
+  while (n--)
+    {
       dst[0] = src[2];
       dst[1] = src[1];
       dst[2] = src[0];
@@ -101,7 +117,10 @@ init (void)
       );
 
       babl_conversion_new (babl_format ("R'aG'aB'aA u8"), f32, "linear", 
+                           conv_rgbA8_premul_cairo32_le, NULL);
+      babl_conversion_new (babl_format ("R'G'B'A u8"), f32, "linear",
                            conv_rgbA8_cairo32_le, NULL);
+
       babl_conversion_new (babl_format ("R'G'B'A u8"), f24, "linear", 
                            conv_rgba8_cairo24_le, NULL);
       babl_conversion_new (babl_format ("R'G'B' u8"), f24, "linear", 
