@@ -93,6 +93,8 @@ INTROSPECTION_SCANNER_ARGS = --add-include-path=$(srcdir)
 INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
 
 if HAVE_INTROSPECTION
+
+if HAVE_GI_RENAME_TO
 Babl-$(BABL_API_VERSION).gir: $(G_IR_SCANNER) $(library_include_HEADERS) $(c_sources) $(srcdir)/Makefile.am libbabl-@BABL_API_VERSION@.la
 	$(INTROSPECTION_SCANNER) -v --namespace Babl --nsversion=$(BABL_API_VERSION) \
             --add-include-path=$(srcdir) --add-include-path=. \
@@ -105,6 +107,15 @@ Babl-$(BABL_API_VERSION).gir: $(G_IR_SCANNER) $(library_include_HEADERS) $(c_sou
 	    $(addprefix $(srcdir)/, $(libinc_hdrs)) \
 	    $(addprefix $(builddir)/, $(libinc_generated_hdrs)) \
 	    $(addprefix $(srcdir)/, $(c_sources))
+
+else # HAVE_GI_RENAME_TO
+# If the "rename to" gobject introspection annotation is not respected (GI <= 1.33.4)
+# we have to use a pre-generated .gir file. See https://bugzilla.gnome.org/show_bug.cgi?id=673422
+# and https://bugzilla.gnome.org/show_bug.cgi?id=675985
+Babl-$(BABL_API_VERSION).gir:
+	cp $@.static $@
+
+endif # HAVE_GI_RENAME_TO
 
 girdir = $(datadir)/gir-1.0
 gir_DATA = Babl-$(BABL_API_VERSION).gir

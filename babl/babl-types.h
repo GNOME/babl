@@ -23,11 +23,14 @@
 #error "babl-version.h must not be included directly, include babl.h instead."
 #endif
 
-
 /**
+ * Babl:
+ *
  * The babl API is based around polymorphism and almost everything is
  * a Babl object.
- */
+ *
+ * Rename to: BablObject
+ **/
 typedef union _Babl Babl;
 
 /* Conversion function between linear data of a either a data types or
