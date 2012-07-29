@@ -29,7 +29,7 @@
  * The babl API is based around polymorphism and almost everything is
  * a Babl object.
  *
- * Rename to: BablObject
+ * Rename to: Object
  **/
 typedef union _Babl Babl;
 

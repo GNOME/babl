@@ -11,7 +11,7 @@ and/or use gtk-doc annotations.  -->
              shared-library="libbabl-0.1.so.0"
              c:identifier-prefixes="Babl"
              c:symbol-prefixes="babl">
-    <record name="BablObject" c:type="Babl" disguised="1">
+    <record name="Object" c:type="Babl" disguised="1">
       <doc xml:whitespace="preserve">The babl API is based around polymorphism and almost everything is
 a Babl object.</doc>
     </record>
@@ -78,7 +78,7 @@ a Babl object.</doc>
               c:identifier="babl_component"
               introspectable="0">
       <return-value transfer-ownership="none">
-        <type name="BablObject" c:type="const Babl*"/>
+        <type name="Object" c:type="const Babl*"/>
       </return-value>
       <parameters>
         <parameter name="name" transfer-ownership="none">
@@ -90,7 +90,7 @@ a Babl object.</doc>
               c:identifier="babl_component_new"
               introspectable="0">
       <return-value transfer-ownership="none">
-        <type name="BablObject" c:type="const Babl*"/>
+        <type name="Object" c:type="const Babl*"/>
       </return-value>
       <parameters>
         <parameter name="first_arg" transfer-ownership="none">
@@ -106,7 +106,7 @@ a Babl object.</doc>
               c:identifier="babl_conversion_new"
               introspectable="0">
       <return-value transfer-ownership="none">
-        <type name="BablObject" c:type="const Babl*"/>
+        <type name="Object" c:type="const Babl*"/>
       </return-value>
       <parameters>
         <parameter name="first_arg" transfer-ownership="none">
@@ -125,7 +125,7 @@ a Babl object.</doc>
     </function>
     <function name="fish" c:identifier="babl_fish" introspectable="0">
       <return-value transfer-ownership="none">
-        <type name="BablObject" c:type="const Babl*"/>
+        <type name="Object" c:type="const Babl*"/>
       </return-value>
       <parameters>
         <parameter name="source_format" transfer-ownership="none">
@@ -138,7 +138,7 @@ a Babl object.</doc>
     </function>
     <function name="format" c:identifier="babl_format" introspectable="0">
       <return-value transfer-ownership="none">
-        <type name="BablObject" c:type="const Babl*"/>
+        <type name="Object" c:type="const Babl*"/>
       </return-value>
       <parameters>
         <parameter name="name" transfer-ownership="none">
@@ -154,7 +154,7 @@ a Babl object.</doc>
       </return-value>
       <parameters>
         <parameter name="format" transfer-ownership="none">
-          <type name="BablObject" c:type="const Babl*"/>
+          <type name="Object" c:type="const Babl*"/>
         </parameter>
       </parameters>
     </function>
@@ -162,11 +162,11 @@ a Babl object.</doc>
               c:identifier="babl_format_get_model"
               introspectable="0">
       <return-value transfer-ownership="none">
-        <type name="BablObject" c:type="const Babl*"/>
+        <type name="Object" c:type="const Babl*"/>
       </return-value>
       <parameters>
         <parameter name="format" transfer-ownership="none">
-          <type name="BablObject" c:type="const Babl*"/>
+          <type name="Object" c:type="const Babl*"/>
         </parameter>
       </parameters>
     </function>
@@ -178,7 +178,7 @@ a Babl object.</doc>
       </return-value>
       <parameters>
         <parameter name="format" transfer-ownership="none">
-          <type name="BablObject" c:type="const Babl*"/>
+          <type name="Object" c:type="const Babl*"/>
         </parameter>
       </parameters>
     </function>
@@ -186,11 +186,11 @@ a Babl object.</doc>
               c:identifier="babl_format_get_type"
               introspectable="0">
       <return-value transfer-ownership="none">
-        <type name="BablObject" c:type="const Babl*"/>
+        <type name="Object" c:type="const Babl*"/>
       </return-value>
       <parameters>
         <parameter name="format" transfer-ownership="none">
-          <type name="BablObject" c:type="const Babl*"/>
+          <type name="Object" c:type="const Babl*"/>
         </parameter>
         <parameter name="component_index" transfer-ownership="none">
           <type name="gint" c:type="int"/>
@@ -205,7 +205,7 @@ a Babl object.</doc>
       </return-value>
       <parameters>
         <parameter name="format" transfer-ownership="none">
-          <type name="BablObject" c:type="const Babl*"/>
+          <type name="Object" c:type="const Babl*"/>
         </parameter>
       </parameters>
     </function>
@@ -217,7 +217,7 @@ a Babl object.</doc>
       </return-value>
       <parameters>
         <parameter name="format" transfer-ownership="none">
-          <type name="BablObject" c:type="const Babl*"/>
+          <type name="Object" c:type="const Babl*"/>
         </parameter>
       </parameters>
     </function>
@@ -229,17 +229,17 @@ a Babl object.</doc>
       </return-value>
       <parameters>
         <parameter name="format" transfer-ownership="none">
-          <type name="BablObject" c:type="const Babl*"/>
+          <type name="Object" c:type="const Babl*"/>
         </parameter>
       </parameters>
     </function>
     <function name="format_n" c:identifier="babl_format_n" introspectable="0">
       <return-value transfer-ownership="none">
-        <type name="BablObject" c:type="const Babl*"/>
+        <type name="Object" c:type="const Babl*"/>
       </return-value>
       <parameters>
         <parameter name="type" transfer-ownership="none">
-          <type name="BablObject" c:type="const Babl*"/>
+          <type name="Object" c:type="const Babl*"/>
         </parameter>
         <parameter name="components" transfer-ownership="none">
           <type name="gint" c:type="int"/>
@@ -250,7 +250,7 @@ a Babl object.</doc>
               c:identifier="babl_format_new"
               introspectable="0">
       <return-value transfer-ownership="none">
-        <type name="BablObject" c:type="const Babl*"/>
+        <type name="Object" c:type="const Babl*"/>
       </return-value>
       <parameters>
         <parameter name="first_arg" transfer-ownership="none">
@@ -268,7 +268,7 @@ a Babl object.</doc>
       </return-value>
       <parameters>
         <parameter name="babl" transfer-ownership="none">
-          <type name="BablObject" c:type="const Babl*"/>
+          <type name="Object" c:type="const Babl*"/>
         </parameter>
       </parameters>
     </function>
@@ -280,7 +280,7 @@ a Babl object.</doc>
       </return-value>
       <parameters>
         <parameter name="babl" transfer-ownership="none">
-          <type name="BablObject" c:type="const Babl*"/>
+          <type name="Object" c:type="const Babl*"/>
         </parameter>
       </parameters>
     </function>
@@ -307,7 +307,7 @@ a Babl object.</doc>
     </function>
     <function name="model" c:identifier="babl_model" introspectable="0">
       <return-value transfer-ownership="none">
-        <type name="BablObject" c:type="const Babl*"/>
+        <type name="Object" c:type="const Babl*"/>
       </return-value>
       <parameters>
         <parameter name="name" transfer-ownership="none">
@@ -319,7 +319,7 @@ a Babl object.</doc>
               c:identifier="babl_model_new"
               introspectable="0">
       <return-value transfer-ownership="none">
-        <type name="BablObject" c:type="const Babl*"/>
+        <type name="Object" c:type="const Babl*"/>
       </return-value>
       <parameters>
         <parameter name="first_arg" transfer-ownership="none">
@@ -335,17 +335,17 @@ a Babl object.</doc>
               c:identifier="babl_new_palette"
               introspectable="0">
       <return-value transfer-ownership="none">
-        <type name="BablObject" c:type="const Babl*"/>
+        <type name="Object" c:type="const Babl*"/>
       </return-value>
       <parameters>
         <parameter name="name" transfer-ownership="none">
           <type name="utf8" c:type="const char*"/>
         </parameter>
         <parameter name="format_u8" transfer-ownership="none">
-          <type name="BablObject" c:type="const Babl**"/>
+          <type name="Object" c:type="const Babl**"/>
         </parameter>
         <parameter name="format_u8_with_alpha" transfer-ownership="none">
-          <type name="BablObject" c:type="const Babl**"/>
+          <type name="Object" c:type="const Babl**"/>
         </parameter>
       </parameters>
     </function>
@@ -357,7 +357,7 @@ a Babl object.</doc>
       </return-value>
       <parameters>
         <parameter name="babl" transfer-ownership="none">
-          <type name="BablObject" c:type="const Babl*"/>
+          <type name="Object" c:type="const Babl*"/>
         </parameter>
       </parameters>
     </function>
@@ -369,10 +369,10 @@ a Babl object.</doc>
       </return-value>
       <parameters>
         <parameter name="babl" transfer-ownership="none">
-          <type name="BablObject" c:type="const Babl*"/>
+          <type name="Object" c:type="const Babl*"/>
         </parameter>
         <parameter name="format" transfer-ownership="none">
-          <type name="BablObject" c:type="const Babl*"/>
+          <type name="Object" c:type="const Babl*"/>
         </parameter>
         <parameter name="data" transfer-ownership="none">
           <type name="gpointer" c:type="void*"/>
@@ -388,7 +388,7 @@ a Babl object.</doc>
       </return-value>
       <parameters>
         <parameter name="babl_fish" transfer-ownership="none">
-          <type name="BablObject" c:type="const Babl*"/>
+          <type name="Object" c:type="const Babl*"/>
         </parameter>
         <parameter name="source" transfer-ownership="none">
           <type name="gpointer" c:type="void*"/>
@@ -403,7 +403,7 @@ a Babl object.</doc>
     </function>
     <function name="sampling" c:identifier="babl_sampling" introspectable="0">
       <return-value transfer-ownership="none">
-        <type name="BablObject" c:type="const Babl*"/>
+        <type name="Object" c:type="const Babl*"/>
       </return-value>
       <parameters>
         <parameter name="horizontal" transfer-ownership="none">
@@ -422,7 +422,7 @@ a Babl object.</doc>
       </return-value>
       <parameters>
         <parameter name="babl" transfer-ownership="none">
-          <type name="BablObject" c:type="const Babl*"/>
+          <type name="Object" c:type="const Babl*"/>
         </parameter>
         <parameter name="data" transfer-ownership="none">
           <type name="gpointer" c:type="void*"/>
@@ -431,7 +431,7 @@ a Babl object.</doc>
     </function>
     <function name="type" c:identifier="babl_type" introspectable="0">
       <return-value transfer-ownership="none">
-        <type name="BablObject" c:type="const Babl*"/>
+        <type name="Object" c:type="const Babl*"/>
       </return-value>
       <parameters>
         <parameter name="name" transfer-ownership="none">
@@ -441,7 +441,7 @@ a Babl object.</doc>
     </function>
     <function name="type_new" c:identifier="babl_type_new" introspectable="0">
       <return-value transfer-ownership="none">
-        <type name="BablObject" c:type="const Babl*"/>
+        <type name="Object" c:type="const Babl*"/>
       </return-value>
       <parameters>
         <parameter name="first_arg" transfer-ownership="none">
