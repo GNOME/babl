@@ -2,7 +2,7 @@ if OS_UNIX
 CONCURRENCY_STRESS_TEST = concurrency-stress-test 
 endif
 
-TESTS =				\
+C_TESTS =				\
 	grayscale_to_rgb	\
 	rgb_to_bgr       	\
 	rgb_to_ycbcr		\
@@ -21,7 +21,16 @@ TESTS =				\
 	cairo-RGB24		\
 	$(CONCURRENCY_STRESS_TEST)
 
-TESTS_ENVIRONMENT = BABL_PATH=$(top_builddir)/extensions/.libs
+if HAVE_INTROSPECTION
+INTROSPECTION_TESTS = \
+	introspection.py
+endif
+
+TESTS = \
+	$(C_TESTS) \
+	$(INTROSPECTION_TESTS)
+
+TESTS_ENVIRONMENT = LD_LIBRARY_PATH=$(top_builddir)/babl:$LD_LIBRARY_PATH GI_TYPELIB_PATH=$(top_builddir)/babl BABL_PATH=$(top_builddir)/extensions/.libs
 
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/babl
 if OS_UNIX
@@ -33,6 +42,9 @@ LDADD = $(top_builddir)/babl/libbabl-@BABL_API_VERSION@.la \
 
 EXTRA_DIST=common.inc
 
+noinst_SCRIPTS = \
+	introspection.py
+
 noinst_PROGRAMS =		\
 	introspect		\
 	babl_fish_path_fitness	\
@@ -40,4 +52,4 @@ noinst_PROGRAMS =		\
 	babl-html-dump		\
 	conversions		\
 	formats			\
-	$(TESTS)
+	$(C_TESTS)
