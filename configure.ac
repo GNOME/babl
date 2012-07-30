@@ -65,7 +65,7 @@ AC_SUBST(BABL_RELEASE)
 GOBJECT_INTROSPECTION_CHECK([0.10])
 
 # Check whether g-ir-scanner respects "rename to" annotation
-PKG_CHECK_MODULES([GI_1_33_5], [gobject-introspection-1.0 >=1.33.5],
+PKG_CHECK_MODULES([GI_1_33_5], [gobject-introspection-1.0 >= 1.33.5],
    [have_gi_rename_to=true],
    [have_gi_rename_to=false]
 )
