@@ -54,22 +54,6 @@ conv_rgb8_cairo24_le (unsigned char *src, unsigned char *dst, long samples)
 }
 
 static inline long
-conv_rgbA8_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
-{
-  long n = samples;
-  while (n--)
-    {
-      dst[0] = src[2] * src[3];
-      dst[1] = src[1] * src[3];
-      dst[2] = src[0] * src[3];
-      dst[3] = src[3];
-      src+=4;
-      dst+=4;
-    }
-  return samples;
-}
-
-static inline long
 conv_rgbA8_premul_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
@@ -84,6 +68,27 @@ conv_rgbA8_premul_cairo32_le (unsigned char *src, unsigned char *dst, long sampl
     }
   return samples;
 }
+
+static float         lut_linear[1 << 8];
+
+static inline long
+conv_rgbA8_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
+{
+  long n = samples;
+  while (n--)
+    {
+#define div_255(a) ((((a)+127)+(((a)+127)>>8))>>8)
+      dst[0] = div_255 (src[2] * src[3]);
+      dst[1] = div_255 (src[1] * src[3]);
+      dst[2] = div_255 (src[0] * src[3]);
+#undef div_255
+      dst[3] = src[3];
+      src+=4;
+      dst+=4;
+    }
+  return samples;
+}
+
 
 int
 init (void)
