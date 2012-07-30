@@ -96,7 +96,8 @@ if HAVE_INTROSPECTION
 
 if HAVE_GI_RENAME_TO
 Babl-$(BABL_API_VERSION).gir: $(G_IR_SCANNER) $(library_include_HEADERS) $(c_sources) $(srcdir)/Makefile.am libbabl-@BABL_API_VERSION@.la
-	$(INTROSPECTION_SCANNER) -v --namespace Babl --nsversion=$(BABL_API_VERSION) \
+	$(INTROSPECTION_SCANNER) -v --warn-all \
+	    --namespace Babl --nsversion=$(BABL_API_VERSION) \
             --add-include-path=$(srcdir) --add-include-path=. \
             --library=$(builddir)/libbabl-$(BABL_API_VERSION).la \
             --libtool="$(LIBTOOL)" \
