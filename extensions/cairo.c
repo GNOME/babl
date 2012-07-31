@@ -69,8 +69,6 @@ conv_rgbA8_premul_cairo32_le (unsigned char *src, unsigned char *dst, long sampl
   return samples;
 }
 
-static float         lut_linear[1 << 8];
-
 static inline long
 conv_rgbA8_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
 {
