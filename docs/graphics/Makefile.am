@@ -22,7 +22,7 @@ MAINTAINERCLEANFILES = $(PNG_FILES)
 all: $(MAINTAINERCLEANFILES)
 
 RSVG_CMD = echo -n " SVG: $@" ;\
-  $(RSVG) $< $@\
+  $(RSVG) -o $@ $< \
     &&\
       echo " [OK]"\
     ||\
@@ -40,7 +40,7 @@ dist-check-rsvg:
 # 0.0
 babl-a4poster.png: babl-a4poster.svg
 	echo -n " SVG: $@" ;\
-	$(RSVG) -w 256 $< $@\
+	$(RSVG) -w 256 -o $@ $< \
 	  &&\
 	    echo " [OK]"\
 	  ||\

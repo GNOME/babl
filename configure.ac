@@ -166,7 +166,7 @@ CFLAGS="$CFLAGS $extra_warnings"
 
 fi
 
-AC_PATH_PROG(RSVG, rsvg, no)
+AC_PATH_PROG(RSVG, rsvg-convert, no)
 AM_CONDITIONAL(HAVE_RSVG, test "x$RSVG" != "xno")
 
 AC_PATH_PROG(W3M, w3m, no)
