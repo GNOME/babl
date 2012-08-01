@@ -42,7 +42,7 @@ LDADD = $(top_builddir)/babl/libbabl-@BABL_API_VERSION@.la \
 
 EXTRA_DIST=common.inc
 
-noinst_SCRIPTS = \
+dist_noinst_SCRIPTS = \
 	introspection.py
 
 noinst_PROGRAMS =		\
