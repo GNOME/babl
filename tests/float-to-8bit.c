@@ -37,7 +37,7 @@ main (int    argc,
   {
   {
     float in[][4]   = {{ 0.21582, -0.55, -0.14, 1.0 }, {0.2, 0.3, 0.5, 0.6}, {0.0, 1.0, 2.0, 3.0}};
-    unsigned char out[][4]  = {{ 55, 0, 0, 255 }, {51,77,128,153}, {0,255,255,255}};
+    unsigned char out[][4]  = {{ 55, 0, 0, 255 }, {51,76,128,153}, {0,255,255,255}};
 
     CHECK_CONV("float -> u8 1", unsigned char,
         babl_format("R'G'B'A float"),
@@ -57,7 +57,7 @@ main (int    argc,
 
   {
     float in[][4]   = {{ 0.21582, -0.55, -0.14, 1.0 }, {0.2, 0.3, 0.5, 0.6}, {0.0, 1.0, 2.0, 3.0}};
-    unsigned char out[][4]  = {{ 55, 0, 0, 255 }, {51,77,128,153}, {0,255,255,255}};
+    unsigned char out[][4]  = {{ 55, 0, 0, 255 }, {51,76,128,153}, {0,255,255,255}};
 
     CHECK_CONV("float -> u8 3", unsigned char,
         babl_format("RGBA float"),
