@@ -25,6 +25,8 @@
 #define BABL_HARD_MAX_PATH_LENGTH  8
 #define BABL_MAX_NAME_LEN          1024
 
+#define NUM_TEST_PIXELS            2048
+
 int   babl_in_fish_path = 0;
 
 typedef struct _FishPathInstrumentation
@@ -478,7 +480,6 @@ process_conversion_path (BablList   *path,
   return n;
 }
 
-#define NUM_TEST_PIXELS  (256 + 16 + 16)
 
 static double *
 test_create (void)
