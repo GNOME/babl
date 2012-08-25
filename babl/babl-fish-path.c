@@ -25,7 +25,7 @@
 #define BABL_HARD_MAX_PATH_LENGTH  8
 #define BABL_MAX_NAME_LEN          1024
 
-#define NUM_TEST_PIXELS            2048
+#define NUM_TEST_PIXELS            3072
 
 int   babl_in_fish_path = 0;
 
