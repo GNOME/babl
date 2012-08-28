@@ -101,7 +101,7 @@ rgba_to_hsva (char *src,
     double  min;
     double  chroma;
 
-     if (red > green)
+    if (red > green)
     {
       value = MAX (red, blue);
       min = MIN (green, blue);
@@ -128,7 +128,7 @@ rgba_to_hsva (char *src,
       if (red == value)
       {
         hue = (green - blue) / chroma;
-        
+
         if(hue < 0.0)
           hue += 6.0;
       }
