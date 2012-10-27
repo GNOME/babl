@@ -379,6 +379,66 @@ babl_fish_process (Babl       *babl,
   return ret;
 }
 
+/* This size buffer needs to be possible to allocate on the stack..*/
+#define MAX_BUFFER_SIZE   65536
+
+static long
+babl_process_chunks (const Babl *cbabl,
+                     const char *source,
+                     char       *destination,
+                     long        n)
+{
+  Babl *babl = (Babl*)cbabl;
+  const Babl *babl_source;
+  const Babl *babl_dest;
+  int source_bpp = 0;
+  int dest_bpp = 0;
+
+  babl_source = babl->fish.source;
+  babl_dest = babl->fish.destination;
+
+  switch (babl_source->instance.class_type)
+    {
+      case BABL_FORMAT:
+        source_bpp = babl_source->format.bytes_per_pixel;
+        break;
+      case BABL_TYPE:
+        source_bpp = babl_source->type.bits / 8;
+        break;
+      default:
+        fprintf (stderr, "=eeek{%i}\n", babl_source->instance.class_type - BABL_MAGIC);
+    }
+
+  switch (babl_dest->instance.class_type)
+    {
+      case BABL_FORMAT:
+        dest_bpp = babl_dest->format.bytes_per_pixel;
+        break;
+      case BABL_TYPE:
+        dest_bpp = babl_dest->type.bits / 8;
+        break;
+      default:
+        fprintf (stderr, "-eeek{%i}\n", babl_dest->instance.class_type - BABL_MAGIC);
+    }
+
+  babl_assert (source_bpp);
+  babl_assert (dest_bpp);
+
+  long i;
+  for (i = 0; i < n; i += MAX_BUFFER_SIZE)
+    {
+      long c;
+      if (i + MAX_BUFFER_SIZE <= n)
+        c = MAX_BUFFER_SIZE;
+      else
+        c = n - i;
+
+      babl_process (cbabl, source + (i * source_bpp),
+                           destination + (i * dest_bpp), c);
+    }
+  return n;
+}
+
 long
 babl_process (const Babl *cbabl,
               const void *source,
@@ -394,13 +454,20 @@ babl_process (const Babl *cbabl,
     return 0;
   babl_assert (n > 0);
 
-  /* first check if it is a fish since that is out fast path */
+  if (n > MAX_BUFFER_SIZE  &&
+      babl->class_type >= BABL_FISH &&
+      babl->class_type <= BABL_FISH_PATH )
+    /* XXX: should only do the chunking if temporary buffers are needed */
+    return babl_process_chunks (cbabl, source, destination, n);
+
+  /* first check if it is a fish since that is our fast path */
   if (babl->class_type >= BABL_FISH &&
       babl->class_type <= BABL_FISH_PATH)
     {
       babl->fish.processings++;
-      return babl->fish.pixels +=
+      babl->fish.pixels +=
              babl_fish_process (babl, source, destination, n);
+      return n;
     }
 
   /* matches all conversion classes */
