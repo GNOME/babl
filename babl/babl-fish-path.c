@@ -379,8 +379,8 @@ babl_fish_process (Babl       *babl,
   return ret;
 }
 
-/* This size buffer needs to be possible to allocate on the stack..*/
-#define MAX_BUFFER_SIZE   8192
+/* This size buffers needs to be possible to allocate on the stack..*/
+#define MAX_BUFFER_SIZE   14000
 
 static long
 babl_process_chunks (const Babl *cbabl,
