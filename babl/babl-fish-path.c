@@ -380,7 +380,7 @@ babl_fish_process (Babl       *babl,
 }
 
 /* This size buffer needs to be possible to allocate on the stack..*/
-#define MAX_BUFFER_SIZE   65536
+#define MAX_BUFFER_SIZE   8192
 
 static long
 babl_process_chunks (const Babl *cbabl,
@@ -393,6 +393,7 @@ babl_process_chunks (const Babl *cbabl,
   const Babl *babl_dest;
   int source_bpp = 0;
   int dest_bpp = 0;
+  long i;
 
   babl_source = babl->fish.source;
   babl_dest = babl->fish.destination;
@@ -424,7 +425,6 @@ babl_process_chunks (const Babl *cbabl,
   babl_assert (source_bpp);
   babl_assert (dest_bpp);
 
-  long i;
   for (i = 0; i < n; i += MAX_BUFFER_SIZE)
     {
       long c;
@@ -455,9 +455,11 @@ babl_process (const Babl *cbabl,
   babl_assert (n > 0);
 
   if (n > MAX_BUFFER_SIZE  &&
-      babl->class_type >= BABL_FISH &&
-      babl->class_type <= BABL_FISH_PATH )
-    /* XXX: should only do the chunking if temporary buffers are needed */
+      (babl->class_type == BABL_FISH_PATH ||
+       babl->class_type == BABL_FISH_REFERENCE))
+        /* we only need to do chunking for multi-step conversions
+         * and reference code paths
+         */
     return babl_process_chunks (cbabl, source, destination, n);
 
   /* first check if it is a fish since that is our fast path */
