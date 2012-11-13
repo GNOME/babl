@@ -25,6 +25,8 @@
 #define BABL_HARD_MAX_PATH_LENGTH  8
 #define BABL_MAX_NAME_LEN          1024
 
+#define MIN(a, b) (((a) > (b)) ? (b) : (a))
+
 #define NUM_TEST_PIXELS            3072
 
 int   babl_in_fish_path = 0;
@@ -407,7 +409,7 @@ babl_process_chunks (const Babl *cbabl,
         source_bpp = babl_source->type.bits / 8;
         break;
       default:
-        fprintf (stderr, "=eeek{%i}\n", babl_source->instance.class_type - BABL_MAGIC);
+        babl_log ("=eeek{%i}\n", babl_source->instance.class_type - BABL_MAGIC);
     }
 
   switch (babl_dest->instance.class_type)
@@ -419,7 +421,7 @@ babl_process_chunks (const Babl *cbabl,
         dest_bpp = babl_dest->type.bits / 8;
         break;
       default:
-        fprintf (stderr, "-eeek{%i}\n", babl_dest->instance.class_type - BABL_MAGIC);
+        babl_log ("-eeek{%i}\n", babl_dest->instance.class_type - BABL_MAGIC);
     }
 
   babl_assert (source_bpp);
@@ -427,14 +429,12 @@ babl_process_chunks (const Babl *cbabl,
 
   for (i = 0; i < n; i += MAX_BUFFER_SIZE)
     {
-      long c;
-      if (i + MAX_BUFFER_SIZE <= n)
-        c = MAX_BUFFER_SIZE;
-      else
-        c = n - i;
+      long c = MIN (n - i, MAX_BUFFER_SIZE);
 
-      babl_process (cbabl, source + (i * source_bpp),
-                           destination + (i * dest_bpp), c);
+      babl->fish.processings++;
+      babl->fish.pixels +=
+             babl_fish_process (babl, source + (i * source_bpp),
+                                destination + (i * dest_bpp), c);
     }
   return n;
 }
