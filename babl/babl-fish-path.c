@@ -30,6 +30,8 @@
 #endif
 
 #define NUM_TEST_PIXELS            3072
+#define MAX_BUFFER_SIZE            1024  /* XXX: reasonable size for this should be profiled */
+
 
 int   babl_in_fish_path = 0;
 
@@ -421,64 +423,6 @@ babl_fish_process (Babl       *babl,
   return ret;
 }
 
-/* This size buffers needs to be possible to allocate on the stack..*/
-#define MAX_BUFFER_SIZE   1024
-
-static long
-babl_process_chunks (const Babl *cbabl,
-                     const char *source,
-                     char       *destination,
-                     long        n)
-{
-  Babl *babl = (Babl*)cbabl;
-  const Babl *babl_source;
-  const Babl *babl_dest;
-  int source_bpp = 0;
-  int dest_bpp = 0;
-  long i;
-
-  babl_source = babl->fish.source;
-  babl_dest = babl->fish.destination;
-
-  switch (babl_source->instance.class_type)
-    {
-      case BABL_FORMAT:
-        source_bpp = babl_source->format.bytes_per_pixel;
-        break;
-      case BABL_TYPE:
-        source_bpp = babl_source->type.bits / 8;
-        break;
-      default:
-        babl_log ("=eeek{%i}\n", babl_source->instance.class_type - BABL_MAGIC);
-    }
-
-  switch (babl_dest->instance.class_type)
-    {
-      case BABL_FORMAT:
-        dest_bpp = babl_dest->format.bytes_per_pixel;
-        break;
-      case BABL_TYPE:
-        dest_bpp = babl_dest->type.bits / 8;
-        break;
-      default:
-        babl_log ("-eeek{%i}\n", babl_dest->instance.class_type - BABL_MAGIC);
-    }
-
-  babl_assert (source_bpp);
-  babl_assert (dest_bpp);
-
-  for (i = 0; i < n; i += MAX_BUFFER_SIZE)
-    {
-      long c = MIN (n - i, MAX_BUFFER_SIZE);
-
-      babl->fish.processings++;
-      babl->fish.pixels +=
-             babl_fish_process (babl, source + (i * source_bpp),
-                                destination + (i * dest_bpp), c);
-    }
-  return n;
-}
-
 long
 babl_process (const Babl *cbabl,
               const void *source,
@@ -493,14 +437,6 @@ babl_process (const Babl *cbabl,
   if (n == 0)
     return 0;
   babl_assert (n > 0);
-
-  if (n > MAX_BUFFER_SIZE  &&
-      (babl->class_type == BABL_FISH_PATH ||
-       babl->class_type == BABL_FISH_REFERENCE))
-        /* we only need to do chunking for multi-step conversions
-         * and reference code paths
-         */
-    return babl_process_chunks (cbabl, source, destination, n);
 
   /* first check if it is a fish since that is our fast path */
   if (babl->class_type >= BABL_FISH &&
