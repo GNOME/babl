@@ -25,7 +25,9 @@
 #define BABL_HARD_MAX_PATH_LENGTH  8
 #define BABL_MAX_NAME_LEN          1024
 
+#ifndef MIN
 #define MIN(a, b) (((a) > (b)) ? (b) : (a))
+#endif
 
 #define NUM_TEST_PIXELS            3072
 
@@ -68,10 +70,13 @@ get_path_instrumentation (FishPathInstrumentation *fpi,
                           double                  *ref_cost,
                           double                  *path_error);
 
+
 static long
 process_conversion_path (BablList   *path,
                          const void *source_buffer,
+                         int         source_bpp,
                          void       *destination_buffer,
+                         int         dest_bpp,
                          long        n);
 
 static void
@@ -177,6 +182,10 @@ get_conversion_path (PathContext *pc,
         {
           FishPathInstrumentation fpi;
           memset (&fpi, 0, sizeof (fpi));
+
+          fpi.source = current_format;
+          fpi.destination = pc->to_format;
+
           get_path_instrumentation (&fpi, pc->current_path, &path_cost, &ref_cost, &path_error);
 
           if ((path_cost < ref_cost) && /* do not use paths that took longer to compute than reference */
@@ -327,9 +336,40 @@ babl_fish_path_process (Babl       *babl,
                         void       *destination,
                         long        n)
 {
+   const Babl *babl_source = babl->fish.source;
+   const Babl *babl_dest = babl->fish.destination;
+   int source_bpp;
+   int dest_bpp;
+
+   switch (babl_source->instance.class_type)
+     {
+       case BABL_FORMAT:
+         source_bpp = babl_source->format.bytes_per_pixel;
+         break;
+       case BABL_TYPE:
+         source_bpp = babl_source->type.bits / 8;
+         break;
+       default:
+         babl_log ("=eeek{%i}\n", babl_source->instance.class_type - BABL_MAGIC);
+     }
+
+   switch (babl_dest->instance.class_type)
+     {
+       case BABL_FORMAT:
+         dest_bpp = babl_dest->format.bytes_per_pixel;
+         break;
+       case BABL_TYPE:
+         dest_bpp = babl_dest->type.bits / 8;
+         break;
+       default:
+         babl_log ("-eeek{%i}\n", babl_dest->instance.class_type - BABL_MAGIC);
+     }
+
   return process_conversion_path (babl->fish_path.conversion_list,
                                   source,
+                                  source_bpp,
                                   destination,
+                                  dest_bpp,
                                   n);
 
 }
@@ -382,7 +422,7 @@ babl_fish_process (Babl       *babl,
 }
 
 /* This size buffers needs to be possible to allocate on the stack..*/
-#define MAX_BUFFER_SIZE   14000
+#define MAX_BUFFER_SIZE   1024
 
 static long
 babl_process_chunks (const Babl *cbabl,
@@ -494,7 +534,9 @@ static void inline *align_16 (unsigned char *ret)
 static long
 process_conversion_path (BablList   *path,
                          const void *source_buffer,
+                         int         source_bpp,
                          void       *destination_buffer,
+                         int         dest_bpp,
                          long        n)
 {
   int conversions = babl_list_size (path);
@@ -508,42 +550,59 @@ process_conversion_path (BablList   *path,
     }
   else
     {
-      void *aux1_buffer = align_16 (alloca (n * sizeof (double) * 5 + 16));
-      void *aux2_buffer = NULL;
-      void *swap_buffer = NULL;
-      int   i;
+      long j;
+      int source_bpp = 0;
+      int dest_bpp = 0;
+
+      void *temp_buffer = align_16 (alloca (MIN(n, MAX_BUFFER_SIZE) * sizeof (double) * 5 + 16));
+      void *temp_buffer2 = NULL;
 
       if (conversions > 2)
         {
           /* We'll need one more auxiliary buffer */
-          aux2_buffer = align_16 (alloca ((n * sizeof (double) * 5 + 16)));
+          temp_buffer2 = align_16 (alloca (MIN(n, MAX_BUFFER_SIZE) * sizeof (double) * 5 + 16));
         }
 
-      /* The first conversion goes from source_buffer to aux1_buffer */
-      babl_conversion_process (babl_list_get_first (path),
-                               source_buffer,
-                               aux1_buffer,
-                               n);
 
-      /* Process, if any, conversions between the first and the last
-       * conversion in the path, in a loop */
-      for (i = 1; i < conversions - 1; i++)
+
+
+      for (j = 0; j < n; j+= MAX_BUFFER_SIZE)
         {
-          babl_conversion_process (path->items[i],
-                                   aux1_buffer,
-                                   aux2_buffer,
-                                   n);
-          /* Swap the auxiliary buffers */
-          swap_buffer = aux1_buffer;
-          aux1_buffer = aux2_buffer;
-          aux2_buffer = swap_buffer;
-        }
+          long c = MIN (n - 1, MAX_BUFFER_SIZE);
+          int i;
 
-      /* The last conversion goes from aux1_buffer to destination_buffer */
-      babl_conversion_process (babl_list_get_last (path),
-                               aux1_buffer,
-                               destination_buffer,
-                               n);
+          /* this is where the loop unrolling should happen */
+          void *aux1_buffer = temp_buffer;
+          void *aux2_buffer = NULL;
+          void *swap_buffer = NULL;
+          aux2_buffer = temp_buffer2;
+
+          /* The first conversion goes from source_buffer to aux1_buffer */
+          babl_conversion_process (babl_list_get_first (path),
+                                   (void*)(((unsigned char*)source_buffer) + (j * source_bpp)),
+                                   aux1_buffer,
+                                   c);
+
+          /* Process, if any, conversions between the first and the last
+           * conversion in the path, in a loop */
+          for (i = 1; i < conversions - 1; i++)
+            {
+              babl_conversion_process (path->items[i],
+                                       aux1_buffer,
+                                       aux2_buffer,
+                                       c);
+              /* Swap the auxiliary buffers */
+              swap_buffer = aux1_buffer;
+              aux1_buffer = aux2_buffer;
+              aux2_buffer = swap_buffer;
+            }
+
+          /* The last conversion goes from aux1_buffer to destination_buffer */
+          babl_conversion_process (babl_list_get_last (path),
+                                   aux1_buffer,
+                                   (void*)((unsigned char*)destination_buffer + (j * dest_bpp)),
+                                   c);
+        }
   }
 
   return n;
@@ -664,20 +723,48 @@ get_path_instrumentation (FishPathInstrumentation *fpi,
   long   ticks_start = 0;
   long   ticks_end   = 0;
 
+  Babl *babl_source = fpi->source;
+  Babl *babl_destination = fpi->destination;
+
+  int source_bpp;
+  int dest_bpp;
+
+  switch (babl_source->instance.class_type)
+    {
+      case BABL_FORMAT:
+        source_bpp = babl_source->format.bytes_per_pixel;
+        break;
+      case BABL_TYPE:
+        source_bpp = babl_source->type.bits / 8;
+        break;
+      default:
+        babl_log ("=eeek{%i}\n", babl_source->instance.class_type - BABL_MAGIC);
+    }
+
+  switch (babl_destination->instance.class_type)
+    {
+      case BABL_FORMAT:
+        dest_bpp = babl_destination->format.bytes_per_pixel;
+        break;
+      case BABL_TYPE:
+        dest_bpp = babl_destination->type.bits / 8;
+        break;
+      default:
+        babl_log ("-eeek{%i}\n", babl_destination->instance.class_type - BABL_MAGIC);
+     }
+
   if (!fpi->init_instrumentation_done)
     {
       /* this initialization can be done only once since the
        * source and destination formats do not change during
        * the search */
-      Babl *fmt_source = (Babl *) BABL (babl_list_get_first (path))->conversion.source;
-      Babl *fmt_destination = (Babl *) BABL (babl_list_get_last (path))->conversion.destination;
-      init_path_instrumentation (fpi, fmt_source, fmt_destination);
+      init_path_instrumentation (fpi, babl_source, babl_destination);
       fpi->init_instrumentation_done = 1;
     }
 
   /* calculate this path's view of what the result should be */
   ticks_start = babl_ticks ();
-  process_conversion_path (path, fpi->source, fpi->destination, NUM_TEST_PIXELS);
+  process_conversion_path (path, fpi->source, source_bpp, fpi->destination, dest_bpp, NUM_TEST_PIXELS);
   ticks_end = babl_ticks ();
   *path_cost = babl_process_cost (ticks_start, ticks_end);
 
