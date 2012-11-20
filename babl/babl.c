@@ -19,10 +19,6 @@
 #include "config.h"
 #include "babl-internal.h"
 
-#ifdef _WIN32
-#include <stdint.h>
-#endif
-
 static int ref_count = 0;
 
 #ifdef _WIN32
