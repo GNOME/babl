@@ -26,3 +26,5 @@
 /sanity*
 /srgb_to_lab_u8*
 /types*
+/hsva
+/hsva.o
