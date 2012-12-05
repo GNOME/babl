@@ -185,7 +185,7 @@ get_conversion_path (PathContext *pc,
           FishPathInstrumentation fpi;
           memset (&fpi, 0, sizeof (fpi));
 
-          fpi.source = current_format;
+          fpi.source = (Babl*) babl_list_get_first (pc->current_path)->conversion.source;
           fpi.destination = pc->to_format;
 
           get_path_instrumentation (&fpi, pc->current_path, &path_cost, &ref_cost, &path_error);
@@ -340,8 +340,8 @@ babl_fish_path_process (Babl       *babl,
 {
    const Babl *babl_source = babl->fish.source;
    const Babl *babl_dest = babl->fish.destination;
-   int source_bpp;
-   int dest_bpp;
+   int source_bpp = 0;
+   int dest_bpp = 0;
 
    switch (babl_source->instance.class_type)
      {
@@ -487,8 +487,6 @@ process_conversion_path (BablList   *path,
   else
     {
       long j;
-      int source_bpp = 0;
-      int dest_bpp = 0;
 
       void *temp_buffer = align_16 (alloca (MIN(n, MAX_BUFFER_SIZE) * sizeof (double) * 5 + 16));
       void *temp_buffer2 = NULL;
@@ -504,7 +502,7 @@ process_conversion_path (BablList   *path,
 
       for (j = 0; j < n; j+= MAX_BUFFER_SIZE)
         {
-          long c = MIN (n - 1, MAX_BUFFER_SIZE);
+          long c = MIN (n - j, MAX_BUFFER_SIZE);
           int i;
 
           /* this is where the loop unrolling should happen */
@@ -662,8 +660,8 @@ get_path_instrumentation (FishPathInstrumentation *fpi,
   Babl *babl_source = fpi->source;
   Babl *babl_destination = fpi->destination;
 
-  int source_bpp;
-  int dest_bpp;
+  int source_bpp = 0;
+  int dest_bpp = 0;
 
   switch (babl_source->instance.class_type)
     {
