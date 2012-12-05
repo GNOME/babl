@@ -289,9 +289,12 @@ process_same_model (const Babl      *babl,
       babl_log ("args=(%p, %p, %p, %li): trying to handle BablImage (unconfirmed code)",
                 babl_fish, source, destination, n);
     }
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
 
   double_buf = babl_malloc (sizeof (double) * n *
-                            BABL (babl->fish.source)->format.model->components);
+                            MAX (BABL (babl->fish.source)->format.model->components,
+                                 BABL (babl->fish.source)->format.components));
+#undef MAX
 
   if (
       (BABL (babl->fish.source)->format.components ==
