@@ -291,7 +291,7 @@ process_same_model (const Babl      *babl,
     }
 
   double_buf = babl_malloc (sizeof (double) * n *
-                            BABL (babl->fish.source)->format.components);
+                            BABL (babl->fish.source)->format.model->components);
 
   if (
       (BABL (babl->fish.source)->format.components ==
