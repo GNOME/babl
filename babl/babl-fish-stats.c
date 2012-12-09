@@ -308,7 +308,7 @@ babl_fish_stats (FILE *file)
            "<html>\n"
            "<head>\n"
            "<title>BablFishPath introspection</title>\n"
-
+           "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n"
            "<style type='text/css'>"
            " body {"
            "   font-family: sans;"
