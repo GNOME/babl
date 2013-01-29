@@ -98,6 +98,18 @@ const Babl * babl_fish      (const void *source_format,
                              const void *destination_format);
 
 /**
+ * babl_fish:
+ *
+ *  Create a babl fish capable of converting from source_format to
+ *  destination_format with the given error tolerance, source
+ *  and destination can be either strings with the names of the
+ *  formats or Babl-format objects.
+ */
+const Babl * babl_fish_with_tolerance (const void *source,
+                                       const void *destination,
+                                       double tolerance);
+
+/**
  * babl_process:
  *
  *  Process n pixels from source to destination using babl_fish,

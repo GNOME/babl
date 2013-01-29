@@ -385,8 +385,6 @@ babl_fish_path (const Babl *source,
        */
       return babl;
     }
-  
-  babl_log("Inserting %s into babl_fish_db\n", name);
 
   babl = babl_calloc (1, sizeof (BablFishPath) +
                       strlen (name) + 1);
@@ -461,6 +459,7 @@ babl_fish_path (const Babl *source,
     }
   }
   
+  /*
   printf("%d canidate conversions:\n", babl_list_size(conversion_list->fish_path_list.path_list));
   {
     int i;
@@ -472,21 +471,17 @@ babl_fish_path (const Babl *source,
       babl_introspect(babl);
     }
   }
-  
-  //FIXME: Throw away the list for now:
-  babl_free (conversion_list);
-
-  if (babl_list_size (babl->fish_path.conversion_list) == 0)
-    {
-      babl_free (babl);
-      return NULL;
-    }
+  */
+    
+  babl_free (babl); //FIXME: This object is from the old system and should be removed
 
   /* Since there is not an already registered instance by the required
    * name, inserting newly created class into database.
    */
-  babl_db_insert (babl_fish_db (), babl);
-  return babl;
+  babl_log("Inserting %s into babl_fish_db\n", conversion_list->instance.name);
+
+  babl_db_insert (babl_fish_db (), conversion_list);
+  return conversion_list;
 }
 
 static long

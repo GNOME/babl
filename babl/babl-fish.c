@@ -24,11 +24,28 @@
 #include <string.h>
 #include <stdarg.h>
 
+#define BABL_LEGAL_ERROR           0.000001
+static double legal_error (void)
+{
+  static double error = 0.0;
+  const char   *env;
+
+  if (error != 0.0)
+    return error;
+
+  env = getenv ("BABL_TOLERANCE");
+  if (env && env[0] != '\0')
+    error = atof (env);
+  else
+    error = BABL_LEGAL_ERROR;
+  return error;
+}
+
 typedef struct _BablFindFish BablFindFish;
 
 typedef struct _BablFindFish
 {
-  Babl       *fish_path;
+  Babl       *fish_path_list;
   Babl       *fish_ref;
   Babl       *fish_fish;
   int        fishes;
@@ -62,9 +79,9 @@ find_fish_path (Babl *item,
           ffish->fish_ref = item;
           ffish->fishes++;
         }
-      else if (item->instance.class_type == BABL_FISH_PATH)
+      else if (item->instance.class_type == BABL_FISH_PATH_LIST)
         {
-          ffish->fish_path = item;
+          ffish->fish_path_list = item;
           ffish->fishes++;
         }
       else if (item->instance.class_type == BABL_FISH)
@@ -142,6 +159,14 @@ const Babl *
 babl_fish (const void *source,
            const void *destination)
 {
+  return babl_fish_with_tolerance (source, destination, legal_error());
+}
+
+const Babl *
+babl_fish_with_tolerance (const void *source,
+                          const void *destination,
+                          double tolerance)
+{
   const Babl *source_format      = NULL;
   const Babl *destination_format = NULL;
 
@@ -213,41 +238,34 @@ babl_fish (const void *source,
          * insert it into the fish database to indicate non-existent fish
          * path.
          */
+        Babl *conversion_list = NULL;
+        Babl *fish_path = NULL;
+        int i;
+        
         babl_hash_table_find (id_htable, hashval, find_fish_path, (void *) &ffish);
-
-        if (ffish.fish_path)
+        
+        if (ffish.fish_path_list)
           {
             /* we have found suitable fish path in the database */
-            return ffish.fish_path;
+            conversion_list = ffish.fish_path_list;
           }
-        if (!ffish.fish_fish)
+        else
           {
             /* we haven't tried to search for suitable path yet */
-            Babl *fish_path = babl_fish_path (source_format, destination_format);
-
-            if (fish_path)
-              {
-                return fish_path;
-              }
-            else
-              {
-                /* there isn't a suitable path for requested formats,
-                 * let's create a dummy BABL_FISH instance and insert
-                 * it into the fish database to indicate that such path
-                 * does not exist.
-                 */
-                char *name = "X"; /* name does not matter */
-                Babl *fish = babl_calloc (1, sizeof (BablFish) + strlen (name) + 1);
-
-                fish->class_type                = BABL_FISH;
-                fish->instance.id               = babl_fish_get_id (source_format, destination_format);
-                fish->instance.name             = ((char *) fish) + sizeof (BablFish);
-                strcpy (fish->instance.name, name);
-                fish->fish.source               = source_format;
-                fish->fish.destination          = destination_format;
-                babl_db_insert (babl_fish_db (), fish);
-              }
+            conversion_list = babl_fish_path (source_format, destination_format);
           }
+
+        /* find a conversion with an acceptable tolerance */
+        for (i = 0; i < babl_list_size(conversion_list->fish_path_list.path_list); ++i) {
+          Babl *candidate_path = babl_list_get_n(conversion_list->fish_path_list.path_list, i);
+          if (candidate_path->fish.error <= tolerance)
+            fish_path = candidate_path;
+          else
+            break;
+        }
+        
+        if (fish_path)
+          return fish_path;
       }
 
     if (ffish.fish_ref)
