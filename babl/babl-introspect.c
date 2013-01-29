@@ -164,6 +164,15 @@ fish_introspect (Babl *babl)
             babl->fish.processings, babl->fish.pixels);
 }
 
+static void
+fish_path_introspect (Babl *babl)
+{
+  babl_log ("\t\tcost:%f error:%f",
+            babl->fish_path.cost, babl->fish.error);
+
+  babl_list_each(babl->fish_path.conversion_list, each_introspect, NULL);
+}
+
 static int
 each_introspect (Babl *babl,
                  void *user_data)
@@ -208,6 +217,10 @@ each_introspect (Babl *babl,
       case BABL_FISH_REFERENCE:
       case BABL_FISH_SIMPLE:
         fish_introspect (babl);
+        break;
+        
+      case BABL_FISH_PATH:
+        fish_path_introspect (babl);
         break;
 
       default:
