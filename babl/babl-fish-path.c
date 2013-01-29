@@ -52,7 +52,7 @@ typedef struct _FishPathInstrumentation
 } FishPathInstrumentation;
 
 typedef struct PathContext {
-  Babl     *fish_path;
+  Babl     *conversion_list;
   Babl     *to_format;
   BablList *current_path;
 } PathContext;
@@ -97,26 +97,7 @@ create_name (char       *buf,
              const Babl *destination,
              int         is_reference);
 
-static double legal_error (void);
-
 static int max_path_length (void);
-
-
-static double legal_error (void)
-{
-  static double error = 0.0;
-  const char   *env;
-
-  if (error != 0.0)
-    return error;
-
-  env = getenv ("BABL_TOLERANCE");
-  if (env && env[0] != '\0')
-    error = atof (env);
-  else
-    error = BABL_LEGAL_ERROR;
-  return error;
-}
 
 static int max_path_length (void)
 {
@@ -206,6 +187,8 @@ get_conversion_path (PathContext *pc,
       double path_cost  = 0.0;
       double ref_cost   = 0.0;
       double path_error = 1.0;
+      FishPathInstrumentation fpi;
+      /*
       int    i;
 
       //printf("Considering path of lenght %i:\n", babl_list_size (pc->current_path));
@@ -217,73 +200,72 @@ get_conversion_path (PathContext *pc,
           //printf("%s -> ", babl_get_name(((BablConversion *) pc->current_path->items[i])->source));
         }
         //printf("%s\n", babl_get_name(((BablConversion *) pc->current_path->items[i-1])->destination));
+      */
 
-#if 0 // This check is causing it to reject valid conversions
-      if (path_error - 1.0 <= legal_error ()) /* check this before the next;
-                                                 which does a more accurate
-                                                 measurement of the error */
-#endif
+      memset (&fpi, 0, sizeof (fpi));
+
+      fpi.source = (Babl*) babl_list_get_first (pc->current_path)->conversion.source;
+      fpi.destination = pc->to_format;
+
+      get_path_instrumentation (&fpi, pc->current_path, &path_cost, &ref_cost, &path_error);
+      /*
+      if (path_error <= legal_error ()) {
+        printf("  Cost %f, error %f\n", path_cost, path_error);
+      }
+      else {
+        printf("  Error too high (inner) %f\n", path_error);
+      }
+      */
+      
+      if (path_cost < ref_cost) /* do not use paths that took longer to compute than reference */
         {
-          FishPathInstrumentation fpi;
-          memset (&fpi, 0, sizeof (fpi));
-
-          fpi.source = (Babl*) babl_list_get_first (pc->current_path)->conversion.source;
-          fpi.destination = pc->to_format;
-
-          get_path_instrumentation (&fpi, pc->current_path, &path_cost, &ref_cost, &path_error);
-          /*
-          if (path_error <= legal_error ()) {
-            printf("  Cost %f, error %f\n", path_cost, path_error);
-          }
-          else {
-            printf("  Error too high (inner) %f\n", path_error);
-          }
-          */
+          int path_list_index = 0;
+          int found = -1;
+          const int rounding_factor = 10000;
           
-          {
-            int path_list_index = 0;
-            int found = -1;
-            
-            for (path_list_index = 0;
-                 path_list_index < babl_list_size(interesting_paths->fish_path_list.path_list);
-                 path_list_index++)
+          for (path_list_index = 0;
+               path_list_index < babl_list_size(interesting_paths->fish_path_list.path_list);
+               path_list_index++)
             {
               Babl *cur_query_path = babl_list_get_n(interesting_paths->fish_path_list.path_list, path_list_index);
-              if ((unsigned int)(path_error * 10000) == (unsigned int)(cur_query_path->fish.error * 10000)) {
-                found = path_list_index;
-                break;
-              }
-              else if (((unsigned int)(path_error * 10000) > (unsigned int)(cur_query_path->fish.error * 10000)) &&
-                       (path_cost >= cur_query_path->fish_path.cost)) {
-                /* Less expensive path with less error */
-                found = path_list_index;
-                break;
-              }
-              else if (((unsigned int)(path_error * 10000) < (unsigned int)(cur_query_path->fish.error * 10000)) &&
-                       (path_cost <= cur_query_path->fish_path.cost)) {
-                /* Less expensive path with less error */
-                found = path_list_index;
-                break;
-              }
-
+              if ((unsigned int)(path_error * rounding_factor) == (unsigned int)(cur_query_path->fish.error * rounding_factor))
+                {
+                  found = path_list_index;
+                  break;
+                }
+              else if (((unsigned int)(path_error * rounding_factor) > (unsigned int)(cur_query_path->fish.error * rounding_factor)) &&
+                       (path_cost >= cur_query_path->fish_path.cost))
+                {
+                  /* Less expensive path with less error */
+                  found = path_list_index;
+                  break;
+                }
+              else if (((unsigned int)(path_error * rounding_factor) < (unsigned int)(cur_query_path->fish.error * rounding_factor)) &&
+                       (path_cost <= cur_query_path->fish_path.cost))
+                {
+                  /* New path is worse than this path, it will be skipped below */
+                  found = path_list_index;
+                  break;
+                }
             }
-            if (found == -1)
+          
+          if (found == -1)
             {
               Babl *babl;              
               babl = babl_calloc (1, sizeof (BablFishPath) +
-                      strlen (pc->fish_path->instance.name) + 1);
+                      strlen (interesting_paths->instance.name) + 1);
               babl_set_destructor (babl, babl_fish_path_destroy);
               babl->class_type                = BABL_FISH_PATH;
-              babl->instance.id               = babl_fish_get_id (pc->fish_path->fish.source, pc->fish_path->fish.destination);
+              babl->instance.id               = babl_fish_get_id (interesting_paths->fish_path_list.source, interesting_paths->fish_path_list.destination);
               babl->instance.name             = ((char *) babl) + sizeof (BablFishPath);
-              strcpy (babl->instance.name, pc->fish_path->instance.name);
-              babl->fish.source               = pc->fish_path->fish.source;
-              babl->fish.destination          = pc->fish_path->fish.destination;
+              strcpy (babl->instance.name, interesting_paths->instance.name);
+              babl->fish.source               = interesting_paths->fish_path_list.source;
+              babl->fish.destination          = interesting_paths->fish_path_list.destination;
               babl->fish.processings          = 0;
               babl->fish.pixels               = 0;
               babl->fish.error                = path_error;
               babl->fish_path.cost            = path_cost;
-              babl->fish_path.loss            = pc->fish_path->fish_path.loss; //FIXME: Has this been set yet?
+              babl->fish_path.loss            = BABL_MAX_COST_VALUE; //FIXME: Set this to a real value?
               babl->fish_path.conversion_list = babl_list_init();
               
               babl_list_copy (pc->current_path,
@@ -292,46 +274,26 @@ get_conversion_path (PathContext *pc,
             
               babl_list_insert_last(interesting_paths->fish_path_list.path_list, babl);
             }
-            else {
+          else
+            {
               Babl *babl = babl_list_get_n(interesting_paths->fish_path_list.path_list, found);
-              if (babl->fish_path.cost > path_cost) {
+              if ((babl->fish_path.cost > path_cost) && babl->fish.error >= path_error) {
                 babl_free (babl->fish_path.conversion_list);
 
                 babl->fish.processings          = 0;
                 babl->fish.pixels               = 0;
                 babl->fish.error                = path_error;
                 babl->fish_path.cost            = path_cost;
-                babl->fish_path.loss            = pc->fish_path->fish_path.loss; //FIXME: Has this been set yet?
+                babl->fish_path.loss            = BABL_MAX_COST_VALUE; //FIXME: Set this to a real value?
                 babl->fish_path.conversion_list = babl_list_init();
                 
                 babl_list_copy (pc->current_path,
                                 babl->fish_path.conversion_list);
               }
             }
-
-          }
-
-
-          if ((path_cost < ref_cost) && /* do not use paths that took longer to compute than reference */
-              (path_cost < pc->fish_path->fish_path.cost) &&
-              (path_error <= legal_error ()))
-            {
-              /* We have found the best path so far,
-               * let's copy it into our new fish */
-              pc->fish_path->fish_path.cost = path_cost;
-              pc->fish_path->fish.error  = path_error;
-              babl_list_copy (pc->current_path,
-                              pc->fish_path->fish_path.conversion_list);
-            }
-
-          destroy_path_instrumentation (&fpi);
         }
-#if 0
-        else {
-          printf("  Error too high\n");
-        }
-#endif
 
+      destroy_path_instrumentation (&fpi);
     }
   else
     {
@@ -372,36 +334,18 @@ Babl *
 babl_fish_path (const Babl *source,
                 const Babl *destination)
 {
-  Babl *babl = NULL;
   Babl *conversion_list = NULL;
   char name[BABL_MAX_NAME_LEN];
 
   create_name (name, source, destination, 1);
-  babl = babl_db_exist_by_name (babl_fish_db (), name);
-  if (babl)
+  conversion_list = babl_db_exist_by_name (babl_fish_db (), name);
+  if (conversion_list)
     {
       /* There is an instance already registered by the required name,
        * returning the preexistent one instead.
        */
-      return babl;
+      return conversion_list;
     }
-
-  babl = babl_calloc (1, sizeof (BablFishPath) +
-                      strlen (name) + 1);
-  babl_set_destructor (babl, babl_fish_path_destroy);
-
-  babl->class_type                = BABL_FISH_PATH;
-  babl->instance.id               = babl_fish_get_id (source, destination);
-  babl->instance.name             = ((char *) babl) + sizeof (BablFishPath);
-  strcpy (babl->instance.name, name);
-  babl->fish.source               = source;
-  babl->fish.destination          = destination;
-  babl->fish.processings          = 0;
-  babl->fish.pixels               = 0;
-  babl->fish.error                = BABL_MAX_COST_VALUE;
-  babl->fish_path.cost            = BABL_MAX_COST_VALUE;
-  babl->fish_path.loss            = BABL_MAX_COST_VALUE;
-  babl->fish_path.conversion_list = babl_list_init_with_size (BABL_HARD_MAX_PATH_LENGTH);
 
   conversion_list = babl_calloc (1, sizeof (BablFishPathList) +
                       strlen (name) + 1);
@@ -409,7 +353,7 @@ babl_fish_path (const Babl *source,
   
   conversion_list->class_type                = BABL_FISH_PATH_LIST;
   conversion_list->instance.id               = babl_fish_get_id (source, destination);
-  conversion_list->instance.name             = ((char *) babl) + sizeof (BablFishPathList);
+  conversion_list->instance.name             = ((char *) conversion_list) + sizeof (BablFishPathList);
   strcpy (conversion_list->instance.name, name);
   conversion_list->fish.source               = source;
   conversion_list->fish.destination          = destination;
@@ -417,8 +361,8 @@ babl_fish_path (const Babl *source,
 
   {
     PathContext pc;
+    pc.conversion_list = conversion_list;
     pc.current_path = babl_list_init_with_size (BABL_HARD_MAX_PATH_LENGTH);
-    pc.fish_path = babl;
     pc.to_format = (Babl *) destination;
 
     if (babl_in_fish_path <= 0)
@@ -458,7 +402,7 @@ babl_fish_path (const Babl *source,
 
     }
   }
-  
+
   /*
   printf("%d canidate conversions:\n", babl_list_size(conversion_list->fish_path_list.path_list));
   {
@@ -472,14 +416,10 @@ babl_fish_path (const Babl *source,
     }
   }
   */
-    
-  babl_free (babl); //FIXME: This object is from the old system and should be removed
 
   /* Since there is not an already registered instance by the required
    * name, inserting newly created class into database.
    */
-  babl_log("Inserting %s into babl_fish_db\n", conversion_list->instance.name);
-
   babl_db_insert (babl_fish_db (), conversion_list);
   return conversion_list;
 }
