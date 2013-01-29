@@ -100,6 +100,7 @@ Babl-$(BABL_API_VERSION).gir: $(G_IR_SCANNER) $(library_include_HEADERS) $(c_sou
 	$(INTROSPECTION_SCANNER) -v --warn-all \
 	    --namespace Babl --nsversion=$(BABL_API_VERSION) \
             --add-include-path=$(srcdir) --add-include-path=. \
+            --identifier-prefix= --symbol-prefix=babl \
             --library=$(builddir)/libbabl-$(BABL_API_VERSION).la \
             --libtool="$(LIBTOOL)" \
             --output $@ \
