@@ -70,6 +70,15 @@ typedef struct
   BablList         *conversion_list;
 } BablFishPath;
 
+/**/
+typedef struct
+{
+  BablInstance    instance;
+  const Babl     *source;
+  const Babl     *destination;
+  BablList       *path_list;
+} BablFishPathList;
+
 /* BablFishReference
  *
  * A BablFishReference is not intended to be fast, thus the algorithm

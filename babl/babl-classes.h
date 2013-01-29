@@ -48,6 +48,7 @@ enum {
   BABL_FISH_REFERENCE,
   BABL_FISH_SIMPLE,
   BABL_FISH_PATH,
+  BABL_FISH_PATH_LIST,
   BABL_IMAGE,
 
   BABL_EXTENSION,
@@ -84,6 +85,7 @@ typedef union _Babl
   BablFishReference fish_reference;
   BablFishSimple    fish_simple;
   BablFishPath      fish_path;
+  BablFishPathList  fish_path_list;
   BablExtension     extension;
 } _Babl;
 
