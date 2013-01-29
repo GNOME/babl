@@ -63,6 +63,7 @@ h_sources  =				\
 
 library_includedir=$(includedir)/babl-$(BABL_API_VERSION)/babl
 libinc_hdrs = \
+	babl-introspect.h       \
 	babl-macros.h           \
 	babl-types.h            \
 	babl.h
