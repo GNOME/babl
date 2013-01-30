@@ -465,6 +465,8 @@ conv_rgbAF_lrgba8 (unsigned char *srcc,
 }
 
 #define conv_rgb8_rgbAF    conv_rgb8_rgbaF
+#define conv_gamma_rgbaF_gamma_rgbAF   conv_rgbaF_rgbAF
+#define conv_gamma_rgbAF_gamma_rgbaF   conv_rgbAF_rgbaF
 
 int init (void);
 
@@ -485,6 +487,24 @@ init (void)
     babl_component ("Ra"),
     babl_component ("Ga"),
     babl_component ("Ba"),
+    babl_component ("A"),
+    NULL);
+    
+    
+  const Babl *gamma_rgbaF = babl_format_new (
+    babl_model ("R'G'B'A"),
+    babl_type ("float"),
+    babl_component ("R'"),
+    babl_component ("G'"),
+    babl_component ("B'"),
+    babl_component ("A"),
+    NULL);
+  const Babl *gamma_rgbAF = babl_format_new (
+    babl_model ("R'aG'aB'aA"),
+    babl_type ("float"),
+    babl_component ("R'a"),
+    babl_component ("G'a"),
+    babl_component ("B'a"),
     babl_component ("A"),
     NULL);
 
@@ -529,6 +549,10 @@ init (void)
 
   o (rgbaF, rgbAF);
   o (rgbAF, rgbaF);
+  
+  o (gamma_rgbaF, gamma_rgbAF);
+  o (gamma_rgbAF, gamma_rgbaF);
+  
   o (rgbAF, lrgba8);
   o (rgb8, rgbaF);
   o (rgb8, rgbAF);
