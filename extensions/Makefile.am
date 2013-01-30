@@ -25,10 +25,12 @@ ext_LTLIBRARIES = \
 	fast-float.la    \
 	naive-CMYK.la   \
 	HSV.la   \
+	simple.la       \
 	sse-fixups.la
 
 cairo_la_SOURCES = cairo.c
 CIE_la_SOURCES = CIE.c
+expar_la_SOURCES = expar.c
 gegl_fixups_la_SOURCES = gegl-fixups.c
 gggl_lies_la_SOURCES = gggl-lies.c
 gggl_la_SOURCES = gggl.c
