@@ -188,19 +188,23 @@ get_conversion_path (PathContext *pc,
       double ref_cost   = 0.0;
       double path_error = 1.0;
       FishPathInstrumentation fpi;
-      /*
       int    i;
 
       //printf("Considering path of lenght %i:\n", babl_list_size (pc->current_path));
 
+      //FIXME: I'm not sure what this loop does, but it's important
+      //       I had thought that get_path_instrumentation did a full error / time evaluation
+      //       but if this isn't called first the values get odd. It seems like this might
+      //       also be a chaching issue, because the first check in a given extension.so
+      //       was getting scored poorly while later ones were correct.
+      /* Fill out conversion data if it hasn't been used before */
       for (i = 0; i < babl_list_size (pc->current_path); i++)
         {
-          path_error *= (1.0 + babl_conversion_error ((BablConversion *) pc->current_path->items[i]));
+          babl_conversion_error ((BablConversion *) pc->current_path->items[i]);
           //printf("%s ", babl_get_name(((BablConversion *) pc->current_path->items[i])->source));
           //printf("%s -> ", babl_get_name(((BablConversion *) pc->current_path->items[i])->source));
         }
         //printf("%s\n", babl_get_name(((BablConversion *) pc->current_path->items[i-1])->destination));
-      */
 
       memset (&fpi, 0, sizeof (fpi));
 
@@ -221,27 +225,26 @@ get_conversion_path (PathContext *pc,
         {
           int path_list_index = 0;
           int found = -1;
-          const int rounding_factor = 10000;
           
           for (path_list_index = 0;
                path_list_index < babl_list_size(interesting_paths->fish_path_list.path_list);
                path_list_index++)
             {
-              Babl *cur_query_path = babl_list_get_n(interesting_paths->fish_path_list.path_list, path_list_index);
-              if ((unsigned int)(path_error * rounding_factor) == (unsigned int)(cur_query_path->fish.error * rounding_factor))
+              Babl *cur_query_path = interesting_paths->fish_path_list.path_list->items[path_list_index];
+              if (path_error == cur_query_path->fish.error)
                 {
                   found = path_list_index;
                   break;
                 }
-              else if (((unsigned int)(path_error * rounding_factor) > (unsigned int)(cur_query_path->fish.error * rounding_factor)) &&
-                       (path_cost >= cur_query_path->fish_path.cost))
+              else if ((path_error < cur_query_path->fish.error) &&
+                       (path_cost <= cur_query_path->fish_path.cost))
                 {
                   /* Less expensive path with less error */
                   found = path_list_index;
                   break;
                 }
-              else if (((unsigned int)(path_error * rounding_factor) < (unsigned int)(cur_query_path->fish.error * rounding_factor)) &&
-                       (path_cost <= cur_query_path->fish_path.cost))
+              else if ((path_error > cur_query_path->fish.error) &&
+                       (path_cost >= cur_query_path->fish_path.cost))
                 {
                   /* New path is worse than this path, it will be skipped below */
                   found = path_list_index;
@@ -251,6 +254,10 @@ get_conversion_path (PathContext *pc,
           
           if (found == -1)
             {
+              /*
+              printf("New path: %f %f\n",
+                     path_cost, path_error);
+               */
               Babl *babl;              
               babl = babl_calloc (1, sizeof (BablFishPath) +
                       strlen (interesting_paths->instance.name) + 1);
@@ -276,8 +283,18 @@ get_conversion_path (PathContext *pc,
             }
           else
             {
+              //FIXME: It's possible for a path to be better than several existing paths, but this code only replaces one
               Babl *babl = babl_list_get_n(interesting_paths->fish_path_list.path_list, found);
+              /*
+              printf("Considering paths:\n  current %f %f\n  new     %f %f\n",
+                     babl->fish_path.cost, babl->fish.error,
+                     path_cost, path_error);
+              */
               if ((babl->fish_path.cost > path_cost) && babl->fish.error >= path_error) {
+                /*
+                printf("Replacing:\n");
+                babl_introspect(babl);
+                */
                 babl_free (babl->fish_path.conversion_list);
 
                 babl->fish.processings          = 0;
@@ -385,22 +402,39 @@ babl_fish_path (const Babl *source,
   //FIXME: Bubble sort! Yay!
   {
     int i = 0;
+    int pruned = 0;
     while (i < babl_list_size(conversion_list->fish_path_list.path_list) - 1) {
       Babl *babl_a = babl_list_get_n(conversion_list->fish_path_list.path_list, i);
       Babl *babl_b = babl_list_get_n(conversion_list->fish_path_list.path_list, i + 1);
       
-      
-      if (babl_a->fish.error > babl_b->fish.error) {
+      if (!babl_b) {
+        i += 1;
+      }
+      else if ((!babl_a) || (babl_a->fish.error > babl_b->fish.error)) {
         Babl *tmp = conversion_list->fish_path_list.path_list->items[i];
         conversion_list->fish_path_list.path_list->items[i] = conversion_list->fish_path_list.path_list->items[i+1];
         conversion_list->fish_path_list.path_list->items[i+1] = tmp;
         i = 0;
       }
+      else if ((babl_a->fish.error <= babl_b->fish.error) &&
+               (babl_a->fish_path.cost < babl_b->fish_path.cost))
+      {
+        /* If the next value is universaly worse than this one prune it */
+        /*
+        printf("Pruned:");
+        babl_introspect(babl_b);
+        */
+        babl_free(babl_b);
+        conversion_list->fish_path_list.path_list->items[i+1] = NULL;
+        pruned += 1;
+        i = 0;
+      }
       else {
         i += 1;
       }
-
     }
+
+    conversion_list->fish_path_list.path_list->count -= pruned;
   }
 
   /*
