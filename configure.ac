@@ -172,6 +172,13 @@ AM_CONDITIONAL(HAVE_RSVG, test "x$RSVG" != "xno")
 AC_PATH_PROG(W3M, w3m, no)
 AM_CONDITIONAL(HAVE_W3M, test "x$W3M" != "xno")
 
+dnl disable docs generation.
+AC_ARG_ENABLE([docs],
+              [  --disable-docs          disable docs generation (default=no)],,
+              enable_docs="yes")
+
+AM_CONDITIONAL(ENABLE_DOCS, test "x$enable_docs" = "xyes")
+
 ###########################
 # Check target architecture
 ###########################

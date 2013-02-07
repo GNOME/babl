@@ -4,8 +4,11 @@ ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 SUBDIRS = \
 	babl		\
 	extensions	\
-	tests		\
-	docs
+	tests
+
+if ENABLE_DOCS
+SUBDIRS+= docs
+endif
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = babl.pc
