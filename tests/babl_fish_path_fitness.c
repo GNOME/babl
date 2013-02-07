@@ -43,9 +43,9 @@ static int destination_each (Babl *babl,
     printf (" ");
   else
     {
-      Babl *temp = babl_fish_path (source, destination);
+      Babl const *temp = babl_fish (source, destination);
 
-      if (temp)
+      if (temp && temp->class_type == BABL_FISH_PATH)
         {
           printf ("%s", utf8_bar[babl_list_size (temp->fish_path.conversion_list)]);
           total_length += babl_list_size (temp->fish_path.conversion_list);
