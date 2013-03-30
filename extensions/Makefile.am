@@ -20,12 +20,14 @@ ext_LTLIBRARIES = \
 	gegl-fixups.la  \
 	gggl.la         \
 	gimp-8bit.la    \
-	float.la    \
-	fast-float.la    \
+	float.la        \
+	fast-float.la   \
 	naive-CMYK.la   \
-	HSV.la   \
+	HSV.la          \
 	simple.la       \
-	sse-fixups.la
+	sse-fixups.la   \
+	sse-float.la    \
+	sse-int16.la
 
 cairo_la_SOURCES = cairo.c
 CIE_la_SOURCES = CIE.c
@@ -36,9 +38,13 @@ gimp_8bit_la_SOURCES = gimp-8bit.c
 naive_CMYK_la_SOURCES = naive-CMYK.c
 HSV_la_SOURCES = HSV.c
 sse_fixups_la_SOURCES = sse-fixups.c
+sse_float_la_SOURCES = sse-float.c
+sse_int16_la_SOURCES = sse-int16.c
 float_la_SOURCES = float.c
 fast_float_la_SOURCES = fast-float.c
 
 LIBS = $(top_builddir)/babl/libbabl-@BABL_API_VERSION@.la $(MATH_LIB)
 
 sse_fixups_la_CFLAGS = $(MMX_EXTRA_CFLAGS) $(SSE_EXTRA_CFLAGS)
+sse_float_la_CFLAGS = $(MMX_EXTRA_CFLAGS) $(SSE_EXTRA_CFLAGS)
+sse_int16_la_CFLAGS = $(MMX_EXTRA_CFLAGS) $(SSE_EXTRA_CFLAGS)
