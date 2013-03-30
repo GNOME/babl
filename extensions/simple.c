@@ -113,37 +113,9 @@ float_pre_to_u16_pre (unsigned char *src_char, unsigned char *dst_char, long sam
   return samples;
 }
 
-static inline long
-float_pre_to_float (unsigned char *src_char, unsigned char *dst_char, long samples)
-{
-  float *src = (float *)src_char;
-  float *dst = (float *)dst_char;
-  long n = samples;
-  while (n--)
-    {
-      const float a_term = 1.0f / src[3];
-      dst[0] = src[0] * a_term;
-      dst[1] = src[1] * a_term;
-      dst[2] = src[2] * a_term;
-      dst[3] = src[3];
-      
-      dst += 4;
-      src += 4;
-
-    }
-  return samples;
-}
-
 int
 init (void)
 {
-  /* float and float */
-  babl_conversion_new (babl_format ("R'aG'aB'aA float"),
-                       babl_format ("R'G'B'A float"),
-                      "linear", 
-                       float_pre_to_float,
-                       NULL);
-
   /* float and u8 */
   babl_conversion_new (babl_format ("R'G'B'A float"),
                        babl_format ("R'G'B'A u8"),
