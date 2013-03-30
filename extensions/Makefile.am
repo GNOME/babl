@@ -18,7 +18,6 @@ ext_LTLIBRARIES = \
 	cairo.la        \
 	CIE.la          \
 	gegl-fixups.la  \
-	gggl-lies.la    \
 	gggl.la         \
 	gimp-8bit.la    \
 	float.la    \
@@ -32,7 +31,6 @@ cairo_la_SOURCES = cairo.c
 CIE_la_SOURCES = CIE.c
 expar_la_SOURCES = expar.c
 gegl_fixups_la_SOURCES = gegl-fixups.c
-gggl_lies_la_SOURCES = gggl-lies.c
 gggl_la_SOURCES = gggl.c
 gimp_8bit_la_SOURCES = gimp-8bit.c
 naive_CMYK_la_SOURCES = naive-CMYK.c
