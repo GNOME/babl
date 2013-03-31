@@ -21,7 +21,8 @@
 
 #if defined(__GNUC__) && (__GNUC__ >= 4) && defined(USE_SSE) && defined(USE_MMX)
 
-#include <xmmintrin.h>
+/* SSE 2 */
+#include <emmintrin.h>
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -32,8 +33,6 @@
 
 #define Q(a) { a, a, a, a }
 static const __v4sf  u16_float = Q (1.f / 65535);
-static const __m128i zero = { 0 };
-
 
 static long
 conv_rgba16_linear_rgbaF_linear (const uint16_t *src, float *dst, long samples)
@@ -48,9 +47,11 @@ conv_rgba16_linear_rgbaF_linear (const uint16_t *src, float *dst, long samples)
 
       for (; i < n / 2; i++)
         {
-          const __m128i t0 = _mm_unpacklo_epi16 (s[i + 0], zero);
-          const __m128i t1 = _mm_unpackhi_epi16 (s[i + 0], zero);
+          /* Expand shorts to ints by loading zero in the high bits */
+          const __m128i t0 = _mm_unpacklo_epi16 (s[i + 0], (__m128i)_mm_setzero_ps());
+          const __m128i t1 = _mm_unpackhi_epi16 (s[i + 0], (__m128i)_mm_setzero_ps());
 
+          /* Convert to float */
           const __m128  u0 = _mm_cvtepi32_ps (t0);
           const __m128  u1 = _mm_cvtepi32_ps (t1);
 
@@ -62,8 +63,10 @@ conv_rgba16_linear_rgbaF_linear (const uint16_t *src, float *dst, long samples)
         }
       _mm_empty();
     }
+
   for (i *= 2 * 4; i != 4 * samples; i++)
     dst[i] = src[i] * (1.f / 65535);
+
   return samples;
 }
 
@@ -84,8 +87,8 @@ conv_rgba16_linear_rgbAF_linear (const uint16_t *src, float *dst, long samples)
       for (; i < n / 2; i++)
         {
           /* Expand shorts to ints by loading zero in the high bits */
-          const __m128i t0 = _mm_unpacklo_epi16 (s[i + 0], zero);
-          const __m128i t1 = _mm_unpackhi_epi16 (s[i + 0], zero);
+          const __m128i t0 = _mm_unpacklo_epi16 (s[i + 0], (__m128i)_mm_setzero_ps());
+          const __m128i t1 = _mm_unpackhi_epi16 (s[i + 0], (__m128i)_mm_setzero_ps());
 
           /* Convert to float */
           const __m128  u0 = _mm_cvtepi32_ps (t0);
@@ -99,26 +102,14 @@ conv_rgba16_linear_rgbAF_linear (const uint16_t *src, float *dst, long samples)
           __v4sf aaaa0 = (__v4sf)_mm_shuffle_epi32(rgba0, _MM_SHUFFLE(3, 3, 3, 3));
           __v4sf aaaa1 = (__v4sf)_mm_shuffle_epi32(rgba1, _MM_SHUFFLE(3, 3, 3, 3));
           
-          /* Set the value in the alpha slot to 1 */
+          /* Set the value in the alpha slot to 1.0, we know max is sufficent because alpha was a short */
           aaaa0 = _mm_max_ps(aaaa0, max_mask);
           aaaa1 = _mm_max_ps(aaaa1, max_mask);
           
           /* Premultiply */
           rgba0 = rgba0 * aaaa0;
           rgba1 = rgba1 * aaaa1;
-#if 0
-          /* Rotate a to ABGR so we can replace A */
-          rgba0 = (__v4sf)_mm_shuffle_epi32(rgba0, _MM_SHUFFLE(0, 1, 2, 3));
-          rgba1 = (__v4sf)_mm_shuffle_epi32(rgba1, _MM_SHUFFLE(0, 1, 2, 3));
           
-          /* Restore original alpha value */
-          rgba0 = _mm_move_ss(rgba0, aaaa0);
-          rgba1 = _mm_move_ss(rgba1, aaaa1);
-          
-          /* Rotate back to RGBA */
-          rgba0 = (__v4sf)_mm_shuffle_epi32(rgba0, _MM_SHUFFLE(0, 1, 2, 3));
-          rgba1 = (__v4sf)_mm_shuffle_epi32(rgba1, _MM_SHUFFLE(0, 1, 2, 3));
-#endif
           d[2 * i + 0] = rgba0;
           d[2 * i + 1] = rgba1;
         }
@@ -181,8 +172,8 @@ init (void)
     babl_component ("A"),
     NULL);
 
-  if ((babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_MMX) &&
-      (babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_SSE))
+  if ((babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_SSE) &&
+      (babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_SSE2))
     {
       o (rgba16_linear, rgbaF_linear);
       o (rgba16_linear, rgbAF_linear);

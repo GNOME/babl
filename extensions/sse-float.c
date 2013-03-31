@@ -46,10 +46,10 @@ conv_rgbaF_linear_rgbAF_linear (const float *src, float *dst, long samples)
 
       for ( ; i < n; i += 4)
         {
-          const __v4sf s0 = s[i + 0];
-          const __v4sf s1 = s[i + 1];
-          const __v4sf s2 = s[i + 2];
-          const __v4sf s3 = s[i + 3];
+          const __v4sf s0 = *s++;
+          const __v4sf s1 = *s++;
+          const __v4sf s2 = *s++;
+          const __v4sf s3 = *s++;
 
           /* Shuffle the pixels into a planar layout */
           const __v4sf rg01 = _mm_unpacklo_ps (s0, s1);
@@ -71,10 +71,10 @@ conv_rgbaF_linear_rgbAF_linear (const float *src, float *dst, long samples)
           const __v4sf Ga02 = _mm_unpacklo_ps (G0213, a0213);
           const __v4sf Ga13 = _mm_unpackhi_ps (G0213, a0213);
 
-          d[i + 0] = _mm_unpacklo_ps (RB02, Ga02);
-          d[i + 1] = _mm_unpacklo_ps (RB13, Ga13);
-          d[i + 2] = _mm_unpackhi_ps (RB02, Ga02);
-          d[i + 3] = _mm_unpackhi_ps (RB13, Ga13);
+          *d++ = _mm_unpacklo_ps (RB02, Ga02);
+          *d++ = _mm_unpacklo_ps (RB13, Ga13);
+          *d++ = _mm_unpackhi_ps (RB02, Ga02);
+          *d++ = _mm_unpackhi_ps (RB13, Ga13);
         }
       _mm_empty ();
     }
@@ -111,10 +111,10 @@ conv_rgbAF_linear_rgbaF_linear (const float *src, float *dst, long samples)
 
       for ( ; i < n; i += 4)
         {
-          const __v4sf s0 = s[i + 0];
-          const __v4sf s1 = s[i + 1];
-          const __v4sf s2 = s[i + 2];
-          const __v4sf s3 = s[i + 3];
+          const __v4sf s0 = *s++;
+          const __v4sf s1 = *s++;
+          const __v4sf s2 = *s++;
+          const __v4sf s3 = *s++;
 
           /* Shuffle the pixels into a planar layout */
           const __v4sf rg01 = _mm_unpacklo_ps (s0, s1);
@@ -136,10 +136,10 @@ conv_rgbAF_linear_rgbaF_linear (const float *src, float *dst, long samples)
           const __v4sf Ga02 = _mm_unpacklo_ps (G0213, a0213);
           const __v4sf Ga13 = _mm_unpackhi_ps (G0213, a0213);
 
-          d[i + 0] = _mm_unpacklo_ps (RB02, Ga02);
-          d[i + 1] = _mm_unpacklo_ps (RB13, Ga13);
-          d[i + 2] = _mm_unpackhi_ps (RB02, Ga02);
-          d[i + 3] = _mm_unpackhi_ps (RB13, Ga13);
+          *d++ = _mm_unpacklo_ps (RB02, Ga02);
+          *d++ = _mm_unpacklo_ps (RB13, Ga13);
+          *d++ = _mm_unpackhi_ps (RB02, Ga02);
+          *d++ = _mm_unpackhi_ps (RB13, Ga13);
         }
       _mm_empty ();
     }
