@@ -297,6 +297,7 @@ AC_ARG_ENABLE(sse,
 if test "x$enable_mmx" = xyes; then
   BABL_DETECT_CFLAGS(MMX_EXTRA_CFLAGS, '-mmmx')
   SSE_EXTRA_CFLAGS=
+  SSE2_EXTRA_CFLAGS=
 
   AC_MSG_CHECKING(whether we can compile MMX code)
 
@@ -324,6 +325,22 @@ if test "x$enable_mmx" = xyes; then
         AC_MSG_RESULT(no)
         AC_MSG_WARN([The assembler does not support the SSE command set.])
       )
+      
+      BABL_DETECT_CFLAGS(sse2_flag, '-msse2')
+      SSE2_EXTRA_CFLAGS="$SSE_EXTRA_CFLAGS $sse2_flag"
+
+      AC_MSG_CHECKING(whether we can compile SSE2 code)
+
+      CFLAGS="$CFLAGS $sse2_flag"
+
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM(,[asm ("punpckhwd %xmm0,%xmm1");])],
+        AC_DEFINE(USE_SSE2, 1, [Define to 1 if SSE2 assembly is available.])
+        AC_MSG_RESULT(yes)
+      ,
+        enable_sse2=no
+        AC_MSG_RESULT(no)
+        AC_MSG_WARN([The assembler does not support the SSE2 command set.])
+      )
 
     fi
   ,
@@ -336,6 +353,7 @@ if test "x$enable_mmx" = xyes; then
 
   AC_SUBST(MMX_EXTRA_CFLAGS)
   AC_SUBST(SSE_EXTRA_CFLAGS)
+  AC_SUBST(SSE2_EXTRA_CFLAGS)
 fi
 
 
