@@ -19,9 +19,10 @@
 
 #include "config.h"
 
-#if defined(__GNUC__) && (__GNUC__ >= 4) && defined(USE_SSE) && defined(USE_MMX)
+#if defined(USE_SSE2)
 
-#include <xmmintrin.h>
+/* SSE 2 */
+#include <emmintrin.h>
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -40,41 +41,34 @@ conv_rgbaF_linear_rgbAF_linear (const float *src, float *dst, long samples)
 
   if (((uintptr_t)src % 16) + ((uintptr_t)dst % 16) == 0)
     {
-      const long    n = (samples / 4) * 4;
+      const long    n = (samples / 2) * 2;
       const __v4sf *s = (const __v4sf*) src;
             __v4sf *d = (__v4sf*)dst;
 
-      for ( ; i < n; i += 4)
+      for ( ; i < n; i += 2)
         {
-          const __v4sf s0 = *s++;
-          const __v4sf s1 = *s++;
-          const __v4sf s2 = *s++;
-          const __v4sf s3 = *s++;
+          __v4sf rbaa0, rbaa1;
+        
+          __v4sf rgba0 = *s++;
+          __v4sf rgba1 = *s++;
 
-          /* Shuffle the pixels into a planar layout */
-          const __v4sf rg01 = _mm_unpacklo_ps (s0, s1);
-          const __v4sf ba01 = _mm_unpackhi_ps (s0, s1);
-          const __v4sf rg23 = _mm_unpacklo_ps (s2, s3);
-          const __v4sf ba23 = _mm_unpackhi_ps (s2, s3);
-
-          const __v4sf r0213 = _mm_unpacklo_ps (rg01, rg23);
-          const __v4sf g0213 = _mm_unpackhi_ps (rg01, rg23);
-          const __v4sf b0213 = _mm_unpacklo_ps (ba01, ba23);
-          const __v4sf a0213 = _mm_unpackhi_ps (ba01, ba23);
-
-          const __v4sf R0213 = r0213 * a0213;
-          const __v4sf G0213 = g0213 * a0213;
-          const __v4sf B0213 = b0213 * a0213;
-
-          const __v4sf RB02 = _mm_unpacklo_ps (R0213, B0213);
-          const __v4sf RB13 = _mm_unpackhi_ps (R0213, B0213);
-          const __v4sf Ga02 = _mm_unpacklo_ps (G0213, a0213);
-          const __v4sf Ga13 = _mm_unpackhi_ps (G0213, a0213);
-
-          *d++ = _mm_unpacklo_ps (RB02, Ga02);
-          *d++ = _mm_unpacklo_ps (RB13, Ga13);
-          *d++ = _mm_unpackhi_ps (RB02, Ga02);
-          *d++ = _mm_unpackhi_ps (RB13, Ga13);
+          /* Expand alpha */
+          __v4sf aaaa0 = (__v4sf)_mm_shuffle_epi32((__m128i)rgba0, _MM_SHUFFLE(3, 3, 3, 3));
+          __v4sf aaaa1 = (__v4sf)_mm_shuffle_epi32((__m128i)rgba1, _MM_SHUFFLE(3, 3, 3, 3));
+          
+          /* Premultiply */
+          rgba0 = rgba0 * aaaa0;
+          rgba1 = rgba1 * aaaa1;
+          
+          /* Shuffle the original alpha value back in */
+          rbaa0 = _mm_shuffle_ps(rgba0, aaaa0, _MM_SHUFFLE(0, 0, 2, 0));
+          rbaa1 = _mm_shuffle_ps(rgba1, aaaa1, _MM_SHUFFLE(0, 0, 2, 0));
+          
+          rgba0 = _mm_shuffle_ps(rgba0, rbaa0, _MM_SHUFFLE(2, 1, 1, 0));
+          rgba1 = _mm_shuffle_ps(rgba1, rbaa1, _MM_SHUFFLE(2, 1, 1, 0));
+          
+          *d++ = rgba0;
+          *d++ = rgba1;
         }
       _mm_empty ();
     }
@@ -105,41 +99,33 @@ conv_rgbAF_linear_rgbaF_linear (const float *src, float *dst, long samples)
 
   if (((uintptr_t)src % 16) + ((uintptr_t)dst % 16) == 0)
     {
-      const long    n = (samples / 4) * 4;
+      const long    n = (samples / 2) * 2;
       const __v4sf *s = (const __v4sf*) src;
             __v4sf *d = (__v4sf*)dst;
 
-      for ( ; i < n; i += 4)
+      for ( ; i < n; i += 2)
         {
-          const __v4sf s0 = *s++;
-          const __v4sf s1 = *s++;
-          const __v4sf s2 = *s++;
-          const __v4sf s3 = *s++;
+          __v4sf rbaa0, rbaa1;
+          
+          __v4sf rgba0 = *s++;
+          __v4sf rgba1 = *s++;
 
-          /* Shuffle the pixels into a planar layout */
-          const __v4sf rg01 = _mm_unpacklo_ps (s0, s1);
-          const __v4sf ba01 = _mm_unpackhi_ps (s0, s1);
-          const __v4sf rg23 = _mm_unpacklo_ps (s2, s3);
-          const __v4sf ba23 = _mm_unpackhi_ps (s2, s3);
-
-          const __v4sf r0213 = _mm_unpacklo_ps (rg01, rg23);
-          const __v4sf g0213 = _mm_unpackhi_ps (rg01, rg23);
-          const __v4sf b0213 = _mm_unpacklo_ps (ba01, ba23);
-          const __v4sf a0213 = _mm_unpackhi_ps (ba01, ba23);
-
-          const __v4sf R0213 = r0213 / a0213;
-          const __v4sf G0213 = g0213 / a0213;
-          const __v4sf B0213 = b0213 / a0213;
-
-          const __v4sf RB02 = _mm_unpacklo_ps (R0213, B0213);
-          const __v4sf RB13 = _mm_unpackhi_ps (R0213, B0213);
-          const __v4sf Ga02 = _mm_unpacklo_ps (G0213, a0213);
-          const __v4sf Ga13 = _mm_unpackhi_ps (G0213, a0213);
-
-          *d++ = _mm_unpacklo_ps (RB02, Ga02);
-          *d++ = _mm_unpacklo_ps (RB13, Ga13);
-          *d++ = _mm_unpackhi_ps (RB02, Ga02);
-          *d++ = _mm_unpackhi_ps (RB13, Ga13);
+          /* Expand alpha */
+          __v4sf aaaa0 = (__v4sf)_mm_shuffle_epi32((__m128i)rgba0, _MM_SHUFFLE(3, 3, 3, 3));
+          __v4sf aaaa1 = (__v4sf)_mm_shuffle_epi32((__m128i)rgba1, _MM_SHUFFLE(3, 3, 3, 3));
+          
+          /* Premultiply */
+          rgba0 = rgba0 / aaaa0;
+          rgba1 = rgba1 / aaaa1;
+          
+          /* Shuffle the original alpha value back in */
+          rbaa0 = _mm_shuffle_ps(rgba0, aaaa0, _MM_SHUFFLE(0, 0, 2, 0));
+          rbaa1 = _mm_shuffle_ps(rgba1, aaaa1, _MM_SHUFFLE(0, 0, 2, 0));
+          rgba0 = _mm_shuffle_ps(rgba0, rbaa0, _MM_SHUFFLE(2, 1, 1, 0));
+          rgba1 = _mm_shuffle_ps(rgba1, rbaa1, _MM_SHUFFLE(2, 1, 1, 0));
+          
+          *d++ = rgba0;
+          *d++ = rgba1;
         }
       _mm_empty ();
     }
@@ -163,7 +149,7 @@ conv_rgbAF_linear_rgbaF_linear (const float *src, float *dst, long samples)
   return samples;
 }
 
-#endif /* defined(__GNUC__) && (__GNUC__ >= 4) && defined(USE_SSE) && defined(USE_MMX) */
+#endif /* defined(USE_SSE2) */
 
 #define o(src, dst) \
   babl_conversion_new (src, dst, "linear", conv_ ## src ## _ ## dst, NULL)
@@ -173,7 +159,7 @@ int init (void);
 int
 init (void)
 {
-#if defined(__GNUC__) && (__GNUC__ >= 4) && defined(USE_SSE) && defined(USE_MMX)
+#if defined(USE_SSE2)
 
   const Babl *rgbaF_linear = babl_format_new (
     babl_model ("RGBA"),
@@ -192,14 +178,15 @@ init (void)
     babl_component ("A"),
     NULL);
 
-  if ((babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_MMX) &&
-      (babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_SSE))
+  if ((babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_SSE) &&
+      (babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_SSE2))
+      
     {
       o (rgbaF_linear, rgbAF_linear);
       o (rgbAF_linear, rgbaF_linear);
     }
 
-#endif
+#endif /* defined(USE_SSE2) */
 
   return 0;
 }

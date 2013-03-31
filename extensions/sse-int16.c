@@ -19,7 +19,7 @@
 
 #include "config.h"
 
-#if defined(__GNUC__) && (__GNUC__ >= 4) && defined(USE_SSE) && defined(USE_MMX)
+#if defined(USE_SSE2)
 
 /* SSE 2 */
 #include <emmintrin.h>
@@ -94,7 +94,7 @@ conv_rgba16_linear_rgbAF_linear (const uint16_t *src, float *dst, long samples)
           const __m128  u0 = _mm_cvtepi32_ps (t0);
           const __m128  u1 = _mm_cvtepi32_ps (t1);
 
-          /* Multiply by 1 / 2^16 */
+          /* Multiply by 1 / 65535 */
           __v4sf rgba0 = u0 * u16_float;
           __v4sf rgba1 = u1 * u16_float;
           
@@ -135,7 +135,7 @@ conv_rgba16_linear_rgbAF_linear (const uint16_t *src, float *dst, long samples)
   return samples;
 }
 
-#endif
+#endif /* defined(USE_SSE2) */
 
 #define o(src, dst) \
   babl_conversion_new (src, dst, "linear", conv_ ## src ## _ ## dst, NULL)
@@ -145,7 +145,7 @@ int init (void);
 int
 init (void)
 {
-#if defined(__GNUC__) && (__GNUC__ >= 4) && defined(USE_SSE) && defined(USE_MMX)
+#if defined(USE_SSE2)
 
   const Babl *rgbaF_linear = babl_format_new (
     babl_model ("RGBA"),
@@ -179,7 +179,7 @@ init (void)
       o (rgba16_linear, rgbAF_linear);
     }
 
-#endif
+#endif /* defined(USE_SSE2) */
 
   return 0;
 }
