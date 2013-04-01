@@ -99,8 +99,8 @@ conv_rgba16_linear_rgbAF_linear (const uint16_t *src, float *dst, long samples)
           __v4sf rgba1 = u1 * u16_float;
           
           /* Expand alpha */
-          __v4sf aaaa0 = (__v4sf)_mm_shuffle_epi32(rgba0, _MM_SHUFFLE(3, 3, 3, 3));
-          __v4sf aaaa1 = (__v4sf)_mm_shuffle_epi32(rgba1, _MM_SHUFFLE(3, 3, 3, 3));
+          __v4sf aaaa0 = (__v4sf)_mm_shuffle_epi32((__m128i)rgba0, _MM_SHUFFLE(3, 3, 3, 3));
+          __v4sf aaaa1 = (__v4sf)_mm_shuffle_epi32((__m128i)rgba1, _MM_SHUFFLE(3, 3, 3, 3));
           
           /* Set the value in the alpha slot to 1.0, we know max is sufficent because alpha was a short */
           aaaa0 = _mm_max_ps(aaaa0, max_mask);
