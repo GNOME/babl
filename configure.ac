@@ -310,8 +310,11 @@ if test "x$enable_mmx" = xyes; then
     AC_MSG_RESULT(yes)
 
     if test "x$enable_sse" = xyes; then
+      BABL_DETECT_CFLAGS(fpmath_flag, '-mfpmath=sse')
+      SSE_EXTRA_CFLAGS="$MMX_EXTRA_CFLAGS $fpmath_flag"
+      
       BABL_DETECT_CFLAGS(sse_flag, '-msse')
-      SSE_EXTRA_CFLAGS="$MMX_EXTRA_CFLAGS $sse_flag"
+      SSE_EXTRA_CFLAGS="$SSE_EXTRA_CFLAGS $sse_flag"
 
       AC_MSG_CHECKING(whether we can compile SSE code)
 
