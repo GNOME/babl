@@ -31,7 +31,7 @@ ext_LTLIBRARIES = \
 
 cairo_la_SOURCES = cairo.c
 CIE_la_SOURCES = CIE.c
-expar_la_SOURCES = expar.c
+simple_la_SOURCES = simple.c
 gegl_fixups_la_SOURCES = gegl-fixups.c
 gggl_la_SOURCES = gggl.c
 gimp_8bit_la_SOURCES = gimp-8bit.c
