@@ -220,7 +220,7 @@ esac
 # Check how to find plug-ins
 ############################
 
-AC_MSG_CHECKING([for some Win32 platform])
+AC_MSG_CHECKING([the extension for shared libraries])
 case "$target_or_host" in 
   hppa*-hpux*)		       # HP/UX
     shrext=.sl
@@ -236,6 +236,7 @@ esac
 SHREXT=$shrext
 AC_SUBST(SHREXT)
 AC_DEFINE_UNQUOTED(SHREXT,     "$shrext",     [File extension for shared libraries])
+AC_MSG_RESULT([$shrext])
 
 dnl ===========================================================================
 
