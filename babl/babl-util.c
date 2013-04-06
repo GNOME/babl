@@ -23,6 +23,34 @@
 #include <sys/time.h>
 #include <time.h>
 
+#ifdef HAVE_CLOCK_GETTIME
+struct timespec start_time;
+
+static void
+init_ticks (void)
+{
+  static int done = 0;
+
+  if (done)
+    return;
+  done = 1;
+  clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start_time);
+}
+
+long
+babl_ticks (void)
+{
+  struct timespec measure_time;
+  init_ticks ();
+  clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &measure_time);
+
+  long long delta_t = (measure_time.tv_sec - start_time.tv_sec) * 1000000000 + (measure_time.tv_nsec - start_time.tv_nsec);
+
+  return (delta_t + 999) / 1000;
+}
+
+#else
+
 static struct timeval start_time;
 
 #define usecs(time)    ((time.tv_sec - start_time.tv_sec) * 1000000 + time.tv_usec)
@@ -46,6 +74,8 @@ babl_ticks (void)
   gettimeofday (&measure_time, NULL);
   return usecs (measure_time) - usecs (start_time);
 }
+
+#endif HAVE_CLOCK_GETTIME
 
 long
 babl_process_cost (long ticks_start,

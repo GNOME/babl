@@ -85,6 +85,7 @@ libbabl_@BABL_API_VERSION@_la_LIBADD=\
 
 libbabl_@BABL_API_VERSION@_la_LDFLAGS= 		\
 	${no_undefined} $(MATH_LIB)	\
+	$(CLOCK_GETTIME_LIBS) \
 	-version-info $(BABL_LIBRARY_VERSION)
 
 # GObject Introspection

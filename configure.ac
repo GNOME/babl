@@ -278,6 +278,30 @@ AC_SUBST(MATH_LIB)
 AM_CONDITIONAL(OS_WIN32, test "$os_win32" = "yes")
 AM_CONDITIONAL(OS_UNIX, test "$os_win32" != "yes")
 
+############################
+# Check for clock_gettime
+############################
+
+if test "x$os_win32" != xyes; then
+  have_clock_gettime_save_LIBS="$LIBS"
+  LIBS="$LIBS -lrt"
+  AC_MSG_CHECKING([for clock_gettime])
+  AC_RUN_IFELSE(
+    [AC_LANG_PROGRAM(
+      [[#include <time.h>]],
+      [[struct timespec t; clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &t);]])],
+    [have_clock_gettime=yes],
+    [have_clock_gettime=no])
+  AC_MSG_RESULT($have_clock_gettime)
+  if test "x$have_clock_gettime" = xyes; then
+    CLOCK_GETTIME_LIBS="-lrt"
+    AC_DEFINE(HAVE_CLOCK_GETTIME, 1, [Define to 1 if clock_gettime is available.])
+  fi
+  LIBS="$have_clock_gettime_save_LIBS"
+fi
+
+AC_SUBST(CLOCK_GETTIME_LIBS)
+#AM_CONDITIONAL(HAVE_CLOCK_GETTIME, test "x$have_clock_gettime" = "xyes")
 
 dnl ===========================================================================
 
@@ -293,6 +317,10 @@ AC_ARG_ENABLE(mmx,
 AC_ARG_ENABLE(sse,
   [  --enable-sse            enable SSE support (default=auto)],,
   enable_sse=$enable_mmx)
+
+AC_ARG_ENABLE(sse2,
+  [  --enable-sse2            enable SSE2 support (default=auto)],,
+  enable_sse2=$enable_sse)
 
 if test "x$enable_mmx" = xyes; then
   BABL_DETECT_CFLAGS(MMX_EXTRA_CFLAGS, '-mmmx')
@@ -329,21 +357,24 @@ if test "x$enable_mmx" = xyes; then
         AC_MSG_WARN([The assembler does not support the SSE command set.])
       )
       
-      BABL_DETECT_CFLAGS(sse2_flag, '-msse2')
-      SSE2_EXTRA_CFLAGS="$SSE_EXTRA_CFLAGS $sse2_flag"
+      
+      if test "x$enable_sse2" = xyes; then
+        BABL_DETECT_CFLAGS(sse2_flag, '-msse2')
+        SSE2_EXTRA_CFLAGS="$SSE_EXTRA_CFLAGS $sse2_flag"
 
-      AC_MSG_CHECKING(whether we can compile SSE2 code)
+        AC_MSG_CHECKING(whether we can compile SSE2 code)
 
-      CFLAGS="$CFLAGS $sse2_flag"
+        CFLAGS="$CFLAGS $sse2_flag"
 
-      AC_COMPILE_IFELSE([AC_LANG_PROGRAM(,[asm ("punpckhwd %xmm0,%xmm1");])],
-        AC_DEFINE(USE_SSE2, 1, [Define to 1 if SSE2 assembly is available.])
-        AC_MSG_RESULT(yes)
-      ,
-        enable_sse2=no
-        AC_MSG_RESULT(no)
-        AC_MSG_WARN([The assembler does not support the SSE2 command set.])
-      )
+        AC_COMPILE_IFELSE([AC_LANG_PROGRAM(,[asm ("punpckhwd %xmm0,%xmm1");])],
+          AC_DEFINE(USE_SSE2, 1, [Define to 1 if SSE2 assembly is available.])
+          AC_MSG_RESULT(yes)
+        ,
+          enable_sse2=no
+          AC_MSG_RESULT(no)
+          AC_MSG_WARN([The assembler does not support the SSE2 command set.])
+        )
+      fi
 
     fi
   ,
@@ -454,3 +485,14 @@ INSTALL
 )
 
 AC_OUTPUT
+
+dnl Print a summary of features enabled/disabled:
+AC_MSG_RESULT([
+Building Babl with prefix=$prefix
+
+Optional features:
+  SIMD: mmx: $enable_mmx
+        sse: $enable_sse
+        sse2:$enable_sse2
+  RTC: $have_clock_gettime
+]);
