@@ -20,9 +20,41 @@
 #include <math.h>
 #include "babl-internal.h"
 
+#ifdef __WIN32__
+#include <windows.h>
+#else
 #include <sys/time.h>
 #include <time.h>
+#endif
 
+#ifdef __WIN32__
+static LARGE_INTEGER start_time;
+static LARGE_INTEGER timer_freq;
+
+static void
+init_ticks (void)
+{
+  static int done = 0;
+
+  if (done)
+    return;
+  done = 1;
+
+  QueryPerformanceCounter(&start_time);
+  QueryPerformanceFrequency(&timer_freq);
+}
+
+long
+babl_ticks (void)
+{
+  LARGE_INTEGER end_time;
+
+  init_ticks ();
+
+  QueryPerformanceCounter(&end_time);
+  return (end_time.QuadPart - start_time.QuadPart) * (1000000.0 / timer_freq.QuadPart);
+}
+#else
 static struct timeval start_time;
 
 #define usecs(time)    ((time.tv_sec - start_time.tv_sec) * 1000000 + time.tv_usec)
@@ -46,6 +78,7 @@ babl_ticks (void)
   gettimeofday (&measure_time, NULL);
   return usecs (measure_time) - usecs (start_time);
 }
+#endif
 
 long
 babl_process_cost (long ticks_start,
