@@ -1732,25 +1732,9 @@ init (void)
   o (g16, g8);
   o (rgbaF, rgbAF);
   o (rgbAF, rgbaF);
-  o (rgbA8, rgbA16);
-  o (rgb8, rgb16);
   o (ga8, ga16);
   o (gA8, gA16);
   o (g8, g16);
-  o (rgba8, rgbaF);
-  o (rgbA8, rgbAF);
-  o (rgb8, rgbF);
-  o (ga8, gaF);
-  o (gA8, gAF);
-  o (g8, gF);
-  o (rgba16, rgbaF);
-  o (rgbA16, rgbAF);
-  o (rgb16, rgbF);
-  o (ga16, gaF);
-  o (gA16, gAF);
-  o (g16, gF);
-  o (rgbaF, rgbAF);
-  o (rgbAF, rgbaF);
   o (gaF, gAF);
   o (gAF, gaF);
   o (rgbaF, rgbF);
@@ -1766,24 +1750,14 @@ init (void)
   o (rgbAF, gAF);
   o (gAF, rgbAF);
   o (rgbaF, rgb8);
-  o (rgbA8, rgbAF);
-  o (ga8, gaF);
-  o (gA8, gAF);
   o (rgbA8, rgba8);
   o (rgba8, rgbA8);
-  o (gAF, rgbAF);
   o (rgbaF, g8);
   o (rgbaF, rgb16);
   o (rgb8, rgba8);
   o (rgb8, rgbA8);
   o (rgba8, rgb8);
   o (rgbaF, rgbA8);
-#if 0
-  o (rgbF, xyzF);
-  o (xyzF, rgbF);
-  o (labF, xyzF);
-  o (xyzF, labF);
-#endif
 
   return 0;
 }
