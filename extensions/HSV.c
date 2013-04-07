@@ -21,6 +21,7 @@
  */
 
 #include "config.h"
+
 #include <math.h>
 #include <string.h>
 
@@ -31,11 +32,11 @@
 
 static long  rgba_to_hsva (char *src,
                            char *dst,
-                           long  n);
+                           long  samples);
 
 static long  hsva_to_rgba (char *src,
                            char *dst,
-                           long  n);
+                           long  samples);
 
 int init (void);
 
@@ -87,8 +88,10 @@ init (void)
 static long
 rgba_to_hsva (char *src,
               char *dst,
-              long  n)
+              long  samples)
 {
+  long n = samples;
+
   while (n--)
   {
     double red   = ((double *) src)[0];
@@ -148,14 +151,17 @@ rgba_to_hsva (char *src,
     src += 4 * sizeof (double);
     dst += 4 * sizeof (double);
   }
-  return n;
+
+  return samples;
 }
 
 static long
 hsva_to_rgba (char *src,
               char *dst,
-              long  n)
+              long  samples)
 {
+  long n = samples;
+
   while (n--)
   {
     double hue        = ((double *) src)[0];
@@ -216,5 +222,6 @@ hsva_to_rgba (char *src,
     src += 4 * sizeof (double);
     dst += 4 * sizeof (double);
   }
-  return n;
+
+  return samples;
 }
