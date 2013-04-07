@@ -137,7 +137,7 @@ rgba_to_hsva (char *src,
       else
         hue = 4.0 + (red - green) / chroma;
 
-      hue *= 60.0;
+      hue /= 6.0;
     }
 
     ((double *) dst)[0] = hue;
@@ -168,7 +168,7 @@ hsva_to_rgba (char *src,
     double chroma, h_tmp, x, min;
 
     chroma = saturation * value;
-    h_tmp = hue / 60.0;
+    h_tmp = hue * 6.0;
     x = chroma * (1.0 - fabs(fmod(h_tmp, 2.0) - 1.0));
 
     if (h_tmp < 1.0)
