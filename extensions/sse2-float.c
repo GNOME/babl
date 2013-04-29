@@ -1,6 +1,7 @@
 /* babl - dynamically extendable universal pixel conversion library.
  * Copyright (C) 2013 Massimo Valentini
  * Copyright (C) 2013 Daniel Sabo
+ * Copyright (C) 2013 Loren Merritt
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -237,6 +238,121 @@ conv_rgbAF_linear_rgbaF_linear_spin (const float *src, float *dst, long samples)
   return samples;
 }
 
+#define splat4f(x) ((__v4sf){x,x,x,x})
+#define splat4i(x) ((__v4si){x,x,x,x})
+#define FLT_ONE 0x3f800000 // ((union {float f; int i;}){1.0f}).i
+#define FLT_MANTISSA (1<<23)
+
+static inline __v4sf
+init_newton (__v4sf x, double exponent, double c0, double c1, double c2)
+{
+    double norm = exponent*M_LN2/FLT_MANTISSA;
+    __v4sf y = _mm_cvtepi32_ps((__m128i)((__v4si)x - splat4i(FLT_ONE)));
+    return splat4f(c0) + splat4f(c1*norm)*y + splat4f(c2*norm*norm)*y*y;
+}
+
+static inline __v4sf
+pow_1_24 (__v4sf x)
+{
+  __v4sf y, z;
+  y = init_newton (x, -1./12, 0.9976800269, 0.9885126933, 0.5908575383);
+  x = _mm_sqrt_ps (x);
+  /* newton's method for x^(-1/6) */
+  z = splat4f (1.f/6.f) * x;
+  y = splat4f (7.f/6.f) * y - z * ((y*y)*(y*y)*(y*y*y));
+  y = splat4f (7.f/6.f) * y - z * ((y*y)*(y*y)*(y*y*y));
+  return x*y;
+}
+
+static inline __v4sf
+pow_24 (__v4sf x)
+{
+  __v4sf y, z;
+  y = init_newton (x, -1./5, 0.9953189663, 0.9594345146, 0.6742970332);
+  /* newton's method for x^(-1/5) */
+  z = splat4f (1.f/5.f) * x;
+  y = splat4f (6.f/5.f) * y - z * ((y*y*y)*(y*y*y));
+  y = splat4f (6.f/5.f) * y - z * ((y*y*y)*(y*y*y));
+  x *= y;
+  return x*x*x;
+}
+
+static inline __v4sf
+linear_to_gamma_2_2_sse2 (__v4sf x)
+{
+  __v4sf curve = pow_1_24 (x) * splat4f (1.055f) - splat4f (0.055f);
+  __v4sf line = x * splat4f (12.92f);
+  __v4sf mask = _mm_cmpgt_ps (x, splat4f (0.003130804954f));
+  return _mm_or_ps (_mm_and_ps (mask, curve), _mm_andnot_ps (mask, line));
+}
+
+static inline __v4sf
+gamma_2_2_to_linear_sse2 (__v4sf x)
+{
+  __v4sf curve = pow_24 ((x + splat4f (0.055f)) * splat4f (1/1.055f));
+  __v4sf line = x * splat4f (1/12.92f);
+  __v4sf mask = _mm_cmpgt_ps (x, splat4f (0.04045f));
+  return _mm_or_ps (_mm_and_ps (mask, curve), _mm_andnot_ps (mask, line));
+}
+
+#define GAMMA_RGBA(func, munge) \
+static long \
+func (const float *src, float *dst, long samples)\
+{\
+  int i = samples;\
+  if (((uintptr_t)src % 16) + ((uintptr_t)dst % 16) == 0)\
+    {\
+      for (; i > 3; i -= 4, src += 16, dst += 16)\
+        {\
+          /* Pack the rgb components from 4 pixels into 3 vectors, gammafy, unpack. */\
+          __v4sf x0 = _mm_load_ps (src);\
+          __v4sf x1 = _mm_load_ps (src+4);\
+          __v4sf x2 = _mm_load_ps (src+8);\
+          __v4sf x3 = _mm_load_ps (src+12);\
+          __v4sf y0 = _mm_movelh_ps (x0, x1);\
+          __v4sf y1 = _mm_movelh_ps (x2, x3);\
+          __v4sf z0 = _mm_unpackhi_ps (x0, x1);\
+          __v4sf z1 = _mm_unpackhi_ps (x2, x3);\
+          __v4sf y2 = _mm_movelh_ps (z0, z1);\
+          __v4sf y3 = _mm_movehl_ps (z1, z0);\
+          y0 = munge (y0);\
+          _mm_storel_pi ((__m64*)(dst), y0);\
+          _mm_storeh_pi ((__m64*)(dst+4), y0);\
+          y1 = munge (y1);\
+          _mm_storel_pi ((__m64*)(dst+8), y1);\
+          _mm_storeh_pi ((__m64*)(dst+12), y1);\
+          y2 = munge (y2);\
+          z0 = _mm_unpacklo_ps (y2, y3);\
+          z1 = _mm_unpackhi_ps (y2, y3);\
+          _mm_storel_pi ((__m64*)(dst+2), z0);\
+          _mm_storeh_pi ((__m64*)(dst+6), z0);\
+          _mm_storel_pi ((__m64*)(dst+10), z1);\
+          _mm_storeh_pi ((__m64*)(dst+14), z1);\
+        }\
+      for (; i > 0; i--, src += 4, dst += 4)\
+        {\
+          __v4sf x = munge (_mm_load_ps (src));\
+          float a = src[3];\
+          _mm_store_ps (dst, x);\
+          dst[3] = a;\
+        }\
+    }\
+  else\
+    {\
+      for (; i > 0; i--, src += 4, dst += 4)\
+        {\
+          __v4sf x = munge (_mm_loadu_ps (src));\
+          float a = src[3];\
+          _mm_storeu_ps (dst, x);\
+          dst[3] = a;\
+        }\
+    }\
+  return samples;\
+}
+
+GAMMA_RGBA(conv_rgbaF_linear_rgbaF_gamma, linear_to_gamma_2_2_sse2)
+GAMMA_RGBA(conv_rgbaF_gamma_rgbaF_linear, gamma_2_2_to_linear_sse2)
+
 #endif /* defined(USE_SSE2) */
 
 #define o(src, dst) \
@@ -265,6 +381,14 @@ init (void)
     babl_component ("Ba"),
     babl_component ("A"),
     NULL);
+  const Babl *rgbaF_gamma = babl_format_new (
+    babl_model ("R'G'B'A"),
+    babl_type ("float"),
+    babl_component ("R'"),
+    babl_component ("G'"),
+    babl_component ("B'"),
+    babl_component ("A"),
+    NULL);
 
   if ((babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_SSE) &&
       (babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_SSE2))
@@ -290,6 +414,9 @@ init (void)
                           "linear",
                           conv_rgbAF_linear_rgbaF_linear_spin,
                           NULL);
+
+      o (rgbaF_linear, rgbaF_gamma);
+      o (rgbaF_gamma, rgbaF_linear);
     }
 
 #endif /* defined(USE_SSE2) */
