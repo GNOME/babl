@@ -571,93 +571,6 @@ conv_gAF_gaF (unsigned char *src, unsigned char *dst, long samples)
   return samples;
 }
 
-static long
-conv_rgbAF_rgbaF (unsigned char *src, unsigned char *dst, long samples)
-{
-  long n = samples;
-
-  while (n--)
-    {
-      float alpha = (*(float *) (src + 4 * 3));
-      int   c;
-      if (alpha >= 1.0)
-        {
-          for (c = 0; c < 3; c++)
-            {
-              *(float *) dst = *(float *) src;
-              dst           += 4;
-              src           += 4;
-            }
-        }
-      else if (alpha <= 0.0)
-        {
-          for (c = 0; c < 3; c++)
-            {
-              *(float *) dst = 0;
-              dst           += 4;
-              src           += 4;
-            }
-        }
-      else
-        {
-          for (c = 0; c < 3; c++)
-            {
-              *(float *) dst = ((*(float *) src) / alpha);
-              dst           += 4;
-              src           += 4;
-            }
-        }
-      *(float *) dst = alpha;
-      dst           += 4;
-      src           += 4;
-    }
-  return samples;
-}
-
-static long
-conv_rgbaF_rgbAF (unsigned char *src, unsigned char *dst, long samples)
-{
-  long n = samples;
-
-  while (n--)
-    {
-      float alpha = (*(float *) (src + 4 * 3));
-      int   c;
-
-      if (alpha >= 1.0)
-        {
-          for (c = 0; c < 3; c++)
-            {
-              *(float *) dst = *(float *) src;
-              dst           += 4;
-              src           += 4;
-            }
-        }
-      else if (alpha <= 0.0)
-        {
-          for (c = 0; c < 3; c++)
-            {
-              *(float *) dst = 0;
-              dst           += 4;
-              src           += 4;
-            }
-        }
-      else
-        {
-          for (c = 0; c < 3; c++)
-            {
-              *(float *) dst = ((*(float *) src) * alpha);
-              dst           += 4;
-              src           += 4;
-            }
-        }
-      *(float *) dst = alpha;
-      dst           += 4;
-      src           += 4;
-    }
-  return samples;
-}
-
 /* alpha stripping and adding */
 
 static long
@@ -1183,8 +1096,6 @@ init (void)
   o (g16, gF);
   o (ga16, ga8);
   o (g16, g8);
-  o (rgbaF, rgbAF);
-  o (rgbAF, rgbaF);
   o (ga8, ga16);
   o (gA8, gA16);
   o (g8, g16);
