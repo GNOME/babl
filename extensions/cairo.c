@@ -19,6 +19,9 @@
 #include <stdlib.h>
 #include "babl.h"
 
+#include "base/util.h"
+#include "extensions/cairo-tables.h"
+
 int init (void);
 
 static inline long
@@ -87,6 +90,59 @@ conv_rgbA8_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
   return samples;
 }
 
+static inline unsigned char
+conv_rgbafloat_cairo32_map (float value,
+                            float alpha)
+{
+  unsigned short index;
+  float result;
+  if (value < 0.0)
+    return 0;
+  else if (value > 1.0)
+    return 0xFF;
+  index = (unsigned short)(value * 0xFFFF);
+  result = linear_to_gamma16[index] / 257.0; /* 65535.0 / 255.0 */
+
+  return (result * alpha) + 0.5f;
+}
+
+static long
+conv_rgbafloat_cairo32_le (unsigned char *src_char,
+                           unsigned char *dst,
+                           long           samples)
+{
+  long   n   = samples;
+  float *src = (float*)src_char;
+
+  while (n--)
+    {
+      if (src[3] < BABL_ALPHA_THRESHOLD)
+        {
+          *(int *)dst = 0;
+        }
+      else
+        {
+          if (src[3] >= 1.0)
+            {
+              dst[0] = conv_rgbafloat_cairo32_map (src[2], 1.0f);
+              dst[1] = conv_rgbafloat_cairo32_map (src[1], 1.0f);
+              dst[2] = conv_rgbafloat_cairo32_map (src[0], 1.0f);
+              dst[3] = 0xFF;
+            }
+          else
+            {
+              dst[0] = conv_rgbafloat_cairo32_map (src[2], src[3]);
+              dst[1] = conv_rgbafloat_cairo32_map (src[1], src[3]);
+              dst[2] = conv_rgbafloat_cairo32_map (src[0], src[3]);
+              dst[3] = src[3] * 0xFF + 0.5f;
+            }
+        }
+
+      src += 4;
+      dst += 4;
+    }
+  return samples;
+}
 
 int
 init (void)
@@ -123,6 +179,9 @@ init (void)
                            conv_rgbA8_premul_cairo32_le, NULL);
       babl_conversion_new (babl_format ("R'G'B'A u8"), f32, "linear",
                            conv_rgbA8_cairo32_le, NULL);
+
+      babl_conversion_new (babl_format ("RGBA float"), f32, "linear",
+                           conv_rgbafloat_cairo32_le, NULL);
 
       babl_conversion_new (babl_format ("R'G'B'A u8"), f24, "linear", 
                            conv_rgba8_cairo24_le, NULL);

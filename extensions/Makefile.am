@@ -32,7 +32,7 @@ ext_LTLIBRARIES = \
 	sse2-int16.la   \
 	two-table.la
 
-cairo_la_SOURCES = cairo.c
+cairo_la_SOURCES = cairo.c cairo-tables.h
 CIE_la_SOURCES = CIE.c
 simple_la_SOURCES = simple.c
 gegl_fixups_la_SOURCES = gegl-fixups.c
