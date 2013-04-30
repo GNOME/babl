@@ -1564,7 +1564,6 @@ int init (void);
 int
 init (void)
 {
-#if 0
   const Babl *rgbaF = babl_format_new (
     babl_model ("RGBA"),
     babl_type ("float"),
@@ -1759,7 +1758,6 @@ init (void)
   o (rgb8, rgbA8);
   o (rgba8, rgb8);
   o (rgbaF, rgbA8);
-#endif
 
   return 0;
 }
