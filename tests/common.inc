@@ -1,4 +1,6 @@
 
+#include "babl/babl-introspect.h"
+
 #define CHECK_CONV(test_name, componenttype, src_fmt, dst_fmt, src_pix, expected_pix) \
   {       \
   const Babl *fish;       \
@@ -19,6 +21,7 @@
         {       \
           printf (" %s failed #%i[%i]  got %i expected %i\n", test_name, i, c, result[c], expected_pix[i][c]);       \
           OK = 0;          \
+          babl_introspect((Babl *)fish); \
         }       \
     }       \
   }
