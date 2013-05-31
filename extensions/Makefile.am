@@ -28,8 +28,9 @@ ext_LTLIBRARIES = \
 	HSV.la          \
 	simple.la       \
 	sse-fixups.la   \
-	sse2-float.la    \
-	sse2-int16.la
+	sse2-float.la   \
+	sse2-int16.la   \
+	two-table.la
 
 cairo_la_SOURCES = cairo.c
 CIE_la_SOURCES = CIE.c
@@ -44,6 +45,7 @@ HSV_la_SOURCES = HSV.c
 sse_fixups_la_SOURCES = sse-fixups.c
 sse2_float_la_SOURCES = sse2-float.c
 sse2_int16_la_SOURCES = sse2-int16.c
+two_table_la_SOURCES = two-table.c
 float_la_SOURCES = float.c
 fast_float_la_SOURCES = fast-float.c
 
