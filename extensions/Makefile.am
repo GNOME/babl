@@ -21,6 +21,7 @@ ext_LTLIBRARIES = \
 	gggl-lies.la    \
 	gggl.la         \
 	gimp-8bit.la    \
+	grey.la         \
 	float.la        \
 	fast-float.la   \
 	naive-CMYK.la   \
@@ -37,6 +38,7 @@ gegl_fixups_la_SOURCES = gegl-fixups.c
 gggl_lies_la_SOURCES = gggl-lies.c
 gggl_la_SOURCES = gggl.c
 gimp_8bit_la_SOURCES = gimp-8bit.c
+grey_la_SOURCES = grey.c
 naive_CMYK_la_SOURCES = naive-CMYK.c
 HSV_la_SOURCES = HSV.c
 sse_fixups_la_SOURCES = sse-fixups.c
