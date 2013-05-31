@@ -45,7 +45,7 @@ HSV_la_SOURCES = HSV.c
 sse_fixups_la_SOURCES = sse-fixups.c
 sse2_float_la_SOURCES = sse2-float.c
 sse2_int16_la_SOURCES = sse2-int16.c
-two_table_la_SOURCES = two-table.c
+two_table_la_SOURCES = two-table.c two-table-tables.h
 float_la_SOURCES = float.c
 fast_float_la_SOURCES = fast-float.c
 
