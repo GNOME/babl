@@ -353,6 +353,193 @@ func (const float *src, float *dst, long samples)\
 GAMMA_RGBA(conv_rgbaF_linear_rgbaF_gamma, linear_to_gamma_2_2_sse2)
 GAMMA_RGBA(conv_rgbaF_gamma_rgbaF_linear, gamma_2_2_to_linear_sse2)
 
+#define YA_APPLY(load, store, convert) \
+{ \
+  __v4sf yyaa0, yyaa1; \
+  __v4sf yaya0  = load ((float *)s++); \
+  __v4sf yaya1  = load ((float *)s++); \
+  __v4sf yyyy01 = _mm_shuffle_ps (yaya0, yaya1, _MM_SHUFFLE(0, 2, 0, 2)); \
+\
+  yyyy01 = convert (yyyy01); \
+\
+  yyaa0 = _mm_shuffle_ps (yyyy01, yaya0, _MM_SHUFFLE(3, 1, 0, 1)); \
+  yaya0 = (__v4sf)_mm_shuffle_epi32((__m128i)yyaa0, _MM_SHUFFLE(3, 1, 2, 0)); \
+  yyaa1 = _mm_shuffle_ps (yyyy01, yaya1, _MM_SHUFFLE(3, 1, 2, 3)); \
+  yaya1 = (__v4sf)_mm_shuffle_epi32((__m128i)yyaa1, _MM_SHUFFLE(3, 1, 2, 0)); \
+\
+  store ((float *)d++, yaya0); \
+  store ((float *)d++, yaya1); \
+}\
+
+static long
+conv_yaF_linear_yaF_gamma (const float *src, float *dst, long samples)
+{
+  long total = samples;
+
+  const __v4sf *s = (const __v4sf*)src;
+        __v4sf *d = (__v4sf*)dst;
+
+  if (((uintptr_t)src % 16) + ((uintptr_t)dst % 16) == 0)
+    {
+      while (samples > 4)
+        {
+          YA_APPLY (_mm_load_ps, _mm_store_ps, linear_to_gamma_2_2_sse2);
+          samples -= 4;
+        }
+    }
+  else
+    {
+      while (samples > 4)
+        {
+          YA_APPLY (_mm_loadu_ps, _mm_storeu_ps, linear_to_gamma_2_2_sse2);
+          samples -= 4;
+        }
+    }
+
+  src = (const float *)s;
+  dst = (float *)d;
+
+  while (samples--)
+    {
+      *dst++ = linear_to_gamma_2_2 (*src++);
+      *dst++ = *src++;
+    }
+
+  return total;
+}
+
+
+static long
+conv_yaF_gamma_yaF_linear (const float *src, float *dst, long samples)
+{
+  long total = samples;
+
+  const __v4sf *s = (const __v4sf*)src;
+        __v4sf *d = (__v4sf*)dst;
+
+  if (((uintptr_t)src % 16) + ((uintptr_t)dst % 16) == 0)
+    {
+      while (samples > 4)
+        {
+          YA_APPLY (_mm_load_ps, _mm_store_ps, gamma_2_2_to_linear_sse2);
+          samples -= 4;
+        }
+    }
+  else
+    {
+      while (samples > 4)
+        {
+          YA_APPLY (_mm_loadu_ps, _mm_storeu_ps, gamma_2_2_to_linear_sse2);
+          samples -= 4;
+        }
+    }
+
+  src = (const float *)s;
+  dst = (float *)d;
+
+  while (samples--)
+    {
+      *dst++ = gamma_2_2_to_linear (*src++);
+      *dst++ = *src++;
+    }
+
+  return total;
+}
+
+static inline long
+conv_yF_linear_yF_gamma (const float *src, float *dst, long samples)
+{
+  long total = samples;
+
+  const __v4sf *s = (const __v4sf*)src;
+        __v4sf *d = (__v4sf*)dst;
+
+  if (((uintptr_t)src % 16) + ((uintptr_t)dst % 16) == 0)
+    {
+      while (samples > 4)
+        {
+          __v4sf rgba0 = _mm_load_ps ((float *)s++);
+          rgba0 = linear_to_gamma_2_2_sse2 (rgba0);
+          _mm_store_ps ((float *)d++, rgba0);
+          samples -= 4;
+        }
+    }
+  else
+    {
+      while (samples > 4)
+        {
+          __v4sf rgba0 = _mm_loadu_ps ((float *)s++);
+          rgba0 = linear_to_gamma_2_2_sse2 (rgba0);
+          _mm_storeu_ps ((float *)d++, rgba0);
+          samples -= 4;
+        }
+    }
+
+  src = (const float *)s;
+  dst = (float *)d;
+
+  while (samples--)
+    {
+      *dst++ = linear_to_gamma_2_2 (*src++);
+    }
+
+  return total;
+}
+
+static inline long
+conv_yF_gamma_yF_linear (const float *src, float *dst, long samples)
+{
+  long total = samples;
+
+  const __v4sf *s = (const __v4sf*)src;
+        __v4sf *d = (__v4sf*)dst;
+
+  if (((uintptr_t)src % 16) + ((uintptr_t)dst % 16) == 0)
+    {
+      while (samples > 4)
+        {
+          __v4sf rgba0 = _mm_load_ps ((float *)s++);
+          rgba0 = gamma_2_2_to_linear_sse2 (rgba0);
+          _mm_store_ps ((float *)d++, rgba0);
+          samples -= 4;
+        }
+    }
+  else
+    {
+      while (samples > 4)
+        {
+          __v4sf rgba0 = _mm_loadu_ps ((float *)s++);
+          rgba0 = gamma_2_2_to_linear_sse2 (rgba0);
+          _mm_storeu_ps ((float *)d++, rgba0);
+          samples -= 4;
+        }
+    }
+
+  src = (const float *)s;
+  dst = (float *)d;
+
+  while (samples--)
+    {
+      *dst++ = gamma_2_2_to_linear (*src++);
+    }
+
+  return total;
+}
+
+
+static long
+conv_rgbF_linear_rgbF_gamma (const float *src, float *dst, long samples)
+{
+  return conv_yF_linear_yF_gamma (src, dst, samples * 3) / 3;
+}
+
+
+static long
+conv_rgbF_gamma_rgbF_linear (const float *src, float *dst, long samples)
+{
+  return conv_yF_gamma_yF_linear (src, dst, samples * 3) / 3;
+}
+
 #endif /* defined(USE_SSE2) */
 
 #define o(src, dst) \
@@ -389,6 +576,42 @@ init (void)
     babl_component ("B'"),
     babl_component ("A"),
     NULL);
+  const Babl *rgbF_linear = babl_format_new (
+    babl_model ("RGB"),
+    babl_type ("float"),
+    babl_component ("R"),
+    babl_component ("G"),
+    babl_component ("B"),
+    NULL);
+  const Babl *rgbF_gamma = babl_format_new (
+    babl_model ("R'G'B'"),
+    babl_type ("float"),
+    babl_component ("R'"),
+    babl_component ("G'"),
+    babl_component ("B'"),
+    NULL);
+  const Babl *yaF_linear = babl_format_new (
+    babl_model ("YA"),
+    babl_type ("float"),
+    babl_component ("Y"),
+    babl_component ("A"),
+    NULL);
+  const Babl *yaF_gamma = babl_format_new (
+    babl_model ("Y'A"),
+    babl_type ("float"),
+    babl_component ("Y'"),
+    babl_component ("A"),
+    NULL);
+  const Babl *yF_linear = babl_format_new (
+    babl_model ("Y"),
+    babl_type ("float"),
+    babl_component ("Y"),
+    NULL);
+  const Babl *yF_gamma = babl_format_new (
+    babl_model ("Y'"),
+    babl_type ("float"),
+    babl_component ("Y'"),
+    NULL);
 
   if ((babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_SSE) &&
       (babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_SSE2))
@@ -414,6 +637,15 @@ init (void)
                           "linear",
                           conv_rgbAF_linear_rgbaF_linear_spin,
                           NULL);
+
+      o (yF_linear, yF_gamma);
+      o (yF_gamma,  yF_linear);
+
+      o (yaF_linear, yaF_gamma);
+      o (yaF_gamma,  yaF_linear);
+
+      o (rgbF_linear, rgbF_gamma);
+      o (rgbF_gamma,  rgbF_linear);
 
       o (rgbaF_linear, rgbaF_gamma);
       o (rgbaF_gamma, rgbaF_linear);
