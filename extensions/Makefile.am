@@ -29,6 +29,7 @@ ext_LTLIBRARIES = \
 	simple.la       \
 	sse-fixups.la   \
 	sse2-float.la   \
+	sse2-int8.la    \
 	sse2-int16.la   \
 	two-table.la
 
@@ -44,6 +45,7 @@ naive_CMYK_la_SOURCES = naive-CMYK.c
 HSV_la_SOURCES = HSV.c
 sse_fixups_la_SOURCES = sse-fixups.c
 sse2_float_la_SOURCES = sse2-float.c
+sse2_int8_la_SOURCES = sse2-int8.c
 sse2_int16_la_SOURCES = sse2-int16.c
 two_table_la_SOURCES = two-table.c two-table-tables.h
 float_la_SOURCES = float.c
@@ -53,4 +55,5 @@ LIBS = $(top_builddir)/babl/libbabl-@BABL_API_VERSION@.la $(MATH_LIB)
 
 sse_fixups_la_CFLAGS = $(SSE_EXTRA_CFLAGS)
 sse2_float_la_CFLAGS = $(SSE2_EXTRA_CFLAGS)
+sse2_int8_la_CFLAGS = $(SSE2_EXTRA_CFLAGS)
 sse2_int16_la_CFLAGS = $(SSE2_EXTRA_CFLAGS)
