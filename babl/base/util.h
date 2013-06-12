@@ -61,12 +61,12 @@ linear_to_gamma_2_2 (double value)
 {
 #if 0
   if (value > 0.003130804954)
-    return 1.055F * pow (value, (1.0F/2.4F)) - 0.055F;
-  return 12.92F * value;
+    return 1.055 * pow (value, (1.0/2.4)) - 0.055;
+  return 12.92 * value;
 #else
   if (value > 0.003130804954)
-    return 1.055F * babl_pow_1_24 (value) - 0.055F;
-  return 12.92F * value;
+    return 1.055 * babl_pow_1_24 (value) - 0.055;
+  return 12.92 * value;
 #endif
 }
 
@@ -74,13 +74,13 @@ static inline double
 gamma_2_2_to_linear (double value)
 {
 #if 0
-  if (value > 0.04045F)
-    return pow ((value + 0.055F) / 1.055F, 2.4F);
-  return value / 12.92F;
+  if (value > 0.04045)
+    return pow ((value + 0.055) / 1.055, 2.4);
+  return value / 12.92;
 #else
-  if (value > 0.04045F)
-    return babl_pow_24 ((value + 0.055F) / 1.055F);
-  return value / 12.92F;
+  if (value > 0.04045)
+    return babl_pow_24 ((value + 0.055) / 1.055);
+  return value / 12.92;
 #endif
 }
 
