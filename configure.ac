@@ -316,7 +316,10 @@ if test "x$enable_mmx" = xyes; then
 
     if test "x$enable_sse" = xyes; then
       BABL_DETECT_CFLAGS(fpmath_flag, '-mfpmath=sse')
-      SSE_EXTRA_CFLAGS="$MMX_EXTRA_CFLAGS $fpmath_flag"
+      if test "x$platform_win32" = xyes; then
+        BABL_DETECT_CFLAGS(stack_align, '-mstackrealign')
+      fi
+      SSE_EXTRA_CFLAGS="$MMX_EXTRA_CFLAGS $stack_align $fpmath_flag"
       
       BABL_DETECT_CFLAGS(sse_flag, '-msse')
       SSE_EXTRA_CFLAGS="$SSE_EXTRA_CFLAGS $sse_flag"
