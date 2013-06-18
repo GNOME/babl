@@ -88,7 +88,7 @@ table_init (void)
 
     //u.s[0] = 0;
 
-    for (u.s = 0; u.s < 4294900000; u.s += 32768)
+    for (u.s = 0; u.s < 4294900000U; u.s += 32768)
       {
         int c;
         int cg;
