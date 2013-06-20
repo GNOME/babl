@@ -26,6 +26,7 @@
 #include <string.h>
 
 #include "babl.h"
+#include "base/util.h"
 
 #define MIN(a,b) (a > b) ? b : a;
 #define MAX(a,b) (a < b) ? b : a;
@@ -94,9 +95,9 @@ rgba_to_hsva (char *src,
 
   while (n--)
   {
-    double red   = ((double *) src)[0];
-    double green = ((double *) src)[1];
-    double blue  = ((double *) src)[2];
+    double red   = linear_to_gamma_2_2 (((double *) src)[0]);
+    double green = linear_to_gamma_2_2 (((double *) src)[1]);
+    double blue  = linear_to_gamma_2_2 (((double *) src)[2]);
     double alpha = ((double *) src)[3];
 
     double hue, saturation, value;
@@ -214,9 +215,9 @@ hsva_to_rgba (char *src,
     green += min;
     blue += min;
 
-    ((double *) dst)[0] = red;
-    ((double *) dst)[1] = green;
-    ((double *) dst)[2] = blue;
+    ((double *) dst)[0] = gamma_2_2_to_linear (red);
+    ((double *) dst)[1] = gamma_2_2_to_linear (green);
+    ((double *) dst)[2] = gamma_2_2_to_linear (blue);
     ((double *) dst)[3] = alpha;
 
     src += 4 * sizeof (double);
