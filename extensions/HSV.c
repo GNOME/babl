@@ -31,24 +31,59 @@
 #define MIN(a,b) (a > b) ? b : a;
 #define MAX(a,b) (a < b) ? b : a;
 
-static long  rgba_to_hsva (char *src,
-                           char *dst,
-                           long  samples);
+static long rgba_to_hsva     (char *src,
+                              char *dst,
+                              long  samples);
 
-static long  hsva_to_rgba (char *src,
-                           char *dst,
-                           long  samples);
+static long hsva_to_rgba     (char *src,
+                              char *dst,
+                              long  samples);
+
+static long rgba_to_hsv      (char *src,
+                              char *dst,
+                              long  samples);
+
+static long hsv_to_rgba      (char *src,
+                              char *dst,
+                              long  samples);
+
+static void rgba_to_hsv_step (char *src,
+                              char *dst);
+
+static void hsv_to_rgba_step (char *src,
+                              char *dst);
+
+static void components       (void);
+static void models           (void);
+static void conversions      (void);
+static void formats          (void);
 
 int init (void);
 
 int
 init (void)
 {
+  components  ();
+  models      ();
+  conversions ();
+  formats     ();
+
+  return 0;
+}
+
+
+static void
+components (void)
+{
   babl_component_new ("hue", NULL);
   babl_component_new ("saturation", NULL);
   babl_component_new ("value", NULL);
   babl_component_new ("alpha", NULL);
+}
 
+static void
+models (void)
+{
   babl_model_new (
     "name", "HSVA",
     babl_component ("hue"),
@@ -58,10 +93,29 @@ init (void)
     NULL
   );
 
+  babl_model_new (
+    "name", "HSV",
+    babl_component ("hue"),
+    babl_component ("saturation"),
+    babl_component ("value"),
+    NULL
+  );
+}
+
+static void
+conversions (void)
+{
   babl_conversion_new (
     babl_model ("RGBA"),
     babl_model ("HSVA"),
     "linear", rgba_to_hsva,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_model ("RGBA"),
+    babl_model ("HSV"),
+    "linear", rgba_to_hsv,
     NULL
   );
 
@@ -71,6 +125,18 @@ init (void)
     "linear", hsva_to_rgba,
     NULL
   );
+
+  babl_conversion_new (
+    babl_model ("HSV"),
+    babl_model ("RGBA"),
+    "linear", hsv_to_rgba,
+    NULL
+  );
+}
+
+static void
+formats (void)
+{
   babl_format_new (
     "name", "HSVA float",
     babl_model ("HSVA"),
@@ -82,9 +148,130 @@ init (void)
     NULL
   );
 
-  return 0;
+  babl_format_new (
+    "name", "HSV float",
+    babl_model ("HSV"),
+    babl_type ("float"),
+    babl_component ("hue"),
+    babl_component ("saturation"),
+    babl_component ("value"),
+    NULL
+  );
 }
 
+static void
+rgba_to_hsv_step (char *src,
+                  char *dst)
+{
+  double hue, saturation, value;
+  double min, chroma;
+
+  double red   = linear_to_gamma_2_2 (((double *) src)[0]);
+  double green = linear_to_gamma_2_2 (((double *) src)[1]);
+  double blue  = linear_to_gamma_2_2 (((double *) src)[2]);
+
+  if (red > green)
+    {
+      value = MAX (red, blue);
+      min   = MIN (green, blue);
+    }
+  else
+    {
+      value = MAX (green, blue);
+      min   = MIN (red, blue);
+    }
+
+  chroma = value - min;
+
+  if (value == 0.0)
+    saturation = 0.0;
+  else
+    saturation = chroma / value;
+
+  if (saturation == 0.0)
+    {
+      hue = 0.0;
+    }
+  else
+    {
+      if (red == value)
+        {
+          hue = (green - blue) / chroma;
+
+          if (hue < 0.0)
+            hue += 6.0;
+        }
+      else if (green == value)
+        hue = 2.0 + (blue - red) / chroma;
+      else
+        hue = 4.0 + (red - green) / chroma;
+
+      hue /= 6.0;
+    }
+
+  ((double *) dst)[0] = hue;
+  ((double *) dst)[1] = saturation;
+  ((double *) dst)[2] = value;
+}
+
+
+static void
+hsv_to_rgba_step (char *src,
+                  char *dst)
+{
+  double hue        = ((double *) src)[0];
+  double saturation = ((double *) src)[1];
+  double value      = ((double *) src)[2];
+
+  double red = 0, green = 0, blue = 0;
+
+  double chroma, h_tmp, x, min;
+
+  chroma = saturation * value;
+  h_tmp = hue * 6.0;
+  x = chroma * (1.0 - fabs (fmod (h_tmp, 2.0) - 1.0));
+
+  if (h_tmp < 1.0)
+    {
+      red   = chroma;
+      green = x;
+    }
+  else if (h_tmp < 2.0)
+    {
+      red   = x;
+      green = chroma;
+    }
+  else if (h_tmp < 3.0)
+    {
+      green = chroma;
+      blue  = x;
+    }
+  else if (h_tmp < 4.0)
+    {
+      green = x;
+      blue  = chroma;
+    }
+  else if (h_tmp < 5.0)
+    {
+      red  = x;
+      blue = chroma;
+    }
+  else if (h_tmp < 6.0)
+    {
+      red  = chroma;
+      blue = x;
+    }
+
+  min = value - chroma;
+
+  red   += min;
+  green += min;
+  blue  += min;
+
+  ((double *) dst)[0] = gamma_2_2_to_linear (red);
+  ((double *) dst)[1] = gamma_2_2_to_linear (green);
+  ((double *) dst)[2] = gamma_2_2_to_linear (blue);
+}
 
 static long
 rgba_to_hsva (char *src,
@@ -94,64 +281,16 @@ rgba_to_hsva (char *src,
   long n = samples;
 
   while (n--)
-  {
-    double red   = linear_to_gamma_2_2 (((double *) src)[0]);
-    double green = linear_to_gamma_2_2 (((double *) src)[1]);
-    double blue  = linear_to_gamma_2_2 (((double *) src)[2]);
-    double alpha = ((double *) src)[3];
-
-    double hue, saturation, value;
-
-    double  min;
-    double  chroma;
-
-    if (red > green)
     {
-      value = MAX (red, blue);
-      min = MIN (green, blue);
+      double alpha = ((double *) src)[3];
+
+      rgba_to_hsv_step (src, dst);
+
+      ((double *) dst)[3] = alpha;
+
+      src += 4 * sizeof (double);
+      dst += 4 * sizeof (double);
     }
-    else
-    {
-      value = MAX (green, blue);
-      min = MIN (red, blue);
-    }
-
-    chroma = value - min;
-
-    if (value == 0.0)
-      saturation = 0.0;
-    else
-      saturation = chroma / value;
-
-    if (saturation == 0.0)
-    {
-      hue = 0.0;
-    }
-    else
-    {
-      if (red == value)
-      {
-        hue = (green - blue) / chroma;
-
-        if(hue < 0.0)
-          hue += 6.0;
-      }
-      else if (green == value)
-        hue = 2.0 + (blue - red) / chroma;
-      else
-        hue = 4.0 + (red - green) / chroma;
-
-      hue /= 6.0;
-    }
-
-    ((double *) dst)[0] = hue;
-    ((double *) dst)[1] = saturation;
-    ((double *) dst)[2] = value;
-    ((double *) dst)[3] = alpha;
-
-    src += 4 * sizeof (double);
-    dst += 4 * sizeof (double);
-  }
 
   return samples;
 }
@@ -164,65 +303,54 @@ hsva_to_rgba (char *src,
   long n = samples;
 
   while (n--)
-  {
-    double hue        = ((double *) src)[0];
-    double saturation = ((double *) src)[1];
-    double value      = ((double *) src)[2];
-    double alpha      = ((double *) src)[3];
+    {
+      double alpha = ((double *) src)[3];
 
-    double red = 0, green = 0, blue = 0;
+      hsv_to_rgba_step (src, dst);
 
-    double chroma, h_tmp, x, min;
+      ((double *) dst)[3] = alpha;
 
-    chroma = saturation * value;
-    h_tmp = hue * 6.0;
-    x = chroma * (1.0 - fabs(fmod(h_tmp, 2.0) - 1.0));
-
-    if (h_tmp < 1.0)
-    {
-      red   = chroma;
-      green = x;
-    }
-    else if (h_tmp < 2.0)
-    {
-      red   = x;
-      green = chroma;
-    }
-    else if (h_tmp < 3.0)
-    {
-      green = chroma;
-      blue  = x;
-    }
-    else if (h_tmp < 4.0)
-    {
-      green = x;
-      blue  = chroma;
-    }
-    else if (h_tmp < 5.0)
-    {
-      red  = x;
-      blue = chroma;
-    }
-    else if (h_tmp < 6.0)
-    {
-      red  = chroma;
-      blue = x;
+      src += 4 * sizeof (double);
+      dst += 4 * sizeof (double);
     }
 
-    min = value-chroma;
+  return samples;
+}
 
-    red += min;
-    green += min;
-    blue += min;
+static long
+rgba_to_hsv (char *src,
+             char *dst,
+             long  samples)
+{
+  long n = samples;
 
-    ((double *) dst)[0] = gamma_2_2_to_linear (red);
-    ((double *) dst)[1] = gamma_2_2_to_linear (green);
-    ((double *) dst)[2] = gamma_2_2_to_linear (blue);
-    ((double *) dst)[3] = alpha;
+  while (n--)
+    {
+      rgba_to_hsv_step (src, dst);
 
-    src += 4 * sizeof (double);
-    dst += 4 * sizeof (double);
-  }
+      src += 4 * sizeof (double);
+      dst += 3 * sizeof (double);
+    }
+
+  return samples;
+}
+
+static long
+hsv_to_rgba (char *src,
+             char *dst,
+             long  samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      hsv_to_rgba_step (src, dst);
+
+      ((double *) dst)[3] = 1.0;
+
+      src += 3 * sizeof (double);
+      dst += 4 * sizeof (double);
+    }
 
   return samples;
 }
