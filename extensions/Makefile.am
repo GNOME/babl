@@ -25,6 +25,7 @@ ext_LTLIBRARIES = \
 	float.la        \
 	fast-float.la   \
 	naive-CMYK.la   \
+	HSL.la          \
 	HSV.la          \
 	simple.la       \
 	sse2-float.la   \
@@ -41,6 +42,7 @@ gggl_la_SOURCES = gggl.c
 gimp_8bit_la_SOURCES = gimp-8bit.c
 grey_la_SOURCES = grey.c
 naive_CMYK_la_SOURCES = naive-CMYK.c
+HSL_la_SOURCES = HSL.c
 HSV_la_SOURCES = HSV.c
 sse2_float_la_SOURCES = sse2-float.c
 sse2_int8_la_SOURCES = sse2-int8.c

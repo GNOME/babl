@@ -12,6 +12,7 @@ C_TESTS =				\
 	extract \
 	floatclamp \
 	float-to-8bit \
+	hsl    \
 	hsva   \
 	types			\
 	palette \
