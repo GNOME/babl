@@ -31,7 +31,8 @@ ext_LTLIBRARIES = \
 	sse2-float.la   \
 	sse2-int8.la    \
 	sse2-int16.la   \
-	two-table.la
+	two-table.la	\
+	ycbcr.la
 
 cairo_la_SOURCES = cairo.c cairo-tables.h
 CIE_la_SOURCES = CIE.c
@@ -48,6 +49,7 @@ sse2_float_la_SOURCES = sse2-float.c
 sse2_int8_la_SOURCES = sse2-int8.c
 sse2_int16_la_SOURCES = sse2-int16.c
 two_table_la_SOURCES = two-table.c two-table-tables.h
+ycbcr_la_SOURCES = ycbcr.c
 float_la_SOURCES = float.c
 fast_float_la_SOURCES = fast-float.c
 
