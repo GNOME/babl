@@ -32,6 +32,14 @@ static long  cmyk_to_rgba (char *src,
                            char *dst,
                            long  n);
 
+static long  rgba_to_cmy  (char *src,
+                           char *dst,
+                           long  n);
+
+static long  cmy_to_rgba  (char *src,
+                           char *dst,
+                           long  n);
+
 int init (void);
 
 int
@@ -50,6 +58,13 @@ init (void)
     babl_component ("key"),
     NULL
   );
+  babl_model_new (
+    "name", "CMY",
+    babl_component ("cyan"),
+    babl_component ("magenta"),
+    babl_component ("yellow"),
+    NULL
+  );
 
   babl_conversion_new (
     babl_model ("RGBA"),
@@ -57,13 +72,25 @@ init (void)
     "linear", rgba_to_cmyk,
     NULL
   );
-
   babl_conversion_new (
     babl_model ("CMYK"),
     babl_model ("RGBA"),
     "linear", cmyk_to_rgba,
     NULL
   );
+  babl_conversion_new (
+    babl_model ("RGBA"),
+    babl_model ("CMY"),
+    "linear", rgba_to_cmy,
+    NULL
+  );
+  babl_conversion_new (
+    babl_model ("CMY"),
+    babl_model ("RGBA"),
+    "linear", cmy_to_rgba,
+    NULL
+  );
+
   babl_format_new (
     "name", "CMYK float",
     babl_model ("CMYK"),
@@ -72,6 +99,15 @@ init (void)
     babl_component ("yellow"),
     babl_component ("magenta"),
     babl_component ("key"),
+    NULL
+  );
+  babl_format_new (
+    "name", "CMY float",
+    babl_model ("CMY"),
+    babl_type ("float"),
+    babl_component ("cyan"),
+    babl_component ("yellow"),
+    babl_component ("magenta"),
     NULL
   );
 
@@ -170,3 +206,58 @@ cmyk_to_rgba (char *src,
   return n;
 }
 
+static long
+rgba_to_cmy (char *src,
+             char *dst,
+             long  n)
+{
+  while (n--)
+    {
+      double red   = linear_to_gamma_2_2 (((double *) src)[0]);
+      double green = linear_to_gamma_2_2 (((double *) src)[1]);
+      double blue  = linear_to_gamma_2_2 (((double *) src)[2]);
+
+      double cyan, magenta, yellow;
+
+      cyan    = 1.0 - red;
+      magenta = 1.0 - green;
+      yellow  = 1.0 - blue;
+
+      ((double *) dst)[0] = cyan;
+      ((double *) dst)[1] = magenta;
+      ((double *) dst)[2] = yellow;
+
+      src += 4 * sizeof (double);
+      dst += 3 * sizeof (double);
+    }
+  return n;
+}
+
+static long
+cmy_to_rgba (char *src,
+              char *dst,
+              long  n)
+{
+  while (n--)
+    {
+      double cyan    = ((double *) src)[0];
+      double magenta = ((double *) src)[1];
+      double yellow  = ((double *) src)[2];
+
+      double red, green, blue;
+
+      red   = 1.0 - cyan;
+      green = 1.0 - magenta;
+      blue  = 1.0 - yellow;
+
+      ((double *) dst)[0] = gamma_2_2_to_linear (red);
+      ((double *) dst)[1] = gamma_2_2_to_linear (green);
+      ((double *) dst)[2] = gamma_2_2_to_linear (blue);
+
+      ((double *) dst)[3] = 1.0;
+
+      src += 3 * sizeof (double);
+      dst += 4 * sizeof (double);
+    }
+  return n;
+}
