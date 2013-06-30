@@ -885,49 +885,49 @@ types (void)
 /* Phosphor colours: */
 
 /* sRGB/HDTV phosphor colours */
-static const double pxr = 0.64F;
-static const double pyr = 0.33F;
-static const double pxg = 0.30F;
-static const double pyg = 0.60F;
-static const double pxb = 0.15F;
-static const double pyb = 0.06F;
+static const double pxr = 0.64;
+static const double pyr = 0.33;
+static const double pxg = 0.30;
+static const double pyg = 0.60;
+static const double pxb = 0.15;
+static const double pyb = 0.06;
 
 /* White point: */
 
 /* D65 (6500K) (recommended but not a common display default) */
-static const double lxn = 0.312713F;
-static const double lyn = 0.329016F;
+static const double lxn = 0.312713;
+static const double lyn = 0.329016;
 
 /* D50 (5000K) */
-/*static const double lxn = 0.3457F; */
-/*static const double lyn = 0.3585F; */
+/*static const double lxn = 0.3457; */
+/*static const double lyn = 0.3585; */
 
 /* D55 (5500K) */
-/*static const double lxn = 0.3324F; */
-/*static const double lyn = 0.3474F; */
+/*static const double lxn = 0.3324; */
+/*static const double lyn = 0.3474; */
 
 /* D93 (9300K) (a common monitor default, but poor colour reproduction) */
-/* static const double lxn = 0.2848F; */
-/* static const double lyn = 0.2932F; */
+/* static const double lxn = 0.2848; */
+/* static const double lyn = 0.2932; */
 
 /* illum E (normalized) */
-/*static const double lxn = 1.0/3.0F; */
-/*static const double lyn = 1.0/3.0F; */
+/*static const double lxn = 1.0/3.0; */
+/*static const double lyn = 1.0/3.0; */
 
 /* illum C (average sunlight) */
-/*static const double lxn = 0.3101F; */
-/*static const double lyn = 0.3162F; */
+/*static const double lxn = 0.3101; */
+/*static const double lyn = 0.3162; */
 
 /* illum B (direct sunlight) */
-/*static const double lxn = 0.3484F; */
-/*static const double lyn = 0.3516F; */
+/*static const double lxn = 0.3484; */
+/*static const double lyn = 0.3516; */
 
 /* illum A (tungsten lamp) */
-/*static const double lxn = 0.4476F; */
-/*static const double lyn = 0.4074F; */
+/*static const double lxn = 0.4476; */
+/*static const double lyn = 0.4074; */
 
 
-static const double LRAMP = 7.99959199F;
+static const double LRAMP = 7.99959199;
 
 
 static double xnn, znn;
@@ -963,7 +963,7 @@ Minvert (CMatrix src, CMatrix dest)
     src[0][1] * dest[1][0] +
     src[0][2] * dest[2][0];
 
-  if (det <= 0.0F)
+  if (det <= 0.0)
     {
 #ifdef SANITY
       g_printerr ("\n\007 XXXX det: %f\n", det);
@@ -995,7 +995,7 @@ rgbxyzrgb_init (void)
 
   xnn = lxn / lyn;
   /* ynn taken as 1.0 */
-  znn = (1.0F - (lxn + lyn)) / lyn;
+  znn = (1.0 - (lxn + lyn)) / lyn;
 
   {
     CMatrix MRC, MRCi;
@@ -1007,9 +1007,9 @@ rgbxyzrgb_init (void)
     MRC[1][0] = pyr;
     MRC[1][1] = pyg;
     MRC[1][2] = pyb;
-    MRC[2][0] = 1.0F - (pxr + pyr);
-    MRC[2][1] = 1.0F - (pxg + pyg);
-    MRC[2][2] = 1.0F - (pxb + pyb);
+    MRC[2][0] = 1.0 - (pxr + pyr);
+    MRC[2][1] = 1.0 - (pxg + pyg);
+    MRC[2][2] = 1.0 - (pxb + pyb);
 
     Minvert (MRC, MRCi);
 
@@ -1065,13 +1065,13 @@ rgb_to_xyz (double *inr_outx,
 static inline double
 ffunc (const double t)
 {
-  if (t > 0.008856F)
+  if (t > 0.008856)
     {
       return (cbrt (t));
     }
   else
     {
-      return (7.787F * t + 16.0F / 116.0F);
+      return (7.787 * t + 16.0 / 116.0);
     }
 }
 
@@ -1079,13 +1079,13 @@ ffunc (const double t)
 static inline double
 ffunc_inv (const double t)
 {
-  if (t > 0.206893F)
+  if (t > 0.206893)
     {
       return (t * t * t);
     }
   else
     {
-      return ((t - 16.0F / 116.0F) / 7.787F);
+      return ((t - 16.0 / 116.0) / 7.787);
     }
 }
 
@@ -1101,24 +1101,24 @@ xyz_to_lab (double *inx,
   const double Y = *iny;
   const double Z = *inz;
 
-  if (Y > 0.0F)
+  if (Y > 0.0)
     {
-      if (Y > 0.008856F)
+      if (Y > 0.008856)
         {
-          L = (116.0F * cbrt (Y)) - 16.0F;
+          L = (116.0 * cbrt (Y)) - 16.0;
         }
       else
         {
-          L = (Y * 903.3F);
+          L = (Y * 903.3);
         }
 
 #ifdef SANITY
-      if (L < 0.0F)
+      if (L < 0.0)
         {
           g_printerr (" <eek1>%f \007", (float) L);
         }
 
-      if (L > 100.0F)
+      if (L > 100.0)
         {
           g_printerr (" <eek2>%f \007", (float) L);
         }
@@ -1130,8 +1130,8 @@ xyz_to_lab (double *inx,
     }
 
   ffuncY = ffunc (Y);
-  a      = 500.0F * (ffunc (X / xnn) - ffuncY);
-  b      = 200.0F * (ffuncY - ffunc (Z / znn));
+  a      = 500.0 * (ffunc (X / xnn) - ffuncY);
+  b      = 200.0 * (ffuncY - ffunc (Z / znn));
 
   *inx = L;
   *iny = a;
@@ -1152,38 +1152,38 @@ lab_to_xyz (double *inl,
 
   if (L > LRAMP)
     {
-      P = Y = (L + 16.0F) / 116.0F;
+      P = Y = (L + 16.0) / 116.0;
       Y = Y * Y * Y;
     }
   else
     {
-      Y = L / 903.3F;
-      P = 7.787F * Y + 16.0F / 116.0F;
+      Y = L / 903.3;
+      P = 7.787 * Y + 16.0 / 116.0;
     }
 
-  X = (P + a / 500.0F);
+  X = (P + a / 500.0);
   X = xnn *ffunc_inv (X);
-  Z = (P - b / 200.0F);
+  Z = (P - b / 200.0);
   Z = znn *ffunc_inv (Z);
 
 #ifdef SANITY
-  if (X < -0.00000F)
+  if (X < -0.00000)
     {
-      if (X < -0.0001F)
+      if (X < -0.0001)
         g_printerr ("{badX %f {%f,%f,%f}}", X, L, a, b);
-      X = 0.0F;
+      X = 0.0;
     }
-  if (Y < -0.00000F)
+  if (Y < -0.00000)
     {
-      if (Y < -0.0001F)
+      if (Y < -0.0001)
         g_printerr ("{badY %f}", Y);
-      Y = 0.0F;
+      Y = 0.0;
     }
-  if (Z < -0.00000F)
+  if (Z < -0.00000)
     {
-      if (Z < -0.1F)
+      if (Z < -0.1)
         g_printerr ("{badZ %f}", Z);
-      Z = 0.0F;
+      Z = 0.0;
     }
 #endif
 
@@ -1218,12 +1218,12 @@ cpercep_rgb_to_space (double  inr,
 #ifdef APPROX
 #ifdef SANITY
   /* ADM extra sanity */
-  if ((inr) > 255.0F ||
-      (ing) > 255.0F ||
-      (inb) > 255.0F ||
-      (inr) < -0.0F ||
-      (ing) < -0.0F ||
-      (inb) < -0.0F
+  if ((inr) > 255.0 ||
+      (ing) > 255.0 ||
+      (inb) > 255.0 ||
+      (inr) < -0.0 ||
+      (ing) < -0.0 ||
+      (inb) < -0.0
   )
     abort ();
 #endif /* SANITY */
@@ -1231,12 +1231,12 @@ cpercep_rgb_to_space (double  inr,
 
 #ifdef SANITY
   /* ADM extra sanity */
-  if ((inr) > 1.0F ||
-      (ing) > 1.0F ||
-      (inb) > 1.0F ||
-      (inr) < 0.0F ||
-      (ing) < 0.0F ||
-      (inb) < 0.0F
+  if ((inr) > 1.0 ||
+      (ing) > 1.0 ||
+      (inb) > 1.0 ||
+      (inr) < 0.0 ||
+      (ing) < 0.0 ||
+      (inb) < 0.0
   )
     {
       g_printerr ("%%");
@@ -1247,7 +1247,7 @@ cpercep_rgb_to_space (double  inr,
   rgb_to_xyz (&inr, &ing, &inb);
 
 #ifdef SANITY
-  if (inr < 0.0F || ing < 0.0F || inb < 0.0F)
+  if (inr < 0.0 || ing < 0.0 || inb < 0.0)
     {
       g_printerr (" [BAD2 XYZ: %f,%f,%f]\007 ",
                   inr, ing, inb);
@@ -1273,7 +1273,7 @@ cpercep_space_to_rgb (double  inr,
   lab_to_xyz (&inr, &ing, &inb);
 
 #ifdef SANITY
-  if (inr < -0.0F || ing < -0.0F || inb < -0.0F)
+  if (inr < -0.0 || ing < -0.0 || inb < -0.0)
     {
       g_printerr (" [BAD1 XYZ: %f,%f,%f]\007 ",
                   inr, ing, inb);
@@ -1283,9 +1283,9 @@ cpercep_space_to_rgb (double  inr,
   xyz_to_rgb (&inr, &ing, &inb);
 
   /* yes, essential.  :( */
-  inr = CLAMP (inr, 0.0F, 1.0F);
-  ing = CLAMP (ing, 0.0F, 1.0F);
-  inb = CLAMP (inb, 0.0F, 1.0F);
+  inr = CLAMP (inr, 0.0, 1.0);
+  ing = CLAMP (ing, 0.0, 1.0);
+  inb = CLAMP (inb, 0.0, 1.0);
 
   *outr = inr;
   *outg = ing;
