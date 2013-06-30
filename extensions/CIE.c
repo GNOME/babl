@@ -933,11 +933,6 @@ static const double LRAMP = 7.99959199;
 static double xnn, znn;
 
 
-#ifndef CLAMP
-#define CLAMP(x, l, u)    ((x) < (l) ? (l) : ((x) > (u) ? (u) : (x)))
-#endif
-
-
 typedef double CMatrix[3][3];
 typedef double CVector[3];
 
@@ -1281,11 +1276,6 @@ cpercep_space_to_rgb (double  inr,
 #endif
 
   xyz_to_rgb (&inr, &ing, &inb);
-
-  /* yes, essential.  :( */
-  inr = CLAMP (inr, 0.0, 1.0);
-  ing = CLAMP (ing, 0.0, 1.0);
-  inb = CLAMP (inb, 0.0, 1.0);
 
   *outr = inr;
   *outg = ing;
