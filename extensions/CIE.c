@@ -603,8 +603,8 @@ types_u8 (void)
     "integer",
     "unsigned",
     "bits", 8,
-    "min_val", -50.0,
-    "max_val", 50.0,
+    "min_val", -128.0,
+    "max_val", 127.0,
     NULL
   );
 
@@ -741,8 +741,8 @@ types_u16 (void)
     "integer",
     "unsigned",
     "bits", 16,
-    "min_val", -50.0,
-    "max_val", 50.0,
+    "min_val", -128.0,
+    "max_val", 127.0,
     NULL
   );
 
