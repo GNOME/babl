@@ -35,7 +35,7 @@
 static const __v4sf  u16_float = Q (1.f / 65535);
 
 static long
-conv_rgba16_linear_rgbaF_linear (const uint16_t *src, float *dst, long samples)
+conv_rgba16_rgbaF (const uint16_t *src, float *dst, long samples)
 {
   long i = 0;
 
@@ -71,7 +71,7 @@ conv_rgba16_linear_rgbaF_linear (const uint16_t *src, float *dst, long samples)
 }
 
 static long
-conv_rgba16_linear_rgbAF_linear (const uint16_t *src, float *dst, long samples)
+conv_rgba16_rgbAF (const uint16_t *src, float *dst, long samples)
 {
   long i = 0;
   long remainder;
@@ -137,9 +137,6 @@ conv_rgba16_linear_rgbAF_linear (const uint16_t *src, float *dst, long samples)
 
 #endif /* defined(USE_SSE2) */
 
-#define o(src, dst) \
-  babl_conversion_new (src, dst, "linear", conv_ ## src ## _ ## dst, NULL)
-
 int init (void);
 
 int
@@ -172,11 +169,42 @@ init (void)
     babl_component ("A"),
     NULL);
 
+  const Babl *rgbaF_gamma = babl_format_new (
+    babl_model ("R'G'B'A"),
+    babl_type ("float"),
+    babl_component ("R'"),
+    babl_component ("G'"),
+    babl_component ("B'"),
+    babl_component ("A"),
+    NULL);
+  const Babl *rgbAF_gamma = babl_format_new (
+    babl_model ("R'aG'aB'aA"),
+    babl_type ("float"),
+    babl_component ("R'a"),
+    babl_component ("G'a"),
+    babl_component ("B'a"),
+    babl_component ("A"),
+    NULL);
+  const Babl *rgba16_gamma = babl_format_new (
+    babl_model ("R'G'B'A"),
+    babl_type ("u16"),
+    babl_component ("R'"),
+    babl_component ("G'"),
+    babl_component ("B'"),
+    babl_component ("A"),
+    NULL);
+
+#define CONV(src, dst) \
+{ \
+  babl_conversion_new (src ## _linear, dst ## _linear, "linear", conv_ ## src ## _ ## dst, NULL); \
+  babl_conversion_new (src ## _gamma, dst ## _gamma, "linear", conv_ ## src ## _ ## dst, NULL); \
+}
+
   if ((babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_SSE) &&
       (babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_SSE2))
     {
-      o (rgba16_linear, rgbaF_linear);
-      o (rgba16_linear, rgbAF_linear);
+      CONV (rgba16, rgbaF);
+      CONV (rgba16, rgbAF);
     }
 
 #endif /* defined(USE_SSE2) */
