@@ -41,9 +41,9 @@ conv_rgbaF_linear_rgbAF_gamma (unsigned char *src,
    while (n--)
      {
        float alpha = fsrc[3];
-       *fdst++ = linear_to_gamma_2_2 (*fsrc++) * alpha;
-       *fdst++ = linear_to_gamma_2_2 (*fsrc++) * alpha;
-       *fdst++ = linear_to_gamma_2_2 (*fsrc++) * alpha;
+       *fdst++ = babl_linear_to_gamma_2_2 (*fsrc++) * alpha;
+       *fdst++ = babl_linear_to_gamma_2_2 (*fsrc++) * alpha;
+       *fdst++ = babl_linear_to_gamma_2_2 (*fsrc++) * alpha;
        *fdst++ = *fsrc++;
      }
   return samples;
@@ -71,17 +71,17 @@ conv_rgbAF_linear_rgbAF_gamma (unsigned char *src,
          }
        else if (alpha >= 1.0)
          {
-           *fdst++ = linear_to_gamma_2_2 (*fsrc++);
-           *fdst++ = linear_to_gamma_2_2 (*fsrc++);
-           *fdst++ = linear_to_gamma_2_2 (*fsrc++);
+           *fdst++ = babl_linear_to_gamma_2_2 (*fsrc++);
+           *fdst++ = babl_linear_to_gamma_2_2 (*fsrc++);
+           *fdst++ = babl_linear_to_gamma_2_2 (*fsrc++);
            *fdst++ = *fsrc++;
          }
        else
          {
            float alpha_recip = 1.0 / alpha;
-           *fdst++ = linear_to_gamma_2_2 (*fsrc++ * alpha_recip) * alpha;
-           *fdst++ = linear_to_gamma_2_2 (*fsrc++ * alpha_recip) * alpha;
-           *fdst++ = linear_to_gamma_2_2 (*fsrc++ * alpha_recip) * alpha;
+           *fdst++ = babl_linear_to_gamma_2_2 (*fsrc++ * alpha_recip) * alpha;
+           *fdst++ = babl_linear_to_gamma_2_2 (*fsrc++ * alpha_recip) * alpha;
+           *fdst++ = babl_linear_to_gamma_2_2 (*fsrc++ * alpha_recip) * alpha;
            *fdst++ = *fsrc++;
          }
      }
@@ -99,9 +99,9 @@ conv_rgbaF_linear_rgbaF_gamma (unsigned char *src,
 
    while (n--)
      {
-       *fdst++ = linear_to_gamma_2_2 (*fsrc++);
-       *fdst++ = linear_to_gamma_2_2 (*fsrc++);
-       *fdst++ = linear_to_gamma_2_2 (*fsrc++);
+       *fdst++ = babl_linear_to_gamma_2_2 (*fsrc++);
+       *fdst++ = babl_linear_to_gamma_2_2 (*fsrc++);
+       *fdst++ = babl_linear_to_gamma_2_2 (*fsrc++);
        *fdst++ = *fsrc++;
      }
   return samples;
@@ -118,9 +118,9 @@ conv_rgbF_linear_rgbF_gamma (unsigned char *src,
 
    while (n--)
      {
-       *fdst++ = linear_to_gamma_2_2 (*fsrc++);
-       *fdst++ = linear_to_gamma_2_2 (*fsrc++);
-       *fdst++ = linear_to_gamma_2_2 (*fsrc++);
+       *fdst++ = babl_linear_to_gamma_2_2 (*fsrc++);
+       *fdst++ = babl_linear_to_gamma_2_2 (*fsrc++);
+       *fdst++ = babl_linear_to_gamma_2_2 (*fsrc++);
      }
   return samples;
 }
@@ -137,9 +137,9 @@ conv_rgbaF_gamma_rgbaF_linear (unsigned char *src,
 
    while (n--)
      {
-       *fdst++ = gamma_2_2_to_linear (*fsrc++);
-       *fdst++ = gamma_2_2_to_linear (*fsrc++);
-       *fdst++ = gamma_2_2_to_linear (*fsrc++);
+       *fdst++ = babl_gamma_2_2_to_linear (*fsrc++);
+       *fdst++ = babl_gamma_2_2_to_linear (*fsrc++);
+       *fdst++ = babl_gamma_2_2_to_linear (*fsrc++);
        *fdst++ = *fsrc++;
      }
   return samples;
@@ -156,9 +156,9 @@ conv_rgbF_gamma_rgbF_linear (unsigned char *src,
 
    while (n--)
      {
-       *fdst++ = gamma_2_2_to_linear (*fsrc++);
-       *fdst++ = gamma_2_2_to_linear (*fsrc++);
-       *fdst++ = gamma_2_2_to_linear (*fsrc++);
+       *fdst++ = babl_gamma_2_2_to_linear (*fsrc++);
+       *fdst++ = babl_gamma_2_2_to_linear (*fsrc++);
+       *fdst++ = babl_gamma_2_2_to_linear (*fsrc++);
      }
   return samples;
 }

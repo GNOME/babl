@@ -401,7 +401,7 @@ conv_yaF_linear_yaF_gamma (const float *src, float *dst, long samples)
 
   while (samples--)
     {
-      *dst++ = linear_to_gamma_2_2 (*src++);
+      *dst++ = babl_linear_to_gamma_2_2 (*src++);
       *dst++ = *src++;
     }
 
@@ -439,7 +439,7 @@ conv_yaF_gamma_yaF_linear (const float *src, float *dst, long samples)
 
   while (samples--)
     {
-      *dst++ = gamma_2_2_to_linear (*src++);
+      *dst++ = babl_gamma_2_2_to_linear (*src++);
       *dst++ = *src++;
     }
 
@@ -480,7 +480,7 @@ conv_yF_linear_yF_gamma (const float *src, float *dst, long samples)
 
   while (samples--)
     {
-      *dst++ = linear_to_gamma_2_2 (*src++);
+      *dst++ = babl_linear_to_gamma_2_2 (*src++);
     }
 
   return total;
@@ -520,7 +520,7 @@ conv_yF_gamma_yF_linear (const float *src, float *dst, long samples)
 
   while (samples--)
     {
-      *dst++ = gamma_2_2_to_linear (*src++);
+      *dst++ = babl_gamma_2_2_to_linear (*src++);
     }
 
   return total;

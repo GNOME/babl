@@ -59,29 +59,32 @@
 static inline double
 linear_to_gamma_2_2 (double value)
 {
-#if 0
   if (value > 0.003130804954)
     return 1.055 * pow (value, (1.0/2.4)) - 0.055;
   return 12.92 * value;
-#else
-  if (value > 0.003130804954)
-    return 1.055 * babl_pow_1_24 (value) - 0.055;
-  return 12.92 * value;
-#endif
 }
 
 static inline double
 gamma_2_2_to_linear (double value)
 {
-#if 0
   if (value > 0.04045)
     return pow ((value + 0.055) / 1.055, 2.4);
   return value / 12.92;
-#else
+}
+static inline double
+babl_linear_to_gamma_2_2 (double value)
+{
+  if (value > 0.003130804954)
+    return 1.055 * babl_pow_1_24 (value) - 0.055;
+  return 12.92 * value;
+}
+
+static inline double
+babl_gamma_2_2_to_linear (double value)
+{
   if (value > 0.04045)
     return babl_pow_24 ((value + 0.055) / 1.055);
   return value / 12.92;
-#endif
 }
 
 #else
