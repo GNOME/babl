@@ -25,6 +25,7 @@
 
 #define MIN(a,b) ((a > b) ? b : a)
 #define MAX(a,b) ((a < b) ? b : a)
+#define EPSILON  1.0e-10
 
 static long  rgba_to_hsla     (char   *src,
                                char   *dst,
@@ -121,16 +122,16 @@ rgb_to_hsl_step (double* src,
   max = MAX (red, MAX (green, blue));
   min = MIN (red, MIN (green, blue));
 
-  if (max == red)
+  if (max - red < EPSILON)
     cpn_max = 0;
-  else if (max == green)
+  else if (max - green < EPSILON)
     cpn_max = 1;
   else
     cpn_max = 2;
 
   lightness = (max + min) / 2.0;
 
-  if (max == min)
+  if (max - min < EPSILON)
     {
       hue = saturation = 0;
     }

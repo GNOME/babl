@@ -30,6 +30,7 @@
 
 #define MIN(a,b) (a > b) ? b : a;
 #define MAX(a,b) (a < b) ? b : a;
+#define EPSILON  1.0e-10
 
 static long rgba_to_hsva     (char *src,
                               char *dst,
@@ -183,25 +184,25 @@ rgba_to_hsv_step (char *src,
 
   chroma = value - min;
 
-  if (value == 0.0)
+  if (value < EPSILON)
     saturation = 0.0;
   else
     saturation = chroma / value;
 
-  if (saturation == 0.0)
+  if (saturation < EPSILON)
     {
       hue = 0.0;
     }
   else
     {
-      if (red == value)
+      if (fabs (red - value) < EPSILON)
         {
           hue = (green - blue) / chroma;
 
           if (hue < 0.0)
             hue += 6.0;
         }
-      else if (green == value)
+      else if (fabs (green - value) < EPSILON)
         hue = 2.0 + (blue - red) / chroma;
       else
         hue = 4.0 + (red - green) / chroma;
