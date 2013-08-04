@@ -61,7 +61,8 @@ test (void)
     {
       if (rgb_buf[i] != rgb_buf_ref[i])
         {
-          babl_log ("index %i is problematic", i);
+          babl_log ("index %i is problematic : %f instead of %f",
+                    i, rgb_buf[i], rgb_buf_ref[i]);
           OK = 0;
         }
     }
