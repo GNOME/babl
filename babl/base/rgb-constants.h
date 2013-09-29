@@ -16,21 +16,16 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#if 0
-#define CONTEMPORARY_MONITOR
-#endif
+/*
+ * These primaries have been adapted for a D50 illuminant.
+ *
+ * They were taken from here:
+ * http://www.brucelindbloom.com/WorkingSpaceInfo.html#AdaptedPrimaries
+ *
+ * For more information, see this thread:
+ * https://mail.gnome.org/archives/gimp-developer-list/2013-September/msg00113.html
+ */
 
-#ifdef CONTEMPORARY_MONITOR
-  /* source: http://www.poynton.com/ColorFAQ.html */
-  #define RGB_LUMINANCE_RED    (0.212671)
-  #define RGB_LUMINANCE_GREEN  (0.715160)
-  #define RGB_LUMINANCE_BLUE   (0.072169)
-#else
-  /* this is not correct, but the constants are kept around */
-  #define RGB_LUMA_RED         (0.299)
-  #define RGB_LUMA_GREEN       (0.587)
-  #define RGB_LUMA_BLUE        (0.114)
-  #define RGB_LUMINANCE_RED    RGB_LUMA_RED
-  #define RGB_LUMINANCE_GREEN  RGB_LUMA_GREEN
-  #define RGB_LUMINANCE_BLUE   RGB_LUMA_BLUE
-#endif
+#define RGB_LUMINANCE_RED    (0.222491)
+#define RGB_LUMINANCE_GREEN  (0.716888)
+#define RGB_LUMINANCE_BLUE   (0.060621)
