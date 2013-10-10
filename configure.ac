@@ -112,6 +112,7 @@ AC_SUBST(BABL_CURRENT_MINUS_AGE)
 
 dnl ==========================================================================
 
+AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE([1.11 foreign no-define dist-bzip2 no-dist-gzip -Wno-portability])
 
 # Enable silent build rules by default, requires at least
@@ -119,7 +120,28 @@ AM_INIT_AUTOMAKE([1.11 foreign no-define dist-bzip2 no-dist-gzip -Wno-portabilit
 # configure or passing V=1 to make
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
-BABL_VARIADIC_MACROS
+# Prefer clang on OSX, because GCC isn't updated
+
+case "$build_os" in
+  darwin10.* | darwin9.* | darwin8.*)
+    ;;
+  darwin*)
+    prefered_cc="clang"
+    prefered_cxx="clang++"
+    ;;
+  *)
+    ;;
+esac
+
+if test -z "$CC" && test -n "$prefered_cc"; then
+  AC_MSG_NOTICE([setting CC to $prefered_cc for $build_os])
+  CC=$prefered_cc
+fi
+
+if test -z "$CXX" && test -n "$prefered_cc"; then
+  AC_MSG_NOTICE([setting CXX to $prefered_cxx for $build_os])
+  CXX=$prefered_cxx
+fi
 
 # Check for programs
 AC_PROG_CC
@@ -128,6 +150,8 @@ AC_PROG_CC_C99
 # Initialize libtool
 LT_PREREQ([2.2])
 LT_INIT([disable-static win32-dll])
+
+BABL_VARIADIC_MACROS
 
 dnl Initialize maintainer mode
 AM_MAINTAINER_MODE([enable])
