@@ -23,14 +23,8 @@ C_TESTS =				\
 	cairo-RGB24		\
 	$(CONCURRENCY_STRESS_TEST)
 
-if HAVE_INTROSPECTION
-INTROSPECTION_TESTS = \
-	introspection.py
-endif
-
 TESTS = \
-	$(C_TESTS) \
-	$(INTROSPECTION_TESTS)
+	$(C_TESTS)
 
 TESTS_ENVIRONMENT = LD_LIBRARY_PATH=$(top_builddir)/babl:$LD_LIBRARY_PATH GI_TYPELIB_PATH=$(top_builddir)/babl BABL_PATH=$(top_builddir)/extensions/.libs
 
@@ -43,9 +37,6 @@ LDADD = $(top_builddir)/babl/libbabl-@BABL_API_VERSION@.la \
 	$(MATH_LIB)
 
 EXTRA_DIST=common.inc
-
-dist_noinst_SCRIPTS = \
-	introspection.py
 
 noinst_PROGRAMS =		\
 	introspect		\

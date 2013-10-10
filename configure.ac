@@ -61,34 +61,6 @@ AC_SUBST(BABL_API_VERSION)
 BABL_RELEASE=babl_api_version
 AC_SUBST(BABL_RELEASE)
 
-# GObject Introspection
-GOBJECT_INTROSPECTION_CHECK([0.10])
-
-# Check whether g-ir-scanner respects "rename to" annotation
-PKG_CHECK_MODULES([GI_1_33_5], [gobject-introspection-1.0 >= 1.33.5],
-   [have_gi_rename_to=true],
-   [have_gi_rename_to=false]
-)
-AM_CONDITIONAL(HAVE_GI_RENAME_TO, [test x$have_gi_rename_to = xtrue])
-
-# Vala
-AC_ARG_WITH(vala, [  --without-vala         build without Vala support])
-
-have_vapigen="no"
-if test "x$with_vala" != "xno"; then
-
-  AC_PATH_PROG(VAPIGEN, vapigen, no)
-  if test "$VAPIGEN" = "no"; then
-    have_vapigen="no  (vapigen executable not found)"
-    AC_MSG_RESULT([*** Check for vapigen failed.])
-  else
-    have_vapigen="yes"
-  fi
-fi
-
-have_vala=$have_vapigen
-AM_CONDITIONAL(HAVE_VALA, test "$have_vala" = "yes")
-
 dnl The symbol BABL_UNSTABLE is defined above for substitution in
 dnl Makefiles and conditionally defined here as a preprocessor symbol
 dnl and automake conditional.

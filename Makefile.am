@@ -1,5 +1,4 @@
 ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
-#DISTCHECK_CONFIGURE_FLAGS = --enable-introspection
 
 SUBDIRS = \
 	babl		\
@@ -23,7 +22,6 @@ EXTRA_DIST = \
 	NEWS			\
 	TODO			\
 	autogen.sh		\
-	m4/introspection.m4	\
 	babl.pc.in
 
 DISTCLEANFILES = \
