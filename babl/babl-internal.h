@@ -82,10 +82,10 @@ void     babl_set_extender              (Babl           *new_extender);
 Babl   * babl_extension_quiet_log       (void);
 void     babl_extension_deinit          (void);
 
-long     babl_fish_reference_process    (const Babl     *babl,
-                                         const BablImage*source,
-                                         BablImage      *destination,
-                                         long            n);
+long     babl_fish_reference_process    (const Babl *babl,
+                                         const char *source,
+                                         char       *destination,
+                                         long        n);
 
 Babl   * babl_fish_reference            (const Babl     *source,
                                          const Babl     *destination);

@@ -93,8 +93,7 @@ babl_fish_reference (const Babl *source,
 
 static void
 convert_to_double (BablFormat      *source_fmt,
-                   const BablImage *source,
-                   char            *source_buf,
+                   const char      *source_buf,
                    char            *source_double_buf,
                    int              n)
 {
@@ -114,7 +113,7 @@ convert_to_double (BablFormat      *source_fmt,
   dst_img->stride[0] = 0;
 
 
-  src_img->data[0]   = source_buf;
+  src_img->data[0]   = (char *)source_buf;
   src_img->type[0]   = (BablType *) babl_type_from_id (BABL_DOUBLE);
   src_img->pitch[0]  = source_fmt->bytes_per_pixel;
   src_img->stride[0] = 0;
@@ -151,7 +150,6 @@ convert_to_double (BablFormat      *source_fmt,
 static void
 convert_from_double (BablFormat *destination_fmt,
                      char       *destination_double_buf,
-                     BablImage  *destination,
                      char       *destination_buf,
                      int         n)
 {
@@ -204,7 +202,6 @@ convert_from_double (BablFormat *destination_fmt,
 
 static void
 ncomponent_convert_to_double (BablFormat       *source_fmt,
-                              const BablImage  *source,
                               char             *source_buf,
                               char             *source_double_buf,
                               int               n)
@@ -239,7 +236,6 @@ ncomponent_convert_to_double (BablFormat       *source_fmt,
 static void
 ncomponent_convert_from_double (BablFormat *destination_fmt,
                                 char       *destination_double_buf,
-                                BablImage  *destination,
                                 char       *destination_buf,
                                 int         n)
 {
@@ -276,19 +272,13 @@ ncomponent_convert_from_double (BablFormat *destination_fmt,
 
 
 static int
-process_same_model (const Babl      *babl,
-                    const BablImage *source,
-                    BablImage       *destination,
-                    long             n)
+process_same_model (const Babl  *babl,
+                    const char *source,
+                    char       *destination,
+                    long        n)
 {
   void *double_buf;
 
-  if (BABL_IS_BABL (source) ||
-      BABL_IS_BABL (destination))
-    {
-      babl_log ("args=(%p, %p, %p, %li): trying to handle BablImage (unconfirmed code)",
-                babl_fish, source, destination, n);
-    }
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
   double_buf = babl_malloc (sizeof (double) * n *
@@ -307,8 +297,7 @@ process_same_model (const Babl      *babl,
        */
       ncomponent_convert_to_double (
         (BablFormat *) BABL (babl->fish.source),
-        BABL_IS_BABL (source) ? source : NULL,
-        BABL_IS_BABL (source) ? NULL : (char *) source,
+        (char *) source,
         double_buf,
         n
       );
@@ -316,8 +305,7 @@ process_same_model (const Babl      *babl,
       ncomponent_convert_from_double (
         (BablFormat *) BABL (babl->fish.destination),
         double_buf,
-        BABL_IS_BABL (destination) ? destination : NULL,
-        BABL_IS_BABL (destination) ? NULL : (char *) destination,
+        (char *) destination,
         n
       );
     }
@@ -325,8 +313,7 @@ process_same_model (const Babl      *babl,
     {
       convert_to_double (
         (BablFormat *) BABL (babl->fish.source),
-        BABL_IS_BABL (source) ? source : NULL,
-        BABL_IS_BABL (source) ? NULL : (char *) source,
+        (char *) source,
         double_buf,
         n
       );
@@ -334,8 +321,7 @@ process_same_model (const Babl      *babl,
       convert_from_double (
         (BablFormat *) BABL (babl->fish.destination),
         double_buf,
-        BABL_IS_BABL (destination) ? destination : NULL,
-        BABL_IS_BABL (destination) ? NULL : (char *) destination,
+        (char *) destination,
         n
       );
     }
@@ -344,10 +330,10 @@ process_same_model (const Babl      *babl,
 }
 
 long
-babl_fish_reference_process (const Babl      *babl,
-                             const BablImage *source,
-                             BablImage       *destination,
-                             long             n)
+babl_fish_reference_process (const Babl *babl,
+                             const char *source,
+                             char       *destination,
+                             long        n)
 {
   void *source_double_buf;
   void *rgba_double_buf;
@@ -360,14 +346,6 @@ babl_fish_reference_process (const Babl      *babl,
   if (BABL (babl->fish.source)->format.model ==
       BABL (babl->fish.destination)->format.model)
     return process_same_model (babl, source, destination, n);
-#if 0
-  if (BABL_IS_BABL (source) ||
-      BABL_IS_BABL (destination))
-    {
-      babl_log ("args=(%p, %p, %p, %li): trying to handle BablImage (unconfirmed code)",
-                babl_fish, source, destination, n);
-    }
-#endif
 
   source_double_buf = babl_malloc (sizeof (double) * n *
                                    BABL (babl->fish.source)->format.model->components);
@@ -384,8 +362,7 @@ babl_fish_reference_process (const Babl      *babl,
 
   convert_to_double (
     (BablFormat *) BABL (babl->fish.source),
-    NULL,
-    (char *) source,
+    source,
     source_double_buf,
     n
   );
@@ -438,8 +415,7 @@ babl_fish_reference_process (const Babl      *babl,
   convert_from_double (
     (BablFormat *) BABL (babl->fish.destination),
     destination_double_buf,
-    NULL,
-    (char *) destination,
+    destination,
     n
   );
 
