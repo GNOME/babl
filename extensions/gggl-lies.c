@@ -673,28 +673,6 @@ conv_gF_rgbF (unsigned char *src, unsigned char *dst, long samples)
 }
 
 static long
-conv_rgbF_gF (unsigned char *src, unsigned char *dst, long samples)
-{
-  long n = samples;
-
-  while (n--)
-    {
-      int   c;
-      float sum = 0;
-
-      for (c = 0; c < 3; c++)
-        {
-          sum += (*(float *) src);
-          src += 4;
-        }
-      sum             /= 3;
-      (*(float *) dst) = sum;
-      dst             += 4;
-    }
-  return samples;
-}
-
-static long
 conv_gaF_rgbaF (unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
@@ -716,32 +694,7 @@ conv_gaF_rgbaF (unsigned char *src, unsigned char *dst, long samples)
   return samples;
 }
 
-static long
-conv_rgbaF_gaF (unsigned char *src, unsigned char *dst, long samples)
-{
-  long n = samples;
-
-  while (n--)
-    {
-      int   c;
-      float sum = 0;
-
-      for (c = 0; c < 3; c++)
-        {
-          sum += (*(float *) src);
-          src += 4;
-        }
-      (*(float *) dst) = sum / 3;
-      dst             += 4;
-      (*(int *) dst)   = (*(int *) src);
-      dst             += 4;
-      src             += 4;
-    }
-  return samples;
-}
-
 #define conv_gAF_rgbAF    conv_gaF_rgbaF
-#define conv_rgbAF_gAF    conv_rgbaF_gaF
 
 /* other conversions coded for some optimisation reason or sumthin */
 
@@ -783,28 +736,6 @@ conv_rgbaF_rgb8 (unsigned char *src, unsigned char *dst, long samples)
           dst                   += 1;
           src                   += 4;
         }
-      src += 4;
-    }
-  return samples;
-}
-
-static long
-conv_rgbaF_g8 (unsigned char *src, unsigned char *dst, long samples)
-{
-  long n = samples;
-
-  while (n--)
-    {
-      int   c;
-      float sum = 0;
-
-      for (c = 0; c < 3; c++)
-        {
-          sum += (*(float *) src);
-          src += 4;
-        }
-      *(unsigned char *) dst = sum * 255.0 / 3;
-      dst++;
       src += 4;
     }
   return samples;
@@ -1107,16 +1038,12 @@ init (void)
   o (rgbF, rgbAF);
   o (gF, gaF);
   o (gF, gAF);
-  o (rgbF, gF);
   o (gF, rgbF);
-  o (rgbaF, gaF);
   o (gaF, rgbaF);
-  o (rgbAF, gAF);
   o (gAF, rgbAF);
   o (rgbaF, rgb8);
   o (rgbA8, rgba8);
   o (rgba8, rgbA8);
-  o (rgbaF, g8);
   o (rgbaF, rgb16);
   o (rgb8, rgba8);
   o (rgb8, rgbA8);
