@@ -52,12 +52,6 @@
 #include "babl-mutex.h"
 #include "babl-cpuaccel.h"
 
-/* redefining some functions for the win32 platform */
-#ifdef _WIN32
-#define srandom srand
-#define random  rand
-#endif
-
 /* fallback to floor function when rint is not around */
 #ifndef HAVE_RINT
 # define rint(f)  (floor (((double) (f)) + 0.5))

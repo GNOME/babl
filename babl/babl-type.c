@@ -24,6 +24,7 @@
 #define NEEDS_BABL_DB
 #include "babl-internal.h"
 #include "babl-db.h"
+#include "babl-ref-pixels.h"
 
 static int
 babl_type_destroy (void *data)
@@ -169,32 +170,6 @@ babl_type_new (void *first_arg,
 
 
 #define TOLERANCE    0.000000001
-#define samples      512
-
-static double test[samples];
-
-static double r_interval (double min, double max)
-{
-  long int rand_i = random ();
-  double   ret;
-
-  ret  = (double) rand_i / RAND_MAX;
-  ret *= (max - min);
-  ret += min;
-  return ret;
-}
-
-static void test_init (double min, double max)
-{
-  int i;
-
-  srandom (20050728);
-  for (i = 0; i < samples; i++)
-    {
-      test [i] = r_interval (min, max);
-    }
-}
-
 
 static const Babl *double_vector_format (void)
 {
@@ -223,7 +198,8 @@ babl_type_is_symmetric (const Babl *babl)
   Babl       *fish_to;
   Babl       *fish_from;
 
-  test_init (0.0, 182.0);
+  const int   samples = babl_get_num_type_test_pixels ();
+  const double *test_pixels = babl_get_type_test_pixels ();
 
   ref_fmt = double_vector_format ();
   fmt     = babl_format_new (babl_model ("Y"),
@@ -238,7 +214,7 @@ babl_type_is_symmetric (const Babl *babl)
   destination = babl_calloc (1, babl->type.bits / 8 * samples);
   transformed = babl_calloc (1, 64 / 8 * samples);
 
-  babl_process (fish_to, test, original, samples);
+  babl_process (fish_to, test_pixels, original, samples);
   babl_process (fish_from, original, clipped, samples);
   babl_process (fish_to, clipped, destination, samples);
   babl_process (fish_from, destination, transformed, samples);
@@ -257,7 +233,7 @@ babl_type_is_symmetric (const Babl *babl)
           {
             if (cnt++ < 4)
               babl_log ("%s:  %f %f %f)",
-                        babl->instance.name, test[i], clipped[i], transformed[i]
+                        babl->instance.name, test_pixels[i], clipped[i], transformed[i]
               );
             is_symmetrical = 0;
           }

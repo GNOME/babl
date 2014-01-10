@@ -19,6 +19,7 @@
 #include "config.h"
 #include <math.h>
 #include "babl-internal.h"
+#include "babl-ref-pixels.h"
 
 #define BABL_LEGAL_ERROR           0.000001
 #define BABL_MAX_COST_VALUE        2000000
@@ -29,7 +30,7 @@
 #define MIN(a, b) (((a) > (b)) ? (b) : (a))
 #endif
 
-#define NUM_TEST_PIXELS            3072
+#define NUM_TEST_PIXELS            (babl_get_num_path_test_pixels ())
 #define MAX_BUFFER_SIZE            1024  /* XXX: reasonable size for this should be profiled */
 
 
@@ -38,7 +39,7 @@ int   babl_in_fish_path = 0;
 typedef struct _FishPathInstrumentation
 {
   const Babl   *fmt_rgba_double;
-  double *test;
+  int     num_test_pixels;
   void   *source;
   void   *destination;
   void   *ref_destination;
@@ -86,9 +87,6 @@ get_conversion_path (PathContext *pc,
                      Babl *current_format,
                      int current_length,
                      int max_length);
-
-static double *
-test_create (void);
 
 static char *
 create_name (char       *buf,
@@ -542,38 +540,6 @@ process_conversion_path (BablList   *path,
   return n;
 }
 
-
-static double *
-test_create (void)
-{
-  static double test[sizeof (double) * NUM_TEST_PIXELS * 4];
-  int           i, j;
-  static int    done = 0;
-
-  if (done)
-    return test;
-
-  /* There is no need to generate the test
-   * more times ... */
-
-  srandom (20050728);
-
-  /*  add 128 pixels in the valid range between 0.0 and 1.0  */
-  for (i = 0; i < 256 * 4; i++)
-    test [i] = (double) random () / RAND_MAX;
-
-  /*  add 16 pixels between -1.0 and 0.0  */
-  for (j = 0; j < 16 * 4; i++, j++)
-    test [i] = 0.0 - (double) random () / RAND_MAX;
-
-  /*  add 16 pixels between 1.0 and 2.0  */
-  for (j = 0; j < 16 * 4; i++, j++)
-    test [i] = 1.0 + (double) random () / RAND_MAX;
-
-  done = 1;
-  return test;
-}
-
 static void
 init_path_instrumentation (FishPathInstrumentation *fpi,
                            Babl                    *fmt_source,
@@ -581,6 +547,8 @@ init_path_instrumentation (FishPathInstrumentation *fpi,
 {
   long   ticks_start = 0;
   long   ticks_end   = 0;
+
+  const double *test_pixels = babl_get_path_test_pixels ();
 
   if (!fpi->fmt_rgba_double)
     {
@@ -594,8 +562,7 @@ init_path_instrumentation (FishPathInstrumentation *fpi,
         NULL);
     }
 
-  if (!fpi->test)
-    fpi->test = test_create (); // <- test_create utiliza var static dentro de la función
+  fpi->num_test_pixels = babl_get_num_path_test_pixels ();
 
   fpi->fish_rgba_to_source      = babl_fish_reference (fpi->fmt_rgba_double,
                                                   fmt_source);
@@ -604,31 +571,31 @@ init_path_instrumentation (FishPathInstrumentation *fpi,
   fpi->fish_destination_to_rgba = babl_fish_reference (fmt_destination,
                                                   fpi->fmt_rgba_double);
 
-  fpi->source                      = babl_calloc (NUM_TEST_PIXELS,
+  fpi->source                      = babl_calloc (fpi->num_test_pixels,
                                              fmt_source->format.bytes_per_pixel);
-  fpi->destination                 = babl_calloc (NUM_TEST_PIXELS,
+  fpi->destination                 = babl_calloc (fpi->num_test_pixels,
                                              fmt_destination->format.bytes_per_pixel);
-  fpi->ref_destination             = babl_calloc (NUM_TEST_PIXELS,
+  fpi->ref_destination             = babl_calloc (fpi->num_test_pixels,
                                              fmt_destination->format.bytes_per_pixel);
-  fpi->destination_rgba_double     = babl_calloc (NUM_TEST_PIXELS,
+  fpi->destination_rgba_double     = babl_calloc (fpi->num_test_pixels,
                                              fpi->fmt_rgba_double->format.bytes_per_pixel);
-  fpi->ref_destination_rgba_double = babl_calloc (NUM_TEST_PIXELS,
+  fpi->ref_destination_rgba_double = babl_calloc (fpi->num_test_pixels,
                                              fpi->fmt_rgba_double->format.bytes_per_pixel);
 
   /* create sourcebuffer from testbuffer in the correct format */
   babl_process (fpi->fish_rgba_to_source,
-                fpi->test, fpi->source, NUM_TEST_PIXELS);
+                test_pixels, fpi->source, fpi->num_test_pixels);
 
   /* calculate the reference buffer of how it should be */
   ticks_start = babl_ticks ();
   babl_process (fpi->fish_reference,
-                fpi->source, fpi->ref_destination, NUM_TEST_PIXELS);
+                fpi->source, fpi->ref_destination, fpi->num_test_pixels);
   ticks_end = babl_ticks ();
   fpi->reference_cost = babl_process_cost (ticks_start, ticks_end);
 
   /* transform the reference destination buffer to RGBA */
   babl_process (fpi->fish_destination_to_rgba,
-                fpi->ref_destination, fpi->ref_destination_rgba_double, NUM_TEST_PIXELS);
+                fpi->ref_destination, fpi->ref_destination_rgba_double, fpi->num_test_pixels);
 }
 
 static void
@@ -698,7 +665,7 @@ get_path_instrumentation (FishPathInstrumentation *fpi,
 
   /* calculate this path's view of what the result should be */
   ticks_start = babl_ticks ();
-  process_conversion_path (path, fpi->source, source_bpp, fpi->destination, dest_bpp, NUM_TEST_PIXELS);
+  process_conversion_path (path, fpi->source, source_bpp, fpi->destination, dest_bpp, fpi->num_test_pixels);
   ticks_end = babl_ticks ();
   *path_cost = babl_process_cost (ticks_start, ticks_end);
 
@@ -706,20 +673,20 @@ get_path_instrumentation (FishPathInstrumentation *fpi,
    * for comparison with each other
    */
   babl_process (fpi->fish_destination_to_rgba,
-                fpi->destination, fpi->destination_rgba_double, NUM_TEST_PIXELS);
+                fpi->destination, fpi->destination_rgba_double, fpi->num_test_pixels);
 
   *path_error = babl_abs_error (fpi->destination_rgba_double,
                                 fpi->ref_destination_rgba_double,
-                                NUM_TEST_PIXELS * 4);
+                                fpi->num_test_pixels * 4);
 
 #if 0
   fpi->fish_rgba_to_source->fish.processings--;
   fpi->fish_reference->fish.processings--;
   fpi->fish_destination_to_rgba->fish.processings -= 2;
 
-  fpi->fish_rgba_to_source->fish.pixels      -= NUM_TEST_PIXELS;
-  fpi->fish_reference->fish.pixels           -= NUM_TEST_PIXELS;
-  fpi->fish_destination_to_rgba->fish.pixels -= 2 * NUM_TEST_PIXELS;
+  fpi->fish_rgba_to_source->fish.pixels      -= fpi->num_test_pixels;
+  fpi->fish_reference->fish.pixels           -= fpi->num_test_pixels;
+  fpi->fish_destination_to_rgba->fish.pixels -= 2 * fpi->num_test_pixels;
 #endif
 
   *ref_cost = fpi->reference_cost;

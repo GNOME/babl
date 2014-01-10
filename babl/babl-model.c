@@ -23,6 +23,7 @@
 #define NEEDS_BABL_DB
 #include "babl-internal.h"
 #include "babl-db.h"
+#include "babl-ref-pixels.h"
 
 static const Babl *construct_double_format (const Babl *model);
 
@@ -216,24 +217,6 @@ babl_model_new (void *first_argument,
 
 #define TOLERANCE      0.001
 
-#define test_pixels    512
-
-static double *
-test_create (void)
-{
-  double *test;
-  int     i;
-
-  srandom (20050728);
-
-  test = babl_malloc (sizeof (double) * test_pixels * 4);
-
-  for (i = 0; i < test_pixels * 4; i++)
-    test [i] = ((double) random () / RAND_MAX) * 1.4 - 0.2;
-
-  return test;
-}
-
 static const Babl *reference_format (void)
 {
   static const Babl *self = NULL;
@@ -289,7 +272,6 @@ double
 babl_model_is_symmetric (const Babl *cbabl)
 {
   Babl *babl = (Babl*)cbabl;
-  double *test;
   void   *original;
   double *clipped;
   void   *destination;
@@ -301,7 +283,9 @@ babl_model_is_symmetric (const Babl *cbabl)
   Babl *fish_to;
   Babl *fish_from;
 
-  test      = test_create ();
+  const int test_pixels = babl_get_num_model_test_pixels ();
+  const double *test = babl_get_model_test_pixels ();
+
   ref_fmt   = reference_format ();
   fmt       = construct_double_format (babl);
   fish_to   = babl_fish_reference (ref_fmt, fmt);
@@ -360,7 +344,6 @@ babl_model_is_symmetric (const Babl *cbabl)
   babl_free (clipped);
   babl_free (destination);
   babl_free (transformed);
-  babl_free (test);
   return symmetric;
 }
 

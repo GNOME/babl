@@ -24,6 +24,7 @@
 #define NEEDS_BABL_DB
 #include "babl-internal.h"
 #include "babl-db.h"
+#include "babl-ref-pixels.h"
 
 static int babl_format_destruct (void *babl)
 {
@@ -543,29 +544,10 @@ babl_format_with_model_as_type (const Babl *model,
   );
 }
 
-#define test_pixels    256
-
-static double *
-test_create (void)
-{
-  double *test;
-  int     i;
-
-  srandom (20050728);
-
-  test = babl_malloc (sizeof (double) * test_pixels * 4);
-
-  for (i = 0; i < test_pixels * 4; i++)
-    test [i] = (double) random () / RAND_MAX;
-
-  return test;
-}
-
 double
 babl_format_loss (const Babl *babl)
 {
   double  loss = 0.0;
-  double *test;
   void   *original;
   double *clipped;
   void   *destination;
@@ -575,6 +557,9 @@ babl_format_loss (const Babl *babl)
   const Babl *fmt;
   Babl       *fish_to;
   Babl       *fish_from;
+
+  const double *test = babl_get_format_test_pixels ();
+  const int     test_pixels = babl_get_num_format_test_pixels ();
 
   ref_fmt = babl_format_new (
     babl_model ("RGBA"),
@@ -592,7 +577,6 @@ babl_format_loss (const Babl *babl)
   fish_to   = babl_fish_reference (ref_fmt, fmt);
   fish_from = babl_fish_reference (fmt, ref_fmt);
 
-  test        = test_create ();
   original    = babl_calloc (test_pixels, fmt->format.bytes_per_pixel);
   clipped     = babl_calloc (test_pixels, ref_fmt->format.bytes_per_pixel);
   destination = babl_calloc (test_pixels, fmt->format.bytes_per_pixel);
@@ -614,7 +598,6 @@ babl_format_loss (const Babl *babl)
   babl_free (clipped);
   babl_free (destination);
   babl_free (transformed);
-  babl_free (test);
 
   ((Babl*)babl)->format.loss = loss;
   return loss;

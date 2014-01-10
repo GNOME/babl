@@ -456,6 +456,7 @@ docs/Makefile
 docs/index-static.html
 docs/graphics/Makefile
 tests/Makefile
+tools/Makefile
 extensions/Makefile
 INSTALL
 )

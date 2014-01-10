@@ -24,6 +24,7 @@
 #define NEEDS_BABL_DB
 #include "babl-internal.h"
 #include "babl-db.h"
+#include "babl-ref-pixels.h"
 
 static Babl *
 conversion_new (const char    *name,
@@ -429,28 +430,6 @@ babl_conversion_process (const Babl *babl,
   return n;
 }
 
-#define test_pixels    128
-
-
-static double *
-test_create (void)
-{
-  static double test[sizeof (double) * test_pixels * 4];
-  int           i;
-  static int done = 0;
-
-  if (done)
-    return test;
-
-  srandom (20050728);
-
-  for (i = 0; i < test_pixels * 4; i++)
-    test [i] = (double) random () / RAND_MAX;
-
-  done = 1;
-  return test;
-}
-
 long
 babl_conversion_cost (BablConversion *conversion)
 {
@@ -479,7 +458,9 @@ babl_conversion_error (BablConversion *conversion)
   long    ticks_start = 0;
   long    ticks_end   = 0;
 
-  double *test;
+  const int test_pixels = babl_get_num_conversion_test_pixels ();
+  const double *test = babl_get_conversion_test_pixels ();
+
   void   *source;
   void   *destination;
   double *destination_rgba_double;
@@ -520,9 +501,6 @@ babl_conversion_error (BablConversion *conversion)
     {
       conversion->error = 0.000042;
     }
-
-  test = test_create ();
-
 
   source                      = babl_calloc (test_pixels, fmt_source->format.bytes_per_pixel);
   destination                 = babl_calloc (test_pixels, fmt_destination->format.bytes_per_pixel);
