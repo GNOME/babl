@@ -167,7 +167,7 @@ fish_introspect (Babl *babl)
 static void
 fish_path_introspect (Babl *babl)
 {
-  babl_log ("\t\tcost:%f error:%f",
+  babl_log ("\t\tcost:%f error:%.12f",
             babl->fish_path.cost, babl->fish.error);
 
   babl_list_each(babl->fish_path.conversion_list, each_introspect, NULL);
