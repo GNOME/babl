@@ -708,9 +708,9 @@ get_path_instrumentation (FishPathInstrumentation *fpi,
   babl_process (fpi->fish_destination_to_rgba,
                 fpi->destination, fpi->destination_rgba_double, NUM_TEST_PIXELS);
 
-  *path_error = babl_rel_avg_error (fpi->destination_rgba_double,
-                                    fpi->ref_destination_rgba_double,
-                                    NUM_TEST_PIXELS * 4);
+  *path_error = babl_abs_error (fpi->destination_rgba_double,
+                                fpi->ref_destination_rgba_double,
+                                NUM_TEST_PIXELS * 4);
 
 #if 0
   fpi->fish_rgba_to_source->fish.processings--;
