@@ -89,5 +89,5 @@ libbabl_@BABL_API_VERSION@_la_LDFLAGS= 		\
 	${no_undefined} $(MATH_LIB)	\
 	-version-info $(BABL_LIBRARY_VERSION)
 
-EXTRA_DIST = $(gir_DATA)
-CLEANFILES = $(gir_DATA) $(typelibs_DATA) $(vapi_DATA)
+# EXTRA_DIST =
+# CLEANFILES =
