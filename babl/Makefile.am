@@ -89,5 +89,5 @@ libbabl_@BABL_API_VERSION@_la_LDFLAGS= 		\
 	${no_undefined} $(MATH_LIB)	\
 	-version-info $(BABL_LIBRARY_VERSION)
 
-# EXTRA_DIST =
+EXTRA_DIST = babl-ref-pixels.inc
 # CLEANFILES =
