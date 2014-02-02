@@ -425,6 +425,13 @@ if test "x$enable_altivec" = xyes; then
 fi
 
 
+##################
+# Check for random
+##################
+have_srandom=no
+AC_CHECK_FUNC(srandom, have_srandom=yes)
+AM_CONDITIONAL([HAVE_SRANDOM], [test x$have_srandom = xyes])
+
 dnl ===========================================================================
 
 AC_CHECK_HEADERS(dl.h)
