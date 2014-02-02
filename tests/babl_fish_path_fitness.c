@@ -6,6 +6,11 @@
 #include <math.h>
 #include "babl-internal.h"
 
+#ifndef HAVE_SRANDOM
+#define srandom srand
+#define random  rand
+#endif
+
 #define pixels    1024
 int           total_length = 0;
 int           total_cost   = 0;
