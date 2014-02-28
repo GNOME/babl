@@ -88,28 +88,9 @@ babl_process_cost (long ticks_start,
 }
 
 double
-babl_abs_error (const double *imgA,
-                const double *imgB,
-                long          samples)
-{
-  double abs_error = 0.0;
-  long   i;
-
-  for (i = 0; i < samples; i++)
-    {
-      double sample_error = fabs (imgA[i] - imgB[i]);
-
-      if (sample_error > abs_error)
-        abs_error = sample_error;
-    }
-
-  return abs_error;
-}
-
-double
-babl_rel_avg_error (const double *imgA,
-                    const double *imgB,
-                    long          samples)
+babl_rel_avg_error (double *imgA,
+                    double *imgB,
+                    long    samples)
 {
   double error = 0.0;
   long   i;
