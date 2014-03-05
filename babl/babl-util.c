@@ -88,9 +88,9 @@ babl_process_cost (long ticks_start,
 }
 
 double
-babl_rel_avg_error (double *imgA,
-                    double *imgB,
-                    long    samples)
+babl_rel_avg_error (const double *imgA,
+                    const double *imgB,
+                    long          samples)
 {
   double error = 0.0;
   long   i;
