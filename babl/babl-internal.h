@@ -112,14 +112,13 @@ int      babl_type_is_symmetric         (const Babl     *babl);
 int babl_backtrack (void);
 
 static inline void
-real_babl_log (const char *file,
-               int         line,
-               const char *function,
-               const char *fmt, ...)
+real_babl_log_va(const char *file,
+                 int         line,
+                 const char *function,
+                 const char *fmt,
+                 va_list     varg)
 {
   Babl *extender = babl_extender();
-  va_list  varg;
-
 
   if (extender != babl_extension_quiet_log())
     {
@@ -129,13 +128,24 @@ real_babl_log (const char *file,
       fprintf (stdout, "%s:%i %s()\n\t", file, line, function);
     }
 
-  va_start (varg, fmt);
   vfprintf (stdout, fmt, varg);
-  va_end (varg);
 
   fprintf (stdout, "\n");
   fflush (NULL);
   return;
+}
+
+static inline void
+real_babl_log (const char *file,
+               int         line,
+               const char *function,
+               const char *fmt, ...)
+{
+  va_list  varg;
+
+  va_start (varg, fmt);
+  real_babl_log_va(file, line, function, fmt, varg);
+  va_end (varg);
 }
 
 /* Provide a string identifying the current function, non-concatenatable */
@@ -180,7 +190,7 @@ babl_log (const char *format, ...)
 {
   va_list args;
   va_start (args, format);
-  real_babl_log (__FILE__, __LINE__, G_STRFUNC, format, args);
+  real_babl_log_va (__FILE__, __LINE__, G_STRFUNC, format, args);
   va_end (args);
 }
 static inline void
@@ -188,7 +198,7 @@ babl_fatal (const char *format, ...)
 {
   va_list args;
   va_start (args, format);
-  real_babl_log (__FILE__, __LINE__, G_STRFUNC, format, args);
+  real_babl_log_va (__FILE__, __LINE__, G_STRFUNC, format, args);
   va_end (args);
   babl_die();
 }
