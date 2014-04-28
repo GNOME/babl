@@ -270,6 +270,60 @@ ncomponent_convert_from_double (BablFormat *destination_fmt,
 }
 
 
+static int
+process_same_model2 (const Babl  *babl,
+                    const char *source,
+                    char       *destination,
+                    long        n)
+{
+  void *double_buf;
+
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+
+  double_buf = babl_malloc (sizeof (double) * n *
+                            MAX (BABL (babl->fish.source)->format.model->components,
+                                 BABL (babl->fish.source)->format.components));
+#undef MAX
+
+  if (1)
+    {
+      /* FIXME: should recursively invoke babl and look up an appropriate fish
+       * for the conversion and multiply n by the number of components.
+       */
+      ncomponent_convert_to_double (
+        (BablFormat *) BABL (babl->fish.source),
+        (char *) source,
+        double_buf,
+        n
+      );
+
+      ncomponent_convert_from_double (
+        (BablFormat *) BABL (babl->fish.destination),
+        double_buf,
+        (char *) destination,
+        n
+      );
+    }
+  else
+    {
+      convert_to_double (
+        (BablFormat *) BABL (babl->fish.source),
+        (char *) source,
+        double_buf,
+        n
+      );
+
+      convert_from_double (
+        (BablFormat *) BABL (babl->fish.destination),
+        double_buf,
+        (char *) destination,
+        n
+      );
+    }
+  babl_free (double_buf);
+  return 0;
+}
+
 
 static int
 process_same_model (const Babl  *babl,
@@ -346,6 +400,13 @@ babl_fish_reference_process (const Babl *babl,
   if (BABL (babl->fish.source)->format.model ==
       BABL (babl->fish.destination)->format.model)
     return process_same_model (babl, source, destination, n);
+
+  if (babl_format_is_format_n (BABL (babl->fish.destination)))
+  {
+    return process_same_model2 (babl, source, destination, n);
+  }
+  
+
 
   source_double_buf = babl_malloc (sizeof (double) * n *
                                    BABL (babl->fish.source)->format.model->components);
