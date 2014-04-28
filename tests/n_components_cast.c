@@ -34,31 +34,62 @@ main (int    argc,
     unsigned char out1[][1]  = {{0},        {4},  {8}  };
     unsigned char out2[][2]  = {{0,1},      {4,5},         {8,9}  };
     unsigned char out4[][4]  = {{0,1,2,3},  {4,5,6,7},    {8,9,10,11}  };
-    //unsigned char out5[][5]  = {{0,1,2,3,0},  {4,5,6,7,0},{8,9,10,11,0}  };
+    unsigned char out5[][5]  = {{0,1,2,3,0},  {4,5,6,7,0},{8,9,10,11,0}  };
 
     CHECK_CONV("RGBAu8 to n1'", unsigned char,
         babl_format("R'G'B'A u8"),
         babl_format_n (babl_type ("u8"), 1),
         in, out1);
 
-
     CHECK_CONV("RGBAu8 to n2'", unsigned char,
         babl_format("R'G'B'A u8"),
         babl_format_n (babl_type ("u8"), 2),
         in, out2);
-
 
     CHECK_CONV("RGBAu8 to n4'", unsigned char,
         babl_format("R'G'B'A u8"),
         babl_format_n (babl_type ("u8"), 4),
         in, out4);
 
-    /* XXX: uncomment this when it passes
     CHECK_CONV("RGBAu8 to n5'", unsigned char,
         babl_format("R'G'B'A u8"),
         babl_format_n (babl_type ("u8"), 5),
         in, out5);
-     */
+  }
+  {
+    unsigned char in[][3]   = {{0,1,2  },{4,5,6    },{8,9,10  }};
+    unsigned char out1[][1]  = {{0},        {4},  {8}  };
+    unsigned char out2[][2]  = {{0,1},      {4,5},         {8,9}  };
+    unsigned char out4[][4]  = {{0,1,2,0},  {4,5,6,0},    {8,9,10,0}  };
+    unsigned char out5[][5]  = {{0,1,2,0,0},  {4,5,6,0,0},{8,9,10,0,0}  };
+    unsigned char out6[][6]  = {{0,1,2,0,0,0},  {4,5,6,0,0,0},{8,9,10,0,0,0}  };
+
+    CHECK_CONV("RGBu8 to n1'", unsigned char,
+        babl_format("R'G'B' u8"),
+        babl_format_n (babl_type ("u8"), 1),
+        in, out1);
+
+
+    CHECK_CONV("RGBu8 to n2'", unsigned char,
+        babl_format("R'G'B' u8"),
+        babl_format_n (babl_type ("u8"), 2),
+        in, out2);
+
+
+    CHECK_CONV("RGBu8 to n4'", unsigned char,
+        babl_format("R'G'B' u8"),
+        babl_format_n (babl_type ("u8"), 4),
+        in, out4);
+
+    CHECK_CONV("RGBu8 to n5'", unsigned char,
+        babl_format("R'G'B' u8"),
+        babl_format_n (babl_type ("u8"), 5),
+        in, out5);
+
+    CHECK_CONV("RGBu8 to n6'", unsigned char,
+        babl_format("R'G'B' u8"),
+        babl_format_n (babl_type ("u8"), 6),
+        in, out6);
   }
 
   babl_exit ();
