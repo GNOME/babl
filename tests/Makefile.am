@@ -19,6 +19,7 @@ C_TESTS =				\
 	extract \
 	nop \
 	n_components		\
+	n_components_cast \
 	models			\
 	cairo-RGB24		\
 	$(CONCURRENCY_STRESS_TEST)
