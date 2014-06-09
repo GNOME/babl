@@ -295,4 +295,26 @@ babl_##klass##_from_id (int id)                               \
 
 #define BABL(obj)  ((Babl*)(obj))
 
+static inline double babl_parse_double (const char *str)
+{
+  double result = 0;
+  if (!str)
+    return 0.0;
+  result = atoi (str);
+  if (strchr (str, '.'))
+  {
+    char *p = strchr (str, '.') + 1;
+    double d = 10;
+    for (;*p && *p > '0' && *p < '9';p++, d *= 10)
+    {
+      if (result >= 0)
+        result += (*p - '0') / d;
+      else
+        result -= (*p - '0') / d;
+    }
+  }
+  return result;
+}
+
+
 #endif

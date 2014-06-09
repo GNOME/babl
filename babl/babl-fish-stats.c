@@ -252,7 +252,7 @@ static double legal_error (void)
 
   env = getenv ("BABL_TOLERANCE");
   if (env && env[0] != '\0')
-    error = atof (env);
+    error = babl_parse_double (env);
   else
     error = BABL_LEGAL_ERROR;
   return error;
