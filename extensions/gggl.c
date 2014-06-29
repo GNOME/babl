@@ -26,6 +26,7 @@
 #include "config.h"
 #include <math.h>
 #include <string.h>
+#include <stdint.h>
 
 #include "babl.h"
 #include "extensions/util.h"
@@ -58,6 +59,7 @@ static float          table_16_F[1 << 16];
 static unsigned char  table_F_8[1 << 16];
 static unsigned short table_F_16[1 << 16];
 
+static uint32_t      *table_8_F_int = NULL;
 
 static int table_inited = 0;
 
@@ -66,6 +68,9 @@ table_init (void)
 {
   if (table_inited)
     return;
+  
+  table_8_F_int = (void*)(table_8_F);
+
   table_inited = 1;
 
   /* fill tables for conversion from integer to float */
@@ -189,9 +194,33 @@ conv_8_F (unsigned char *src, unsigned char *dst, long samples)
     table_init ();
   while (n--)
     {
-      (*(float *) dst) = table_8_F[*(unsigned char *) src];
+      (*(uint32_t *) dst) = table_8_F_int[*(unsigned char *) src];
       dst             += 4;
       src             += 1;
+    }
+  return samples;
+}
+
+static long
+conv_rgb8_rgbaF (unsigned char *src, unsigned char *dst, long samples)
+{
+  long n = samples;
+
+  if (!table_inited)
+    table_init ();
+  while (n--)
+    {
+      (*(uint32_t *) dst) = table_8_F_int[*(unsigned char *) src];
+      dst             += 4;
+      src             += 1;
+      (*(uint32_t *) dst) = table_8_F_int[*(unsigned char *) src];
+      dst             += 4;
+      src             += 1;
+      (*(uint32_t *) dst) = table_8_F_int[*(unsigned char *) src];
+      dst             += 4;
+      src             += 1;
+      (*(float    *) dst) = 1.0;
+      dst             += 4;
     }
   return samples;
 }
@@ -459,6 +488,7 @@ conv_rgba8_rgbaF (unsigned char *src, unsigned char *dst, long samples)
   return conv_8_F (src, dst, samples * 4) / 4;
 }
 
+
 static long
 conv_rgb8_rgbF (unsigned char *src, unsigned char *dst, long samples)
 {
@@ -613,13 +643,13 @@ conv_rgbaF_rgbF (unsigned char *src, unsigned char *dst, long samples)
 
   while (n--)
     {
-      *(float *) dst = (*(float *) src);
+      *(uint32_t *) dst = (*(uint32_t *) src);
       dst           += 4;
       src           += 4;
-      *(float *) dst = (*(float *) src);
+      *(uint32_t *) dst = (*(uint32_t *) src);
       dst           += 4;
       src           += 4;
-      *(float *) dst = (*(float *) src);
+      *(uint32_t *) dst = (*(uint32_t *) src);
       dst           += 4;
       src           += 4;
       src           += 4;
@@ -634,20 +664,23 @@ conv_rgbF_rgbaF (unsigned char *src, unsigned char *dst, long samples)
 
   while (n--)
     {
-      *(float *) dst = (*(float *) src);
+      *(uint32_t *) dst = (*(uint32_t *) src);
       src           += 4;
       dst           += 4;
-      *(float *) dst = (*(float *) src);
+      *(uint32_t *) dst = (*(uint32_t *) src);
       src           += 4;
       dst           += 4;
-      *(float *) dst = (*(float *) src);
+      *(uint32_t *) dst = (*(uint32_t *) src);
       src           += 4;
       dst           += 4;
-      *(float *) dst = 1.0;
+      *(uint32_t *) dst = 1.0;
       dst           += 4;
     }
   return samples;
 }
+
+#define conv_rgbF_rgbAF    conv_rgbF_rgbaF
+
 
 static long
 conv_gaF_gF (unsigned char *src, unsigned char *dst, long samples)
@@ -946,8 +979,7 @@ conv_rgb8_rgba8 (unsigned char *src, unsigned char *dst, long samples)
   long n = samples-1;
   while (n--)
     {
-      *(unsigned int *) dst = *(unsigned int *) src;
-      dst[3] = 255;
+      *(unsigned int *) dst = (*(unsigned int *) src) | (255 << 24);
       src   += 3;
       dst   += 4;
     }
@@ -1308,6 +1340,7 @@ init (void)
   o (rgbA16, rgbaF);
   o (rgbaF, rgbaD);
   o (rgbaD, rgbaF);
+  o (rgb8, rgbaF);
 
 #ifdef USE_TABLES
   if (!table_inited)
