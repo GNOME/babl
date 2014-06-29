@@ -943,20 +943,18 @@ conv_rgbA8_rgba8 (unsigned char *src, unsigned char *dst, long samples)
 static long
 conv_rgb8_rgba8 (unsigned char *src, unsigned char *dst, long samples)
 {
-  long n = samples;
-
+  long n = samples-1;
   while (n--)
     {
-      /**(unsigned int *) dst = *(unsigned int *) src;
-         dst[3] = 255;*/
-
-      dst[0] = src[0];
-      dst[1] = src[1];
-      dst[2] = src[2];
+      *(unsigned int *) dst = *(unsigned int *) src;
       dst[3] = 255;
       src   += 3;
       dst   += 4;
     }
+  dst[0] = src[0];
+  dst[1] = src[1];
+  dst[2] = src[2];
+  dst[3] = 255;
   return samples;
 }
 
