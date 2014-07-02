@@ -91,7 +91,9 @@ functions_sanity (void)
         }
       else
         {
-          babl_fatal ("babl memory function(s) attempted switched on the fly");
+          fprintf (stderr, "HMM....\nSomething strange is happening,\n%s function pointer changing between invocations in babl.\n",
+              first_malloc_used == malloc_f ? 
+              first_free_used == free_f ? "malloc and free" : "malloc" : "free");
         }
     }
 }
