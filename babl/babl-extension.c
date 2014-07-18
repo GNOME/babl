@@ -332,8 +332,10 @@ babl_extension_load_dir_list (const char *dir_list)
           case BABL_PATH_SEPARATOR:
           {
             char *expanded_path = expand_path (path);
-            babl_extension_load_dir (expanded_path);
-            babl_free (expanded_path);
+            if (expanded_path) {
+                babl_extension_load_dir (expanded_path);
+                babl_free (expanded_path);
+            }
           }
             dst = path;
             src++;
