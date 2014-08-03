@@ -5,9 +5,40 @@
          xmlns="http://usefulinc.com/ns/doap#">
 
   <name xml:lang="en">babl</name>
-  <shortdesc xml:lang="en">babl is a dynamic, any to any, pixel format translation library.</shortdesc>
+
+  <shortdesc xml:lang="en">
+    babl is a dynamic, any to any, pixel format translation library.
+  </shortdesc>
+  <shortdesc xml:lang="de">
+    babl ist eine dynamische Bibliothek zur direkten Umwandlung von
+    Pixelformaten.
+  </shortdesc>
+
+  <description xml:lang="en">
+    babl is a dynamic, any to any, pixel format translation library.
+  </description>
+  <description xml:lang="de">
+    babl ist eine dynamische Bibliothek zur direkten Umwandlung von
+    Pixelformaten.
+  </description>
+
   <homepage rdf:resource="http://www.gegl.org/babl" />
-  <mailing-list rdf:resource="https://lists.xcf.berkeley.edu/mailman/listinfo/gegl-developer" />
+
+  <mailing-list
+    rdf:resource="https://mail.gnome.org/mailman/listinfo/gegl-developer-list"
+  />
+
+  <download-page rdf:resource="http://gegl.org/babl/#Download" />
+
+  <bug-database
+    rdf:resource="https://bugzilla.gnome.org/browse.cgi?product=GEGL"
+  />
+
+  <category rdf:resource="http://api.gnome.org/doap-extensions#core" />
+
+  <programming-language>C</programming-language>
+  <programming-language>Shell Command Language</programming-language>
+  <programming-language>M4</programming-language>
 
   <maintainer>
     <foaf:Person>
@@ -15,4 +46,7 @@
       <gnome:userid>ok</gnome:userid>
     </foaf:Person>
   </maintainer>
+
+<!-- TODO: generate MAINTAINERS from this file -->
+ 
 </Project>

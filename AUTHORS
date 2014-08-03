@@ -40,5 +40,6 @@
         <dd>Documentation and other improvements</dd>
   <dt>Jehan <em>jehan at girinstud.io</em></dt>
         <dd>win32 portabilitiy</dd>
-
+  <dt>Sven Claussner</dt>
+        <dd>Update DOAP file</dd>
 </dl>
