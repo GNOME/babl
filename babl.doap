@@ -34,11 +34,8 @@
     rdf:resource="https://bugzilla.gnome.org/browse.cgi?product=GEGL"
   />
 
-  <category rdf:resource="http://api.gnome.org/doap-extensions#core" />
-
   <programming-language>C</programming-language>
-  <programming-language>Shell Command Language</programming-language>
-  <programming-language>M4</programming-language>
+  <programming-language>Shell</programming-language>
 
   <maintainer>
     <foaf:Person>
@@ -48,5 +45,5 @@
   </maintainer>
 
 <!-- TODO: generate MAINTAINERS from this file -->
- 
+
 </Project>
