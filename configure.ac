@@ -452,6 +452,7 @@ AC_DEFINE_UNQUOTED(BABL_DIR_SEPARATOR, "$DIR_SEP", [separator between directorie
 
 AC_DEFINE_UNQUOTED(BABL_LIBRARY, "$PACKAGE_NAME-$BABL_API_VERSION", [name of BABL library])
 
+GLIB_TESTS
 
 
 dnl ===========================================================================

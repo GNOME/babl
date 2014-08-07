@@ -1,3 +1,5 @@
+include $(top_srcdir)/glib-tap.mk
+
 if OS_UNIX
 CONCURRENCY_STRESS_TEST = concurrency-stress-test 
 endif
@@ -16,7 +18,6 @@ C_TESTS =				\
 	hsva   \
 	types			\
 	palette \
-	extract \
 	nop \
 	n_components		\
 	n_components_cast \
@@ -26,6 +27,8 @@ C_TESTS =				\
 
 TESTS = \
 	$(C_TESTS)
+
+test_programs = $(TESTS)
 
 TESTS_ENVIRONMENT = LD_LIBRARY_PATH=$(top_builddir)/babl:$LD_LIBRARY_PATH GI_TYPELIB_PATH=$(top_builddir)/babl BABL_PATH=$(top_builddir)/extensions/.libs
 
