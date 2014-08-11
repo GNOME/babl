@@ -111,6 +111,17 @@ init (void)
     NULL
   );
 
+  babl_format_new (
+    "name", "CMYK u8",
+    babl_model ("CMYK"),
+    babl_type ("u8"),
+    babl_component ("cyan"),
+    babl_component ("magenta"),
+    babl_component ("yellow"),
+    babl_component ("key"),
+    NULL
+  );
+
   return 0;
 }
 
