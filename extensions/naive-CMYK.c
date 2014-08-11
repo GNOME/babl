@@ -96,8 +96,8 @@ init (void)
     babl_model ("CMYK"),
     babl_type ("float"),
     babl_component ("cyan"),
-    babl_component ("yellow"),
     babl_component ("magenta"),
+    babl_component ("yellow"),
     babl_component ("key"),
     NULL
   );
@@ -106,8 +106,8 @@ init (void)
     babl_model ("CMY"),
     babl_type ("float"),
     babl_component ("cyan"),
-    babl_component ("yellow"),
     babl_component ("magenta"),
+    babl_component ("yellow"),
     NULL
   );
 
