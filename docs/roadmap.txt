@@ -1,0 +1,108 @@
+architecture introduction
+=========================
+
+Babl is domain specific, evolving as GEGLs needs expands, pixel-format color
+management system. It is modelled on how ICC color management works, but
+instead of ICC profiles, light weight BablFormats which are pointers to
+lightweight structures, identified by strings. The role of a color management
+system is to convert data between different representations. In the external
+world this use of color management permits controlled reproduction of color.
+
+Their use is the same in GEGL, we use BablFormats to know what type of data is
+in a buffer.. for performance reasons babl is directly responsible for doing
+the copies when they are neccesary (and GEGL knows when to peek directly at
+memory efficiently since it only compares pointers of BablFormats).
+
+We haven't even reached operations and how they can negotiate which BablFormat
+they'd prefer data in or which BablFormat they want buffers created in.
+
+The role of these formats is not to dictate how data is used in any buffers -
+the role is to accurately describe what the meaning of the bits stored in the
+pixels are. It allows a vocabulary to say that a buffer has a single gray
+scale linear component, as  well as specifying bit-depth, a currently limited
+set of color models, how alpha is integrated with color, precision, linearity,
+component permutation, masking of components, management of arbitrary
+components with a given precision.
+
+The architecture of babl is designed to be extended both dynamically with
+extensions at runtime as well as to be amendable to new needs as they arise in
+GEGL. One addition that was made for GIMP is formats that deal with indexed
+mode, thus making the babl/GEGL back GIMP-2.9 and future GIMP-2.10 end up
+having better support for indexed editing than 2.8 instead of possible worse -
+since buffers with indexed data is no longer special cased.
+
+Internally babl consists of two parts, the reference implementation, and the
+fast paths.
+
+The reference implementation manually step by using loops and conditionals
+dependent on count and order of components for shuffling components, going
+through registered data types to reach double precision floating point, and in
+double precision floating point convert to a connection-space, in ICC terms
+known as PCS, then the reference implementation takes the steps back in
+shuffling the components into expected order and converting to
+linear/perceptual and more.
+
+The above can of course be quite slow, which is where the fast paths come in.
+Between any two formats a single function that takes a source pointer,
+destination pointer and a count of pixels can be registered, that does this
+conversion. The first time a BablFish; the object representing a conversion
+between two fixed BablFormats, is requested babl must figure out how to do the
+conversion. The options are 1) a single point conversion 2) a chain of up to 4
+steps providing the conversion 3) the reference code path. The candidate
+chain(s) of conversions are all tested against the reference code path for
+data-loss (as well as profiled for performance.) If none of the candidates
+have a lower error level than the threshold than configured in
+GEGL/GIMP/environment the a reference fish is returned; otherwise the one
+which was fastest. Many code paths are reused in these conversions for being
+regsitered for different formats; some of them even wrong - but we try to get
+rid of those.
+
+Babls vocabulary denotes has 6 core RGB variations when describing formats:
+
+RGB         linear data
+RGBA        linear data with linear alpha channel
+RaGaBaA     linear data with pre-multiplied (associcated) alpha
+
+R'G'B'      RGB data with sRGB TRC
+R'G'B'A     RGB data with sRGB TRC
+R'aG'aB'aA  RGB data with sRGB TRC and pre-multipled alpha
+
+The user can create custom formats with any permutation of the components,
+using any of the (double float u8 u16 u8-luma u8-chroma u16 u32 and CIE Lab
+specific) data types in babl - or have new ones registered.
+
+Limitations/roadmap:
+====================
+
+Babl currently only supports formats using the sRGB primaries, quite a few
+editing operations including gamma adjustments and multiply compositing relies
+on the chromaticities of the space used, permitting at least linear formats
+with other chromaticities is highly desirable, this will be fixed by allowing
+to specify named RGB spaces, possibly like this:
+
+void babl_define_named_rgb_space (
+  Babl *babl,
+  const char *name,
+  double red_xyz[3],
+  double blue_xyz[3],
+  double green_xyz[3],
+  int white_reference, /* could be _XYZ[3] instead of d50/d65/d60; but this is likely sufficient */
+  double trc_gamma     /* makes sense to have it even if not initially
+                          used */
+);
+
+To keep existing code relying on existing behavior working, such named spaces
+would not be addressed through the same babl-format names as the existing
+formats. Instead a space registered for the name "sensor" would be addressed
+as babl_format("wide:RGBA float") or babl_format("sensor:RaGaBaA half") etc.
+
+Babl would also be extended with light-weight sub-babl contexts; so that
+different documents or parts of a workflow have their own name space within
+the same babl library instance.
+
+Babls use of a linear space with the sRGB primaries; a space of "sRGB:R'G'B'
+u8" should mean the same as "R'G'B' u8". And places in the code where the data
+defintely is sRGB should have the prefix added for clarity.
+
+For questions, please join #gegl on the GIMP/GNOME irc network.
+
