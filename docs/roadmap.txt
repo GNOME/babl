@@ -59,12 +59,12 @@ rid of those.
 
 Babls vocabulary denotes has 6 core RGB variations when describing formats:
 
-RGB         linear data
-RGBA        linear data with linear alpha channel
-RaGaBaA     linear data with pre-multiplied (associcated) alpha
+RGB         linear RGB data
+RGBA        linear RGB data with linear alpha channel
+RaGaBaA     linear RGB data with pre-multiplied (associcated) alpha
 
 R'G'B'      RGB data with sRGB TRC
-R'G'B'A     RGB data with sRGB TRC
+R'G'B'A     RGB data with sRGB TRC with linear alpha channel
 R'aG'aB'aA  RGB data with sRGB TRC and pre-multipled alpha
 
 The user can create custom formats with any permutation of the components,
@@ -94,7 +94,7 @@ void babl_define_named_rgb_space (
 To keep existing code relying on existing behavior working, such named spaces
 would not be addressed through the same babl-format names as the existing
 formats. Instead a space registered for the name "sensor" would be addressed
-as babl_format("wide:RGBA float") or babl_format("sensor:RaGaBaA half") etc.
+as babl_format(babl, "wide:RGBA float") or babl_format(babl, "sensor:RaGaBaA half") etc.
 
 Babl would also be extended with light-weight sub-babl contexts; so that
 different documents or parts of a workflow have their own name space within
@@ -106,3 +106,69 @@ defintely is sRGB should have the prefix added for clarity.
 
 For questions, please join #gegl on the GIMP/GNOME irc network.
 
+--
+
+To further pencil out what the situation would be at the end of this
+refactoring, focusing only on the formats and what they would mean.
+
+For formats where all components have the same type, the type is suffixed at
+the end, conversions within a given model but different types only needs to do
+type conversions.
+
+RGB                linear RGB data with sRGB primaries
+RGBA               linear RGB data with sRGB primaries and alpha channel
+RaGaBaA            linear RGB data with sRGB primaries and premultiplied alpha
+R'G'B'             RGB data with sRGB primaries and sRGB TRC
+R'G'B'A            RGB data with sRGB primaries and sRGB TRC with alpha
+R'aG'aB'aA         RGB data with sRGB primaries and sRGB TRC with alpha
+Y                  linear grayscale data
+YA                 linear grayscale data with alpha
+YaA                linear grayscale data with premultiplied alpha
+Y'                 grayscale data with sRGB TRC
+Y'A                grayscale data with sRGB TRC with alpha
+Y'aA               grayscale data with sRGB TRC with premultiplied alpha
+
+sRGB:RGB           linear RGB data with sRGB primaries
+sRGB:RGBA          linear RGB data with sRGB primaries and alpha channel
+sRGB:RaGaBaA       linear RGB data with sRGB primaries and premultiplied alpha
+sRGB:R'G'B'        RGB data with sRGB primaries and sRGB TRC
+sRGB:R'G'B'A       RGB data with sRGB primaries and sRGB TRC with alpha
+sRGB:R'aG'aB'aA    RGB data with sRGB primaries and sRGB TRC with alpha
+sRGB:Y             linear grayscale data
+sRGB:YA            linear grayscale data with alpha
+sRGB:YaA           linear grayscale data with premultiplied alpha
+sRGB:Y'            grayscale data with sRGB TRC
+sRGB:Y'A           grayscale data with sRGB TRC with alpha
+sRGB:Y'aA          grayscale data with sRGB TRC with premultiplied alpha
+
+foo:RGB            linear RGB data with foo primaries
+foo:RGBA          
+foo:RaGaBaA        linear RGB data with foo primaries and premultiplied alpha
+foo:R'G'B'         RGB data with foo primaries and sRGB TRC
+foo:R'G'B'A        RGB data with foo primaries and sRGB TRC with alpha
+foo:R'aG'aB'aA     RGB data with foo primaries and sRGB TRC with alpha
+foo:Y              linear grayscale data where 0.0-1.0 matches foo:RGB
+foo:YA             linear grayscale data ----"---- with alpha
+foo:YaA            linear grayscale data ----"---- with premultiplied alpha
+foo:Y'             grayscale data with response curve like foo:R'G'B'
+foo:Y'A            grayscale data with ..  with alpha
+foo:Y'aA           grayscale data with ..  with premultiplied alpha
+
+bar:RGB            linear RGB data with bar primaries
+bar:RGBA          
+bar:RaGaBaA        linear RGB data with bar primaries and premultiplied alpha
+bar:R'G'B'         RGB data with bar primaries and sRGB TRC
+bar:R'G'B'A        RGB data with bar primaries and sRGB TRC with alpha
+bar:R'aG'aB'aA     RGB data with bar primaries and sRGB TRC with alpha
+bar:Y              linear grayscale data where 0.0-1.0 matches bar:RGB
+bar:YA             linear grayscale data ----"---- with alpha
+bar:YaA            linear grayscale data ----"---- with premultiplied alpha
+bar:Y'             grayscale data with response curve like bar:R'G'B'
+bar:Y'A            grayscale data with ..  with alpha
+bar:Y'aA           grayscale data with ..  with premultiplied alpha
+
+Once a format has been resolved using babl_format(babl, "bar:RGBA float") 
+the returned pointer would refer to the babl context that looked up "bar"'s
+definition of bar. This makes it easy to define specific names, like camera /
+chromaticicities / compositing / target and other similar concerns per
+document; with the corresponding space configuration loaded into each.
