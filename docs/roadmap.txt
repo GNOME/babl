@@ -74,6 +74,9 @@ specific) data types in babl - or have new ones registered.
 Limitations/roadmap:
 ====================
 
+Note that this roadmap doesn't document a final state of things, but a
+direction that allows finer control over how things work.
+
 Babl currently only supports formats using the sRGB primaries, quite a few
 editing operations including gamma adjustments and multiply compositing relies
 on the chromaticities of the space used, permitting at least linear formats
@@ -94,7 +97,8 @@ void babl_define_named_rgb_space (
 To keep existing code relying on existing behavior working, such named spaces
 would not be addressed through the same babl-format names as the existing
 formats. Instead a space registered for the name "sensor" would be addressed
-as babl_format(babl, "wide:RGBA float") or babl_format(babl, "sensor:RaGaBaA half") etc.
+as babl_format(babl, "wide:RGBA float") or babl_format(babl, "sensor:RaGaBaA
+half") etc. 
 
 Babl would also be extended with light-weight sub-babl contexts; so that
 different documents or parts of a workflow have their own name space within
@@ -109,7 +113,7 @@ For questions, please join #gegl on the GIMP/GNOME irc network.
 --
 
 To further pencil out what the situation would be at the end of this
-refactoring, focusing only on the formats and what they would mean.
+(incomplete) roadmap, focusing only on the formats and what they would mean.
 
 For formats where all components have the same type, the type is suffixed at
 the end, conversions within a given model but different types only needs to do
@@ -171,4 +175,11 @@ Once a format has been resolved using babl_format(babl, "bar:RGBA float")
 the returned pointer would refer to the babl context that looked up "bar"'s
 definition of bar. This makes it easy to define specific names, like camera /
 chromaticicities / compositing / target and other similar concerns per
-document; with the corresponding space configuration loaded into each.
+document; with the corresponding space configuration loaded into each. And
+allows rigging up a situation where the user has control over the RGB space
+used for chromaticity dependent operations.
+
+Floating point rounding errors are not a significant issue; since single
+precision floating point which is the intermediate formats mostly used by GEGL
+have 24bits significand precision - which is much higher than the bitdepth of
+most imaging sensors.
