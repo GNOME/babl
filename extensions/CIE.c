@@ -54,6 +54,9 @@ components (void)
   babl_component_new ("CIE b", "chroma", NULL);
   babl_component_new ("CIE C(ab)", "chroma", NULL);
   babl_component_new ("CIE H(ab)", "chroma", NULL);
+  /* babl_component_new ("CIE X", NULL);
+  babl_component_new ("CIE Y", NULL);
+  babl_component_new ("CIE Z", NULL);*/
 }
 
 static void
@@ -88,69 +91,57 @@ models (void)
     babl_component ("CIE H(ab)"),
     babl_component ("A"),
     NULL);
+  /*babl_model_new (
+    "name", "CIE XYZ",
+    babl_component ("CIE X"),
+    babl_component ("CIE Y"),
+    babl_component ("CIE Z"),
+    NULL);*/
 }
 
-/***********    cpercep.h *********   */
+/***********    RGB/CIE color space conversions *********   */
 
-/*
-   Copyright (C) 1997-2002 Adam D. Moss (the "Author").  All Rights Reserved.
+static void  rgbcie_init (void);
 
-   Permission is hereby granted, free of charge, to any person obtaining a copy
-   of this software and associated documentation files (the "Software"), to deal
-   in the Software without restriction, including without limitation the rights
-   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-   copies of the Software, and to permit persons to whom the Software is fur-
-   nished to do so, subject to the following conditions:
-
-   The above copyright notice and this permission notice shall be included in
-   all copies or substantial portions of the Software.
-
-   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FIT-
-   NESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
-   AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-   IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CON-
-   NECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-   Except as contained in this notice, the name of the Author of the
-   Software shall not be used in advertising or otherwise to promote the sale,
-   use or other dealings in this Software without prior written authorization
-   from the Author.
- */
-
-/*
-   cpercep.c: The CPercep Functions v0.9: 2002-02-10
-   Adam D. Moss: adam@gimp.org <http://www.foxbox.org/adam/code/cpercep/>
-
-   TODO: document functions, rename erroneously-named arguments
- */
-
-static void  cpercep_init (void);
-
-static void  cpercep_rgb_to_space (double  inr,
-                                   double  ing,
-                                   double  inb,
-                                   double *outr,
-                                   double *outg,
-                                   double *outb);
-
-static void  cpercep_space_to_rgb (double  inr,
-                                   double  ing,
-                                   double  inb,
-                                   double *outr,
-                                   double *outg,
-                                   double *outb);
-
-static void  ab_to_chab           (double  a,
+static void  ab_to_CHab           (double  a,
                                    double  b,
-                                   double *C,
-                                   double *H);
+                                   double *to_C,
+                                   double *to_H);
 
-static void  chab_to_ab           (double  C,
+static void  CHab_to_ab           (double  C,
                                    double  H,
-                                   double *a,
-                                   double *b);
+                                   double *to_a,
+                                   double *to_b);
+                                   
+static void RGB_to_XYZ            (double R,
+                                   double G,
+                                   double B,
+                                   double *to_X,
+                                   double *to_Y,
+                                   double *to_Z);
 
+static void XYZ_to_LAB            (double X,
+                                   double Y,
+                                   double Z,
+                                   double *to_L,
+                                   double *to_a,
+                                   double *to_b
+                                   );
+
+static void LAB_to_XYZ            (double L,
+                                   double a,
+                                   double b,
+                                   double *to_X,
+                                   double *to_Y,
+                                   double *to_Z
+                                   );
+
+static void XYZ_to_RGB            (double X,
+                                   double Y,
+                                   double Z,
+                                   double *to_R,
+                                   double *to_G,
+                                   double *to_B);
 
 static long
 rgba_to_lab (char *src,
@@ -159,13 +150,16 @@ rgba_to_lab (char *src,
 {
   while (n--)
     {
-      double red   = ((double *) src)[0];
-      double green = ((double *) src)[1];
-      double blue  = ((double *) src)[2];
-
-      double L, a, b;
-
-      cpercep_rgb_to_space (red, green, blue, &L, &a, &b);
+      double R  = ((double *) src)[0];
+      double G  = ((double *) src)[1];
+      double B  = ((double *) src)[2];
+      double X, Y, Z, L, a, b;
+      
+      //convert RGB to XYZ
+      RGB_to_XYZ (R, G, B, &X, &Y, &Z);
+      
+      //convert XYZ to Lab
+      XYZ_to_LAB (X, Y, Z, &L, &a, &b);
 
       ((double *) dst)[0] = L;
       ((double *) dst)[1] = a;
@@ -188,13 +182,16 @@ lab_to_rgba (char *src,
       double a = ((double *) src)[1];
       double b = ((double *) src)[2];
 
-      double red, green, blue;
-
-      cpercep_space_to_rgb (L, a, b, &red, &green, &blue);
-
-      ((double *) dst)[0] = red;
-      ((double *) dst)[1] = green;
-      ((double *) dst)[2] = blue;
+      double X, Y, Z, R, G, B;
+      
+      //convert Lab to XYZ
+      LAB_to_XYZ (L, a, b, &X, &Y, &Z);
+      
+      //convert XYZ to RGB
+      XYZ_to_RGB (X, Y, Z, &R, &G, &B);
+      ((double *) dst)[0] = R;
+      ((double *) dst)[1] = G;
+      ((double *) dst)[2] = B;
       ((double *) dst)[3] = 1.0;
 
       src += sizeof (double) * 3;
@@ -211,14 +208,17 @@ rgba_to_laba (char *src,
 {
   while (n--)
     {
-      double red   = ((double *) src)[0];
-      double green = ((double *) src)[1];
-      double blue  = ((double *) src)[2];
+      double R     = ((double *) src)[0];
+      double G     = ((double *) src)[1];
+      double B     = ((double *) src)[2];
       double alpha = ((double *) src)[3];
-
-      double L, a, b;
-
-      cpercep_rgb_to_space (red, green, blue, &L, &a, &b);
+      double X, Y, Z, L, a, b;
+      
+      //convert RGB to XYZ
+      RGB_to_XYZ (R, G, B, &X, &Y, &Z);
+      
+      //convert XYZ to Lab
+      XYZ_to_LAB (X, Y, Z, &L, &a, &b);
 
       ((double *) dst)[0] = L;
       ((double *) dst)[1] = a;
@@ -243,13 +243,16 @@ laba_to_rgba (char *src,
       double b     = ((double *) src)[2];
       double alpha = ((double *) src)[3];
 
-      double red, green, blue;
-
-      cpercep_space_to_rgb (L, a, b, &red, &green, &blue);
-
-      ((double *) dst)[0] = red;
-      ((double *) dst)[1] = green;
-      ((double *) dst)[2] = blue;
+      double X, Y, Z, R, G, B;
+      
+      //convert Lab to XYZ
+      LAB_to_XYZ (L, a, b, &X, &Y, &Z);
+      
+      //convert XYZ to RGB
+      XYZ_to_RGB (X, Y, Z, &R, &G, &B);
+      ((double *) dst)[0] = R;
+      ((double *) dst)[1] = G;
+      ((double *) dst)[2] = B;
       ((double *) dst)[3] = alpha;
 
       src += sizeof (double) * 4;
@@ -258,8 +261,30 @@ laba_to_rgba (char *src,
   return n;
 }
 
+static void
+CHab_to_ab (double  C,
+            double  H,
+            double *to_a,
+            double *to_b)
+{
+  *to_a = cos (H * RADIANS_PER_DEGREE) * C;
+  *to_b = sin (H * RADIANS_PER_DEGREE) * C;
+}
 
+static void
+ab_to_CHab (double  a,
+            double  b,
+            double *to_C,
+            double *to_H)
+{
+  *to_C = sqrt ( (a * a) + (b * b) );
+  *to_H = atan2 (b, a) * DEGREES_PER_RADIAN;
 
+  // Keep H within the range 0-360
+  if (*to_H < 0.0)
+    *to_H += 360;
+
+}
 
 static long
 rgba_to_lchab (char *src,
@@ -268,13 +293,19 @@ rgba_to_lchab (char *src,
 {
   while (n--)
     {
-      double red   = ((double *) src)[0];
-      double green = ((double *) src)[1];
-      double blue  = ((double *) src)[2];
-      double L, a, b, C, H;
+      double R = ((double *) src)[0];
+      double G = ((double *) src)[1];
+      double B = ((double *) src)[2];
+      double X, Y, Z, L, a, b, C, H;
 
-      cpercep_rgb_to_space (red, green, blue, &L, &a, &b);
-      ab_to_chab (a, b, &C, &H);
+      //convert RGB to XYZ
+      RGB_to_XYZ (R, G, B, &X, &Y, &Z);
+      
+      //convert XYZ to Lab
+      XYZ_to_LAB (X, Y, Z, &L, &a, &b);
+      
+      //convert Lab to LCH(ab)
+      ab_to_CHab (a, b, &C, &H);
 
       ((double *) dst)[0] = L;
       ((double *) dst)[1] = C;
@@ -296,14 +327,20 @@ lchab_to_rgba (char *src,
       double L = ((double *) src)[0];
       double C = ((double *) src)[1];
       double H = ((double *) src)[2];
-      double a, b, red, green, blue;
+      double a, b, X, Y, Z, R, G, B;
+      
+      //Convert LCH(ab) to Lab
+      CHab_to_ab (C, H, &a, &b);
+      
+      //Convert LAB to XYZ
+      LAB_to_XYZ (L, a, b, &X, &Y, &Z);
+      
+      //Convert XYZ to RGB
+      XYZ_to_RGB (X, Y, Z, &R, &G, &B);
 
-      chab_to_ab (C, H, &a, &b);
-      cpercep_space_to_rgb (L, a, b, &red, &green, &blue);
-
-      ((double *) dst)[0] = red;
-      ((double *) dst)[1] = green;
-      ((double *) dst)[2] = blue;
+      ((double *) dst)[0] = R;
+      ((double *) dst)[1] = G;
+      ((double *) dst)[2] = B;
       ((double *) dst)[3] = 1.0;
 
       src += sizeof (double) * 3;
@@ -320,14 +357,20 @@ rgba_to_lchaba (char *src,
 {
   while (n--)
     {
-      double red   = ((double *) src)[0];
-      double green = ((double *) src)[1];
-      double blue  = ((double *) src)[2];
+      double R = ((double *) src)[0];
+      double G = ((double *) src)[1];
+      double B = ((double *) src)[2];
       double alpha = ((double *) src)[3];
-      double L, a, b, C, H;
+      double X, Y, Z, L, a, b, C, H;
 
-      cpercep_rgb_to_space (red, green, blue, &L, &a, &b);
-      ab_to_chab (a, b, &C, &H);
+      //convert RGB to XYZ
+      RGB_to_XYZ (R, G, B, &X, &Y, &Z);
+      
+      //convert XYZ to Lab
+      XYZ_to_LAB (X, Y, Z, &L, &a, &b);
+      
+      //convert Lab to LCH(ab)
+      ab_to_CHab (a, b, &C, &H);
 
       ((double *) dst)[0] = L;
       ((double *) dst)[1] = C;
@@ -351,14 +394,20 @@ lchaba_to_rgba (char *src,
       double C     = ((double *) src)[1];
       double H     = ((double *) src)[2];
       double alpha = ((double *) src)[3];
-      double a, b, red, green, blue;
-
-      chab_to_ab (C, H, &a, &b);
-      cpercep_space_to_rgb (L, a, b, &red, &green, &blue);
-
-      ((double *) dst)[0] = red;
-      ((double *) dst)[1] = green;
-      ((double *) dst)[2] = blue;
+      double a, b, X, Y, Z, R, G, B;
+      
+      //Convert LCH(ab) to Lab
+      CHab_to_ab (C, H, &a, &b);
+      
+      //Convert Lab to XYZ
+      LAB_to_XYZ (L, a, b, &X, &Y, &Z);
+      
+      //Convert XYZ to RGB
+      XYZ_to_RGB (X, Y, Z, &R, &G, &B);
+      
+      ((double *) dst)[0] = R;
+      ((double *) dst)[1] = G;
+      ((double *) dst)[2] = B;
       ((double *) dst)[3] = alpha;
 
       src += sizeof (double) * 4;
@@ -419,8 +468,20 @@ conversions (void)
     "linear", lchaba_to_rgba,
     NULL
   );
+  /*babl_conversion_new (
+    babl_model ("RGBA"),
+    babl_model ("CIE XYZ"),
+    "linear", RGB_to_XYZ,
+    NULL
+  );
+  babl_conversion_new (
+    babl_model ("CIE XYZ"),
+    babl_model ("RGBA"),
+    "linear", XYZ_to_RGB,
+    NULL
+  );*/
 
-  cpercep_init ();
+  rgbcie_init ();
 }
 
 static void
@@ -435,6 +496,16 @@ formats (void)
     babl_component ("CIE a"),
     babl_component ("CIE b"),
     NULL);
+    
+  /*babl_format_new (
+    "name", "CIE XYZ float",
+    babl_model ("CIE XYZ"),
+
+    babl_type ("float"),
+    babl_component ("CIE X"),
+    babl_component ("CIE Y"),
+    babl_component ("CIE Z"),
+    NULL);*/
 
   babl_format_new (
     "name", "CIE Lab alpha float",
@@ -781,68 +852,6 @@ types (void)
   types_u16 ();
 }
 
-
-
-
-/***********   cpercep.c *********   */
-
-
-/*
-   Copyright (C) 1999-2002 Adam D. Moss (the "Author").  All Rights Reserved.
-
-   Permission is hereby granted, free of charge, to any person obtaining a copy
-   of this software and associated documentation files (the "Software"), to deal
-   in the Software without restriction, including without limitation the rights
-   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-   copies of the Software, and to permit persons to whom the Software is fur-
-   nished to do so, subject to the following conditions:
-
-   The above copyright notice and this permission notice shall be included in
-   all copies or substantial portions of the Software.
-
-   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FIT-
-   NESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
-   AUTHOR BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-   IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CON-
-   NECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-   Except as contained in this notice, the name of the Author of the
-   Software shall not be used in advertising or otherwise to promote the sale,
-   use or other dealings in this Software without prior written authorization
-   from the Author.
- */
-
-/*
-   cpercep.c: The CPercep Functions v0.9: 2002-02-10
-   Adam D. Moss: adam@gimp.org <http://www.foxbox.org/adam/code/cpercep/>
-
-   This code module concerns itself with conversion from a hard-coded
-   RGB colour space (sRGB by default) to CIE L*a*b* and back again with
-   (primarily) precision and (secondarily) speed, oriented largely
-   towards the purposes of quantifying the PERCEPTUAL difference between
-   two arbitrary RGB colours with a minimum of fuss.
-
-   Motivation One: The author is disheartened at the amount of graphics
-   processing software around which uses weighted or non-weighted
-   Euclidean distance between co-ordinates within a (poorly-defined) RGB
-   space as the basis of what should really be an estimate of perceptual
-   difference to the human eye.  Certainly it's fast to do it that way,
-   but please think carefully about whether your particular application
-   should be tolerating sloppy results for the sake of real-time response.
-
-   Motivation Two: Lack of tested, re-usable and free code available
-   for this purpose.  The difficulty in finding something similar to
-   CPercep with a free license motivated this project; I hope that this
-   code also serves to illustrate how to perform the
-   R'G'B'->XYZ->L*a*b*->XYZ->R'G'B' transformation correctly since I
-   was distressed to note how many of the equations and code snippets
-   on the net were omitting the reverse transform and/or were using
-   incorrectly-derived or just plain wrong constants.
-
-   TODO: document functions, rename erroneously-named arguments
- */
-
 /* defines added to make it compile outside gimp */
 
 #ifndef gboolean
@@ -859,339 +868,197 @@ types (void)
 /* #include "config.h" */
 #include <math.h>
 
-#ifndef __GLIBC__
-/* cbrt() is a GNU extension */
-#define cbrt(x)    (pow (x, 1.0 / 3.0))
-#endif
-
-
-/* defines:
-
-   SANITY: emits warnings when passed non-sane colours (and usually
-   corrects them) -- useful when debugging.
-
-   APPROX: speeds up the conversion from RGB to the colourspace by
-   assuming that the RGB values passed in are integral and definitely
-   in the range 0->255
- */
-
-/* #define SANITY */
-/* #define APPROX */
-
-
-/* define characteristics of the source RGB space (and the space
-   within which we try to behave linearly). */
-
-/* Phosphor colours: */
-
-/* sRGB/HDTV phosphor colours */
-static const double pxr = 0.64;
-static const double pyr = 0.33;
-static const double pxg = 0.30;
-static const double pyg = 0.60;
-static const double pxb = 0.15;
-static const double pyb = 0.06;
-
-/* White point: */
-
-/* D65 (6500K) (recommended but not a common display default) */
-static const double lxn = 0.312713;
-static const double lyn = 0.329016;
-
-/* D50 (5000K) */
-/*static const double lxn = 0.3457; */
-/*static const double lyn = 0.3585; */
-
-/* D55 (5500K) */
-/*static const double lxn = 0.3324; */
-/*static const double lyn = 0.3474; */
-
-/* D93 (9300K) (a common monitor default, but poor colour reproduction) */
-/* static const double lxn = 0.2848; */
-/* static const double lyn = 0.2932; */
-
-/* illum E (normalized) */
-/*static const double lxn = 1.0/3.0; */
-/*static const double lyn = 1.0/3.0; */
-
-/* illum C (average sunlight) */
-/*static const double lxn = 0.3101; */
-/*static const double lyn = 0.3162; */
-
-/* illum B (direct sunlight) */
-/*static const double lxn = 0.3484; */
-/*static const double lyn = 0.3516; */
-
-/* illum A (tungsten lamp) */
-/*static const double lxn = 0.4476; */
-/*static const double lyn = 0.4074; */
-
-
-static const double LRAMP = 7.99959199;
-
-
-static double xnn, znn;
-
-
-typedef double CMatrix[3][3];
-typedef double CVector[3];
-
-static CMatrix Mrgb_to_xyz, Mxyz_to_rgb;
-
-static int
-Minvert (CMatrix src, CMatrix dest)
-{
-  double det;
-
-  dest[0][0] = src[1][1] * src[2][2] - src[1][2] * src[2][1];
-  dest[0][1] = src[0][2] * src[2][1] - src[0][1] * src[2][2];
-  dest[0][2] = src[0][1] * src[1][2] - src[0][2] * src[1][1];
-  dest[1][0] = src[1][2] * src[2][0] - src[1][0] * src[2][2];
-  dest[1][1] = src[0][0] * src[2][2] - src[0][2] * src[2][0];
-  dest[1][2] = src[0][2] * src[1][0] - src[0][0] * src[1][2];
-  dest[2][0] = src[1][0] * src[2][1] - src[1][1] * src[2][0];
-  dest[2][1] = src[0][1] * src[2][0] - src[0][0] * src[2][1];
-  dest[2][2] = src[0][0] * src[1][1] - src[0][1] * src[1][0];
-
-  det =
-    src[0][0] * dest[0][0] +
-    src[0][1] * dest[1][0] +
-    src[0][2] * dest[2][0];
-
-  if (det <= 0.0)
-    {
-#ifdef SANITY
-      g_printerr ("\n\007 XXXX det: %f\n", det);
-#endif
-      return 0;
-    }
-
-  dest[0][0] /= det;
-  dest[0][1] /= det;
-  dest[0][2] /= det;
-  dest[1][0] /= det;
-  dest[1][1] /= det;
-  dest[1][2] /= det;
-  dest[2][0] /= det;
-  dest[2][1] /= det;
-  dest[2][2] /= det;
-
-  return 1;
-}
-
-
 static void
 rgbxyzrgb_init (void)
 {
-  /* The gamma related code has been removed since we do our
-   * calculations in linear light. To revice that code, use version
-   * control means
-   */
-
-  xnn = lxn / lyn;
-  /* ynn taken as 1.0 */
-  znn = (1.0 - (lxn + lyn)) / lyn;
-
-  {
-    CMatrix MRC, MRCi;
-    double  C1, C2, C3;
-
-    MRC[0][0] = pxr;
-    MRC[0][1] = pxg;
-    MRC[0][2] = pxb;
-    MRC[1][0] = pyr;
-    MRC[1][1] = pyg;
-    MRC[1][2] = pyb;
-    MRC[2][0] = 1.0 - (pxr + pyr);
-    MRC[2][1] = 1.0 - (pxg + pyg);
-    MRC[2][2] = 1.0 - (pxb + pyb);
-
-    Minvert (MRC, MRCi);
-
-    C1 = MRCi[0][0] * xnn + MRCi[0][1] + MRCi[0][2] * znn;
-    C2 = MRCi[1][0] * xnn + MRCi[1][1] + MRCi[1][2] * znn;
-    C3 = MRCi[2][0] * xnn + MRCi[2][1] + MRCi[2][2] * znn;
-
-    Mrgb_to_xyz[0][0] = MRC[0][0] * C1;
-    Mrgb_to_xyz[0][1] = MRC[0][1] * C2;
-    Mrgb_to_xyz[0][2] = MRC[0][2] * C3;
-    Mrgb_to_xyz[1][0] = MRC[1][0] * C1;
-    Mrgb_to_xyz[1][1] = MRC[1][1] * C2;
-    Mrgb_to_xyz[1][2] = MRC[1][2] * C3;
-    Mrgb_to_xyz[2][0] = MRC[2][0] * C1;
-    Mrgb_to_xyz[2][1] = MRC[2][1] * C2;
-    Mrgb_to_xyz[2][2] = MRC[2][2] * C3;
-
-    Minvert (Mrgb_to_xyz, Mxyz_to_rgb);
-  }
 }
-
 
 static void
-xyz_to_rgb (double *inx_outr,
-            double *iny_outg,
-            double *inz_outb)
+RGB_to_XYZ (double R,
+            double G,
+            double B,
+            double *to_X,
+            double *to_Y,
+            double *to_Z)
 {
-  const double x = *inx_outr;
-  const double y = *iny_outg;
-  const double z = *inz_outb;
 
-  *inx_outr = Mxyz_to_rgb[0][0] * x + Mxyz_to_rgb[0][1] * y + Mxyz_to_rgb[0][2] * z;
-  *iny_outg = Mxyz_to_rgb[1][0] * x + Mxyz_to_rgb[1][1] * y + Mxyz_to_rgb[1][2] * z;
-  *inz_outb = Mxyz_to_rgb[2][0] * x + Mxyz_to_rgb[2][1] * y + Mxyz_to_rgb[2][2] * z;
+  double RGBtoXYZ[3][3];
+
+/* 
+ * The variables below hard-code the D50-adapted sRGB RGB to XYZ matrix. 
+ *  
+ * In a properly ICC profile color-managed application, this matrix 
+ * is retrieved from the image's ICC profile's RGB colorants. 
+ * 
+ * */
+  RGBtoXYZ[0][0]= 0.43603516;
+  RGBtoXYZ[0][1]= 0.38511658;
+  RGBtoXYZ[0][2]= 0.14305115;
+  RGBtoXYZ[1][0]= 0.22248840;
+  RGBtoXYZ[1][1]= 0.71690369;
+  RGBtoXYZ[1][2]= 0.06060791;
+  RGBtoXYZ[2][0]= 0.01391602;
+  RGBtoXYZ[2][1]= 0.09706116;
+  RGBtoXYZ[2][2]= 0.71392822;
+
+/* Convert RGB to XYZ */
+  *to_X = RGBtoXYZ[0][0]*R + RGBtoXYZ[0][1]*G + RGBtoXYZ[0][2]*B;
+  *to_Y = RGBtoXYZ[1][0]*R + RGBtoXYZ[1][1]*G + RGBtoXYZ[1][2]*B;
+  *to_Z = RGBtoXYZ[2][0]*R + RGBtoXYZ[2][1]*G + RGBtoXYZ[2][2]*B;
+
 }
 
+static void XYZ_to_RGB (double X,
+                        double Y,
+                        double Z,
+                        double *to_R,
+                        double *to_G,
+                        double *to_B)
+{
+  double XYZtoRGB[3][3];
+
+/* 
+ * The variables below hard-code the inverse of 
+ * the D50-adapted sRGB RGB to XYZ matrix.
+ * 
+ * In a properly ICC profile color-managed application, 
+ * this matrix is the inverse of the matrix 
+ * retrieved from the image's ICC profile's RGB colorants. 
+ * 
+ * */
+  XYZtoRGB[0][0]=  3.134274799724;
+  XYZtoRGB[0][1]= -1.617275708956;
+  XYZtoRGB[0][2]= -0.490724283042;
+  XYZtoRGB[1][0]= -0.978795575994;
+  XYZtoRGB[1][1]=  1.916161689117;
+  XYZtoRGB[1][2]=  0.033453331711;
+  XYZtoRGB[2][0]=  0.071976988401;
+  XYZtoRGB[2][1]= -0.228984974402;
+  XYZtoRGB[2][2]=  1.405718224383;
+
+/* Convert XYZ to RGB */
+  *to_R = XYZtoRGB[0][0]*X + XYZtoRGB[0][1]*Y + XYZtoRGB[0][2]*Z;
+  *to_G = XYZtoRGB[1][0]*X + XYZtoRGB[1][1]*Y + XYZtoRGB[1][2]*Z;
+  *to_B = XYZtoRGB[2][0]*X + XYZtoRGB[2][1]*Y + XYZtoRGB[2][2]*Z;
+
+}
 
 static void
-rgb_to_xyz (double *inr_outx,
-            double *ing_outy,
-            double *inb_outz)
+XYZ_to_LAB (double X,
+            double Y,
+            double Z,
+            double *to_L,
+            double *to_a,
+            double *to_b
+            )
+            
 {
-  const double r = *inr_outx;
-  const double g = *ing_outy;
-  const double b = *inb_outz;
 
-  *inr_outx = Mrgb_to_xyz[0][0] * r + Mrgb_to_xyz[0][1] * g + Mrgb_to_xyz[0][2] * b;
-  *ing_outy = Mrgb_to_xyz[1][0] * r + Mrgb_to_xyz[1][1] * g + Mrgb_to_xyz[1][2] * b;
-  *inb_outz = Mrgb_to_xyz[2][0] * r + Mrgb_to_xyz[2][1] * g + Mrgb_to_xyz[2][2] * b;
+  const double kappa   = 903.3;//24389.0/27.0;
+  const double epsilon = 0.008856;//216/24389.0;
+  
+/* The constants below hard-code the D50-adapted sRGB ICC profile 
+ * reference white, aka the ICC profile D50 illuminant. 
+ * 
+ * In a properly ICC profile color-managed application, the profile 
+ * illuminant values should be retrieved from the image's
+ * ICC profile's illuminant.
+ * 
+ * At present, the ICC profile illuminant is always D50. This might
+ * change when the next version of the ICC specs is released.
+ * 
+ * As encoded in an actual V2 or V4 ICC profile, 
+ * the illuminant values are hexadecimal-rounded, as are the following 
+ * hard-coded D50 ICC profile illuminant values:
+ * 
+ * */  
+  const double X_reference_white = 0.964202880;
+  const double Y_reference_white = 1.000000000;
+  const double Z_reference_white = 0.824905400;
+ 
+  double x_r = X/X_reference_white;
+  double y_r = Y/Y_reference_white;
+  double z_r = Z/Z_reference_white;
+  
+  double f_x, f_y, f_z;
+  
+  if (x_r > epsilon) f_x = pow(x_r, 1.0 / 3.0);
+  else ( f_x = ((kappa * x_r) + 16) / 116.0 );
+  
+  if (y_r > epsilon) f_y = pow(y_r, 1.0 / 3.0);
+  else ( f_y = ((kappa * y_r) + 16) / 116.0 );
+  
+  if (z_r > epsilon) f_z = pow(z_r, 1.0 / 3.0);
+  else ( f_z = ((kappa * z_r) + 16) / 116.0 );
+
+
+  *to_L = (116.0 * f_y) - 16.0;
+  *to_a = 500.0 * (f_x - f_y);
+  *to_b = 200.0 * (f_y - f_z);
+
+}
+
+static void LAB_to_XYZ (double L,
+                        double a,
+                        double b,
+                        double *to_X,
+                        double *to_Y,
+                        double *to_Z)
+{
+
+  const double kappa   = 903.3;//24389.0/27.0;
+  const double epsilon = 0.008856;//216/24389.0;
+  
+  double fy, fx, fz, fx_cubed, fy_cubed, fz_cubed;
+  double xr, yr, zr;
+  
+/* The constants below hard-code the D50-adapted sRGB ICC profile 
+ * reference white, aka the ICC profile D50 illuminant. 
+ * 
+ * In a properly ICC profile color-managed application, the profile 
+ * illuminant values should be retrieved from the image's
+ * ICC profile's illuminant.
+ * 
+ * At present, the ICC profile illuminant is always D50. This might
+ * change when the next version of the ICC specs is released.
+ * 
+ * As encoded in an actual V2 or V4 ICC profile, 
+ * the illuminant values are hexadecimal-rounded, as are the following 
+ * hard-coded D50 ICC profile illuminant values:
+ * 
+ * */
+  const double X_reference_white = 0.964202880;
+  const double Y_reference_white = 1.000000000;
+  const double Z_reference_white = 0.824905400;
+  
+  fy = (L + 16.0) / 116.0;
+  fy_cubed = fy*fy*fy;
+  
+  fz = fy - (b / 200.0);
+  fz_cubed = fz*fz*fz;
+  
+  fx = (a / 500.0) + fy;
+  fx_cubed = fx*fx*fx;
+  
+  if (fx_cubed > epsilon) xr = fx_cubed;
+  else xr = ((116.0 * fx) - 16) / kappa;
+
+  if ( L > (kappa * epsilon) ) yr = fy_cubed;
+  else yr = (L / kappa);
+
+  if (fz_cubed > epsilon) zr = fz_cubed;
+  else zr = ( (116.0 * fz) - 16 ) / kappa;
+  
+  *to_X = xr * X_reference_white;
+  *to_Y = yr * Y_reference_white;
+  *to_Z = zr * Z_reference_white;
+
 }
 
 
-static inline double
-ffunc (const double t)
-{
-  if (t > 0.008856)
-    {
-      return (cbrt (t));
-    }
-  else
-    {
-      return (7.787 * t + 16.0 / 116.0);
-    }
-}
-
-
-static inline double
-ffunc_inv (const double t)
-{
-  if (t > 0.206893)
-    {
-      return (t * t * t);
-    }
-  else
-    {
-      return ((t - 16.0 / 116.0) / 7.787);
-    }
-}
-
-
+/* Call this before using the RGB/CIE color space conversions */
 static void
-xyz_to_lab (double *inx,
-            double *iny,
-            double *inz)
-{
-  double       L, a, b;
-  double       ffuncY;
-  const double X = *inx;
-  const double Y = *iny;
-  const double Z = *inz;
-
-  if (Y > 0.0)
-    {
-      if (Y > 0.008856)
-        {
-          L = (116.0 * cbrt (Y)) - 16.0;
-        }
-      else
-        {
-          L = (Y * 903.3);
-        }
-
-#ifdef SANITY
-      if (L < 0.0)
-        {
-          g_printerr (" <eek1>%f \007", (float) L);
-        }
-
-      if (L > 100.0)
-        {
-          g_printerr (" <eek2>%f \007", (float) L);
-        }
-#endif
-    }
-  else
-    {
-      L = 0.0;
-    }
-
-  ffuncY = ffunc (Y);
-  a      = 500.0 * (ffunc (X / xnn) - ffuncY);
-  b      = 200.0 * (ffuncY - ffunc (Z / znn));
-
-  *inx = L;
-  *iny = a;
-  *inz = b;
-}
-
-
-static void
-lab_to_xyz (double *inl,
-            double *ina,
-            double *inb)
-{
-  double       X, Y, Z;
-  double       P;
-  const double L = *inl;
-  const double a = *ina;
-  const double b = *inb;
-
-  if (L > LRAMP)
-    {
-      P = Y = (L + 16.0) / 116.0;
-      Y = Y * Y * Y;
-    }
-  else
-    {
-      Y = L / 903.3;
-      P = 7.787 * Y + 16.0 / 116.0;
-    }
-
-  X = (P + a / 500.0);
-  X = xnn *ffunc_inv (X);
-  Z = (P - b / 200.0);
-  Z = znn *ffunc_inv (Z);
-
-#ifdef SANITY
-  if (X < -0.00000)
-    {
-      if (X < -0.0001)
-        g_printerr ("{badX %f {%f,%f,%f}}", X, L, a, b);
-      X = 0.0;
-    }
-  if (Y < -0.00000)
-    {
-      if (Y < -0.0001)
-        g_printerr ("{badY %f}", Y);
-      Y = 0.0;
-    }
-  if (Z < -0.00000)
-    {
-      if (Z < -0.1)
-        g_printerr ("{badZ %f}", Z);
-      Z = 0.0;
-    }
-#endif
-
-  *inl = X;
-  *ina = Y;
-  *inb = Z;
-}
-
-
-
-/* call this before using the CPercep function */
-static void
-cpercep_init (void)
+rgbcie_init (void)
 {
   static gboolean initialized = FALSE;
 
@@ -1202,161 +1069,4 @@ cpercep_init (void)
     }
 }
 
-static void
-cpercep_rgb_to_space (double  inr,
-                      double  ing,
-                      double  inb,
-                      double *outr,
-                      double *outg,
-                      double *outb)
-{
-#ifdef APPROX
-#ifdef SANITY
-  /* ADM extra sanity */
-  if ((inr) > 255.0 ||
-      (ing) > 255.0 ||
-      (inb) > 255.0 ||
-      (inr) < -0.0 ||
-      (ing) < -0.0 ||
-      (inb) < -0.0
-  )
-    abort ();
-#endif /* SANITY */
-#endif /* APPROX */
-
-#ifdef SANITY
-  /* ADM extra sanity */
-  if ((inr) > 1.0 ||
-      (ing) > 1.0 ||
-      (inb) > 1.0 ||
-      (inr) < 0.0 ||
-      (ing) < 0.0 ||
-      (inb) < 0.0
-  )
-    {
-      g_printerr ("%%");
-      /* abort(); */
-    }
-#endif /* SANITY */
-
-  rgb_to_xyz (&inr, &ing, &inb);
-
-#ifdef SANITY
-  if (inr < 0.0 || ing < 0.0 || inb < 0.0)
-    {
-      g_printerr (" [BAD2 XYZ: %f,%f,%f]\007 ",
-                  inr, ing, inb);
-    }
-#endif /* SANITY */
-
-  xyz_to_lab (&inr, &ing, &inb);
-
-  *outr = inr;
-  *outg = ing;
-  *outb = inb;
-}
-
-
-static void
-cpercep_space_to_rgb (double  inr,
-                      double  ing,
-                      double  inb,
-                      double *outr,
-                      double *outg,
-                      double *outb)
-{
-  lab_to_xyz (&inr, &ing, &inb);
-
-#ifdef SANITY
-  if (inr < -0.0 || ing < -0.0 || inb < -0.0)
-    {
-      g_printerr (" [BAD1 XYZ: %f,%f,%f]\007 ",
-                  inr, ing, inb);
-    }
-#endif
-
-  xyz_to_rgb (&inr, &ing, &inb);
-
-  *outr = inr;
-  *outg = ing;
-  *outb = inb;
-}
-
-static void
-ab_to_chab (double  a,
-            double  b,
-            double *C,
-            double *H)
-{
-  *C = sqrt (a * a + b * b);
-  *H = atan2 (b, a) * DEGREES_PER_RADIAN;
-
-  /* Keep H within the range 0-360 */
-  if (*H < 0.0)
-    *H += 360;
-}
-
-static void
-chab_to_ab (double  C,
-            double  H,
-            double *a,
-            double *b)
-{
-  *a = cos (H * RADIANS_PER_DEGREE) * C;
-  *b = sin (H * RADIANS_PER_DEGREE) * C;
-}
-
-
-#if 0
-/* EXPERIMENTAL SECTION */
-
-const double
-xscaler (const double start, const double end,
-         const double me, const double him)
-{
-  return start + ((end - start) * him) / (me + him);
-}
-
-
-void
-mix_colours (const double L1, const double a1, const double b1,
-             const double L2, const double a2, const double b2,
-             double *rtnL, double *rtna, double *rtnb,
-             double mass1, double mass2)
-{
-  double w1, w2;
-
-#if 0
-  *rtnL = xscaler (L1, L2, mass1, mass2);
-  *rtna = xscaler (a1, a2, mass1, mass2);
-  *rtnb = xscaler (b1, b2, mass1, mass2);
-#else
-#if 1
-  w1 = mass1 * L1;
-  w2 = mass2 * L2;
-#else
-  w1 = mass1 * (L1 * L1 * L1);
-  w2 = mass2 * (L2 * L2 * L2);
-#endif
-
-  *rtnL = xscaler (L1, L2, mass1, mass2);
-
-  if (w1 <= 0.0 &&
-      w2 <= 0.0)
-    {
-      *rtna   =
-        *rtnb = 0.0;
-#ifdef SANITY
-      /* g_printerr ("\007OUCH. "); */
-#endif
-    }
-  else
-    {
-      *rtna = xscaler (a1, a2, w1, w2);
-      *rtnb = xscaler (b1, b2, w1, w2);
-    }
-#endif
-}
-#endif /* EXPERIMENTAL SECTION */
-
-/***********  /cpercep.c *********   */
+/***********  / RGB/CIE color space conversions *********   */
