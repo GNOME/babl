@@ -32,12 +32,12 @@ unsigned char source_buf [PIXELS * 3] =
   0.0, 0.0, 255 };
 
 unsigned char reference_buf [PIXELS * 3] =
-{ 0,     128, 128,
+{ 0,   128, 128,
   136, 128, 128,
   255, 128, 128,
-  136, 208, 195,
-  224, 42,  211,
-  82,  207, 20 };
+  138, 209, 198,
+  224, 49,  209,
+  75,  196, 16 };
 
 unsigned char destination_buf [PIXELS * 3];
 
