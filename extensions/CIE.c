@@ -1,6 +1,7 @@
 /* babl - dynamically extendable universal pixel conversion library.
- * Copyright (C) 2005, Øyvind Kolås.
+ * Copyright (C) 2005, 2014 Øyvind Kolås.
  * Copyright (C) 2009, Martin Nordholts
+ * Copyright (C) 2014, Elle Stone
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -99,28 +100,26 @@ models (void)
     NULL);*/
 }
 
-/***********    RGB/CIE color space conversions *********   */
-
 static void  rgbcie_init (void);
 
-static void  ab_to_CHab           (double  a,
+static inline void  ab_to_CHab    (double  a,
                                    double  b,
                                    double *to_C,
                                    double *to_H);
 
-static void  CHab_to_ab           (double  C,
+static inline void  CHab_to_ab    (double  C,
                                    double  H,
                                    double *to_a,
                                    double *to_b);
                                    
-static void RGB_to_XYZ            (double R,
+static inline void RGB_to_XYZ     (double R,
                                    double G,
                                    double B,
                                    double *to_X,
                                    double *to_Y,
                                    double *to_Z);
 
-static void XYZ_to_LAB            (double X,
+static inline void XYZ_to_LAB     (double X,
                                    double Y,
                                    double Z,
                                    double *to_L,
@@ -128,7 +127,7 @@ static void XYZ_to_LAB            (double X,
                                    double *to_b
                                    );
 
-static void LAB_to_XYZ            (double L,
+static inline void LAB_to_XYZ     (double L,
                                    double a,
                                    double b,
                                    double *to_X,
@@ -136,7 +135,7 @@ static void LAB_to_XYZ            (double L,
                                    double *to_Z
                                    );
 
-static void XYZ_to_RGB            (double X,
+static inline void XYZ_to_RGB     (double X,
                                    double Y,
                                    double Z,
                                    double *to_R,
@@ -261,7 +260,7 @@ laba_to_rgba (char *src,
   return n;
 }
 
-static void
+static inline void
 CHab_to_ab (double  C,
             double  H,
             double *to_a,
@@ -271,7 +270,7 @@ CHab_to_ab (double  C,
   *to_b = sin (H * RADIANS_PER_DEGREE) * C;
 }
 
-static void
+static inline void
 ab_to_CHab (double  a,
             double  b,
             double *to_C,
@@ -627,13 +626,13 @@ convert_u8_double_scaled (double        min_val,
   return n;
 }
 
-#define MAKE_CONVERSIONS(name, min_val, max_val, min, max)      \
+#define MAKE_CONVERSIONS(name, min_val, max_val, min, max) \
   static long \
   convert_ ## name ## _double (char *src, \
                                char *dst, \
                                int src_pitch, \
                                int dst_pitch, \
-                               long n)                               \
+                               long n)        \
   { \
     return convert_u8_double_scaled (min_val, max_val, min, max, \
                                      src, dst, src_pitch, dst_pitch, n); \
@@ -643,7 +642,7 @@ convert_u8_double_scaled (double        min_val,
                            char *dst, \
                            int src_pitch, \
                            int dst_pitch, \
-                           long n)                                 \
+                           long n)        \
   { \
     return convert_double_u8_scaled (min_val, max_val, min, max, \
                                      src, dst, src_pitch, dst_pitch, n); \
@@ -772,7 +771,7 @@ convert_u16_double_scaled (double         min_val,
                                char *dst, \
                                int src_pitch, \
                                int dst_pitch, \
-                               long n)                               \
+                               long n)        \
   { \
     return convert_u16_double_scaled (min_val, max_val, min, max, \
                                       src, dst, src_pitch, dst_pitch, n); \
@@ -782,7 +781,7 @@ convert_u16_double_scaled (double         min_val,
                            char *dst, \
                            int src_pitch, \
                            int dst_pitch, \
-                           long n)                                 \
+                           long n)        \
   { \
     return convert_double_u16_scaled (min_val, max_val, min, max, \
                                       src, dst, src_pitch, dst_pitch, n); \
@@ -852,28 +851,13 @@ types (void)
   types_u16 ();
 }
 
-/* defines added to make it compile outside gimp */
-
-#ifndef gboolean
-#define gboolean    int
-#endif
-#ifndef FALSE
-#define FALSE       0
-#endif
-#ifndef TRUE
-#define TRUE        1
-#endif
-
-
-/* #include "config.h" */
-#include <math.h>
 
 static void
 rgbxyzrgb_init (void)
 {
 }
 
-static void
+static inline void
 RGB_to_XYZ (double R,
             double G,
             double B,
@@ -881,15 +865,14 @@ RGB_to_XYZ (double R,
             double *to_Y,
             double *to_Z)
 {
-
   double RGBtoXYZ[3][3];
 
-/* 
- * The variables below hard-code the D50-adapted sRGB RGB to XYZ matrix. 
- *  
- * In a properly ICC profile color-managed application, this matrix 
- * is retrieved from the image's ICC profile's RGB colorants. 
- * 
+/*
+ * The variables below hard-code the D50-adapted sRGB RGB to XYZ matrix.
+ *
+ * In a properly ICC profile color-managed application, this matrix
+ * is retrieved from the image's ICC profile's RGB colorants.
+ *
  * */
   RGBtoXYZ[0][0]= 0.43603516;
   RGBtoXYZ[0][1]= 0.38511658;
@@ -908,24 +891,25 @@ RGB_to_XYZ (double R,
 
 }
 
-static void XYZ_to_RGB (double X,
-                        double Y,
-                        double Z,
-                        double *to_R,
-                        double *to_G,
-                        double *to_B)
+static inline void
+XYZ_to_RGB (double X,
+            double Y,
+            double Z,
+            double *to_R,
+            double *to_G,
+            double *to_B)
 {
   double XYZtoRGB[3][3];
 
-/* 
- * The variables below hard-code the inverse of 
+/*
+ * The variables below hard-code the inverse of
  * the D50-adapted sRGB RGB to XYZ matrix.
- * 
- * In a properly ICC profile color-managed application, 
- * this matrix is the inverse of the matrix 
- * retrieved from the image's ICC profile's RGB colorants. 
- * 
- * */
+ *
+ * In a properly ICC profile color-managed application,
+ * this matrix is the inverse of the matrix
+ * retrieved from the image's ICC profile's RGB colorants.
+ *
+ */
   XYZtoRGB[0][0]=  3.134274799724;
   XYZtoRGB[0][1]= -1.617275708956;
   XYZtoRGB[0][2]= -0.490724283042;
@@ -937,21 +921,18 @@ static void XYZ_to_RGB (double X,
   XYZtoRGB[2][2]=  1.405718224383;
 
 /* Convert XYZ to RGB */
-  *to_R = XYZtoRGB[0][0]*X + XYZtoRGB[0][1]*Y + XYZtoRGB[0][2]*Z;
-  *to_G = XYZtoRGB[1][0]*X + XYZtoRGB[1][1]*Y + XYZtoRGB[1][2]*Z;
-  *to_B = XYZtoRGB[2][0]*X + XYZtoRGB[2][1]*Y + XYZtoRGB[2][2]*Z;
-
+  *to_R = XYZtoRGB[0][0] * X + XYZtoRGB[0][1] * Y + XYZtoRGB[0][2] * Z;
+  *to_G = XYZtoRGB[1][0] * X + XYZtoRGB[1][1] * Y + XYZtoRGB[1][2] * Z;
+  *to_B = XYZtoRGB[2][0] * X + XYZtoRGB[2][1] * Y + XYZtoRGB[2][2] * Z;
 }
 
-static void
+static inline void
 XYZ_to_LAB (double X,
             double Y,
             double Z,
             double *to_L,
             double *to_a,
-            double *to_b
-            )
-            
+            double *to_b)
 {
 
   const double kappa   = 903.3;//24389.0/27.0;
@@ -995,15 +976,15 @@ XYZ_to_LAB (double X,
   *to_L = (116.0 * f_y) - 16.0;
   *to_a = 500.0 * (f_x - f_y);
   *to_b = 200.0 * (f_y - f_z);
-
 }
 
-static void LAB_to_XYZ (double L,
-                        double a,
-                        double b,
-                        double *to_X,
-                        double *to_Y,
-                        double *to_Z)
+static inline void
+LAB_to_XYZ (double L,
+            double a,
+            double b,
+            double *to_X,
+            double *to_Y,
+            double *to_Z)
 {
 
   const double kappa   = 903.3;//24389.0/27.0;
@@ -1026,7 +1007,7 @@ static void LAB_to_XYZ (double L,
  * the illuminant values are hexadecimal-rounded, as are the following 
  * hard-coded D50 ICC profile illuminant values:
  * 
- * */
+ */
   const double X_reference_white = 0.964202880;
   const double Y_reference_white = 1.000000000;
   const double Z_reference_white = 0.824905400;
@@ -1052,21 +1033,16 @@ static void LAB_to_XYZ (double L,
   *to_X = xr * X_reference_white;
   *to_Y = yr * Y_reference_white;
   *to_Z = zr * Z_reference_white;
-
 }
 
-
-/* Call this before using the RGB/CIE color space conversions */
 static void
 rgbcie_init (void)
 {
-  static gboolean initialized = FALSE;
+  static int initialized = 0;
 
   if (!initialized)
     {
       rgbxyzrgb_init ();
-      initialized = TRUE;
+      initialized = 1;
     }
 }
-
-/***********  / RGB/CIE color space conversions *********   */
