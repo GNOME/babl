@@ -5,7 +5,11 @@ the news section both in the README and the webpage.
 
                                                                           -->
 
-2012-03-30 babl-0.1.8                                               </dt><dd>
+2012-03-30 babl-0.1.12                                              </dt><dd>
+optimizations for floating point conversions, HSV and HSL color models,
+removal of dead code, fixed CIE Lab conversions.
+                                                                    </dd><dt>
+2012-03-30 babl-0.1.10                                              </dt><dd>
 LUT based speedups for gamma correction / uncorrection.
                                                                     </dd><dt>
 2012-03-30 babl-0.1.8                                               </dt><dd>
