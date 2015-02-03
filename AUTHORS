@@ -42,4 +42,25 @@
         <dd>win32 portabilitiy</dd>
   <dt>Sven Claussner</dt>
         <dd>Update DOAP file</dd>
+  <dt>Alexander Larsson</dt>
+        <dd>Math optimizations</dd>
+  <dt>Nils Philippsen</dt>
+        <dd>code cleanups</dd>
+  <dt>Simon Budig</dt>
+  <dd>cleanups</dd>
+
+  <dt>Micheal Muré</dd>
+  <dd>portability fixes</dd>
+
+  <dt>Maxime Nicco</dt>
+    <dl>HSV color model extension</dl>
+  <dt>Teo Mazars</dt>
+        <dd>Color spaces/models in extensions</dd>
+  <dt>Daniel Sabo</dt>
+        <dd>Dead code elimination, general cleanups, </dd>
+  <dt>Michael Henning</dt>
+        <dd>Conversion fixes</dd>
+  <dt>Elle Stone</dt>
+        <dd>Verification and improvements to accuracy of color space
+        conversions.</dd>
 </dl>
