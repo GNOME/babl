@@ -17,15 +17,16 @@
  */
 
 /*
- * These primaries have been adapted for a D50 illuminant.
+ * These sRGB Y values have been adapted to the ICC spec D50 illuminant.
+ * They match the Y values in the GEGL and GIMP built-in sRGB profiles,
+ * which match the Y values in the ArgyllCMS sRGB.icm profile.
  *
- * They were taken from here:
- * http://www.brucelindbloom.com/WorkingSpaceInfo.html#AdaptedPrimaries
- *
- * For more information, see this thread:
+ * For more information, see this thread and these bug reports:
  * https://mail.gnome.org/archives/gimp-developer-list/2013-September/msg00113.html
+ * https://bugzilla.gnome.org/show_bug.cgi?id=723787
+ * https://bugzilla.gnome.org/show_bug.cgi?id=724822
  */
 
-#define RGB_LUMINANCE_RED    (0.222491)
-#define RGB_LUMINANCE_GREEN  (0.716888)
-#define RGB_LUMINANCE_BLUE   (0.060621)
+#define RGB_LUMINANCE_RED    (0.22248840)
+#define RGB_LUMINANCE_GREEN  (0.71690369)
+#define RGB_LUMINANCE_BLUE   (0.06060791)
