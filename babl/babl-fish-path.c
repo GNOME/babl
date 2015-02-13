@@ -300,8 +300,7 @@ babl_fish_path (const Babl *source,
     pc.fish_path = babl;
     pc.to_format = (Babl *) destination;
 
-    if (babl_in_fish_path <= 0)
-      babl_mutex_lock (babl_format_mutex);
+    babl_mutex_lock (babl_format_mutex);
     /* we hold a global lock whilerunning get_conversion_path since
      * it depends on keeping the various format.visited members in
      * a consistent state, this code path is not performance critical
@@ -312,8 +311,7 @@ babl_fish_path (const Babl *source,
     get_conversion_path (&pc, (Babl *) source, 0, max_path_length ());
 
     babl_in_fish_path--;
-    if (babl_in_fish_path <= 0)
-      babl_mutex_unlock (babl_format_mutex);
+    babl_mutex_unlock (babl_format_mutex);
     babl_free (pc.current_path);
   }
 
