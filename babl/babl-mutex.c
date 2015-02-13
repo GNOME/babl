@@ -30,7 +30,12 @@ babl_mutex_new (void)
 #ifdef _WIN32
   InitializeCriticalSection (mutex);
 #else
-  pthread_mutex_init (mutex, NULL);
+  pthread_mutexattr_t mutexattr;
+
+  pthread_mutexattr_init (&mutexattr);
+  pthread_mutexattr_settype (&mutexattr, PTHREAD_MUTEX_RECURSIVE);
+  pthread_mutex_init (mutex, &mutexattr);
+  pthread_mutexattr_destroy (&mutexattr);
 #endif
   return mutex;
 }

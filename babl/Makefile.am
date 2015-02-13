@@ -86,7 +86,7 @@ libbabl_@BABL_API_VERSION@_la_LIBADD=\
 	@LTLIBOBJS@
 
 libbabl_@BABL_API_VERSION@_la_LDFLAGS= 		\
-	${no_undefined} $(MATH_LIB)	\
+	${no_undefined} $(MATH_LIB) $(THREAD_LIB) \
 	-version-info $(BABL_LIBRARY_VERSION)
 
 EXTRA_DIST = babl-ref-pixels.inc

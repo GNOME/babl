@@ -254,6 +254,7 @@ AC_MSG_RESULT([$platform_win32])
 AM_CONDITIONAL(PLATFORM_WIN32, test "$platform_win32" = "yes")
 
 MATH_LIB=-lm
+THREAD_LIB=-lpthread
 AC_MSG_CHECKING([for native Win32])
 case "$target_or_host" in
   *-*-mingw*)
@@ -261,6 +262,7 @@ case "$target_or_host" in
     PATH_SEP=';'
     DIR_SEP='\\'
     MATH_LIB=
+    THREAD_LIB=
     ;;
   *)
     os_win32=no
@@ -272,6 +274,7 @@ AC_MSG_RESULT([$os_win32])
 AC_SUBST(PATH_SEP)
 AC_SUBST(DIR_SEP)
 AC_SUBST(MATH_LIB)
+AC_SUBST(THREAD_LIB)
 
 AM_CONDITIONAL(OS_WIN32, test "$os_win32" = "yes")
 AM_CONDITIONAL(OS_UNIX, test "$os_win32" != "yes")

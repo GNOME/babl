@@ -1,7 +1,7 @@
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/babl
 
 LDADD = $(top_builddir)/babl/libbabl-@BABL_API_VERSION@.la \
-	$(MATH_LIB)
+	$(MATH_LIB) $(THREAD_LIB)
 
 if HAVE_SRANDOM
 noinst_PROGRAMS =		\

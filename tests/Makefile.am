@@ -35,7 +35,7 @@ AM_LDFLAGS  = -pthread
 endif
 
 LDADD = $(top_builddir)/babl/libbabl-@BABL_API_VERSION@.la \
-	$(MATH_LIB)
+	$(MATH_LIB) $(THREAD_LIB)
 
 EXTRA_DIST=common.inc
 
