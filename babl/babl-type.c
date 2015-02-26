@@ -108,7 +108,7 @@ babl_type_new (void *first_arg,
         {
           bits = va_arg (varg, int);
           min  = 0;
-          max  = 1 << bits;
+          max  = (1 << bits) - 1;
         }
       else if (!strcmp (arg, "integer"))
         {
