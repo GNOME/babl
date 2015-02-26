@@ -118,14 +118,12 @@ babl_model_new (void *first_argument,
           switch (bablc->class_type)
             {
               case BABL_COMPONENT:
-                component [components] = (BablComponent *) bablc;
-                components++;
-
                 if (components >= BABL_MAX_COMPONENTS)
                   {
                     babl_log ("maximum number of components (%i) exceeded for %s",
                               BABL_MAX_COMPONENTS, assigned_name);
                   }
+                component [components++] = (BablComponent *) bablc;
                 break;
 
               case BABL_MODEL:
