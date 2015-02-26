@@ -73,12 +73,7 @@ babl_type_new (void *first_arg,
   va_list     varg;
   Babl       *babl;
   int         id         = 0;
-  int         is_integer = 0;
   int         bits       = 0;
-  long        min        = 0;
-  long        max        = 255;
-  double      min_val    = 0.0;
-  double      max_val    = 0.0;
   const char *name = first_arg;
   const char *arg;
 
@@ -107,28 +102,26 @@ babl_type_new (void *first_arg,
       else if (!strcmp (arg, "bits"))
         {
           bits = va_arg (varg, int);
-          min  = 0;
-          max  = (1 << bits) - 1;
         }
       else if (!strcmp (arg, "integer"))
         {
-          is_integer = va_arg (varg, int);
+          (void) va_arg (varg, int);
         }
       else if (!strcmp (arg, "min"))
         {
-          min = va_arg (varg, long);
+          (void) va_arg (varg, long);
         }
       else if (!strcmp (arg, "max"))
         {
-          max = va_arg (varg, long);
+          (void) va_arg (varg, long);
         }
       else if (!strcmp (arg, "min_val"))
         {
-          min_val = va_arg (varg, double);
+          (void) va_arg (varg, double);
         }
       else if (!strcmp (arg, "max_val"))
         {
-          max_val = va_arg (varg, double);
+          (void) va_arg (varg, double);
         }
 
       else
@@ -148,7 +141,6 @@ babl_type_new (void *first_arg,
       /* There is an instance already registered by the required id/name,
        * returning the preexistent one instead if it doesn't differ.
        */
-
       if (!is_type_duplicate (babl, bits))
         babl_fatal ("BablType '%s' already registered "
                     "as different type!", name);
@@ -163,9 +155,6 @@ babl_type_new (void *first_arg,
    */
   babl_db_insert (db, babl);
   return babl;
-
-  if (min || max || is_integer || max_val || min_val)
-    return NULL;
 }
 
 
