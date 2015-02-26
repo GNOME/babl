@@ -99,7 +99,7 @@ babl_model_new (void *first_argument,
                 ...)
 {
   va_list        varg;
-  Babl          *babl;
+  Babl          *babl          = NULL;
   int            id            = 0;
   int            components    = 0;
   const char    *arg           = first_argument;
@@ -189,8 +189,7 @@ babl_model_new (void *first_argument,
   if (!components)
     {
       babl_log("no components specified for model '%s'", name);
-      babl_free(name);
-      return NULL;
+      goto out;
     }
 
   babl = babl_db_exist (db, id, name);
@@ -210,6 +209,7 @@ babl_model_new (void *first_argument,
                           "with different components!", name);
     }
 
+ out:
   babl_free (name);
 
   return babl;
