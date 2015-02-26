@@ -113,12 +113,12 @@ babl_model_new (void *first_argument,
     {
       if (BABL_IS_BABL (arg))
         {
-          Babl *babl = (Babl *) arg;
+          Babl *bablc = (Babl *) arg;
 
-          switch (babl->class_type)
+          switch (bablc->class_type)
             {
               case BABL_COMPONENT:
-                component [components] = (BablComponent *) babl;
+                component [components] = (BablComponent *) bablc;
                 components++;
 
                 if (components >= BABL_MAX_COMPONENTS)
@@ -150,7 +150,7 @@ babl_model_new (void *first_argument,
               case BABL_FISH_PATH:
               case BABL_IMAGE:
               case BABL_EXTENSION:
-                babl_log ("%s unexpected", babl_class_name (babl->class_type));
+                babl_log ("%s unexpected", babl_class_name (bablc->class_type));
                 break;
 
               case BABL_SKY: /* shut up compiler */
