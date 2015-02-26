@@ -121,7 +121,8 @@ babl_model_new (void *first_argument,
                 if (components >= BABL_MAX_COMPONENTS)
                   {
                     babl_log ("maximum number of components (%i) exceeded for %s",
-                              BABL_MAX_COMPONENTS, assigned_name);
+                              BABL_MAX_COMPONENTS,
+                              assigned_name ? assigned_name : "(unnamed)");
                   }
                 component [components++] = (BablComponent *) bablc;
                 break;
