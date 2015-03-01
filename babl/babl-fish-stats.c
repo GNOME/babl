@@ -220,6 +220,7 @@ table_source_each (Babl *babl,
     fprintf (output_file, "<dt>bytes/pixel</dt><dd>%i</dd>", babl->format.bytes_per_pixel);
     fprintf (output_file, "<dt>model</dt><dd>%s</dd>", BABL (babl->format.model)->instance.name);
     fprintf (output_file, "<dt>loss</dt><dd>%f</dd>", babl_format_loss (babl));
+    fprintf (output_file, "<dt>planar</dt><dd>%d</dd>", babl->format.planar);
     fprintf (output_file, "<dt>components</dt><dd><table class='nopad'>");
 
     for (i = 0; i < babl->format.components; i++)
