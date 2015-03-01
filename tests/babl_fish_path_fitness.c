@@ -88,6 +88,7 @@ int main (void)
     int i;
 
     for (i = 0; i < babl_formats_count (); i++) printf ("|");printf ("\n");
+    for (i = 0; i < babl_formats_count (); i++) if (i / 100 == 0) printf ("|");else printf ("%i", (i / 100) % 10);printf ("\n");
     for (i = 0; i < babl_formats_count (); i++) if (i / 10 == 0) printf ("|");else printf ("%i", (i / 10) % 10);printf ("\n");
     /* for (i=0;i<babl_formats_count ();i++) printf ("│"); printf ("\n");
        for (i=0;i<babl_formats_count ();i++) if (i/10==0) printf("│"); else printf ("%i", (i/10)%10); printf ("\n");*/
