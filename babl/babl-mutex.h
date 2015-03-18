@@ -20,7 +20,7 @@
 #define _BABL_MUTEX_H
 
 #ifndef _WIN32
-#define __USE_GNU 1
+#define __GNU_SOURCE 1
 #include <pthread.h>
 #else
 #include <windows.h>
