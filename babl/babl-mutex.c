@@ -17,11 +17,9 @@
  */
 
 #include "config.h"
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include "babl-mutex.h"
+
+#include <stdlib.h>
 
 BablMutex  *
 babl_mutex_new (void)
