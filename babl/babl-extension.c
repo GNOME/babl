@@ -251,14 +251,11 @@ babl_extension_load_dir (const char *base_path)
           if (dentry->d_name[0] != '.')
             {
               char       *path = NULL;
-              struct stat st;
               char       *extension;
 
               path = babl_strcat (path, base_path);
               path = babl_strcat (path, BABL_DIR_SEPARATOR);
               path = babl_strcat (path, dentry->d_name);
-
-              stat (path, &st);
 
               if ((extension = strrchr (dentry->d_name, '.')) != NULL &&
                   !strcmp (extension, SHREXT))
