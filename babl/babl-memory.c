@@ -84,16 +84,19 @@ functions_sanity (void)
   if (first_malloc_used != malloc_f ||
       first_free_used != free_f)
     {
+      static int displayed = 0;
+
       if (first_malloc_used == NULL)
         {
           first_malloc_used = malloc_f;
           first_free_used   = free_f;
         }
-      else
+      else if (!displayed)
         {
           fprintf (stderr, "HMM....\nSomething strange is happening,\n%s function pointer changing between invocations in babl.\n",
                    first_malloc_used == malloc_f ? "free" :
                    (first_free_used == free_f ? "malloc" : "malloc and free"));
+          displayed = 1;
         }
     }
 }
