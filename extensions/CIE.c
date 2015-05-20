@@ -415,6 +415,123 @@ lchaba_to_rgba (char *src,
   return n;
 }
 
+#define LAB_EPSILON (216.0f / 24389.0f)
+#define LAB_KAPPA   (24389.0f / 27.0f)
+#define D50_WHITE_REF_X   0.964202880f
+#define D50_WHITE_REF_Y   1.000000000f
+#define D50_WHITE_REF_Z   0.824905400f
+
+static inline float
+cubef (float f)
+{
+  return f * f * f;
+}
+
+static long
+Yaf_to_Laf (float *src,
+            float *dst,
+            long   samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      float yr = src[0];
+      float a  = src[1];
+      float L  = yr > LAB_EPSILON ? 116.0 * cbrtf (yr) - 16 : LAB_KAPPA * yr;
+
+      dst[0] = L;
+      dst[1] = a;
+
+      src += 2;
+      dst += 2;
+    }
+
+  return samples;
+}
+
+static long
+rgbaf_to_Labaf (float *src,
+                float *dst,
+                long   samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      float r = src[0];
+      float g = src[1];
+      float b = src[2];
+      float a = src[3];
+
+      float xr = 0.43603516f / D50_WHITE_REF_X * r + 0.38511658f / D50_WHITE_REF_X * g + 0.14305115f / D50_WHITE_REF_X * b;
+      float yr = 0.22248840f / D50_WHITE_REF_Y * r + 0.71690369f / D50_WHITE_REF_Y * g + 0.06060791f / D50_WHITE_REF_Y * b;
+      float zr = 0.01391602f / D50_WHITE_REF_Z * r + 0.09706116f / D50_WHITE_REF_Z * g + 0.71392822f / D50_WHITE_REF_Z * b;
+
+      float fx = xr > LAB_EPSILON ? cbrtf (xr) : (LAB_KAPPA * xr + 16.0f) / 116.0f;
+      float fy = yr > LAB_EPSILON ? cbrtf (yr) : (LAB_KAPPA * yr + 16.0f) / 116.0f;
+      float fz = zr > LAB_EPSILON ? cbrtf (zr) : (LAB_KAPPA * zr + 16.0f) / 116.0f;
+
+      float L = 116.0f * fy - 16.0f;
+      float A = 500.0f * (fx - fy);
+      float B = 200.0f * (fy - fz);
+
+      dst[0] = L;
+      dst[1] = A;
+      dst[2] = B;
+      dst[3] = a;
+
+      src += 4;
+      dst += 4;
+    }
+
+  return samples;
+}
+
+static long
+Labaf_to_rgbaf (float *src,
+                float *dst,
+                long   samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      float L = src[0];
+      float A = src[1];
+      float B = src[2];
+      float a = src[3];
+
+      float fy = (L + 16.0f) / 116.0f;
+      float fx = fy + A / 500.0f;
+      float fz = fy - B / 200.0f;
+
+      float yr = L > LAB_KAPPA * LAB_EPSILON ? cubef (fy) : L / LAB_KAPPA;
+      float xr = cubef (fx) > LAB_EPSILON ? cubef (fx) : (fx * 116.0f - 16.0f) / LAB_KAPPA;
+      float zr = cubef (fz) > LAB_EPSILON ? cubef (fz) : (fz * 116.0f - 16.0f) / LAB_KAPPA;
+
+      float r =  3.134274799724f * D50_WHITE_REF_X * xr -1.617275708956f * D50_WHITE_REF_Y * yr -0.490724283042f * D50_WHITE_REF_Z * zr;
+      float g = -0.978795575994f * D50_WHITE_REF_X * xr +1.916161689117f * D50_WHITE_REF_Y * yr +0.033453331711f * D50_WHITE_REF_Z * zr;
+      float b =  0.071976988401f * D50_WHITE_REF_X * xr -0.228984974402f * D50_WHITE_REF_Y * yr +1.405718224383f * D50_WHITE_REF_Z * zr;
+
+      dst[0] = r;
+      dst[1] = g;
+      dst[2] = b;
+      dst[3] = a;
+
+      src += 4;
+      dst += 4;
+    }
+
+  return samples;
+}
+
+#undef LAB_EPSILON
+#undef LAB_KAPPA
+#undef D50_WHITE_REF_X
+#undef D50_WHITE_REF_Y
+#undef D50_WHITE_REF_Z
+
 static void
 conversions (void)
 {
@@ -442,7 +559,24 @@ conversions (void)
     "linear", laba_to_rgba,
     NULL
   );
-
+  babl_conversion_new (
+    babl_format ("RGBA float"),
+    babl_format ("CIE Lab alpha float"),
+    "linear", rgbaf_to_Labaf,
+    NULL
+  );
+  babl_conversion_new (
+    babl_format ("CIE Lab alpha float"),
+    babl_format ("RGBA float"),
+    "linear", Labaf_to_rgbaf,
+    NULL
+  );
+  babl_conversion_new (
+    babl_format ("YA float"),
+    babl_format ("CIE L alpha float"),
+    "linear", Yaf_to_Laf,
+    NULL
+  );
   babl_conversion_new (
     babl_model ("RGBA"),
     babl_model ("CIE LCH(ab)"),
@@ -514,6 +648,14 @@ formats (void)
     babl_component ("CIE L"),
     babl_component ("CIE a"),
     babl_component ("CIE b"),
+    babl_component ("A"),
+    NULL);
+
+  babl_format_new (
+    "name", "CIE L alpha float",
+    babl_model ("CIE Lab alpha"),
+    babl_type ("float"),
+    babl_component ("CIE L"),
     babl_component ("A"),
     NULL);
 
