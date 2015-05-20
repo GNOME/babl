@@ -28,6 +28,29 @@
 #define DEGREES_PER_RADIAN (180 / 3.14159265358979323846)
 #define RADIANS_PER_DEGREE (1 / DEGREES_PER_RADIAN)
 
+#define LAB_EPSILON       (216.0 / 24389.0)
+#define LAB_KAPPA         (24389.0 / 27.0)
+
+/* The constants below hard-code the D50-adapted sRGB ICC profile
+ * reference white, aka the ICC profile D50 illuminant.
+ *
+ * In a properly ICC profile color-managed application, the profile
+ * illuminant values should be retrieved from the image's
+ * ICC profile's illuminant.
+ *
+ * At present, the ICC profile illuminant is always D50. This might
+ * change when the next version of the ICC specs is released.
+ *
+ * As encoded in an actual V2 or V4 ICC profile,
+ * the illuminant values are hexadecimal-rounded, as are the following
+ * hard-coded D50 ICC profile illuminant values:
+ */
+
+#define D50_WHITE_REF_X   0.964202880
+#define D50_WHITE_REF_Y   1.000000000
+#define D50_WHITE_REF_Z   0.824905400
+
+
 int init (void);
 
 static void types (void);
@@ -415,12 +438,6 @@ lchaba_to_rgba (char *src,
   return n;
 }
 
-#define LAB_EPSILON (216.0f / 24389.0f)
-#define LAB_KAPPA   (24389.0f / 27.0f)
-#define D50_WHITE_REF_X   0.964202880f
-#define D50_WHITE_REF_Y   1.000000000f
-#define D50_WHITE_REF_Z   0.824905400f
-
 static inline float
 cubef (float f)
 {
@@ -525,12 +542,6 @@ Labaf_to_rgbaf (float *src,
 
   return samples;
 }
-
-#undef LAB_EPSILON
-#undef LAB_KAPPA
-#undef D50_WHITE_REF_X
-#undef D50_WHITE_REF_Y
-#undef D50_WHITE_REF_Z
 
 static void
 conversions (void)
@@ -1076,44 +1087,20 @@ XYZ_to_LAB (double X,
             double *to_a,
             double *to_b)
 {
-
-  const double kappa   = 903.3;//24389.0/27.0;
-  const double epsilon = 0.008856;//216/24389.0;
-  
-/* The constants below hard-code the D50-adapted sRGB ICC profile 
- * reference white, aka the ICC profile D50 illuminant. 
- * 
- * In a properly ICC profile color-managed application, the profile 
- * illuminant values should be retrieved from the image's
- * ICC profile's illuminant.
- * 
- * At present, the ICC profile illuminant is always D50. This might
- * change when the next version of the ICC specs is released.
- * 
- * As encoded in an actual V2 or V4 ICC profile, 
- * the illuminant values are hexadecimal-rounded, as are the following 
- * hard-coded D50 ICC profile illuminant values:
- * 
- * */  
-  const double X_reference_white = 0.964202880;
-  const double Y_reference_white = 1.000000000;
-  const double Z_reference_white = 0.824905400;
- 
-  double x_r = X/X_reference_white;
-  double y_r = Y/Y_reference_white;
-  double z_r = Z/Z_reference_white;
-  
   double f_x, f_y, f_z;
   
-  if (x_r > epsilon) f_x = pow(x_r, 1.0 / 3.0);
-  else ( f_x = ((kappa * x_r) + 16) / 116.0 );
-  
-  if (y_r > epsilon) f_y = pow(y_r, 1.0 / 3.0);
-  else ( f_y = ((kappa * y_r) + 16) / 116.0 );
-  
-  if (z_r > epsilon) f_z = pow(z_r, 1.0 / 3.0);
-  else ( f_z = ((kappa * z_r) + 16) / 116.0 );
+  double x_r = X / D50_WHITE_REF_X;
+  double y_r = Y / D50_WHITE_REF_Y;
+  double z_r = Z / D50_WHITE_REF_Z;
 
+  if (x_r > LAB_EPSILON) f_x = pow(x_r, 1.0 / 3.0);
+  else ( f_x = ((LAB_KAPPA * x_r) + 16) / 116.0 );
+
+  if (y_r > LAB_EPSILON) f_y = pow(y_r, 1.0 / 3.0);
+  else ( f_y = ((LAB_KAPPA * y_r) + 16) / 116.0 );
+
+  if (z_r > LAB_EPSILON) f_z = pow(z_r, 1.0 / 3.0);
+  else ( f_z = ((LAB_KAPPA * z_r) + 16) / 116.0 );
 
   *to_L = (116.0 * f_y) - 16.0;
   *to_a = 500.0 * (f_x - f_y);
@@ -1128,53 +1115,30 @@ LAB_to_XYZ (double L,
             double *to_Y,
             double *to_Z)
 {
-
-  const double kappa   = 903.3;//24389.0/27.0;
-  const double epsilon = 0.008856;//216/24389.0;
-  
   double fy, fx, fz, fx_cubed, fy_cubed, fz_cubed;
   double xr, yr, zr;
-  
-/* The constants below hard-code the D50-adapted sRGB ICC profile 
- * reference white, aka the ICC profile D50 illuminant. 
- * 
- * In a properly ICC profile color-managed application, the profile 
- * illuminant values should be retrieved from the image's
- * ICC profile's illuminant.
- * 
- * At present, the ICC profile illuminant is always D50. This might
- * change when the next version of the ICC specs is released.
- * 
- * As encoded in an actual V2 or V4 ICC profile, 
- * the illuminant values are hexadecimal-rounded, as are the following 
- * hard-coded D50 ICC profile illuminant values:
- * 
- */
-  const double X_reference_white = 0.964202880;
-  const double Y_reference_white = 1.000000000;
-  const double Z_reference_white = 0.824905400;
-  
+
   fy = (L + 16.0) / 116.0;
   fy_cubed = fy*fy*fy;
-  
+
   fz = fy - (b / 200.0);
   fz_cubed = fz*fz*fz;
-  
+
   fx = (a / 500.0) + fy;
   fx_cubed = fx*fx*fx;
-  
-  if (fx_cubed > epsilon) xr = fx_cubed;
-  else xr = ((116.0 * fx) - 16) / kappa;
 
-  if ( L > (kappa * epsilon) ) yr = fy_cubed;
-  else yr = (L / kappa);
+  if (fx_cubed > LAB_EPSILON) xr = fx_cubed;
+  else xr = ((116.0 * fx) - 16) / LAB_KAPPA;
 
-  if (fz_cubed > epsilon) zr = fz_cubed;
-  else zr = ( (116.0 * fz) - 16 ) / kappa;
-  
-  *to_X = xr * X_reference_white;
-  *to_Y = yr * Y_reference_white;
-  *to_Z = zr * Z_reference_white;
+  if ( L > (LAB_KAPPA * LAB_EPSILON) ) yr = fy_cubed;
+  else yr = (L / LAB_KAPPA);
+
+  if (fz_cubed > LAB_EPSILON) zr = fz_cubed;
+  else zr = ( (116.0 * fz) - 16 ) / LAB_KAPPA;
+
+  *to_X = xr * D50_WHITE_REF_X;
+  *to_Y = yr * D50_WHITE_REF_Y;
+  *to_Z = zr * D50_WHITE_REF_Z;
 }
 
 static void
