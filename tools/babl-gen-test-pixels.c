@@ -75,8 +75,14 @@ static void gen_path_pixels (void)
         rand_range_double (1.0, 2.0));
     }
 
-  /* the remaining pixels are 0 */
-  printf ("%a, /* The remaining values default to zero. */ ", 0.0);
+  for (i = 288; i < BABL_PATH_NUM_TEST_PIXELS; i++)
+    {
+      printf ("%a, %a, %a, %a,\n",
+        rand_double (),
+        rand_double (),
+        rand_double (),
+        rand_double ());
+    }
 
   printf ("};\n\n");
 
