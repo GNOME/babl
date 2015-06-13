@@ -85,15 +85,7 @@ babl_type_new (void *first_arg,
       if (!arg)
         break;
 
-      if (BABL_IS_BABL (arg))
-        {
-#ifdef BABL_LOG
-          Babl *babl = (Babl *) arg;
-
-          babl_log ("%s unexpected", babl_class_name (babl->class_type));
-#endif
-        }
-      /* if we didn't point to a babl, we assume arguments to be strings */
+      /* first, we assume arguments to be strings */
       else if (!strcmp (arg, "id"))
         {
           id = va_arg (varg, int);
@@ -124,6 +116,15 @@ babl_type_new (void *first_arg,
           (void) va_arg (varg, double);
         }
 
+      /* if we didn't point to a known string, we assume argument to be babl */
+      else if (BABL_IS_BABL (arg))
+        {
+#ifdef BABL_LOG
+          Babl *babl = (Babl *) arg;
+
+          babl_log ("%s unexpected", babl_class_name (babl->class_type));
+#endif
+        }
       else
         {
           babl_fatal ("unhandled argument '%s' for format '%s'", arg, name);
