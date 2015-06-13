@@ -314,7 +314,29 @@ babl_format_new (const void *first_arg,
 
   while (1)
     {
-      if (BABL_IS_BABL (arg))
+      /* first, we assume arguments to be strings */
+      if (!strcmp (arg, "id"))
+        {
+          id = va_arg (varg, int);
+        }
+
+      else if (!strcmp (arg, "name"))
+        {
+          name = babl_strdup (va_arg (varg, char *));
+        }
+
+      else if (!strcmp (arg, "packed"))
+        {
+          planar = 0;
+        }
+
+      else if (!strcmp (arg, "planar"))
+        {
+          planar = 1;
+        }
+
+      /* if we didn't point to a known string, we assume argument to be babl */
+      else if (BABL_IS_BABL (arg))
         {
           Babl *babl = (Babl *) arg;
 
@@ -376,26 +398,6 @@ babl_format_new (const void *first_arg,
               case BABL_SKY: /* shut up compiler */
                 break;
             }
-        }
-      /* if we didn't point to a babl, we assume arguments to be strings */
-      else if (!strcmp (arg, "id"))
-        {
-          id = va_arg (varg, int);
-        }
-
-      else if (!strcmp (arg, "name"))
-        {
-          name = babl_strdup (va_arg (varg, char *));
-        }
-
-      else if (!strcmp (arg, "packed"))
-        {
-          planar = 0;
-        }
-
-      else if (!strcmp (arg, "planar"))
-        {
-          planar = 1;
         }
 
       else
