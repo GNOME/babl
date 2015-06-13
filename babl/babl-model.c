@@ -111,7 +111,19 @@ babl_model_new (void *first_argument,
 
   while (1)
     {
-      if (BABL_IS_BABL (arg))
+      /* first, we assume arguments to be strings */
+      if (!strcmp (arg, "id"))
+        {
+          id = va_arg (varg, int);
+        }
+
+      else if (!strcmp (arg, "name"))
+        {
+          assigned_name = va_arg (varg, char *);
+        }
+
+      /* if we didn't point to a known string, we assume argument to be babl */
+      else if (BABL_IS_BABL (arg))
         {
           Babl *bablc = (Babl *) arg;
 
@@ -155,16 +167,6 @@ babl_model_new (void *first_argument,
               case BABL_SKY: /* shut up compiler */
                 break;
             }
-        }
-      /* if we didn't point to a babl, we assume arguments to be strings */
-      else if (!strcmp (arg, "id"))
-        {
-          id = va_arg (varg, int);
-        }
-
-      else if (!strcmp (arg, "name"))
-        {
-          assigned_name = va_arg (varg, char *);
         }
 
       else
