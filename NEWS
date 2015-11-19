@@ -5,7 +5,10 @@ the news section both in the README and the webpage.
 
                                                                           -->
 
-2012-03-30 babl-0.1.12                                              </dt><dd>
+2015-11-19 babl-0.1.14                                              </dt><dd>
+sRGB precision tuning, stability fixes, locale fix for setting error tolerance.
+                                                                    </dd><dt>
+2015-02-03 babl-0.1.12                                              </dt><dd>
 optimizations for floating point conversions, HSV and HSL color models,
 removal of dead code, fixed CIE Lab conversions.
                                                                     </dd><dt>

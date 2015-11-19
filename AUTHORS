@@ -63,4 +63,12 @@
   <dt>Elle Stone</dt>
         <dd>Verification and improvements to accuracy of color space
         conversions.</dd>
+  <dt>Thomas Manni</dt>
+        <dd>CIE related fixups</dd?
+  <dt>Roman Lebedev</dt>
+        <dd>Stability/crasher fixes</dd>
+  <dt>Jon Nordby</dt>
+        <dd>Portability, Stability and more</dd>
+  <dt>Massimo Valentini</dt>
+        <dd>stability fixes</dd>
 </dl>
