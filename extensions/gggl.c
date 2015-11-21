@@ -673,7 +673,7 @@ conv_rgbF_rgbaF (unsigned char *src, unsigned char *dst, long samples)
       *(uint32_t *) dst = (*(uint32_t *) src);
       src           += 4;
       dst           += 4;
-      *(uint32_t *) dst = 1.0;
+      *(float *) dst = 1.0;
       dst           += 4;
     }
   return samples;
