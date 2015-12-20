@@ -31,6 +31,7 @@ ext_LTLIBRARIES = \
 	sse2-float.la   \
 	sse2-int8.la    \
 	sse2-int16.la   \
+	sse4-int8.la    \
 	two-table.la	\
 	ycbcr.la
 
@@ -48,6 +49,7 @@ HSV_la_SOURCES = HSV.c
 sse2_float_la_SOURCES = sse2-float.c
 sse2_int8_la_SOURCES = sse2-int8.c
 sse2_int16_la_SOURCES = sse2-int16.c
+sse4_int8_la_SOURCES = sse4-int8.c
 two_table_la_SOURCES = two-table.c two-table-tables.h
 ycbcr_la_SOURCES = ycbcr.c
 float_la_SOURCES = float.c
@@ -59,3 +61,4 @@ LIBS = $(top_builddir)/babl/libbabl-@BABL_API_VERSION@.la $(MATH_LIB) \
 sse2_float_la_CFLAGS = $(SSE2_EXTRA_CFLAGS)
 sse2_int8_la_CFLAGS = $(SSE2_EXTRA_CFLAGS)
 sse2_int16_la_CFLAGS = $(SSE2_EXTRA_CFLAGS)
+sse4_int8_la_CFLAGS = $(SSE4_1_EXTRA_CFLAGS)
