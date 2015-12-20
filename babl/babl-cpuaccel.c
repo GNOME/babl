@@ -114,7 +114,11 @@ enum
 
 enum
 {
-  ARCH_X86_INTEL_FEATURE_PNI      = 1 << 0
+  ARCH_X86_INTEL_FEATURE_PNI      = 1 << 0,
+  ARCH_X86_INTEL_FEATURE_SSSE3    = 1 << 9,
+  ARCH_X86_INTEL_FEATURE_SSE4_1   = 1 << 19,
+  ARCH_X86_INTEL_FEATURE_SSE4_2   = 1 << 20,
+  ARCH_X86_INTEL_FEATURE_AVX      = 1 << 28
 };
 
 #if !defined(ARCH_X86_64) && (defined(PIC) || defined(__PIC__))
@@ -234,6 +238,12 @@ arch_accel_intel (void)
 
     if (ecx & ARCH_X86_INTEL_FEATURE_PNI)
       caps |= BABL_CPU_ACCEL_X86_SSE3;
+
+    if (ecx & ARCH_X86_INTEL_FEATURE_SSSE3)
+      caps |= BABL_CPU_ACCEL_X86_SSSE3;
+
+    if (ecx & ARCH_X86_INTEL_FEATURE_SSE4_1)
+      caps |= BABL_CPU_ACCEL_X86_SSE4_1;
 #endif /* USE_SSE */
   }
 #endif /* USE_MMX */
@@ -399,7 +409,11 @@ arch_accel (void)
 
 #ifdef USE_SSE
   if ((caps & BABL_CPU_ACCEL_X86_SSE) && !arch_accel_sse_os_support ())
-    caps &= ~(BABL_CPU_ACCEL_X86_SSE | BABL_CPU_ACCEL_X86_SSE2);
+    caps &= ~(BABL_CPU_ACCEL_X86_SSE   |
+              BABL_CPU_ACCEL_X86_SSE2  |
+              BABL_CPU_ACCEL_X86_SSE3  |
+              BABL_CPU_ACCEL_X86_SSSE3 |
+              BABL_CPU_ACCEL_X86_SSE4_1);
 #endif
 
   return caps;
