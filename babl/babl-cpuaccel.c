@@ -118,7 +118,8 @@ enum
   ARCH_X86_INTEL_FEATURE_SSSE3    = 1 << 9,
   ARCH_X86_INTEL_FEATURE_SSE4_1   = 1 << 19,
   ARCH_X86_INTEL_FEATURE_SSE4_2   = 1 << 20,
-  ARCH_X86_INTEL_FEATURE_AVX      = 1 << 28
+  ARCH_X86_INTEL_FEATURE_AVX      = 1 << 28,
+  ARCH_X86_INTEL_FEATURE_F16C     = 1 << 29,
 };
 
 #if !defined(ARCH_X86_64) && (defined(PIC) || defined(__PIC__))
@@ -244,6 +245,9 @@ arch_accel_intel (void)
 
     if (ecx & ARCH_X86_INTEL_FEATURE_SSE4_1)
       caps |= BABL_CPU_ACCEL_X86_SSE4_1;
+
+    if (ecx & ARCH_X86_INTEL_FEATURE_F16C)
+      caps |= BABL_CPU_ACCEL_X86_F16C;
 #endif /* USE_SSE */
   }
 #endif /* USE_MMX */

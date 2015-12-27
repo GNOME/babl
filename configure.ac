@@ -303,6 +303,10 @@ AC_ARG_ENABLE(sse4_1,
   [  --enable-sse4_1            enable SSE4_1 support (default=auto)],,
   enable_sse4_1=$enable_sse)
 
+AC_ARG_ENABLE(f16c,
+  [  --enable-f16c            enable hardware half-float support (default=auto)],,
+  enable_f16c=$enable_sse)
+
 if test "x$enable_mmx" = xyes; then
   BABL_DETECT_CFLAGS(MMX_EXTRA_CFLAGS, '-mmmx')
   SSE_EXTRA_CFLAGS=
@@ -376,6 +380,24 @@ if test "x$enable_mmx" = xyes; then
             AC_MSG_WARN([The assembler does not support the SSE4_1 command set.])
           )
         fi
+      fi
+
+      if test "x$enable_f16c" = xyes; then
+        BABL_DETECT_CFLAGS(f16c_flag, '-mf16c')
+        SSE4_1_EXTRA_CFLAGS="$SSE_EXTRA_CFLAGS $f16c_flag"
+
+        AC_MSG_CHECKING(whether we can compile half-floating point code)
+
+        CFLAGS="$CFLAGS $sse_flag $f16c_flag"
+
+        AC_COMPILE_IFELSE([AC_LANG_PROGRAM([#include <immintrin.h>],[_mm_cvtph_ps ((__m128i)_mm_setzero_ps());])],
+          AC_DEFINE(USE_F16C, 1, [Define to 1 if f16c intrinsics are available.])
+          AC_MSG_RESULT(yes)
+        ,
+          enable_f16c=no
+          AC_MSG_RESULT(no)
+          AC_MSG_WARN([The compiler does not support f16c intrinsics.])
+        )
       fi
 
     fi
