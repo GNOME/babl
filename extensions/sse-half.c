@@ -18,7 +18,7 @@
 
 #include "config.h"
 
-#if defined(USE_SSE4_1) && defined(USE_F16C)
+#if defined(USE_SSE4_1) && defined(USE_F16C) && defined(ARCH_X86_64)
 
 #include <immintrin.h>
 
@@ -131,14 +131,14 @@ conv_rgbaF_rgbaHalf (const float *src, uint16_t *dst, long samples)
   return conv_yF_yHalf (src, dst, samples * 4) / 4;
 }
 
-#endif /* defined(USE_SSE4_1) && defined(USE_F16C) */
+#endif /* defined(USE_SSE4_1) && defined(USE_F16C) && defined(ARCH_X86_64) */
 
 int init (void);
 
 int
 init (void)
 {
-#if defined(USE_SSE4_1) && defined(USE_F16C)
+#if defined(USE_SSE4_1) && defined(USE_F16C) && defined(ARCH_X86_64)
   const Babl *rgbaF_linear = babl_format_new (
     babl_model ("RGBA"),
     babl_type ("float"),
@@ -263,7 +263,7 @@ init (void)
       CONV(yF,       yHalf);
     }
 
-#endif /* defined(USE_SSE4_1) && defined(USE_F16C) */
+#endif /* defined(USE_SSE4_1) && defined(USE_F16C) && defined(ARCH_X86_64) */
 
   return 0;
 }
