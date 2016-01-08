@@ -382,9 +382,11 @@ if test "x$enable_mmx" = xyes; then
         fi
       fi
 
+      CFLAGS="$mmx_save_CFLAGS"
+
       if test "x$enable_f16c" = xyes; then
         BABL_DETECT_CFLAGS(f16c_flag, '-mf16c')
-        SSE4_1_EXTRA_CFLAGS="$SSE_EXTRA_CFLAGS $f16c_flag"
+        F16C_EXTRA_CFLAGS="$SSE_EXTRA_CFLAGS $f16c_flag"
 
         AC_MSG_CHECKING(whether we can compile half-floating point code)
 
@@ -413,6 +415,7 @@ if test "x$enable_mmx" = xyes; then
   AC_SUBST(SSE_EXTRA_CFLAGS)
   AC_SUBST(SSE2_EXTRA_CFLAGS)
   AC_SUBST(SSE4_1_EXTRA_CFLAGS)
+  AC_SUBST(F16C_EXTRA_CFLAGS)
 fi
 
 
