@@ -468,6 +468,42 @@ Yaf_to_Laf (float *src,
 }
 
 static long
+rgbf_to_Labf (float *src,
+              float *dst,
+              long   samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      float r = src[0];
+      float g = src[1];
+      float b = src[2];
+
+      float xr = 0.43603516f / D50_WHITE_REF_X * r + 0.38511658f / D50_WHITE_REF_X * g + 0.14305115f / D50_WHITE_REF_X * b;
+      float yr = 0.22248840f / D50_WHITE_REF_Y * r + 0.71690369f / D50_WHITE_REF_Y * g + 0.06060791f / D50_WHITE_REF_Y * b;
+      float zr = 0.01391602f / D50_WHITE_REF_Z * r + 0.09706116f / D50_WHITE_REF_Z * g + 0.71392822f / D50_WHITE_REF_Z * b;
+
+      float fx = xr > LAB_EPSILON ? cbrtf (xr) : (LAB_KAPPA * xr + 16.0f) / 116.0f;
+      float fy = yr > LAB_EPSILON ? cbrtf (yr) : (LAB_KAPPA * yr + 16.0f) / 116.0f;
+      float fz = zr > LAB_EPSILON ? cbrtf (zr) : (LAB_KAPPA * zr + 16.0f) / 116.0f;
+
+      float L = 116.0f * fy - 16.0f;
+      float A = 500.0f * (fx - fy);
+      float B = 200.0f * (fy - fz);
+
+      dst[0] = L;
+      dst[1] = A;
+      dst[2] = B;
+
+      src += 3;
+      dst += 3;
+    }
+
+  return samples;
+}
+
+static long
 rgbaf_to_Labaf (float *src,
                 float *dst,
                 long   samples)
@@ -500,6 +536,42 @@ rgbaf_to_Labaf (float *src,
 
       src += 4;
       dst += 4;
+    }
+
+  return samples;
+}
+
+static long
+Labf_to_rgbf (float *src,
+                float *dst,
+                long   samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      float L = src[0];
+      float A = src[1];
+      float B = src[2];
+
+      float fy = (L + 16.0f) / 116.0f;
+      float fx = fy + A / 500.0f;
+      float fz = fy - B / 200.0f;
+
+      float yr = L > LAB_KAPPA * LAB_EPSILON ? cubef (fy) : L / LAB_KAPPA;
+      float xr = cubef (fx) > LAB_EPSILON ? cubef (fx) : (fx * 116.0f - 16.0f) / LAB_KAPPA;
+      float zr = cubef (fz) > LAB_EPSILON ? cubef (fz) : (fz * 116.0f - 16.0f) / LAB_KAPPA;
+
+      float r =  3.134274799724f * D50_WHITE_REF_X * xr -1.617275708956f * D50_WHITE_REF_Y * yr -0.490724283042f * D50_WHITE_REF_Z * zr;
+      float g = -0.978795575994f * D50_WHITE_REF_X * xr +1.916161689117f * D50_WHITE_REF_Y * yr +0.033453331711f * D50_WHITE_REF_Z * zr;
+      float b =  0.071976988401f * D50_WHITE_REF_X * xr -0.228984974402f * D50_WHITE_REF_Y * yr +1.405718224383f * D50_WHITE_REF_Z * zr;
+
+      dst[0] = r;
+      dst[1] = g;
+      dst[2] = b;
+
+      src += 3;
+      dst += 3;
     }
 
   return samples;
@@ -568,6 +640,18 @@ conversions (void)
     babl_model ("CIE Lab alpha"),
     babl_model ("RGBA"),
     "linear", laba_to_rgba,
+    NULL
+  );
+  babl_conversion_new (
+    babl_format ("RGB float"),
+    babl_format ("CIE Lab float"),
+    "linear", rgbf_to_Labf,
+    NULL
+  );
+  babl_conversion_new (
+    babl_format ("CIE Lab float"),
+    babl_format ("RGB float"),
+    "linear", Labf_to_rgbf,
     NULL
   );
   babl_conversion_new (
