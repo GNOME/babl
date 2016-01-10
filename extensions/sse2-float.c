@@ -568,6 +568,14 @@ init (void)
     babl_component ("Ba"),
     babl_component ("A"),
     NULL);
+  const Babl *rgbAF_gamma = babl_format_new (
+    babl_model ("R'aG'aB'aA"),
+    babl_type ("float"),
+    babl_component ("R'a"),
+    babl_component ("G'a"),
+    babl_component ("B'a"),
+    babl_component ("A"),
+    NULL);
   const Babl *rgbaF_gamma = babl_format_new (
     babl_model ("R'G'B'A"),
     babl_type ("float"),
@@ -622,6 +630,12 @@ init (void)
                           "linear",
                           conv_rgbaF_linear_rgbAF_linear,
                           NULL);
+
+      babl_conversion_new(rgbaF_gamma, 
+                          rgbAF_gamma,
+                          "linear",
+                          conv_rgbaF_linear_rgbAF_linear,
+                          NULL);
                           
       /* Which of these is faster varies by CPU, and the difference
        * is big enough that it's worthwhile to include both and
@@ -632,6 +646,12 @@ init (void)
                           "linear",
                           conv_rgbAF_linear_rgbaF_linear_shuffle,
                           NULL);
+      babl_conversion_new(rgbAF_gamma, 
+                          rgbaF_gamma,
+                          "linear",
+                          conv_rgbAF_linear_rgbaF_linear_shuffle,
+                          NULL);
+
       babl_conversion_new(rgbAF_linear, 
                           rgbaF_linear,
                           "linear",
