@@ -283,7 +283,7 @@ static void halfp2doubles(void *target, void *source, long numel)
                 *xp++ = (xs | xe | xm); // Combine sign bit, exponent bits, and mantissa bits
             }
         }
-        xp++; // Skip over the remaining 32 bits of the mantissa
+        *xp++ = 0; // Skip over and zero the remaining 32 bits of the mantissa
     }
 }
 
