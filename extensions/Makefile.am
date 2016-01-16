@@ -17,6 +17,7 @@ extdir = $(libdir)/babl-@BABL_API_VERSION@
 ext_LTLIBRARIES = \
 	cairo.la        \
 	CIE.la          \
+    float-half.la   \
 	gegl-fixups.la  \
 	gggl-lies.la    \
 	gggl.la         \
@@ -39,6 +40,7 @@ ext_LTLIBRARIES = \
 cairo_la_SOURCES = cairo.c cairo-tables.h
 CIE_la_SOURCES = CIE.c
 simple_la_SOURCES = simple.c
+float_half_la_SOURCES = float-half.c
 gegl_fixups_la_SOURCES = gegl-fixups.c
 gggl_lies_la_SOURCES = gggl-lies.c
 gggl_la_SOURCES = gggl.c
