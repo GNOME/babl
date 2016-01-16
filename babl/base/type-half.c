@@ -138,6 +138,8 @@ static void halfp2doubles(void *target, void *source, long numel)
     int32_t xes;
     int e;
 
+    if (next)
+      *xp = 0;
     xp += next;  // Little Endian adjustment if necessary
     
     if( source == NULL || target == NULL ) // Nothing to convert (e.g., imag part of pure real)
@@ -175,7 +177,9 @@ static void halfp2doubles(void *target, void *source, long numel)
                 *xp++ = (xs | xe | xm); // Combine sign bit, exponent bits, and mantissa bits
             }
         }
-        *xp++ = 0; // Skip over and zero the remaining 32 bits of the mantissa
+        xp++; // Skip over and zero the remaining 32 bits of the mantissa
+        if (!next)
+          *xp = 0;
     }
 }
 
