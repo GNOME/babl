@@ -50,176 +50,6 @@
  *       gamma correction  (not really,. gamma correction belongs in seperate ops,.
  */
 
-#define USE_TABLES
-#ifdef USE_TABLES
-
-/* lookup tables used in conversion */
-
-static float          table_8_F[1 << 8];
-static float          table_16_F[1 << 16];
-static unsigned char  table_F_8[1 << 16];
-static unsigned short table_F_16[1 << 16];
-
-
-static int table_inited = 0;
-
-static void
-table_init (void)
-{
-  int i;
-
-  if (table_inited)
-    return;
-  table_inited = 1;
-
-  /* fill tables for conversion from integer to float */
-  for (i = 0; i < 1 << 8; i++)
-    {
-      table_8_F[i] = (i * 1.0) / 255.0;
-    }
-  for (i = 0; i < 1 << 16; i++)
-    {
-      table_16_F[i] = (i * 1.0) / 65535.0;
-    }
-  /* fill tables for conversion from float to integer */
-  {
-    union
-    {
-      float          f;
-      unsigned short s[2];
-    } u;
-    u.f = 0.0;
-
-    u.s[0] = 0x8000;
-
-    for (i = 0; i < 1 << 16; i++)
-      {
-        unsigned char  c;
-        unsigned short s;
-
-        u.s[1] = i;
-
-        if (u.f <= 0.0)
-          {
-            c = 0;
-            s = 0;
-          }
-        else if (u.f >= 1.0)
-          {
-            c = 255;
-            s = 65535;
-          }
-        else
-          {
-            c = lrint (u.f * 255.0);
-            s = lrint (u.f * 65535.0);
-          }
-
-        /*fprintf (stderr, "%2.3f=%03i %05i ", f, c, (*hi));
-           / if (! ((*hi)%9))
-           /         fprintf (stderr, "\n"); */
-
-        table_F_8[u.s[1]]  = c;
-        table_F_16[u.s[1]] = s;
-      }
-  }
-  /* fix tables to ensure 1:1 conversions back and forth */
-  if (0)
-    {                           /*FIXME: probably not the right way to do it,.. must sit down and scribble on paper */
-      int i;
-      for (i = 0; i < 256; i++)
-        {
-          float           f  = table_8_F[i];
-          unsigned short *hi = ((unsigned short *) (void *) &f);
-          unsigned short *lo = ((unsigned short *) (void *) &f);
-          *lo              = 0;
-          table_F_8[(*hi)] = i;
-        }
-    }
-}
-
-/* function to find the index in table for a float */
-static unsigned int
-gggl_float_to_index16 (float f)
-{
-  union
-  {
-    float          f;
-    unsigned short s[2];
-  } u;
-  u.f = f;
-  return u.s[1];
-}
-
-
-static long
-conv_F_8 (unsigned char *src, unsigned char *dst, long samples)
-{
-  long n = samples;
-
-  if (!table_inited)
-    table_init ();
-  while (n--)
-    {
-      register float f = (*(float *) src);
-      *(unsigned char *) dst = table_F_8[gggl_float_to_index16 (f)];
-      dst                   += 1;
-      src                   += 4;
-    }
-  return samples;
-}
-
-static long
-conv_F_16 (unsigned char *src, unsigned char *dst, long samples)
-{
-  long n = samples;
-
-  if (!table_inited)
-    table_init ();
-  while (n--)
-    {
-      register float f = (*(float *) src);
-      *(unsigned short *) dst = table_F_16[gggl_float_to_index16 (f)];
-      dst                    += 2;
-      src                    += 4;
-    }
-  return samples;
-}
-
-static long
-conv_8_F (unsigned char *src, unsigned char *dst, long samples)
-{
-  long n = samples;
-
-  if (!table_inited)
-    table_init ();
-  while (n--)
-    {
-      (*(float *) dst) = table_8_F[*(unsigned char *) src];
-      dst             += 4;
-      src             += 1;
-    }
-  return samples;
-}
-
-static long
-conv_16_F (unsigned char *src, unsigned char *dst, long samples)
-{
-  long n = samples;
-
-  if (!table_inited)
-    table_init ();
-  while (n--)
-    {
-      (*(float *) dst) = table_16_F[*(unsigned short *) src];
-      dst             += 4;
-      src             += 2;
-    }
-  return samples;
-}
-
-#else
-
 static long
 conv_F_8 (unsigned char *src, unsigned char *dst, long samples)
 {
@@ -302,9 +132,6 @@ conv_16_F (unsigned char *src, unsigned char *dst, long samples)
   return samples;
 }
 
-
-#endif
-
 static long
 conv_F_D (unsigned char *src, unsigned char *dst, long samples)
 {
@@ -318,7 +145,6 @@ conv_F_D (unsigned char *src, unsigned char *dst, long samples)
     }
   return samples;
 }
-
 
 static long
 conv_D_F (unsigned char *src, unsigned char *dst, long samples)
@@ -1049,11 +875,6 @@ init (void)
   o (rgb8, rgbA8);
   o (rgba8, rgb8);
   o (rgbaF, rgbA8);
-
-#ifdef USE_TABLES
-  if (!table_inited)
-    table_init ();
-#endif
 
   return 0;
 }
