@@ -137,17 +137,15 @@ static void halfp2doubles(void *target, void *source, long numel)
     uint32_t xs, xe, xm;
     int32_t xes;
     int e;
-
-    if (next)
-      *xp = 0;
-    xp += next;  // Little Endian adjustment if necessary
     
     if( source == NULL || target == NULL ) // Nothing to convert (e.g., imag part of pure real)
         return;
     while( numel-- ) {
+        uint32_t x;
+
         h = *hp++;
         if( (h & 0x7FFFu) == 0 ) {  // Signed zero
-            *xp++ = ((uint32_t) h) << 16;  // Return the signed zero
+            x = ((uint32_t) h) << 16;  // Return the signed zero
         } else { // Not zero
             hs = h & 0x8000u;  // Pick off sign bit
             he = h & 0x7C00u;  // Pick off exponent bits
@@ -162,24 +160,26 @@ static void halfp2doubles(void *target, void *source, long numel)
                 xes = ((int32_t) (he >> 10)) - 15 + 1023 - e; // Exponent unbias the halfp, then bias the double
                 xe = (uint32_t) (xes << 20); // Exponent
                 xm = ((uint32_t) (hm & 0x03FFu)) << 10; // Mantissa
-                *xp++ = (xs | xe | xm); // Combine sign bit, exponent bits, and mantissa bits
+                x = (xs | xe | xm); // Combine sign bit, exponent bits, and mantissa bits
             } else if( he == 0x7C00u ) {  // Inf or NaN (all the exponent bits are set)
                 if( hm == 0 ) { // If mantissa is zero ...
-                    *xp++ = (((uint32_t) hs) << 16) | ((uint32_t) 0x7FF00000u); // Signed Inf
+                    x = (((uint32_t) hs) << 16) | ((uint32_t) 0x7FF00000u); // Signed Inf
                 } else {
-                    *xp++ = (uint32_t) 0xFFF80000u; // NaN, only the 1st mantissa bit set
+                    x = (uint32_t) 0xFFF80000u; // NaN, only the 1st mantissa bit set
                 }
             } else {
                 xs = ((uint32_t) hs) << 16; // Sign bit
                 xes = ((int32_t) (he >> 10)) - 15 + 1023; // Exponent unbias the halfp, then bias the double
                 xe = (uint32_t) (xes << 20); // Exponent
                 xm = ((uint32_t) hm) << 10; // Mantissa
-                *xp++ = (xs | xe | xm); // Combine sign bit, exponent bits, and mantissa bits
+                x = (xs | xe | xm); // Combine sign bit, exponent bits, and mantissa bits
             }
         }
-        xp++; // Skip over and zero the remaining 32 bits of the mantissa
-        if (!next)
-          *xp = 0;
+
+       xp[1 - next] = 0;
+       xp[next] = x;
+
+       xp += 2;
     }
 }
 
