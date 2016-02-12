@@ -20,6 +20,8 @@ ext_LTLIBRARIES = \
     float-half.la   \
 	gegl-fixups.la  \
 	gggl-lies.la    \
+	gggl-table.la   \
+	gggl-table-lies.la \
 	gggl.la         \
 	gimp-8bit.la    \
 	grey.la         \
@@ -43,6 +45,8 @@ simple_la_SOURCES = simple.c
 float_half_la_SOURCES = float-half.c
 gegl_fixups_la_SOURCES = gegl-fixups.c
 gggl_lies_la_SOURCES = gggl-lies.c
+gggl_table_lies_la_SOURCES = gggl-table-lies.c
+gggl_table_la_SOURCES = gggl-table.c
 gggl_la_SOURCES = gggl.c
 gimp_8bit_la_SOURCES = gimp-8bit.c
 grey_la_SOURCES = grey.c
