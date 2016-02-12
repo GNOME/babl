@@ -5,6 +5,10 @@ the news section both in the README and the webpage.
 
                                                                           -->
 
+2016-02-12 babl-0.1.16                                              </dt><dd>
+Improvements to half float reference, SIMD, and fast-paths, and CIE float fast
+paths; cleanups of fast path extensions.
+                                                                    </dd><dt>
 2015-11-19 babl-0.1.14                                              </dt><dd>
 sRGB precision tuning, stability fixes, locale fix for setting error tolerance.
                                                                     </dd><dt>
