@@ -114,7 +114,7 @@ conv_rgbAF_linear_rgbaF_linear_shuffle (const float *src, float *dst, long sampl
           float alpha0 = ((float *)s)[3];
           pre_rgba0 = *s;
           
-          if (alpha0 <= 0.0f)
+          if (alpha0 <= BABL_ALPHA_THRESHOLD_FLOAT)
           {
             /* Zero RGB */
             rgba0 = _mm_setzero_ps();
@@ -174,7 +174,7 @@ conv_rgbAF_linear_rgbaF_linear_spin (const float *src, float *dst, long samples)
       const long    n = samples;
       const __v4sf *s = (const __v4sf*) src;
             __v4sf *d = (__v4sf*)dst;
-      const __v4sf zero = _mm_setzero_ps();
+      const __v4sf zero = _mm_set_ss (BABL_ALPHA_THRESHOLD_FLOAT);
       const __v4sf one = _mm_set_ss(1.0f);
 
       for ( ; i < n; i += 1)
