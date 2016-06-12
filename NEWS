@@ -4,7 +4,9 @@ the news section both in the README and the webpage.
 
 
                                                                           -->
-
+2016-06-13 babl-0.1.18                                              </dt><dd>
+Bugfix: take alpha threshold in consideration when processing floats in SSE2.
+                                                                    </dd><dt>
 2016-02-12 babl-0.1.16                                              </dt><dd>
 Improvements to half float reference, SIMD, and fast-paths, and CIE float fast
 paths; cleanups of fast path extensions.
