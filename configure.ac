@@ -283,6 +283,22 @@ AM_CONDITIONAL(OS_UNIX, test "$os_win32" != "yes")
 dnl ===========================================================================
 
 
+#################
+# Check for some not-so-common features
+#################
+
+# babl_fish_reference(), create_name() would like this
+AC_MSG_CHECKING([for __thread])
+AC_LINK_IFELSE([AC_LANG_PROGRAM(, [static __thread char buf[1024];])],
+               [AC_DEFINE(HAVE_TLS, 1,
+                      Define to 1 if compiler supports __thread)
+                AC_MSG_RESULT([yes])],
+               [AC_MSG_RESULT([no])])
+
+
+dnl ===========================================================================
+
+
 ########################
 # Check for MMX assembly
 ########################

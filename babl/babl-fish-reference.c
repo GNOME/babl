@@ -43,6 +43,28 @@ create_name_internal (char *buf,
                    source, destination);
 }
 
+#ifdef HAVE_TLS
+
+static __thread char buf[1024];
+
+static char *
+create_name (const Babl *source,
+             const Babl *destination,
+             int   is_reference)
+{
+  int size = 0;
+
+  size = create_name_internal (buf, sizeof(buf), source, destination, is_reference);
+
+  if (size < 0)
+    return NULL;
+
+  return buf;
+}
+
+
+#else
+
 static char *
 create_name (const Babl *source,
              const Babl *destination,
@@ -72,6 +94,7 @@ create_name (const Babl *source,
   return buf;
 }
 
+#endif
 
 Babl *
 babl_fish_reference (const Babl *source,
@@ -88,7 +111,9 @@ babl_fish_reference (const Babl *source,
       /* There is an instance already registered by the required name,
        * returning the preexistent one instead.
        */
+#ifndef HAVE_TLS
       free (name);
+#endif
       return babl;
     }
 
@@ -117,7 +142,9 @@ babl_fish_reference (const Babl *source,
    * name, inserting newly created class into database.
    */
   babl_db_insert (babl_fish_db (), babl);
+#ifndef HAVE_TLS
   free (name);
+#endif
   return babl;
 }
 
