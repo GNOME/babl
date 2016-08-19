@@ -78,7 +78,7 @@ babl_lookup (BablLookup *lookup,
   else
     return lookup->function (number, lookup->data);
 
-  if (!(lookup->bitmask[i/32] & (1<<(i & 31))))
+  if (!(lookup->bitmask[i/32] & (1UL<<(i & 31))))
     {
       /* XXX: should look up the value in the middle of the range
        *      that yields a given value,
@@ -88,7 +88,7 @@ babl_lookup (BablLookup *lookup,
        *      lookup table.. 
        */
       lookup->table[i]= lookup->function (number, lookup->data);
-      lookup->bitmask[i/32] |= (1<<(i & 31));
+      lookup->bitmask[i/32] |= (1UL<<(i & 31));
     }
 
   return lookup->table[i];
