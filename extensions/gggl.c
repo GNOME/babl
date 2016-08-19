@@ -755,7 +755,7 @@ conv_rgb8_rgba8 (unsigned char *src, unsigned char *dst, long samples)
   long n = samples-1;
   while (n--)
     {
-      *(unsigned int *) dst = (*(unsigned int *) src) | (255 << 24);
+      *(unsigned int *) dst = (*(unsigned int *) src) | (255UL << 24);
       src   += 3;
       dst   += 4;
     }
