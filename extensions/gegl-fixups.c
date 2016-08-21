@@ -181,7 +181,7 @@ conv_F_8g (unsigned char *src, unsigned char *dst, long samples)
 }
 
 
-static INLINE long
+static INLINE long __attribute__((unused))
 conv_8_F (unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
@@ -226,7 +226,7 @@ conv_rgbaF_rgb8 (unsigned char *src, unsigned char *dst, long samples)
 }
 
 
-static INLINE long
+static INLINE long __attribute__((unused))
 conv_rgbaF_rgba8 (unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
@@ -258,14 +258,14 @@ conv_rgbaF_rgba8 (unsigned char *src, unsigned char *dst, long samples)
 
 #define conv_rgbaF_rgbP8    conv_rgbaF_rgba8
 
-static INLINE long
+static INLINE long __attribute__((unused))
 conv_rgbF_rgb8 (unsigned char *src, unsigned char *dst, long samples)
 {
   conv_F_8g (src, dst, samples * 3);
   return samples;
 }
 
-static INLINE long
+static INLINE long __attribute__((unused))
 conv_gaF_ga8 (unsigned char *src, unsigned char *dst, long samples)
 {
   conv_F_8 (src, dst, samples * 2);
