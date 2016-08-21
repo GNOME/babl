@@ -30,7 +30,7 @@ assert_conversion_find (const void *source,
   return ret;
 }
 
-static char *
+static int
 create_name_internal (char *buf,
                       size_t maxlen,
                       const Babl *source,
