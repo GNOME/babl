@@ -167,4 +167,6 @@ int main (int argc, char **argv)
   gen_path_pixels ();
   gen_model_pixels ();
   gen_type_pixels ();
+
+  return 0;
 }
