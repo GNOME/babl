@@ -469,3 +469,12 @@ init (void)
   return 0;
 }
 
+void destroy (void);
+
+void
+destroy (void)
+{
+  free (fast_rpow);
+  free (fast_pow);
+}
+
