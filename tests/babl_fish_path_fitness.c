@@ -84,16 +84,58 @@ int main (void)
 
   babl_set_extender (babl_extension_quiet_log ());
   babl_format_class_for_each (source_each, NULL);
+
   {
     int i;
 
-    for (i = 0; i < babl_formats_count (); i++) printf ("|");printf ("\n");
-    for (i = 0; i < babl_formats_count (); i++) if (i / 100 == 0) printf ("|");else printf ("%i", (i / 100) % 10);printf ("\n");
-    for (i = 0; i < babl_formats_count (); i++) if (i / 10 == 0) printf ("|");else printf ("%i", (i / 10) % 10);printf ("\n");
-    /* for (i=0;i<babl_formats_count ();i++) printf ("│"); printf ("\n");
-       for (i=0;i<babl_formats_count ();i++) if (i/10==0) printf("│"); else printf ("%i", (i/10)%10); printf ("\n");*/
-    for (i = 0; i < babl_formats_count (); i++) printf ("%i", (i) % 10);printf ("\n");
+    for (i = 0; i < babl_formats_count (); i++)
+      printf ("|");
+
+    printf ("\n");
+
+    for (i = 0; i < babl_formats_count (); i++)
+      {
+        if (i / 100 == 0)
+          printf ("|");
+        else
+          printf ("%i", (i / 100) % 10);
+      }
+
+    printf ("\n");
+
+    for (i = 0; i < babl_formats_count (); i++)
+      {
+        if (i / 10 == 0)
+          printf ("|");
+        else
+          printf ("%i", (i / 10) % 10);
+      }
+
+    printf ("\n");
+
+    /*
+    for (i = 0; i < babl_formats_count (); i++)
+      printf ("│");
+
+    printf ("\n");
+
+    for (i = 0; i < babl_formats_count (); i++)
+      {
+        if (i / 10 == 0)
+          printf ("│");
+        else
+          printf ("%i", (i / 10) % 10);
+      }
+
+    printf ("\n");
+    */
+
+    for (i = 0; i < babl_formats_count (); i++)
+      printf ("%i", (i) % 10);
+
+    printf ("\n");
   }
+
   printf ("total length: %i\n", total_length);
   printf ("total cost  : %i\n", total_cost);
   /*printf ("ok / total : %i %i %f\n", ok, total, (1.0*ok) / total);
