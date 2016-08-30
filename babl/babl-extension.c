@@ -346,6 +346,14 @@ babl_extension_load_dir_list (const char *dir_list)
         }
     }
   babl_free (path);
+  if (babl_db_count (db) <= 0)
+  {
+    fprintf (stderr,
+"WARNING: the babl installation seems broken, no extensions found in queried\n"
+"BABL_PATH (%s) this means no SIMD/instructions/special case fast paths and\n"
+"only slow reference conversions are available, applications might still\n"
+"run but software relying on babl for conversions will be slow\n", dir_list);
+  }
 }
 
 #endif
