@@ -346,7 +346,7 @@ babl_extension_load_dir_list (const char *dir_list)
         }
     }
   babl_free (path);
-  if (babl_db_count (db) <= 0)
+  if (babl_db_count (db) <= 1)
   {
     fprintf (stderr,
 "WARNING: the babl installation seems broken, no extensions found in queried\n"
