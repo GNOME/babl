@@ -88,11 +88,11 @@ get_conversion_path (PathContext *pc,
                      int current_length,
                      int max_length);
 
-static char *
-create_name (char       *buf,
-             const Babl *source,
-             const Babl *destination,
-             int         is_reference);
+char *
+_babl_fish_create_name (char       *buf,
+                        const Babl *source,
+                        const Babl *destination,
+                        int         is_reference);
 
 static double legal_error (void);
 
@@ -238,11 +238,11 @@ get_conversion_path (PathContext *pc,
    }
 }
 
-static char *
-create_name (char       *buf,
-             const Babl *source,
-             const Babl *destination,
-             int         is_reference)
+char *
+_babl_fish_create_name (char       *buf,
+                        const Babl *source,
+                        const Babl *destination,
+                        int         is_reference)
 {
   /* fish names are intentionally kept short */
   snprintf (buf, BABL_MAX_NAME_LEN, "%s %p %p", "",
@@ -250,8 +250,11 @@ create_name (char       *buf,
   return buf;
 }
 
-static int
-babl_fish_path_destroy (void *data)
+int
+_babl_fish_path_destroy (void *data);
+
+int
+_babl_fish_path_destroy (void *data)
 {
   Babl *babl=data;
   if (babl->fish_path.conversion_list)
@@ -267,7 +270,7 @@ babl_fish_path (const Babl *source,
   Babl *babl = NULL;
   char name[BABL_MAX_NAME_LEN];
 
-  create_name (name, source, destination, 1);
+  _babl_fish_create_name (name, source, destination, 1);
   babl = babl_db_exist_by_name (babl_fish_db (), name);
   if (babl)
     {
@@ -279,7 +282,7 @@ babl_fish_path (const Babl *source,
 
   babl = babl_calloc (1, sizeof (BablFishPath) +
                       strlen (name) + 1);
-  babl_set_destructor (babl, babl_fish_path_destroy);
+  babl_set_destructor (babl, _babl_fish_path_destroy);
 
   babl->class_type                = BABL_FISH_PATH;
   babl->instance.id               = babl_fish_get_id (source, destination);
