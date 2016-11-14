@@ -18,6 +18,7 @@
 
 #include "config.h"
 #include "babl-internal.h"
+#include "git-version.h"
 
 static int ref_count = 0;
 
@@ -184,8 +185,8 @@ static const char *fish_cache_path (void)
 
 static int compare_fish_pixels (const void *a, const void *b)
 {
-  const Babl **fa = a;
-  const Babl **fb = b;
+  const Babl **fa = (void*)a;
+  const Babl **fb = (void*)b;
   return ((*fb)->fish.pixels - (*fa)->fish.pixels) +
          ((*fb)->fish.processings - (*fa)->fish.processings);
 }
@@ -197,7 +198,7 @@ static void babl_store_db (void)
   FILE *dbfile = fopen (fish_cache_path (), "w");
   if (!dbfile)
     return;
-  fprintf (dbfile, "#babl 0 %i fishes\n", db->babl_list->count);
+  fprintf (dbfile, "#%s\n", BABL_GIT_VERSION);
 
   /* sort the list of fishes by usage, making next run more efficient -
    * and the data easier to approach as source of profiling
