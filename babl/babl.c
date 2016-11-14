@@ -182,6 +182,14 @@ static const char *fish_cache_path (void)
   return "/tmp/babl.db"; // XXX: a $HOME/.cache/babl/fishes path might be better
 }
 
+static int compare_fish_pixels (const void *a, const void *b)
+{
+  const Babl **fa = a;
+  const Babl **fb = b;
+  return ((*fb)->fish.pixels - (*fa)->fish.pixels) +
+         ((*fb)->fish.processings - (*fa)->fish.processings);
+}
+
 static void babl_store_db (void)
 {
   BablDb *db = babl_fish_db ();
@@ -190,6 +198,13 @@ static void babl_store_db (void)
   if (!dbfile)
     return;
   fprintf (dbfile, "#babl 0 %i fishes\n", db->babl_list->count);
+
+  /* sort the list of fishes by usage, making next run more efficient -
+   * and the data easier to approach as source of profiling
+   */
+  qsort (db->babl_list->items, db->babl_list->count,
+         sizeof (Babl*), compare_fish_pixels);
+
   for (i = 0; i< db->babl_list->count; i++)
   {
     Babl *fish = db->babl_list->items[i];
