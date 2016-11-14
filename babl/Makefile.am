@@ -90,4 +90,38 @@ libbabl_@BABL_API_VERSION@_la_LDFLAGS= 		\
 	-version-info $(BABL_LIBRARY_VERSION)
 
 EXTRA_DIST = babl-ref-pixels.inc
-# CLEANFILES =
+
+
+# If git is available, always check if git-version.h should be
+# updated. If git is not available, don't do anything if git-version.h
+# already exists because then we are probably working with a tarball
+# in which case the git-version.h we ship is correct.
+
+libbabl_generated_sources = git-version.h 
+BUILT_SOURCES = git-version.h
+CLEANFILES = git-version.h
+
+git-version.h: update-git-version-header
+	@if test -d "$(top_srcdir)/.git"; then \
+	  git_version="`git --git-dir=$(top_srcdir)/.git describe --always`"; \
+	  git_last_commit_year="`git --git-dir=$(top_srcdir)/.git log -n1 --reverse --pretty=%ci | cut -b 1-4`"; \
+	elif test ! -f "$@"; then \
+	  git_version="Unknown, shouldn't happen"; \
+	  git_last_commit_timestamp=-1; \
+	  git_last_commit_year="`date -u '+%Y'`"; \
+	fi; \
+	if test -n "$$git_version"; then \
+	  echo "#ifndef __GIT_VERSION_H__" > "$@.tmp"; \
+	  echo "#define __GIT_VERSION_H__" >> "$@.tmp"; \
+	  echo "#define BABL_GIT_VERSION \"$$git_version\"" >> "$@.tmp"; \
+	  echo "#define BABL_GIT_LAST_COMMIT_YEAR \"$$git_last_commit_year\"" >> "$@.tmp"; \
+	  echo "#endif /* __GIT_VERSION_H__ */" >> "$@.tmp"; \
+	fi
+	@if ( test -f "$@.tmp" && test -f "$@" && cmp "$@.tmp" "$@" > /dev/null ); then \
+	  rm -f "$@.tmp"; \
+	elif test -f "$@.tmp"; then \
+	  mv "$@.tmp" "$@"; \
+	  echo "  git HEAD changed: $@ regenerated"; \
+	fi
+
+.PHONY: update-git-version-header
