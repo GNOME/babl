@@ -334,11 +334,11 @@ static void babl_init_db (const char *path)
             {
               if (!strncmp (token2, "error=", 6))
               {
-                babl->fish.error = strtod (token2 + 6, NULL);
+                babl->fish.error = babl_parse_double (token2 + 6);
               }
               else if (!strncmp (token2, "cost=", 5))
               {
-                babl->fish_path.cost = strtod (token2 + 5, NULL);
+                babl->fish_path.cost = babl_parse_double (token2 + 5);
               }
               else if (!strncmp (token2, "pixels=", 7))
               {
