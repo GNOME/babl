@@ -350,9 +350,17 @@ static void babl_init_db (const char *path)
           break;
         default:
           if (!from_format)
-            from_format = babl_format (token);
+          {
+            from_format = (void*)babl_db_find(babl_format_db(), &token[1]);
+            if (!from_format)
+              return;
+          }
           else
-            to_format = babl_format (token);
+          {
+            to_format = (void*)babl_db_find(babl_format_db(), &token[1]);
+            if (!to_format)
+              return;
+          }
 
           break;
       }
