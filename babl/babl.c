@@ -351,17 +351,16 @@ static void babl_init_db (const char *path)
         default:
           if (!from_format)
           {
-            from_format = (void*)babl_db_find(babl_format_db(), &token[1]);
+            from_format = (void*)babl_db_find(babl_format_db(), token);
             if (!from_format)
               return;
           }
           else
           {
-            to_format = (void*)babl_db_find(babl_format_db(), &token[1]);
+            to_format = (void*)babl_db_find(babl_format_db(), token);
             if (!to_format)
               return;
           }
-
           break;
       }
       token = strtok_r (NULL, seps, &tokp);
