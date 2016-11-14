@@ -296,6 +296,12 @@ static void babl_init_db (const char *path)
           babl=NULL;
           break;
         case '#':
+          /* if babl has changed in git .. drop whole cache */
+          if (strcmp ( &token[1], BABL_GIT_VERSION))
+          {
+            free (contents);
+            return;
+          }
           break;
         case '\t':
           if (strchr (token, '='))
