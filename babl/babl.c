@@ -151,9 +151,6 @@ babl_fish_serialize (Babl *fish, char *dest, int n)
         snprintf (d, n, " cost=%f", fish->fish_path.cost);
         n -= strlen (d);d += strlen (d);
 
-        snprintf (d, n, " loss=%f", fish->fish_path.loss);
-        n -= strlen (d);d += strlen (d);
-
         snprintf (d, n, "\n");
         n -= strlen (d);d += strlen (d);
 
@@ -342,10 +339,6 @@ static void babl_init_db (const char *path)
               else if (!strncmp (token2, "cost=", 5))
               {
                 babl->fish_path.cost = strtod (token2 + 5, NULL);
-              }
-              else if (!strncmp (token2, "loss=", 5))
-              {
-                babl->fish_path.loss = strtod (token2 + 5, NULL);
               }
               else if (!strncmp (token2, "pixels=", 7))
               {

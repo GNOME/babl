@@ -66,7 +66,6 @@ typedef struct
 {
   BablFish         fish;
   double           cost;   /* number of  ticks *10 + chain_length */
-  double           loss;   /* error introduced */
   BablList         *conversion_list;
 } BablFishPath;
 
