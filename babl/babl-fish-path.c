@@ -271,12 +271,14 @@ babl_fish_path (const Babl *source,
   char name[BABL_MAX_NAME_LEN];
 
   _babl_fish_create_name (name, source, destination, 1);
+  babl_mutex_lock (babl_format_mutex);
   babl = babl_db_exist_by_name (babl_fish_db (), name);
   if (babl)
     {
       /* There is an instance already registered by the required name,
        * returning the preexistent one instead.
        */
+      babl_mutex_unlock (babl_format_mutex);
       return babl;
     }
 
@@ -303,7 +305,6 @@ babl_fish_path (const Babl *source,
     pc.fish_path = babl;
     pc.to_format = (Babl *) destination;
 
-    babl_mutex_lock (babl_format_mutex);
     /* we hold a global lock whilerunning get_conversion_path since
      * it depends on keeping the various format.visited members in
      * a consistent state, this code path is not performance critical
@@ -314,13 +315,13 @@ babl_fish_path (const Babl *source,
     get_conversion_path (&pc, (Babl *) source, 0, max_path_length ());
 
     babl_in_fish_path--;
-    babl_mutex_unlock (babl_format_mutex);
     babl_free (pc.current_path);
   }
 
   if (babl_list_size (babl->fish_path.conversion_list) == 0)
     {
       babl_free (babl);
+      babl_mutex_unlock (babl_format_mutex);
       return NULL;
     }
 
@@ -328,6 +329,7 @@ babl_fish_path (const Babl *source,
    * name, inserting newly created class into database.
    */
   babl_db_insert (babl_fish_db (), babl);
+  babl_mutex_unlock (babl_format_mutex);
   return babl;
 }
 
