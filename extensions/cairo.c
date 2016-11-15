@@ -78,7 +78,7 @@ conv_rgbA8_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
   long n = samples;
   while (n--)
     {
-#define div_255(a) ((((a)+127)+(((a)+127)>>8))>>8)
+#define div_255(a) ((((a)+128)+(((a)+128)>>8))>>8)
       dst[0] = div_255 (src[2] * src[3]);
       dst[1] = div_255 (src[1] * src[3]);
       dst[2] = div_255 (src[0] * src[3]);
