@@ -17,13 +17,40 @@
  */
 
 #include <time.h>
+#include <sys/stat.h>
 #include "config.h"
 #include "babl-internal.h"
 #include "git-version.h"
 
 static const char *fish_cache_path (void)
 {
-  return "/tmp/babl.db"; // XXX: a $HOME/.cache/babl/fishes path might be better
+  // FIXME: need a location for this temporary file on win32
+  struct stat stat_buf;
+  static char resolved[4096];
+  char *ret = NULL;
+  if (getenv ("HOME"))
+  {
+    sprintf (resolved, "%s/.cache/babl/fishes", getenv("HOME"));
+  }
+  else
+  {
+    return "/tmp/babl.db";
+  }
+
+  if (stat (resolved, &stat_buf)==0 && S_ISREG(stat_buf.st_mode))
+    return resolved;
+  ret = strdup (resolved);
+
+  while (strrchr (resolved, '/'))
+  {
+    *strrchr (resolved, '/') = '\0';
+    mkdir (resolved, S_IRWXU);
+  }
+
+  strcpy (resolved, ret);
+  free (ret);
+
+  return resolved;
 }
 
 static char *
