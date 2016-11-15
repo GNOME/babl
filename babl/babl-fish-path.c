@@ -126,7 +126,10 @@ static int max_path_length (void)
   if (env)
     max_length = atoi (env);
   else
-    max_length = 4;
+    max_length = 3; /* reducing this number makes finding short fishes much
+                       faster - even if we lose out on some of the fast
+                       bigger fish
+                     */
   if (max_length > BABL_HARD_MAX_PATH_LENGTH)
     max_length = BABL_HARD_MAX_PATH_LENGTH;
   else if (max_length <= 0)
