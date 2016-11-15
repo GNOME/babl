@@ -29,47 +29,35 @@ static const char *fish_cache_path (void)
 static char *
 babl_fish_serialize (Babl *fish, char *dest, int n)
 {
-  switch (fish->class_type)
-  {
-    case BABL_FISH_PATH:
-      {
-        char *d = dest;
+  char *d = dest;
+  if (fish->class_type != BABL_FISH_PATH)
+    return NULL;
                               
-        snprintf (d, n, "%s\n%s\n",
-        babl_get_name (fish->fish.source),
-        babl_get_name (fish->fish.destination));
-        n -= strlen (d);d += strlen (d);
+  snprintf (d, n, "%s\n%s\n",
+  babl_get_name (fish->fish.source),
+  babl_get_name (fish->fish.destination));
+  n -= strlen (d);d += strlen (d);
 
-        snprintf (d, n, "\terror=%f", fish->fish.error);
-        n -= strlen (d);d += strlen (d);
+  snprintf (d, n, "\terror=%f", fish->fish.error);
+  n -= strlen (d);d += strlen (d);
 
-        snprintf (d, n, " processings=%i", fish->fish.processings);
-        n -= strlen (d);d += strlen (d);
+  snprintf (d, n, " processings=%i", fish->fish.processings);
+  n -= strlen (d);d += strlen (d);
 
-        snprintf (d, n, " pixels=%li", fish->fish.pixels);
-        n -= strlen (d);d += strlen (d);
+  snprintf (d, n, " pixels=%li", fish->fish.pixels);
+  n -= strlen (d);d += strlen (d);
 
-        snprintf (d, n, " cost=%f", fish->fish_path.cost);
-        n -= strlen (d);d += strlen (d);
+  snprintf (d, n, " cost=%f", fish->fish_path.cost);
+  n -= strlen (d);d += strlen (d);
 
-        snprintf (d, n, "\n");
-        n -= strlen (d);d += strlen (d);
+  snprintf (d, n, "\n");
+  n -= strlen (d);d += strlen (d);
 
-        for (int i = 0; i < fish->fish_path.conversion_list->count; i++)
-        {
-          snprintf (d, n, "\t%s\n", 
-            babl_get_name(fish->fish_path.conversion_list->items[i]  ));
-          n -= strlen (d);d += strlen (d);
-        }
-      }
-      break;
-    case BABL_FISH_SIMPLE:   
-      return NULL;
-      break;
-    case BABL_FISH_REFERENCE:
-      return NULL; break;
-    default:
-      break;
+  for (int i = 0; i < fish->fish_path.conversion_list->count; i++)
+  {
+    snprintf (d, n, "\t%s\n", 
+      babl_get_name(fish->fish_path.conversion_list->items[i]  ));
+    n -= strlen (d);d += strlen (d);
   }
 
   return dest;
