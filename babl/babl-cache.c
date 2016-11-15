@@ -16,6 +16,7 @@
  * <http://www.gnu.org/licenses/>.
  */
 
+#include <time.h>
 #include "config.h"
 #include "babl-internal.h"
 #include "git-version.h"
@@ -89,10 +90,11 @@ void babl_store_db (void)
   FILE *dbfile = fopen (fish_cache_path (), "w");
   if (!dbfile)
     return;
-  fprintf (dbfile, "#%s BABL_TOLERANCE=%f\n", BABL_GIT_VERSION, _babl_legal_error ());
+  fprintf (dbfile, "#%s BABL_TOLERANCE=%f\n",
+           BABL_GIT_VERSION, _babl_legal_error ());
 
   /* sort the list of fishes by usage, making next run more efficient -
-   * and the data easier to approach as source of profiling
+   * and the data easier to approach as data for targeted optimization
    */
   qsort (db->babl_list->items, db->babl_list->count,
          sizeof (Babl*), compare_fish_pixels);
@@ -166,6 +168,7 @@ void babl_init_db (void)
   char *tokp;
   const Babl  *from_format = NULL;
   const Babl  *to_format   = NULL;
+  time_t tim = time (NULL);
 #ifdef _WIN32  // XXX: fixme - make this work on windows
   return;
 #endif
@@ -180,9 +183,19 @@ void babl_init_db (void)
       switch (token[0])
       {
         case '-': /* finalize */
-          //fprintf (stderr, "%p %p\n", from_format, to_format);
           if (babl)
-            babl_db_insert (babl_fish_db(), babl);
+          {
+            if ( ((babl->fish.pixels+1 + babl->fish.processings) % 
+                (tim % 100)) == 0)
+            {
+              /* 1% chance of individual cached conversions being dropped -
+               * making sure mis-measured conversions do not
+                 stick around for a long time*/
+              babl_free (babl);
+            }
+            else
+              babl_db_insert (babl_fish_db(), babl);
+          }
           from_format = NULL;
           to_format = NULL;
           babl=NULL;
@@ -191,12 +204,13 @@ void babl_init_db (void)
           /* if babl has changed in git .. drop whole cache */
           {
             char buf[2048];
-            sprintf (buf, "#%s BABL_TOLERANCE=%f", BABL_GIT_VERSION, _babl_legal_error ());
-          if (strcmp ( token, buf))
-          {
-            free (contents);
-            return;
-          }
+            sprintf (buf, "#%s BABL_TOLERANCE=%f",
+                     BABL_GIT_VERSION, _babl_legal_error ());
+            if (strcmp ( token, buf))
+            {
+              free (contents);
+              return;
+            }
           }
           break;
         case '\t':
@@ -217,7 +231,7 @@ void babl_init_db (void)
             }
 
             babl = babl_calloc (1, sizeof (BablFishPath) +
-                      strlen (name) + 1);
+                                strlen (name) + 1);
             babl_set_destructor (babl, _babl_fish_path_destroy);
 
             babl->class_type     = BABL_FISH_PATH;
