@@ -24,6 +24,10 @@
 
 static const char *fish_cache_path (void)
 {
+#ifdef _WIN32  // XXX: fixme - make this work - and be a reasonable location
+               // on windows
+  return "C:\\babl.txt"; 
+#else
   // FIXME: need a location for this temporary file on win32
   struct stat stat_buf;
   static char resolved[4096];
@@ -51,6 +55,7 @@ static const char *fish_cache_path (void)
   free (ret);
 
   return resolved;
+#endif
 }
 
 static char *
