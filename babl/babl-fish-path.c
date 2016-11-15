@@ -94,12 +94,11 @@ _babl_fish_create_name (char       *buf,
                         const Babl *destination,
                         int         is_reference);
 
-static double legal_error (void);
 
 static int max_path_length (void);
 
 
-static double legal_error (void)
+double _babl_legal_error (void)
 {
   static double error = 0.0;
   const char   *env;
@@ -176,9 +175,9 @@ get_conversion_path (PathContext *pc,
           path_error *= (1.0 + babl_conversion_error ((BablConversion *) pc->current_path->items[i]));
         }
 
-      if (path_error - 1.0 <= legal_error ()) /* check this before the next;
-                                                 which does a more accurate
-                                                 measurement of the error */
+      if (path_error - 1.0 <= _babl_legal_error ())
+                /* check this before the more accurate measurement of error -
+                   to bail earlier */
         {
           FishPathInstrumentation fpi;
           memset (&fpi, 0, sizeof (fpi));
@@ -190,7 +189,7 @@ get_conversion_path (PathContext *pc,
 
           if ((path_cost < ref_cost) && /* do not use paths that took longer to compute than reference */
               (path_cost < pc->fish_path->fish_path.cost) &&
-              (path_error <= legal_error ()))
+              (path_error <= _babl_legal_error ()))
             {
               /* We have found the best path so far,
                * let's copy it into our new fish */

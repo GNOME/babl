@@ -58,8 +58,7 @@ babl_fish_serialize (Babl *fish, char *dest, int n)
         {
           snprintf (d, n, "\t%s\n", 
             babl_get_name(fish->fish_path.conversion_list->items[i]  ));
-          n -= strlen (d);
-          d += strlen (d);
+          n -= strlen (d);d += strlen (d);
         }
       }
       break;
@@ -90,7 +89,7 @@ void babl_store_db (void)
   FILE *dbfile = fopen (fish_cache_path (), "w");
   if (!dbfile)
     return;
-  fprintf (dbfile, "#%s\n", BABL_GIT_VERSION);
+  fprintf (dbfile, "#%s BABL_TOLERANCE=%f\n", BABL_GIT_VERSION, _babl_legal_error ());
 
   /* sort the list of fishes by usage, making next run more efficient -
    * and the data easier to approach as source of profiling
@@ -190,10 +189,14 @@ void babl_init_db (void)
           break;
         case '#':
           /* if babl has changed in git .. drop whole cache */
-          if (strcmp ( &token[1], BABL_GIT_VERSION))
+          {
+            char buf[2048];
+            sprintf (buf, "#%s BABL_TOLERANCE=%f", BABL_GIT_VERSION, _babl_legal_error ());
+          if (strcmp ( token, buf))
           {
             free (contents);
             return;
+          }
           }
           break;
         case '\t':
@@ -249,8 +252,7 @@ void babl_init_db (void)
           }
           else
           {
-            Babl *conv =
-                    (void*)babl_db_find(babl_conversion_db(), &token[1]);
+            Babl *conv = (void*)babl_db_find(babl_conversion_db(), &token[1]);
             if (!conv)
             {
               return;
@@ -279,4 +281,3 @@ void babl_init_db (void)
   if (contents)
     free (contents);
 }
-
