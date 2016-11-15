@@ -317,4 +317,7 @@ static inline double babl_parse_double (const char *str)
 }
 
 
+void babl_init_db (void);
+void babl_store_db (void);
+
 #endif

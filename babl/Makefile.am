@@ -8,6 +8,7 @@ SUBDIRS = base
 
 c_sources =				\
 	babl.c				\
+	babl-cache.c		\
 	babl-component.c		\
 	babl-conversion.c		\
 	babl-core.c			\
