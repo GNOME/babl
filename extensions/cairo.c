@@ -17,10 +17,10 @@
  */
 
 #include <stdlib.h>
+#include <stdio.h>
 #include "babl.h"
 
 #include "base/util.h"
-#include "extensions/cairo-tables.h"
 
 int init (void);
 
@@ -90,20 +90,33 @@ conv_rgbA8_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
   return samples;
 }
 
+static unsigned short linear_to_gamma[65536];
+
+static void init_table(void)
+{
+  unsigned int index;
+  static int done = 0;
+  if (done) return;
+  done = 1;
+
+  for (index = 0; index < 65536 * 1; index++)
+  {
+    float value = index / (65535 * 1.0);
+    linear_to_gamma[index] = babl_linear_to_gamma_2_2 (value) * 65536 * 1;
+  }
+}
+
 static inline unsigned char
 conv_rgbafloat_cairo32_map (float value,
                             float alpha)
 {
-  unsigned short index;
-  float result;
-  if (value < 0.0)
-    return 0;
-  else if (value > 1.0)
+  unsigned int index;
+  if (value <= 0.0)
+    return 0x00;
+  if (value >= 1.0)
     return 0xFF;
-  index = (unsigned short)(value * 0xFFFF);
-  result = linear_to_gamma16[index] / 257.0; /* 65535.0 / 255.0 */
-
-  return (result * alpha) + 0.5f;
+  index = (unsigned int)(value * 65535);
+  return linear_to_gamma[index] * alpha / 257 + 0.5f;
 }
 
 static long
@@ -217,6 +230,8 @@ init (void)
     babl_type ("u8"),
     babl_component ("A"),
     NULL
-  );
+    );
+  
+  init_table();
   return 0;
 }

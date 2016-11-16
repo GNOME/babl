@@ -39,7 +39,7 @@ ext_LTLIBRARIES = \
 	two-table.la	\
 	ycbcr.la
 
-cairo_la_SOURCES = cairo.c cairo-tables.h
+cairo_la_SOURCES = cairo.c
 CIE_la_SOURCES = CIE.c
 simple_la_SOURCES = simple.c
 float_half_la_SOURCES = float-half.c
