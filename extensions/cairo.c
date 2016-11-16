@@ -102,13 +102,25 @@ static void init_table(void)
   for (index = 0; index < 65536 * 1; index++)
   {
     float value = index / (65535 * 1.0);
-    linear_to_gamma[index] = babl_linear_to_gamma_2_2 (value) * 65536 * 1;
+    linear_to_gamma[index] = babl_linear_to_gamma_2_2 (value) * 65536;
   }
 }
 
 static inline unsigned char
-conv_rgbafloat_cairo32_map (float value,
-                            float alpha)
+conv_rgbafloat_cairo32_map (float value)
+{
+  unsigned int index;
+  if (value <= 0.0)
+    return 0x00;
+  if (value >= 1.0)
+    return 0xFF;
+  index = (unsigned int)(value * 65535);
+  return linear_to_gamma[index] / 257 + 0.5f;
+}
+
+static inline unsigned char
+conv_rgbafloat_cairo32_map_a (float value,
+                              float alpha)
 {
   unsigned int index;
   if (value <= 0.0)
@@ -118,6 +130,7 @@ conv_rgbafloat_cairo32_map (float value,
   index = (unsigned int)(value * 65535);
   return linear_to_gamma[index] * alpha / 257 + 0.5f;
 }
+
 
 static long
 conv_rgbafloat_cairo32_le (unsigned char *src_char,
@@ -137,16 +150,16 @@ conv_rgbafloat_cairo32_le (unsigned char *src_char,
         {
           if (src[3] >= 1.0)
             {
-              dst[0] = conv_rgbafloat_cairo32_map (src[2], 1.0f);
-              dst[1] = conv_rgbafloat_cairo32_map (src[1], 1.0f);
-              dst[2] = conv_rgbafloat_cairo32_map (src[0], 1.0f);
+              dst[0] = conv_rgbafloat_cairo32_map (src[2]);
+              dst[1] = conv_rgbafloat_cairo32_map (src[1]);
+              dst[2] = conv_rgbafloat_cairo32_map (src[0]);
               dst[3] = 0xFF;
             }
           else
             {
-              dst[0] = conv_rgbafloat_cairo32_map (src[2], src[3]);
-              dst[1] = conv_rgbafloat_cairo32_map (src[1], src[3]);
-              dst[2] = conv_rgbafloat_cairo32_map (src[0], src[3]);
+              dst[0] = conv_rgbafloat_cairo32_map_a (src[2], src[3]);
+              dst[1] = conv_rgbafloat_cairo32_map_a (src[1], src[3]);
+              dst[2] = conv_rgbafloat_cairo32_map_a (src[0], src[3]);
               dst[3] = src[3] * 0xFF + 0.5f;
             }
         }
