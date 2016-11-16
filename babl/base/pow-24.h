@@ -21,5 +21,7 @@
 
 extern double babl_pow_1_24 (double x);
 extern double babl_pow_24 (double x);
+extern float  babl_pow_1_24f (float x);
+extern float  babl_pow_24f (float x);
 
 #endif

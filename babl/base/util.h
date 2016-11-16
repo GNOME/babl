@@ -78,6 +78,14 @@ babl_linear_to_gamma_2_2 (double value)
     return 1.055 * babl_pow_1_24 (value) - 0.055;
   return 12.92 * value;
 }
+static inline float
+babl_linear_to_gamma_2_2f (float value)
+{
+  if (value > 0.003130804954f)
+    return 1.055f * babl_pow_1_24f (value) - 0.055f;
+  return 12.92f * value;
+}
+
 
 static inline double
 babl_gamma_2_2_to_linear (double value)
@@ -85,6 +93,13 @@ babl_gamma_2_2_to_linear (double value)
   if (value > 0.04045)
     return babl_pow_24 ((value + 0.055) / 1.055);
   return value / 12.92;
+}
+static inline float
+babl_gamma_2_2_to_linearf (float value)
+{
+  if (value > 0.04045f)
+    return babl_pow_24f ((value + 0.055f) / 1.055f);
+  return value / 12.92f;
 }
 
 #else
