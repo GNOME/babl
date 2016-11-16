@@ -99,9 +99,9 @@ static void init_table(void)
   if (done) return;
   done = 1;
 
-  for (index = 0; index < 65536 * 1; index++)
+  for (index = 0; index < 65536; index++)
   {
-    float value = index / (65535 * 1.0);
+    float value = index / 65535.5;
     linear_to_gamma[index] = babl_linear_to_gamma_2_2 (value) * 65536;
   }
 }
@@ -114,7 +114,7 @@ conv_rgbafloat_cairo32_map (float value)
     return 0x00;
   if (value >= 1.0)
     return 0xFF;
-  index = (unsigned int)(value * 65535);
+  index = (unsigned int)(value * 65535.5);
   return linear_to_gamma[index] / 257 + 0.5f;
 }
 
@@ -127,7 +127,7 @@ conv_rgbafloat_cairo32_map_a (float value,
     return 0x00;
   if (value >= 1.0)
     return 0xFF;
-  index = (unsigned int)(value * 65535);
+  index = (unsigned int)(value * 65535.5);
   return linear_to_gamma[index] * alpha / 257 + 0.5f;
 }
 
@@ -163,7 +163,6 @@ conv_rgbafloat_cairo32_le (unsigned char *src_char,
               dst[3] = src[3] * 0xFF + 0.5f;
             }
         }
-
       src += 4;
       dst += 4;
     }
