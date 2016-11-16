@@ -193,6 +193,9 @@ void babl_init_db (void)
   return;
 #endif
 
+  if (getenv ("BABL_DEBUG_CONVERSIONS"))
+    return;
+
   babl_file_get_contents (path, &contents, &length, NULL);
   if (!contents)
     return;

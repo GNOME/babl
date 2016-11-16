@@ -84,7 +84,7 @@ long
 babl_process_cost (long ticks_start,
                    long ticks_end)
 {
-  return (ticks_end - ticks_start) * 10 + 1;
+  return (ticks_end - ticks_start);
 }
 
 double

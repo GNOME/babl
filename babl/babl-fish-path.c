@@ -97,6 +97,7 @@ _babl_fish_create_name (char       *buf,
 
 static int max_path_length (void);
 
+static int debug_conversions = 0;
 
 double _babl_legal_error (void)
 {
@@ -111,6 +112,13 @@ double _babl_legal_error (void)
     error = babl_parse_double (env);
   else
     error = BABL_LEGAL_ERROR;
+
+  env = getenv ("BABL_DEBUG_CONVERSIONS");
+  if (env && env[0] != '\0')
+    debug_conversions = 1;
+  else
+    debug_conversions = 0;
+
   return error;
 }
 
@@ -136,7 +144,6 @@ static int max_path_length (void)
     max_length = 1;
   return max_length;
 }
-
 
 /* The task of BablFishPath construction is to compute
  * the shortest path in a graph where formats are the vertices
@@ -189,6 +196,13 @@ get_conversion_path (PathContext *pc,
           fpi.destination = pc->to_format;
 
           get_path_instrumentation (&fpi, pc->current_path, &path_cost, &ref_cost, &path_error);
+          if(debug_conversions && current_length == 1)
+            fprintf (stderr, "%s  error:%f cost:%f  \n", 
+                 babl_get_name (pc->current_path->items[0]),
+                 /*babl_get_name (pc->fish_path->fish.source),
+                 babl_get_name (pc->fish_path->fish.destination),*/
+                 path_error,
+                 path_cost /*, current_length*/);
 
           if ((path_cost < ref_cost) && /* do not use paths that took longer to compute than reference */
               (path_cost < pc->fish_path->fish_path.cost) &&
@@ -212,7 +226,6 @@ get_conversion_path (PathContext *pc,
        */
       BablList *list;
       int i;
-
 
       list = current_format->format.from_list;
       if (list)
@@ -375,7 +388,6 @@ babl_fish_path_process (Babl       *babl,
                                   destination,
                                   dest_bpp,
                                   n);
-
 }
 
 static long
@@ -421,7 +433,6 @@ babl_fish_process (Babl       *babl,
         ret = -1;
         break;
     }
-
   return ret;
 }
 
@@ -681,7 +692,7 @@ get_path_instrumentation (FishPathInstrumentation *fpi,
 
   *path_error = babl_rel_avg_error (fpi->destination_rgba_double,
                                     fpi->ref_destination_rgba_double,
-                                    fpi->num_test_pixels * 4);
+                                     fpi->num_test_pixels * 4);
 
 #if 0
   fpi->fish_rgba_to_source->fish.processings--;
