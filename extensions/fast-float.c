@@ -449,7 +449,7 @@ init (void)
     fast_pow = babl_lookup_new (core_lookup, NULL, 0.0, 1.0,   0.0001);
     fast_rpow = babl_lookup_new (core_rlookup, NULL, 0.0, 1.0, 0.0001);
 
-    for (f = 0.0; f < 1.0; f+= 0.00001)
+    for (f = 0.0; f < 1.0; f+= 0.000012)
       {
         a = linear_to_gamma_2_2_lut (f);
         a = gamma_2_2_to_linear_lut (f);
