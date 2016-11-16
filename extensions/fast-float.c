@@ -222,7 +222,7 @@ static BablLookup *fast_pow = NULL;
 
 static inline float core_lookup (float val, void *userdata)
 {
-  return linear_to_gamma_2_2 (val);
+  return babl_linear_to_gamma_2_2f (val);
 }
 
 static float
@@ -236,7 +236,7 @@ static BablLookup *fast_rpow = NULL;
 
 static inline float core_rlookup (float val, void *userdata)
 {
-  return gamma_2_2_to_linear (val);
+  return babl_gamma_2_2_to_linearf (val);
 }
 
 static float
@@ -265,10 +265,29 @@ conv_rgbaF_linear_rgbAF_gamma (unsigned char *src,
    while (n--)
      {
        float alpha = fsrc[3];
-       *fdst++ = linear_to_gamma_2_2_lut (*fsrc++) * alpha;
-       *fdst++ = linear_to_gamma_2_2_lut (*fsrc++) * alpha;
-       *fdst++ = linear_to_gamma_2_2_lut (*fsrc++) * alpha;
-       *fdst++ = *fsrc++;
+       if (alpha == 1.0)
+       {
+         *fdst++ = linear_to_gamma_2_2_lut (*fsrc++);
+         *fdst++ = linear_to_gamma_2_2_lut (*fsrc++);
+         *fdst++ = linear_to_gamma_2_2_lut (*fsrc++);
+         *fdst++ = *fsrc++;
+       }
+       else if (alpha == 0.0)
+       {
+         *fdst++ = 0.0;
+         *fdst++ = 0.0;
+         *fdst++ = 0.0;
+         *fdst++ = 0.0;
+         fsrc+=4;
+       }
+       else
+       {
+         *fdst++ = linear_to_gamma_2_2_lut (*fsrc++) * alpha;
+         *fdst++ = linear_to_gamma_2_2_lut (*fsrc++) * alpha;
+         *fdst++ = linear_to_gamma_2_2_lut (*fsrc++) * alpha;
+         *fdst++ = alpha;
+         fsrc++;
+       }
      }
   return samples;
 }
@@ -446,10 +465,10 @@ init (void)
     float f;
     float a;
 
-    fast_pow = babl_lookup_new (core_lookup, NULL, 0.0, 1.0,   0.0001);
-    fast_rpow = babl_lookup_new (core_rlookup, NULL, 0.0, 1.0, 0.0001);
+    fast_pow = babl_lookup_new (core_lookup, NULL, 0.0, 1.0,   0.00005);
+    fast_rpow = babl_lookup_new (core_rlookup, NULL, 0.0, 1.0, 0.00005);
 
-    for (f = 0.0; f < 1.0; f+= 0.000012)
+    for (f = 0.0; f < 1.0; f+= 0.0000001)
       {
         a = linear_to_gamma_2_2_lut (f);
         a = gamma_2_2_to_linear_lut (f);
