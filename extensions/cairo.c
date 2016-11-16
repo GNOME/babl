@@ -33,7 +33,7 @@ conv_rgba8_cairo24_le (unsigned char *src, unsigned char *dst, long samples)
       dst[0] = src[2];
       dst[1] = src[1];
       dst[2] = src[0];
-      dst[3] = src[0];
+      dst[3] = 255;
       src+=4;
       dst+=4;
     }
@@ -49,7 +49,7 @@ conv_rgb8_cairo24_le (unsigned char *src, unsigned char *dst, long samples)
       dst[0] = src[2];
       dst[1] = src[1];
       dst[2] = src[0];
-      dst[3] = src[0];
+      dst[3] = 255;
       src+=3;
       dst+=4;
     }
