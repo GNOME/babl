@@ -46,8 +46,6 @@
  * need this piece of code for projects where GPL compatibility
  * was a must.
  *
- * TODO: error diffusion,
- *       gamma correction  (not really,. gamma correction belongs in seperate ops,.
  */
 
 static long
@@ -635,7 +633,7 @@ conv_rgbA8_rgba8 (unsigned char *src, unsigned char *dst, long samples)
         }
       else
         {
-          unsigned int aa = ((255 << 16) + (src[3] >> 1)) / src[3];
+          unsigned int aa = ((255 << 16) - 255) / src[3];
           *dst++ = (src[0] * aa + 0x8000) >> 16;
           *dst++ = (src[1] * aa + 0x8000) >> 16;
           *dst++ = (src[2] * aa + 0x8000) >> 16;
