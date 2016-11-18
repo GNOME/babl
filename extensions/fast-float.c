@@ -39,8 +39,9 @@ typedef struct BablLookup
   BablLookupFunction function;
   void              *data;
   int               shift;
-  uint32_t            positive_min, positive_max, negative_min, negative_max;
-  uint32_t            bitmask[babl_LOOKUP_MAX_ENTRIES/32];
+  uint32_t          positive_min, positive_max, negative_min, negative_max;
+  uint32_t          bitmask[babl_LOOKUP_MAX_ENTRIES/32];
+  int               entries;
   float             table[];
 } BablLookup;
 
@@ -54,44 +55,73 @@ static BablLookup *babl_lookup_new (BablLookupFunction  function,
 static void        babl_lookup_free      (BablLookup         *lookup);
 #endif
 
+#include <string.h>
 
 static inline float
 babl_lookup (BablLookup *lookup,
-             float      number)
+             float       number)
 {
-  union
-  {
-    float   f;
-    uint32_t i;
-  } u;
+  union { float   f; uint32_t i; } u;
+  union { float   f; uint32_t i; } ub;
+  union { float   f; uint32_t i; } ua;
+
   uint32_t i;
+  float dx = 0.0;
 
   u.f = number;
-  i = (u.i << LSHIFT )>> lookup->shift;
+  i = (u.i << LSHIFT ) >> lookup->shift;
 
-  if (i > lookup->positive_min &&
-      i < lookup->positive_max)
+  if (i > lookup->positive_min && i < lookup->positive_max)
+  {
+    ua.i = ((i) << lookup->shift)    >> LSHIFT;
+    ub.i = ((i+ 1) << lookup->shift) >> LSHIFT;
+
     i = i - lookup->positive_min;
-  else if (i > lookup->negative_min &&
-           i < lookup->negative_max)
+  }
+  else if (i > lookup->negative_min && i < lookup->negative_max)
+  {
+
+    ua.i = ((i) << lookup->shift)    >> LSHIFT;
+    ub.i = ((i+ 1) << lookup->shift) >> LSHIFT;
+
     i = i - lookup->negative_min + (lookup->positive_max - lookup->positive_min);
+  }
   else
+  {
     return lookup->function (number, lookup->data);
+  }
+
+  {
+    uint32_t bm =u.i & 0b11000000000000000000000000000000;
+    ua.i |= bm;
+    ub.i |= bm;
+  }
+  dx = (u.f-ua.f) / (ub.f - ua.f);
+
+  {
 
   if (!(lookup->bitmask[i/32] & (1UL<<(i & 31))))
     {
-      /* XXX: should look up the value in the middle of the range
-       *      that yields a given value,
-       *
-       *      potentially even do linear interpolation between
-       *      the two neighbour values to get away with a tiny
-       *      lookup table.. 
-       */
-      lookup->table[i]= lookup->function (number, lookup->data);
+      lookup->table[i]= lookup->function (ua.f, lookup->data);
+      lookup->bitmask[i/32] |= (1UL<<(i & 31));
+    }
+  i++;
+  if (i< lookup->entries-2)
+  {
+    if (!(lookup->bitmask[i/32] & (1UL<<(i & 31))))
+    {
+      lookup->table[i]= lookup->function (ub.f, lookup->data);
       lookup->bitmask[i/32] |= (1UL<<(i & 31));
     }
 
-  return lookup->table[i];
+    return lookup->table[i-1] * (1.0-dx) +
+           lookup->table[i] * (dx);
+  }
+  else
+  {
+    return lookup->table[i-1];
+  }
+  }
 }
 
 static BablLookup *
@@ -215,6 +245,9 @@ babl_lookup_new (BablLookupFunction function,
   lookup->function = function;
   lookup->data = data;
 
+  lookup->entries = (positive_max-positive_min)+
+                    (negative_max-negative_min);
+
   return lookup;
 }
 
@@ -291,6 +324,50 @@ conv_rgbaF_linear_rgbAF_gamma (unsigned char *src,
      }
   return samples;
 }
+
+
+static INLINE long
+conv_rgbaF_linear_rgbA8_gamma (unsigned char *src, 
+                               unsigned char *dst, 
+                               long           samples)
+{
+   float *fsrc = (float *) src;
+   uint8_t *cdst = (uint8_t *) dst;
+   int n = samples;
+
+   while (n--)
+     {
+       float alpha = fsrc[3];
+       if (alpha == 1.0)
+       {
+         *cdst++ = linear_to_gamma_2_2_lut (*fsrc++) * 0xff + 0.5f;
+         *cdst++ = linear_to_gamma_2_2_lut (*fsrc++) * 0xff + 0.5f;
+         *cdst++ = linear_to_gamma_2_2_lut (*fsrc++) * 0xff + 0.5f;
+         *cdst++ = 0xff;
+         fsrc++;
+       }
+       else if (alpha == 0.0)
+       {
+         *cdst++ = 0.0;
+         *cdst++ = 0.0;
+         *cdst++ = 0.0;
+         *cdst++ = 0.0;
+         fsrc+=4;
+       }
+       else
+       {
+         float balpha = alpha * 0xff;
+         *cdst++ = linear_to_gamma_2_2_lut (*fsrc++) * balpha + 0.5f;
+         *cdst++ = linear_to_gamma_2_2_lut (*fsrc++) * balpha + 0.5f;
+         *cdst++ = linear_to_gamma_2_2_lut (*fsrc++) * balpha + 0.5f;
+         *cdst++ = balpha + 0.5;
+         fsrc++;
+       }
+     }
+  return samples;
+}
+
+
 
 static INLINE long
 conv_rgbAF_linear_rgbAF_gamma (unsigned char *src, 
@@ -446,6 +523,16 @@ init (void)
     babl_component ("B'a"),
     babl_component ("A"),
     NULL);
+
+  const Babl *rgbA8_gamma = babl_format_new (
+    babl_model ("R'aG'aB'aA"),
+    babl_type ("u8"),
+    babl_component ("R'a"),
+    babl_component ("G'a"),
+    babl_component ("B'a"),
+    babl_component ("A"),
+    NULL);
+
   const Babl *rgbF_linear = babl_format_new (
     babl_model ("RGB"),
     babl_type ("float"),
@@ -465,8 +552,8 @@ init (void)
     float f;
     float a;
 
-    fast_pow = babl_lookup_new (core_lookup, NULL, 0.0, 1.0,   0.00005);
-    fast_rpow = babl_lookup_new (core_rlookup, NULL, 0.0, 1.0, 0.00005);
+    fast_pow = babl_lookup_new (core_lookup, NULL, 0.0, 1.0,   0.00033);
+    fast_rpow = babl_lookup_new (core_rlookup, NULL, 0.0, 1.0, 0.00033);
 
     for (f = 0.0; f < 1.0; f+= 0.0000001)
       {
@@ -480,10 +567,11 @@ init (void)
 
   o (rgbAF_linear, rgbAF_gamma);
   o (rgbaF_linear, rgbAF_gamma);
+  o (rgbaF_linear, rgbA8_gamma);
   o (rgbaF_linear, rgbaF_gamma);
   o (rgbaF_gamma,  rgbaF_linear);
-  o (rgbF_linear, rgbF_gamma);
-  o (rgbF_gamma,  rgbF_linear);
+  o (rgbF_linear,  rgbF_gamma);
+  o (rgbF_gamma,   rgbF_linear);
 
   return 0;
 }
