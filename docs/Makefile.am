@@ -13,8 +13,7 @@ DIST_SUBDIRS= graphics
 #
 #
 HTML_FILES = index-static.html 	\
-	     index.html		\
-	     BablFishPath.html
+	     index.html		
 
 EXTRA_DIST= 			\
 	babl.css  		\
@@ -24,33 +23,18 @@ EXTRA_DIST= 			\
 	COPYING			\
 	COPYING.LESSER
 
-BUILT_EXTRA_DIST = index.html BablFishPath.html BablFishPath.txt
+BUILT_EXTRA_DIST = index.html 
 
 CLEANFILES = README changelog.rss
 DISTCLEANFILES = index-static.html $(BUILT_EXTRA_DIST)
 
 all: $(HTML_FILES)
 
-
-BablFishPath.html: $(babl_fish_path_dhtml)
-	echo -n "HTML:"
-	echo -n " $@"
-	export BABL_PATH="$(top_builddir)/extensions:$(top_builddir)/extensions/.libs"; $< > $@ &&\
-	echo " [OK]" || echo " Fail"
-
-BablFishPath.txt: $(babl_fish_path_fitness)
-	echo -n "UTF8:"
-	echo -n " $@"
-	export BABL_PATH="$(top_builddir)/extensions:$(top_builddir)/extensions/.libs"; $< > $@ &&\
-	echo " [OK]" || echo " Fail"
-	if [ "x"$$CRUCIBLE_ID != "x" ] ;then echo;echo;cat $@;echo;echo;fi
-
 index.html: index-static.html                    \
 	    $(babl_html_dump) 			 \
 	    $(top_srcdir)/AUTHORS                \
 	    $(top_srcdir)/TODO                   \
 	    $(top_srcdir)/NEWS                   \
-	    BablFishPath.txt			 \
 	    Makefile.am
 	echo -n "HTML: $@"
 	cp $< $@ 
@@ -60,7 +44,6 @@ index.html: index-static.html                    \
 	rm -f $$TMPFILE )
 	echo -n "."
 
-	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ BablFishPath BablFishPath.txt
 	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ AUTHORS $(top_srcdir)/AUTHORS
 	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ TODO $(top_srcdir)/TODO
 	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ NEWS $(top_srcdir)/NEWS

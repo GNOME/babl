@@ -300,11 +300,6 @@ lab_buffer  = malloc (pixel_count * 3 * sizeof (float));
     conversions. Dots indicate a direct conversion is provided for, the height
     of the bar indicates the number of conversions steps needed in a chain of
     conversions. 
-    A <a href='BablFishPath.html'>DHTML version</a> is also available.
-    </p>
-<pre style='font-size:50%;height:30em;overflow:scroll'>
-<!--BablFishPath-->
-</pre>
 
         <a name='Environment'></a>
         <h2>Environment</h2>
