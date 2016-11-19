@@ -19,9 +19,119 @@
 #ifndef _BASE_POW_24_H
 #define _BASE_POW_24_H
 
-extern double babl_pow_1_24 (double x);
-extern double babl_pow_24 (double x);
-extern float  babl_pow_1_24f (float x);
-extern float  babl_pow_24f (float x);
+static double babl_pow_1_24 (double x);
+static double babl_pow_24 (double x);
+static float  babl_pow_1_24f (float x);
+static float  babl_pow_24f (float x);
+
+
+/* a^b = exp(b*log(a))
+ *
+ * Extracting the exponent from a float gives us an approximate log.
+ * Or better yet, reinterpret the bitpattern of the whole float as an int.
+ *
+ * However, the output values of 12throot vary by less than a factor of 2
+ * over the domain we care about, so we only get log() that way, not exp().
+ *
+ * Approximate exp() with a low-degree polynomial; not exactly equal to the
+ * Taylor series since we're minimizing maximum error over a certain finite
+ * domain. It's not worthwhile to use lots of terms, since Newton's method
+ * has a better convergence rate once you get reasonably close to the answer.
+ */
+static inline double
+init_newton (double x, double exponent, double c0, double c1, double c2)
+{
+    int iexp;
+    double y = frexp(x, &iexp);
+    y = 2*y+(iexp-2);
+    c1 *= M_LN2*exponent;
+    c2 *= M_LN2*M_LN2*exponent*exponent;
+    return y = c0 + c1*y + c2*y*y;
+}
+
+/* Returns x^2.4 == (x*(x^(-1/5)))^3, using Newton's method for x^(-1/5).
+ */
+static inline double
+babl_pow_24 (double x)
+{
+  double y = init_newton (x, -1./5, 0.9953189663, 0.9594345146, 0.6742970332);
+  int i;
+  for (i = 0; i < 3; i++)
+    y = (1.+1./5)*y - ((1./5)*x*(y*y))*((y*y)*(y*y));
+  x *= y;
+  return x*x*x;
+}
+
+/* Returns x^(1/2.4) == x*((x^(-1/6))^(1/2))^7, using Newton's method for x^(-1/6).
+ */
+static inline double
+babl_pow_1_24 (double x)
+{
+  double y = init_newton (x, -1./12, 0.9976800269, 0.9885126933, 0.5908575383);
+  int i;
+  double z;
+  x = sqrt (x);
+  /* newton's method for x^(-1/6) */
+  z = (1./6.) * x;
+  for (i = 0; i < 3; i++)
+    y = (7./6.) * y - z * ((y*y)*(y*y)*(y*y*y));
+  return x*y;
+}
+
+//////////////////////////////////////////////
+/* a^b = exp(b*log(a))
+ *
+ * Extracting the exponent from a float gives us an approximate log.
+ * Or better yet, reinterpret the bitpattern of the whole float as an int.
+ *
+ * However, the output values of 12throot vary by less than a factor of 2
+ * over the domain we care about, so we only get log() that way, not exp().
+ *
+ * Approximate exp() with a low-degree polynomial; not exactly equal to the
+ * Taylor series since we're minimizing maximum error over a certain finite
+ * domain. It's not worthwhile to use lots of terms, since Newton's method
+ * has a better convergence rate once you get reasonably close to the answer.
+ */
+static inline float
+init_newtonf (float x, float exponent, float c0, float c1, float c2)
+{
+    int iexp;
+    float y = frexpf(x, &iexp);
+    y = 2*y+(iexp-2);
+    c1 *= M_LN2*exponent;
+    c2 *= M_LN2*M_LN2*exponent*exponent;
+    return y = c0 + c1*y + c2*y*y;
+}
+
+/* Returns x^2.4 == (x*(x^(-1/5)))^3, using Newton's method for x^(-1/5).
+ */
+static inline float
+babl_pow_24f (float x)
+{
+  float y = init_newtonf (x, -1.f/5, 0.9953189663f, 0.9594345146f, 0.6742970332f);
+  int i;
+  for (i = 0; i < 3; i++)
+    y = (1.f+1.f/5)*y - ((1./5)*x*(y*y))*((y*y)*(y*y));
+  x *= y;
+  return x*x*x;
+}
+
+/* Returns x^(1/2.4) == x*((x^(-1/6))^(1/2))^7, using Newton's method for x^(-1/6).
+ */
+static inline float
+babl_pow_1_24f (float x)
+{
+  float y = init_newtonf (x, -1.f/12, 0.9976800269f, 0.9885126933f, 0.5908575383f);
+  int i;
+  float z;
+  x = sqrtf (x);
+  /* newton's method for x^(-1/6) */
+  z = (1.f/6.f) * x;
+  for (i = 0; i < 3; i++)
+    y = (7.f/6.f) * y - z * ((y*y)*(y*y)*(y*y*y));
+  return x*y;
+}
+
+
 
 #endif

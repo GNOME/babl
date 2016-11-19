@@ -18,7 +18,7 @@
 
 #include <math.h>
 #include "util.h"
-
+#if 0
 /* a^b = exp(b*log(a))
  *
  * Extracting the exponent from a float gives us an approximate log.
@@ -125,3 +125,4 @@ babl_pow_1_24f (float x)
     y = (7.f/6.f) * y - z * ((y*y)*(y*y)*(y*y*y));
   return x*y;
 }
+#endif

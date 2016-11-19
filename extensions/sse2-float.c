@@ -244,7 +244,7 @@ conv_rgbAF_linear_rgbaF_linear_spin (const float *src, float *dst, long samples)
 #define FLT_MANTISSA (1<<23)
 
 static inline __v4sf
-init_newton (__v4sf x, double exponent, double c0, double c1, double c2)
+sse_init_newton (__v4sf x, double exponent, double c0, double c1, double c2)
 {
     double norm = exponent*M_LN2/FLT_MANTISSA;
     __v4sf y = _mm_cvtepi32_ps((__m128i)((__v4si)x - splat4i(FLT_ONE)));
@@ -252,10 +252,10 @@ init_newton (__v4sf x, double exponent, double c0, double c1, double c2)
 }
 
 static inline __v4sf
-pow_1_24 (__v4sf x)
+sse_pow_1_24 (__v4sf x)
 {
   __v4sf y, z;
-  y = init_newton (x, -1./12, 0.9976800269, 0.9885126933, 0.5908575383);
+  y = sse_init_newton (x, -1./12, 0.9976800269, 0.9885126933, 0.5908575383);
   x = _mm_sqrt_ps (x);
   /* newton's method for x^(-1/6) */
   z = splat4f (1.f/6.f) * x;
@@ -265,10 +265,10 @@ pow_1_24 (__v4sf x)
 }
 
 static inline __v4sf
-pow_24 (__v4sf x)
+sse_pow_24 (__v4sf x)
 {
   __v4sf y, z;
-  y = init_newton (x, -1./5, 0.9953189663, 0.9594345146, 0.6742970332);
+  y = sse_init_newton (x, -1./5, 0.9953189663, 0.9594345146, 0.6742970332);
   /* newton's method for x^(-1/5) */
   z = splat4f (1.f/5.f) * x;
   y = splat4f (6.f/5.f) * y - z * ((y*y*y)*(y*y*y));
@@ -280,7 +280,7 @@ pow_24 (__v4sf x)
 static inline __v4sf
 linear_to_gamma_2_2_sse2 (__v4sf x)
 {
-  __v4sf curve = pow_1_24 (x) * splat4f (1.055f) - splat4f (0.055f);
+  __v4sf curve = sse_pow_1_24 (x) * splat4f (1.055f) - splat4f (0.055f);
   __v4sf line = x * splat4f (12.92f);
   __v4sf mask = _mm_cmpgt_ps (x, splat4f (0.003130804954f));
   return _mm_or_ps (_mm_and_ps (mask, curve), _mm_andnot_ps (mask, line));
@@ -289,7 +289,7 @@ linear_to_gamma_2_2_sse2 (__v4sf x)
 static inline __v4sf
 gamma_2_2_to_linear_sse2 (__v4sf x)
 {
-  __v4sf curve = pow_24 ((x + splat4f (0.055f)) * splat4f (1/1.055f));
+  __v4sf curve = sse_pow_24 ((x + splat4f (0.055f)) * splat4f (1/1.055f));
   __v4sf line = x * splat4f (1/12.92f);
   __v4sf mask = _mm_cmpgt_ps (x, splat4f (0.04045f));
   return _mm_or_ps (_mm_and_ps (mask, curve), _mm_andnot_ps (mask, line));
