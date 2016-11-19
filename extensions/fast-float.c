@@ -28,7 +28,7 @@
 
 #define INLINE inline
 
-#define  LSHIFT 2
+#define  LSHIFT 4
 
 typedef  float (* BablLookupFunction) (float  value,
                                        void  *data);
@@ -92,7 +92,7 @@ babl_lookup (BablLookup *lookup,
   }
 
   {
-    uint32_t bm =u.i & 0b11000000000000000000000000000000;
+    uint32_t bm =u.i & 0b11110000000000000000000000000000;
     ua.i |= bm;
     ub.i |= bm;
   }
@@ -157,6 +157,8 @@ babl_lookup_new (BablLookupFunction function,
   else if (precision <= 0.000324) shift = 14;
   else if (precision <= 0.000649) shift = 15;
   else shift = 16; /* a bit better than 8bit sRGB quality */
+
+  shift = 16;
 
   /* Adjust slightly away from 0.0, saving many entries close to 0, this
    * causes lookups very close to zero to be passed directly to the
@@ -263,7 +265,6 @@ linear_to_gamma_2_2_lut (float val)
 {
   return babl_lookup (fast_pow, val);
 }
-
 
 static BablLookup *fast_rpow = NULL;
 
@@ -600,8 +601,8 @@ init (void)
     float a;
 
     /* tweaking the precision - does impact speed.. */
-    fast_pow = babl_lookup_new (core_lookup, NULL, 0.0, 1.0,   0.00033);
-    fast_rpow = babl_lookup_new (core_rlookup, NULL, 0.0, 1.0, 0.00033);
+    fast_pow = babl_lookup_new (core_lookup, NULL, 0.0, 1.0,   0.0033);
+    fast_rpow = babl_lookup_new (core_rlookup, NULL, 0.0, 1.0, 0.0033);
 
     for (f = 0.0; f < 1.0; f+= 0.0000001)
       {
