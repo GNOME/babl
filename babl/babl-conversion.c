@@ -543,7 +543,7 @@ babl_conversion_error (BablConversion *conversion)
   babl_free (ref_destination_rgba_double);
 
   conversion->error = error;
-  conversion->cost  = babl_process_cost (ticks_start, ticks_end);
+  conversion->cost  = ticks_end - ticks_start;
 
   return error;
 }

@@ -606,7 +606,7 @@ init_path_instrumentation (FishPathInstrumentation *fpi,
   babl_process (fpi->fish_reference,
                 fpi->source, fpi->ref_destination, fpi->num_test_pixels);
   ticks_end = babl_ticks ();
-  fpi->reference_cost = babl_process_cost (ticks_start, ticks_end);
+  fpi->reference_cost = ticks_end - ticks_start;
 
   /* transform the reference destination buffer to RGBA */
   babl_process (fpi->fish_destination_to_rgba,
@@ -682,7 +682,7 @@ get_path_instrumentation (FishPathInstrumentation *fpi,
   ticks_start = babl_ticks ();
   process_conversion_path (path, fpi->source, source_bpp, fpi->destination, dest_bpp, fpi->num_test_pixels);
   ticks_end = babl_ticks ();
-  *path_cost = babl_process_cost (ticks_start, ticks_end);
+  *path_cost = ticks_end - ticks_start;
 
   /* transform the reference and the actual destination buffers to RGBA
    * for comparison with each other
