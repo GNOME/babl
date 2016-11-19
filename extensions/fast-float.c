@@ -61,17 +61,19 @@ static inline float
 babl_lookup (BablLookup *lookup,
              float       number)
 {
-  union { float f; uint32_t i; } u;
-  union { float f; uint32_t i; } ua;
-  union { float f; uint32_t i; } ub;
+  union { float   f; uint32_t i; } u;
+  union { float   f; uint32_t i; } ub;
+  union { float   f; uint32_t i; } ua;
+
   uint32_t i;
+  float dx = 0.0;
 
   u.f = number;
   i = (u.i << LSHIFT ) >> lookup->shift;
 
   if (i > lookup->positive_min && i < lookup->positive_max)
   {
-    ua.i = ((i   ) << lookup->shift) >> LSHIFT;
+    ua.i = ((i) << lookup->shift)    >> LSHIFT;
     ub.i = ((i+ 1) << lookup->shift) >> LSHIFT;
 
     i = i - lookup->positive_min;
@@ -89,22 +91,23 @@ babl_lookup (BablLookup *lookup,
     return lookup->function (number, lookup->data);
   }
 
-  ua.i |= 0b11110000000000000000000000000000;
+  {
+    uint32_t bm =u.i & 0b11110000000000000000000000000000;
+    ua.i |= bm;
+    ub.i |= bm;
+  }
+  dx = (u.f-ua.f) / (ub.f - ua.f);
+
+  {
 
   if (!(lookup->bitmask[i/32] & (1UL<<(i & 31))))
     {
       lookup->table[i]= lookup->function (ua.f, lookup->data);
       lookup->bitmask[i/32] |= (1UL<<(i & 31));
     }
-
-  if (i< lookup->entries-1)
+  i++;
+  if (i< lookup->entries-2)
   {
-    float dx;
-
-    ub.i |= 0b11110000000000000000000000000000;
-    dx = (u.f-ua.f) / (ub.f - ua.f);
-  
-    i++;
     if (!(lookup->bitmask[i/32] & (1UL<<(i & 31))))
     {
       lookup->table[i]= lookup->function (ub.f, lookup->data);
@@ -116,7 +119,8 @@ babl_lookup (BablLookup *lookup,
   }
   else
   {
-    return lookup->table[i];
+    return lookup->table[i-1];
+  }
   }
 }
 
@@ -154,8 +158,7 @@ babl_lookup_new (BablLookupFunction function,
   else if (precision <= 0.000649) shift = 15;
   else shift = 16; /* a bit better than 8bit sRGB quality */
 
-  shift = 17; /* hard-coded decrease to slow down and increase precision, 
-                 increase to speed up and decease precision */
+  shift = 16;
 
   /* Adjust slightly away from 0.0, saving many entries close to 0, this
    * causes lookups very close to zero to be passed directly to the
@@ -232,9 +235,9 @@ babl_lookup_new (BablLookupFunction function,
         positive_max-=diff;
     }
 
-  lookup = calloc (sizeof (BablLookup) +
-                   sizeof (float) * ((positive_max-positive_min)+
-                                     (negative_max-negative_min)), 1);
+  lookup = calloc (sizeof (BablLookup) + sizeof (float) *
+                                                  ((positive_max-positive_min)+
+                                                   (negative_max-negative_min)), 1);
 
   lookup->positive_min = positive_min;
   lookup->positive_max = positive_max;
@@ -330,7 +333,7 @@ conv_rgbaF_linear_rgbA8_gamma (unsigned char *src,
                                unsigned char *dst, 
                                long           samples)
 {
-   float   *fsrc = (float *) src;
+   float *fsrc = (float *) src;
    uint8_t *cdst = (uint8_t *) dst;
    int n = samples;
 
@@ -344,13 +347,10 @@ conv_rgbaF_linear_rgbA8_gamma (unsigned char *src,
        {
          int val = linear_to_gamma_2_2_lut (red) * 0xff + 0.5f;
          *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-
          val = linear_to_gamma_2_2_lut (green) * 0xff + 0.5f;
          *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-
          val = linear_to_gamma_2_2_lut (blue) * 0xff + 0.5f;
          *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-
          *cdst++ = 0xff;
        }
        else if (alpha <= 0.0)
@@ -361,16 +361,12 @@ conv_rgbaF_linear_rgbA8_gamma (unsigned char *src,
        else
        {
          float balpha = alpha * 0xff;
-
          int val = linear_to_gamma_2_2_lut (red) * balpha + 0.5f;
          *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-
          val = linear_to_gamma_2_2_lut (green) * balpha + 0.5f;
          *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-
          val = linear_to_gamma_2_2_lut (blue) * balpha + 0.5f;
          *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-
          *cdst++ = balpha + 0.5f;
        }
      }
@@ -396,13 +392,10 @@ conv_rgbaF_linear_rgbA8_gamma_cairo (unsigned char *src,
       {
         int val = linear_to_gamma_2_2_lut (blue) * 0xff + 0.5f;
         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-
         val = linear_to_gamma_2_2_lut (green) * 0xff + 0.5f;
         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-
         val = linear_to_gamma_2_2_lut (red) * 0xff + 0.5f;
         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-
         *cdst++ = 0xff;
       }
       else if (alpha <= 0.0)
@@ -413,16 +406,12 @@ conv_rgbaF_linear_rgbA8_gamma_cairo (unsigned char *src,
       else
       {
         float balpha = alpha * 0xff;
-
         int val = linear_to_gamma_2_2_lut (blue) * balpha + 0.5f;
         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-
         val = linear_to_gamma_2_2_lut (green) * balpha + 0.5f;
         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-
         val = linear_to_gamma_2_2_lut (red) * balpha + 0.5f;
         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-
         *cdst++ = balpha + 0.5f;
       }
     }
@@ -627,6 +616,8 @@ init (void)
       f = 2;
 
   }
+
+
   {
      const Babl *f32 = babl_format_new (
         "name", "cairo-ARGB32",
@@ -662,3 +653,4 @@ destroy (void)
   free (fast_rpow);
   free (fast_pow);
 }
+
