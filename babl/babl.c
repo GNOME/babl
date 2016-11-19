@@ -165,18 +165,6 @@ babl_exit (void)
       babl_store_db ();
 #endif
 
-      if (getenv ("BABL_STATS"))
-        {
-          char  logfile_name[] = "/tmp/babl-stats.html";
-          FILE *logfile;
-          logfile = fopen (logfile_name, "w");
-          if (logfile)
-            {
-              babl_fish_stats (logfile);
-              fclose (logfile);
-            }
-        }
-
       babl_extension_deinit ();
       babl_free (babl_extension_db ());;
       babl_free (babl_fish_db ());;

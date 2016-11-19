@@ -84,7 +84,6 @@ long     babl_fish_reference_process    (const Babl *babl,
 Babl   * babl_fish_reference            (const Babl     *source,
                                          const Babl     *destination);
 Babl   * babl_fish_simple               (BablConversion *conversion);
-void     babl_fish_stats                (FILE           *file);
 Babl   * babl_fish_path                 (const Babl     *source,
                                          const Babl     *destination);
 

@@ -42,7 +42,6 @@ EXTRA_DIST=common.inc
 noinst_PROGRAMS =		\
 	introspect		\
 	babl_fish_path_fitness	\
-	babl_fish_path_dhtml	\
 	babl-html-dump		\
 	conversions		\
 	formats			\

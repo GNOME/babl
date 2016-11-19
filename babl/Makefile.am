@@ -17,7 +17,6 @@ c_sources =				\
 	babl-fish-path.c		\
 	babl-fish-reference.c		\
 	babl-fish-simple.c		\
-	babl-fish-stats.c		\
 	babl-fish.c			\
 	babl-format.c			\
 	babl-hash-table.c		\
