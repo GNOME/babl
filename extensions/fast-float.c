@@ -328,6 +328,44 @@ conv_rgbaF_linear_rgbAF_gamma (unsigned char *src,
 }
 
 
+
+static INLINE long
+conv_rgbaF_linear_rgba8_gamma (unsigned char *src, 
+                               unsigned char *dst, 
+                               long           samples)
+{
+   float *fsrc = (float *) src;
+   uint8_t *cdst = (uint8_t *) dst;
+   int n = samples;
+
+   while (n--)
+     {
+       float red   = *fsrc++;
+       float green = *fsrc++;
+       float blue  = *fsrc++;
+       float alpha = *fsrc++;
+       if (alpha <= 0) /* XXX: we need to drop alpha!! ? */
+       {
+       *cdst++ = 0;
+       *cdst++ = 0;
+       *cdst++ = 0;
+       *cdst++ = 0;
+       }
+       else
+       {
+       int val = linear_to_gamma_2_2_lut (red) * 0xff + 0.5f;
+       *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+       val = linear_to_gamma_2_2_lut (green) * 0xff + 0.5f;
+       *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+       val = linear_to_gamma_2_2_lut (blue) * 0xff + 0.5f;
+       *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+       val = alpha * 0xff + 0.5;
+       *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+       }
+     }
+  return samples;
+}
+
 static INLINE long
 conv_rgbaF_linear_rgbA8_gamma (unsigned char *src, 
                                unsigned char *dst, 
@@ -584,6 +622,15 @@ init (void)
     babl_component ("A"),
     NULL);
 
+  const Babl *rgba8_gamma = babl_format_new (
+    babl_model ("R'G'B'A"),
+    babl_type ("u8"),
+    babl_component ("R'"),
+    babl_component ("G'"),
+    babl_component ("B'"),
+    babl_component ("A"),
+    NULL);
+
   const Babl *rgbF_linear = babl_format_new (
     babl_model ("RGB"),
     babl_type ("float"),
@@ -638,6 +685,7 @@ init (void)
   o (rgbAF_linear, rgbAF_gamma);
   o (rgbaF_linear, rgbAF_gamma);
   o (rgbaF_linear, rgbaF_gamma);
+  o (rgbaF_linear, rgba8_gamma);
   o (rgbaF_gamma,  rgbaF_linear);
   o (rgbF_linear,  rgbF_gamma);
   o (rgbF_gamma,   rgbF_linear);
