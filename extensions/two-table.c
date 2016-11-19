@@ -116,6 +116,37 @@ conv_rgbafloat_linear_rgbu8_gamma (unsigned char *src_char,
   return samples;
 }
 
+
+static long
+conv_rgbafloat_linear_rgbau8_gamma (unsigned char *src_char,
+                                    unsigned char *dst,
+                                    long           samples)
+{
+  long   n    = samples;
+  float *src  = (float*)src_char;
+
+  while (n--)
+    {
+      if (src[3] <=0)
+        {
+          dst[0] = 0;
+          dst[1] = 0;
+          dst[2] = 0;
+          dst[3] = 0;
+        }
+      else
+        {
+          dst[0] = conv_float_u8_two_table_map (src[0]);
+          dst[1] = conv_float_u8_two_table_map (src[1]);
+          dst[2] = conv_float_u8_two_table_map (src[2]);
+          dst[3] = src[3] * 0xff + 0.5;
+        }
+      src += 4;
+      dst += 4;
+    }
+  return samples;
+}
+
 static long
 conv_rgbfloat_linear_rgbu8_gamma (unsigned char *src_char,
                                   unsigned char *dst,
@@ -209,6 +240,12 @@ init (void)
                        babl_format ("R'G'B' u8"),
                        "linear",
                        conv_rgbafloat_linear_rgbu8_gamma,
+                       NULL);
+
+  babl_conversion_new (babl_format ("RGBA float"),
+                       babl_format ("R'G'B'A u8"),
+                       "linear",
+                       conv_rgbafloat_linear_rgbau8_gamma,
                        NULL);
 
   babl_conversion_new (babl_format ("RGB float"),
