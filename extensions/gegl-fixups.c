@@ -381,7 +381,6 @@ conv_bgrA8_rgba8 (unsigned char *srcc,
   return samples;
 }
 
-
 static long
 conv_rgbaF_rgbAF (unsigned char *srcc,
                   unsigned char *dstc,
@@ -403,7 +402,6 @@ conv_rgbaF_rgbAF (unsigned char *srcc,
     }
   return samples;
 }
-
 
 static long
 conv_rgbAF_rgbaF (unsigned char *srcc,
@@ -431,7 +429,6 @@ conv_rgbAF_rgbaF (unsigned char *srcc,
     }
   return samples;
 }
-
 
 
 static long
@@ -489,7 +486,6 @@ init (void)
     babl_component ("Ba"),
     babl_component ("A"),
     NULL);
-    
     
   const Babl *gamma_rgbaF = babl_format_new (
     babl_model ("R'G'B'A"),
@@ -554,8 +550,8 @@ init (void)
   o (gamma_rgbAF, gamma_rgbaF);
   
   o (rgbAF, lrgba8);
-  o (rgb8, rgbaF);
-  o (rgb8, rgbAF);
+  o (rgb8,  rgbaF);
+  o (rgb8,  rgbAF);
   o (rgba8, rgbaF);
   o (rgbaF, rgb8);
   o (rgbAF, rgb8);
