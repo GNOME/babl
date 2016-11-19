@@ -114,7 +114,7 @@ babl_lookup (BablLookup *lookup,
       lookup->bitmask[i/32] |= (1UL<<(i & 31));
     }
 
-    return lookup->table[i-1] * (1.0-dx) +
+    return lookup->table[i-1] * (1.0f-dx) +
            lookup->table[i] * (dx);
   }
   else
@@ -338,36 +338,83 @@ conv_rgbaF_linear_rgbA8_gamma (unsigned char *src,
    while (n--)
      {
        float alpha = fsrc[3];
-       if (alpha == 1.0)
+       if (alpha >= 1.0)
        {
-         *cdst++ = linear_to_gamma_2_2_lut (*fsrc++) * 0xff + 0.5f;
-         *cdst++ = linear_to_gamma_2_2_lut (*fsrc++) * 0xff + 0.5f;
-         *cdst++ = linear_to_gamma_2_2_lut (*fsrc++) * 0xff + 0.5f;
+         int val = linear_to_gamma_2_2_lut (fsrc[0]) * 0xff + 0.5f;
+         *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
+         val = linear_to_gamma_2_2_lut (fsrc[1]) * 0xff + 0.5f;
+         *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
+         val = linear_to_gamma_2_2_lut (fsrc[2]) * 0xff + 0.5f;
+         *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
          *cdst++ = 0xff;
-         fsrc++;
+         fsrc+=4;
        }
-       else if (alpha == 0.0)
+       else if (alpha <= 0.0)
        {
-         *cdst++ = 0.0;
-         *cdst++ = 0.0;
-         *cdst++ = 0.0;
-         *cdst++ = 0.0;
+         *((uint32_t*)(cdst))=0;
+	     cdst+=4;
          fsrc+=4;
        }
        else
        {
          float balpha = alpha * 0xff;
-         *cdst++ = linear_to_gamma_2_2_lut (*fsrc++) * balpha + 0.5f;
-         *cdst++ = linear_to_gamma_2_2_lut (*fsrc++) * balpha + 0.5f;
-         *cdst++ = linear_to_gamma_2_2_lut (*fsrc++) * balpha + 0.5f;
-         *cdst++ = balpha + 0.5;
-         fsrc++;
+         int val = linear_to_gamma_2_2_lut (fsrc[0]) * balpha + 0.5f;
+         *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
+         val = linear_to_gamma_2_2_lut (fsrc[1]) * balpha + 0.5f;
+         *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
+         val = linear_to_gamma_2_2_lut (fsrc[2]) * balpha + 0.5f;
+         *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
+         *cdst++ = balpha + 0.5f;
+         fsrc+=4;
        }
      }
   return samples;
 }
 
+static long
+conv_rgbaF_linear_rgbA8_gamma_cairo (unsigned char *src, 
+                               unsigned char *dst, 
+                               long           samples)
+{
+  float *fsrc = (float *) src;
+   unsigned char *cdst = (unsigned char *) dst;
+   int n = samples;
 
+   while (n--)
+     {
+       float alpha = fsrc[3];
+       if (alpha >= 1.0)
+       {
+         int val = linear_to_gamma_2_2_lut (fsrc[2]) * 0xff + 0.5f;
+         *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
+         val = linear_to_gamma_2_2_lut (fsrc[1]) * 0xff + 0.5f;
+         *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
+         val = linear_to_gamma_2_2_lut (fsrc[0]) * 0xff + 0.5f;
+         *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
+         *cdst++ = 0xff;
+         fsrc+=4;
+       }
+       else if (alpha <= 0.0)
+       {
+         *((uint32_t*)(cdst))=0;
+	     cdst+=4;
+         fsrc+=4;
+       }
+       else
+       {
+         float balpha = alpha * 0xff;
+         int val = linear_to_gamma_2_2_lut (fsrc[2]) * balpha + 0.5f;
+         *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
+         val = linear_to_gamma_2_2_lut (fsrc[1]) * balpha + 0.5f;
+         *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
+         val = linear_to_gamma_2_2_lut (fsrc[0]) * balpha + 0.5f;
+         *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
+         *cdst++ = balpha + 0.5f;
+         fsrc+=4;
+       }
+     }
+  return samples;
+}
 
 static INLINE long
 conv_rgbAF_linear_rgbAF_gamma (unsigned char *src, 
@@ -552,6 +599,7 @@ init (void)
     float f;
     float a;
 
+    /* tweaking the precision - does impact speed.. */
     fast_pow = babl_lookup_new (core_lookup, NULL, 0.0, 1.0,   0.00033);
     fast_rpow = babl_lookup_new (core_rlookup, NULL, 0.0, 1.0, 0.00033);
 
@@ -565,9 +613,27 @@ init (void)
 
   }
 
+
+  {
+     const Babl *f32 = babl_format_new (
+        "name", "cairo-ARGB32",
+        babl_model ("R'aG'aB'aA"),
+        babl_type ("u8"),
+        babl_component ("B'a"),
+        babl_component ("G'a"),
+        babl_component ("R'a"),
+        babl_component ("A"),
+        NULL
+      );
+
+
+    babl_conversion_new (rgbaF_linear, f32, "linear", conv_rgbaF_linear_rgbA8_gamma_cairo, NULL);
+  }
+
+    o (rgbaF_linear, rgbA8_gamma);
+
   o (rgbAF_linear, rgbAF_gamma);
   o (rgbaF_linear, rgbAF_gamma);
-  o (rgbaF_linear, rgbA8_gamma);
   o (rgbaF_linear, rgbaF_gamma);
   o (rgbaF_gamma,  rgbaF_linear);
   o (rgbF_linear,  rgbF_gamma);
