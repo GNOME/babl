@@ -18,6 +18,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
 #include "babl.h"
 
 #include "base/util.h"
@@ -90,81 +91,47 @@ conv_rgbA8_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
   return samples;
 }
 
-static unsigned short linear_to_gamma[65536];
-
-static void init_table(void)
-{
-  unsigned int index;
-  static int done = 0;
-  if (done) return;
-  done = 1;
-
-  for (index = 0; index < 65536; index++)
-  {
-    float value = index / 65535.5;
-    linear_to_gamma[index] = babl_linear_to_gamma_2_2 (value) * 65536;
-  }
-}
-
-static inline unsigned char
-conv_rgbafloat_cairo32_map (float value)
-{
-  unsigned int index;
-  if (value <= 0.0)
-    return 0x00;
-  if (value >= 1.0)
-    return 0xFF;
-  index = (unsigned int)(value * 65535.5);
-  return linear_to_gamma[index] / 257 + 0.5f;
-}
-
-static inline unsigned char
-conv_rgbafloat_cairo32_map_a (float value,
-                              float alpha)
-{
-  unsigned int index;
-  if (value <= 0.0)
-    return 0x00;
-  if (value >= 1.0)
-    return 0xFF;
-  index = (unsigned int)(value * 65535.5);
-  return linear_to_gamma[index] * alpha / 257 + 0.5f;
-}
-
-
 static long
-conv_rgbafloat_cairo32_le (unsigned char *src_char,
+conv_rgbafloat_cairo32_le (unsigned char *src,
                            unsigned char *dst,
                            long           samples)
 {
-  long   n   = samples;
-  float *src = (float*)src_char;
+  float *fsrc = (float *) src;
+  unsigned char *cdst = (unsigned char *) dst;
+  int n = samples;
 
   while (n--)
     {
-      if (src[3] < BABL_ALPHA_THRESHOLD)
-        {
-          *(int *)dst = 0;
-        }
+      float alpha = fsrc[3];
+      if (alpha >= 1.0)
+      {
+        int val = babl_linear_to_gamma_2_2f (fsrc[2]) * 0xff + 0.5f;
+        *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
+        val = babl_linear_to_gamma_2_2f (fsrc[1]) * 0xff + 0.5f;
+        *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
+        val = babl_linear_to_gamma_2_2f (fsrc[0]) * 0xff + 0.5f;
+        *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
+        *cdst++ = 0xff;
+        fsrc+=4;
+      }
+      else if (alpha <= 0.0)
+      {
+        (*(uint32_t*)cdst)=0;
+        cdst+=4;
+        fsrc+=4;
+      }
       else
-        {
-          if (src[3] >= 1.0)
-            {
-              dst[0] = conv_rgbafloat_cairo32_map (src[2]);
-              dst[1] = conv_rgbafloat_cairo32_map (src[1]);
-              dst[2] = conv_rgbafloat_cairo32_map (src[0]);
-              dst[3] = 0xFF;
-            }
-          else
-            {
-              dst[0] = conv_rgbafloat_cairo32_map_a (src[2], src[3]);
-              dst[1] = conv_rgbafloat_cairo32_map_a (src[1], src[3]);
-              dst[2] = conv_rgbafloat_cairo32_map_a (src[0], src[3]);
-              dst[3] = src[3] * 0xFF + 0.5f;
-            }
-        }
-      src += 4;
-      dst += 4;
+      {
+        float balpha = alpha * 0xff;
+        int val = babl_linear_to_gamma_2_2f (fsrc[2]) * balpha + 0.5f;
+        *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
+        val = babl_linear_to_gamma_2_2f (fsrc[1]) * balpha + 0.5f;
+        *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
+        val = babl_linear_to_gamma_2_2f (fsrc[0]) * balpha + 0.5f;
+        *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
+        *cdst++ = balpha + 0.5f;
+        fsrc+=4;
+      }
     }
   return samples;
 }
@@ -244,6 +211,5 @@ init (void)
     NULL
     );
   
-  init_table();
   return 0;
 }
