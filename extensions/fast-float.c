@@ -298,13 +298,16 @@ conv_rgbaF_linear_rgbAF_gamma (unsigned char *src,
 
    while (n--)
      {
-       float alpha = fsrc[3];
+       float red   = *fsrc++;
+       float green = *fsrc++;
+       float blue  = *fsrc++;
+       float alpha = *fsrc++;
        if (alpha == 1.0)
        {
-         *fdst++ = linear_to_gamma_2_2_lut (*fsrc++);
-         *fdst++ = linear_to_gamma_2_2_lut (*fsrc++);
-         *fdst++ = linear_to_gamma_2_2_lut (*fsrc++);
-         *fdst++ = *fsrc++;
+         *fdst++ = linear_to_gamma_2_2_lut (red);
+         *fdst++ = linear_to_gamma_2_2_lut (green);
+         *fdst++ = linear_to_gamma_2_2_lut (blue);
+         *fdst++ = alpha;
        }
        else if (alpha == 0.0)
        {
@@ -312,15 +315,13 @@ conv_rgbaF_linear_rgbAF_gamma (unsigned char *src,
          *fdst++ = 0.0;
          *fdst++ = 0.0;
          *fdst++ = 0.0;
-         fsrc+=4;
        }
        else
        {
-         *fdst++ = linear_to_gamma_2_2_lut (*fsrc++) * alpha;
-         *fdst++ = linear_to_gamma_2_2_lut (*fsrc++) * alpha;
-         *fdst++ = linear_to_gamma_2_2_lut (*fsrc++) * alpha;
+         *fdst++ = linear_to_gamma_2_2_lut (red)   * alpha;
+         *fdst++ = linear_to_gamma_2_2_lut (green) * alpha;
+         *fdst++ = linear_to_gamma_2_2_lut (blue)  * alpha;
          *fdst++ = alpha;
-         fsrc++;
        }
      }
   return samples;
@@ -338,35 +339,35 @@ conv_rgbaF_linear_rgbA8_gamma (unsigned char *src,
 
    while (n--)
      {
-       float alpha = fsrc[3];
+       float red   = *fsrc++;
+       float green = *fsrc++;
+       float blue  = *fsrc++;
+       float alpha = *fsrc++;
        if (alpha >= 1.0)
        {
-         int val = linear_to_gamma_2_2_lut (fsrc[0]) * 0xff + 0.5f;
-         *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
-         val = linear_to_gamma_2_2_lut (fsrc[1]) * 0xff + 0.5f;
-         *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
-         val = linear_to_gamma_2_2_lut (fsrc[2]) * 0xff + 0.5f;
-         *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
+         int val = linear_to_gamma_2_2_lut (red) * 0xff + 0.5f;
+         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+         val = linear_to_gamma_2_2_lut (green) * 0xff + 0.5f;
+         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+         val = linear_to_gamma_2_2_lut (blue) * 0xff + 0.5f;
+         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
          *cdst++ = 0xff;
-         fsrc+=4;
        }
        else if (alpha <= 0.0)
        {
          *((uint32_t*)(cdst))=0;
 	     cdst+=4;
-         fsrc+=4;
        }
        else
        {
          float balpha = alpha * 0xff;
-         int val = linear_to_gamma_2_2_lut (fsrc[0]) * balpha + 0.5f;
-         *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
-         val = linear_to_gamma_2_2_lut (fsrc[1]) * balpha + 0.5f;
-         *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
-         val = linear_to_gamma_2_2_lut (fsrc[2]) * balpha + 0.5f;
-         *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
+         int val = linear_to_gamma_2_2_lut (red) * balpha + 0.5f;
+         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+         val = linear_to_gamma_2_2_lut (green) * balpha + 0.5f;
+         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+         val = linear_to_gamma_2_2_lut (blue) * balpha + 0.5f;
+         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
          *cdst++ = balpha + 0.5f;
-         fsrc+=4;
        }
      }
   return samples;
@@ -374,46 +375,46 @@ conv_rgbaF_linear_rgbA8_gamma (unsigned char *src,
 
 static long
 conv_rgbaF_linear_rgbA8_gamma_cairo (unsigned char *src, 
-                               unsigned char *dst, 
-                               long           samples)
+                                     unsigned char *dst, 
+                                     long           samples)
 {
   float *fsrc = (float *) src;
-   unsigned char *cdst = (unsigned char *) dst;
-   int n = samples;
+  unsigned char *cdst = (unsigned char *) dst;
+  int n = samples;
 
-   while (n--)
-     {
-       float alpha = fsrc[3];
-       if (alpha >= 1.0)
-       {
-         int val = linear_to_gamma_2_2_lut (fsrc[2]) * 0xff + 0.5f;
-         *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
-         val = linear_to_gamma_2_2_lut (fsrc[1]) * 0xff + 0.5f;
-         *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
-         val = linear_to_gamma_2_2_lut (fsrc[0]) * 0xff + 0.5f;
-         *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
-         *cdst++ = 0xff;
-         fsrc+=4;
-       }
-       else if (alpha <= 0.0)
-       {
-         *((uint32_t*)(cdst))=0;
-	     cdst+=4;
-         fsrc+=4;
-       }
-       else
-       {
-         float balpha = alpha * 0xff;
-         int val = linear_to_gamma_2_2_lut (fsrc[2]) * balpha + 0.5f;
-         *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
-         val = linear_to_gamma_2_2_lut (fsrc[1]) * balpha + 0.5f;
-         *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
-         val = linear_to_gamma_2_2_lut (fsrc[0]) * balpha + 0.5f;
-         *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
-         *cdst++ = balpha + 0.5f;
-         fsrc+=4;
-       }
-     }
+  while (n--)
+    {
+      float red   = *fsrc++;
+      float green = *fsrc++;
+      float blue  = *fsrc++;
+      float alpha = *fsrc++;
+      if (alpha >= 1.0)
+      {
+        int val = linear_to_gamma_2_2_lut (blue) * 0xff + 0.5f;
+        *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+        val = linear_to_gamma_2_2_lut (green) * 0xff + 0.5f;
+        *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+        val = linear_to_gamma_2_2_lut (red) * 0xff + 0.5f;
+        *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+        *cdst++ = 0xff;
+      }
+      else if (alpha <= 0.0)
+      {
+        *((uint32_t*)(cdst))=0;
+        cdst+=4;
+      }
+      else
+      {
+        float balpha = alpha * 0xff;
+        int val = linear_to_gamma_2_2_lut (blue) * balpha + 0.5f;
+        *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+        val = linear_to_gamma_2_2_lut (green) * balpha + 0.5f;
+        *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+        val = linear_to_gamma_2_2_lut (red) * balpha + 0.5f;
+        *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+        *cdst++ = balpha + 0.5f;
+      }
+    }
   return samples;
 }
 
@@ -428,29 +429,31 @@ conv_rgbAF_linear_rgbAF_gamma (unsigned char *src,
 
    while (n--)
      {
-       float alpha = fsrc[3];
+      float red   = *fsrc++;
+      float green = *fsrc++;
+      float blue  = *fsrc++;
+      float alpha = *fsrc++;
        if (alpha < BABL_ALPHA_THRESHOLD)
          {
            *fdst++ = 0.0;
            *fdst++ = 0.0;
            *fdst++ = 0.0;
            *fdst++ = 0.0;
-           fsrc+=4;
          }
        else if (alpha >= 1.0)
          {
-           *fdst++ = linear_to_gamma_2_2_lut (*fsrc++);
-           *fdst++ = linear_to_gamma_2_2_lut (*fsrc++);
-           *fdst++ = linear_to_gamma_2_2_lut (*fsrc++);
+           *fdst++ = linear_to_gamma_2_2_lut (red);
+           *fdst++ = linear_to_gamma_2_2_lut (green);
+           *fdst++ = linear_to_gamma_2_2_lut (blue);
            *fdst++ = *fsrc++;
          }
        else
          {
            float alpha_recip = 1.0 / alpha;
-           *fdst++ = linear_to_gamma_2_2_lut (*fsrc++ * alpha_recip) * alpha;
-           *fdst++ = linear_to_gamma_2_2_lut (*fsrc++ * alpha_recip) * alpha;
-           *fdst++ = linear_to_gamma_2_2_lut (*fsrc++ * alpha_recip) * alpha;
-           *fdst++ = *fsrc++;
+           *fdst++ = linear_to_gamma_2_2_lut (red   * alpha_recip) * alpha;
+           *fdst++ = linear_to_gamma_2_2_lut (green * alpha_recip) * alpha;
+           *fdst++ = linear_to_gamma_2_2_lut (blue  * alpha_recip) * alpha;
+           *fdst++ = alpha;
          }
      }
   return samples;
@@ -631,8 +634,7 @@ init (void)
     babl_conversion_new (rgbaF_linear, f32, "linear", conv_rgbaF_linear_rgbA8_gamma_cairo, NULL);
   }
 
-    o (rgbaF_linear, rgbA8_gamma);
-
+  o (rgbaF_linear, rgbA8_gamma);
   o (rgbAF_linear, rgbAF_gamma);
   o (rgbaF_linear, rgbAF_gamma);
   o (rgbaF_linear, rgbaF_gamma);

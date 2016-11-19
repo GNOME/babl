@@ -31,7 +31,7 @@
 #endif
 
 #define NUM_TEST_PIXELS            (babl_get_num_path_test_pixels ())
-#define MAX_BUFFER_SIZE            1024  /* XXX: reasonable size for this should be profiled */
+#define MAX_BUFFER_SIZE            2048 /* XXX: reasonable size for this should be profiled */
 
 
 int   babl_in_fish_path = 0;
