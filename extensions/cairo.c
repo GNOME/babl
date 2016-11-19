@@ -31,12 +31,14 @@ conv_rgba8_cairo24_le (unsigned char *src, unsigned char *dst, long samples)
   long n = samples;
   while (n--)
     {
-      dst[0] = src[2];
-      dst[1] = src[1];
-      dst[2] = src[0];
-      dst[3] = 255;
-      src+=4;
-      dst+=4;
+      unsigned char red   = *src++;
+      unsigned char green = *src++;
+      unsigned char blue  = *src++;
+      *dst++ = blue;
+      *dst++ = green;
+      *dst++ = red;
+      *dst++ = 255;
+      src++;
     }
   return samples;
 }
@@ -47,12 +49,13 @@ conv_rgb8_cairo24_le (unsigned char *src, unsigned char *dst, long samples)
   long n = samples;
   while (n--)
     {
-      dst[0] = src[2];
-      dst[1] = src[1];
-      dst[2] = src[0];
-      dst[3] = 255;
-      src+=3;
-      dst+=4;
+      unsigned char red   = *src++;
+      unsigned char green = *src++;
+      unsigned char blue  = *src++;
+      *dst++ = blue;
+      *dst++ = green;
+      *dst++ = red;
+      *dst++ = 255;
     }
   return samples;
 }
@@ -63,12 +66,15 @@ conv_rgbA8_premul_cairo32_le (unsigned char *src, unsigned char *dst, long sampl
   long n = samples;
   while (n--)
     {
-      dst[0] = src[2];
-      dst[1] = src[1];
-      dst[2] = src[0];
-      dst[3] = src[3];
-      src+=4;
-      dst+=4;
+      unsigned char red    = *src++;
+      unsigned char green  = *src++;
+      unsigned char blue   = *src++;
+      unsigned char alpha  = *src++;
+
+      *dst++ = blue;
+      *dst++ = green;
+      *dst++ = red;
+      *dst++ = alpha;
     }
   return samples;
 }
@@ -79,14 +85,17 @@ conv_rgbA8_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
   long n = samples;
   while (n--)
     {
+      unsigned char red    = *src++;
+      unsigned char green  = *src++;
+      unsigned char blue   = *src++;
+      unsigned char alpha  = *src++;
+
 #define div_255(a) ((((a)+128)+(((a)+128)>>8))>>8)
-      dst[0] = div_255 (src[2] * src[3]);
-      dst[1] = div_255 (src[1] * src[3]);
-      dst[2] = div_255 (src[0] * src[3]);
+      *dst++ = div_255 (blue  * alpha);
+      *dst++ = div_255 (green * alpha);
+      *dst++ = div_255 (red   * alpha);
 #undef div_255
-      dst[3] = src[3];
-      src+=4;
-      dst+=4;
+      *dst++ = alpha;
     }
   return samples;
 }
@@ -102,35 +111,35 @@ conv_rgbafloat_cairo32_le (unsigned char *src,
 
   while (n--)
     {
-      float alpha = fsrc[3];
+      float red    = *fsrc++;
+      float green  = *fsrc++;
+      float blue   = *fsrc++;
+      float alpha  = *fsrc++;
       if (alpha >= 1.0)
       {
-        int val = babl_linear_to_gamma_2_2f (fsrc[2]) * 0xff + 0.5f;
-        *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
-        val = babl_linear_to_gamma_2_2f (fsrc[1]) * 0xff + 0.5f;
-        *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
-        val = babl_linear_to_gamma_2_2f (fsrc[0]) * 0xff + 0.5f;
-        *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
+        int val = babl_linear_to_gamma_2_2f (blue) * 0xff + 0.5f;
+        *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+        val = babl_linear_to_gamma_2_2f (green) * 0xff + 0.5f;
+        *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+        val = babl_linear_to_gamma_2_2f (red) * 0xff + 0.5f;
+        *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
         *cdst++ = 0xff;
-        fsrc+=4;
       }
       else if (alpha <= 0.0)
       {
         (*(uint32_t*)cdst)=0;
         cdst+=4;
-        fsrc+=4;
       }
       else
       {
         float balpha = alpha * 0xff;
-        int val = babl_linear_to_gamma_2_2f (fsrc[2]) * balpha + 0.5f;
-        *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
-        val = babl_linear_to_gamma_2_2f (fsrc[1]) * balpha + 0.5f;
-        *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
-        val = babl_linear_to_gamma_2_2f (fsrc[0]) * balpha + 0.5f;
-        *cdst++ = val > 0xff ? 0xff : val < 0 ? 0 : val;
+        int val = babl_linear_to_gamma_2_2f (blue) * balpha + 0.5f;
+        *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+        val = babl_linear_to_gamma_2_2f (green) * balpha + 0.5f;
+        *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+        val = babl_linear_to_gamma_2_2f (red) * balpha + 0.5f;
+        *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
         *cdst++ = balpha + 0.5f;
-        fsrc+=4;
       }
     }
   return samples;
