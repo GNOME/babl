@@ -209,7 +209,7 @@ void babl_init_db (void)
           if (babl)
           {
             if ( ((babl->fish.pixels+1 + babl->fish.processings) % 
-                (tim % 100)) == 0)
+                  ((tim % 100)+1)) == 0)
             {
               /* 1% chance of individual cached conversions being dropped -
                * making sure mis-measured conversions do not
