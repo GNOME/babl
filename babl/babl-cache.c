@@ -47,10 +47,12 @@ mk_ancestry_iter (const char *path)
 }
 
 static void
-mk_ancestry (char *path)
+mk_ancestry (const char *path)
 {
+  char copy[4096];
+  strncpy (copy, path, 4096);
 #ifdef _WIN32
-  for (char *c = path; *c; c++)
+  for (char *c = copy; *c; c++)
     if (*c == '\\')
       *c = '/';
 #endif
@@ -61,7 +63,6 @@ static const char *fish_cache_path (void)
 {
   struct stat stat_buf;
   static char resolved[4096];
-  char *ret = NULL;
 
 #ifndef _WIN32 
   if (getenv ("HOME"))
@@ -78,10 +79,7 @@ static const char *fish_cache_path (void)
   if (stat (resolved, &stat_buf)==0 && S_ISREG(stat_buf.st_mode))
     return resolved;
 
-  ret = strdup (resolved);
-  mk_ancestry (ret);
-  strcpy (resolved, ret);
-  free (ret);
+  mk_ancestry (resolved);
 
   return resolved;
 }
