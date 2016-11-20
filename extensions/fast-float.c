@@ -154,11 +154,11 @@ babl_lookup_new (BablLookupFunction function,
   else if (precision <= 0.000040) shift = 10;
   else if (precision <= 0.000081) shift = 11;
   else if (precision <= 0.000161) shift = 12;
+  else if (precision <= 0.000200) shift = 13;
   else if (precision <= 0.000324) shift = 14;
   else if (precision <= 0.000649) shift = 15;
   else shift = 16; /* a bit better than 8bit sRGB quality */
 
-  shift = 16;
 
   /* Adjust slightly away from 0.0, saving many entries close to 0, this
    * causes lookups very close to zero to be passed directly to the
@@ -651,8 +651,8 @@ init (void)
     float a;
 
     /* tweaking the precision - does impact speed.. */
-    fast_pow = babl_lookup_new (core_lookup, NULL, 0.0, 1.0,   0.0033);
-    fast_rpow = babl_lookup_new (core_rlookup, NULL, 0.0, 1.0, 0.0033);
+    fast_pow = babl_lookup_new (core_lookup, NULL, 0.0, 1.0,   0.000199);
+    fast_rpow = babl_lookup_new (core_rlookup, NULL, 0.0, 1.0, 0.000250);
 
     for (f = 0.0; f < 1.0; f+= 0.0000001)
       {
