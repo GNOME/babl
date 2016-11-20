@@ -22,40 +22,68 @@
 #include "babl-internal.h"
 #include "git-version.h"
 
+static void
+mk_ancestry_iter (const char *path)
+{
+  char copy[4096];
+  strncpy (copy, path, 4096);
+  if (strrchr (copy, '/'))
+  { 
+    *strrchr (copy, '/') = '\0';
+    if (copy[0])
+    {
+      struct stat stat_buf;
+      if ( ! (stat (copy, &stat_buf)==0 && S_ISDIR(stat_buf.st_mode)))
+      {
+        mk_ancestry_iter (copy);
+#ifndef _WIN32 
+        mkdir (copy, S_IRWXU);
+#else
+        mkdir (copy);
+#endif
+      }
+    }
+  }
+}
+
+static void
+mk_ancestry (char *path)
+{
+#ifdef _WIN32
+  for (char *c = path; *c; c++)
+    if (*c == '\\')
+      *c = '/';
+#endif
+  mk_ancestry_iter (path);
+}
+
 static const char *fish_cache_path (void)
 {
-#ifdef _WIN32  // XXX: fixme - make this work - and be a reasonable location
-               // on windows
-  return "C:\\babl.txt"; 
-#else
-  // FIXME: need a location for this temporary file on win32
   struct stat stat_buf;
   static char resolved[4096];
   char *ret = NULL;
+
+#ifndef _WIN32 
   if (getenv ("HOME"))
-  {
-    sprintf (resolved, "%s/.cache/babl/fishes", getenv("HOME"));
-  }
+    sprintf (resolved, "%s/.cache/babl/babl-fishes", getenv("HOME"));
   else
-  {
-    return "/tmp/babl.db";
-  }
+    strncpy (resolved, "/tmp/babl.db", 4096);
+#else
+  if (getenv ("TEMP"))
+    sprintf (resolved, "%s\\babl-fishes.txt", getenv("TEMP"));
+  else
+    strncpy (resolved, "c:\\babl-fishes.txt", 4096);
+#endif
 
   if (stat (resolved, &stat_buf)==0 && S_ISREG(stat_buf.st_mode))
     return resolved;
+
   ret = strdup (resolved);
-
-  while (strrchr (resolved, '/'))
-  {
-    *strrchr (resolved, '/') = '\0';
-    mkdir (resolved, S_IRWXU);
-  }
-
+  mk_ancestry (ret);
   strcpy (resolved, ret);
   free (ret);
 
   return resolved;
-#endif
 }
 
 static char *
