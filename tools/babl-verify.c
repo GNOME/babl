@@ -10,6 +10,7 @@ int main (int argc, char **argv)
     return -1;
   }
   setenv ("BABL_DEBUG_CONVERSIONS", "1", 0);
+  setenv ("BABL_TOLERANCE", "100000.0", 0);
   babl_init ();
   babl_fish (babl_format(argv[1]), babl_format (argv[2]));
   babl_exit ();
