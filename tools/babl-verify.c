@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include "babl/babl.h"
 
+#ifdef _WIN32
+#define setenv(a,b,c)  putenv((a),(b))
+#endif
+
 int main (int argc, char **argv)
 {
   if (argc != 3)
