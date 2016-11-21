@@ -207,7 +207,7 @@ void babl_init_db (void)
 {
   const char *path = fish_cache_path ();
   long  length = -1;
-  char  seps[] = "\n";
+  char  seps[] = "\n\r";
   Babl *babl   = NULL;
   char *contents = NULL;
   char *token;
