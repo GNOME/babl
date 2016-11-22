@@ -22,7 +22,7 @@
 #include "babl-internal.h"
 #include "git-version.h"
 
-static void
+static int
 mk_ancestry_iter (const char *path)
 {
   char copy[4096];
@@ -35,18 +35,20 @@ mk_ancestry_iter (const char *path)
       struct stat stat_buf;
       if ( ! (stat (copy, &stat_buf)==0 && S_ISDIR(stat_buf.st_mode)))
       {
-        mk_ancestry_iter (copy);
+        if (mk_ancestry_iter (copy) != 0)
+          return -1;
 #ifndef _WIN32 
-        mkdir (copy, S_IRWXU);
+        return mkdir (copy, S_IRWXU);
 #else
-        mkdir (copy);
+        return mkdir (copy);
 #endif
       }
     }
   }
+  return -1;
 }
 
-static void
+static int
 mk_ancestry (const char *path)
 {
   char copy[4096];
@@ -56,7 +58,7 @@ mk_ancestry (const char *path)
     if (*c == '\\')
       *c = '/';
 #endif
-  mk_ancestry_iter (path);
+  return mk_ancestry_iter (path);
 }
 
 static const char *fish_cache_path (void)
