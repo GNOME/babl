@@ -221,9 +221,6 @@ void babl_init_db (void)
   const Babl  *from_format = NULL;
   const Babl  *to_format   = NULL;
   time_t tim = time (NULL);
-#ifdef _WIN32  // XXX: fixme - make this work on windows
-  return;
-#endif
 
   if (getenv ("BABL_DEBUG_CONVERSIONS"))
     return;
