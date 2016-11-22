@@ -22,6 +22,12 @@
 #include "babl-internal.h"
 #include "git-version.h"
 
+#ifdef _WIN32
+#define FALLBACK_CACHE_PATH  "C:/babl-fishes.txt"
+#else
+#define FALLBACK_CACHE_PATH  "/tmp/babl-fishes.txt"
+#endif
+
 static int
 mk_ancestry_iter (const char *path)
 {
@@ -64,26 +70,24 @@ mk_ancestry (const char *path)
 static const char *fish_cache_path (void)
 {
   struct stat stat_buf;
-  static char resolved[4096];
+  static char path[4096];
 
+  strncpy (path, FALLBACK_CACHE_PATH, 4096);
 #ifndef _WIN32 
   if (getenv ("HOME"))
-    sprintf (resolved, "%s/.cache/babl/babl-fishes", getenv("HOME"));
-  else
-    strncpy (resolved, "/tmp/babl.db", 4096);
+    sprintf (path, "%s/.cache/babl/babl-fishes", getenv("HOME"));
 #else
   if (getenv ("TEMP"))
-    sprintf (resolved, "%s\\babl-fishes.txt", getenv("TEMP"));
-  else
-    strncpy (resolved, "c:\\babl-fishes.txt", 4096);
+    sprintf (path, "%s\\babl-fishes.txt", getenv("TEMP"));
 #endif
 
-  if (stat (resolved, &stat_buf)==0 && S_ISREG(stat_buf.st_mode))
-    return resolved;
+  if (stat (path, &stat_buf)==0 && S_ISREG(stat_buf.st_mode))
+    return path;
 
-  mk_ancestry (resolved);
+  if (mk_ancestry (path) != 0)
+    return FALLBACK_CACHE_PATH;
 
-  return resolved;
+  return path;
 }
 
 static char *
