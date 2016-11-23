@@ -319,5 +319,6 @@ static inline double babl_parse_double (const char *str)
 double _babl_legal_error (void);
 void babl_init_db (void);
 void babl_store_db (void);
+int _babl_max_path_len (void);
 
 #endif

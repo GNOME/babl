@@ -145,6 +145,11 @@ static int max_path_length (void)
   return max_length;
 }
 
+int _babl_max_path_len (void)
+{
+  return max_path_length ();
+}
+
 /* The task of BablFishPath construction is to compute
  * the shortest path in a graph where formats are the vertices
  * and conversions are the edges. However, there is an additional

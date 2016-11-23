@@ -142,8 +142,8 @@ void babl_store_db (void)
   FILE *dbfile = fopen (fish_cache_path (), "w");
   if (!dbfile)
     return;
-  fprintf (dbfile, "#%s BABL_TOLERANCE=%f\n",
-           BABL_GIT_VERSION, _babl_legal_error ());
+  fprintf (dbfile, "#%s BABL_PATH_LENGTH=%d BABL_TOLERANCE=%f\n",
+           BABL_GIT_VERSION, _babl_max_path_len (), _babl_legal_error ());
 
   /* sort the list of fishes by usage, making next run more efficient -
    * and the data easier to approach as data for targeted optimization
@@ -256,8 +256,8 @@ void babl_init_db (void)
           /* if babl has changed in git .. drop whole cache */
           {
             char buf[2048];
-            sprintf (buf, "#%s BABL_TOLERANCE=%f",
-                     BABL_GIT_VERSION, _babl_legal_error ());
+            sprintf (buf, "#%s BABL_PATH_LENGTH=%d BABL_TOLERANCE=%f",
+               BABL_GIT_VERSION, _babl_max_path_len (), _babl_legal_error ());
             if (strcmp ( token, buf))
             {
               free (contents);
