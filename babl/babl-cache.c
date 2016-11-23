@@ -237,8 +237,7 @@ void babl_init_db (void)
         case '-': /* finalize */
           if (babl)
           {
-            if ( ((babl->fish.pixels+1 + babl->fish.processings) % 
-                  ((tim % 100)+1)) == 0)
+            if (((babl->fish.pixels + babl->fish.processings) % 100) == (tim % 100))
             {
               /* 1% chance of individual cached conversions being dropped -
                * making sure mis-measured conversions do not
