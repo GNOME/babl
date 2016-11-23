@@ -102,16 +102,16 @@ babl_fish_serialize (Babl *fish, char *dest, int n)
   babl_get_name (fish->fish.destination));
   n -= strlen (d);d += strlen (d);
 
-  snprintf (d, n, "\terror=%f", fish->fish.error);
+  snprintf (d, n, "\tpixels=%li", fish->fish.pixels);
   n -= strlen (d);d += strlen (d);
 
   snprintf (d, n, " processings=%i", fish->fish.processings);
   n -= strlen (d);d += strlen (d);
 
-  snprintf (d, n, " pixels=%li", fish->fish.pixels);
+  snprintf (d, n, " cost=%d", (int)fish->fish_path.cost);
   n -= strlen (d);d += strlen (d);
 
-  snprintf (d, n, " cost=%f", fish->fish_path.cost);
+  snprintf (d, n, " error=%f", fish->fish.error);
   n -= strlen (d);d += strlen (d);
 
   snprintf (d, n, "\n");
