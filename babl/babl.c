@@ -160,10 +160,7 @@ babl_exit (void)
 {
   if (!-- ref_count)
     {
-#ifdef _WIN32  // XXX: fixme - make this work on windows
-#else
       babl_store_db ();
-#endif
 
       babl_extension_deinit ();
       babl_free (babl_extension_db ());;

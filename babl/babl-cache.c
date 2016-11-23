@@ -64,7 +64,7 @@ mk_ancestry (const char *path)
     if (*c == '\\')
       *c = '/';
 #endif
-  return mk_ancestry_iter (path);
+  return mk_ancestry_iter (copy);
 }
 
 static const char *fish_cache_path (void)
