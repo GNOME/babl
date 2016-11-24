@@ -34,23 +34,23 @@ mk_ancestry_iter (const char *path)
   char copy[4096];
   strncpy (copy, path, 4096);
   if (strrchr (copy, '/'))
-  { 
-    *strrchr (copy, '/') = '\0';
-    if (copy[0])
     {
-      struct stat stat_buf;
-      if ( ! (stat (copy, &stat_buf)==0 && S_ISDIR(stat_buf.st_mode)))
-      {
-        if (mk_ancestry_iter (copy) != 0)
-          return -1;
-#ifndef _WIN32 
-        return mkdir (copy, S_IRWXU);
+      *strrchr (copy, '/') = '\0';
+      if (copy[0])
+        {
+          struct stat stat_buf;
+          if ( ! (stat (copy, &stat_buf)==0 && S_ISDIR(stat_buf.st_mode)))
+            {
+              if (mk_ancestry_iter (copy) != 0)
+                return -1;
+#ifndef _WIN32
+              return mkdir (copy, S_IRWXU);
 #else
-        return mkdir (copy);
+              return mkdir (copy);
 #endif
-      }
+            }
+        }
     }
-  }
   return -1;
 }
 
@@ -73,7 +73,7 @@ static const char *fish_cache_path (void)
   static char path[4096];
 
   strncpy (path, FALLBACK_CACHE_PATH, 4096);
-#ifndef _WIN32 
+#ifndef _WIN32
   if (getenv ("HOME"))
     sprintf (path, "%s/.cache/babl/babl-fishes", getenv("HOME"));
 #else
@@ -96,7 +96,7 @@ babl_fish_serialize (Babl *fish, char *dest, int n)
   char *d = dest;
   if (fish->class_type != BABL_FISH_PATH)
     return NULL;
-                              
+
   snprintf (d, n, "%s\n%s\n",
   babl_get_name (fish->fish.source),
   babl_get_name (fish->fish.destination));
@@ -119,7 +119,7 @@ babl_fish_serialize (Babl *fish, char *dest, int n)
 
   for (int i = 0; i < fish->fish_path.conversion_list->count; i++)
   {
-    snprintf (d, n, "\t%s\n", 
+    snprintf (d, n, "\t%s\n",
       babl_get_name(fish->fish_path.conversion_list->items[i]  ));
     n -= strlen (d);d += strlen (d);
   }
