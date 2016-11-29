@@ -138,8 +138,14 @@ static int compare_fish_pixels (const void *a, const void *b)
 static const char *cache_header (void)
 {
   static char buf[2048];
-  sprintf (buf, "#%s BABL_PATH_LENGTH=%d BABL_TOLERANCE=%f",
-  BABL_GIT_VERSION, _babl_max_path_len (), _babl_legal_error ());
+  if (strchr (BABL_GIT_VERSION, ' ')) // we must be building from tarball
+    sprintf (buf, "#%i.%i.%i BABL_PATH_LENGTH=%d BABL_TOLERANCE=%f",
+             BABL_MAJOR_VERSION, BABL_MINOR_VERSION, BABL_MICRO_VERSION,
+             _babl_max_path_len (), _babl_legal_error ());
+  else
+    sprintf (buf, "#%s BABL_PATH_LENGTH=%d BABL_TOLERANCE=%f",
+             BABL_GIT_VERSION,
+             _babl_max_path_len (), _babl_legal_error ());
   return buf;
 }
 
