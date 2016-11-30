@@ -51,7 +51,7 @@ mk_ancestry_iter (const char *path)
             }
         }
     }
-  return -1;
+  return 0;
 }
 
 static int
