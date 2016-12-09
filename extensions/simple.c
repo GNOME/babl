@@ -89,17 +89,17 @@ float_to_u16_x1 (unsigned char *src_char, unsigned char *dst_char, long samples)
 static inline long
 float_to_u16_x2 (unsigned char *src_char, unsigned char *dst_char, long samples)
 {
-  return float_to_u16_x2 (src_char, dst_char, samples * 2);
+  return float_to_u16_x1 (src_char, dst_char, samples * 2);
 }
 static inline long
 float_to_u16_x3 (unsigned char *src_char, unsigned char *dst_char, long samples)
 {
-  return float_to_u16_x3 (src_char, dst_char, samples * 3);
+  return float_to_u16_x1 (src_char, dst_char, samples * 3);
 }
 static inline long
 float_to_u16_x4 (unsigned char *src_char, unsigned char *dst_char, long samples)
 {
-  return float_to_u16_x4 (src_char, dst_char, samples * 4);
+  return float_to_u16_x1 (src_char, dst_char, samples * 4);
 }
 
 static inline long
@@ -185,17 +185,17 @@ float_to_u32_x1 (unsigned char *src_char, unsigned char *dst_char, long samples)
 static inline long
 float_to_u32_x2 (unsigned char *src_char, unsigned char *dst_char, long samples)
 {
-  return float_to_u32_x2 (src_char, dst_char, samples * 2);
+  return float_to_u32_x1 (src_char, dst_char, samples * 2);
 }
 static inline long
 float_to_u32_x3 (unsigned char *src_char, unsigned char *dst_char, long samples)
 {
-  return float_to_u32_x3 (src_char, dst_char, samples * 3);
+  return float_to_u32_x1 (src_char, dst_char, samples * 3);
 }
 static inline long
 float_to_u32_x4 (unsigned char *src_char, unsigned char *dst_char, long samples)
 {
-  return float_to_u32_x4 (src_char, dst_char, samples * 4);
+  return float_to_u32_x1 (src_char, dst_char, samples * 4);
 }
 
 
@@ -207,7 +207,7 @@ u32_to_float (unsigned char *src_char, unsigned char *dst_char, long samples)
   long n = samples;
   while (n--)
     {
-      dst[0] = src[0] / 4294967296.0f;
+      dst[0] = src[0] / 4294967295.0f;
       dst ++;
       src ++;
     }
@@ -222,11 +222,58 @@ u32_to_float_x4 (unsigned char *src_char, unsigned char *dst_char, long samples)
 }
 
 static inline long
+u32_to_float_x3 (unsigned char *src_char, unsigned char *dst_char, long samples)
+{
+  u32_to_float (src_char, dst_char, samples * 3);
+  return samples;
+}
+
+
+static inline long
 u32_to_float_x2 (unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   u32_to_float (src_char, dst_char, samples * 2);
   return samples;
 }
+
+
+static inline long
+u16_to_float (unsigned char *src_char, unsigned char *dst_char, long samples)
+{
+  uint32_t *src = (uint32_t *)src_char;
+  float *dst    = (float *)dst_char;
+  long n = samples;
+  while (n--)
+    {
+      dst[0] = src[0] / 65535.0f;
+      dst ++;
+      src ++;
+    }
+  return samples;
+}
+
+static inline long
+u16_to_float_x4 (unsigned char *src_char, unsigned char *dst_char, long samples)
+{
+  u16_to_float (src_char, dst_char, samples * 4);
+  return samples;
+}
+
+static inline long
+u16_to_float_x3 (unsigned char *src_char, unsigned char *dst_char, long samples)
+{
+  u16_to_float (src_char, dst_char, samples * 3);
+  return samples;
+}
+
+
+static inline long
+u16_to_float_x2 (unsigned char *src_char, unsigned char *dst_char, long samples)
+{
+  u16_to_float (src_char, dst_char, samples * 2);
+  return samples;
+}
+
 
 int
 init (void)
@@ -388,8 +435,6 @@ init (void)
                       "linear", 
                        float_pre_to_u32_pre,
                        NULL);
-
-
   babl_conversion_new (babl_format ("YA u32"),
                        babl_format ("YA float"),
                       "linear", 
@@ -421,6 +466,60 @@ init (void)
                        u32_to_float_x4,
                        NULL);
 
+  babl_conversion_new (babl_format ("RGB u32"),
+                       babl_format ("RGB float"),
+                      "linear", 
+                       u32_to_float_x3,
+                       NULL);
+  babl_conversion_new (babl_format ("R'G'B' u32"),
+                       babl_format ("R'G'B' float"),
+                      "linear", 
+                       u32_to_float_x3,
+                       NULL);
+
+
+
+  babl_conversion_new (babl_format ("YA u16"),
+                       babl_format ("YA float"),
+                      "linear", 
+                       u16_to_float_x2,
+                       NULL);
+  babl_conversion_new (babl_format ("Y'A u16"),
+                       babl_format ("Y'A float"),
+                      "linear", 
+                       u16_to_float_x2,
+                       NULL);
+  babl_conversion_new (babl_format ("Y u16"),
+                       babl_format ("Y float"),
+                      "linear", 
+                       u16_to_float,
+                       NULL);
+  babl_conversion_new (babl_format ("Y' u16"),
+                       babl_format ("Y' float"),
+                      "linear", 
+                       u16_to_float,
+                       NULL);
+  babl_conversion_new (babl_format ("RGBA u16"),
+                       babl_format ("RGBA float"),
+                      "linear", 
+                       u16_to_float_x4,
+                       NULL);
+  babl_conversion_new (babl_format ("R'G'B'A u16"),
+                       babl_format ("R'G'B'A float"),
+                      "linear", 
+                       u16_to_float_x4,
+                       NULL);
+
+  babl_conversion_new (babl_format ("RGB u16"),
+                       babl_format ("RGB float"),
+                      "linear", 
+                       u16_to_float_x3,
+                       NULL);
+  babl_conversion_new (babl_format ("R'G'B' u16"),
+                       babl_format ("R'G'B' float"),
+                      "linear", 
+                       u16_to_float_x3,
+                       NULL);
 
   return 0;
 }
