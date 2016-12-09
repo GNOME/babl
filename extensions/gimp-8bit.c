@@ -229,6 +229,24 @@ conv_ga8_gamma_2_2_gaF_linear (unsigned char *src,
 }
 
 static INLINE long
+conv_ga8_gamma_2_2_rgba8_gamma_2_2 (unsigned char *src,
+                                    unsigned char *dst,
+                                    long           samples)
+{
+  long   n = samples;
+
+  while (n--)
+    {
+      *dst++ = *src;
+      *dst++ = *src;
+      *dst++ = *src++;
+      *dst++ = *src++;
+    }
+
+  return samples;
+}
+
+static INLINE long
 conv_ga8_linear_rgbaF_linear (unsigned char *src,
                               unsigned char *dst,
                               long           samples)
@@ -495,6 +513,8 @@ init (void)
   o (ga8_gamma_2_2, gaF_linear);
   o (ga8_linear, rgbaF_linear);
   o (ga8_gamma_2_2, rgbaF_linear);
+
+  o (ga8_gamma_2_2, rgba8_gamma_2_2);
 
   o (g8_linear, gF_linear);
   o (g8_gamma_2_2, gF_linear);
