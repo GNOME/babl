@@ -240,7 +240,7 @@ u32_to_float_x2 (unsigned char *src_char, unsigned char *dst_char, long samples)
 static inline long
 u16_to_float (unsigned char *src_char, unsigned char *dst_char, long samples)
 {
-  uint32_t *src = (uint32_t *)src_char;
+  uint16_t *src = (uint16_t *)src_char;
   float *dst    = (float *)dst_char;
   long n = samples;
   while (n--)
@@ -271,6 +271,24 @@ static inline long
 u16_to_float_x2 (unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   u16_to_float (src_char, dst_char, samples * 2);
+  return samples;
+}
+
+static inline long
+yau16_rgbaf (unsigned char *src_char, unsigned char *dst_char, long samples)
+{
+  uint16_t *src = (uint16_t *)src_char;
+  float *dst    = (float *)dst_char;
+  long n = samples;
+  while (n--)
+    {
+      dst[0] = src[0] / 65535.0f;
+      dst[1] = src[0] / 65535.0f;
+      dst[2] = src[0] / 65535.0f;
+      dst[3] = src[1] / 65535.0f;
+      dst +=4;
+      src +=2;
+    }
   return samples;
 }
 
@@ -520,6 +538,10 @@ init (void)
                       "linear", 
                        u16_to_float_x3,
                        NULL);
-
+  babl_conversion_new (babl_format ("Y'A u16"),
+                       babl_format ("R'G'B'A float"),
+                      "linear", 
+                       yau16_rgbaf,
+                       NULL);
   return 0;
 }
