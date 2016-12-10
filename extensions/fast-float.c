@@ -411,6 +411,47 @@ conv_rgbaF_linear_rgbA8_gamma (unsigned char *src,
   return samples;
 }
 
+static INLINE long
+conv_yaF_linear_rgbA8_gamma (unsigned char *src, 
+                             unsigned char *dst, 
+                             long           samples)
+{
+   float *fsrc = (float *) src;
+   uint8_t *cdst = (uint8_t *) dst;
+   int n = samples;
+
+   while (n--)
+     {
+       float gray = *fsrc++;
+       float alpha = *fsrc++;
+       if (alpha >= 1.0)
+       {
+         int val = linear_to_gamma_2_2_lut (gray) * 0xff + 0.5f;
+         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+         *cdst++ = 0xff;
+       }
+       else if (alpha <= 0.0)
+       {
+         *((uint32_t*)(cdst))=0;
+	     cdst+=4;
+       }
+       else
+       {
+         float balpha = alpha * 0xff;
+         int val = linear_to_gamma_2_2_lut (gray) * balpha + 0.5f;
+         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+         *cdst++ = balpha + 0.5f;
+       }
+     }
+  return samples;
+}
+
+
+
 static long
 conv_rgbaF_linear_rgbA8_gamma_cairo (unsigned char *src, 
                                      unsigned char *dst, 
@@ -580,6 +621,13 @@ int init (void);
 int
 init (void)
 {
+  const Babl *yaF_linear = babl_format_new (
+    babl_model ("YA"),
+    babl_type ("float"),
+    babl_component ("Y"),
+    babl_component ("A"),
+    NULL);
+
   const Babl *rgbaF_linear = babl_format_new (
     babl_model ("RGBA"),
     babl_type ("float"),
@@ -689,7 +737,7 @@ init (void)
   o (rgbaF_gamma,  rgbaF_linear);
   o (rgbF_linear,  rgbF_gamma);
   o (rgbF_gamma,   rgbF_linear);
-
+  o (yaF_linear,   rgbA8_gamma);
   return 0;
 }
 
