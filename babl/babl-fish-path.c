@@ -341,6 +341,11 @@ babl_fish_path (const Babl *source,
     {
       babl_free (babl);
       babl_mutex_unlock (babl_format_mutex);
+
+      if (debug_conversions)
+        fprintf (stderr, "babl: no fast path for \"%s\" to \"%s\"\n",
+           babl_get_name (source),
+           babl_get_name (destination));
       return NULL;
     }
 
