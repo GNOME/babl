@@ -342,10 +342,24 @@ babl_fish_path (const Babl *source,
       babl_free (babl);
       babl_mutex_unlock (babl_format_mutex);
 
+#ifndef BABL_UNSTABLE
       if (debug_conversions)
-        fprintf (stderr, "babl: no fast path for \"%s\" to \"%s\"\n",
+#endif
+      {
+        static int warnings = 0;
+        if (warnings++ == 0)
+          fprintf (stderr, 
+"Missing fast-path babl conversion detected, Implementing missing babl fast paths\n"
+"accelerates GEGL, GIMP and other software using babl, warnings are printed on\n"
+"first occurance of formats used where a conversion has to be synthesized\n"
+"programmatically by babl based on format description\n"
+"\n");
+
+        fprintf (stderr, "*WARNING*: missing babl fast path(s) between formats \"%s\" and \"%s\"\n",
            babl_get_name (source),
            babl_get_name (destination));
+
+      }
       return NULL;
     }
 
