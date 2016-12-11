@@ -94,8 +94,45 @@ conv_rgbA8_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
       *dst++ = div_255 (blue  * alpha);
       *dst++ = div_255 (green * alpha);
       *dst++ = div_255 (red   * alpha);
-#undef div_255
       *dst++ = alpha;
+    }
+  return samples;
+}
+
+static inline long
+conv_yA8_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
+{
+  long n = samples;
+  while (n--)
+    {
+      unsigned char gray   = *src++;
+      unsigned char alpha  = *src++;
+      unsigned char val = div_255 (gray * alpha);
+
+#undef div_255
+
+      *dst++ = val;
+      *dst++ = val;
+      *dst++ = val;
+      *dst++ = alpha;
+    }
+  return samples;
+}
+
+static inline long
+conv_yA16_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
+{
+  long n = samples;
+  uint16_t *ssrc = (void*) src;
+  while (n--)
+    {
+      float alpha = (ssrc[1]) / 65535.0f;
+      int val = (ssrc[0] * alpha) * (0xff / 65535.0f ) + 0.5f;
+      *dst++ = val;
+      *dst++ = val;
+      *dst++ = val;
+      *dst++ = (alpha * 0xff + 0.5f);
+      ssrc+=2;
     }
   return samples;
 }
@@ -181,6 +218,11 @@ init (void)
       babl_conversion_new (babl_format ("R'G'B'A u8"), f32, "linear",
                            conv_rgbA8_cairo32_le, NULL);
 
+      babl_conversion_new (babl_format ("Y'A u8"), f32, "linear",
+                           conv_yA8_cairo32_le, NULL);
+      babl_conversion_new (babl_format ("Y'A u16"), f32, "linear",
+                           conv_yA16_cairo32_le, NULL);
+
       babl_conversion_new (babl_format ("RGBA float"), f32, "linear",
                            conv_rgbafloat_cairo32_le, NULL);
 
@@ -211,6 +253,8 @@ init (void)
         babl_component ("B'"),
         NULL
       );
+
+      /* formats are registered - but no fast paths, this will be slow */
     }
   babl_format_new (
     "name", "cairo-A8",
