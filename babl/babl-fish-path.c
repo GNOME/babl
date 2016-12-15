@@ -333,6 +333,11 @@ babl_fish_path (const Babl *source,
 
     get_conversion_path (&pc, (Babl *) source, 0, max_path_length ());
 
+    /* second attempt,. at path length + 1*/
+    if (babl->fish_path.conversion_list->count == 0 &&
+        max_path_length () + 1 <= BABL_HARD_MAX_PATH_LENGTH)
+      get_conversion_path (&pc, (Babl *) source, 0, max_path_length () + 1);
+
     babl_in_fish_path--;
     babl_free (pc.current_path);
   }
