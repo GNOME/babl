@@ -32,10 +32,15 @@ int main (int argc, char **argv)
   {
     case BABL_FISH:
       fprintf (stderr, "%s\n", babl_get_name (fish));
-            break;
+      break;
     case BABL_FISH_PATH:
       fprintf (stderr, "chosen %s to %s: steps: %i error: %f cost: %f\n", argv[1], argv[2], fish->fish_path.conversion_list->count, fish->fish.error, fish->fish_path.cost);
-            break;
+        for (int i = 0; i < fish->fish_path.conversion_list->count; i++)
+          {
+            fprintf (stderr, "\t%s\n",
+                      babl_get_name(fish->fish_path.conversion_list->items[i]  ));
+          }
+      break;
   }
 
 
