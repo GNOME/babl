@@ -125,6 +125,9 @@ conv_rgbA8_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
   return samples;
 }
 
+
+
+
 static inline long
 conv_yA8_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
 {
@@ -159,6 +162,40 @@ conv_yA16_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
       *dst++ = val;
       *dst++ = (alpha * 0xff + 0.5f);
       ssrc+=2;
+    }
+  return samples;
+}
+
+static inline long
+conv_y8_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
+{
+  long n = samples;
+  while (n--)
+    {
+      unsigned char val = *src++;
+      *dst++ = val;
+      *dst++ = val;
+      *dst++ = val;
+      *dst++ = 0xff;
+    }
+  return samples;
+}
+
+static inline long
+conv_y16_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
+{
+  long n = samples;
+  uint16_t *s16 = (void*)src;
+  while (n--)
+    {
+#define div_257(a) ((((a)+128)-(((a)+128)>>8))>>8)
+      uint16_t v16 = *s16++;
+      unsigned char val = div_257(v16);
+#undef dib_257
+      *dst++ = val;
+      *dst++ = val;
+      *dst++ = val;
+      *dst++ = 0xff;
     }
   return samples;
 }
@@ -272,6 +309,12 @@ init (void)
                            conv_yA8_cairo32_le, NULL);
       babl_conversion_new (babl_format ("Y'A u16"), f32, "linear",
                            conv_yA16_cairo32_le, NULL);
+
+
+      babl_conversion_new (babl_format ("Y' u8"), f32, "linear",
+                           conv_y8_cairo32_le, NULL);
+      babl_conversion_new (babl_format ("Y' u16"), f32, "linear",
+                           conv_y16_cairo32_le, NULL);
 
       babl_conversion_new (babl_format ("RGBA float"), f32, "linear",
                            conv_rgbafloat_cairo32_le, NULL);
