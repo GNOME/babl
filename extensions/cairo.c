@@ -29,16 +29,17 @@ static inline long
 conv_rgba8_cairo24_le (unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
+  uint32_t *srci = (void *)src;
+  uint32_t *dsti = (void *)dst;
+
   while (n--)
     {
-      unsigned char red   = *src++;
-      unsigned char green = *src++;
-      unsigned char blue  = *src++;
-      *dst++ = blue;
-      *dst++ = green;
-      *dst++ = red;
-      *dst++ = 255;
-      src++;
+      uint32_t orig = *srci++;
+      uint32_t green_alpha = (orig & 0x0000ff00);
+      uint32_t red_blue    = (orig & 0x00ff00ff);
+      uint32_t red         = red_blue << 16;
+      uint32_t blue        = red_blue >> 16;
+      *dsti++              = green_alpha | red | blue | 0xff000000;
     }
   return samples;
 }
@@ -58,8 +59,11 @@ conv_rgb8_cairo24_le (unsigned char *src, unsigned char *dst, long samples)
       *dst++ = 255;
     }
   return samples;
+
+
 }
 
+#if 0
 static inline long
 conv_rgbA8_premul_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
 {
@@ -78,6 +82,28 @@ conv_rgbA8_premul_cairo32_le (unsigned char *src, unsigned char *dst, long sampl
     }
   return samples;
 }
+#else
+
+static inline long
+conv_rgbA8_premul_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
+{
+  long n = samples;
+  uint32_t *srci = (void *)src;
+  uint32_t *dsti = (void *)dst;
+
+  while (n--)
+    {
+      uint32_t orig = *srci++;
+      uint32_t green_alpha = (orig & 0xff00ff00);
+      uint32_t red_blue    = (orig & 0x00ff00ff);
+      uint32_t red         = red_blue << 16;
+      uint32_t blue        = red_blue >> 16;
+      *dsti++              = green_alpha | red | blue;
+    }
+  return samples;
+}
+#endif
+
 
 static inline long
 conv_rgbA8_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
@@ -236,9 +262,9 @@ init (void)
         babl_component ("PAD"),
         NULL
       );
-
       babl_conversion_new (babl_format ("R'aG'aB'aA u8"), f32, "linear", 
                            conv_rgbA8_premul_cairo32_le, NULL);
+
       babl_conversion_new (babl_format ("R'G'B'A u8"), f32, "linear",
                            conv_rgbA8_cairo32_le, NULL);
 
