@@ -607,6 +607,28 @@ conv_rgbA16_rgbaF (unsigned char *src, unsigned char *dst, long samples)
   return samples;
 }
 
+static long
+conv_gF_rgbaF (unsigned char *src, unsigned char *dst, long samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      *(int *) dst   = (*(int *) src);
+      dst           += 4;
+      *(int *) dst   = (*(int *) src);
+      dst           += 4;
+      *(int *) dst   = (*(int *) src);
+      dst           += 4;
+      *(float *) dst = 1.0;
+      dst           += 4;
+      src           += 4;
+    }
+  return samples;
+}
+
+#define conv_gF_rgbAF conv_gF_rgbaF
+
 /*
    static long
    conv_rgb8_rgbaF (unsigned char *src,
@@ -1102,6 +1124,8 @@ init (void)
   o (gF, gaF);
   o (gF, gAF);
   o (gF, rgbF);
+  o (gF, rgbaF);
+  o (gF, rgbAF);
   o (gaF, rgbaF);
   o (gAF, rgbAF);
   o (rgbaF, rgb8);
