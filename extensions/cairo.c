@@ -138,6 +138,30 @@ conv_yA16_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
 }
 
 static long
+conv_rgbA_gamma_float_cairo32_le (unsigned char *src,
+                                  unsigned char *dst,
+                                  long           samples)
+{
+  float *fsrc = (float *) src;
+  unsigned char *cdst = (unsigned char *) dst;
+  int n = samples;
+
+  while (n--)
+    {
+      int val = fsrc[2] * 255.0f  + 0.5f;
+      *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+      val = fsrc[1] * 255.0f + 0.5f;
+      *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+      val = fsrc[0] * 255.0f + 0.5f;
+      *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+      val = fsrc[3] * 255.0f + 0.5f;
+      *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+      fsrc+=4;
+    }
+  return samples;
+}
+
+static long
 conv_rgbafloat_cairo32_le (unsigned char *src,
                            unsigned char *dst,
                            long           samples)
@@ -225,6 +249,9 @@ init (void)
 
       babl_conversion_new (babl_format ("RGBA float"), f32, "linear",
                            conv_rgbafloat_cairo32_le, NULL);
+
+      babl_conversion_new (babl_format ("R'aG'aB'aA float"), f32, "linear",
+                           conv_rgbA_gamma_float_cairo32_le, NULL);
 
       babl_conversion_new (babl_format ("R'G'B'A u8"), f24, "linear", 
                            conv_rgba8_cairo24_le, NULL);
