@@ -694,6 +694,8 @@ init (void)
     babl_component ("B'"),
     NULL);
 
+  return 0;  // XXX: the fast paths registered here doesn't correctly
+             //      clamp negative values - disabling for now
   {
     float f;
     float a;
