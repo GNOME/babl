@@ -146,6 +146,12 @@ conv_rgbaF_rgba8 (const float *src, uint8_t *dst, long samples)
   return conv_yF_y8 (src, dst, samples * 4) / 4;
 }
 
+static long
+conv_rgbAF_rgbA8 (const float *src, uint8_t *dst, long samples)
+{
+  return conv_yF_y8 (src, dst, samples * 4) / 4;
+}
+
 #endif
 
 int init (void);
@@ -154,6 +160,40 @@ int
 init (void)
 {
 #if defined(USE_SSE2)
+
+  const Babl *rgbAF_linear = babl_format_new (
+    babl_model ("RaGaBaA"),
+    babl_type ("float"),
+    babl_component ("Ra"),
+    babl_component ("Ga"),
+    babl_component ("Ba"),
+    babl_component ("A"),
+    NULL);
+  const Babl *rgbA8_linear = babl_format_new (
+    babl_model ("RaGaBaA"),
+    babl_type ("u8"),
+    babl_component ("Ra"),
+    babl_component ("Ga"),
+    babl_component ("Ba"),
+    babl_component ("A"),
+    NULL);
+  const Babl *rgbAF_gamma = babl_format_new (
+    babl_model ("R'aG'aB'aA"),
+    babl_type ("float"),
+    babl_component ("R'a"),
+    babl_component ("G'a"),
+    babl_component ("B'a"),
+    babl_component ("A"),
+    NULL);
+  const Babl *rgbA8_gamma = babl_format_new (
+    babl_model ("R'aG'aB'aA"),
+    babl_type ("u8"),
+    babl_component ("R'a"),
+    babl_component ("G'a"),
+    babl_component ("B'a"),
+    babl_component ("A"),
+    NULL);
+
   const Babl *rgbaF_linear = babl_format_new (
     babl_model ("RGBA"),
     babl_type ("float"),
@@ -268,6 +308,7 @@ init (void)
   if ((babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_SSE2))
     {
       CONV(rgbaF, rgba8);
+      CONV(rgbAF, rgbA8);
       CONV(rgbF,  rgb8);
       CONV(yaF,   ya8);
       CONV(yF,    y8);
