@@ -4,6 +4,8 @@
 # a given pixel format - the script is intended to be run as is -
 # as well as modified as needed including more relevant conversions
 
+rm ~/.cache/babl/babl-fishes
+
 format=$1
 if [ "x$format" = "x" ];then
   echo "pass a babl format to verify (in quotes) - running with \"R'G'B'A u8\""
