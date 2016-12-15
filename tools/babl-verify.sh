@@ -16,7 +16,6 @@ base_path=`realpath $base_path`
 echo $base_path
 
 make -C $base_path/extensions || exit
-make -C $base_path/tools || exit
 
 export BABL_PATH=$base_path/extensions/.libs
 
