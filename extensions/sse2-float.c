@@ -296,7 +296,7 @@ gamma_2_2_to_linear_sse2 (__v4sf x)
 }
 
 #define GAMMA_RGBA(func, munge) \
-static long \
+static inline long \
 func (const float *src, float *dst, long samples)\
 {\
   int i = samples;\
@@ -352,6 +352,14 @@ func (const float *src, float *dst, long samples)\
 
 GAMMA_RGBA(conv_rgbaF_linear_rgbaF_gamma, linear_to_gamma_2_2_sse2)
 GAMMA_RGBA(conv_rgbaF_gamma_rgbaF_linear, gamma_2_2_to_linear_sse2)
+
+static long conv_rgbaF_linear_rgbAF_gamma (const float *src, float *dst, long samples)
+{
+  float *tmp = alloca (sizeof(float)*4*samples);
+  conv_rgbaF_linear_rgbaF_gamma (src, tmp, samples);
+  conv_rgbaF_linear_rgbAF_linear (tmp, dst, samples);
+  return samples;
+}
 
 #define YA_APPLY(load, store, convert) \
 { \
@@ -637,6 +645,12 @@ init (void)
                           conv_rgbaF_linear_rgbAF_linear,
                           NULL);
                           
+      babl_conversion_new(rgbaF_linear, 
+                          rgbAF_gamma,
+                          "linear",
+                          conv_rgbaF_linear_rgbAF_gamma,
+                          NULL);
+
       /* Which of these is faster varies by CPU, and the difference
        * is big enough that it's worthwhile to include both and
        * let them fight it out in the babl benchmarks.
