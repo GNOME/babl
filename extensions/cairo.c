@@ -287,6 +287,48 @@ conv_rgbafloat_cairo32_le (unsigned char *src,
   return samples;
 }
 
+
+static long
+conv_yafloat_cairo32_le (unsigned char *src,
+                         unsigned char *dst,
+                         long           samples)
+{
+  float *fsrc = (float *) src;
+  unsigned char *cdst = (unsigned char *) dst;
+  int n = samples;
+
+  while (n--)
+    {
+      float gray   = *fsrc++;
+      float alpha  = *fsrc++;
+      if (alpha >= 1.0)
+      {
+        int val = babl_linear_to_gamma_2_2f (gray) * 0xff + 0.5f;
+        val = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+        *cdst++ = val;
+        *cdst++ = val;
+        *cdst++ = val;
+        *cdst++ = 0xff;
+      }
+      else if (alpha <= 0.0)
+      {
+        (*(uint32_t*)cdst)=0;
+        cdst+=4;
+      }
+      else
+      {
+        float balpha = alpha * 0xff;
+        int val = babl_linear_to_gamma_2_2f (gray) * balpha + 0.5f;
+        val = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
+        *cdst++ = val;
+        *cdst++ = val;
+        *cdst++ = val;
+        *cdst++ = balpha + 0.5f;
+      }
+    }
+  return samples;
+}
+
 int
 init (void)
 {
@@ -340,6 +382,8 @@ init (void)
 
       babl_conversion_new (babl_format ("RGBA float"), f32, "linear",
                            conv_rgbafloat_cairo32_le, NULL);
+      babl_conversion_new (babl_format ("YA float"), f32, "linear",
+                           conv_yafloat_cairo32_le, NULL);
 
       babl_conversion_new (babl_format ("R'aG'aB'aA float"), f32, "linear",
                            conv_rgbA_gamma_float_cairo32_le, NULL);
