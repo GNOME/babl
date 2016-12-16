@@ -125,6 +125,24 @@ conv_rgbA8_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
   return samples;
 }
 
+static inline long
+conv_rgb8_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
+{
+  long n = samples;
+  while (n--)
+    {
+      unsigned char red    = *src++;
+      unsigned char green  = *src++;
+      unsigned char blue   = *src++;
+
+      *dst++ = blue;
+      *dst++ = green;
+      *dst++ = red;
+      *dst++ = 0xff;
+    }
+  return samples;
+}
+
 
 
 
@@ -304,6 +322,10 @@ init (void)
 
       babl_conversion_new (babl_format ("R'G'B'A u8"), f32, "linear",
                            conv_rgbA8_cairo32_le, NULL);
+
+
+      babl_conversion_new (babl_format ("R'G'B' u8"), f32, "linear",
+                           conv_rgb8_cairo32_le, NULL);
 
       babl_conversion_new (babl_format ("Y'A u8"), f32, "linear",
                            conv_yA8_cairo32_le, NULL);
