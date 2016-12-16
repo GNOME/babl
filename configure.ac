@@ -408,7 +408,7 @@ if test "x$enable_mmx" = xyes; then
 
         CFLAGS="$CFLAGS $sse_flag $f16c_flag"
 
-        AC_COMPILE_IFELSE([AC_LANG_PROGRAM([#include <immintrin.h>],[__m128 val = _mm_cvtph_ps ((__m128i)_mm_setzero_ps());])],
+        AC_COMPILE_IFELSE([AC_LANG_PROGRAM([#include <immintrin.h>],[__m128 val = _mm_cvtph_ps ((__m128i)_mm_setzero_ps()); __m128i val2 = _mm_insert_epi64((__m128i)_mm_setzero_ps(), 0, 0);])],
           AC_DEFINE(USE_F16C, 1, [Define to 1 if f16c intrinsics are available.])
           AC_MSG_RESULT(yes)
         ,
