@@ -58,15 +58,11 @@ babl_hash_by_int (BablHashTable *htab,
                   int           id)
 {
   int   hash = 0;
-  int   i;
-
-  for (i = 0; i < sizeof (int); i++)
-  {
-    hash +=  id & 0xFF;
-    hash += (hash << 10);
-    hash ^= (hash >> 6);
-    id >>= 8;
-  }
+  hash +=  id & 0xFF;
+  hash += (hash << 10);
+  hash ^= (hash >> 6);
+  id >>= 8;
+  hash +=  id & 0xFF;
   hash += (hash << 3);
   hash ^= (hash >> 11);
   hash += (hash << 15);
