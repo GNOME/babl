@@ -133,6 +133,8 @@ babl_fish_get_id (const Babl *source,
    * source/destination values. */
   ptrdiff_t id = source - destination;
   /* instances with id 0 won't be inserted into database */
+  id *= ((((size_t)  (source))) % 37);
+
   if (id == 0)
     id = 1;
   return id;
