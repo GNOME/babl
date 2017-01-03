@@ -250,7 +250,7 @@ conv_gaF_ga16 (unsigned char *src, unsigned char *dst, long samples)
 }
 
 #define conv_rgbAF_rgbAD     conv_rgbaF_rgbaD
-#define conv_rgbAD_rgbAD     conv_rgbaD_rgbaF
+#define conv_rgbAD_rgbAF     conv_rgbaD_rgbaF
 #define conv_rgbAF_rgbA16    conv_rgbaF_rgba16
 #define conv_gF_g16          conv_F_16
 #define conv_gAF_gA16        conv_gaF_ga16
@@ -748,6 +748,15 @@ init (void)
     babl_component ("Ba"),
     babl_component ("A"),
     NULL);
+  const Babl *rgbAD = babl_format_new (
+    babl_model ("RaGaBaA"),
+    babl_type ("double"),
+    babl_component ("Ra"),
+    babl_component ("Ga"),
+    babl_component ("Ba"),
+    babl_component ("A"),
+    NULL);
+
   const Babl *rgbA16 = babl_format_new (
     babl_model ("RaGaBaA"),
     babl_type ("u16"),
@@ -842,6 +851,8 @@ init (void)
 
   o (rgbaF, rgbaD);
   o (rgbaD, rgbaF);
+  o (rgbAF, rgbAD);
+  o (rgbAD, rgbAF);
   o (rgbaF, rgba8);
   o (rgba8, rgbaF);
   o (rgbaF, rgba16);
