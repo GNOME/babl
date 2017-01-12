@@ -28,8 +28,8 @@
 #define DEGREES_PER_RADIAN (180 / 3.14159265358979323846)
 #define RADIANS_PER_DEGREE (1 / DEGREES_PER_RADIAN)
 
-#define LAB_EPSILON       (216.0 / 24389.0)
-#define LAB_KAPPA         (24389.0 / 27.0)
+#define LAB_EPSILON       (216.0f / 24389.0f)
+#define LAB_KAPPA         (24389.0f / 27.0f)
 
 /* The constants below hard-code the D50-adapted sRGB ICC profile
  * reference white, aka the ICC profile D50 illuminant.
@@ -46,9 +46,9 @@
  * hard-coded D50 ICC profile illuminant values:
  */
 
-#define D50_WHITE_REF_X   0.964202880
-#define D50_WHITE_REF_Y   1.000000000
-#define D50_WHITE_REF_Z   0.824905400
+#define D50_WHITE_REF_X   0.964202880f
+#define D50_WHITE_REF_Y   1.000000000f
+#define D50_WHITE_REF_Z   0.824905400f
 
 
 int init (void);
@@ -1044,7 +1044,6 @@ types_u16 (void)
 
   babl_type_new (
     "CIE u16 ab",
-    "id", "CIE u8 ab",
     "integer",
     "unsigned",
     "bits", 16,
