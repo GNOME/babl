@@ -78,6 +78,31 @@ babl_pow_1_24 (double x)
   return x*y;
 }
 
+
+#include <stdint.h>
+/* frexpf copied from musl */
+static inline float babl_frexpf(float x, int *e)
+{
+        union { float f; uint32_t i; } y = { x };
+        int ee = y.i>>23 & 0xff;
+
+        if (!ee) {
+                if (x) {
+                        x = babl_frexpf(x*0x1p64, e);
+                        *e -= 64;
+                } else *e = 0;
+                return x;
+        } else if (ee == 0xff) {
+                return x;
+        }
+
+        *e = ee - 0x7e;
+        y.i &= 0x807ffffful;
+        y.i |= 0x3f000000ul;
+        return y.f;
+}
+
+
 //////////////////////////////////////////////
 /* a^b = exp(b*log(a))
  *
@@ -96,7 +121,7 @@ static inline float
 init_newtonf (float x, float exponent, float c0, float c1, float c2)
 {
     int iexp;
-    float y = frexpf(x, &iexp);
+    float y = babl_frexpf(x, &iexp);
     y = 2*y+(iexp-2);
     c1 *= M_LN2*exponent;
     c2 *= M_LN2*M_LN2*exponent*exponent;
