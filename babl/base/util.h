@@ -105,4 +105,7 @@ babl_gamma_2_2_to_linearf (float value)
 #else
   #define linear_to_gamma_2_2(value) (pow((value), (1.0F/2.2F)))
   #define gamma_2_2_to_linear(value) (pow((value), 2.2F))
+
+  #define babl_linear_to_gamma_2_2f(value) (powf((value), (1.0f/2.2f)))
+  #define babl_gamma_2_2_to_linearf(value) (powf((value), 2.2f))
 #endif
