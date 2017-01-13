@@ -444,6 +444,73 @@ cubef (float f)
   return f * f * f;
 }
 
+/* origin: FreeBSD /usr/src/lib/msun/src/s_cbrtf.c */
+/*
+ * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
+ * Debugged and optimized by Bruce D. Evans.
+ */
+/*
+ * ====================================================
+ * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
+ *
+ * Developed at SunPro, a Sun Microsystems, Inc. business.
+ * Permission to use, copy, modify, and distribute this
+ * software is freely granted, provided that this notice
+ * is preserved.
+ * ====================================================
+ */
+/* _cbrtf(x)
+ * Return cube root of x
+ */
+
+#include <math.h>
+#include <stdint.h>
+
+static const unsigned
+B1 = 709958130, /* B1 = (127-127.0/3-0.03306235651)*2**23 */
+B2 = 642849266; /* B2 = (127-127.0/3-24/3-0.03306235651)*2**23 */
+
+static inline float _cbrtf(float x)
+{
+	double_t r,T;
+	union {float f; uint32_t i;} u = {x};
+	uint32_t hx = u.i & 0x7fffffff;
+
+	if (hx >= 0x7f800000)  /* cbrt(NaN,INF) is itself */
+		return x + x;
+
+	/* rough cbrt to 5 bits */
+	if (hx < 0x00800000) {  /* zero or subnormal? */
+		if (hx == 0)
+			return x;  /* cbrt(+-0) is itself */
+		u.f = x*0x1p24f;
+		hx = u.i & 0x7fffffff;
+		hx = hx/3 + B2;
+	} else
+		hx = hx/3 + B1;
+	u.i &= 0x80000000;
+	u.i |= hx;
+
+	/*
+	 * First step Newton iteration (solving t*t-x/t == 0) to 16 bits.  In
+	 * double precision so that its terms can be arranged for efficiency
+	 * without causing overflow or underflow.
+	 */
+	T = u.f;
+	r = T*T*T;
+	T = T*((double_t)x+x+r)/(x+r+r);
+
+	/*
+	 * Second step Newton iteration to 47 bits.  In double precision for
+	 * efficiency and accuracy.
+	 */
+	r = T*T*T;
+	T = T*((double_t)x+x+r)/(x+r+r);
+
+	/* rounding to 24 bits is perfect in round-to-nearest mode */
+	return T;
+}
+
 static long
 Yaf_to_Laf (float *src,
             float *dst,
@@ -455,7 +522,7 @@ Yaf_to_Laf (float *src,
     {
       float yr = src[0];
       float a  = src[1];
-      float L  = yr > LAB_EPSILON ? 116.0 * cbrtf (yr) - 16 : LAB_KAPPA * yr;
+      float L  = yr > LAB_EPSILON ? 116.0f * _cbrtf (yr) - 16 : LAB_KAPPA * yr;
 
       dst[0] = L;
       dst[1] = a;
@@ -466,6 +533,7 @@ Yaf_to_Laf (float *src,
 
   return samples;
 }
+
 
 static long
 rgbf_to_Labf (float *src,
@@ -484,9 +552,9 @@ rgbf_to_Labf (float *src,
       float yr = 0.22248840f / D50_WHITE_REF_Y * r + 0.71690369f / D50_WHITE_REF_Y * g + 0.06060791f / D50_WHITE_REF_Y * b;
       float zr = 0.01391602f / D50_WHITE_REF_Z * r + 0.09706116f / D50_WHITE_REF_Z * g + 0.71392822f / D50_WHITE_REF_Z * b;
 
-      float fx = xr > LAB_EPSILON ? cbrtf (xr) : (LAB_KAPPA * xr + 16.0f) / 116.0f;
-      float fy = yr > LAB_EPSILON ? cbrtf (yr) : (LAB_KAPPA * yr + 16.0f) / 116.0f;
-      float fz = zr > LAB_EPSILON ? cbrtf (zr) : (LAB_KAPPA * zr + 16.0f) / 116.0f;
+      float fx = xr > LAB_EPSILON ? _cbrtf (xr) : (LAB_KAPPA * xr + 16.0f) / 116.0f;
+      float fy = yr > LAB_EPSILON ? _cbrtf (yr) : (LAB_KAPPA * yr + 16.0f) / 116.0f;
+      float fz = zr > LAB_EPSILON ? _cbrtf (zr) : (LAB_KAPPA * zr + 16.0f) / 116.0f;
 
       float L = 116.0f * fy - 16.0f;
       float A = 500.0f * (fx - fy);
@@ -521,9 +589,9 @@ rgbaf_to_Labaf (float *src,
       float yr = 0.22248840f / D50_WHITE_REF_Y * r + 0.71690369f / D50_WHITE_REF_Y * g + 0.06060791f / D50_WHITE_REF_Y * b;
       float zr = 0.01391602f / D50_WHITE_REF_Z * r + 0.09706116f / D50_WHITE_REF_Z * g + 0.71392822f / D50_WHITE_REF_Z * b;
 
-      float fx = xr > LAB_EPSILON ? cbrtf (xr) : (LAB_KAPPA * xr + 16.0f) / 116.0f;
-      float fy = yr > LAB_EPSILON ? cbrtf (yr) : (LAB_KAPPA * yr + 16.0f) / 116.0f;
-      float fz = zr > LAB_EPSILON ? cbrtf (zr) : (LAB_KAPPA * zr + 16.0f) / 116.0f;
+      float fx = xr > LAB_EPSILON ? _cbrtf (xr) : (LAB_KAPPA * xr + 16.0f) / 116.0f;
+      float fy = yr > LAB_EPSILON ? _cbrtf (yr) : (LAB_KAPPA * yr + 16.0f) / 116.0f;
+      float fz = zr > LAB_EPSILON ? _cbrtf (zr) : (LAB_KAPPA * zr + 16.0f) / 116.0f;
 
       float L = 116.0f * fy - 16.0f;
       float A = 500.0f * (fx - fy);
