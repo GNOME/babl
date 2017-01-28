@@ -154,7 +154,7 @@
     <h2>Download</h2>
 
     <p>The latest versioned development version of babl can be found in
-    <a href='https://download.gimp.org/pub/babl/'>ftp://downloads.gimp.org/pub/babl/</a>.
+    <a href='https://download.gimp.org/pub/babl/'>https://download.gimp.org/pub/babl/</a>.
     </p>
 
     <p>Babl uses git. The main repository is hosted by GNOME.
