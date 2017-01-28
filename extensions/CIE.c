@@ -51,13 +51,14 @@
 #define D50_WHITE_REF_Z   0.824905400f
 
 
-int init (void);
 
 static void types (void);
 static void components (void);
 static void models (void);
 static void conversions (void);
 static void formats (void);
+
+int init (void);
 
 int
 init (void)
@@ -125,6 +126,8 @@ models (void)
 
 static void  rgbcie_init (void);
 
+/******** begin double RGB/CIE color space conversions ****************/
+
 static inline void  ab_to_CHab    (double  a,
                                    double  b,
                                    double *to_C,
@@ -164,6 +167,137 @@ static inline void XYZ_to_RGB     (double X,
                                    double *to_R,
                                    double *to_G,
                                    double *to_B);
+
+static inline void
+RGB_to_XYZ (double R,
+            double G,
+            double B,
+            double *to_X,
+            double *to_Y,
+            double *to_Z)
+{
+  double RGBtoXYZ[3][3];
+
+/*
+ * The variables below hard-code the D50-adapted sRGB RGB to XYZ matrix.
+ *
+ * In a properly ICC profile color-managed application, this matrix
+ * is retrieved from the image's ICC profile's RGB colorants.
+ *
+ * */
+  RGBtoXYZ[0][0]= 0.43603516;
+  RGBtoXYZ[0][1]= 0.38511658;
+  RGBtoXYZ[0][2]= 0.14305115;
+  RGBtoXYZ[1][0]= 0.22248840;
+  RGBtoXYZ[1][1]= 0.71690369;
+  RGBtoXYZ[1][2]= 0.06060791;
+  RGBtoXYZ[2][0]= 0.01391602;
+  RGBtoXYZ[2][1]= 0.09706116;
+  RGBtoXYZ[2][2]= 0.71392822;
+
+/* Convert RGB to XYZ */
+  *to_X = RGBtoXYZ[0][0]*R + RGBtoXYZ[0][1]*G + RGBtoXYZ[0][2]*B;
+  *to_Y = RGBtoXYZ[1][0]*R + RGBtoXYZ[1][1]*G + RGBtoXYZ[1][2]*B;
+  *to_Z = RGBtoXYZ[2][0]*R + RGBtoXYZ[2][1]*G + RGBtoXYZ[2][2]*B;
+
+}
+
+static inline void
+XYZ_to_RGB (double X,
+            double Y,
+            double Z,
+            double *to_R,
+            double *to_G,
+            double *to_B)
+{
+  double XYZtoRGB[3][3];
+
+/*
+ * The variables below hard-code the inverse of
+ * the D50-adapted sRGB RGB to XYZ matrix.
+ *
+ * In a properly ICC profile color-managed application,
+ * this matrix is the inverse of the matrix
+ * retrieved from the image's ICC profile's RGB colorants.
+ *
+ */
+  XYZtoRGB[0][0]=  3.134274799724;
+  XYZtoRGB[0][1]= -1.617275708956;
+  XYZtoRGB[0][2]= -0.490724283042;
+  XYZtoRGB[1][0]= -0.978795575994;
+  XYZtoRGB[1][1]=  1.916161689117;
+  XYZtoRGB[1][2]=  0.033453331711;
+  XYZtoRGB[2][0]=  0.071976988401;
+  XYZtoRGB[2][1]= -0.228984974402;
+  XYZtoRGB[2][2]=  1.405718224383;
+
+/* Convert XYZ to RGB */
+  *to_R = XYZtoRGB[0][0] * X + XYZtoRGB[0][1] * Y + XYZtoRGB[0][2] * Z;
+  *to_G = XYZtoRGB[1][0] * X + XYZtoRGB[1][1] * Y + XYZtoRGB[1][2] * Z;
+  *to_B = XYZtoRGB[2][0] * X + XYZtoRGB[2][1] * Y + XYZtoRGB[2][2] * Z;
+}
+
+static inline void
+XYZ_to_LAB (double X,
+            double Y,
+            double Z,
+            double *to_L,
+            double *to_a,
+            double *to_b)
+{
+  double f_x, f_y, f_z;
+
+  double x_r = X / D50_WHITE_REF_X;
+  double y_r = Y / D50_WHITE_REF_Y;
+  double z_r = Z / D50_WHITE_REF_Z;
+
+  if (x_r > LAB_EPSILON) f_x = pow(x_r, 1.0 / 3.0);
+  else ( f_x = ((LAB_KAPPA * x_r) + 16) / 116.0 );
+
+  if (y_r > LAB_EPSILON) f_y = pow(y_r, 1.0 / 3.0);
+  else ( f_y = ((LAB_KAPPA * y_r) + 16) / 116.0 );
+
+  if (z_r > LAB_EPSILON) f_z = pow(z_r, 1.0 / 3.0);
+  else ( f_z = ((LAB_KAPPA * z_r) + 16) / 116.0 );
+
+  *to_L = (116.0 * f_y) - 16.0;
+  *to_a = 500.0 * (f_x - f_y);
+  *to_b = 200.0 * (f_y - f_z);
+}
+
+static inline void
+LAB_to_XYZ (double L,
+            double a,
+            double b,
+            double *to_X,
+            double *to_Y,
+            double *to_Z)
+{
+  double fy, fx, fz, fx_cubed, fy_cubed, fz_cubed;
+  double xr, yr, zr;
+
+  fy = (L + 16.0) / 116.0;
+  fy_cubed = fy*fy*fy;
+
+  fz = fy - (b / 200.0);
+  fz_cubed = fz*fz*fz;
+
+  fx = (a / 500.0) + fy;
+  fx_cubed = fx*fx*fx;
+
+  if (fx_cubed > LAB_EPSILON) xr = fx_cubed;
+  else xr = ((116.0 * fx) - 16) / LAB_KAPPA;
+
+  if ( L > (LAB_KAPPA * LAB_EPSILON) ) yr = fy_cubed;
+  else yr = (L / LAB_KAPPA);
+
+  if (fz_cubed > LAB_EPSILON) zr = fz_cubed;
+  else zr = ( (116.0 * fz) - 16 ) / LAB_KAPPA;
+
+  *to_X = xr * D50_WHITE_REF_X;
+  *to_Y = yr * D50_WHITE_REF_Y;
+  *to_Z = zr * D50_WHITE_REF_Z;
+}
 
 static long
 rgba_to_lab (char *src,
@@ -208,7 +342,7 @@ lab_to_rgba (char *src,
       
       //convert Lab to XYZ
       LAB_to_XYZ (L, a, b, &X, &Y, &Z);
-      
+
       //convert XYZ to RGB
       XYZ_to_RGB (X, Y, Z, &R, &G, &B);
       ((double *) dst)[0] = R;
@@ -222,7 +356,6 @@ lab_to_rgba (char *src,
   return n;
 }
 
-
 static long
 rgba_to_laba (char *src,
               char *dst,
@@ -235,10 +368,10 @@ rgba_to_laba (char *src,
       double B     = ((double *) src)[2];
       double alpha = ((double *) src)[3];
       double X, Y, Z, L, a, b;
-      
+
       //convert RGB to XYZ
       RGB_to_XYZ (R, G, B, &X, &Y, &Z);
-      
+
       //convert XYZ to Lab
       XYZ_to_LAB (X, Y, Z, &L, &a, &b);
 
@@ -266,10 +399,10 @@ laba_to_rgba (char *src,
       double alpha = ((double *) src)[3];
 
       double X, Y, Z, R, G, B;
-      
+
       //convert Lab to XYZ
       LAB_to_XYZ (L, a, b, &X, &Y, &Z);
-      
+
       //convert XYZ to RGB
       XYZ_to_RGB (X, Y, Z, &R, &G, &B);
       ((double *) dst)[0] = R;
@@ -304,8 +437,7 @@ ab_to_CHab (double  a,
 
   // Keep H within the range 0-360
   if (*to_H < 0.0)
-    *to_H += 360;
-
+      *to_H += 360;
 }
 
 static long
@@ -322,10 +454,10 @@ rgba_to_lchab (char *src,
 
       //convert RGB to XYZ
       RGB_to_XYZ (R, G, B, &X, &Y, &Z);
-      
+
       //convert XYZ to Lab
       XYZ_to_LAB (X, Y, Z, &L, &a, &b);
-      
+
       //convert Lab to LCH(ab)
       ab_to_CHab (a, b, &C, &H);
 
@@ -350,13 +482,13 @@ lchab_to_rgba (char *src,
       double C = ((double *) src)[1];
       double H = ((double *) src)[2];
       double a, b, X, Y, Z, R, G, B;
-      
+
       //Convert LCH(ab) to Lab
       CHab_to_ab (C, H, &a, &b);
-      
+
       //Convert LAB to XYZ
       LAB_to_XYZ (L, a, b, &X, &Y, &Z);
-      
+
       //Convert XYZ to RGB
       XYZ_to_RGB (X, Y, Z, &R, &G, &B);
 
@@ -370,7 +502,6 @@ lchab_to_rgba (char *src,
     }
   return n;
 }
-
 
 static long
 rgba_to_lchaba (char *src,
@@ -387,10 +518,10 @@ rgba_to_lchaba (char *src,
 
       //convert RGB to XYZ
       RGB_to_XYZ (R, G, B, &X, &Y, &Z);
-      
+
       //convert XYZ to Lab
       XYZ_to_LAB (X, Y, Z, &L, &a, &b);
-      
+
       //convert Lab to LCH(ab)
       ab_to_CHab (a, b, &C, &H);
 
@@ -417,16 +548,16 @@ lchaba_to_rgba (char *src,
       double H     = ((double *) src)[2];
       double alpha = ((double *) src)[3];
       double a, b, X, Y, Z, R, G, B;
-      
+
       //Convert LCH(ab) to Lab
       CHab_to_ab (C, H, &a, &b);
-      
+
       //Convert Lab to XYZ
       LAB_to_XYZ (L, a, b, &X, &Y, &Z);
-      
+
       //Convert XYZ to RGB
       XYZ_to_RGB (X, Y, Z, &R, &G, &B);
-      
+
       ((double *) dst)[0] = R;
       ((double *) dst)[1] = G;
       ((double *) dst)[2] = B;
@@ -438,11 +569,10 @@ lchaba_to_rgba (char *src,
   return n;
 }
 
-static inline float
-cubef (float f)
-{
-  return f * f * f;
-}
+
+/******** end double RGB/CIE color space conversions ******************/
+
+/******** begin floating point RGB/CIE color space conversions ********/
 
 /* origin: FreeBSD /usr/src/lib/msun/src/s_cbrtf.c */
 /*
@@ -501,6 +631,12 @@ static inline float _cbrtf(float x)
 	return T;
 }
 
+static inline float
+cubef (float f)
+{
+  return f * f * f;
+}
+
 static long
 Yaf_to_Laf (float *src,
             float *dst,
@@ -523,7 +659,6 @@ Yaf_to_Laf (float *src,
 
   return samples;
 }
-
 
 static long
 rgbf_to_Labf (float *src,
@@ -836,7 +971,6 @@ formats (void)
     babl_component ("CIE b"),
     NULL);
 
-
   babl_format_new (
     "name", "CIE LCH(ab) float",
     babl_model ("CIE LCH(ab)"),
@@ -859,6 +993,10 @@ formats (void)
     NULL);
 }
 
+
+/******** end floating point RGB/CIE color space conversions **********/
+
+/******** begin  integer RGB/CIE color space conversions **************/
 
 static inline long
 convert_double_u8_scaled (double        min_val,
@@ -1145,141 +1283,11 @@ types (void)
   types_u16 ();
 }
 
+/******** end  integer RGB/CIE color space conversions ****************/
 
 static void
 rgbxyzrgb_init (void)
 {
-}
-
-static inline void
-RGB_to_XYZ (double R,
-            double G,
-            double B,
-            double *to_X,
-            double *to_Y,
-            double *to_Z)
-{
-  double RGBtoXYZ[3][3];
-
-/*
- * The variables below hard-code the D50-adapted sRGB RGB to XYZ matrix.
- *
- * In a properly ICC profile color-managed application, this matrix
- * is retrieved from the image's ICC profile's RGB colorants.
- *
- * */
-  RGBtoXYZ[0][0]= 0.43603516;
-  RGBtoXYZ[0][1]= 0.38511658;
-  RGBtoXYZ[0][2]= 0.14305115;
-  RGBtoXYZ[1][0]= 0.22248840;
-  RGBtoXYZ[1][1]= 0.71690369;
-  RGBtoXYZ[1][2]= 0.06060791;
-  RGBtoXYZ[2][0]= 0.01391602;
-  RGBtoXYZ[2][1]= 0.09706116;
-  RGBtoXYZ[2][2]= 0.71392822;
-
-/* Convert RGB to XYZ */
-  *to_X = RGBtoXYZ[0][0]*R + RGBtoXYZ[0][1]*G + RGBtoXYZ[0][2]*B;
-  *to_Y = RGBtoXYZ[1][0]*R + RGBtoXYZ[1][1]*G + RGBtoXYZ[1][2]*B;
-  *to_Z = RGBtoXYZ[2][0]*R + RGBtoXYZ[2][1]*G + RGBtoXYZ[2][2]*B;
-
-}
-
-static inline void
-XYZ_to_RGB (double X,
-            double Y,
-            double Z,
-            double *to_R,
-            double *to_G,
-            double *to_B)
-{
-  double XYZtoRGB[3][3];
-
-/*
- * The variables below hard-code the inverse of
- * the D50-adapted sRGB RGB to XYZ matrix.
- *
- * In a properly ICC profile color-managed application,
- * this matrix is the inverse of the matrix
- * retrieved from the image's ICC profile's RGB colorants.
- *
- */
-  XYZtoRGB[0][0]=  3.134274799724;
-  XYZtoRGB[0][1]= -1.617275708956;
-  XYZtoRGB[0][2]= -0.490724283042;
-  XYZtoRGB[1][0]= -0.978795575994;
-  XYZtoRGB[1][1]=  1.916161689117;
-  XYZtoRGB[1][2]=  0.033453331711;
-  XYZtoRGB[2][0]=  0.071976988401;
-  XYZtoRGB[2][1]= -0.228984974402;
-  XYZtoRGB[2][2]=  1.405718224383;
-
-/* Convert XYZ to RGB */
-  *to_R = XYZtoRGB[0][0] * X + XYZtoRGB[0][1] * Y + XYZtoRGB[0][2] * Z;
-  *to_G = XYZtoRGB[1][0] * X + XYZtoRGB[1][1] * Y + XYZtoRGB[1][2] * Z;
-  *to_B = XYZtoRGB[2][0] * X + XYZtoRGB[2][1] * Y + XYZtoRGB[2][2] * Z;
-}
-
-static inline void
-XYZ_to_LAB (double X,
-            double Y,
-            double Z,
-            double *to_L,
-            double *to_a,
-            double *to_b)
-{
-  double f_x, f_y, f_z;
-  
-  double x_r = X / D50_WHITE_REF_X;
-  double y_r = Y / D50_WHITE_REF_Y;
-  double z_r = Z / D50_WHITE_REF_Z;
-
-  if (x_r > LAB_EPSILON) f_x = pow(x_r, 1.0 / 3.0);
-  else ( f_x = ((LAB_KAPPA * x_r) + 16) / 116.0 );
-
-  if (y_r > LAB_EPSILON) f_y = pow(y_r, 1.0 / 3.0);
-  else ( f_y = ((LAB_KAPPA * y_r) + 16) / 116.0 );
-
-  if (z_r > LAB_EPSILON) f_z = pow(z_r, 1.0 / 3.0);
-  else ( f_z = ((LAB_KAPPA * z_r) + 16) / 116.0 );
-
-  *to_L = (116.0 * f_y) - 16.0;
-  *to_a = 500.0 * (f_x - f_y);
-  *to_b = 200.0 * (f_y - f_z);
-}
-
-static inline void
-LAB_to_XYZ (double L,
-            double a,
-            double b,
-            double *to_X,
-            double *to_Y,
-            double *to_Z)
-{
-  double fy, fx, fz, fx_cubed, fy_cubed, fz_cubed;
-  double xr, yr, zr;
-
-  fy = (L + 16.0) / 116.0;
-  fy_cubed = fy*fy*fy;
-
-  fz = fy - (b / 200.0);
-  fz_cubed = fz*fz*fz;
-
-  fx = (a / 500.0) + fy;
-  fx_cubed = fx*fx*fx;
-
-  if (fx_cubed > LAB_EPSILON) xr = fx_cubed;
-  else xr = ((116.0 * fx) - 16) / LAB_KAPPA;
-
-  if ( L > (LAB_KAPPA * LAB_EPSILON) ) yr = fy_cubed;
-  else yr = (L / LAB_KAPPA);
-
-  if (fz_cubed > LAB_EPSILON) zr = fz_cubed;
-  else zr = ( (116.0 * fz) - 16 ) / LAB_KAPPA;
-
-  *to_X = xr * D50_WHITE_REF_X;
-  *to_Y = yr * D50_WHITE_REF_Y;
-  *to_Z = zr * D50_WHITE_REF_Z;
 }
 
 static void
