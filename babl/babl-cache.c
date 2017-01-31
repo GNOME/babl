@@ -162,7 +162,11 @@ void babl_store_db (void)
 {
   BablDb *db = babl_fish_db ();
   int i;
-  FILE *dbfile = fopen (fish_cache_path (), "w");
+  char *tmpp = calloc(8000,1);
+  FILE *dbfile;
+
+  sprintf (tmpp, "%s~", fish_cache_path ());
+  dbfile  = fopen (tmpp, "w");
   if (!dbfile)
     return;
   fprintf (dbfile, "%s\n", cache_header ());
@@ -181,6 +185,9 @@ void babl_store_db (void)
       fprintf (dbfile, "%s----\n", tmp);
   }
   fclose (dbfile);
+
+  rename (tmpp, fish_cache_path());
+  free (tmpp);
 }
 
 static int
