@@ -4,6 +4,12 @@ the news section both in the README and the webpage.
 
 
                                                                           -->
+
+2017-02-01 babl-0.1.24                                              </dt><dd>
+Improvements to profile cache persistance, fast paths that improve actual GIMP
+use on various precisions, use single precision constants for some more of CIE
+computions.
+                                                                    </dd><dt>
 2016-11-05 babl-0.1.22                                              </dt><dd>
 Added cache of profiled conversions, added HCY color model, some precision and
 performance updated for fast paths.

@@ -52,6 +52,9 @@
   <dt>Micheal Muré</dd>
   <dd>portability fixes</dd>
 
+  <dt>Edward E</dt>
+  <dd>win32 platform adaptations</dd>
+
   <dt>Maxime Nicco</dt>
     <dl>HSV color model extension</dl>
   <dt>Teo Mazars</dt>
