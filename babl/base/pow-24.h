@@ -88,7 +88,7 @@ static inline float babl_frexpf(float x, int *e)
 
         if (!ee) {
                 if (x) {
-                        x = babl_frexpf(x*0x1p64, e);
+                        x = babl_frexpf(x*18446744073709551616.0, e);
                         *e -= 64;
                 } else *e = 0;
                 return x;
