@@ -78,7 +78,9 @@ static const char *fish_cache_path (void)
 
   strncpy (path, FALLBACK_CACHE_PATH, 4096);
 #ifndef _WIN32
-  if (getenv ("HOME"))
+  if (getenv ("XDG_CACHE_HOME"))
+    sprintf (path, "%s/babl/babl-fishes", getenv("XDG_CACHE_HOME"));
+  else if (getenv ("HOME"))
     sprintf (path, "%s/.cache/babl/babl-fishes", getenv("HOME"));
 #else
 {
