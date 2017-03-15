@@ -352,8 +352,12 @@ babl_fish_path (const Babl *source,
 #endif
       {
         static int warnings = 0;
+
+        if (_babl_legal_error() <= 0.0000000001)
+            return NULL;
+
         if (warnings++ == 0)
-          fprintf (stderr, 
+          fprintf (stderr,
 "Missing fast-path babl conversion detected, Implementing missing babl fast paths\n"
 "accelerates GEGL, GIMP and other software using babl, warnings are printed on\n"
 "first occurance of formats used where a conversion has to be synthesized\n"
