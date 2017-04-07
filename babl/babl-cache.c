@@ -188,6 +188,9 @@ void babl_store_db (void)
   }
   fclose (dbfile);
 
+#ifdef _WIN32
+  remove (fish_cache_path ());
+#endif
   rename (tmpp, fish_cache_path());
   free (tmpp);
 }
