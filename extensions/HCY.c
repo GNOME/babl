@@ -197,7 +197,7 @@ rgba_to_hcy_step (char *src,
     X = (rgb[ix[1]] - rgb[ix[0]]) / chroma;
 
     Y_peak = weights[ix[2]] + X * weights[ix[1]];
-    if (luma > 0. && luma < 1.)
+    if (luma != 0. && luma != 1.)
       chroma /= luma < Y_peak ? luma/Y_peak : (1. - luma)/(1. - Y_peak);
 
     hue = (H_sec + t * X) / 6.;
