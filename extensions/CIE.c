@@ -808,6 +808,126 @@ Labaf_to_rgbaf (float *src,
   return samples;
 }
 
+static long
+Labf_to_Lchabf (float *src,
+                float *dst,
+                long   samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      float L = src[0];
+      float A = src[1];
+      float B = src[2];
+
+      float C = sqrtf (A * A + B * B);
+      float H = atan2f (B, A) * DEGREES_PER_RADIAN;
+
+      // Keep H within the range 0-360
+      if (H < 0.0f)
+        H += 360.0f;
+
+      dst[0] = L;
+      dst[1] = C;
+      dst[2] = H;
+
+      src += 3;
+      dst += 3;
+    }
+
+  return samples;
+}
+
+static long
+Lchabf_to_Labf (float *src,
+                float *dst,
+                long   samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      float L = src[0];
+      float C = src[1];
+      float H = src[2];
+
+      float A = C * cosf (H * RADIANS_PER_DEGREE);
+      float B = C * sinf (H * RADIANS_PER_DEGREE);
+
+      dst[0] = L;
+      dst[1] = A;
+      dst[2] = B;
+
+      src += 3;
+      dst += 3;
+    }
+
+  return samples;
+}
+
+static long
+Labaf_to_Lchabaf (float *src,
+                  float *dst,
+                  long   samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      float L = src[0];
+      float A = src[1];
+      float B = src[2];
+      float a = src[3];
+
+      float C = sqrtf (A * A + B * B);
+      float H = atan2f (B, A) * DEGREES_PER_RADIAN;
+
+      // Keep H within the range 0-360
+      if (H < 0.0f)
+        H += 360.0f;
+
+      dst[0] = L;
+      dst[1] = C;
+      dst[2] = H;
+      dst[3] = a;
+
+      src += 4;
+      dst += 4;
+    }
+
+  return samples;
+}
+
+static long
+Lchabaf_to_Labaf (float *src,
+                  float *dst,
+                  long   samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      float L = src[0];
+      float C = src[1];
+      float H = src[2];
+      float a = src[3];
+
+      float A = C * cosf (H * RADIANS_PER_DEGREE);
+      float B = C * sinf (H * RADIANS_PER_DEGREE);
+
+      dst[0] = L;
+      dst[1] = A;
+      dst[2] = B;
+      dst[3] = a;
+
+      src += 4;
+      dst += 4;
+    }
+
+  return samples;
+}
+
 static void
 conversions (void)
 {
@@ -887,6 +1007,30 @@ conversions (void)
     babl_model ("CIE LCH(ab) alpha"),
     babl_model ("RGBA"),
     "linear", lchaba_to_rgba,
+    NULL
+  );
+  babl_conversion_new (
+    babl_format ("CIE Lab float"),
+    babl_format ("CIE LCH(ab) float"),
+    "linear", Labf_to_Lchabf,
+    NULL
+  );
+  babl_conversion_new (
+    babl_format ("CIE LCH(ab) float"),
+    babl_format ("CIE Lab float"),
+    "linear", Lchabf_to_Labf,
+    NULL
+  );
+  babl_conversion_new (
+    babl_format ("CIE Lab alpha float"),
+    babl_format ("CIE LCH(ab) alpha float"),
+    "linear", Labaf_to_Lchabaf,
+    NULL
+  );
+  babl_conversion_new (
+    babl_format ("CIE LCH(ab) alpha float"),
+    babl_format ("CIE Lab alpha float"),
+    "linear", Lchabaf_to_Labaf,
     NULL
   );
   /*babl_conversion_new (
