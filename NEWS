@@ -5,6 +5,10 @@ the news section both in the README and the webpage.
 
                                                                           -->
 
+
+2017-05-09 babl-0.1.26                                              </dt><dd>
+Build and install HCY color space, platform independences fixes to fish cache.
+                                                                    </dd><dt>
 2017-02-01 babl-0.1.24                                              </dt><dd>
 Improvements to profile cache persistance, fast paths that improve actual GIMP
 use on various precisions, use single precision constants for some more of CIE
