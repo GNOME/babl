@@ -104,6 +104,43 @@ conv_rgbA8_premul_cairo32_le (unsigned char *src, unsigned char *dst, long sampl
 }
 #endif
 
+static long conv_cairo32_rgbA8_premul_le (unsigned char *src, unsigned char *dst, long samples)
+{
+  long n = samples;
+  while (n--)
+    {
+      unsigned char blue   = *src++;
+      unsigned char green  = *src++;
+      unsigned char red    = *src++;
+      unsigned char alpha  = *src++;
+
+      *dst++ = red;
+      *dst++ = green;
+      *dst++ = blue;
+      *dst++ = alpha;
+    }
+  return samples;
+}
+
+
+static long conv_cairo32_rgbAF_premul_le (unsigned char *src, unsigned char *dst_char, long samples)
+{
+  long n = samples;
+  float *dst = (void*)dst_char;
+  while (n--)
+    {
+      unsigned char blue   = *src++;
+      unsigned char green  = *src++;
+      unsigned char red    = *src++;
+      unsigned char alpha  = *src++;
+
+      *dst++ = red / 255.0;
+      *dst++ = green / 255.0;
+      *dst++ = blue / 255.0;
+      *dst++ = alpha / 255.0;
+    }
+  return samples;
+}
 
 static inline long
 conv_rgbA8_cairo32_le (unsigned char *src, unsigned char *dst, long samples)
@@ -359,6 +396,13 @@ init (void)
         babl_component ("PAD"),
         NULL
       );
+
+      babl_conversion_new (f32, babl_format ("R'aG'aB'aA float"), "linear", 
+                           conv_cairo32_rgbAF_premul_le, NULL);
+
+      babl_conversion_new (f32, babl_format ("R'aG'aB'aA u8"), "linear", 
+                           conv_cairo32_rgbA8_premul_le, NULL);
+
       babl_conversion_new (babl_format ("R'aG'aB'aA u8"), f32, "linear", 
                            conv_rgbA8_premul_cairo32_le, NULL);
 
