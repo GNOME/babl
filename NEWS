@@ -6,6 +6,9 @@ the news section both in the README and the webpage.
                                                                           -->
 
 
+2017-05-30 babl-0.1.28                                              </dt><dd>
+Fast paths for Lav <-> Lch, release triggered by pending GIMP release.
+                                                                    </dd><dt>
 2017-05-09 babl-0.1.26                                              </dt><dd>
 Build and install HCY color space, platform independences fixes to fish cache.
                                                                     </dd><dt>
