@@ -22,6 +22,7 @@ C_TESTS =				\
 	n_components_cast \
 	models			\
 	cairo-RGB24		\
+	transparent		\
 	$(CONCURRENCY_STRESS_TEST)
 
 TESTS = \

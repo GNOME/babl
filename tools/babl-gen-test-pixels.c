@@ -81,7 +81,20 @@ static void gen_path_pixels (void)
         rand_range_double (1.0, 2.0));
     }
 
-  for (i = 288; i < BABL_PATH_NUM_TEST_PIXELS; i++)
+  /*  add 16 pixels with an alpha of 0.0, to penalize conversions that
+   *  destroy color information of fully-transparent pixels, when
+   *  relevant.  see bug #780016.
+   */
+  for (i = 0; i < 16; i++)
+    {
+      printf (BABL_PIXEL_FMT_STR ",\n",
+        rand_double (),
+        rand_double (),
+        rand_double (),
+        0.0);
+    }
+
+  for (i = 304; i < BABL_PATH_NUM_TEST_PIXELS; i++)
     {
       printf (BABL_PIXEL_FMT_STR ",\n",
         rand_double (),
