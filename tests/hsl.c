@@ -15,36 +15,12 @@
  * <http://www.gnu.org/licenses/>.
  */
 
-#include <math.h>
 #include <stdio.h>
 
 #include "config.h"
 #include "babl.h"
 
-#define CHECK_CONV(test_name, componenttype, src_fmt, dst_fmt, src_pix, expected_pix) \
-  {                                                                     \
-    const Babl *fish;                                                   \
-    int i;                                                              \
-    fish = babl_fish (src_fmt, dst_fmt);                                \
-    if (!fish)                                                          \
-      {                                                                 \
-        printf ("  %s failed to make fish\n", test_name);               \
-        OK = 0;                                                         \
-      }                                                                 \
-    for (i = 0; i < sizeof(src_pix)/sizeof(src_pix[0]); i ++)           \
-      {                                                                 \
-        int c;                                                          \
-        componenttype result[10];                                       \
-        babl_process (fish, src_pix[i], result, 1);                     \
-        for (c = 0; c < sizeof(expected_pix[i])/sizeof(expected_pix[i][0]); c++) \
-          if (fabs(result[c] - expected_pix[i][c]) > 0.001)             \
-            {                                                           \
-              printf (" %s failed #%i[%i]  got %lf expected %lf\n",     \
-                      test_name, i, c, result[c], expected_pix[i][c]);  \
-              OK = 0;                                                   \
-            }                                                           \
-      }                                                                 \
-  }
+#include "common.inc"
 
 
 int
@@ -95,15 +71,15 @@ main (int    argc,
 
   babl_init ();
 
-  CHECK_CONV ("rgba to hsla ", float,
-              babl_format ("RGBA float"),
-              babl_format ("HSLA float"),
-              rgba, hsla);
+  CHECK_CONV_FLOAT ("rgba to hsla ", float, 0.001,
+                    babl_format ("RGBA float"),
+                    babl_format ("HSLA float"),
+                    rgba, hsla);
 
-  CHECK_CONV ("hsla to rgba ", float,
-              babl_format ("HSLA float"),
-              babl_format ("RGBA float"),
-              hsla, rgba);
+  CHECK_CONV_FLOAT ("hsla to rgba ", float, 0.001,
+                    babl_format ("HSLA float"),
+                    babl_format ("RGBA float"),
+                    hsla, rgba);
 
   babl_exit ();
 

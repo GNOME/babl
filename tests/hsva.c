@@ -24,34 +24,11 @@
 
 #include "config.h"
 #include <stdlib.h>
-#include <math.h>
 #include <stdio.h>
 #include <assert.h>
 #include "babl.h"
 
-#define CHECK_CONV(test_name, componenttype, src_fmt, dst_fmt, src_pix, expected_pix) \
-  {       \
-  const Babl *fish;       \
-  int i;       \
-  fish = babl_fish (src_fmt, dst_fmt);       \
-  if (!fish)       \
-    {       \
-      printf ("  %s failed to make fish\n", test_name);       \
-      OK = 0;       \
-    }       \
-  for (i = 0; i < sizeof(src_pix)/sizeof(src_pix[0]); i ++)       \
-    {       \
-      int c;\
-      componenttype result[10];       \
-      babl_process (fish, src_pix[i], result, 1);       \
-      for (c = 0; c < sizeof(expected_pix[i])/sizeof(expected_pix[i][0]); c++) \
-      if (fabs(result[c] - expected_pix[i][c]) > 0.001)       \
-        {       \
-          printf (" %s failed #%i[%i]  got %lf expected %lf\n", test_name, i, c, result[c], expected_pix[i][c]);       \
-          OK = 0;          \
-        }       \
-    }       \
-  }
+#include "common.inc"
 
 
 int
@@ -100,15 +77,15 @@ main (int    argc,
 
   babl_init ();
 
-  CHECK_CONV ("rgba to hsva ", float,
-              babl_format ("RGBA float"),
-              babl_format ("HSVA float"),
-              rgba, hsva);
+  CHECK_CONV_FLOAT ("rgba to hsva ", float, 0.001,
+                    babl_format ("RGBA float"),
+                    babl_format ("HSVA float"),
+                    rgba, hsva);
 
-  CHECK_CONV ("hsva to rgba ", float,
-              babl_format ("HSVA float"),
-              babl_format ("RGBA float"),
-              hsva, rgba);
+  CHECK_CONV_FLOAT ("rgba to hsva ", float, 0.001,
+                    babl_format ("HSVA float"),
+                    babl_format ("RGBA float"),
+                    hsva, rgba);
 
   babl_exit ();
 
