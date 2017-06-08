@@ -26,6 +26,12 @@
 #define BABL_MODEL_NUM_TEST_PIXELS      512
 #define BABL_TYPE_NUM_TEST_PIXELS       512
 
+#define BABL_COMPONENT_FMT_STR          "%.13f"
+#define BABL_PIXEL_FMT_STR              BABL_COMPONENT_FMT_STR ", " \
+                                        BABL_COMPONENT_FMT_STR ", " \
+                                        BABL_COMPONENT_FMT_STR ", " \
+                                        BABL_COMPONENT_FMT_STR
+
 static double rand_double (void)
 {
   return (double) random () / RAND_MAX;
@@ -45,10 +51,10 @@ static void gen_path_pixels (void)
 
   printf ("static const double babl_path_test_pixels[%d] = {\n", BABL_PATH_NUM_TEST_PIXELS * 4);
 
-  /*  add 128 pixels in the valid range between 0.0 and 1.0  */
+  /*  add 256 pixels in the valid range between 0.0 and 1.0  */
   for (i = 0; i < 256; i++)
     {
-      printf ("%a, %a, %a, %a,\n",
+      printf (BABL_PIXEL_FMT_STR ",\n",
         rand_double (),
         rand_double (),
         rand_double (),
@@ -58,7 +64,7 @@ static void gen_path_pixels (void)
   /*  add 16 pixels between -1.0 and 0.0  */
   for (i = 0; i < 16; i++)
     {
-      printf ("%a, %a, %a, %a,\n",
+      printf (BABL_PIXEL_FMT_STR ",\n",
         rand_range_double (-1.0, 0.0),
         rand_range_double (-1.0, 0.0),
         rand_range_double (-1.0, 0.0),
@@ -68,7 +74,7 @@ static void gen_path_pixels (void)
   /*  add 16 pixels between 1.0 and 2.0  */
   for (i = 0; i < 16; i++)
     {
-      printf ("%a, %a, %a, %a,\n",
+      printf (BABL_PIXEL_FMT_STR ",\n",
         rand_range_double (1.0, 2.0),
         rand_range_double (1.0, 2.0),
         rand_range_double (1.0, 2.0),
@@ -77,7 +83,7 @@ static void gen_path_pixels (void)
 
   for (i = 288; i < BABL_PATH_NUM_TEST_PIXELS; i++)
     {
-      printf ("%a, %a, %a, %a,\n",
+      printf (BABL_PIXEL_FMT_STR ",\n",
         rand_double (),
         rand_double (),
         rand_double (),
@@ -107,7 +113,7 @@ static void gen_model_pixels (void)
   /*  add 128 pixels in the valid range between 0.0 and 1.0  */
   for (i = 0; i < BABL_MODEL_NUM_TEST_PIXELS; i++)
     {
-      printf ("%a, %a, %a, %a,\n",
+      printf (BABL_PIXEL_FMT_STR ",\n",
         rand_range_double (-0.2, 1.2),
         rand_range_double (-0.2, 1.2),
         rand_range_double (-0.2, 1.2),
@@ -129,7 +135,7 @@ static void gen_type_pixels (void)
   /*  add 128 pixels in the valid range between 0.0 and 1.0  */
   for (i = 0; i < BABL_MODEL_NUM_TEST_PIXELS; i++)
     {
-      printf ("%a, %a, %a, %a,\n",
+      printf (BABL_PIXEL_FMT_STR ",\n",
         rand_range_double (0.0, 128.0),
         rand_range_double (0.0, 128.0),
         rand_range_double (0.0, 128.0),
