@@ -82,7 +82,7 @@ main (int    argc,
                     babl_format ("HSVA float"),
                     rgba, hsva);
 
-  CHECK_CONV_FLOAT ("rgba to hsva ", float, 0.001,
+  CHECK_CONV_FLOAT ("hsva to rgba ", float, 0.001,
                     babl_format ("HSVA float"),
                     babl_format ("RGBA float"),
                     hsva, rgba);
