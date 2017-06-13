@@ -265,22 +265,18 @@ BABL_CLASS_MINIMAL_IMPLEMENT(klass)                           \
 const Babl *                                                  \
 babl_##klass (const char *name)                               \
 {                                                             \
-  Babl *babl = NULL;                                          \
+  Babl *babl;                                                 \
                                                               \
   if (babl_hmpf_on_name_lookups)                              \
     {                                                         \
-      babl_log ("%s(\"%s\"): hmpf!", G_STRFUNC, name);        \
+      babl_log ("%s(\"%s\"): looking up", G_STRFUNC, name);   \
     }                                                         \
+  if (!db)                                                    \
+    {                                                         \
+      babl_fatal ("%s(\"%s\"): you must call babl_init first", G_STRFUNC, name);  \
+    }                                                         \
+  babl = babl_db_exist_by_name (db, name);                    \
                                                               \
-  if( db != NULL )                                            \
-   {                                                          \
-     babl = babl_db_exist_by_name (db, name);		      \
-   }                                                          \
- else{                                                        \
-   babl_fatal("You must call babl_init() first");             \
- }							      \
-                                                              \
-  						              \
   if (!babl)                                                  \
     {                                                         \
       babl_fatal ("%s(\"%s\"): not found", G_STRFUNC, name);  \
