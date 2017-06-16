@@ -397,13 +397,13 @@ init (void)
         NULL
       );
 
-      babl_conversion_new (f32, babl_format ("R'aG'aB'aA float"), "linear", 
+      babl_conversion_new (f32, babl_format ("R'aG'aB'aA float"), "linear",
                            conv_cairo32_rgbAF_premul_le, NULL);
 
-      babl_conversion_new (f32, babl_format ("R'aG'aB'aA u8"), "linear", 
+      babl_conversion_new (f32, babl_format ("R'aG'aB'aA u8"), "linear",
                            conv_cairo32_rgbA8_premul_le, NULL);
 
-      babl_conversion_new (babl_format ("R'aG'aB'aA u8"), f32, "linear", 
+      babl_conversion_new (babl_format ("R'aG'aB'aA u8"), f32, "linear",
                            conv_rgbA8_premul_cairo32_le, NULL);
 
       babl_conversion_new (babl_format ("R'G'B'A u8"), f32, "linear",
@@ -432,9 +432,9 @@ init (void)
       babl_conversion_new (babl_format ("R'aG'aB'aA float"), f32, "linear",
                            conv_rgbA_gamma_float_cairo32_le, NULL);
 
-      babl_conversion_new (babl_format ("R'G'B'A u8"), f24, "linear", 
+      babl_conversion_new (babl_format ("R'G'B'A u8"), f24, "linear",
                            conv_rgba8_cairo24_le, NULL);
-      babl_conversion_new (babl_format ("R'G'B' u8"), f24, "linear", 
+      babl_conversion_new (babl_format ("R'G'B' u8"), f24, "linear",
                            conv_rgb8_cairo24_le, NULL);
     }
   else
@@ -469,6 +469,6 @@ init (void)
     babl_component ("A"),
     NULL
     );
-  
+
   return 0;
 }
