@@ -1,5 +1,7 @@
 if OS_UNIX
-CONCURRENCY_STRESS_TEST = concurrency-stress-test 
+CONCURRENCY_STRESS_TESTS =		\
+	concurrency-stress-test 	\
+	palette-concurrency-stress-test
 endif
 
 C_TESTS =				\
@@ -23,7 +25,7 @@ C_TESTS =				\
 	models			\
 	cairo-RGB24		\
 	transparent		\
-	$(CONCURRENCY_STRESS_TEST)
+	$(CONCURRENCY_STRESS_TESTS)
 
 TESTS = \
 	$(C_TESTS)

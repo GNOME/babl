@@ -60,8 +60,7 @@ typedef struct BablPalette
   unsigned char *data;  /* one linear segment of all the pixels representing the palette, in   order */
   double        *data_double;
   unsigned char *data_u8;
-  int          hash[HASH_TABLE_SIZE];
-  unsigned int hashpx[HASH_TABLE_SIZE];
+  unsigned int   hash[HASH_TABLE_SIZE];
 } BablPalette;
 
 static void
@@ -70,8 +69,7 @@ babl_palette_reset_hash (BablPalette *pal)
   int i;
   for (i = 0; i < HASH_TABLE_SIZE; i++)
     {
-      pal->hashpx[i] = ((255 << 16) | (255 << 8) | 255) + 11; /* non existant pixel */
-      pal->hash[i] = -1;
+      pal->hash[i] = i + 1; /* always a miss */
     }
 }
 
@@ -80,10 +78,18 @@ babl_palette_lookup (BablPalette *pal, int r, int g, int b, int a)
 {
   unsigned int pixel      = (r << 16) | (g << 8) | b;
   int          hash_index = pixel % HASH_TABLE_SIZE;
-  int          idx = pal->hash[hash_index];
-  
-  if (idx >= 0 &&
-      pal->hashpx[hash_index] == pixel)
+  unsigned int hash_value = pal->hash[hash_index];
+  unsigned int hash_pixel = hash_value & 0x00ffffffu;
+  int          idx        = hash_value >> 24;
+
+  /* note:  we're assuming the palette has no more than 256 colors, otherwise
+   * the index doesn't fit in the top 8 bits of the hash-table value.  since
+   * we're only using this functions with u8 palette formats, there's no need
+   * to actually verify this, but if we add wider formats in the future, it's
+   * something to be aware of.
+   */
+
+  if (pixel == hash_pixel)
     {
       return idx;
     }
@@ -108,11 +114,9 @@ babl_palette_lookup (BablPalette *pal, int r, int g, int b, int a)
               best_idx  = idx;
             }
         }
-      pal->hash[hash_index] = best_idx;
-      pal->hashpx[hash_index] = pixel;
+      pal->hash[hash_index] = ((unsigned int) best_idx << 24) | pixel;
       return best_idx;
     }
-  return 0;
 }
 
 static BablPalette *make_pal (const Babl *format, const void *data, int count)
