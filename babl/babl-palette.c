@@ -55,12 +55,14 @@ static double defpal_double[4*8*16];
 
 typedef struct BablPalette
 {
-  int         count; /* number of palette entries */
-  const Babl *format;/* the pixel format the palette is stored in */
-  unsigned char *data;  /* one linear segment of all the pixels representing the palette, in   order */
-  double        *data_double;
-  unsigned char *data_u8;
-  unsigned int   hash[HASH_TABLE_SIZE];
+  int                    count;  /* number of palette entries */
+  const Babl            *format; /* the pixel format the palette is stored in */
+  unsigned char         *data;   /* one linear segment of all the pixels
+                                  * representing the palette, in order
+                                  */
+  double                *data_double;
+  unsigned char         *data_u8;
+  volatile unsigned int  hash[HASH_TABLE_SIZE];
 } BablPalette;
 
 static void
