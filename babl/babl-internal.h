@@ -143,7 +143,7 @@ real_babl_log (const char *file,
   va_list  varg;
 
   va_start (varg, fmt);
-  real_babl_log_va(file, line, function, fmt, varg);
+  real_babl_log_va (file, line, function, fmt, varg);
   va_end (varg);
 }
 
@@ -167,9 +167,9 @@ real_babl_log (const char *file,
 #define babl_log(...)                                       \
   real_babl_log(__FILE__, __LINE__, G_STRFUNC, __VA_ARGS__)
 
-#define babl_fatal(...) do{                         	    \
+#define babl_fatal(...) do{                                  \
   real_babl_log(__FILE__, __LINE__, G_STRFUNC, __VA_ARGS__); \
-  babl_die();}                                              \
+  babl_die();}                                               \
 while(0)
 
 #elif defined(BABL_GNUC_VARIADIC_MACROS)

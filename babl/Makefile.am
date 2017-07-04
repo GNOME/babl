@@ -97,7 +97,7 @@ EXTRA_DIST = babl-ref-pixels.inc
 # already exists because then we are probably working with a tarball
 # in which case the git-version.h we ship is correct.
 
-libbabl_generated_sources = git-version.h 
+libbabl_generated_sources = git-version.h
 BUILT_SOURCES = git-version.h
 CLEANFILES = git-version.h
 

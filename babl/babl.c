@@ -26,7 +26,8 @@ static HMODULE libbabl_dll = NULL;
 
 /* Minimal DllMain that just stores the handle to this DLL */
 
-BOOL WINAPI			/* Avoid silly "no previous prototype" gcc warning */
+/* Avoid silly "no previous prototype" gcc warning */
+BOOL WINAPI
 DllMain (HINSTANCE hinstDLL,
          DWORD     fdwReason,
          LPVOID    lpvReserved);
