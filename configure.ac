@@ -264,6 +264,12 @@ case "$target_or_host" in
     MATH_LIB=
     THREAD_LIB=
     ;;
+  *-*-android*)
+    os_win32=no
+    PATH_SEP=':'
+    DIR_SEP='/'
+    THREAD_LIB=
+    ;;
   *)
     os_win32=no
     PATH_SEP=':'
