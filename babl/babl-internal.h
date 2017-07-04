@@ -58,6 +58,9 @@
 # define rint(f)  (floor (((double) (f)) + 0.5))
 #endif
 
+#ifdef __ANDROID_API__
+#include <android/log.h>
+#endif
 
 
 Babl *   babl_conversion_find           (const void     *source,
@@ -123,15 +126,33 @@ real_babl_log_va(const char *file,
   if (extender != babl_extension_quiet_log())
     {
       if (babl_extender())
-        fprintf (stdout, "When loading %s:\n\t", babl_extender()->instance.name);
+        {
+#ifdef __ANDROID_API__
+          __android_log_print (ANDROID_LOG_DEBUG, "BABL",
+                               "When loading %s:\n\t", babl_extender()->instance.name);
+#else
+          fprintf (stdout, "When loading %s:\n\t", babl_extender()->instance.name);
+#endif
+        }
 
+#ifdef __ANDROID_API__
+      __android_log_print (ANDROID_LOG_DEBUG, "BABL",
+                           "%s:%i %s()\n\t", file, line, function);
+#else
       fprintf (stdout, "%s:%i %s()\n\t", file, line, function);
+#endif
     }
 
+#ifdef __ANDROID_API__
+  __android_log_vprint (ANDROID_LOG_DEBUG, "BABL",
+                        fmt, varg);
+  __android_log_write (ANDROID_LOG_DEBUG, "BABL", "\n");
+#else
   vfprintf (stdout, fmt, varg);
 
   fprintf (stdout, "\n");
   fflush (NULL);
+#endif
   return;
 }
 
