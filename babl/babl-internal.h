@@ -62,7 +62,6 @@
 #include <android/log.h>
 #endif
 
-
 Babl *   babl_conversion_find           (const void     *source,
                                          const void     *destination);
 double   babl_conversion_error          (BablConversion *conversion);
@@ -137,7 +136,7 @@ real_babl_log_va(const char *file,
 
 #ifdef __ANDROID_API__
       __android_log_print (ANDROID_LOG_DEBUG, "BABL",
-                           "%s:%i %s()\n\t", file, line, function);
+                           "%s:%i %s()", file, line, function);
 #else
       fprintf (stdout, "%s:%i %s()\n\t", file, line, function);
 #endif
@@ -146,10 +145,8 @@ real_babl_log_va(const char *file,
 #ifdef __ANDROID_API__
   __android_log_vprint (ANDROID_LOG_DEBUG, "BABL",
                         fmt, varg);
-  __android_log_write (ANDROID_LOG_DEBUG, "BABL", "\n");
 #else
   vfprintf (stdout, fmt, varg);
-
   fprintf (stdout, "\n");
   fflush (NULL);
 #endif
