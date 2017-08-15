@@ -4,8 +4,10 @@ the news section both in the README and the webpage.
 
 
                                                                           -->
-
-
+2017-07-15 babl-0.1.30                                              </dt><dd>
+Thread stability for palette modes, stricter alpha preservation, now
+cross-compilable on android.
+                                                                    </dd><dt>
 2017-05-30 babl-0.1.28                                              </dt><dd>
 Fast paths for Lav <-> Lch, release triggered by pending GIMP release.
                                                                     </dd><dt>
