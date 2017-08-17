@@ -51,7 +51,6 @@
       dst[i]+=dst_pitch[i];       \
   }
 
-#endif
 
 #define BABL_USE_SRGB_GAMMA
 
@@ -108,4 +107,6 @@ babl_gamma_2_2_to_linearf (float value)
 
   #define babl_linear_to_gamma_2_2f(value) (powf((value), (1.0f/2.2f)))
   #define babl_gamma_2_2_to_linearf(value) (powf((value), 2.2f))
+#endif
+
 #endif
