@@ -112,16 +112,55 @@ match_conversion (Babl *conversion,
   return 0;
 }
 
+
+
 Babl *
 babl_conversion_find (const void *source,
                       const void *destination)
 {
   void *data = (void*)destination;
-
   babl_list_each (BABL (source)->type.from_list, match_conversion, &data);
-  if (data == (void*)destination) /* didn't change */
-    return NULL;
-  return data;
+  if (data != (void*)destination) /* didn't change */
+    return data;
+  data = NULL;
+
+  if (BABL (source)->class_type == BABL_MODEL)
+  {
+     const Babl *srgb_source = BABL (source)->model.data ? BABL (source)->model.data:source;
+     const Babl *srgb_destination = BABL (destination)->model.data ? BABL (destination)->model.data:destination;
+     Babl *reference = babl_conversion_find (srgb_source, srgb_destination);
+     BablConversion *ret;
+
+  /* when conversions are sought between models, with non-sRGB chromaticities,
+     we create the needed conversions from existing ones on the fly, and
+     register them. The conversions registered by the models should pick up the
+     RGB chromaticities, and TRC to use from the space on the model instead of
+     hard-coding it.
+   */
+
+     switch (reference->instance.class_type)
+     {
+        case BABL_CONVERSION_LINEAR:
+          return _conversion_new ("", 0, source, destination,
+                            reference->conversion.function.linear,
+                            NULL,
+                            NULL,
+                            reference->conversion.data);
+        case BABL_CONVERSION_PLANE:
+          return _conversion_new ("", 0, source, destination,
+                            NULL,
+                            reference->conversion.function.plane,
+                            NULL,
+                            reference->conversion.data);
+        case BABL_CONVERSION_PLANAR:
+          return _conversion_new ("", 0, source, destination,
+                            NULL,
+                            NULL,
+                            reference->conversion.function.planar,
+                            reference->conversion.data);
+     }
+  }
+  return NULL;
 }
 
 int

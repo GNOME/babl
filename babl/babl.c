@@ -135,6 +135,7 @@ babl_init (void)
       char * dir_list;
 
       babl_internal_init ();
+      babl_space_class_init ();
       babl_sampling_class_init ();
       babl_type_db ();
       babl_component_db ();

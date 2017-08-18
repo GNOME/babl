@@ -23,13 +23,16 @@ BABL_CLASS_DECLARE (model);
 
 typedef struct
 {
-  BablInstance     instance;
+  BablInstance      instance;
   BablList         *from_list;
-  int              components;
-  BablComponent  **component;
-  BablType       **type; /*< must be doubles,
-                             used here for convenience in code */
-  void            *data; /* used for palette */
+  int               components;
+  BablComponent   **component;
+  BablType        **type; /*< must be doubles,
+                              used here for convenience in code */
+  void             *data; /*  used for palette - and maybe back pointer
+                              to actual model?
+                           */
+  const Babl       *space;
 } BablModel;
 
 #endif

@@ -319,6 +319,10 @@ static inline double babl_parse_double (const char *str)
   return result;
 }
 
+const Babl *
+babl_remodel_with_space (const Babl *model, const Babl *space);
+const Babl *
+babl_model_with_space (const char *name, const Babl *space);
 Babl *
 _conversion_new (const char    *name,
                  int            id,

@@ -33,7 +33,7 @@ babl_model_destroy (void *data)
   Babl *babl = data;
   if (babl->model.from_list)
     babl_free (babl->model.from_list);
-  return 0; 
+  return 0;
 }
 
 static char *
@@ -53,6 +53,7 @@ babl_model_create_name (int             components,
 
 static Babl *
 model_new (const char     *name,
+           const Babl     *space,
            int             id,
            int             components,
            BablComponent **component)
@@ -69,6 +70,7 @@ model_new (const char     *name,
   babl->class_type       = BABL_MODEL;
   babl->instance.id      = id;
   babl->model.components = components;
+  babl->model.space      = space;
   strcpy (babl->instance.name, name);
   memcpy (babl->model.component, component, sizeof (BablComponent *) * components);
 
@@ -77,9 +79,12 @@ model_new (const char     *name,
 }
 
 static int
-is_model_duplicate (Babl *babl, int components, BablComponent **component)
+is_model_duplicate (Babl *babl, const Babl *space, int components, BablComponent **component)
 {
   int   i;
+
+  if (babl->model.space != space)
+    return 0;
 
   if (babl->model.components != components)
     return 0;
@@ -105,6 +110,7 @@ babl_model_new (void *first_argument,
   const char    *arg           = first_argument;
   const char    *assigned_name = NULL;
   char          *name          = NULL;
+  const Babl    *space         = babl_space ("sRGB");
   BablComponent *component [BABL_MAX_COMPONENTS];
 
   va_start (varg, first_argument);
@@ -143,6 +149,10 @@ babl_model_new (void *first_argument,
                 babl_log ("submodels not handled yet");
                 break;
 
+              case BABL_SPACE:
+                space = bablc;
+                break;
+
               case BABL_TYPE:
               case BABL_TYPE_INTEGER:
               case BABL_TYPE_FLOAT:
@@ -172,7 +182,7 @@ babl_model_new (void *first_argument,
       else
         {
           babl_fatal ("unhandled argument '%s' for babl_model '%s'",
-		      arg, assigned_name ? assigned_name : "(unnamed)");
+                      arg, assigned_name ? assigned_name : "(unnamed)");
         }
 
       arg = va_arg (varg, char *);
@@ -199,13 +209,13 @@ babl_model_new (void *first_argument,
 
   if (! babl)
     {
-      babl = model_new (name, id, components, component);
+      babl = model_new (name, space, id, components, component);
       babl_db_insert (db, babl);
       construct_double_format (babl);
     }
   else
     {
-      if (!is_model_duplicate (babl, components, component))
+      if (!is_model_duplicate (babl, space, components, component))
               babl_fatal ("BablModel '%s' already registered "
                           "with different components!", name);
     }
@@ -350,3 +360,45 @@ babl_model_is_symmetric (const Babl *cbabl)
 }
 
 BABL_CLASS_IMPLEMENT (model)
+
+/* XXX: probably better to do like with babl_format, add a -suffix and
+ *      insert in normal database than to have this static cache list
+ */
+static const Babl *babl_remodels[512]={NULL,};
+int          babl_n_remodels = 0;
+
+const Babl *
+babl_remodel_with_space (const Babl *model, const Babl *space)
+{
+  Babl *ret;
+  int i;
+
+  if (model->model.space == space)
+    return (void*)model;
+
+  /* get back to the sRGB model if we are in a COW clone of it  */
+  if (model->model.data)
+    model = (void*)model->model.data;
+
+  for (i = 0; i < babl_n_remodels; i++)
+  {
+    if (babl_remodels[i]->model.data == model &&
+        babl_remodels[i]->model.space == space)
+          return babl_remodels[i];
+  }
+
+  ret = babl_calloc (sizeof (BablModel), 1);
+  memcpy (ret, model, sizeof (BablModel));
+  ret->model.space = space;
+  ret->model.data = (void*)model; /* use the data as a backpointer to original model */
+  return babl_remodels[babl_n_remodels++] = ret;
+  return (Babl*)ret;
+}
+
+const Babl *
+babl_model_with_space (const char *name, const Babl *space)
+{
+  return babl_remodel_with_space (babl_model (name), space);
+}
+
+

@@ -26,7 +26,8 @@ assert_conversion_find (const void *source,
   Babl *ret = babl_conversion_find (source, destination);
 
   if (!ret)
-    babl_fatal ("failed, aborting");
+    babl_fatal ("failed finding conversion between %s and %s aborting",
+                babl_get_name (source), babl_get_name (destination));
   return ret;
 }
 
@@ -176,6 +177,7 @@ convert_to_double (BablFormat      *source_fmt,
   src_img->pitch[0]  = source_fmt->bytes_per_pixel;
   src_img->stride[0] = 0;
 
+  {
   /* i is source position */
   for (i = 0; i < source_fmt->components; i++)
     {
@@ -200,6 +202,7 @@ convert_to_double (BablFormat      *source_fmt,
 
       src_img->data[0] += src_img->type[0]->bits / 8;
     }
+  }
   babl_free (src_img);
   babl_free (dst_img);
 }
@@ -366,7 +369,6 @@ process_to_n_component (const Babl  *babl,
   return 0;
 }
 
-
 static int
 process_same_model (const Babl  *babl,
                     const char *source,
@@ -433,17 +435,17 @@ babl_fish_reference_process (const Babl *babl,
   Babl *rgba_image;
   Babl *destination_image;
 
-
-  if (BABL (babl->fish.source)->format.model ==
-      BABL (babl->fish.destination)->format.model)
+  if ((BABL (babl->fish.source)->format.model ==
+       BABL (babl->fish.destination)->format.model) &&
+      (BABL (babl->fish.source)->format.space ==
+       BABL (babl->fish.destination)->format.space)
+      )
     return process_same_model (babl, source, destination, n);
 
   if (babl_format_is_format_n (BABL (babl->fish.destination)))
   {
     return process_to_n_component (babl, source, destination, n);
   }
-  
-
 
   source_double_buf = babl_malloc (sizeof (double) * n *
                                    BABL (babl->fish.source)->format.model->components);
@@ -454,7 +456,8 @@ babl_fish_reference_process (const Babl *babl,
   source_image = babl_image_from_linear (
     source_double_buf, BABL (BABL ((babl->fish.source))->format.model));
   rgba_image = babl_image_from_linear (
-    rgba_double_buf, babl_model_from_id (BABL_RGBA));
+    rgba_double_buf, babl_remodel_with_space (babl_model_from_id (BABL_RGBA),
+           BABL (BABL ((babl->fish.source))->format.space)) );
   destination_image = babl_image_from_linear (
     destination_double_buf, BABL (BABL ((babl->fish.destination))->format.model));
 
@@ -469,7 +472,8 @@ babl_fish_reference_process (const Babl *babl,
     Babl *conv =
       assert_conversion_find (
       BABL (babl->fish.source)->format.model,
-      babl_model_from_id (BABL_RGBA)
+      babl_remodel_with_space (babl_model_from_id (BABL_RGBA),
+           BABL (BABL ((babl->fish.source))->format.space))
       );
     if (conv->class_type == BABL_CONVERSION_PLANAR)
       {
@@ -488,10 +492,26 @@ babl_fish_reference_process (const Babl *babl,
     else babl_fatal ("oops");
   }
 
+  if (((babl->fish.source)->format.space !=
+      ((babl->fish.destination)->format.space)))
+  {
+    double matrix[9];
+    int i;
+    double *rgba = rgba_double_buf;
+    babl_matrix_mul_matrix (
+      (babl->fish.destination)->format.space->space.XYZtoRGB,
+      (babl->fish.source)->format.space->space.RGBtoXYZ,
+      matrix);
+
+    for (i = 0; i < n; i++)
+      babl_matrix_mul_vector (matrix, &rgba[i * 4], &rgba[i * 4]);
+  }
+
   {
     Babl *conv =
       assert_conversion_find (
-      babl_model_from_id (BABL_RGBA),
+      babl_remodel_with_space (babl_model_from_id (BABL_RGBA),
+           BABL (BABL ((babl->fish.destination))->format.space)),
       BABL (babl->fish.destination)->format.model);
     if (conv->class_type == BABL_CONVERSION_PLANAR)
       {
@@ -526,4 +546,3 @@ babl_fish_reference_process (const Babl *babl,
   babl_free (source_double_buf);
   return n;
 }
-

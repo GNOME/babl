@@ -281,7 +281,7 @@ babl_conversion_new (const void *first_arg,
       babl = babl_db_exist (db, id, name);
     }
 
-  babl = _conversion_new (name, id, source, destination, linear, plane, planar, 
+  babl = _conversion_new (name, id, source, destination, linear, plane, planar,
                          user_data);
 
   /* Since there is not an already registered instance by the required
@@ -300,8 +300,7 @@ babl_conversion_linear_process (BablConversion *conversion,
                                 void           *destination,
                                 long            n)
 {
-  return conversion->function.linear ((void*)conversion,
-                                   source, destination, n, conversion->data);
+  return conversion->function.linear ((void*)conversion, source, destination, n, conversion->data);
 }
 
 static long
@@ -312,8 +311,7 @@ babl_conversion_plane_process (BablConversion *conversion,
                                int             dst_pitch,
                                long            n)
 {
-  return conversion->function.plane ((void*)conversion,
-                                     source, destination,
+  return conversion->function.plane ((void*)conversion, source, destination,
                                      src_pitch, dst_pitch,
                                      n,
                                      conversion->data);
@@ -335,7 +333,6 @@ babl_conversion_planar_process (BablConversion *conversion,
 
   memcpy (src_data, source->data, sizeof (void *) * source->components);
   memcpy (dst_data, destination->data, sizeof (void *) * destination->components);
-
   return conversion->function.planar ((void*)conversion,
                                       source->components,
                                       src_data,
@@ -549,6 +546,16 @@ babl_conversion_error (BablConversion *conversion)
   conversion->cost  = ticks_end - ticks_start;
 
   return error;
+}
+
+const Babl *babl_conversion_get_source_space      (const Babl *conversion)
+{
+  return conversion->conversion.source->format.space;
+}
+
+const Babl *babl_conversion_get_destination_space (const Babl *conversion)
+{
+  return conversion->conversion.destination->format.space;
 }
 
 BABL_CLASS_IMPLEMENT (conversion)

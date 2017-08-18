@@ -22,7 +22,6 @@
 #include "babl-classes.h"
 #include "babl.h"
 #include "babl-ids.h"
-#include "util.h"
 #include "rgb-constants.h"
 #include "math.h"
 #include "babl-base.h"
@@ -165,7 +164,6 @@ rgba_to_gray (Babl *conversion,
   return n;
 }
 
-
 static long
 rgb_to_gray_2_2 (Babl  *conversion,
                  int    src_bands,
@@ -176,6 +174,7 @@ rgb_to_gray_2_2 (Babl  *conversion,
                  int   *dst_pitch,
                  long   n)
 {
+  const Babl *space = babl_conversion_get_destination_space (conversion);
   BABL_PLANAR_SANITY
   while (n--)
     {
@@ -190,10 +189,10 @@ rgb_to_gray_2_2 (Babl  *conversion,
       else
         alpha = 1.0;
 
-      luminance = red * RGB_LUMINANCE_RED +
+      luminance = red   * RGB_LUMINANCE_RED +    // XXX: should be taken from BablSpace
                   green * RGB_LUMINANCE_GREEN +
-                  blue * RGB_LUMINANCE_BLUE;
-      *(double *) dst[0] = linear_to_gamma_2_2 (luminance);
+                  blue  * RGB_LUMINANCE_BLUE;
+      *(double *) dst[0] = babl_space_from_linear (space, luminance);
 
       if (dst_bands == 2)
         *(double *) dst[1] = alpha;
@@ -205,7 +204,7 @@ rgb_to_gray_2_2 (Babl  *conversion,
 
 
 static long
-gray_2_2_to_rgb (Babl  *conversion,
+gray_2_2_to_rgb (Babl *conversion,
                  int    src_bands,
                  char **src,
                  int   *src_pitch,
@@ -214,6 +213,7 @@ gray_2_2_to_rgb (Babl  *conversion,
                  int   *dst_pitch,
                  long   n)
 {
+  const Babl *space = babl_conversion_get_source_space (conversion);
   BABL_PLANAR_SANITY
   while (n--)
     {
@@ -221,7 +221,7 @@ gray_2_2_to_rgb (Babl  *conversion,
       double red, green, blue;
       double alpha;
 
-      luminance = gamma_2_2_to_linear (*(double *) src[0]);
+      luminance = babl_space_to_linear (space, *(double *) src[0]);
       red       = luminance;
       green     = luminance;
       blue      = luminance;
@@ -302,7 +302,7 @@ gray_to_rgba (Babl *conversion,
 }
 
 static long
-gray_alpha_premultiplied_to_rgba (Babl  *conversion,
+gray_alpha_premultiplied_to_rgba (Babl   *conversion,
                                   int    src_bands,
                                   char **src,
                                   int   *src_pitch,
@@ -340,7 +340,7 @@ gray_alpha_premultiplied_to_rgba (Babl  *conversion,
 
 
 static long
-rgba_to_gray_alpha_premultiplied (Babl  *conversion,
+rgba_to_gray_alpha_premultiplied (Babl   *conversion,
                                   int    src_bands,
                                   char **src,
                                   int   *src_pitch,
@@ -445,6 +445,8 @@ rgba2gray_gamma_2_2_premultiplied (Babl *conversion,
                                    char *dst,
                                    long  n)
 {
+  const Babl *space = babl_conversion_get_destination_space (conversion);
+
   while (n--)
     {
       double red   = ((double *) src)[0];
@@ -458,7 +460,7 @@ rgba2gray_gamma_2_2_premultiplied (Babl *conversion,
       luminance = red * RGB_LUMINANCE_RED +
                   green * RGB_LUMINANCE_GREEN +
                   blue * RGB_LUMINANCE_BLUE;
-      luma = linear_to_gamma_2_2 (luminance);
+      luma = babl_space_from_linear (space, luminance);
 
       ((double *) dst)[0] = luma * alpha;
       ((double *) dst)[1] = alpha;
@@ -469,12 +471,15 @@ rgba2gray_gamma_2_2_premultiplied (Babl *conversion,
   return n;
 }
 
+
 static long
 gray_gamma_2_2_premultiplied2rgba (Babl *conversion,
                                    char *src,
                                    char *dst,
                                    long  n)
 {
+  const Babl *space = babl_conversion_get_destination_space (conversion);
+
   while (n--)
     {
       double luma  = ((double *) src)[0];
@@ -482,7 +487,7 @@ gray_gamma_2_2_premultiplied2rgba (Babl *conversion,
       double luminance;
 
       luma      = luma / alpha;
-      luminance = gamma_2_2_to_linear (luma);
+      luminance = babl_space_to_linear (space, luma);
 
       ((double *) dst)[0] = luminance;
       ((double *) dst)[1] = luminance;

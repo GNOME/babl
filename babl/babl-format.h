@@ -29,6 +29,7 @@ typedef struct
   BablComponent  **component;
   BablType       **type;
   void            *model_data;
+  const Babl      *space;
   void            *image_template; /* image template for use with
                                       linear (non-planer) images */
 

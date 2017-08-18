@@ -26,6 +26,7 @@
 #include "babl-db.h"
 #include "babl-ref-pixels.h"
 
+
 static int babl_format_destruct (void *babl)
 {
   BablFormat *format = babl;
@@ -42,11 +43,12 @@ static int babl_format_destruct (void *babl)
 }
 
 static Babl *
-format_new (const char     *name,
-            int             id,
-            int             planar,
-            int             components,
-            BablModel      *model,
+format_new (const char      *name,
+            int              id,
+            int              planar,
+            int              components,
+            BablModel       *model,
+            const Babl      *space,
             BablComponent **component,
             BablSampling  **sampling,
             const BablType **type)
@@ -83,6 +85,7 @@ format_new (const char     *name,
                       sizeof (BablType *) * (components) +
                       sizeof (int) * (components) +
                       sizeof (int) * (components));
+
   babl_set_destructor (babl, babl_format_destruct);
 
   babl->format.from_list = NULL;
@@ -96,8 +99,12 @@ format_new (const char     *name,
 
   strcpy (babl->instance.name, name);
 
-  babl->format.model      = model;
   babl->format.components = components;
+
+  if (space == babl_space ("sRGB"))
+    babl->format.model      = model;
+  else
+    babl->format.model      = babl_remodel_with_space (model, space);
 
   memcpy (babl->format.component, component, sizeof (BablComponent *) * components);
   memcpy (babl->format.type, type, sizeof (BablType *) * components);
@@ -118,7 +125,26 @@ format_new (const char     *name,
   babl->format.format_n = 0;
   babl->format.palette = 0;
 
+  babl->format.space = (void*)space;
+
   return babl;
+}
+
+static Babl *
+format_new_from_format_with_space (const Babl *format, const Babl *space)
+{
+  Babl *ret;
+  char new_name[256];
+  sprintf (new_name, "%s-%s", babl_get_name ((void*)format),
+                              babl_get_name ((void*)space));
+
+  ret = format_new (new_name,
+                    0,
+                    format->format.planar, format->format.components, 
+                    (void*)babl_remodel_with_space (BABL(format->format.model), space),
+                    space,
+                    format->format.component, format->format.sampling, (void*)format->format.type);
+  return ret;
 }
 
 
@@ -190,7 +216,6 @@ create_name (const BablModel *model,
   return babl_strdup (buf);
 }
 
-
 static char *
 ncomponents_create_name (const Babl *type,
                          int         components)
@@ -244,6 +269,7 @@ babl_format_n (const Babl *btype,
   babl = format_new (name,
                      id,
                      planar, components, model,
+                     babl_space("sRGB"),
                      component, sampling, type);
 
   babl_format_set_is_format_n (babl);
@@ -264,12 +290,12 @@ babl_format_is_format_n (const Babl *format)
   return 0;
 }
 
-
 static int
 is_format_duplicate (Babl            *babl,
                      int              planar,
                      int              components,
                      BablModel       *model,
+                     const Babl      *space,
                      BablComponent  **component,
                      BablSampling   **sampling,
                      const BablType **type)
@@ -278,7 +304,8 @@ is_format_duplicate (Babl            *babl,
 
   if (babl->format.planar     != planar     ||
       babl->format.components != components ||
-      babl->format.model      != model)
+      babl->format.model      != model      ||
+      babl->format.space      != (void*)space)
     return 0;
 
   for (i = 0; i < components; i++)
@@ -301,6 +328,7 @@ babl_format_new (const void *first_arg,
   int            planar     = 0;
   int            components = 0;
   BablModel     *model      = NULL;
+  const Babl    * space     = babl_space ("sRGB");
   BablComponent *component [BABL_MAX_COMPONENTS];
   BablSampling  *sampling  [BABL_MAX_COMPONENTS];
   const BablType*type      [BABL_MAX_COMPONENTS];
@@ -370,6 +398,10 @@ babl_format_new (const void *first_arg,
                 current_sampling = (BablSampling *) arg;
                 break;
 
+              case BABL_SPACE:
+                space = (Babl*) arg;
+                break;
+
               case BABL_MODEL:
                 if (model)
                   {
@@ -415,6 +447,15 @@ babl_format_new (const void *first_arg,
   if (!name)
     name = create_name (model, components, component, type);
 
+  if (space != babl_space ("sRGB"))
+  {
+    char *new_name = babl_malloc (strlen (name) +
+                                  strlen (babl_get_name ((Babl*)space)) + 1);
+    sprintf (new_name, "%s-%s", name, babl_get_name ((Babl*)space));
+    babl_free (name);
+    name = new_name;
+  }
+
   if (!model)
     {
       babl_log ("no model specified for format '%s'", name);
@@ -438,7 +479,7 @@ babl_format_new (const void *first_arg,
       /* There is an instance already registered by the required id/name,
        * returning the preexistent one instead if it doesn't differ.
        */
-      if (!is_format_duplicate (babl, planar, components, model,
+      if(0)if (!is_format_duplicate (babl, planar, components, model, space,
                                 component, sampling, type))
         babl_fatal ("BablFormat '%s' already registered "
                     "with different content!", name);
@@ -447,9 +488,9 @@ babl_format_new (const void *first_arg,
       return babl;
     }
 
-  babl = format_new (name,
+  babl = format_new ((void*)name,
                      id,
-                     planar, components, model,
+                     planar, components, model, space,
                      component, sampling, type);
 
   babl_db_insert (db, babl);
@@ -649,6 +690,50 @@ babl_format_get_model (const Babl *format)
   return NULL;
 }
 
+const Babl * babl_format_get_space      (const Babl *format)
+{
+  if (format->class_type == BABL_FORMAT)
+    {
+      return (Babl*)format->format.space;
+    }
+  return NULL;
+}
+
 BABL_CLASS_IMPLEMENT (format)
+
+const Babl *
+babl_format_with_space (const char *name, const Babl *space)
+{
+  const Babl *ret = NULL;
+
+  if (!space) space = babl_space ("sRGB");
+  if (space->class_type == BABL_FORMAT)
+  {
+    space = space->format.space;
+  }
+  else if (space->class_type == BABL_MODEL)
+  {
+    space = space->model.space;
+  }
+  else if (space->class_type != BABL_SPACE)
+  {
+    return NULL;
+  }
+  if (space == babl_space("sRGB"))
+    return babl_format (name);
+
+  {
+    char *new_name = babl_malloc (strlen (name) +
+                                  strlen (babl_get_name ((Babl*)space)) + 1);
+    sprintf (new_name, "%s-%s", name, babl_get_name ((Babl*)space));
+
+    ret = babl_db_exist_by_name (db, new_name);
+    if (ret)
+      return ret;
+
+    ret = format_new_from_format_with_space (babl_format (name), space);
+  }
+  return ret;
+}
 
 
