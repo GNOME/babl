@@ -184,7 +184,8 @@ static void halfp2doubles(void *target, void *source, long numel)
 }
 
 static long
-convert_double_half (char *src,
+convert_double_half (BablConversion *conversion,
+                     char *src,
                      char *dst,
                      int   src_pitch,
                      int   dst_pitch,
@@ -200,11 +201,12 @@ convert_double_half (char *src,
 }
 
 static long
-convert_half_double (char *src,
-                      char *dst,
-                      int   src_pitch,
-                      int   dst_pitch,
-                      long  n)
+convert_half_double (BablConversion *conversion,
+                     char *src,
+                     char *dst,
+                     int   src_pitch,
+                     int   dst_pitch,
+                     long  n)
 {
   while (n--)
     {

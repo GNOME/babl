@@ -288,7 +288,7 @@ babl_lookup_free (BablLookup *lookup)
 #endif
 
 static INLINE long
-conv_rgbaF_linear_rgbAF_gamma (unsigned char *src, 
+conv_rgbaF_linear_rgbAF_gamma (const Babl *conversion,unsigned char *src, 
                                unsigned char *dst, 
                                long           samples)
 {
@@ -330,7 +330,7 @@ conv_rgbaF_linear_rgbAF_gamma (unsigned char *src,
 
 
 static INLINE long
-conv_rgbaF_linear_rgba8_gamma (unsigned char *src, 
+conv_rgbaF_linear_rgba8_gamma (const Babl *conversion,unsigned char *src, 
                                unsigned char *dst, 
                                long           samples)
 {
@@ -367,7 +367,7 @@ conv_rgbaF_linear_rgba8_gamma (unsigned char *src,
 }
 
 static INLINE long
-conv_rgbaF_linear_rgbA8_gamma (unsigned char *src, 
+conv_rgbaF_linear_rgbA8_gamma (const Babl *conversion,unsigned char *src, 
                                unsigned char *dst, 
                                long           samples)
 {
@@ -412,7 +412,7 @@ conv_rgbaF_linear_rgbA8_gamma (unsigned char *src,
 }
 
 static INLINE long
-conv_yaF_linear_rgbA8_gamma (unsigned char *src, 
+conv_yaF_linear_rgbA8_gamma (const Babl *conversion,unsigned char *src, 
                              unsigned char *dst, 
                              long           samples)
 {
@@ -453,7 +453,7 @@ conv_yaF_linear_rgbA8_gamma (unsigned char *src,
 
 
 static long
-conv_rgbaF_linear_rgbA8_gamma_cairo (unsigned char *src, 
+conv_rgbaF_linear_rgbA8_gamma_cairo (const Babl *conversion,unsigned char *src, 
                                      unsigned char *dst, 
                                      long           samples)
 {
@@ -498,7 +498,7 @@ conv_rgbaF_linear_rgbA8_gamma_cairo (unsigned char *src,
 }
 
 static INLINE long
-conv_rgbAF_linear_rgbAF_gamma (unsigned char *src, 
+conv_rgbAF_linear_rgbAF_gamma (const Babl *conversion,unsigned char *src, 
                                unsigned char *dst, 
                                long           samples)
 {
@@ -539,7 +539,7 @@ conv_rgbAF_linear_rgbAF_gamma (unsigned char *src,
 }
 
 static INLINE long
-conv_rgbaF_linear_rgbaF_gamma (unsigned char *src, 
+conv_rgbaF_linear_rgbaF_gamma (const Babl *conversion,unsigned char *src, 
                                unsigned char *dst, 
                                long           samples)
 {
@@ -558,7 +558,7 @@ conv_rgbaF_linear_rgbaF_gamma (unsigned char *src,
 }
 
 static INLINE long
-conv_rgbF_linear_rgbF_gamma (unsigned char *src, 
+conv_rgbF_linear_rgbF_gamma (const Babl *conversion,unsigned char *src, 
                              unsigned char *dst, 
                              long           samples)
 {
@@ -577,7 +577,7 @@ conv_rgbF_linear_rgbF_gamma (unsigned char *src,
 
 
 static INLINE long
-conv_rgbaF_gamma_rgbaF_linear (unsigned char *src, 
+conv_rgbaF_gamma_rgbaF_linear (const Babl *conversion,unsigned char *src, 
                                unsigned char *dst, 
                                long           samples)
 {
@@ -596,7 +596,7 @@ conv_rgbaF_gamma_rgbaF_linear (unsigned char *src,
 }
 
 static INLINE long
-conv_rgbF_gamma_rgbF_linear (unsigned char *src, 
+conv_rgbF_gamma_rgbF_linear (const Babl *conversion,unsigned char *src, 
                              unsigned char *dst, 
                              long           samples)
 {

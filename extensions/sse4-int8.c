@@ -31,7 +31,7 @@
 #include "extensions/util.h"
 
 static inline long
-conv_y8_yF (const uint8_t *src, float *dst, long samples)
+conv_y8_yF (const Babl *conversion,const uint8_t *src, float *dst, long samples)
 {
   const float     factor = 1.0f / 255.0f;
   const __v4sf    factor_vec = {1.0f / 255.0f, 1.0f / 255.0f, 1.0f / 255.0f, 1.0f / 255.0f};
@@ -67,21 +67,21 @@ conv_y8_yF (const uint8_t *src, float *dst, long samples)
 }
 
 static long
-conv_ya8_yaF (const uint8_t *src, float *dst, long samples)
+conv_ya8_yaF (const Babl *conversion,const uint8_t *src, float *dst, long samples)
 {
-  return conv_y8_yF (src, dst, samples * 2) / 2;
+  return conv_y8_yF (conversion, src, dst, samples * 2) / 2;
 }
 
 static long
-conv_rgb8_rgbF (const uint8_t *src, float *dst, long samples)
+conv_rgb8_rgbF (const Babl *conversion,const uint8_t *src, float *dst, long samples)
 {
-  return conv_y8_yF (src, dst, samples * 3) / 3;
+  return conv_y8_yF (conversion, src, dst, samples * 3) / 3;
 }
 
 static long
-conv_rgba8_rgbaF (const uint8_t *src, float *dst, long samples)
+conv_rgba8_rgbaF (const Babl *conversion,const uint8_t *src, float *dst, long samples)
 {
-  return conv_y8_yF (src, dst, samples * 4) / 4;
+  return conv_y8_yF (conversion, src, dst, samples * 4) / 4;
 }
 
 #endif

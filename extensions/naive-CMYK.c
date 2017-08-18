@@ -24,19 +24,19 @@
 #include "base/util.h"
 
 
-static long  rgba_to_cmyk (char *src,
+static long  rgba_to_cmyk (const Babl *conversion,char *src,
                            char *dst,
                            long  n);
 
-static long  cmyk_to_rgba (char *src,
+static long  cmyk_to_rgba (const Babl *conversion,char *src,
                            char *dst,
                            long  n);
 
-static long  rgba_to_cmy  (char *src,
+static long  rgba_to_cmy  (const Babl *conversion,char *src,
                            char *dst,
                            long  n);
 
-static long  cmy_to_rgba  (char *src,
+static long  cmy_to_rgba  (const Babl *conversion,char *src,
                            char *dst,
                            long  n);
 
@@ -127,7 +127,7 @@ init (void)
 
 
 static long
-rgba_to_cmyk (char *src,
+rgba_to_cmyk (const Babl *conversion,char *src,
               char *dst,
               long  n)
 {
@@ -177,7 +177,7 @@ rgba_to_cmyk (char *src,
 }
 
 static long
-cmyk_to_rgba (char *src,
+cmyk_to_rgba (const Babl *conversion,char *src,
               char *dst,
               long  n)
 {
@@ -218,7 +218,7 @@ cmyk_to_rgba (char *src,
 }
 
 static long
-rgba_to_cmy (char *src,
+rgba_to_cmy (const Babl *conversion,char *src,
              char *dst,
              long  n)
 {
@@ -245,7 +245,7 @@ rgba_to_cmy (char *src,
 }
 
 static long
-cmy_to_rgba (char *src,
+cmy_to_rgba (const Babl *conversion,char *src,
               char *dst,
               long  n)
 {

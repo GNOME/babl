@@ -177,7 +177,8 @@ static BablPalette *default_palette (void)
 }
 
 static long
-rgba_to_pal (char *src,
+rgba_to_pal (Babl *conversion,
+             char *src,
              char *dst,
              long  n,
              void *dst_model_data)
@@ -218,7 +219,8 @@ rgba_to_pal (char *src,
 }
 
 static long
-rgba_to_pala (char *src,
+rgba_to_pala (Babl *conversion,
+              char *src,
               char *dst,
               long  n,
               void *dst_model_data)
@@ -264,7 +266,8 @@ rgba_to_pala (char *src,
 }
 
 static long
-pal_to_rgba (char *src,
+pal_to_rgba (Babl *conversion,
+             char *src,
              char *dst,
              long  n,
              void *src_model_data)
@@ -290,7 +293,8 @@ pal_to_rgba (char *src,
 }
 
 static long
-pala_to_rgba (char *src,
+pala_to_rgba (Babl *conversion,
+              char *src,
               char *dst,
               long  n,
               void *src_model_data)
@@ -320,10 +324,11 @@ pala_to_rgba (char *src,
 }
 
 static long
-rgba_u8_to_pal (unsigned char *src,
+rgba_u8_to_pal (Babl          *conversion,
+                unsigned char *src,
                 unsigned char *dst,
-                long  n,
-                void *src_model_data)
+                long           n,
+                void          *src_model_data)
 {
   BablPalette **palptr = src_model_data;
   BablPalette *pal;
@@ -342,7 +347,8 @@ rgba_u8_to_pal (unsigned char *src,
 }
 
 static long
-rgba_u8_to_pal_a (char *src,
+rgba_u8_to_pal_a (Babl *conversion,
+                  char *src,
                   char *dst,
                   long  n,
                   void *src_model_data)
@@ -364,7 +370,8 @@ rgba_u8_to_pal_a (char *src,
 }
 
 static long
-pal_u8_to_rgba_u8 (char *src,
+pal_u8_to_rgba_u8 (Babl *conversion,
+                   char *src,
                    char *dst,
                    long  n,
                    void *src_model_data)
@@ -392,7 +399,8 @@ pal_u8_to_rgba_u8 (char *src,
 }
 
 static long
-pala_u8_to_rgba_u8 (char *src,
+pala_u8_to_rgba_u8 (Babl *conversion,
+                    char *src,
                     char *dst,
                     long  n,
                     void *src_model_data)
@@ -424,7 +432,8 @@ pala_u8_to_rgba_u8 (char *src,
 #include "base/util.h"
 
 static inline long
-conv_pal8_pala8 (unsigned char *src, unsigned char *dst, long samples)
+conv_pal8_pala8 (Babl *conversion,
+                 unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
 
@@ -439,7 +448,8 @@ conv_pal8_pala8 (unsigned char *src, unsigned char *dst, long samples)
 }
 
 static inline long
-conv_pala8_pal8 (unsigned char *src, unsigned char *dst, long samples)
+conv_pala8_pal8 (Babl *conversion,
+                 unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
 

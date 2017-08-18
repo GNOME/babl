@@ -32,19 +32,19 @@
 #define MAX(a,b) (a < b) ? b : a;
 #define EPSILON  1.0e-10
 
-static long rgba_to_hsva     (char *src,
+static long rgba_to_hsva     (const Babl *conversion,char *src,
                               char *dst,
                               long  samples);
 
-static long hsva_to_rgba     (char *src,
+static long hsva_to_rgba     (const Babl *conversion,char *src,
                               char *dst,
                               long  samples);
 
-static long rgba_to_hsv      (char *src,
+static long rgba_to_hsv      (const Babl *conversion,char *src,
                               char *dst,
                               long  samples);
 
-static long hsv_to_rgba      (char *src,
+static long hsv_to_rgba      (const Babl *conversion,char *src,
                               char *dst,
                               long  samples);
 
@@ -275,7 +275,7 @@ hsv_to_rgba_step (char *src,
 }
 
 static long
-rgba_to_hsva (char *src,
+rgba_to_hsva (const Babl *conversion,char *src,
               char *dst,
               long  samples)
 {
@@ -297,7 +297,7 @@ rgba_to_hsva (char *src,
 }
 
 static long
-hsva_to_rgba (char *src,
+hsva_to_rgba (const Babl *conversion,char *src,
               char *dst,
               long  samples)
 {
@@ -319,7 +319,7 @@ hsva_to_rgba (char *src,
 }
 
 static long
-rgba_to_hsv (char *src,
+rgba_to_hsv (const Babl *conversion,char *src,
              char *dst,
              long  samples)
 {
@@ -337,7 +337,7 @@ rgba_to_hsv (char *src,
 }
 
 static long
-hsv_to_rgba (char *src,
+hsv_to_rgba (const Babl *conversion,char *src,
              char *dst,
              long  samples)
 {

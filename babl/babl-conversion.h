@@ -23,19 +23,22 @@ BABL_CLASS_DECLARE (conversion);
 
 const Babl * babl_conversion (const char *name);
 
+typedef struct _BablConversion BablConversion;
+
+
 /* Signature of functions registered for reference type
  * conversions,
  */
-typedef long (*BablFuncPlane)     (const char  *src,
-                                   char        *dst,
-                                   int          src_pitch,
-                                   int          dst_pitch,
-                                   long         n,
-                                   void        *user_data);
+typedef long (*BablFuncPlane)     (BablConversion *conversion,
+                                   const char     *src,
+                                   char           *dst,
+                                   int             src_pitch,
+                                   int             dst_pitch,
+                                   long            n,
+                                   void           *user_data);
 
-
-typedef struct
-BablConversion {
+struct
+_BablConversion {
   BablInstance           instance;
   const Babl            *source;
   const Babl            *destination;
@@ -50,6 +53,6 @@ BablConversion {
   void                  *data;  /* user data */
   int                    processings;
   long                   pixels;
-} BablConversion;
+};
 
 #endif

@@ -151,7 +151,8 @@ models (void)
 }
 
 static long
-copy_strip_1 (int    src_bands,
+copy_strip_1 (BablConversion *conversion,
+              int    src_bands,
               char **src,
               int   *src_pitch,
               int    dst_bands,
@@ -182,7 +183,8 @@ copy_strip_1 (int    src_bands,
 }
 
 static long
-g3_gamma_2_2 (int    src_bands,
+g3_gamma_2_2 (BablConversion *conversion,
+              int    src_bands,
               char **src,
               int   *src_pitch,
               int    dst_bands,
@@ -208,7 +210,8 @@ g3_gamma_2_2 (int    src_bands,
 
 
 static long
-g3_inv_gamma_2_2 (int    src_bands,
+g3_inv_gamma_2_2 (BablConversion *conversion,
+                  int    src_bands,
                   char **src,
                   int   *src_pitch,
                   int    dst_bands,
@@ -239,7 +242,8 @@ g3_inv_gamma_2_2 (int    src_bands,
 }
 
 static long
-non_premultiplied_to_premultiplied (int    src_bands,
+non_premultiplied_to_premultiplied (BablConversion *conversion,
+                                    int    src_bands,
                                     char **src,
                                     int   *src_pitch,
                                     int    dst_bands,
@@ -268,7 +272,8 @@ non_premultiplied_to_premultiplied (int    src_bands,
 }
 
 static long
-premultiplied_to_non_premultiplied (int    src_bands,
+premultiplied_to_non_premultiplied (BablConversion *conversion,
+                                    int    src_bands,
                                     char **src,
                                     int   *src_pitch,
                                     int    dst_bands,
@@ -306,7 +311,8 @@ premultiplied_to_non_premultiplied (int    src_bands,
 
 
 static long
-rgba2rgba_gamma_2_2_premultiplied (char *src,
+rgba2rgba_gamma_2_2_premultiplied (BablConversion *conversion,
+                                   char *src,
                                    char *dst,
                                    long  samples)
 {
@@ -327,9 +333,10 @@ rgba2rgba_gamma_2_2_premultiplied (char *src,
 
 
 static long
-rgba_gamma_2_2_premultiplied2rgba (char *src,
-                                   char *dst,
-                                   long  samples)
+rgba_gamma_2_2_premultiplied2rgba (BablConversion *conversion,
+                                   char           *src,
+                                   char           *dst,
+                                   long            samples)
 {
   long n = samples;
 
@@ -358,9 +365,10 @@ rgba_gamma_2_2_premultiplied2rgba (char *src,
 
 
 static long
-rgba2rgba_gamma_2_2 (char *src,
-                     char *dst,
-                     long  samples)
+rgba2rgba_gamma_2_2 (BablConversion *conversion,
+                     char           *src,
+                     char           *dst,
+                     long            samples)
 {
   long n = samples;
 
@@ -379,7 +387,8 @@ rgba2rgba_gamma_2_2 (char *src,
 
 
 static long
-rgba_gamma_2_22rgba (char *src,
+rgba_gamma_2_22rgba (BablConversion *conversion,
+                     char *src,
                      char *dst,
                      long  samples)
 {

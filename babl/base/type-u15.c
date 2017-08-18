@@ -27,15 +27,16 @@
 
 
 static inline long
-convert_double_u15_scaled (double   min_val,
-                           double   max_val,
-                           uint16_t min,
-                           uint16_t max,
-                           char    *src,
-                           char    *dst,
-                           int      src_pitch,
-                           int      dst_pitch,
-                           long     n)
+convert_double_u15_scaled (BablConversion *conversion,
+                           double          min_val,
+                           double          max_val,
+                           uint16_t        min,
+                           uint16_t        max,
+                           char           *src,
+                           char           *dst,
+                           int             src_pitch,
+                           int             dst_pitch,
+                           long            n)
 {
   while (n--)
     {
@@ -57,8 +58,9 @@ convert_double_u15_scaled (double   min_val,
 }
 
 static inline long
-convert_u15_double_scaled (double   min_val,
-                           double   max_val,
+convert_u15_double_scaled (BablConversion *conversion,
+                           double          min_val,
+                           double          max_val,
                            uint16_t min,
                            uint16_t max,
                            char    *src,
@@ -88,23 +90,24 @@ convert_u15_double_scaled (double   min_val,
 
 #define MAKE_CONVERSIONS(name, min_val, max_val, min, max)      \
   static long \
-  convert_ ## name ## _double (void *src, \
+  convert_ ## name ## _double (BablConversion *conversion, \
+                               void *src, \
                                void *dst, \
                                int src_pitch, \
                                int dst_pitch, \
                                long n)                               \
   { \
-    return convert_u15_double_scaled (min_val, max_val, min, max, \
+    return convert_u15_double_scaled (conversion, min_val, max_val, min, max, \
                                       src, dst, src_pitch, dst_pitch, n); \
   }                                                               \
   static long \
-  convert_double_ ## name (void *src, \
+  convert_double_ ## name (BablConversion *conversion, void *src, \
                            void *dst, \
                            int src_pitch, \
                            int dst_pitch, \
                            long n)                                 \
   { \
-    return convert_double_u15_scaled (min_val, max_val, min, max, \
+    return convert_double_u15_scaled (conversion, min_val, max_val, min, max, \
                                       src, dst, src_pitch, dst_pitch, n); \
   }
 

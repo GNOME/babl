@@ -33,16 +33,19 @@
  **/
 typedef union _Babl Babl;
 
+
 /* Conversion function between linear data of a either a data types or
  * color formats.
  */
-typedef long (*BablFuncLinear)    (const char  *src,
+typedef long (*BablFuncLinear)    (const Babl *conversion,
+                                   const char  *src,
                                    char  *dst,
                                    long   n,
                                    void  *user_data);
 
 /* TypePlanar,ModelPlanar and FormatPlanar */
-typedef long (*BablFuncPlanar)    (int    src_bands,
+typedef long (*BablFuncPlanar)    (const Babl *conversion,
+                                   int    src_bands,
                                    const char  *src[],
                                    int    src_pitch[],
                                    int    dst_bands,

@@ -26,7 +26,8 @@
 
 #include <math.h>
 static inline long
-convert_double_u8_scaled (double        min_val,
+convert_double_u8_scaled (BablConversion *c,
+                          double        min_val,
                           double        max_val,
                           unsigned char min,
                           unsigned char max,
@@ -56,7 +57,8 @@ convert_double_u8_scaled (double        min_val,
 }
 
 static inline long
-convert_u8_double_scaled (double        min_val,
+convert_u8_double_scaled (BablConversion *c,
+                          double        min_val,
                           double        max_val,
                           unsigned char min,
                           unsigned char max,
@@ -88,23 +90,23 @@ convert_u8_double_scaled (double        min_val,
 
 #define MAKE_CONVERSIONS(name, min_val, max_val, min, max)      \
   static long \
-  convert_ ## name ## _double (void *src, \
+  convert_ ## name ## _double (BablConversion *c, void *src, \
                                void *dst, \
                                int src_pitch, \
                                int dst_pitch, \
                                long n)                               \
   { \
-    return convert_u8_double_scaled (min_val, max_val, min, max, \
+    return convert_u8_double_scaled (c, min_val, max_val, min, max, \
                                      src, dst, src_pitch, dst_pitch, n); \
   }                                                               \
   static long \
-  convert_double_ ## name (void *src, \
+  convert_double_ ## name (BablConversion *c, void *src, \
                            void *dst, \
                            int src_pitch, \
                            int dst_pitch, \
                            long n)                                 \
   { \
-    return convert_double_u8_scaled (min_val, max_val, min, max, \
+    return convert_double_u8_scaled (c, min_val, max_val, min, max, \
                                      src, dst, src_pitch, dst_pitch, n); \
   }
 

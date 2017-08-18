@@ -38,7 +38,7 @@
 static const float BABL_ALPHA_THRESHOLD_FLOAT = (float)BABL_ALPHA_THRESHOLD;
 
 static long
-conv_rgbaF_linear_rgbAF_linear (const float *src, float *dst, long samples)
+conv_rgbaF_linear_rgbAF_linear (const Babl *conversion,const float *src, float *dst, long samples)
 {
   long i = 0;
   long remainder;
@@ -96,7 +96,7 @@ conv_rgbaF_linear_rgbAF_linear (const float *src, float *dst, long samples)
 }
 
 static long
-conv_rgbAF_linear_rgbaF_linear_shuffle (const float *src, float *dst, long samples)
+conv_rgbAF_linear_rgbaF_linear_shuffle (const Babl *conversion,const float *src, float *dst, long samples)
 {
   long i = 0;
   long remainder;
@@ -164,7 +164,7 @@ conv_rgbAF_linear_rgbaF_linear_shuffle (const float *src, float *dst, long sampl
 }
 
 static long
-conv_rgbAF_linear_rgbaF_linear_spin (const float *src, float *dst, long samples)
+conv_rgbAF_linear_rgbaF_linear_spin (const Babl *conversion,const float *src, float *dst, long samples)
 {
   long i = 0;
   long remainder;
@@ -297,7 +297,7 @@ gamma_2_2_to_linear_sse2 (__v4sf x)
 
 #define GAMMA_RGBA(func, munge) \
 static inline long \
-func (const float *src, float *dst, long samples)\
+func (const Babl *conversion,const float *src, float *dst, long samples)\
 {\
   int i = samples;\
   if (((uintptr_t)src % 16) + ((uintptr_t)dst % 16) == 0)\
@@ -353,11 +353,11 @@ func (const float *src, float *dst, long samples)\
 GAMMA_RGBA(conv_rgbaF_linear_rgbaF_gamma, linear_to_gamma_2_2_sse2)
 GAMMA_RGBA(conv_rgbaF_gamma_rgbaF_linear, gamma_2_2_to_linear_sse2)
 
-static long conv_rgbaF_linear_rgbAF_gamma (const float *src, float *dst, long samples)
+static long conv_rgbaF_linear_rgbAF_gamma (const Babl *conversion,const float *src, float *dst, long samples)
 {
   float *tmp = alloca (sizeof(float)*4*samples);
-  conv_rgbaF_linear_rgbaF_gamma (src, tmp, samples);
-  conv_rgbaF_linear_rgbAF_linear (tmp, dst, samples);
+  conv_rgbaF_linear_rgbaF_gamma (conversion, src, tmp, samples);
+  conv_rgbaF_linear_rgbAF_linear (conversion, tmp, dst, samples);
   return samples;
 }
 
@@ -380,7 +380,7 @@ static long conv_rgbaF_linear_rgbAF_gamma (const float *src, float *dst, long sa
 }\
 
 static long
-conv_yaF_linear_yaF_gamma (const float *src, float *dst, long samples)
+conv_yaF_linear_yaF_gamma (const Babl *conversion,const float *src, float *dst, long samples)
 {
   long total = samples;
 
@@ -418,7 +418,7 @@ conv_yaF_linear_yaF_gamma (const float *src, float *dst, long samples)
 
 
 static long
-conv_yaF_gamma_yaF_linear (const float *src, float *dst, long samples)
+conv_yaF_gamma_yaF_linear (const Babl *conversion,const float *src, float *dst, long samples)
 {
   long total = samples;
 
@@ -455,7 +455,7 @@ conv_yaF_gamma_yaF_linear (const float *src, float *dst, long samples)
 }
 
 static inline long
-conv_yF_linear_yF_gamma (const float *src, float *dst, long samples)
+conv_yF_linear_yF_gamma (const Babl *conversion,const float *src, float *dst, long samples)
 {
   long total = samples;
 
@@ -495,7 +495,7 @@ conv_yF_linear_yF_gamma (const float *src, float *dst, long samples)
 }
 
 static inline long
-conv_yF_gamma_yF_linear (const float *src, float *dst, long samples)
+conv_yF_gamma_yF_linear (const Babl *conversion,const float *src, float *dst, long samples)
 {
   long total = samples;
 
@@ -536,16 +536,16 @@ conv_yF_gamma_yF_linear (const float *src, float *dst, long samples)
 
 
 static long
-conv_rgbF_linear_rgbF_gamma (const float *src, float *dst, long samples)
+conv_rgbF_linear_rgbF_gamma (const Babl *conversion,const float *src, float *dst, long samples)
 {
-  return conv_yF_linear_yF_gamma (src, dst, samples * 3) / 3;
+  return conv_yF_linear_yF_gamma (conversion, src, dst, samples * 3) / 3;
 }
 
 
 static long
-conv_rgbF_gamma_rgbF_linear (const float *src, float *dst, long samples)
+conv_rgbF_gamma_rgbF_linear (const Babl *conversion,const float *src, float *dst, long samples)
 {
-  return conv_yF_gamma_yF_linear (src, dst, samples * 3) / 3;
+  return conv_yF_gamma_yF_linear (conversion, src, dst, samples * 3) / 3;
 }
 
 #endif /* defined(USE_SSE2) */

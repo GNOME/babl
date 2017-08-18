@@ -146,7 +146,7 @@ gggl_float_to_index16 (float f)
 }
 
 static INLINE long
-conv_F_8 (unsigned char *src, unsigned char *dst, long samples)
+conv_F_8 (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
 
@@ -164,7 +164,7 @@ conv_F_8 (unsigned char *src, unsigned char *dst, long samples)
 
 
 static INLINE long
-conv_F_8g (unsigned char *src, unsigned char *dst, long samples)
+conv_F_8g (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
 
@@ -182,7 +182,7 @@ conv_F_8g (unsigned char *src, unsigned char *dst, long samples)
 
 
 static INLINE long __attribute__((unused))
-conv_8_F (unsigned char *src, unsigned char *dst, long samples)
+conv_8_F (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
 
@@ -199,7 +199,7 @@ conv_8_F (unsigned char *src, unsigned char *dst, long samples)
 
 
 static INLINE long
-conv_rgbaF_rgb8 (unsigned char *src, unsigned char *dst, long samples)
+conv_rgbaF_rgb8 (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
 
@@ -227,7 +227,7 @@ conv_rgbaF_rgb8 (unsigned char *src, unsigned char *dst, long samples)
 
 
 static INLINE long __attribute__((unused))
-conv_rgbaF_rgba8 (unsigned char *src, unsigned char *dst, long samples)
+conv_rgbaF_rgba8 (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
 
@@ -259,16 +259,16 @@ conv_rgbaF_rgba8 (unsigned char *src, unsigned char *dst, long samples)
 #define conv_rgbaF_rgbP8    conv_rgbaF_rgba8
 
 static INLINE long __attribute__((unused))
-conv_rgbF_rgb8 (unsigned char *src, unsigned char *dst, long samples)
+conv_rgbF_rgb8 (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
 {
-  conv_F_8g (src, dst, samples * 3);
+  conv_F_8g (conversion, src, dst, samples * 3);
   return samples;
 }
 
 static INLINE long __attribute__((unused))
-conv_gaF_ga8 (unsigned char *src, unsigned char *dst, long samples)
+conv_gaF_ga8 (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
 {
-  conv_F_8 (src, dst, samples * 2);
+  conv_F_8 (conversion, src, dst, samples * 2);
   return samples;
 }
 
@@ -278,7 +278,7 @@ conv_gaF_ga8 (unsigned char *src, unsigned char *dst, long samples)
 
 
 static INLINE long
-conv_rgba8_rgbaF (unsigned char *src, unsigned char *dst, long samples)
+conv_rgba8_rgbaF (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
 
@@ -304,7 +304,7 @@ conv_rgba8_rgbaF (unsigned char *src, unsigned char *dst, long samples)
 }
 
 static INLINE long
-conv_rgb8_rgbaF (unsigned char *src, unsigned char *dst, long samples)
+conv_rgb8_rgbaF (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
 
@@ -329,7 +329,7 @@ conv_rgb8_rgbaF (unsigned char *src, unsigned char *dst, long samples)
 }
 
 static long
-conv_rgbAF_rgb8 (unsigned char *srcc,
+conv_rgbAF_rgb8 (const Babl *conversion,unsigned char *srcc,
                  unsigned char *dstc,
                  long           samples)
 {
@@ -360,7 +360,7 @@ conv_rgbAF_rgb8 (unsigned char *srcc,
 }
 
 static long
-conv_bgrA8_rgba8 (unsigned char *srcc,
+conv_bgrA8_rgba8 (const Babl *conversion,unsigned char *srcc,
                   unsigned char *dstc,
                   long           samples)
 {
@@ -382,7 +382,7 @@ conv_bgrA8_rgba8 (unsigned char *srcc,
 }
 
 static long
-conv_rgbaF_rgbAF (unsigned char *srcc,
+conv_rgbaF_rgbAF (const Babl *conversion,unsigned char *srcc,
                   unsigned char *dstc,
                   long           samples)
 {
@@ -404,7 +404,7 @@ conv_rgbaF_rgbAF (unsigned char *srcc,
 }
 
 static long
-conv_rgbAF_rgbaF (unsigned char *srcc,
+conv_rgbAF_rgbaF (const Babl *conversion,unsigned char *srcc,
                   unsigned char *dstc,
                   long           samples)
 {
@@ -432,7 +432,7 @@ conv_rgbAF_rgbaF (unsigned char *srcc,
 
 
 static long
-conv_rgbAF_lrgba8 (unsigned char *srcc,
+conv_rgbAF_lrgba8 (const Babl *conversion,unsigned char *srcc,
                    unsigned char *dstc,
                    long           samples)
 {

@@ -26,7 +26,7 @@
 #include "extensions/util.h"
 
 static inline long
-conv_rgbu16_rgbau16 (unsigned char *src, 
+conv_rgbu16_rgbau16 (const Babl *conversion,unsigned char *src, 
                      unsigned char *dst, 
                      long           samples)
 
@@ -48,7 +48,7 @@ conv_rgbu16_rgbau16 (unsigned char *src,
 }
 
 static inline long
-conv_yu16_yau16 (unsigned char *src, 
+conv_yu16_yau16 (const Babl *conversion,unsigned char *src, 
                  unsigned char *dst, 
                  long           samples)
 

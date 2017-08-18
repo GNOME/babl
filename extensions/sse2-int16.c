@@ -35,7 +35,7 @@
 static const __v4sf  u16_float = Q (1.f / 65535);
 
 static long
-conv_rgba16_rgbaF (const uint16_t *src, float *dst, long samples)
+conv_rgba16_rgbaF (const Babl *conversion,const uint16_t *src, float *dst, long samples)
 {
   long i = 0;
 
@@ -71,7 +71,7 @@ conv_rgba16_rgbaF (const uint16_t *src, float *dst, long samples)
 }
 
 static long
-conv_rgba16_rgbAF (const uint16_t *src, float *dst, long samples)
+conv_rgba16_rgbAF (const Babl *conversion,const uint16_t *src, float *dst, long samples)
 {
   long i = 0;
   long remainder;

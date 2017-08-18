@@ -178,53 +178,53 @@ static void singles2halfp(void *target, const void *source, long numel)
 }
 
 static inline long
-conv_yHalf_yF (const uint16_t *src, float *dst, long samples)
+conv_yHalf_yF (const Babl *conversion,const uint16_t *src, float *dst, long samples)
 {
   halfp2singles(dst, src, samples);
   return samples;
 }
 
 static long
-conv_yaHalf_yaF (const uint16_t *src, float *dst, long samples)
+conv_yaHalf_yaF (const Babl *conversion,const uint16_t *src, float *dst, long samples)
 {
-  return conv_yHalf_yF (src, dst, samples * 2) / 2;
+  return conv_yHalf_yF (conversion, src, dst, samples * 2) / 2;
 }
 
 static long
-conv_rgbHalf_rgbF (const uint16_t *src, float *dst, long samples)
+conv_rgbHalf_rgbF (const Babl *conversion,const uint16_t *src, float *dst, long samples)
 {
-  return conv_yHalf_yF (src, dst, samples * 3) / 3;
+  return conv_yHalf_yF (conversion, src, dst, samples * 3) / 3;
 }
 
 static long
-conv_rgbaHalf_rgbaF (const uint16_t *src, float *dst, long samples)
+conv_rgbaHalf_rgbaF (const Babl *conversion,const uint16_t *src, float *dst, long samples)
 {
-  return conv_yHalf_yF (src, dst, samples * 4) / 4;
+  return conv_yHalf_yF (conversion, src, dst, samples * 4) / 4;
 }
 
 static inline long
-conv_yF_yHalf (const float *src, uint16_t *dst, long samples)
+conv_yF_yHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
 {
   singles2halfp (dst, src, samples);
   return samples;
 }
 
 static long
-conv_yaF_yaHalf (const float *src, uint16_t *dst, long samples)
+conv_yaF_yaHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
 {
-  return conv_yF_yHalf (src, dst, samples * 2) / 2;
+  return conv_yF_yHalf (conversion, src, dst, samples * 2) / 2;
 }
 
 static long
-conv_rgbF_rgbHalf (const float *src, uint16_t *dst, long samples)
+conv_rgbF_rgbHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
 {
-  return conv_yF_yHalf (src, dst, samples * 3) / 3;
+  return conv_yF_yHalf (conversion, src, dst, samples * 3) / 3;
 }
 
 static long
-conv_rgbaF_rgbaHalf (const float *src, uint16_t *dst, long samples)
+conv_rgbaF_rgbaHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
 {
-  return conv_yF_yHalf (src, dst, samples * 4) / 4;
+  return conv_yF_yHalf (conversion, src, dst, samples * 4) / 4;
 }
 
 int init (void);

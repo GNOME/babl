@@ -72,7 +72,7 @@ models (void)
 
 
 static long
-rgba_to_ycbcra709 (char *src,
+rgba_to_ycbcra709 (const Babl *conversion,char *src,
                    char *dst,
                    long  n)
 {
@@ -106,7 +106,7 @@ rgba_to_ycbcra709 (char *src,
 
 
 static long
-rgba_to_ycbcr709 (char *src,
+rgba_to_ycbcr709 (const Babl *conversion,char *src,
                   char *dst,
                   long  n)
 {
@@ -138,7 +138,7 @@ rgba_to_ycbcr709 (char *src,
 
 
 static long
-ycbcra709_to_rgba (char *src,
+ycbcra709_to_rgba (const Babl *conversion,char *src,
                 char *dst,
                 long  n)
 {
@@ -172,7 +172,7 @@ ycbcra709_to_rgba (char *src,
 
 
 static long
-ycbcr709_to_rgba (char *src,
+ycbcr709_to_rgba (const Babl *conversion,char *src,
                char *dst,
                long  n)
 {

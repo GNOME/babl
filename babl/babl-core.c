@@ -22,11 +22,12 @@
 #include "util.h"
 
 static long
-convert_double_double (char *src,
-                       char *dst,
-                       int   src_pitch,
-                       int   dst_pitch,
-                       long  n)
+convert_double_double (const Babl *babl,
+                       char       *src,
+                       char       *dst,
+                       int         src_pitch,
+                       int         dst_pitch,
+                       long        n)
 {
   if (src_pitch == 64 &&
       dst_pitch == 64)
@@ -77,9 +78,10 @@ convert_double_double (char *src,
 
  */
 static long
-rgba_to_rgba (char *src,
-              char *dst,
-              long  n)
+rgba_to_rgba (const Babl *babl,
+              char       *src,
+              char       *dst,
+              long        n)
 {
   memcpy (dst, src, n * sizeof (double) * 4);
   return n;

@@ -26,15 +26,15 @@
 #include "babl-db.h"
 #include "babl-ref-pixels.h"
 
-static Babl *
-conversion_new (const char    *name,
-                int            id,
-                Babl          *source,
-                Babl          *destination,
-                BablFuncLinear linear,
-                BablFuncPlane  plane,
-                BablFuncPlanar planar,
-                void          *user_data)
+Babl *
+_conversion_new (const char    *name,
+                 int            id,
+                 Babl          *source,
+                 Babl          *destination,
+                 BablFuncLinear linear,
+                 BablFuncPlane  plane,
+                 BablFuncPlanar planar,
+                 void          *user_data)
 {
   Babl *babl = NULL;
 
@@ -281,7 +281,7 @@ babl_conversion_new (const void *first_arg,
       babl = babl_db_exist (db, id, name);
     }
 
-  babl = conversion_new (name, id, source, destination, linear, plane, planar, 
+  babl = _conversion_new (name, id, source, destination, linear, plane, planar, 
                          user_data);
 
   /* Since there is not an already registered instance by the required
@@ -300,7 +300,8 @@ babl_conversion_linear_process (BablConversion *conversion,
                                 void           *destination,
                                 long            n)
 {
-  return conversion->function.linear (source, destination, n, conversion->data);
+  return conversion->function.linear ((void*)conversion,
+                                   source, destination, n, conversion->data);
 }
 
 static long
@@ -311,7 +312,8 @@ babl_conversion_plane_process (BablConversion *conversion,
                                int             dst_pitch,
                                long            n)
 {
-  return conversion->function.plane (source, destination,
+  return conversion->function.plane ((void*)conversion,
+                                     source, destination,
                                      src_pitch, dst_pitch,
                                      n,
                                      conversion->data);
@@ -334,7 +336,8 @@ babl_conversion_planar_process (BablConversion *conversion,
   memcpy (src_data, source->data, sizeof (void *) * source->components);
   memcpy (dst_data, destination->data, sizeof (void *) * destination->components);
 
-  return conversion->function.planar (source->components,
+  return conversion->function.planar ((void*)conversion,
+                                      source->components,
                                       src_data,
                                       source->pitch,
                                       destination->components,

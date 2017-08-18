@@ -319,6 +319,15 @@ static inline double babl_parse_double (const char *str)
   return result;
 }
 
+Babl *
+_conversion_new (const char    *name,
+                 int            id,
+                 Babl          *source,
+                 Babl          *destination,
+                 BablFuncLinear linear,
+                 BablFuncPlane  plane,
+                 BablFuncPlanar planar,
+                 void          *user_data);
 
 double _babl_legal_error (void);
 void babl_init_db (void);

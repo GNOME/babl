@@ -110,7 +110,8 @@ models (void)
 
 
 static long
-rgba_to_graya (char *src,
+rgba_to_graya (Babl *conversion,
+               char *src,
                char *dst,
                long  n)
 {
@@ -138,7 +139,8 @@ rgba_to_graya (char *src,
 }
 
 static long
-rgba_to_gray (char *src,
+rgba_to_gray (Babl *conversion,
+              char *src,
               char *dst,
               long  n)
 {
@@ -165,7 +167,8 @@ rgba_to_gray (char *src,
 
 
 static long
-rgb_to_gray_2_2 (int    src_bands,
+rgb_to_gray_2_2 (Babl  *conversion,
+                 int    src_bands,
                  char **src,
                  int   *src_pitch,
                  int    dst_bands,
@@ -202,7 +205,8 @@ rgb_to_gray_2_2 (int    src_bands,
 
 
 static long
-gray_2_2_to_rgb (int    src_bands,
+gray_2_2_to_rgb (Babl  *conversion,
+                 int    src_bands,
                  char **src,
                  int   *src_pitch,
                  int    dst_bands,
@@ -241,7 +245,8 @@ gray_2_2_to_rgb (int    src_bands,
 
 
 static long
-graya_to_rgba (char *src,
+graya_to_rgba (Babl *conversion,
+               char *src,
                char *dst,
                long  n)
 {
@@ -270,7 +275,8 @@ graya_to_rgba (char *src,
 
 
 static long
-gray_to_rgba (char *src,
+gray_to_rgba (Babl *conversion,
+              char *src,
               char *dst,
               long  n)
 {
@@ -296,7 +302,8 @@ gray_to_rgba (char *src,
 }
 
 static long
-gray_alpha_premultiplied_to_rgba (int    src_bands,
+gray_alpha_premultiplied_to_rgba (Babl  *conversion,
+                                  int    src_bands,
                                   char **src,
                                   int   *src_pitch,
                                   int    dst_bands,
@@ -333,7 +340,8 @@ gray_alpha_premultiplied_to_rgba (int    src_bands,
 
 
 static long
-rgba_to_gray_alpha_premultiplied (int    src_bands,
+rgba_to_gray_alpha_premultiplied (Babl  *conversion,
+                                  int    src_bands,
                                   char **src,
                                   int   *src_pitch,
                                   int    dst_bands,
@@ -367,7 +375,8 @@ rgba_to_gray_alpha_premultiplied (int    src_bands,
 }
 
 static long
-non_premultiplied_to_premultiplied (int    src_bands,
+non_premultiplied_to_premultiplied (Babl  *conversion,
+                                    int    src_bands,
                                     char **src,
                                     int   *src_pitch,
                                     int    dst_bands,
@@ -395,7 +404,8 @@ non_premultiplied_to_premultiplied (int    src_bands,
 }
 
 static long
-premultiplied_to_non_premultiplied (int    src_bands,
+premultiplied_to_non_premultiplied (Babl  *conversion,
+                                    int    src_bands,
                                     char **src,
                                     int   *src_pitch,
                                     int    dst_bands,
@@ -430,7 +440,8 @@ premultiplied_to_non_premultiplied (int    src_bands,
 }
 
 static long
-rgba2gray_gamma_2_2_premultiplied (char *src,
+rgba2gray_gamma_2_2_premultiplied (Babl *conversion,
+                                   char *src,
                                    char *dst,
                                    long  n)
 {
@@ -458,9 +469,9 @@ rgba2gray_gamma_2_2_premultiplied (char *src,
   return n;
 }
 
-
 static long
-gray_gamma_2_2_premultiplied2rgba (char *src,
+gray_gamma_2_2_premultiplied2rgba (Babl *conversion,
+                                   char *src,
                                    char *dst,
                                    long  n)
 {

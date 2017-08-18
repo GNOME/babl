@@ -37,7 +37,7 @@ static const float RGB_LUMINANCE_GREEN_FLOAT = RGB_LUMINANCE_GREEN;
 static const float RGB_LUMINANCE_BLUE_FLOAT = RGB_LUMINANCE_BLUE;
 
 static long
-conv_rgbaF_linear_y8_linear (unsigned char *src,
+conv_rgbaF_linear_y8_linear (const Babl *conversion,unsigned char *src,
                              unsigned char *dst,
                              long           samples)
 {
@@ -65,7 +65,7 @@ conv_rgbaF_linear_y8_linear (unsigned char *src,
 }
 
 static long
-conv_rgbaF_linear_yF_linear (unsigned char *src,
+conv_rgbaF_linear_yF_linear (const Babl *conversion,unsigned char *src,
                              unsigned char *dst,
                              long           samples)
 {
@@ -88,7 +88,7 @@ conv_rgbaF_linear_yF_linear (unsigned char *src,
 }
 
 static long
-conv_rgbaF_linear_yaF_linear (unsigned char *src,
+conv_rgbaF_linear_yaF_linear (const Babl *conversion,unsigned char *src,
                               unsigned char *dst,
                               long           samples)
 {

@@ -300,7 +300,8 @@ LAB_to_XYZ (double L,
 }
 
 static long
-rgba_to_lab (char *src,
+rgba_to_lab (Babl *babl,
+             char *src,
              char *dst,
              long  n)
 {
@@ -328,7 +329,8 @@ rgba_to_lab (char *src,
 }
 
 static long
-lab_to_rgba (char *src,
+lab_to_rgba (Babl *babl,
+             char *src,
              char *dst,
              long  n)
 {
@@ -357,7 +359,8 @@ lab_to_rgba (char *src,
 }
 
 static long
-rgba_to_laba (char *src,
+rgba_to_laba (Babl *babl,
+              char *src,
               char *dst,
               long  n)
 {
@@ -387,7 +390,8 @@ rgba_to_laba (char *src,
 }
 
 static long
-laba_to_rgba (char *src,
+laba_to_rgba (Babl *babl,
+              char *src,
               char *dst,
               long  n)
 {
@@ -441,7 +445,8 @@ ab_to_CHab (double  a,
 }
 
 static long
-rgba_to_lchab (char *src,
+rgba_to_lchab (Babl *babl,
+               char *src,
                char *dst,
                long  n)
 {
@@ -472,7 +477,8 @@ rgba_to_lchab (char *src,
 }
 
 static long
-lchab_to_rgba (char *src,
+lchab_to_rgba (Babl *babl,
+               char *src,
                char *dst,
                long  n)
 {
@@ -504,7 +510,8 @@ lchab_to_rgba (char *src,
 }
 
 static long
-rgba_to_lchaba (char *src,
+rgba_to_lchaba (Babl *babl,
+                char *src,
                 char *dst,
                 long  n)
 {
@@ -537,7 +544,8 @@ rgba_to_lchaba (char *src,
 }
 
 static long
-lchaba_to_rgba (char *src,
+lchaba_to_rgba (Babl *babl,
+                char *src,
                 char *dst,
                 long  n)
 {
@@ -1143,7 +1151,8 @@ formats (void)
 /******** begin  integer RGB/CIE color space conversions **************/
 
 static inline long
-convert_double_u8_scaled (double        min_val,
+convert_double_u8_scaled (const Babl   *babl,
+                          double        min_val,
                           double        max_val,
                           unsigned char min,
                           unsigned char max,
@@ -1173,7 +1182,8 @@ convert_double_u8_scaled (double        min_val,
 }
 
 static inline long
-convert_u8_double_scaled (double        min_val,
+convert_u8_double_scaled (const Babl   *c,
+                          double        min_val,
                           double        max_val,
                           unsigned char min,
                           unsigned char max,
@@ -1205,23 +1215,23 @@ convert_u8_double_scaled (double        min_val,
 
 #define MAKE_CONVERSIONS(name, min_val, max_val, min, max) \
   static long \
-  convert_ ## name ## _double (char *src, \
+  convert_ ## name ## _double (const Babl *c, char *src, \
                                char *dst, \
                                int src_pitch, \
                                int dst_pitch, \
                                long n)        \
   { \
-    return convert_u8_double_scaled (min_val, max_val, min, max, \
+    return convert_u8_double_scaled (c, min_val, max_val, min, max, \
                                      src, dst, src_pitch, dst_pitch, n); \
   }                                                               \
   static long \
-  convert_double_ ## name (char *src, \
+  convert_double_ ## name (const Babl *c, char *src, \
                            char *dst, \
                            int src_pitch, \
                            int dst_pitch, \
                            long n)        \
   { \
-    return convert_double_u8_scaled (min_val, max_val, min, max, \
+    return convert_double_u8_scaled (c, min_val, max_val, min, max, \
                                      src, dst, src_pitch, dst_pitch, n); \
   }
 
@@ -1283,7 +1293,8 @@ types_u8 (void)
 }
 
 static inline long
-convert_double_u16_scaled (double         min_val,
+convert_double_u16_scaled (const Babl    *babl,
+                           double         min_val,
                            double         max_val,
                            unsigned short min,
                            unsigned short max,
@@ -1313,7 +1324,8 @@ convert_double_u16_scaled (double         min_val,
 }
 
 static inline long
-convert_u16_double_scaled (double         min_val,
+convert_u16_double_scaled (const Babl    *babl,
+                           double         min_val,
                            double         max_val,
                            unsigned short min,
                            unsigned short max,
@@ -1344,23 +1356,23 @@ convert_u16_double_scaled (double         min_val,
 
 #define MAKE_CONVERSIONS(name, min_val, max_val, min, max)      \
   static long \
-  convert_ ## name ## _double (char *src, \
+  convert_ ## name ## _double (const Babl *c, char *src, \
                                char *dst, \
                                int src_pitch, \
                                int dst_pitch, \
                                long n)        \
   { \
-    return convert_u16_double_scaled (min_val, max_val, min, max, \
+    return convert_u16_double_scaled (c, min_val, max_val, min, max, \
                                       src, dst, src_pitch, dst_pitch, n); \
   }                                                               \
   static long \
-  convert_double_ ## name (char *src, \
+  convert_double_ ## name (const Babl *c, char *src, \
                            char *dst, \
                            int src_pitch, \
                            int dst_pitch, \
                            long n)        \
   { \
-    return convert_double_u16_scaled (min_val, max_val, min, max, \
+    return convert_double_u16_scaled (c, min_val, max_val, min, max, \
                                       src, dst, src_pitch, dst_pitch, n); \
   }
 

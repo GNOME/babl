@@ -26,7 +26,8 @@
 #include "babl-base.h"
 
 static long
-convert_double_float (char *src,
+convert_double_float (BablConversion *conversion,
+                      char *src,
                       char *dst,
                       int   src_pitch,
                       int   dst_pitch,
@@ -42,7 +43,8 @@ convert_double_float (char *src,
 }
 
 static long
-convert_float_double (char *src,
+convert_float_double (BablConversion *conversion,
+                      char *src,
                       char *dst,
                       int   src_pitch,
                       int   dst_pitch,

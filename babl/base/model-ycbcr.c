@@ -78,7 +78,8 @@ models (void)
 }
 
 static long
-rgba_to_ycbcra (char *src,
+rgba_to_ycbcra (BablConversion *conversion,
+                char *src,
                 char *dst,
                 long  n)
 {
@@ -112,7 +113,8 @@ rgba_to_ycbcra (char *src,
 
 
 static long
-rgba_to_ycbcr (char *src,
+rgba_to_ycbcr (BablConversion *conversion,
+               char *src,
                char *dst,
                long  n)
 {
@@ -143,7 +145,8 @@ rgba_to_ycbcr (char *src,
 }
 
 static long
-ycbcra_to_rgba (char *src,
+ycbcra_to_rgba (BablConversion *conversion,
+                char *src,
                 char *dst,
                 long  n)
 {
@@ -177,7 +180,8 @@ ycbcra_to_rgba (char *src,
 
 
 static long
-ycbcr_to_rgba (char *src,
+ycbcr_to_rgba (BablConversion *conversion,
+               char *src,
                char *dst,
                long  n)
 {

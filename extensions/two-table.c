@@ -43,7 +43,7 @@ conv_float_u8_two_table_map (float value)
 }
 
 static long
-conv_rgbafloat_linear_cairo24_le (unsigned char *src_char,
+conv_rgbafloat_linear_cairo24_le (const Babl *conversion,unsigned char *src_char,
                                   unsigned char *dst,
                                   long           samples)
 {
@@ -69,7 +69,7 @@ conv_rgbafloat_linear_cairo24_le (unsigned char *src_char,
 }
 
 static long
-conv_rgbfloat_linear_cairo24_le (unsigned char *src_char,
+conv_rgbfloat_linear_cairo24_le (const Babl *conversion,unsigned char *src_char,
                                  unsigned char *dst,
                                  long           samples)
 {
@@ -89,7 +89,7 @@ conv_rgbfloat_linear_cairo24_le (unsigned char *src_char,
 }
 
 static long
-conv_rgbafloat_linear_rgbu8_gamma (unsigned char *src_char,
+conv_rgbafloat_linear_rgbu8_gamma (const Babl *conversion,unsigned char *src_char,
                                    unsigned char *dst,
                                    long           samples)
 {
@@ -118,7 +118,7 @@ conv_rgbafloat_linear_rgbu8_gamma (unsigned char *src_char,
 
 
 static long
-conv_rgbafloat_linear_rgbau8_gamma (unsigned char *src_char,
+conv_rgbafloat_linear_rgbau8_gamma (const Babl *conversion,unsigned char *src_char,
                                     unsigned char *dst,
                                     long           samples)
 {
@@ -148,7 +148,7 @@ conv_rgbafloat_linear_rgbau8_gamma (unsigned char *src_char,
 }
 
 static long
-conv_rgbfloat_linear_rgbu8_gamma (unsigned char *src_char,
+conv_rgbfloat_linear_rgbu8_gamma (const Babl *conversion,unsigned char *src_char,
                                   unsigned char *dst,
                                   long           samples)
 {
@@ -168,7 +168,7 @@ conv_rgbfloat_linear_rgbu8_gamma (unsigned char *src_char,
 }
 
 static long
-conv_yfloat_linear_yu8_gamma (unsigned char *src_char,
+conv_yfloat_linear_yu8_gamma (const Babl *conversion,unsigned char *src_char,
                               unsigned char *dst,
                               long           samples)
 {
@@ -183,7 +183,7 @@ conv_yfloat_linear_yu8_gamma (unsigned char *src_char,
 }
 
 static long
-conv_yafloat_linear_yau8_gamma (unsigned char *src_char,
+conv_yafloat_linear_yau8_gamma (const Babl *conversion,unsigned char *src_char,
                                 unsigned char *dst,
                                 long           samples)
 {
