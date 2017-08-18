@@ -6,6 +6,7 @@ endif
 
 C_TESTS =				\
 	grayscale_to_rgb	\
+	chromaticities          \
 	rgb_to_bgr       	\
 	rgb_to_ycbcr		\
 	srgb_to_lab_u8		\
