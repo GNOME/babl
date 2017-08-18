@@ -32,6 +32,7 @@ c_sources =				\
 	babl-sampling.c			\
 	babl-sanity.c			\
 	babl-space.c 			\
+	babl-trc.c			\
 	babl-type.c			\
 	babl-util.c			\
 	babl-cpuaccel.c			\

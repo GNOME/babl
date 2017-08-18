@@ -101,11 +101,50 @@ const Babl * babl_format            (const char *name);
  */
 const Babl * babl_format_with_space (const char *name, const Babl *space);
 
-typedef enum {
-  BABL_TRC_LINEAR,
-  BABL_TRC_GAMMA,
-  BABL_TRC_SRGB
-} BablTRC;
+/**
+ * babl_trc:
+ *
+ * Look up a TRC by name, "sRGB" "1.0" "linear" and "2.2" are recognized
+ * strings in a stock babl configuration.
+ */
+const Babl * babl_trc       (const char *name);
+
+/**
+ * babl_trc_gamma:
+ *
+ * Creates a Babl TRC for a specific gamma value.
+ */
+const Babl * babl_trc_gamma (double gamma);
+
+/**
+ * babl_trc_from_linear:
+ *
+ * Makes linear data non-linear according to the trc.
+ */
+double babl_trc_from_linear (const Babl *trc, double value);
+
+/**
+ * babl_trc_from_linear:
+ *
+ * Makes non-linear data with the TRC linear data.
+ */
+double babl_trc_to_linear   (const Babl *trc, double value);
+
+/**
+ * babl_trc_from_linearf:
+ *
+ * Makes linear data non-linear according to the trc, single precision float,
+ * a little bit faster than the double version.
+ */
+float babl_trc_from_linearf (const Babl *trc, float value);
+
+/**
+ * babl_trc_from_linearf:
+ *
+ * Makes non-linear data with the TRC linear data, single precision float
+ * alittle bit faster than the double version.
+ */
+float babl_trc_to_linearf   (const Babl *trc, float value);
 
 /**
  * babl_space:
@@ -114,22 +153,25 @@ typedef enum {
  * working space referred to by name. Babl knows of:
  *    sRGB, Adobe, Apple and ProPhoto
  */
-const Babl * babl_space             (const char *name);
+const Babl * babl_space (const char *name);
 
 /**
  * babl_space_new:
  *
  * Creates a new RGB matrix color space definition with the specified
  * white point wx, wy, primary chromaticities rx,ry,gx,gy,bx,by and
- * TRC to be used. After registering a new babl-space it can be used
- * with babl_space().
+ * TRCs to be used. After registering a new babl-space it can be used
+ * with babl_space() passing its name;
  */
 const Babl * babl_space_new (const char *name,
                              double wx, double wy,
                              double rx, double ry,
                              double gx, double gy,
                              double bx, double by,
-                             double gamma, BablTRC trc);
+                             const Babl *trc_red,
+                             const Babl *trc_green,
+                             const Babl *trc_blue);
+
 
 void babl_space_to_xyz   (const Babl *space, const double *rgb, double *xyz);
 void babl_space_from_xyz (const Babl *space, const double *xyz, double *rgb);
@@ -140,19 +182,6 @@ void babl_space_from_xyz (const Babl *space, const double *xyz, double *rgb);
  * Retrieve the RGB color space used for a pixel format.
  */
 const Babl * babl_format_get_space  (const Babl *format);
-
-/*
- * babl_space_get_trc:
- *
- * Returns the type of transfer response curve used for ' annotated components
- * for this space. BABL_TRC_LINEAR means no mapping, BABL_TRC_GAMMA means use
- * the gamma double value and BABL_TRC_SRGB means use the sRGB gamma
- * function.
- *
- * If a pointer to return double is not provided but is NULL, then the trc type
- * is still returned.
- */
-BablTRC babl_space_get_trc            (const Babl *space, double *gamma);
 
 /**
  * babl_space_get_chromaticities:

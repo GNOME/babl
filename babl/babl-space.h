@@ -40,8 +40,7 @@ typedef struct
   double           xb;  // blue primary chromaticity
   double           yb;
 
-  double           gamma;// gamma TRC
-  BablTRC          trc;  // flag for treatment of gamma (sRGB(1) vs just pow(0))
+  const Babl      *trc[3];
   char             name[128];
 
   double RGBtoXYZ[9]; /* matrices for conversions */
@@ -53,59 +52,6 @@ typedef struct
 
 } BablSpace;
 #include <stdio.h>
-static inline double babl_space_from_linear (const Babl *space_, double value)
-{
-  BablSpace *space = (void*)space_;
-  switch (space->trc)
-  {
-    case BABL_TRC_LINEAR: 
-            return value;
-    case BABL_TRC_GAMMA:
-            return pow (value, 1.0/space->gamma);
-    case BABL_TRC_SRGB:
-            return babl_linear_to_gamma_2_2 (value);
-  }
-  return value;
-}
-
-static inline double babl_space_to_linear (const Babl *space_, double value)
-{
-  BablSpace *space = (void*)space_;
-  switch (space->trc)
-  {
-    case BABL_TRC_LINEAR:
-            return value;
-    case BABL_TRC_GAMMA:
-            return pow (value, space->gamma);
-    case BABL_TRC_SRGB:
-            return babl_gamma_2_2_to_linear (value);
-  }
-  return value;
-}
-
-static inline float babl_space_from_linearf (const Babl *space_, float value)
-{
-  BablSpace *space = (void*)space_;
-  switch (space->trc)
-  {
-    case BABL_TRC_LINEAR: return value;
-    case BABL_TRC_GAMMA:  return powf (value, 1.0f/space->gamma);
-    case BABL_TRC_SRGB:   return babl_linear_to_gamma_2_2f (value);
-  }
-  return value;
-}
-
-static inline float babl_space_to_linearf (const Babl *space_, float value)
-{
-  BablSpace *space = (void*)space_;
-  switch (space->trc)
-  {
-    case BABL_TRC_LINEAR: return value;
-    case BABL_TRC_GAMMA:  return powf (value, space->gamma);
-    case BABL_TRC_SRGB:   return babl_gamma_2_2_to_linearf (value);
-  }
-  return value;
-}
 
 #define m(matr, j, i)  matr[j*3+i]
 

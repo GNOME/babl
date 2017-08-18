@@ -338,4 +338,13 @@ void babl_init_db (void);
 void babl_store_db (void);
 int _babl_max_path_len (void);
 
+double babl_trc_from_linear (const Babl *trc, double value);
+double babl_trc_to_linear   (const Babl *trc, double value);
+float babl_trc_from_linearf (const Babl *trc, float value);
+float babl_trc_to_linearf   (const Babl *trc, float value);
+
+const Babl * babl_trc_new (const char *name,
+                           BablTRCType type,
+                           double      gamma);
+
 #endif

@@ -175,6 +175,7 @@ rgb_to_gray_2_2 (Babl  *conversion,
                  long   n)
 {
   const Babl *space = babl_conversion_get_destination_space (conversion);
+  const Babl *trc = space->space.trc[0];
   BABL_PLANAR_SANITY
   while (n--)
     {
@@ -192,7 +193,7 @@ rgb_to_gray_2_2 (Babl  *conversion,
       luminance = red   * RGB_LUMINANCE_RED +    // XXX: should be taken from BablSpace
                   green * RGB_LUMINANCE_GREEN +
                   blue  * RGB_LUMINANCE_BLUE;
-      *(double *) dst[0] = babl_space_from_linear (space, luminance);
+      *(double *) dst[0] = _babl_trc_from_linear (trc, luminance);
 
       if (dst_bands == 2)
         *(double *) dst[1] = alpha;
@@ -214,6 +215,8 @@ gray_2_2_to_rgb (Babl *conversion,
                  long   n)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
+  const Babl *trc = space->space.trc[0];
+
   BABL_PLANAR_SANITY
   while (n--)
     {
@@ -221,7 +224,7 @@ gray_2_2_to_rgb (Babl *conversion,
       double red, green, blue;
       double alpha;
 
-      luminance = babl_space_to_linear (space, *(double *) src[0]);
+      luminance = _babl_trc_to_linear (trc, *(double *) src[0]);
       red       = luminance;
       green     = luminance;
       blue      = luminance;
@@ -446,6 +449,7 @@ rgba2gray_gamma_2_2_premultiplied (Babl *conversion,
                                    long  n)
 {
   const Babl *space = babl_conversion_get_destination_space (conversion);
+  const Babl *trc = space->space.trc[0];
 
   while (n--)
     {
@@ -460,7 +464,7 @@ rgba2gray_gamma_2_2_premultiplied (Babl *conversion,
       luminance = red * RGB_LUMINANCE_RED +
                   green * RGB_LUMINANCE_GREEN +
                   blue * RGB_LUMINANCE_BLUE;
-      luma = babl_space_from_linear (space, luminance);
+      luma = _babl_trc_from_linear (trc, luminance);
 
       ((double *) dst)[0] = luma * alpha;
       ((double *) dst)[1] = alpha;
@@ -479,6 +483,7 @@ gray_gamma_2_2_premultiplied2rgba (Babl *conversion,
                                    long  n)
 {
   const Babl *space = babl_conversion_get_destination_space (conversion);
+  const Babl *trc = space->space.trc[0];
 
   while (n--)
     {
@@ -487,7 +492,7 @@ gray_gamma_2_2_premultiplied2rgba (Babl *conversion,
       double luminance;
 
       luma      = luma / alpha;
-      luminance = babl_space_to_linear (space, luma);
+      luminance = _babl_trc_to_linear (trc, luma);
 
       ((double *) dst)[0] = luminance;
       ((double *) dst)[1] = luminance;

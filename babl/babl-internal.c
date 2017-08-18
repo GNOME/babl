@@ -27,6 +27,7 @@ static const char *class_names[] =
   "BablTypeInteger",
   "BablTypeFloat",
   "BablSampling",
+  "BablTRC",
   "BablComponent",
   "BablModel",
   "BablFormat",

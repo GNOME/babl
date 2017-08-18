@@ -35,6 +35,7 @@ enum {
   BABL_TYPE_INTEGER,
   BABL_TYPE_FLOAT,
   BABL_SAMPLING,
+  BABL_TRC,
   BABL_COMPONENT,
   BABL_MODEL,
   BABL_FORMAT,
@@ -58,6 +59,7 @@ enum {
 
 #include "babl-type.h"
 #include "babl-sampling.h"
+#include "babl-trc.h"
 #include "babl-space.h"
 #include "babl-component.h"
 #include "babl-model.h"
@@ -78,6 +80,7 @@ typedef union _Babl
   BablType          type;
   BablSampling      sampling;
   BablSpace         space;
+  BablSpace         trc;
   BablComponent     component;
   BablModel         model;
   BablFormat        format;

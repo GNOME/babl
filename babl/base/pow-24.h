@@ -120,7 +120,7 @@ static inline float babl_frexpf(float x, int *e)
 static inline float
 init_newtonf (float x, float exponent, float c0, float c1, float c2)
 {
-    int iexp;
+    int iexp = 0;
     float y = babl_frexpf(x, &iexp);
     y = 2*y+(iexp-2);
     c1 *= M_LN2*exponent;

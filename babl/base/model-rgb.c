@@ -192,6 +192,7 @@ g3_gamma_2_2 (Babl  *conversion,
               long   samples)
 {
   const Babl *space = babl_conversion_get_destination_space (conversion);
+  const Babl **trc  = (void*)space->space.trc;
 
   long n = samples;
 
@@ -200,7 +201,7 @@ g3_gamma_2_2 (Babl  *conversion,
     {
       int band;
       for (band = 0; band < 3; band++)
-        *(double *) dst[band] = babl_space_from_linear (space, (*(double *) src[band]));
+        *(double *) dst[band] = _babl_trc_from_linear (trc[band], (*(double *) src[band]));
       for (; band < dst_bands; band++)
         *(double *) dst[band] = *(double *) src[band];
 
@@ -221,6 +222,7 @@ g3_inv_gamma_2_2 (Babl  *conversion,
                   long   samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
+  const Babl **trc  = (void*)space->space.trc;
   long n = samples;
 
   BABL_PLANAR_SANITY
@@ -229,7 +231,7 @@ g3_inv_gamma_2_2 (Babl  *conversion,
       int band;
       for (band = 0; band < 3; band++)
         {
-          *(double *) dst[band] = babl_space_to_linear (space, (*(double *) src[band]));
+          *(double *) dst[band] = _babl_trc_to_linear (trc[band], (*(double *) src[band]));
         }
       for (; band < dst_bands; band++)
         {
@@ -319,14 +321,15 @@ rgba2rgba_gamma_2_2_premultiplied (Babl *conversion,
                                    long  samples)
 {
   const Babl *space = babl_conversion_get_destination_space (conversion);
+  const Babl **trc  = (void*)space->space.trc;
   long n = samples;
 
   while (n--)
     {
       double alpha = ((double *) src)[3];
-      ((double *) dst)[0] = babl_space_from_linear (space, ((double *) src)[0]) * alpha;
-      ((double *) dst)[1] = babl_space_from_linear (space, ((double *) src)[1]) * alpha;
-      ((double *) dst)[2] = babl_space_from_linear (space, ((double *) src)[2]) * alpha;
+      ((double *) dst)[0] = _babl_trc_from_linear (trc[0], ((double *) src)[0]) * alpha;
+      ((double *) dst)[1] = _babl_trc_from_linear (trc[1], ((double *) src)[1]) * alpha;
+      ((double *) dst)[2] = _babl_trc_from_linear (trc[2], ((double *) src)[2]) * alpha;
       ((double *) dst)[3] = alpha;
       src                += 4 * sizeof (double);
       dst                += 4 * sizeof (double);
@@ -342,6 +345,7 @@ rgba_gamma_2_2_premultiplied2rgba (Babl *conversion,
                                    long            samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
+  const Babl **trc  = (void*)space->space.trc;
   long n = samples;
 
   while (n--)
@@ -349,9 +353,9 @@ rgba_gamma_2_2_premultiplied2rgba (Babl *conversion,
       double alpha = ((double *) src)[3];
       if (alpha > BABL_ALPHA_THRESHOLD)
         {
-          ((double *) dst)[0] = babl_space_to_linear (space, ((double *) src)[0] / alpha);
-          ((double *) dst)[1] = babl_space_to_linear (space, ((double *) src)[1] / alpha);
-          ((double *) dst)[2] = babl_space_to_linear (space, ((double *) src)[2] / alpha);
+          ((double *) dst)[0] = _babl_trc_to_linear (trc[0], ((double *) src)[0] / alpha);
+          ((double *) dst)[1] = _babl_trc_to_linear (trc[1], ((double *) src)[1] / alpha);
+          ((double *) dst)[2] = _babl_trc_to_linear (trc[2], ((double *) src)[2] / alpha);
         }
       else
         {
@@ -375,14 +379,15 @@ rgba2rgba_gamma_2_2 (Babl *conversion,
                      long  samples)
 {
   const Babl *space = babl_conversion_get_destination_space (conversion);
+  const Babl **trc  = (void*)space->space.trc;
   long n = samples;
 
   while (n--)
     {
       double alpha = ((double *) src)[3];
-      ((double *) dst)[0] = babl_space_from_linear (space, ((double *) src)[0]);
-      ((double *) dst)[1] = babl_space_from_linear (space, ((double *) src)[1]);
-      ((double *) dst)[2] = babl_space_from_linear (space, ((double *) src)[2]);
+      ((double *) dst)[0] = _babl_trc_from_linear (trc[0], ((double *) src)[0]);
+      ((double *) dst)[1] = _babl_trc_from_linear (trc[1], ((double *) src)[1]);
+      ((double *) dst)[2] = _babl_trc_from_linear (trc[2], ((double *) src)[2]);
       ((double *) dst)[3] = alpha;
       src                += 4 * sizeof (double);
       dst                += 4 * sizeof (double);
@@ -398,14 +403,15 @@ rgba_gamma_2_22rgba (Babl *conversion,
                      long  samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
+  const Babl **trc  = (void*)(space->space.trc);
   long n = samples;
 
   while (n--)
     {
       double alpha = ((double *) src)[3];
-      ((double *) dst)[0] = babl_space_to_linear (space, ((double *) src)[0]);
-      ((double *) dst)[1] = babl_space_to_linear (space, ((double *) src)[1]);
-      ((double *) dst)[2] = babl_space_to_linear (space, ((double *) src)[2]);
+      ((double *) dst)[0] = _babl_trc_to_linear (trc[0], ((double *) src)[0]);
+      ((double *) dst)[1] = _babl_trc_to_linear (trc[1], ((double *) src)[1]);
+      ((double *) dst)[2] = _babl_trc_to_linear (trc[2], ((double *) src)[2]);
       ((double *) dst)[3] = alpha;
 
       src += 4 * sizeof (double);

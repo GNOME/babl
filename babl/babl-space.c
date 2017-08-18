@@ -133,14 +133,6 @@ babl_space_get_chromaticities (const Babl *space,
   if (yb) *yb = space->space.yb;
 }
 
-BablTRC babl_space_get_trc (const Babl *space, double *gamma)
-{
-  if (!space)
-    return 0;
-  if (gamma) *gamma = space->space.gamma;
-  return space->space.trc;
-}
-
 const Babl *
 babl_space (const char *name)
 {
@@ -157,7 +149,9 @@ babl_space_new (const char *name,
                 double rx, double ry,
                 double gx, double gy,
                 double bx, double by,
-                double gamma, BablTRC trc)
+                const Babl *trc_red,
+                const Babl *trc_green,
+                const Babl *trc_blue)
 {
   int i=0;
   static BablSpace space;
@@ -172,13 +166,14 @@ babl_space_new (const char *name,
   space.yb = by;
   space.xw = wx;
   space.yw = wy;
-  space.gamma = gamma;
-  space.trc = trc;
+  space.trc[0] = trc_red;
+  space.trc[1] = trc_green?trc_green:trc_red;
+  space.trc[2] = trc_blue?trc_blue:trc_red;
 
   for (i = 0; space_db[i].instance.class_type; i++)
   {
     int offset = ((char*)&space_db[i].xr) - (char*)(&space_db[i]);
-    int size   = ((char*)&space_db[i].trc) - ((char*)&space_db[i].xr);
+    int size   = ((char*)&space_db[i].trc) + sizeof(space_db[i].trc) - ((char*)&space_db[i].xr);
 
     if (memcmp ((char*)(&space_db[i]) + offset, ((char*)&space) + offset, size)==0)
       {
@@ -195,8 +190,9 @@ babl_space_new (const char *name,
   if (name)
     sprintf (space_db[i].name, "%s", name);
   else
-    sprintf (space_db[i].name, "space-%.4f,%.4f_%.4f,%.4f_%.4f,%.4f_%.4f,%.4f_%.4f,%i",
-             wx,wy,rx,ry,bx,by,gx,gy,gamma,trc);
+    sprintf (space_db[i].name, "space-%.4f,%.4f_%.4f,%.4f_%.4f,%.4f_%.4f,%.4f_%s,%s,%s",
+             wx,wy,rx,ry,bx,by,gx,gy,babl_get_name (space.trc[0]),
+             babl_get_name(space.trc[1]), babl_get_name(space.trc[2]));
 
   /* compute matrixes */
   babl_space_compute_matrices (&space_db[i]);
@@ -224,7 +220,7 @@ babl_space_class_init (void)
                   0.6400,  0.3300,
                   0.3000,  0.6000,
                   0.1500,  0.0600,
-                  1.0, BABL_TRC_LINEAR);
+                  babl_trc("linear"), NULL, NULL);
 #else
   babl_space_new ("sRGB",
                   0.3127,  0.3290, /* D65 */
@@ -232,7 +228,7 @@ babl_space_class_init (void)
                   0.6400,  0.3300,
                   0.3000,  0.6000,
                   0.1500,  0.0600,
-                  2.2, BABL_TRC_SRGB);
+                  babl_trc("sRGB"), NULL, NULL);
 #endif
 
   babl_space_new ("Adobe",
@@ -240,77 +236,77 @@ babl_space_class_init (void)
                   0.6400,  0.3300,
                   0.2100,  0.7100,
                   0.1500,  0.0600,
-                  2.2, BABL_TRC_GAMMA);
+                  babl_trc("2.2"), NULL, NULL);
 
   babl_space_new ("Apple",
                   0.3127,  0.3290, /* D65 */
                   0.6250,  0.3400,
                   0.2800,  0.5950,
                   0.1550,  0.0700,
-                  1.8, BABL_TRC_GAMMA);
+                  babl_trc("1.8"), NULL, NULL);
 
   babl_space_new ("Best",
                   0.34567, 0.3585,  /* D50 */
                   0.7347,  0.2653,
                   0.2150,  0.7750,
                   0.1300,  0.0350,
-                  2.2, BABL_TRC_GAMMA);
+                  babl_trc("2.2"), NULL, NULL);
 
   babl_space_new ("Beta",
                   0.34567, 0.3585,  /* D50 */
                   0.6888,  0.3112,
                   0.1986,  0.7551,
                   0.1265,  0.0352,
-                  2.2, BABL_TRC_GAMMA);
+                  babl_trc("2.2"), NULL, NULL);
 
   babl_space_new ("ProPhoto",
                   0.34567, 0.3585,  /* D50 */
                   0.7347,  0.2653,
                   0.1596,  0.8404,
                   0.0366,  0.0001,
-                  1.8, BABL_TRC_GAMMA);
+                  babl_trc("1.8"), NULL, NULL);
 
   babl_space_new ("Bruce",
                   0.3127,  0.3290, /* D65 */
                   0.6400,  0.3300,
                   0.2800,  0.6500,
                   0.1500,  0.0600,
-                  1.8, BABL_TRC_GAMMA);
+                  babl_trc("1.8"), NULL, NULL);
 
   babl_space_new ("PAL",
                   0.3127,  0.3290, /* D65 */
                   0.6400,  0.3300,
                   0.2900,  0.6000,
                   0.1500,  0.0600,
-                  2.2, BABL_TRC_GAMMA);
+                  babl_trc("2.2"), NULL, NULL);
 
   babl_space_new ("SMPTE-C",
                   0.3127,  0.3290, /* D65 */
                   0.6300,  0.3300,
                   0.3100,  0.5950,
                   0.1550,  0.0700,
-                  2.2, BABL_TRC_GAMMA);
+                  babl_trc("2.2"), NULL, NULL);
 
   babl_space_new ("ColorMatch",
                   0.34567, 0.3585,  /* D50 */
                   0.6300,  0.3400,
                   0.2950,  0.6050,
                   0.1500,  0.0750,
-                  1.8, BABL_TRC_GAMMA);
+                  babl_trc("1.8"), NULL, NULL);
 
   babl_space_new ("Don RGB 4",
                   0.34567, 0.3585,  /* D50 */
                   0.6960,  0.3000,
                   0.2150,  0.7650,
                   0.1300,  0.0350,
-                  1.8, BABL_TRC_GAMMA);
+                  babl_trc("1.8"), NULL, NULL);
 
   babl_space_new ("WideGamutRGB",
                   0.34567, 0.3585,  /* D50 */
                   0.7350,  0.2650,
                   0.1150,  0.8260,
                   0.1570,  0.0180,
-                  2.2, BABL_TRC_GAMMA);
+                  babl_trc("2.2"), NULL, NULL);
 }
 
 void babl_space_to_xyz (const Babl *space, const double *rgb, double *xyz)
