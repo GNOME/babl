@@ -31,6 +31,7 @@ c_sources =				\
 	babl-ref-pixels.c		\
 	babl-sampling.c			\
 	babl-sanity.c			\
+	babl-space.c 			\
 	babl-type.c			\
 	babl-util.c			\
 	babl-cpuaccel.c			\
@@ -59,6 +60,7 @@ h_sources  =				\
 	babl-mutex.h			\
 	babl-ref-pixels.h		\
 	babl-sampling.h			\
+	babl-space.h			\
 	babl-type.h			\
 	babl-types.h			\
 	babl-util.h

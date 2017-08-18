@@ -63,6 +63,7 @@ const Babl * babl_type      (const char *name);
 const Babl * babl_sampling  (int horizontal,
                              int vertical);
 
+
 /**
  * babl_component:
  *
@@ -85,7 +86,86 @@ const Babl * babl_model     (const char *name);
  * Returns the babl object representing the color format given by
  * @name such as for example "RGB u8", "CMYK float" or "CIE Lab u16".
  */
-const Babl * babl_format    (const char *name);
+const Babl * babl_format            (const char *name);
+
+
+/**
+ * babl_format_with_space:
+ *
+ * Returns the babl object representing the color format given by
+ * @name such as for example "RGB u8", "R'G'B'A float", "Y float" with
+ * a specific RGB working space used as the space, the resulting format
+ * has -space suffixed to it, unless the space requested is sRGB then
+ * the unsuffixed version is used. If a format is passed in as space
+ * the space of the format is used.
+ */
+const Babl * babl_format_with_space (const char *name, const Babl *space);
+
+typedef enum {
+  BABL_TRC_LINEAR,
+  BABL_TRC_GAMMA,
+  BABL_TRC_SRGB
+} BablTRC;
+
+/**
+ * babl_space:
+ *
+ * Returns the babl object representing the specific RGB matrix color
+ * working space referred to by name. Babl knows of:
+ *    sRGB, Adobe, Apple and ProPhoto
+ */
+const Babl * babl_space             (const char *name);
+
+/**
+ * babl_space_new:
+ *
+ * Creates a new RGB matrix color space definition with the specified
+ * white point wx, wy, primary chromaticities rx,ry,gx,gy,bx,by and
+ * TRC to be used. After registering a new babl-space it can be used
+ * with babl_space().
+ */
+const Babl * babl_space_new (const char *name,
+                             double wx, double wy,
+                             double rx, double ry,
+                             double gx, double gy,
+                             double bx, double by,
+                             double gamma, BablTRC trc);
+
+void babl_space_to_xyz   (const Babl *space, const double *rgb, double *xyz);
+void babl_space_from_xyz (const Babl *space, const double *xyz, double *rgb);
+
+/*
+ * babl_format_get_space:
+ *
+ * Retrieve the RGB color space used for a pixel format.
+ */
+const Babl * babl_format_get_space  (const Babl *format);
+
+/*
+ * babl_space_get_trc:
+ *
+ * Returns the type of transfer response curve used for ' annotated components
+ * for this space. BABL_TRC_LINEAR means no mapping, BABL_TRC_GAMMA means use
+ * the gamma double value and BABL_TRC_SRGB means use the sRGB gamma
+ * function.
+ *
+ * If a pointer to return double is not provided but is NULL, then the trc type
+ * is still returned.
+ */
+BablTRC babl_space_get_trc            (const Babl *space, double *gamma);
+
+/**
+ * babl_space_get_chromaticities:
+ *
+ * Returns the CIE xyY chromaticity values for white point and primaries for a
+ * space.
+ */
+void babl_space_get_chromaticities  (const Babl *space,
+                                     double *wx, double *wy,
+                                     double *rx, double *ry,
+                                     double *gx, double *gy,
+                                     double *bx, double *by);
+
 
 /**
  * babl_fish:
@@ -112,7 +192,7 @@ long         babl_process   (const Babl *babl_fish,
 /**
  * babl_get_name:
  *
- * Returns a string decsribing a Babl object.
+ * Returns a string describing a Babl object.
  */
 const char * babl_get_name                     (const Babl *babl);
 
@@ -251,6 +331,19 @@ int babl_format_is_format_n (const Babl *format);
 const Babl * babl_conversion_new (const void *first_arg,
                                   ...) BABL_ARG_NULL_TERMINATED;
 
+/**
+ * babl_conversion_get_source_space:
+ *
+ * Returns the RGB space defined for the source of conversion.
+ */
+const Babl *babl_conversion_get_source_space      (const Babl *conversion);
+
+/**
+ * babl_conversion_get_destination_space:
+ *
+ * Returns the RGB space defined for the destination of conversion.
+ */
+const Babl *babl_conversion_get_destination_space (const Babl *conversion);
 
 /**
  * babl_new_palette:

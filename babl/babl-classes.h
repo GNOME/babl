@@ -38,6 +38,7 @@ enum {
   BABL_COMPONENT,
   BABL_MODEL,
   BABL_FORMAT,
+  BABL_SPACE,
 
   BABL_CONVERSION,
   BABL_CONVERSION_LINEAR,
@@ -57,6 +58,7 @@ enum {
 
 #include "babl-type.h"
 #include "babl-sampling.h"
+#include "babl-space.h"
 #include "babl-component.h"
 #include "babl-model.h"
 #include "babl-format.h"
@@ -75,6 +77,7 @@ typedef union _Babl
   BablInstance      instance;
   BablType          type;
   BablSampling      sampling;
+  BablSpace         space;
   BablComponent     component;
   BablModel         model;
   BablFormat        format;

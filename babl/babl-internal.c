@@ -30,6 +30,7 @@ static const char *class_names[] =
   "BablComponent",
   "BablModel",
   "BablFormat",
+  "BablSpace",
   "BablConversion",
   "BablConversionLinear",
   "BablConversionPlane",
