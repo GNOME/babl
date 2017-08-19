@@ -326,8 +326,8 @@ babl_model_with_space (const char *name, const Babl *space);
 Babl *
 _conversion_new (const char    *name,
                  int            id,
-                 Babl          *source,
-                 Babl          *destination,
+                 const Babl    *source,
+                 const Babl    *destination,
                  BablFuncLinear linear,
                  BablFuncPlane  plane,
                  BablFuncPlanar planar,
