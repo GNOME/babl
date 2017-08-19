@@ -22,7 +22,6 @@
 #include "babl.h"
 
 #include "base/util.h"
-#include "base/rgb-constants.h"
 #include "extensions/util.h"
 
 /* There was some debate on #gimp about whether these constants
@@ -32,18 +31,17 @@
  */
 
 /* Float versions of the double constants in rgb-constants.h */
-static const float RGB_LUMINANCE_RED_FLOAT = RGB_LUMINANCE_RED;
-static const float RGB_LUMINANCE_GREEN_FLOAT = RGB_LUMINANCE_GREEN;
-static const float RGB_LUMINANCE_BLUE_FLOAT = RGB_LUMINANCE_BLUE;
 
 static long
 conv_rgbaF_linear_y8_linear (const Babl *conversion,unsigned char *src,
                              unsigned char *dst,
                              long           samples)
 {
-  static const float RGB_LUMINANCE_RED_FLOAT = RGB_LUMINANCE_RED;
-  static const float RGB_LUMINANCE_GREEN_FLOAT = RGB_LUMINANCE_GREEN;
-  static const float RGB_LUMINANCE_BLUE_FLOAT = RGB_LUMINANCE_BLUE;
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  double *rgbtoxyz = babl_space_get_rgbtoxyz (space);
+  const float RGB_LUMINANCE_RED_FLOAT = rgbtoxyz[3];
+  const float RGB_LUMINANCE_GREEN_FLOAT = rgbtoxyz[4];
+  const float RGB_LUMINANCE_BLUE_FLOAT = rgbtoxyz[5];
 
   float *s = (float *) src;
   long   n = samples;
@@ -69,6 +67,11 @@ conv_rgbaF_linear_yF_linear (const Babl *conversion,unsigned char *src,
                              unsigned char *dst,
                              long           samples)
 {
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  double *rgbtoxyz = babl_space_get_rgbtoxyz (space);
+  const float RGB_LUMINANCE_RED_FLOAT = rgbtoxyz[3];
+  const float RGB_LUMINANCE_GREEN_FLOAT = rgbtoxyz[4];
+  const float RGB_LUMINANCE_BLUE_FLOAT = rgbtoxyz[5];
 
   float *s = (float *) src;
   float *d = (float *) dst;
@@ -92,6 +95,11 @@ conv_rgbaF_linear_yaF_linear (const Babl *conversion,unsigned char *src,
                               unsigned char *dst,
                               long           samples)
 {
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  double *rgbtoxyz = babl_space_get_rgbtoxyz (space);
+  const float RGB_LUMINANCE_RED_FLOAT = rgbtoxyz[3];
+  const float RGB_LUMINANCE_GREEN_FLOAT = rgbtoxyz[4];
+  const float RGB_LUMINANCE_BLUE_FLOAT = rgbtoxyz[5];
 
   float *s = (float *) src;
   float *d = (float *) dst;

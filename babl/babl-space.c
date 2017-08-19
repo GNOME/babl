@@ -329,3 +329,8 @@ void babl_space_from_xyz (const Babl *space, const double *xyz, double *rgb)
 {
   _babl_space_from_xyz (space, xyz, rgb);
 }
+
+double * babl_space_get_rgbtoxyz (const Babl *space)
+{
+  return space->space.RGBtoXYZ;
+}

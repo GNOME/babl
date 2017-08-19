@@ -22,7 +22,6 @@
 #include "babl-classes.h"
 #include "babl.h"
 #include "babl-ids.h"
-#include "rgb-constants.h"
 #include "math.h"
 #include "babl-base.h"
 
@@ -114,6 +113,11 @@ rgba_to_graya (Babl *conversion,
                char *dst,
                long  n)
 {
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  double RGB_LUMINANCE_RED   = space->space.RGBtoXYZ[3];
+  double RGB_LUMINANCE_GREEN = space->space.RGBtoXYZ[4];
+  double RGB_LUMINANCE_BLUE  = space->space.RGBtoXYZ[5];
+
   while (n--)
     {
       double red, green, blue;
@@ -143,6 +147,11 @@ rgba_to_gray (Babl *conversion,
               char *dst,
               long  n)
 {
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  double RGB_LUMINANCE_RED   = space->space.RGBtoXYZ[3];
+  double RGB_LUMINANCE_GREEN = space->space.RGBtoXYZ[4];
+  double RGB_LUMINANCE_BLUE  = space->space.RGBtoXYZ[5];
+
   while (n--)
     {
       double red, green, blue;
@@ -176,6 +185,10 @@ rgb_to_gray_2_2 (Babl  *conversion,
 {
   const Babl *space = babl_conversion_get_destination_space (conversion);
   const Babl *trc = space->space.trc[0];
+  double RGB_LUMINANCE_RED   = space->space.RGBtoXYZ[3];
+  double RGB_LUMINANCE_GREEN = space->space.RGBtoXYZ[4];
+  double RGB_LUMINANCE_BLUE  = space->space.RGBtoXYZ[5];
+
   BABL_PLANAR_SANITY
   while (n--)
     {
@@ -352,6 +365,11 @@ rgba_to_gray_alpha_premultiplied (Babl   *conversion,
                                   int   *dst_pitch,
                                   long   n)
 {
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  double RGB_LUMINANCE_RED   = space->space.RGBtoXYZ[3];
+  double RGB_LUMINANCE_GREEN = space->space.RGBtoXYZ[4];
+  double RGB_LUMINANCE_BLUE  = space->space.RGBtoXYZ[5];
+
   BABL_PLANAR_SANITY;
   assert (src_bands == 4);
   assert (dst_bands == 2);
@@ -450,6 +468,9 @@ rgba2gray_gamma_2_2_premultiplied (Babl *conversion,
 {
   const Babl *space = babl_conversion_get_destination_space (conversion);
   const Babl *trc = space->space.trc[0];
+  double RGB_LUMINANCE_RED   = space->space.RGBtoXYZ[3];
+  double RGB_LUMINANCE_GREEN = space->space.RGBtoXYZ[4];
+  double RGB_LUMINANCE_BLUE  = space->space.RGBtoXYZ[5];
 
   while (n--)
     {

@@ -104,7 +104,7 @@ format_new (const char      *name,
   if (space == babl_space ("sRGB"))
     babl->format.model      = model;
   else
-    babl->format.model      = babl_remodel_with_space (model, space);
+    babl->format.model      = (void*)babl_remodel_with_space ((void*)model, space);
 
   memcpy (babl->format.component, component, sizeof (BablComponent *) * components);
   memcpy (babl->format.type, type, sizeof (BablType *) * components);
