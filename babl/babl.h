@@ -122,7 +122,7 @@ const Babl * babl_space_rgb_chromaticities (const char *name,
                                             const Babl *trc_green,
                                             const Babl *trc_blue);
 
-double * babl_space_get_rgbtoxyz (const Babl *space);
+const double * babl_space_get_rgbtoxyz (const Babl *space);
 void babl_space_to_xyz   (const Babl *space, const double *rgb, double *xyz);
 void babl_space_from_xyz (const Babl *space, const double *xyz, double *rgb);
 

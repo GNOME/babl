@@ -213,23 +213,42 @@ babl_space_class_for_each (BablEachFunction each_fun,
 void
 babl_space_class_init (void)
 {
-  /* we register sRGB first so that lookups for it is fastest */
-#ifdef CCE
-  babl_space_rgb_chromaticities ("sRGB",
-                  0.3127, 0.3290, /* D65 */
+  if (getenv ("BABL_RGB_OVERRIDE"))
+  {
+     /* added to be able to easily have the behavior of Elle Stones CCH fork of babl,
+      * configuring the working space through an environment variable should be easier
+      * than keeping compiled versions of CCH GIMP for different spaces.
+      */
+
+     char *override = getenv ("BABL_RGB_OVERRIDE");
+     if (strlen (override) < 5)
+       {
+          babl_space_rgb_chromaticities ("sRGB",
+                  0.3127,  0.3290, /* D65 */
                   0.6400,  0.3300,
                   0.3000,  0.6000,
                   0.1500,  0.0600,
                   babl_trc("linear"), NULL, NULL);
-#else
-  babl_space_rgb_chromaticities ("sRGB",
+       }
+     else
+     {
+       float xr=0.6400, yr=0.3300, xg=0.3000,  yg=0.6000,  xb=0.1500, yb=0.0600, wx=0.3127, wy=0.3290, gamma=2.2;
+       sscanf (override, "%f %f %f %f %f %f %f %f %f", &xr, &yr, &xg, &yg, &xb, &yb, &wx, &wy, &gamma);
+       fprintf (stderr, "overriding babl default RGB space with: r=%f %f g=%f %f b=%f %f w=%f %f gamma=%f\n",
+                xr, yr, xg, yg, xb, yb, wx, wy, gamma);
+       babl_space_rgb_chromaticities ("sRGB",
+            wx, wy, xr, yr, xg, yg, xb, yb, babl_trc_gamma (gamma), NULL, NULL);
+     }
+  }
+  else
+  {
+     babl_space_rgb_chromaticities ("sRGB",
                   0.3127,  0.3290, /* D65 */
-                  //0.3127, 0.3290, /* D65 */
                   0.6400,  0.3300,
                   0.3000,  0.6000,
                   0.1500,  0.0600,
                   babl_trc("sRGB"), NULL, NULL);
-#endif
+  }
 
   babl_space_rgb_chromaticities (
       "Adobe",
@@ -330,7 +349,7 @@ void babl_space_from_xyz (const Babl *space, const double *xyz, double *rgb)
   _babl_space_from_xyz (space, xyz, rgb);
 }
 
-double * babl_space_get_rgbtoxyz (const Babl *space)
+const double * babl_space_get_rgbtoxyz (const Babl *space)
 {
   return space->space.RGBtoXYZ;
 }
