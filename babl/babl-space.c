@@ -144,6 +144,70 @@ babl_space (const char *name)
 }
 
 const Babl *
+babl_space_rgb_matrix (const char *name,
+                       double rx, double gx, double bx,
+                       double ry, double gy, double by,
+                       double rz, double gz, double bz,
+                       const Babl *trc_red,
+                       const Babl *trc_green,
+                       const Babl *trc_blue)
+{
+  int i=0;
+  static BablSpace space;
+  space.instance.class_type = BABL_SPACE;
+  space.instance.id         = 0;
+
+  space.xr = rx;
+  space.yr = gx;
+  space.xg = bx;
+  space.yg = ry;
+  space.xb = gy;
+  space.yb = by;
+  space.xw = rz;
+  space.yw = gz;
+  space.pad = bz;
+  space.trc[0] = trc_red;
+  space.trc[1] = trc_green?trc_green:trc_red;
+  space.trc[2] = trc_blue?trc_blue:trc_red;
+
+  for (i = 0; space_db[i].instance.class_type; i++)
+  {
+    int offset = ((char*)&space_db[i].xr) - (char*)(&space_db[i]);
+    int size   = ((char*)&space_db[i].trc) + sizeof(space_db[i].trc) - ((char*)&space_db[i].xr);
+
+    if (memcmp ((char*)(&space_db[i]) + offset, ((char*)&space) + offset, size)==0)
+      {
+        return (void*)&space_db[i];
+      }
+  }
+  if (i >= MAX_SPACES-1)
+  {
+    babl_log ("too many BablSpaces");
+    return NULL;
+  }
+  /* transplany matrixes */
+  babl_space_compute_matrices (&space_db[i]);
+  memcpy (space.RGBtoXYZ, &space.xr, sizeof (space.RGBtoXYZ));
+  babl_matrix_invert (space.RGBtoXYZ, space.XYZtoRGB);
+
+  space_db[i]=space;
+  space_db[i].instance.name = space_db[i].name;
+  if (name)
+    sprintf (space_db[i].name, "%s", name);
+  else
+    sprintf (space_db[i].name, "space-%.4f,%.4f_%.4f,%.4f_%.4f_%.4f,%.4f_%.4f,%.4f_%s,%s,%s",
+                       rx, gx, bx,
+                       ry, gy, by,
+                       rz, gz, bz,
+             babl_get_name (space.trc[0]),
+             babl_get_name(space.trc[1]), babl_get_name(space.trc[2]));
+
+
+  return (Babl*)&space_db[i];
+}
+
+
+const Babl *
 babl_space_rgb_chromaticities (const char *name,
                                double wx, double wy,
                                double rx, double ry,

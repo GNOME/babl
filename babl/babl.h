@@ -106,7 +106,7 @@ const Babl * babl_trc_gamma (double gamma);
 const Babl * babl_space (const char *name);
 
 /**
- * babl_space_new:
+ * babl_space_rgb_chromaticities:
  *
  * Creates a new RGB matrix color space definition with the specified
  * white point wx, wy, primary chromaticities rx,ry,gx,gy,bx,by and
@@ -121,6 +121,21 @@ const Babl * babl_space_rgb_chromaticities (const char *name,
                                             const Babl *trc_red,
                                             const Babl *trc_green,
                                             const Babl *trc_blue);
+
+/**
+ * babl_space_rgb_chromaticities:
+ *
+ * Creates a new RGB matrix color space definition using a precomputed
+ * D50 adapted 3x3 matrix, as possibly read from an ICC profile.
+ */
+const Babl *
+babl_space_rgb_matrix (const char *name,
+                       double rx, double gx, double bx,
+                       double ry, double gy, double by,
+                       double rz, double gz, double bz,
+                       const Babl *trc_red,
+                       const Babl *trc_green,
+                       const Babl *trc_blue);
 
 const double * babl_space_get_rgbtoxyz (const Babl *space);
 void babl_space_to_xyz   (const Babl *space, const double *rgb, double *xyz);
