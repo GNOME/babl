@@ -20,6 +20,7 @@ c_sources =				\
 	babl-fish.c			\
 	babl-format.c			\
 	babl-hash-table.c		\
+	babl-icc.c			\
 	babl-image.c			\
 	babl-internal.c			\
 	babl-introspect.c		\

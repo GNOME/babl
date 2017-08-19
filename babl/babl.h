@@ -123,7 +123,7 @@ const Babl * babl_space_rgb_chromaticities (const char *name,
                                             const Babl *trc_blue);
 
 /**
- * babl_space_rgb_chromaticities:
+ * babl_space_rgb_matrix:
  *
  * Creates a new RGB matrix color space definition using a precomputed
  * D50 adapted 3x3 matrix, as possibly read from an ICC profile.
@@ -136,6 +136,20 @@ babl_space_rgb_matrix (const char *name,
                        const Babl *trc_red,
                        const Babl *trc_green,
                        const Babl *trc_blue);
+/**
+ * babl_space_rgb_icc:
+ *
+ * Create a babl space from an in memory ICC profile, the
+ * profile does no longer need to be loaded for the space to work,
+ * multiple calls with the same icc profile will result in the
+ * same space.
+ *
+ * If a BablSpace cannot be created from the profile NULL is returned and
+ * a static string is set on the provided error location.
+ */
+const Babl *babl_space_rgb_icc (const char *icc,
+                                int         length,
+                                char      **error);
 
 const double * babl_space_get_rgbtoxyz (const Babl *space);
 void babl_space_to_xyz   (const Babl *space, const double *rgb, double *xyz);

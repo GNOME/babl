@@ -392,6 +392,9 @@ float babl_trc_to_linearf   (const Babl *trc, float value);
 void babl_space_to_xyz   (const Babl *space, const double *rgb, double *xyz);
 void babl_space_from_xyz (const Babl *space, const double *xyz, double *rgb);
 
+const Babl *babl_space_from_icc (const char *icc,
+                                 int         length,
+                                 char      **error);
 
 
 #endif
