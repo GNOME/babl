@@ -144,14 +144,14 @@ babl_space (const char *name)
 }
 
 const Babl *
-babl_space_new (const char *name,
-                double wx, double wy,
-                double rx, double ry,
-                double gx, double gy,
-                double bx, double by,
-                const Babl *trc_red,
-                const Babl *trc_green,
-                const Babl *trc_blue)
+babl_space_rgb_chromaticities (const char *name,
+                               double wx, double wy,
+                               double rx, double ry,
+                               double gx, double gy,
+                               double bx, double by,
+                               const Babl *trc_red,
+                               const Babl *trc_green,
+                               const Babl *trc_blue)
 {
   int i=0;
   static BablSpace space;
@@ -215,14 +215,14 @@ babl_space_class_init (void)
 {
   /* we register sRGB first so that lookups for it is fastest */
 #ifdef CCE
-  babl_space_new ("sRGB",
+  babl_space_rgb_chromaticities ("sRGB",
                   0.3127, 0.3290, /* D65 */
                   0.6400,  0.3300,
                   0.3000,  0.6000,
                   0.1500,  0.0600,
                   babl_trc("linear"), NULL, NULL);
 #else
-  babl_space_new ("sRGB",
+  babl_space_rgb_chromaticities ("sRGB",
                   0.3127,  0.3290, /* D65 */
                   //0.3127, 0.3290, /* D65 */
                   0.6400,  0.3300,
@@ -231,82 +231,93 @@ babl_space_class_init (void)
                   babl_trc("sRGB"), NULL, NULL);
 #endif
 
-  babl_space_new ("Adobe",
-                  0.3127,  0.3290, /* D65 */
-                  0.6400,  0.3300,
-                  0.2100,  0.7100,
-                  0.1500,  0.0600,
-                  babl_trc("2.2"), NULL, NULL);
+  babl_space_rgb_chromaticities (
+      "Adobe",
+      0.3127,  0.3290, /* D65 */
+      0.6400,  0.3300,
+      0.2100,  0.7100,
+      0.1500,  0.0600,
+      babl_trc("2.2"), NULL, NULL);
 
-  babl_space_new ("Apple",
-                  0.3127,  0.3290, /* D65 */
-                  0.6250,  0.3400,
-                  0.2800,  0.5950,
-                  0.1550,  0.0700,
-                  babl_trc("1.8"), NULL, NULL);
+  babl_space_rgb_chromaticities (
+      "ProPhoto",
+      0.34567, 0.3585,  /* D50 */
+      0.7347,  0.2653,
+      0.1596,  0.8404,
+      0.0366,  0.0001,
+      babl_trc("1.8"), NULL, NULL);
 
-  babl_space_new ("Best",
-                  0.34567, 0.3585,  /* D50 */
-                  0.7347,  0.2653,
-                  0.2150,  0.7750,
-                  0.1300,  0.0350,
-                  babl_trc("2.2"), NULL, NULL);
+  babl_space_rgb_chromaticities (
+      "Apple",
+      0.3127,  0.3290, /* D65 */
+      0.6250,  0.3400,
+      0.2800,  0.5950,
+      0.1550,  0.0700,
+      babl_trc("1.8"), NULL, NULL);
 
-  babl_space_new ("Beta",
-                  0.34567, 0.3585,  /* D50 */
-                  0.6888,  0.3112,
-                  0.1986,  0.7551,
-                  0.1265,  0.0352,
-                  babl_trc("2.2"), NULL, NULL);
+  babl_space_rgb_chromaticities (
+      "Best",
+      0.34567, 0.3585,  /* D50 */
+      0.7347,  0.2653,
+      0.2150,  0.7750,
+      0.1300,  0.0350,
+      babl_trc("2.2"), NULL, NULL);
 
-  babl_space_new ("ProPhoto",
-                  0.34567, 0.3585,  /* D50 */
-                  0.7347,  0.2653,
-                  0.1596,  0.8404,
-                  0.0366,  0.0001,
-                  babl_trc("1.8"), NULL, NULL);
+  babl_space_rgb_chromaticities (
+      "Beta",
+      0.34567, 0.3585,  /* D50 */
+      0.6888,  0.3112,
+      0.1986,  0.7551,
+      0.1265,  0.0352,
+      babl_trc("2.2"), NULL, NULL);
 
-  babl_space_new ("Bruce",
-                  0.3127,  0.3290, /* D65 */
-                  0.6400,  0.3300,
-                  0.2800,  0.6500,
-                  0.1500,  0.0600,
-                  babl_trc("1.8"), NULL, NULL);
+  babl_space_rgb_chromaticities (
+      "Bruce",
+      0.3127,  0.3290, /* D65 */
+      0.6400,  0.3300,
+      0.2800,  0.6500,
+      0.1500,  0.0600,
+      babl_trc("1.8"), NULL, NULL);
 
-  babl_space_new ("PAL",
-                  0.3127,  0.3290, /* D65 */
-                  0.6400,  0.3300,
-                  0.2900,  0.6000,
-                  0.1500,  0.0600,
-                  babl_trc("2.2"), NULL, NULL);
+  babl_space_rgb_chromaticities (
+      "PAL",
+      0.3127,  0.3290, /* D65 */
+      0.6400,  0.3300,
+      0.2900,  0.6000,
+      0.1500,  0.0600,
+      babl_trc("2.2"), NULL, NULL);
 
-  babl_space_new ("SMPTE-C",
-                  0.3127,  0.3290, /* D65 */
-                  0.6300,  0.3300,
-                  0.3100,  0.5950,
-                  0.1550,  0.0700,
-                  babl_trc("2.2"), NULL, NULL);
+  babl_space_rgb_chromaticities (
+      "SMPTE-C",
+      0.3127,  0.3290, /* D65 */
+      0.6300,  0.3300,
+      0.3100,  0.5950,
+      0.1550,  0.0700,
+      babl_trc("2.2"), NULL, NULL);
 
-  babl_space_new ("ColorMatch",
-                  0.34567, 0.3585,  /* D50 */
-                  0.6300,  0.3400,
-                  0.2950,  0.6050,
-                  0.1500,  0.0750,
-                  babl_trc("1.8"), NULL, NULL);
+  babl_space_rgb_chromaticities (
+      "ColorMatch",
+      0.34567, 0.3585,  /* D50 */
+      0.6300,  0.3400,
+      0.2950,  0.6050,
+      0.1500,  0.0750,
+      babl_trc("1.8"), NULL, NULL);
 
-  babl_space_new ("Don RGB 4",
-                  0.34567, 0.3585,  /* D50 */
-                  0.6960,  0.3000,
-                  0.2150,  0.7650,
-                  0.1300,  0.0350,
-                  babl_trc("1.8"), NULL, NULL);
+  babl_space_rgb_chromaticities (
+     "Don RGB 4",
+     0.34567, 0.3585,  /* D50 */
+     0.6960,  0.3000,
+     0.2150,  0.7650,
+     0.1300,  0.0350,
+     babl_trc("1.8"), NULL, NULL);
 
-  babl_space_new ("WideGamutRGB",
-                  0.34567, 0.3585,  /* D50 */
-                  0.7350,  0.2650,
-                  0.1150,  0.8260,
-                  0.1570,  0.0180,
-                  babl_trc("2.2"), NULL, NULL);
+  babl_space_rgb_chromaticities (
+     "WideGamutRGB",
+     0.34567, 0.3585,  /* D50 */
+     0.7350,  0.2650,
+     0.1150,  0.8260,
+     0.1570,  0.0180,
+     babl_trc("2.2"), NULL, NULL);
 }
 
 void babl_space_to_xyz (const Babl *space, const double *rgb, double *xyz)

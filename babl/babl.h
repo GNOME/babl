@@ -113,14 +113,14 @@ const Babl * babl_space (const char *name);
  * TRCs to be used. After registering a new babl-space it can be used
  * with babl_space() passing its name;
  */
-const Babl * babl_space_new (const char *name,
-                             double wx, double wy,
-                             double rx, double ry,
-                             double gx, double gy,
-                             double bx, double by,
-                             const Babl *trc_red,
-                             const Babl *trc_green,
-                             const Babl *trc_blue);
+const Babl * babl_space_rgb_chromaticities (const char *name,
+                                            double wx, double wy,
+                                            double rx, double ry,
+                                            double gx, double gy,
+                                            double bx, double by,
+                                            const Babl *trc_red,
+                                            const Babl *trc_green,
+                                            const Babl *trc_blue);
 
 /**
  * babl_format:
