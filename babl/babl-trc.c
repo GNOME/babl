@@ -89,6 +89,8 @@ babl_trc_gamma (double gamma)
 {
   char name[32];
   int i;
+  if (fabs (gamma - 1.0) < 0.0001)
+     return babl_trc_new ("linear", BABL_TRC_LINEAR, 1.0);
   sprintf (name, "%.6f", gamma);
   for (i = 0; name[i]; i++)
     if (name[i] == ',') name[i] = '.';
