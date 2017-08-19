@@ -343,8 +343,55 @@ double babl_trc_to_linear   (const Babl *trc, double value);
 float babl_trc_from_linearf (const Babl *trc, float value);
 float babl_trc_to_linearf   (const Babl *trc, float value);
 
+/**
+ * babl_space_get_chromaticities:
+ *
+ * Returns the CIE xyY chromaticity values for white point and primaries for a
+ * space.
+ */
+void babl_space_get_chromaticities  (const Babl *space,
+                                     double *wx, double *wy,
+                                     double *rx, double *ry,
+                                     double *gx, double *gy,
+                                     double *bx, double *by);
+
 const Babl * babl_trc_new (const char *name,
                            BablTRCType type,
                            double      gamma);
+
+/**
+ * babl_trc_from_linear:
+ *
+ * Makes linear data non-linear according to the trc.
+ */
+double babl_trc_from_linear (const Babl *trc, double value);
+
+/**
+ * babl_trc_from_linear:
+ *
+ * Makes non-linear data with the TRC linear data.
+ */
+double babl_trc_to_linear   (const Babl *trc, double value);
+
+/**
+ * babl_trc_from_linearf:
+ *
+ * Makes linear data non-linear according to the trc, single precision float,
+ * a little bit faster than the double version.
+ */
+float babl_trc_from_linearf (const Babl *trc, float value);
+
+/**
+ * babl_trc_from_linearf:
+ *
+ * Makes non-linear data with the TRC linear data, single precision float
+ * alittle bit faster than the double version.
+ */
+float babl_trc_to_linearf   (const Babl *trc, float value);
+
+void babl_space_to_xyz   (const Babl *space, const double *rgb, double *xyz);
+void babl_space_from_xyz (const Babl *space, const double *xyz, double *rgb);
+
+
 
 #endif

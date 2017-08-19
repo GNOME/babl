@@ -81,27 +81,6 @@ const Babl * babl_component (const char *name);
 const Babl * babl_model     (const char *name);
 
 /**
- * babl_format:
- *
- * Returns the babl object representing the color format given by
- * @name such as for example "RGB u8", "CMYK float" or "CIE Lab u16".
- */
-const Babl * babl_format            (const char *name);
-
-
-/**
- * babl_format_with_space:
- *
- * Returns the babl object representing the color format given by
- * @name such as for example "RGB u8", "R'G'B'A float", "Y float" with
- * a specific RGB working space used as the space, the resulting format
- * has -space suffixed to it, unless the space requested is sRGB then
- * the unsuffixed version is used. If a format is passed in as space
- * the space of the format is used.
- */
-const Babl * babl_format_with_space (const char *name, const Babl *space);
-
-/**
  * babl_trc:
  *
  * Look up a TRC by name, "sRGB" "1.0" "linear" and "2.2" are recognized
@@ -116,35 +95,6 @@ const Babl * babl_trc       (const char *name);
  */
 const Babl * babl_trc_gamma (double gamma);
 
-/**
- * babl_trc_from_linear:
- *
- * Makes linear data non-linear according to the trc.
- */
-double babl_trc_from_linear (const Babl *trc, double value);
-
-/**
- * babl_trc_from_linear:
- *
- * Makes non-linear data with the TRC linear data.
- */
-double babl_trc_to_linear   (const Babl *trc, double value);
-
-/**
- * babl_trc_from_linearf:
- *
- * Makes linear data non-linear according to the trc, single precision float,
- * a little bit faster than the double version.
- */
-float babl_trc_from_linearf (const Babl *trc, float value);
-
-/**
- * babl_trc_from_linearf:
- *
- * Makes non-linear data with the TRC linear data, single precision float
- * alittle bit faster than the double version.
- */
-float babl_trc_to_linearf   (const Babl *trc, float value);
 
 /**
  * babl_space:
@@ -172,9 +122,25 @@ const Babl * babl_space_new (const char *name,
                              const Babl *trc_green,
                              const Babl *trc_blue);
 
+/**
+ * babl_format:
+ *
+ * Returns the babl object representing the color format given by
+ * @name such as for example "RGB u8", "CMYK float" or "CIE Lab u16".
+ */
+const Babl * babl_format            (const char *name);
 
-void babl_space_to_xyz   (const Babl *space, const double *rgb, double *xyz);
-void babl_space_from_xyz (const Babl *space, const double *xyz, double *rgb);
+/**
+ * babl_format_with_space:
+ *
+ * Returns the babl object representing the color format given by
+ * @name such as for example "RGB u8", "R'G'B'A float", "Y float" with
+ * a specific RGB working space used as the space, the resulting format
+ * has -space suffixed to it, unless the space requested is sRGB then
+ * the unsuffixed version is used. If a format is passed in as space
+ * the space of the format is used.
+ */
+const Babl * babl_format_with_space (const char *name, const Babl *space);
 
 /*
  * babl_format_get_space:
@@ -182,18 +148,6 @@ void babl_space_from_xyz (const Babl *space, const double *xyz, double *rgb);
  * Retrieve the RGB color space used for a pixel format.
  */
 const Babl * babl_format_get_space  (const Babl *format);
-
-/**
- * babl_space_get_chromaticities:
- *
- * Returns the CIE xyY chromaticity values for white point and primaries for a
- * space.
- */
-void babl_space_get_chromaticities  (const Babl *space,
-                                     double *wx, double *wy,
-                                     double *rx, double *ry,
-                                     double *gx, double *gy,
-                                     double *bx, double *by);
 
 
 /**
