@@ -364,7 +364,7 @@ babl_fish_path (const Babl *source,
 "programmatically by babl based on format description\n"
 "\n");
 
-        fprintf (stderr, "*WARNING*: missing babl fast path(s) between formats \"%s\" and \"%s\"\n",
+        fprintf (stderr, "*WARNING* missing babl fast path(s): \"%s\" to \"%s\"\n",
            babl_get_name (source),
            babl_get_name (destination));
 
