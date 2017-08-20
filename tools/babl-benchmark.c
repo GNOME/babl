@@ -74,15 +74,15 @@ test (void)
      babl_format_with_space("RGBA float",     babl_space("ProPhoto")),
      babl_format_with_space("R'G'B' u16",     babl_space("ProPhoto")),
 #endif
-     babl_format("RGBA float"),
-     babl_format("R'G'B'A float"),
-     babl_format("R'G'B' u8"),
      babl_format("CIE Lab float"),
-     babl_format_with_space("R'G'B' u8",     babl_space("Adobe")),
-     babl_format_with_space("R'G'B' u8",     babl_space("ProPhoto")),
-     babl_format_with_space("Y float",       babl_space("ProPhoto")),
+     babl_format("RGBA float"),
+     babl_format("Y float"),
+     babl_format("R'G'B'A u8"),
+     babl_format_with_space("RGBA float",    babl_space("ProPhoto")),
      babl_format_with_space("R'G'B'A float", babl_space("ProPhoto")),
-     babl_format_with_space("RGBA float",    babl_space("ProPhoto"))
+     babl_format_with_space("Y float",       babl_space("ProPhoto")),
+     babl_format_with_space("R'G'B'A u8",     babl_space("Adobe")),
+     babl_format_with_space("R'G'B'A u8",     babl_space("ProPhoto")),
      };
   int n_formats = sizeof (formats) / sizeof (formats[0]);
   double mbps[50 * 50] = {0,};
@@ -105,8 +105,8 @@ test (void)
       long end, start;
       int iters = ITERATIONS;
 
-      fprintf (stderr, "%s to %s\r", babl_get_name (formats[i]),
-                                     babl_get_name (formats[j]));
+      fprintf (stderr, "%s to %s          \r", babl_get_name (formats[i]),
+                                               babl_get_name (formats[j]));
       fflush (0);
 
       /* a quarter round of warmup */

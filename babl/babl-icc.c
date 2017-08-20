@@ -45,8 +45,8 @@ static int load_sbyte (const char *icc, int length, int offset)
 
 static int16_t load_u1f15 (const char *icc, int length, int offset)
 {
-  return load_sbyte (icc, length, offset + 1) +
-         (load_byte (icc, length, offset + 0) << 8);
+  return load_byte (icc, length, offset + 1) +
+         (load_sbyte (icc, length, offset + 0) << 8);
 }
 
 static uint16_t load_u16 (const char *icc, int length, int offset)
@@ -59,12 +59,6 @@ static double load_s15f16 (const char *icc, int length, int offset)
 {
   return load_u1f15 (icc, length, offset) +
          load_u16 (icc, length, offset + 2) / 65535.0f;
-}
-
-static double load_u16f16 (const char *icc, int length, int offset)
-{
-  return load_u16 (icc, length, offset) +
-         load_u16 (icc, length, offset + 2) / 65535.0;
 }
 
 static uint32_t load_u32 (const char *icc, int length, int offset)
@@ -238,9 +232,9 @@ babl_space_rgb_icc (const char *icc,
 
      icc_tag (icc, length, "wtpt", &offset, &element_size);
      {
-       double wX = load_u16f16 (icc, length, offset + 8);
-       double wY = load_u16f16 (icc, length, offset + 8 + 4);
-       double wZ = load_u16f16 (icc, length, offset + 8 + 4 * 2);
+       double wX = load_s15f16 (icc, length, offset + 8);
+       double wY = load_s15f16 (icc, length, offset + 8 + 4);
+       double wZ = load_s15f16 (icc, length, offset + 8 + 4 * 2);
 
        return babl_space_rgb_chromaticities (NULL,
                        wX / (wX + wY + wZ),
@@ -262,17 +256,17 @@ babl_space_rgb_icc (const char *icc,
      double rz, gz, bz;
 
      icc_tag (icc, length, "rXYZ", &offset, &element_size);
-     rx = load_u16f16 (icc, length, offset + 8 + 4 * 0);
-     ry = load_u16f16 (icc, length, offset + 8 + 4 * 1);
-     rz = load_u16f16 (icc, length, offset + 8 + 4 * 2);
+     rx = load_s15f16 (icc, length, offset + 8 + 4 * 0);
+     ry = load_s15f16 (icc, length, offset + 8 + 4 * 1);
+     rz = load_s15f16 (icc, length, offset + 8 + 4 * 2);
      icc_tag (icc, length, "gXYZ", &offset, &element_size);
-     gx = load_u16f16 (icc, length, offset + 8 + 4 * 0);
-     gy = load_u16f16 (icc, length, offset + 8 + 4 * 1);
-     gz = load_u16f16 (icc, length, offset + 8 + 4 * 2);
+     gx = load_s15f16 (icc, length, offset + 8 + 4 * 0);
+     gy = load_s15f16 (icc, length, offset + 8 + 4 * 1);
+     gz = load_s15f16 (icc, length, offset + 8 + 4 * 2);
      icc_tag (icc, length, "bXYZ", &offset, &element_size);
-     bx = load_u16f16 (icc, length, offset + 8 + 4 * 0);
-     by = load_u16f16 (icc, length, offset + 8 + 4 * 1);
-     bz = load_u16f16 (icc, length, offset + 8 + 4 * 2);
+     bx = load_s15f16 (icc, length, offset + 8 + 4 * 0);
+     by = load_s15f16 (icc, length, offset + 8 + 4 * 1);
+     bz = load_s15f16 (icc, length, offset + 8 + 4 * 2);
 
      return babl_space_rgb_matrix (NULL,
                 rx, gx, bx,
