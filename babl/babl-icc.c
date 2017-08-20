@@ -55,7 +55,7 @@ static uint16_t load_u16 (const char *icc, int length, int offset)
          (load_byte (icc, length, offset + 0) << 8);
 }
 
-static double load_s15f15 (const char *icc, int length, int offset)
+static double load_s15f16 (const char *icc, int length, int offset)
 {
   return load_u1f15 (icc, length, offset) +
          load_u16 (icc, length, offset + 2) / 65535.0f;
@@ -211,7 +211,7 @@ babl_space_rgb_icc (const char *icc,
       icc_tag (icc, length, "wtpt", NULL, NULL))
   {
      int offset, element_size;
-     double redX, redY, greenX, greenY, blueX, blueY;
+     double red_x, red_y, green_x, green_y, blue_x, blue_y;
      int channels, phosporant;
 
      icc_tag (icc, length, "chrm", &offset, &element_size);
@@ -229,12 +229,12 @@ babl_space_rgb_icc (const char *icc,
        return NULL;
      }
 
-     redX    = load_s15f15 (icc, length, offset + 12);
-     redY    = load_s15f15 (icc, length, offset + 12 + 4);
-     greenX  = load_s15f15 (icc, length, offset + 20);
-     greenY  = load_s15f15 (icc, length, offset + 20 + 4);
-     blueX   = load_s15f15 (icc, length, offset + 28);
-     blueY   = load_s15f15 (icc, length, offset + 28 + 4);
+     red_x   = load_s15f16 (icc, length, offset + 12);
+     red_y   = load_s15f16 (icc, length, offset + 12 + 4);
+     green_x = load_s15f16 (icc, length, offset + 20);
+     green_y = load_s15f16 (icc, length, offset + 20 + 4);
+     blue_x  = load_s15f16 (icc, length, offset + 28);
+     blue_y  = load_s15f16 (icc, length, offset + 28 + 4);
 
      icc_tag (icc, length, "wtpt", &offset, &element_size);
      {
@@ -245,9 +245,9 @@ babl_space_rgb_icc (const char *icc,
        return babl_space_rgb_chromaticities (NULL,
                        wX / (wX + wY + wZ),
                        wY / (wX + wY + wZ),
-                       redX, redY,
-                       greenX, greenY,
-                       blueX, blueY,
+                       red_x, red_y,
+                       green_x, green_y,
+                       blue_x, blue_y,
                        trc_red, trc_green, trc_blue);
 
      }
