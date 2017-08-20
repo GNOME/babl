@@ -26,6 +26,14 @@
 #include "babl-db.h"
 #include "babl-ref-pixels.h"
 
+static int model_is_rgba (const Babl *model)
+{
+  const Babl *RGBA = babl_model_from_id (BABL_RGBA);
+  if (model == RGBA || model->model.data == RGBA)
+    return 1;
+  return 0;
+}
+
 Babl *
 _conversion_new (const char    *name,
                  int            id,
@@ -112,19 +120,16 @@ _conversion_new (const char    *name,
     {
       const Babl *src_format = NULL;
       const Babl *dst_format = NULL;
-      if (BABL (babl->conversion.source) == babl_model_from_id (BABL_RGBA))
-        {
-          src_format = babl_format_from_id (BABL_RGBA_DOUBLE);
-          dst_format = babl_format_with_model_as_type (
-            BABL (babl->conversion.destination),
-            babl_type_from_id (BABL_DOUBLE));
-        }
-      else if (BABL (babl->conversion.destination) == babl_model_from_id (BABL_RGBA))
+
+      if (model_is_rgba (BABL (babl->conversion.source)) ||
+          model_is_rgba (BABL (babl->conversion.destination)))
         {
           src_format = babl_format_with_model_as_type (
             BABL (babl->conversion.source),
             babl_type_from_id (BABL_DOUBLE));
-          dst_format = babl_format_from_id (BABL_RGBA_DOUBLE);
+          dst_format = babl_format_with_model_as_type (
+            BABL (babl->conversion.destination),
+            babl_type_from_id (BABL_DOUBLE));
         }
       else
         {
@@ -161,12 +166,13 @@ create_name (Babl *source, Babl *destination, int type)
     }
   else
     {
-      snprintf (buf, 512 - 1, "%s %s to %s",
+      snprintf (buf, 512 - 1, "%s %s to %s %i",
                 type == BABL_CONVERSION_LINEAR ? "" :
                 type == BABL_CONVERSION_PLANE ? "plane " :
                 type == BABL_CONVERSION_PLANAR ? "planar " : "Eeeek! ",
                 source->instance.name,
-                destination->instance.name);
+                destination->instance.name,
+                collisions);
       buf[511] = '\0';
     }
   return buf;
