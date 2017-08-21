@@ -645,14 +645,21 @@ file_get_contents (const char  *path,
 
 int main (int argc, char **argv)
 {
-  int i;
+  int i = 1;
   if (argc < 2)
   {
-    fprintf (stdout, "need one arg, an ICC profile file\n");
+    fprintf (stdout, "usage: babl-icc-dump [options] <file1.icc [file2.icc ...]>\n");
     return -1;
   }
 
-  for (i = 1; argv[i]; i++)
+  if (argv[i] && (!strcmp (argv[i], "-e") ||
+                  !strcmp (argv[i], "--exact")))
+  {
+    exact = 1;
+    i++;
+  }
+
+  for (; argv[i]; i++)
   {
     char *error = NULL;
     fprintf (stdout, "\nfile: %s\n", argv[i]);
