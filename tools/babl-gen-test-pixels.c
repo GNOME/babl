@@ -20,6 +20,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#ifndef HAVE_SRANDOM
+#define srandom srand
+#define random  rand
+#endif
+
 #define BABL_PATH_NUM_TEST_PIXELS       3072
 #define BABL_CONVERSION_NUM_TEST_PIXELS 128
 #define BABL_FROMAT_NUM_TEST_PIXELS     256

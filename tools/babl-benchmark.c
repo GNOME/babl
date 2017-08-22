@@ -20,6 +20,11 @@
 #include <math.h>
 #include "babl-internal.h"
 
+#ifndef HAVE_SRANDOM
+#define srandom srand
+#define random  rand
+#endif
+
 int ITERATIONS = 2;
 #define  N_PIXELS (512*1024)  // a too small batch makes the test set live
                                // in l2 cache skewing results
