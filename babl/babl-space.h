@@ -44,7 +44,7 @@ typedef struct
 
   const Babl      *trc[3];
   char             name[128];
-
+  double whitepoint[3]; /* CIE XYZ whitepoint */
   double RGBtoXYZ[9]; /* matrices for conversions */
   double XYZtoRGB[9];
 

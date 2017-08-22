@@ -145,6 +145,7 @@ babl_space (const char *name)
 
 const Babl *
 babl_space_rgb_matrix (const char *name,
+                       double wx, double wy, double wz,
                        double rx, double gx, double bx,
                        double ry, double gy, double by,
                        double rz, double gz, double bz,
@@ -166,6 +167,11 @@ babl_space_rgb_matrix (const char *name,
   space.xw = rz;
   space.yw = gz;
   space.pad = bz;
+
+  space.whitepoint[0] = wx;
+  space.whitepoint[1] = wy;
+  space.whitepoint[2] = wz;
+
   space.trc[0] = trc_red;
   space.trc[1] = trc_green?trc_green:trc_red;
   space.trc[2] = trc_blue?trc_blue:trc_red;
@@ -185,9 +191,17 @@ babl_space_rgb_matrix (const char *name,
     babl_log ("too many BablSpaces");
     return NULL;
   }
-  /* transplany matrixes */
-  babl_space_compute_matrices (&space_db[i]);
-  memcpy (space.RGBtoXYZ, &space.xr, sizeof (space.RGBtoXYZ));
+  /* transplant matrixes */
+  //babl_space_compute_matrices (&space_db[i]);
+  space.RGBtoXYZ[0] = rx;
+  space.RGBtoXYZ[1] = gx;
+  space.RGBtoXYZ[2] = bx;
+  space.RGBtoXYZ[3] = ry;
+  space.RGBtoXYZ[4] = gy;
+  space.RGBtoXYZ[5] = by;
+  space.RGBtoXYZ[6] = rz;
+  space.RGBtoXYZ[7] = gz;
+  space.RGBtoXYZ[8] = bz;
   babl_matrix_invert (space.RGBtoXYZ, space.XYZtoRGB);
 
   space_db[i]=space;
@@ -234,6 +248,10 @@ babl_space_rgb_chromaticities (const char *name,
   space.trc[1] = trc_green?trc_green:trc_red;
   space.trc[2] = trc_blue?trc_blue:trc_red;
 
+  space.whitepoint[0] = wx / wy;
+  space.whitepoint[1] = 1.0;
+  space.whitepoint[2] = (1.0 - wx - wy) / wy;
+
   for (i = 0; space_db[i].instance.class_type; i++)
   {
     int offset = ((char*)&space_db[i].xr) - (char*)(&space_db[i]);
@@ -277,42 +295,12 @@ babl_space_class_for_each (BablEachFunction each_fun,
 void
 babl_space_class_init (void)
 {
-  if (getenv ("BABL_RGB_OVERRIDE"))
-  {
-     /* added to be able to easily have the behavior of Elle Stones CCH fork of babl,
-      * configuring the working space through an environment variable should be easier
-      * than keeping compiled versions of CCH GIMP for different spaces.
-      */
-
-     char *override = getenv ("BABL_RGB_OVERRIDE");
-     if (strlen (override) < 5)
-       {
-          babl_space_rgb_chromaticities ("sRGB",
-                  0.3127,  0.3290, /* D65 */
-                  0.6400,  0.3300,
-                  0.3000,  0.6000,
-                  0.1500,  0.0600,
-                  babl_trc("linear"), NULL, NULL);
-       }
-     else
-     {
-       float xr=0.6400, yr=0.3300, xg=0.3000,  yg=0.6000,  xb=0.1500, yb=0.0600, wx=0.3127, wy=0.3290, gamma=2.2;
-       sscanf (override, "%f %f %f %f %f %f %f %f %f", &xr, &yr, &xg, &yg, &xb, &yb, &wx, &wy, &gamma);
-       fprintf (stderr, "overriding babl default RGB space with: r=%f %f g=%f %f b=%f %f w=%f %f gamma=%f\n",
-                xr, yr, xg, yg, xb, yb, wx, wy, gamma);
-       babl_space_rgb_chromaticities ("sRGB",
-            wx, wy, xr, yr, xg, yg, xb, yb, babl_trc_gamma (gamma), NULL, NULL);
-     }
-  }
-  else
-  {
-     babl_space_rgb_chromaticities ("sRGB",
-                  0.3127,  0.3290, /* D65 */
-                  0.6400,  0.3300,
-                  0.3000,  0.6000,
-                  0.1500,  0.0600,
-                  babl_trc("sRGB"), NULL, NULL);
-  }
+  babl_space_rgb_chromaticities ("sRGB",
+               0.3127,  0.3290, /* D65 */
+               0.6400,  0.3300,
+               0.3000,  0.6000,
+               0.1500,  0.0600,
+               babl_trc("sRGB"), NULL, NULL);
 
   babl_space_rgb_chromaticities (
       "Adobe",
@@ -401,6 +389,9 @@ babl_space_class_init (void)
      0.1150,  0.8260,
      0.1570,  0.0180,
      babl_trc("2.2"), NULL, NULL);
+
+
+  babl_space_rgb_to_icc (babl_space("sRGB"), NULL);
 }
 
 void babl_space_to_xyz (const Babl *space, const double *rgb, double *xyz)

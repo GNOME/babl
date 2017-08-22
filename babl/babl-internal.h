@@ -396,5 +396,6 @@ const Babl *babl_space_from_icc (const char *icc,
                                  int         length,
                                  char      **error);
 
+const char *babl_space_rgb_to_icc (const Babl *space, int *ret_length);
 
 #endif

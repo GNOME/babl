@@ -34,7 +34,28 @@ typedef struct {
   uint16_t fraction;
 } u8f8_t;
 
-static int load_u8 (const char *icc, int length, int offset)
+typedef struct {
+  char str[5];
+} sign_t;
+
+#define icc_write(type, offset, value)  write_##type(icc,length,offset,value)
+#define icc_read(type, offset)          read_##type(icc,length,offset)
+
+static void write_u8 (char *icc, int length, int offset, uint8_t value)
+{
+  if (offset < 0 || offset > length)
+    return;
+  *(uint8_t*) (&icc[offset]) = value;
+}
+
+static void write_s8 (char *icc, int length, int offset, int8_t value)
+{
+  if (offset < 0 || offset > length)
+    return;
+  *(int8_t*) (&icc[offset]) = value;
+}
+
+static int read_u8 (const char *icc, int length, int offset)
 {
 /* all reading functions take both the char *pointer and the length of the
  * buffer, and all reads thus gets protected by this condition.
@@ -45,7 +66,7 @@ static int load_u8 (const char *icc, int length, int offset)
   return *(uint8_t*) (&icc[offset]);
 }
 
-static int load_s8 (const char *icc, int length, int offset)
+static int read_s8 (const char *icc, int length, int offset)
 {
   if (offset < 0 || offset > length)
     return 0;
@@ -53,29 +74,55 @@ static int load_s8 (const char *icc, int length, int offset)
   return *(int8_t*) (&icc[offset]);
 }
 
-static int16_t load_u1f15 (const char *icc, int length, int offset)
+static void write_s16 (char *icc, int length, int offset, int16_t value)
 {
-  return load_u8 (icc, length, offset + 1) +
-         (load_s8 (icc, length, offset + 0) << 8);
+  write_s8 (icc, length, offset + 0, value >> 8);
+  write_u8 (icc, length, offset + 1, value & 0xff);
 }
 
-static uint16_t load_u16 (const char *icc, int length, int offset)
+static int16_t read_s16 (const char *icc, int length, int offset)
 {
-  return load_u8 (icc, length, offset + 1) +
-         (load_u8 (icc, length, offset + 0) << 8);
+  return icc_read (u8, offset + 1) +
+         (read_s8 (icc, length, offset + 0) << 8);
 }
 
-static u8f8_t load_u8f8_ (const char *icc, int length, int offset)
+static uint16_t read_u16 (const char *icc, int length, int offset)
 {
-  u8f8_t ret ={load_u8 (icc, length, offset),
-               load_u8 (icc, length, offset + 1)};
+  return icc_read (u8, offset + 1) +
+         (icc_read (u8, offset + 0) << 8);
+}
+
+static void write_u16 (char *icc, int length, int offset, uint16_t value)
+{
+  write_u8 (icc, length, offset + 0, value >> 8);
+  write_u8 (icc, length, offset + 1, value & 0xff);
+}
+
+static u8f8_t read_u8f8_ (const char *icc, int length, int offset)
+{
+  u8f8_t ret ={icc_read (u8, offset),
+               icc_read (u8, offset + 1)};
   return ret;
 }
 
-static s15f16_t load_s15f16_ (const char *icc, int length, int offset)
+static s15f16_t read_s15f16_ (const char *icc, int length, int offset)
 {
-  s15f16_t ret ={load_u1f15 (icc, length, offset),
-                 load_u16 (icc, length, offset + 2)};
+  s15f16_t ret ={icc_read (s16, offset),
+                 icc_read (u16, offset + 2)};
+  return ret;
+}
+
+static void write_s15f16_ (char *icc, int length, int offset, s15f16_t val)
+{
+  icc_write (s16, offset, val.integer),
+  icc_write (u16, offset + 2, val.fraction);
+}
+
+static s15f16_t d_to_s15f16 (double value)
+{
+  s15f16_t ret;
+  ret.integer = floor (value);
+  ret.fraction = fmod(value, 1.0) * 65535.999;
   return ret;
 }
 
@@ -89,14 +136,19 @@ static double u8f8_to_d (u8f8_t fix)
   return fix.integer + fix.fraction / 255.0;
 }
 
-static double load_s15f16 (const char *icc, int length, int offset)
+static void write_s15f16 (char *icc, int length, int offset, double value)
 {
-  return s15f16_to_d (load_s15f16_ (icc, length, offset));
+   write_s15f16_ (icc, length, offset, d_to_s15f16 (value));
 }
 
-static double load_u8f8 (const char *icc, int length, int offset)
+static double read_s15f16 (const char *icc, int length, int offset)
 {
-  return u8f8_to_d (load_u8f8_ (icc, length, offset));
+  return s15f16_to_d (read_s15f16_ (icc, length, offset));
+}
+
+static double read_u8f8 (const char *icc, int length, int offset)
+{
+  return u8f8_to_d (read_u8f8_ (icc, length, offset));
 }
 
 static inline void print_u8f8 (u8f8_t fix)
@@ -143,22 +195,47 @@ static inline void print_s15f16 (s15f16_t fix)
   }
 }
 
-static uint32_t load_u32 (const char *icc, int length, int offset)
+static void write_u32 (char *icc,
+                      int length,
+                      int offset,
+                      uint32_t value)
 {
-  return load_u8 (icc, length, offset + 3) +
-         (load_u8 (icc, length, offset + 2) << 8) +
-         (load_u8 (icc, length, offset + 1) << 16) +
-         (load_u8 (icc, length, offset + 0) << 24);
+  int i;
+  for (i = 0; i < 4; i ++)
+  {
+    write_u8 (icc, length, offset + i,
+                  (value & 0xff000000) >> 24
+                  );
+    value <<= 8;
+  }
 }
 
-static void load_sign (const char *icc, int length,
+static uint32_t read_u32 (const char *icc, int length, int offset)
+{
+  return icc_read (u8, offset + 3) +
+         (icc_read (u8, offset + 2) << 8) +
+         (icc_read (u8, offset + 1) << 16) +
+         (icc_read (u8, offset + 0) << 24);
+}
+
+static sign_t read_sign (const char *icc, int length,
+                         int offset)
+{
+  sign_t ret;
+  ret.str[0]=icc_read (u8, offset);
+  ret.str[1]=icc_read (u8, offset + 1);
+  ret.str[2]=icc_read (u8, offset + 2);
+  ret.str[3]=icc_read (u8, offset + 3);
+  ret.str[4]=0;
+  return ret;
+}
+
+static void write_sign (char *icc, int length,
                        int offset, char *sign)
 {
-  sign[0]=load_u8(icc, length, offset);
-  sign[1]=load_u8(icc, length, offset + 1);
-  sign[2]=load_u8(icc, length, offset + 2);
-  sign[3]=load_u8(icc, length, offset + 3);
-  sign[4]=0;
+  int i;
+  for (i = 0; i < 4; i ++)
+    icc_write (u8, offset + i, sign[i]);
 }
 
 /* looks up offset and length for a specific icc tag
@@ -166,19 +243,18 @@ static void load_sign (const char *icc, int length,
 static int icc_tag (const char *icc, int length,
                     const char *tag, int *offset, int *el_length)
 {
-  int tag_count = load_u32 (icc, length, TAG_COUNT_OFF);
+  int tag_count = icc_read (u32, TAG_COUNT_OFF);
   int t;
 
   for (t =  0; t < tag_count; t++)
   {
-     char tag_signature[5];
-     load_sign (icc, length, TAG_COUNT_OFF + 4 + 12 * t, tag_signature);
-     if (!strcmp (tag_signature, tag))
+     sign_t sign = icc_read (sign, TAG_COUNT_OFF + 4 + 12 * t);
+     if (!strcmp (sign.str, tag))
      {
         if (offset)
-          *offset = load_u32 (icc, length, TAG_COUNT_OFF + 4 + 12* t + 4);
+          *offset = icc_read (u32, TAG_COUNT_OFF + 4 + 12* t + 4);
         if (el_length)
-          *el_length = load_u32 (icc, length, TAG_COUNT_OFF + 4 + 12* t + 4*2);
+          *el_length = icc_read (u32, TAG_COUNT_OFF + 4 + 12* t + 4*2);
         return 1;
      }
   }
@@ -191,7 +267,7 @@ static const Babl *babl_trc_from_icc (const char *icc,
 {
   int offset = 0;
   {
-    int count = load_u32 (icc, length, offset + 8);
+    int count = icc_read (u32, offset + 8);
     int i;
     {
       if (count == 0)
@@ -200,7 +276,7 @@ static const Babl *babl_trc_from_icc (const char *icc,
       }
       else if (count == 1)
       {
-        return babl_trc_gamma (load_u8f8 (icc, length, offset + 12));
+        return babl_trc_gamma (icc_read (u8f8, offset + 12));
       }
       else
       {
@@ -211,8 +287,7 @@ static const Babl *babl_trc_from_icc (const char *icc,
 
         for (i = 0; i < count && i < 10; i ++)
         {
-          fprintf (stdout, "%i=%i ", i, load_u16 (icc, length,
-                                                  offset + 12 + i * 2));
+          fprintf (stdout, "%i=%i ", i, icc_read (u16, offset + 12 + i * 2));
           if (i % 7 == 0)
             fprintf (stdout, "\n");
         }
@@ -222,14 +297,166 @@ static const Babl *babl_trc_from_icc (const char *icc,
   return NULL;
 }
 
-const char *babl_space_rgb_to_icc (const Babl *space, int *ret_length);
-const char *babl_space_rgb_to_icc (const Babl *space, int *ret_length)
+
+const char *babl_space_rgb_to_icc (const Babl *babl, int *ret_length)
 {
-  static char icc[4096];
-  int length=0;
+  const BablSpace *space = &babl->space;
+  static char icc[8192];
+  int length=4095;
   icc[length]=0;
 
+#if 1
+  icc_write (s8, 8,-2);
+  assert (icc_read (s8, 8) == -2);
+  icc_write (s8, 8, 3);     // ICC verison
+  assert (icc_read (s8, 8) == 3);
 
+  icc_write (u8, 8, 2);     // ICC verison
+  assert (icc_read (u8, 8) == 2);
+
+  icc_write (u16, 8, 3);     // ICC verison
+  assert (icc_read (u16, 8) == 3);
+
+  icc_write (s16, 8, -3);     // ICC verison
+  assert (icc_read (s16, 8) == -3);
+
+  icc_write (s16, 8, 9);     // ICC verison
+  assert (icc_read (s16, 8) == 9);
+
+  icc_write (u32, 8, 4);     // ICC verison
+  assert (icc_read (u32, 8) == 4);
+#endif
+
+  icc_write (sign, 4, "babl");     // ICC verison
+  icc_write (u8, 8, 2);     // ICC verison
+  icc_write (u8, 9, 0x20);  // 2.2 for now..
+  icc_write (u32,64, 0);    // rendering intent
+
+  icc_write (s15f16,68, 0.96421); // Illuminant
+  icc_write (s15f16,72, 1.0);
+  icc_write (s15f16,76, 0.82491);
+
+  icc_write (sign, 80, "babl"); // creator
+
+  icc_write (sign, 12, "mntr");
+  icc_write (sign, 16, "RGB ");
+  icc_write (sign, 20, "XYZ ");
+
+  icc_write (u16, 24, 2017); // babl profiles
+  icc_write (u16, 26, 8);    // should
+  icc_write (u16, 28, 21);   // use a fixed
+  icc_write (u16, 30, 2);    // date
+  icc_write (u16, 32, 25);   // that gets updated
+  icc_write (u16, 34, 23);   // when the generator
+  icc_write (u16, 34, 23);   // when the generator
+
+  icc_write (sign, 36, "acsp"); // changes
+
+
+  {
+    int headpos = 0;
+    int tags;
+    int o, no;
+    int p = 0;
+    int psize = 0;
+
+    tags = 10;
+    no = o = 128 + 4 + 12 * tags;
+
+    icc_write (u32,  128, tags);
+#define ALLOC(tag, size) \
+    no+=((4-o)%4);o = no;psize = size;\
+    icc_write (sign, 128 + 4 + 4 * headpos++, tag);\
+    icc_write (u32,  128 + 4 + 4 * headpos++, o);\
+    icc_write (u32,  128 + 4 + 4 * headpos++, size);\
+    p = no;\
+    no+=size;
+#define REALLOC(tag) \
+    icc_write (sign, 128 + 4 + 4 * headpos++, tag);\
+    icc_write (u32,  128 + 4 + 4 * headpos++, p); \
+    icc_write (u32,  128 + 4 + 4 * headpos++, psize);
+
+    ALLOC("wtpt", 20);
+    icc_write (sign,o, "XYZ ");
+    icc_write (u32, o + 4, 0);
+    icc_write (s15f16, o + 8, space->whitepoint[0]);
+    icc_write (s15f16, o + 12, space->whitepoint[1]);
+    icc_write (s15f16, o + 16, space->whitepoint[2]);
+
+    ALLOC("rXYZ", 20);
+    icc_write (sign,o, "XYZ ");
+    icc_write (u32, o + 4, 0);
+    icc_write (s15f16, o + 8,  space->RGBtoXYZ[0]);
+    icc_write (s15f16, o + 12, space->RGBtoXYZ[3]);
+    icc_write (s15f16, o + 16, space->RGBtoXYZ[6]);
+
+    ALLOC("gXYZ", 20);
+    icc_write (sign,o, "XYZ ");
+    icc_write (u32, o + 4, 0);
+    icc_write (s15f16, o + 8,  space->RGBtoXYZ[1]);
+    icc_write (s15f16, o + 12, space->RGBtoXYZ[4]);
+    icc_write (s15f16, o + 16, space->RGBtoXYZ[7]);
+
+    ALLOC("bXYZ", 20);
+    icc_write (sign,o, "XYZ ");
+    icc_write (u32, o + 4, 0);
+    icc_write (s15f16, o + 8,  space->RGBtoXYZ[2]);
+    icc_write (s15f16, o + 12, space->RGBtoXYZ[5]);
+    icc_write (s15f16, o + 16, space->RGBtoXYZ[8]);
+
+    ALLOC("rTRC", 14);
+    icc_write (sign,o, "curv");
+    icc_write (u32, o + 4, 0);
+    icc_write (u32, o + 8, 1);
+    icc_write (u16, o + 12, 334);
+
+    if (space->trc[0] == space->trc[1] &&
+        space->trc[0] == space->trc[2])
+    {
+      REALLOC("gTRC");
+      REALLOC("bTRC");
+    }
+    else
+    {
+      ALLOC("gTRC", 14);
+      icc_write (sign,o, "curv");
+      icc_write (u32, o + 4, 0);
+      icc_write (u32, o + 8, 1); /* forcing a linear curve */
+      ALLOC("bTRC", 14);
+      icc_write (sign,o, "curv");
+      icc_write (u32, o + 4, 0);
+      icc_write (u32, o + 8, 1); /* forcing a linear curve */
+    }
+
+    {
+      char str[128];
+      int i;
+      sprintf (str, "babl");
+      ALLOC("desc", 30 + strlen (str) + 1);
+      icc_write (sign,o,"desc");
+      icc_write (u32, o + 4, 0);
+      icc_write (u32, o + 8, strlen(str));
+      for (i = 0; str[i]; i++)
+        icc_write (u8, o + 12 + i, str[i]);
+      icc_write (u8, o + 12 + i, 0);
+
+      REALLOC("dmnd");
+    }
+
+    {
+      char str[128];
+      int i;
+      sprintf (str, "CC0/public domain");
+      ALLOC("cprt", 8 + strlen (str) + 1);
+      icc_write (sign,o, "text");
+      icc_write (u32, o + 4, 0);
+      for (i = 0; str[i]; i++)
+        icc_write (u8, o + 8 + i, str[i]);
+    }
+
+    icc_write (u32, 0, no + 3);
+    length = no + 3;
+  }
 
   if (ret_length)
     *ret_length = length;
@@ -241,13 +468,12 @@ babl_space_rgb_icc (const char *icc,
                     int         length,
                     char      **error)
 {
-  int  profile_size     = load_u32 (icc, length, 0);
-  int  icc_ver_major    = load_u8 (icc, length, 8);
+  int  profile_size     = icc_read (u32, 0);
+  int  icc_ver_major    = icc_read (u8, 8);
   const Babl *trc_red   = NULL;
   const Babl *trc_green = NULL;
   const Babl *trc_blue  = NULL;
-  char profile_class[5];
-  char color_space[5];
+  sign_t profile_class, color_space;
 
   if (profile_size != length)
   {
@@ -259,14 +485,14 @@ babl_space_rgb_icc (const char *icc,
     *error = "only ICC v2 profiles supported";
     return NULL;
   }
-  load_sign (icc, length, 12, profile_class);
-  if (strcmp (profile_class, "mntr"))
+  profile_class = icc_read (sign, 12);
+  if (strcmp (profile_class.str, "mntr"))
   {
     *error = "not a monitor-class profile";
     return NULL;
   }
-  load_sign (icc, length, 16, color_space);
-  if (strcmp (color_space, "RGB "))
+  color_space = icc_read (sign, 16);
+  if (strcmp (color_space.str, "RGB "))
   {
     *error = "not defining an RGB space";
     return NULL;
@@ -304,8 +530,8 @@ babl_space_rgb_icc (const char *icc,
      int channels, phosporant;
 
      icc_tag (icc, length, "chrm", &offset, &element_size);
-     channels   = load_u16 (icc, length, offset + 8);
-     phosporant = load_u16 (icc, length, offset + 10);
+     channels   = icc_read (u16, offset + 8);
+     phosporant = icc_read (u16, offset + 10);
 
      if (phosporant != 0)
      {
@@ -318,18 +544,18 @@ babl_space_rgb_icc (const char *icc,
        return NULL;
      }
 
-     red_x   = load_s15f16 (icc, length, offset + 12);
-     red_y   = load_s15f16 (icc, length, offset + 12 + 4);
-     green_x = load_s15f16 (icc, length, offset + 20);
-     green_y = load_s15f16 (icc, length, offset + 20 + 4);
-     blue_x  = load_s15f16 (icc, length, offset + 28);
-     blue_y  = load_s15f16 (icc, length, offset + 28 + 4);
+     red_x   = icc_read (s15f16, offset + 12);
+     red_y   = icc_read (s15f16, offset + 12 + 4);
+     green_x = icc_read (s15f16, offset + 20);
+     green_y = icc_read (s15f16, offset + 20 + 4);
+     blue_x  = icc_read (s15f16, offset + 28);
+     blue_y  = icc_read (s15f16, offset + 28 + 4);
 
      icc_tag (icc, length, "wtpt", &offset, &element_size);
      {
-       double wX = load_s15f16 (icc, length, offset + 8);
-       double wY = load_s15f16 (icc, length, offset + 8 + 4);
-       double wZ = load_s15f16 (icc, length, offset + 8 + 4 * 2);
+       double wX = icc_read (s15f16, offset + 8);
+       double wY = icc_read (s15f16, offset + 8 + 4);
+       double wZ = icc_read (s15f16, offset + 8 + 4 * 2);
 
        return babl_space_rgb_chromaticities (NULL,
                        wX / (wX + wY + wZ),
@@ -343,27 +569,35 @@ babl_space_rgb_icc (const char *icc,
   }
   else if (icc_tag (icc, length, "rXYZ", NULL, NULL) &&
            icc_tag (icc, length, "gXYZ", NULL, NULL) &&
-           icc_tag (icc, length, "bXYZ", NULL, NULL))
+           icc_tag (icc, length, "bXYZ", NULL, NULL) &&
+           icc_tag (icc, length, "wtpt", NULL, NULL))
   {
      int offset, element_size;
      double rx, gx, bx;
      double ry, gy, by;
      double rz, gz, bz;
 
+     double wX, wY, wZ;
+
      icc_tag (icc, length, "rXYZ", &offset, &element_size);
-     rx = load_s15f16 (icc, length, offset + 8 + 4 * 0);
-     ry = load_s15f16 (icc, length, offset + 8 + 4 * 1);
-     rz = load_s15f16 (icc, length, offset + 8 + 4 * 2);
+     rx = icc_read (s15f16, offset + 8 + 4 * 0);
+     ry = icc_read (s15f16, offset + 8 + 4 * 1);
+     rz = icc_read (s15f16, offset + 8 + 4 * 2);
      icc_tag (icc, length, "gXYZ", &offset, &element_size);
-     gx = load_s15f16 (icc, length, offset + 8 + 4 * 0);
-     gy = load_s15f16 (icc, length, offset + 8 + 4 * 1);
-     gz = load_s15f16 (icc, length, offset + 8 + 4 * 2);
+     gx = icc_read (s15f16, offset + 8 + 4 * 0);
+     gy = icc_read (s15f16, offset + 8 + 4 * 1);
+     gz = icc_read (s15f16, offset + 8 + 4 * 2);
      icc_tag (icc, length, "bXYZ", &offset, &element_size);
-     bx = load_s15f16 (icc, length, offset + 8 + 4 * 0);
-     by = load_s15f16 (icc, length, offset + 8 + 4 * 1);
-     bz = load_s15f16 (icc, length, offset + 8 + 4 * 2);
+     bx = icc_read (s15f16, offset + 8 + 4 * 0);
+     by = icc_read (s15f16, offset + 8 + 4 * 1);
+     bz = icc_read (s15f16, offset + 8 + 4 * 2);
+     icc_tag (icc, length, "wtpt", &offset, &element_size);
+     wX = icc_read (s15f16, offset + 8);
+     wY = icc_read (s15f16, offset + 8 + 4);
+     wZ = icc_read (s15f16, offset + 8 + 4 * 2);
 
      return babl_space_rgb_matrix (NULL,
+                wX, wY, wZ,
                 rx, gx, bx,
                 ry, gy, by,
                 rz, gz, bz,

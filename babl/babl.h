@@ -130,6 +130,7 @@ const Babl * babl_space_rgb_chromaticities (const char *name,
  */
 const Babl *
 babl_space_rgb_matrix (const char *name,
+                       double wx, double wy, double wz,
                        double rx, double gx, double bx,
                        double ry, double gy, double by,
                        double rz, double gz, double bz,
