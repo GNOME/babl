@@ -23,7 +23,6 @@ libbase_la_SOURCES= $(h_sources) $(c_sources)
 libbase_la_LIBADD = $(MATH_LIB)
 
 EXTRA_DIST = 		\
-	rgb-constants.h	\
 	util.h	\
 	pow-24.h
 
