@@ -389,9 +389,6 @@ babl_space_class_init (void)
      0.1150,  0.8260,
      0.1570,  0.0180,
      babl_trc("2.2"), NULL, NULL);
-
-
-  babl_space_rgb_to_icc (babl_space("sRGB"), NULL);
 }
 
 void babl_space_to_xyz (const Babl *space, const double *rgb, double *xyz)

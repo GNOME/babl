@@ -364,47 +364,47 @@ const char *babl_space_rgb_to_icc (const Babl *babl, int *ret_length)
     no = o = 128 + 4 + 12 * tags;
 
     icc_write (u32,  128, tags);
-#define ALLOC(tag, size) \
+#define icc_allocate_tag(tag, size) \
     no+=((4-o)%4);o = no;psize = size;\
     icc_write (sign, 128 + 4 + 4 * headpos++, tag);\
     icc_write (u32,  128 + 4 + 4 * headpos++, o);\
     icc_write (u32,  128 + 4 + 4 * headpos++, size);\
     p = no;\
     no+=size;
-#define REALLOC(tag) \
+#define icc_duplicate_tag(tag) \
     icc_write (sign, 128 + 4 + 4 * headpos++, tag);\
     icc_write (u32,  128 + 4 + 4 * headpos++, p); \
     icc_write (u32,  128 + 4 + 4 * headpos++, psize);
 
-    ALLOC("wtpt", 20);
+    icc_allocate_tag ("wtpt", 20);
     icc_write (sign,o, "XYZ ");
     icc_write (u32, o + 4, 0);
     icc_write (s15f16, o + 8, space->whitepoint[0]);
     icc_write (s15f16, o + 12, space->whitepoint[1]);
     icc_write (s15f16, o + 16, space->whitepoint[2]);
 
-    ALLOC("rXYZ", 20);
+    icc_allocate_tag ("rXYZ", 20);
     icc_write (sign,o, "XYZ ");
     icc_write (u32, o + 4, 0);
     icc_write (s15f16, o + 8,  space->RGBtoXYZ[0]);
     icc_write (s15f16, o + 12, space->RGBtoXYZ[3]);
     icc_write (s15f16, o + 16, space->RGBtoXYZ[6]);
 
-    ALLOC("gXYZ", 20);
+    icc_allocate_tag ("gXYZ", 20);
     icc_write (sign,o, "XYZ ");
     icc_write (u32, o + 4, 0);
     icc_write (s15f16, o + 8,  space->RGBtoXYZ[1]);
     icc_write (s15f16, o + 12, space->RGBtoXYZ[4]);
     icc_write (s15f16, o + 16, space->RGBtoXYZ[7]);
 
-    ALLOC("bXYZ", 20);
+    icc_allocate_tag ("bXYZ", 20);
     icc_write (sign,o, "XYZ ");
     icc_write (u32, o + 4, 0);
     icc_write (s15f16, o + 8,  space->RGBtoXYZ[2]);
     icc_write (s15f16, o + 12, space->RGBtoXYZ[5]);
     icc_write (s15f16, o + 16, space->RGBtoXYZ[8]);
 
-    ALLOC("rTRC", 14);
+    icc_allocate_tag ("rTRC", 14);
     icc_write (sign,o, "curv");
     icc_write (u32, o + 4, 0);
     icc_write (u32, o + 8, 1);
@@ -413,16 +413,16 @@ const char *babl_space_rgb_to_icc (const Babl *babl, int *ret_length)
     if (space->trc[0] == space->trc[1] &&
         space->trc[0] == space->trc[2])
     {
-      REALLOC("gTRC");
-      REALLOC("bTRC");
+      icc_duplicate_tag ("gTRC");
+      icc_duplicate_tag ("bTRC");
     }
     else
     {
-      ALLOC("gTRC", 14);
+      icc_allocate_tag ("gTRC", 14);
       icc_write (sign,o, "curv");
       icc_write (u32, o + 4, 0);
       icc_write (u32, o + 8, 1); /* forcing a linear curve */
-      ALLOC("bTRC", 14);
+      icc_allocate_tag ("bTRC", 14);
       icc_write (sign,o, "curv");
       icc_write (u32, o + 4, 0);
       icc_write (u32, o + 8, 1); /* forcing a linear curve */
@@ -432,22 +432,21 @@ const char *babl_space_rgb_to_icc (const Babl *babl, int *ret_length)
       char str[128];
       int i;
       sprintf (str, "babl");
-      ALLOC("desc", 30 + strlen (str) + 1);
+      icc_allocate_tag("desc", 100 + strlen (str) + 1);
       icc_write (sign,o,"desc");
       icc_write (u32, o + 4, 0);
       icc_write (u32, o + 8, strlen(str));
       for (i = 0; str[i]; i++)
         icc_write (u8, o + 12 + i, str[i]);
-      icc_write (u8, o + 12 + i, 0);
 
-      REALLOC("dmnd");
+      icc_duplicate_tag ("dmnd");
     }
 
     {
       char str[128];
       int i;
       sprintf (str, "CC0/public domain");
-      ALLOC("cprt", 8 + strlen (str) + 1);
+      icc_allocate_tag("cprt", 8 + strlen (str) + 1);
       icc_write (sign,o, "text");
       icc_write (u32, o + 4, 0);
       for (i = 0; str[i]; i++)
@@ -518,12 +517,48 @@ babl_space_rgb_icc (const char *icc,
 
   if (!trc_red || !trc_green || !trc_blue)
   {
-     *error = "missing TRC";
+     *error = "missing TRCs";
      return NULL;
   }
 
-  if (icc_tag (icc, length, "chrm", NULL, NULL) &&
-      icc_tag (icc, length, "wtpt", NULL, NULL))
+  if (icc_tag (icc, length, "rXYZ", NULL, NULL) &&
+           icc_tag (icc, length, "gXYZ", NULL, NULL) &&
+           icc_tag (icc, length, "bXYZ", NULL, NULL) &&
+           icc_tag (icc, length, "wtpt", NULL, NULL))
+  {
+     int offset, element_size;
+     double rx, gx, bx;
+     double ry, gy, by;
+     double rz, gz, bz;
+
+     double wX, wY, wZ;
+
+     icc_tag (icc, length, "rXYZ", &offset, &element_size);
+     rx = icc_read (s15f16, offset + 8 + 4 * 0);
+     ry = icc_read (s15f16, offset + 8 + 4 * 1);
+     rz = icc_read (s15f16, offset + 8 + 4 * 2);
+     icc_tag (icc, length, "gXYZ", &offset, &element_size);
+     gx = icc_read (s15f16, offset + 8 + 4 * 0);
+     gy = icc_read (s15f16, offset + 8 + 4 * 1);
+     gz = icc_read (s15f16, offset + 8 + 4 * 2);
+     icc_tag (icc, length, "bXYZ", &offset, &element_size);
+     bx = icc_read (s15f16, offset + 8 + 4 * 0);
+     by = icc_read (s15f16, offset + 8 + 4 * 1);
+     bz = icc_read (s15f16, offset + 8 + 4 * 2);
+     icc_tag (icc, length, "wtpt", &offset, &element_size);
+     wX = icc_read (s15f16, offset + 8);
+     wY = icc_read (s15f16, offset + 8 + 4);
+     wZ = icc_read (s15f16, offset + 8 + 4 * 2);
+
+     return babl_space_rgb_matrix (NULL,
+                wX, wY, wZ,
+                rx, gx, bx,
+                ry, gy, by,
+                rz, gz, bz,
+                trc_red, trc_green, trc_blue);
+  }
+  else if (icc_tag (icc, length, "chrm", NULL, NULL) &&
+           icc_tag (icc, length, "wtpt", NULL, NULL))
   {
      int offset, element_size;
      double red_x, red_y, green_x, green_y, blue_x, blue_y;
@@ -566,42 +601,6 @@ babl_space_rgb_icc (const char *icc,
                        trc_red, trc_green, trc_blue);
 
      }
-  }
-  else if (icc_tag (icc, length, "rXYZ", NULL, NULL) &&
-           icc_tag (icc, length, "gXYZ", NULL, NULL) &&
-           icc_tag (icc, length, "bXYZ", NULL, NULL) &&
-           icc_tag (icc, length, "wtpt", NULL, NULL))
-  {
-     int offset, element_size;
-     double rx, gx, bx;
-     double ry, gy, by;
-     double rz, gz, bz;
-
-     double wX, wY, wZ;
-
-     icc_tag (icc, length, "rXYZ", &offset, &element_size);
-     rx = icc_read (s15f16, offset + 8 + 4 * 0);
-     ry = icc_read (s15f16, offset + 8 + 4 * 1);
-     rz = icc_read (s15f16, offset + 8 + 4 * 2);
-     icc_tag (icc, length, "gXYZ", &offset, &element_size);
-     gx = icc_read (s15f16, offset + 8 + 4 * 0);
-     gy = icc_read (s15f16, offset + 8 + 4 * 1);
-     gz = icc_read (s15f16, offset + 8 + 4 * 2);
-     icc_tag (icc, length, "bXYZ", &offset, &element_size);
-     bx = icc_read (s15f16, offset + 8 + 4 * 0);
-     by = icc_read (s15f16, offset + 8 + 4 * 1);
-     bz = icc_read (s15f16, offset + 8 + 4 * 2);
-     icc_tag (icc, length, "wtpt", &offset, &element_size);
-     wX = icc_read (s15f16, offset + 8);
-     wY = icc_read (s15f16, offset + 8 + 4);
-     wZ = icc_read (s15f16, offset + 8 + 4 * 2);
-
-     return babl_space_rgb_matrix (NULL,
-                wX, wY, wZ,
-                rx, gx, bx,
-                ry, gy, by,
-                rz, gz, bz,
-                trc_red, trc_green, trc_blue);
   }
 
   *error = "didnt find RGB primaries";
