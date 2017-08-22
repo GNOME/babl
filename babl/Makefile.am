@@ -63,6 +63,7 @@ h_sources  =				\
 	babl-ref-pixels.h		\
 	babl-sampling.h			\
 	babl-space.h			\
+	babl-trc.h			\
 	babl-type.h			\
 	babl-types.h			\
 	babl-util.h
