@@ -299,6 +299,46 @@ static int icc_tag (ICC *state,
   return 0;
 }
 
+static const Babl *babl_trc_lut_find (float *lut, int lut_size)
+{
+  int i;
+  int match = 1;
+
+  /* look for linear match */
+  for (i = 0; match && i < lut_size; i++)
+    if (fabs (lut[i] - i / (lut_size-1.0)) > 0.015)
+      match = 0;
+  if (match)
+    return babl_trc_gamma (1.0);
+
+  /* look for sRGB match: */
+  match = 1;
+  if (lut_size > 1024)
+  {
+  for (i = 0; match && i < lut_size; i++)
+  {
+    if (fabs (lut[i] - gamma_2_2_to_linear (i / (lut_size-1.0))) > 0.00001)
+      match = 0;
+  }
+  }
+  else
+  {
+    for (i = 0; match && i < lut_size; i++)
+    {
+      fprintf (stderr, "%i: %f %f\n",
+        i, lut[i], gamma_2_2_to_linear (i / (lut_size-1.0)));
+
+      if (fabs (lut[i] - gamma_2_2_to_linear (i / (lut_size-1.0))) > 0.015)
+        match = 0;
+    }
+  }
+  if (match)
+    return babl_trc ("sRGB");
+
+
+  return NULL;
+}
+
 static const Babl *babl_trc_from_icc (ICC  *state, int offset,
                                       char **error)
 {
@@ -317,12 +357,18 @@ static const Babl *babl_trc_from_icc (ICC  *state, int offset,
       else
       {
         const Babl *ret;
-        float *lut = babl_malloc (sizeof (float) * count);
+        float *lut;
 
-        for (i = 0; i < count && i < 10; i ++)
+        lut = babl_malloc (sizeof (float) * count);
+
+        for (i = 0; i < count; i ++)
         {
           lut[i] = icc_read (u16, offset + 12 + i * 2) / 65535.0;
         }
+
+        ret = babl_trc_lut_find (lut, count);
+        if (ret)
+          return ret;
 
         ret = babl_trc_lut (NULL, count, lut);
         babl_free (lut);
@@ -368,6 +414,23 @@ switch (trc->type)
     icc_write (u32, state->o + 8, 1);
     icc_write (u8f8, state->o + 12, trc->gamma);
     break;
+
+  case BABL_TRC_SRGB:
+    {
+      int lut_size = 1024;
+      icc_allocate_tag (state, name, 13 + lut_size * 2);
+      icc_write (sign, state->o, "curv");
+      icc_write (u32, state->o + 4, 0);
+      icc_write (u32, state->o + 8, lut_size);
+      {
+        int j;
+        for (j = 0; j < lut_size; j ++)
+        icc_write (u16, state->o + 12 + j * 2, 
+            gamma_2_2_to_linear (j / (lut_size-1.0)) * 65535.5);
+      }
+    }
+    break;
+
   case BABL_TRC_LUT:
     icc_allocate_tag (state, name, 13 + trc->lut_size * 2);
     icc_write (sign, state->o, "curv");
@@ -475,7 +538,6 @@ const char *babl_space_rgb_to_icc (const Babl *babl, int *ret_length)
     }
     else
     {
-      fprintf (stderr, "!!!!!!!!\n");
       write_trc (state, "gTRC", &space->trc[1]->trc);
       write_trc (state, "bTRC", &space->trc[2]->trc);
     }
