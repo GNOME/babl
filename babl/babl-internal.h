@@ -355,9 +355,12 @@ void babl_space_get_chromaticities  (const Babl *space,
                                      double *gx, double *gy,
                                      double *bx, double *by);
 
-const Babl * babl_trc_new (const char *name,
-                           BablTRCType type,
-                           double      gamma);
+const Babl *
+babl_trc_new (const char *name,
+              BablTRCType type,
+              double      gamma,
+              int         n_lut,
+              float      *lut);
 
 /**
  * babl_trc_from_linear:

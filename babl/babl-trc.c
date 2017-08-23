@@ -40,7 +40,9 @@ babl_trc (const char *name)
 const Babl *
 babl_trc_new (const char *name,
               BablTRCType type,
-              double      gamma)
+              double      gamma,
+              int         n_lut,
+              float      *lut)
 {
   int i=0;
   static BablTRC trc;
@@ -74,6 +76,11 @@ babl_trc_new (const char *name,
   return (Babl*)&trc_db[i];
 }
 
+const Babl * babl_trc_lut   (const char *name, int n, float *entries)
+{
+  return babl_trc_new (name, BABL_TRC_LUT, 0, n, entries);
+}
+
 void
 babl_trc_class_for_each (BablEachFunction each_fun,
                            void            *user_data)
@@ -90,24 +97,24 @@ babl_trc_gamma (double gamma)
   char name[32];
   int i;
   if (fabs (gamma - 1.0) < 0.0001)
-     return babl_trc_new ("linear", BABL_TRC_LINEAR, 1.0);
+     return babl_trc_new ("linear", BABL_TRC_LINEAR, 1.0, 0, NULL);
   sprintf (name, "%.6f", gamma);
   for (i = 0; name[i]; i++)
     if (name[i] == ',') name[i] = '.';
   while (name[strlen(name)-1]=='0')
     name[strlen(name)-1]='\0';
-  return babl_trc_new (name,   BABL_TRC_GAMMA, gamma);
+  return babl_trc_new (name,   BABL_TRC_GAMMA, gamma, 0, NULL);
 }
+
 
 void
 babl_trc_class_init (void)
 {
-  /* we register sRGB first so that lookups for it is fastest */
-  babl_trc_new ("sRGB",  BABL_TRC_SRGB,    2.2);
+  babl_trc_new ("sRGB",  BABL_TRC_SRGB, 2.2, 0, NULL);
   babl_trc_gamma (2.2);
   babl_trc_gamma (1.8);
   babl_trc_gamma (1.0);
-  babl_trc_new ("linear", BABL_TRC_LINEAR, 1.0);
+  babl_trc_new ("linear", BABL_TRC_LINEAR, 1.0, 0, NULL);
 }
 
 double babl_trc_from_linear (const Babl *trc_, double value)

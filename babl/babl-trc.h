@@ -27,7 +27,8 @@ BABL_CLASS_DECLARE (trc);
 
 typedef enum {BABL_TRC_LINEAR,
               BABL_TRC_GAMMA,
-              BABL_TRC_SRGB} BablTRCType;
+              BABL_TRC_SRGB,
+              BABL_TRC_LUT} BablTRCType;
 
 typedef struct
 {
@@ -35,8 +36,19 @@ typedef struct
   BablTRCType      type;
   double           gamma;
   char             name[128];
-
+  float           *lut;
+  int              lut_size;
 } BablTRC;
+
+static inline double babl_trc_lut_from_linear (const Babl *trc_, double value)
+{
+  return 0;
+}
+
+static inline double babl_trc_lut_to_linear (const Babl *trc_, double value)
+{
+  return 0;
+}
 
 static inline double _babl_trc_from_linear (const Babl *trc_, double value)
 {
@@ -49,6 +61,8 @@ static inline double _babl_trc_from_linear (const Babl *trc_, double value)
             return pow (value, 1.0/trc->gamma);
     case BABL_TRC_SRGB:
             return babl_linear_to_gamma_2_2 (value);
+    case BABL_TRC_LUT:
+            return babl_trc_lut_from_linear (trc_, value);
   }
   return value;
 }
@@ -64,6 +78,8 @@ static inline double _babl_trc_to_linear (const Babl *trc_, double value)
             return pow (value, trc->gamma);
     case BABL_TRC_SRGB:
             return babl_gamma_2_2_to_linear (value);
+    case BABL_TRC_LUT:
+            return babl_trc_lut_to_linear (trc_, value);
   }
   return value;
 }
@@ -76,6 +92,7 @@ static inline float _babl_trc_from_linearf (const Babl *trc_, float value)
     case BABL_TRC_LINEAR: return value;
     case BABL_TRC_GAMMA:  return powf (value, 1.0f/trc->gamma);
     case BABL_TRC_SRGB:   return babl_linear_to_gamma_2_2f (value);
+    case BABL_TRC_LUT:    return babl_trc_lut_from_linear (trc_, value);
   }
   return value;
 }
@@ -88,6 +105,7 @@ static inline float _babl_trc_to_linearf (const Babl *trc_, float value)
     case BABL_TRC_LINEAR: return value;
     case BABL_TRC_GAMMA:  return powf (value, trc->gamma);
     case BABL_TRC_SRGB:   return babl_gamma_2_2_to_linearf (value);
+    case BABL_TRC_LUT:    return babl_trc_lut_to_linear (trc_, value);
   }
   return value;
 }
