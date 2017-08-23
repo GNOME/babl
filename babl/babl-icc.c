@@ -317,9 +317,11 @@ static const Babl *babl_trc_lut_find (float *lut, int lut_size)
   {
   for (i = 0; match && i < lut_size; i++)
   {
+#if 0
     fprintf (stderr, "%i %f %f\n", i,
                    lut[i],
                    pow ((i / (lut_size-1.0)), 2.2));
+#endif
     if (fabs (lut[i] - pow ((i / (lut_size-1.0)), 2.2)) > 0.0001)
       match = 0;
   }
@@ -342,9 +344,11 @@ static const Babl *babl_trc_lut_find (float *lut, int lut_size)
   {
   for (i = 0; match && i < lut_size; i++)
   {
+#if 0
     fprintf (stderr, "%i %f %f\n", i,
                    lut[i],
                    pow ((i / (lut_size-1.0)), 1.8));
+#endif
     if (fabs (lut[i] - pow ((i / (lut_size-1.0)), 1.8)) > 0.0001)
       match = 0;
   }
@@ -527,18 +531,17 @@ const char *babl_space_rgb_to_icc (const Babl *babl, int *ret_length)
   icc_write (sign, 16, "RGB ");
   icc_write (sign, 20, "XYZ ");
 
-  icc_write (u16, 24, 2017); // babl profiles
-  icc_write (u16, 26, 8);    // should
-  icc_write (u16, 28, 21);   // use a fixed
-  icc_write (u16, 30, 2);    // date
-  icc_write (u16, 32, 25);   // that gets updated
-  icc_write (u16, 34, 23);   // when the generator
-  icc_write (u16, 34, 23);   // when the generator
+  icc_write (u16, 24, 2222); // babl profiles
+  icc_write (u16, 26, 11);    // should
+  icc_write (u16, 28, 11);   // use a fixed
+  icc_write (u16, 30,  3);    // date
+  icc_write (u16, 32, 44);   // that gets updated
+  icc_write (u16, 34, 55);   // when the generator
 
   icc_write (sign, 36, "acsp"); // changes
 
   {
-    state->tags = 10; /* note: we could reserve a couple of spots and
+    state->tags = 9; /* note: we could reserve a couple of spots and
                         still use a very simple allocator and
                         still be valid - albeit with tiny waste of
                         space.
@@ -593,14 +596,12 @@ const char *babl_space_rgb_to_icc (const Babl *babl, int *ret_length)
       char str[128];
       int i;
       sprintf (str, "babl");
-      icc_allocate_tag(state, "desc", 100 + strlen (str) + 1);
+      icc_allocate_tag(state, "desc", 90 + strlen (str) + 1);
       icc_write (sign, state->o,"desc");
       icc_write (u32, state->o + 4, 0);
-      icc_write (u32, state->o + 8, strlen(str));
+      icc_write (u32, state->o + 8, strlen(str) + 1);
       for (i = 0; str[i]; i++)
         icc_write (u8, state->o + 12 + i, str[i]);
-
-      icc_duplicate_tag (state, "dmnd");
     }
 
     {
