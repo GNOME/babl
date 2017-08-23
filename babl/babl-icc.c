@@ -311,13 +311,16 @@ static const Babl *babl_trc_lut_find (float *lut, int lut_size)
   if (match)
     return babl_trc_gamma (1.0);
 
-  /* look for sRGB match: */
+  /* look for 2.2 match: */
   match = 1;
   if (lut_size > 1024)
   {
   for (i = 0; match && i < lut_size; i++)
   {
-    if (fabs (lut[i] - gamma_2_2_to_linear (i / (lut_size-1.0))) > 0.00001)
+    fprintf (stderr, "%i %f %f\n", i,
+                   lut[i],
+                   pow ((i / (lut_size-1.0)), 2.2));
+    if (fabs (lut[i] - pow ((i / (lut_size-1.0)), 2.2)) > 0.0001)
       match = 0;
   }
   }
@@ -325,7 +328,54 @@ static const Babl *babl_trc_lut_find (float *lut, int lut_size)
   {
     for (i = 0; match && i < lut_size; i++)
     {
-      if (fabs (lut[i] - gamma_2_2_to_linear (i / (lut_size-1.0))) > 0.015)
+    if (fabs (lut[i] - pow ((i / (lut_size-1.0)), 2.2)) > 0.001)
+        match = 0;
+    }
+  }
+  if (match)
+    return babl_trc_gamma(2.2);
+
+
+  /* look for 1.8 match: */
+  match = 1;
+  if (lut_size > 1024)
+  {
+  for (i = 0; match && i < lut_size; i++)
+  {
+    fprintf (stderr, "%i %f %f\n", i,
+                   lut[i],
+                   pow ((i / (lut_size-1.0)), 1.8));
+    if (fabs (lut[i] - pow ((i / (lut_size-1.0)), 1.8)) > 0.0001)
+      match = 0;
+  }
+  }
+  else
+  {
+    for (i = 0; match && i < lut_size; i++)
+    {
+    if (fabs (lut[i] - pow ((i / (lut_size-1.0)), 1.8)) > 0.001)
+        match = 0;
+    }
+  }
+  if (match)
+    return babl_trc_gamma(2.2);
+
+
+  /* look for sRGB match: */
+  match = 1;
+  if (lut_size > 1024)
+  {
+  for (i = 0; match && i < lut_size; i++)
+  {
+    if (fabs (lut[i] - gamma_2_2_to_linear (i / (lut_size-1.0))) > 0.0001)
+      match = 0;
+  }
+  }
+  else
+  {
+    for (i = 0; match && i < lut_size; i++)
+    {
+      if (fabs (lut[i] - gamma_2_2_to_linear (i / (lut_size-1.0))) > 0.001)
         match = 0;
     }
   }
