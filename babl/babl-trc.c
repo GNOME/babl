@@ -90,11 +90,17 @@ babl_trc_new (const char *name,
 
   if (n_lut)
   {
+    int j;
     trc_db[i].lut_size = n_lut;
     trc_db[i].lut = babl_calloc (sizeof (float), n_lut);
     memcpy (trc_db[i].lut, lut, sizeof (float) * n_lut);
+    trc_db[i].inv_lut = babl_calloc (sizeof (float), n_lut);
+    for (j = 0; j < n_lut; j++)
+      trc_db[i].inv_lut[j] =
+        babl_trc_to_linear (BABL(&trc_db[i]), trc_db[i].lut[(int) ( j/(n_lut-1.0) * (n_lut-1))]);
+    
   }
-
+ 
   return (Babl*)&trc_db[i];
 }
 

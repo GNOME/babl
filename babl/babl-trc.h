@@ -38,16 +38,31 @@ typedef struct
   double           gamma;
   char             name[128];
   float           *lut;
+  float           *inv_lut;
 } BablTRC;
 
 static inline double babl_trc_lut_from_linear (const Babl *trc_, double value)
 {
-  return 0;
+  BablTRC *trc = (void*)trc_;
+  int entry = value * trc->lut_size + 0.5;
+  double ret = trc->inv_lut[
+    (entry >= 0 && entry < trc->lut_size) ?
+                               entry :
+                               trc->lut_size-1];
+  /* XXX: fixme, do linear interpolation */
+  return ret;
 }
 
 static inline double babl_trc_lut_to_linear (const Babl *trc_, double value)
 {
-  return 0;
+  BablTRC *trc = (void*)trc_;
+  int entry = value * trc->lut_size + 0.5;
+  double ret = trc->lut[
+    (entry >= 0 && entry < trc->lut_size) ?
+                               entry :
+                               trc->lut_size-1];
+  /* XXX: fixme, do linear interpolation */
+  return ret;
 }
 
 static inline double _babl_trc_from_linear (const Babl *trc_, double value)

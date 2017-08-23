@@ -325,9 +325,6 @@ static const Babl *babl_trc_lut_find (float *lut, int lut_size)
   {
     for (i = 0; match && i < lut_size; i++)
     {
-      fprintf (stderr, "%i: %f %f\n",
-        i, lut[i], gamma_2_2_to_linear (i / (lut_size-1.0)));
-
       if (fabs (lut[i] - gamma_2_2_to_linear (i / (lut_size-1.0))) > 0.015)
         match = 0;
     }
