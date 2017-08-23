@@ -51,6 +51,19 @@ babl_trc_new (const char *name,
   trc.type = type;
   trc.gamma = gamma;
 
+  if (n_lut )
+  {
+    for (i = 0; trc_db[i].instance.class_type; i++)
+    {
+    if ( trc_db[i].lut_size == n_lut &&
+         (memcmp (trc_db[i].lut, lut, sizeof (float) * n_lut)==0)
+       )
+      {
+        return (void*)&trc_db[i];
+      }
+    }
+  }
+  else
   for (i = 0; trc_db[i].instance.class_type; i++)
   {
     int offset = ((char*)&trc_db[i].type) - (char*)(&trc_db[i]);
@@ -70,8 +83,17 @@ babl_trc_new (const char *name,
   trc_db[i].instance.name = trc_db[i].name;
   if (name)
     sprintf (trc_db[i].name, "%s", name);
+  else if (n_lut)
+    sprintf (trc_db[i].name, "lut-trc");
   else
     sprintf (trc_db[i].name, "trc-%i-%f", type, gamma);
+
+  if (n_lut)
+  {
+    trc_db[i].lut_size = n_lut;
+    trc_db[i].lut = babl_calloc (sizeof (float), n_lut);
+    memcpy (trc_db[i].lut, lut, sizeof (float) * n_lut);
+  }
 
   return (Babl*)&trc_db[i];
 }
@@ -105,7 +127,6 @@ babl_trc_gamma (double gamma)
     name[strlen(name)-1]='\0';
   return babl_trc_new (name,   BABL_TRC_GAMMA, gamma, 0, NULL);
 }
-
 
 void
 babl_trc_class_init (void)

@@ -80,7 +80,7 @@ typedef union _Babl
   BablType          type;
   BablSampling      sampling;
   BablSpace         space;
-  BablSpace         trc;
+  BablTRC           trc;
   BablComponent     component;
   BablModel         model;
   BablFormat        format;

@@ -44,8 +44,6 @@ ICC *icc_state_new (char *data, int length, int tags)
   return ret;
 }
 
-
-
 #define ICC_HEADER_LEN 128
 #define TAG_COUNT_OFF  ICC_HEADER_LEN
 
@@ -137,6 +135,12 @@ static s15f16_t read_s15f16_ (ICC *state, int offset)
   return ret;
 }
 
+static void write_u8f8_ (ICC *state, int offset, u8f8_t val)
+{
+  icc_write (u8, offset,     val.integer),
+  icc_write (u8, offset + 1, val.fraction);
+}
+
 static void write_s15f16_ (ICC *state, int offset, s15f16_t val)
 {
   icc_write (s16, offset, val.integer),
@@ -148,6 +152,14 @@ static s15f16_t d_to_s15f16 (double value)
   s15f16_t ret;
   ret.integer = floor (value);
   ret.fraction = fmod(value, 1.0) * 65535.999;
+  return ret;
+}
+
+static u8f8_t d_to_u8f8 (double value)
+{
+  u8f8_t ret;
+  ret.integer = floor (value);
+  ret.fraction = fmod(value, 1.0) * 255.999;
   return ret;
 }
 
@@ -165,6 +177,12 @@ static void write_s15f16 (ICC *state, int offset, double value)
 {
    write_s15f16_ (state, offset, d_to_s15f16 (value));
 }
+
+static void write_u8f8 (ICC *state, int offset, double value)
+{
+  write_u8f8_ (state, offset, d_to_u8f8 (value));
+}
+
 
 static double read_s15f16 (ICC *state, int offset)
 {
@@ -298,16 +316,17 @@ static const Babl *babl_trc_from_icc (ICC  *state, int offset,
       }
       else
       {
-        return babl_trc_gamma (10.0);
-        // XXX: todo implement a curve trc babl type
-        //      as well as detect sRGB curve from LUTs
+        const Babl *ret;
+        float *lut = babl_malloc (sizeof (float) * count);
 
         for (i = 0; i < count && i < 10; i ++)
         {
-          fprintf (stdout, "%i=%i ", i, icc_read (u16, offset + 12 + i * 2));
-          if (i % 7 == 0)
-            fprintf (stdout, "\n");
+          lut[i] = icc_read (u16, offset + 12 + i * 2) / 65535.0;
         }
+
+        ret = babl_trc_lut (NULL, count, lut);
+        babl_free (lut);
+        return ret;
       }
     }
   }
@@ -331,36 +350,57 @@ static void icc_duplicate_tag(ICC *state, const char *tag)
     icc_write (u32,  128 + 4 + 4 * state->headpos++, state->psize);
 }
 
+void write_trc (ICC *state, const char *name, const BablTRC *trc);
+void write_trc (ICC *state, const char *name, const BablTRC *trc)
+{
+switch (trc->type)
+{
+  case BABL_TRC_LINEAR:
+    icc_allocate_tag (state, name, 13);
+    icc_write (sign, state->o, "curv");
+    icc_write (u32, state->o + 4, 0);
+    icc_write (u32, state->o + 8, 0);
+    break;
+  case BABL_TRC_GAMMA:
+    icc_allocate_tag (state, name, 14);
+    icc_write (sign, state->o, "curv");
+    icc_write (u32, state->o + 4, 0);
+    icc_write (u32, state->o + 8, 1);
+    icc_write (u8f8, state->o + 12, trc->gamma);
+    break;
+  case BABL_TRC_LUT:
+    icc_allocate_tag (state, name, 13 + trc->lut_size * 2);
+    icc_write (sign, state->o, "curv");
+    icc_write (u32, state->o + 4, 0);
+    icc_write (u32, state->o + 8, trc->lut_size);
+    {
+      int j;
+      for (j = 0; j < trc->lut_size; j ++)
+        icc_write (u16, state->o + 12 + j * 2, (int)(trc->lut[j]*65535.5f));
+    }
+    break;
+  default:
+    icc_allocate_tag (state, "rTRC", 14);
+    icc_write (sign, state->o, "curv");
+    icc_write (u32, state->o + 4, 0);
+    icc_write (u32, state->o + 8, 1);
+    icc_write (u16, state->o + 12, 0);
+    break;
+}
+}
+
+static void symmetry_test (ICC *state);
+
 const char *babl_space_rgb_to_icc (const Babl *babl, int *ret_length)
 {
   const BablSpace *space = &babl->space;
-  static char icc[8192];
-  int length=4095;
+  static char icc[65536];
+  int length=65535;
   ICC *state = icc_state_new (icc, length, 10);
 
   icc[length]=0;
 
-#if 0
-  icc_write (s8, 8,-2);
-  assert (icc_read (s8, 8) == -2);
-  icc_write (s8, 8, 3);     // ICC verison
-  assert (icc_read (s8, 8) == 3);
-
-  icc_write (u8, 8, 2);     // ICC verison
-  assert (icc_read (u8, 8) == 2);
-
-  icc_write (u16, 8, 3);     // ICC verison
-  assert (icc_read (u16, 8) == 3);
-
-  icc_write (s16, 8, -3);     // ICC verison
-  assert (icc_read (s16, 8) == -3);
-
-  icc_write (s16, 8, 9);     // ICC verison
-  assert (icc_read (s16, 8) == 9);
-
-  icc_write (u32, 8, 4);     // ICC verison
-  assert (icc_read (u32, 8) == 4);
-#endif
+  symmetry_test (state);
 
   icc_write (sign, 4, "babl");     // ICC verison
   icc_write (u8, 8, 2);     // ICC verison
@@ -400,7 +440,7 @@ const char *babl_space_rgb_to_icc (const Babl *babl, int *ret_length)
     icc_allocate_tag (state, "wtpt", 20);
     icc_write (sign, state->o, "XYZ ");
     icc_write (u32,  state->o + 4, 0);
-    icc_write (s15f16, state->o + 8, space->whitepoint[0]);
+    icc_write (s15f16, state->o + 8,  space->whitepoint[0]);
     icc_write (s15f16, state->o + 12, space->whitepoint[1]);
     icc_write (s15f16, state->o + 16, space->whitepoint[2]);
 
@@ -425,11 +465,7 @@ const char *babl_space_rgb_to_icc (const Babl *babl, int *ret_length)
     icc_write (s15f16, state->o + 12, space->RGBtoXYZ[5]);
     icc_write (s15f16, state->o + 16, space->RGBtoXYZ[8]);
 
-    icc_allocate_tag (state, "rTRC", 14);
-    icc_write (sign, state->o, "curv");
-    icc_write (u32, state->o + 4, 0);
-    icc_write (u32, state->o + 8, 1);
-    icc_write (u16, state->o + 12, 334);
+    write_trc (state, "rTRC", &space->trc[0]->trc);
 
     if (space->trc[0] == space->trc[1] &&
         space->trc[0] == space->trc[2])
@@ -439,14 +475,9 @@ const char *babl_space_rgb_to_icc (const Babl *babl, int *ret_length)
     }
     else
     {
-      icc_allocate_tag (state, "gTRC", 14);
-      icc_write (sign, state->o, "curv");
-      icc_write (u32, state->o + 4, 0);
-      icc_write (u32, state->o + 8, 1); /* forcing a linear curve */
-      icc_allocate_tag (state, "bTRC", 14);
-      icc_write (sign, state->o, "curv");
-      icc_write (u32, state->o + 4, 0);
-      icc_write (u32, state->o + 8, 1); /* forcing a linear curve */
+      fprintf (stderr, "!!!!!!!!\n");
+      write_trc (state, "gTRC", &space->trc[1]->trc);
+      write_trc (state, "bTRC", &space->trc[2]->trc);
     }
 
     {
@@ -535,7 +566,6 @@ babl_space_rgb_icc (const char *icc,
        trc_blue = babl_trc_from_icc (state, offset, error);
      }
   }
-
 
   if (!*error && (!trc_red || !trc_green || !trc_blue))
   {
@@ -637,3 +667,27 @@ babl_space_rgb_icc (const char *icc,
   babl_free (state);
   return NULL;
 }
+
+static void symmetry_test (ICC *state)
+{
+  icc_write (s8, 8,-2);
+  assert (icc_read (s8, 8) == -2);
+  icc_write (s8, 8, 3);     // ICC verison
+  assert (icc_read (s8, 8) == 3);
+
+  icc_write (u8, 8, 2);     // ICC verison
+  assert (icc_read (u8, 8) == 2);
+
+  icc_write (u16, 8, 3);     // ICC verison
+  assert (icc_read (u16, 8) == 3);
+
+  icc_write (s16, 8, -3);     // ICC verison
+  assert (icc_read (s16, 8) == -3);
+
+  icc_write (s16, 8, 9);     // ICC verison
+  assert (icc_read (s16, 8) == 9);
+
+  icc_write (u32, 8, 4);     // ICC verison
+  assert (icc_read (u32, 8) == 4);
+}
+

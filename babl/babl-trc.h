@@ -34,10 +34,10 @@ typedef struct
 {
   BablInstance     instance;
   BablTRCType      type;
+  int              lut_size;
   double           gamma;
   char             name[128];
   float           *lut;
-  int              lut_size;
 } BablTRC;
 
 static inline double babl_trc_lut_from_linear (const Babl *trc_, double value)
