@@ -299,97 +299,6 @@ static int icc_tag (ICC *state,
   return 0;
 }
 
-static const Babl *babl_trc_lut_find (float *lut, int lut_size)
-{
-  int i;
-  int match = 1;
-
-  /* look for linear match */
-  for (i = 0; match && i < lut_size; i++)
-    if (fabs (lut[i] - i / (lut_size-1.0)) > 0.015)
-      match = 0;
-  if (match)
-    return babl_trc_gamma (1.0);
-
-  /* look for 2.2 match: */
-  match = 1;
-  if (lut_size > 1024)
-  {
-  for (i = 0; match && i < lut_size; i++)
-  {
-#if 0
-    fprintf (stderr, "%i %f %f\n", i,
-                   lut[i],
-                   pow ((i / (lut_size-1.0)), 2.2));
-#endif
-    if (fabs (lut[i] - pow ((i / (lut_size-1.0)), 2.2)) > 0.0001)
-      match = 0;
-  }
-  }
-  else
-  {
-    for (i = 0; match && i < lut_size; i++)
-    {
-    if (fabs (lut[i] - pow ((i / (lut_size-1.0)), 2.2)) > 0.001)
-        match = 0;
-    }
-  }
-  if (match)
-    return babl_trc_gamma(2.2);
-
-
-  /* look for 1.8 match: */
-  match = 1;
-  if (lut_size > 1024)
-  {
-  for (i = 0; match && i < lut_size; i++)
-  {
-#if 0
-    fprintf (stderr, "%i %f %f\n", i,
-                   lut[i],
-                   pow ((i / (lut_size-1.0)), 1.8));
-#endif
-    if (fabs (lut[i] - pow ((i / (lut_size-1.0)), 1.8)) > 0.0001)
-      match = 0;
-  }
-  }
-  else
-  {
-    for (i = 0; match && i < lut_size; i++)
-    {
-    if (fabs (lut[i] - pow ((i / (lut_size-1.0)), 1.8)) > 0.001)
-        match = 0;
-    }
-  }
-  if (match)
-    return babl_trc_gamma(2.2);
-
-
-  /* look for sRGB match: */
-  match = 1;
-  if (lut_size > 1024)
-  {
-  for (i = 0; match && i < lut_size; i++)
-  {
-    if (fabs (lut[i] - gamma_2_2_to_linear (i / (lut_size-1.0))) > 0.0001)
-      match = 0;
-  }
-  }
-  else
-  {
-    for (i = 0; match && i < lut_size; i++)
-    {
-      if (fabs (lut[i] - gamma_2_2_to_linear (i / (lut_size-1.0))) > 0.001)
-        match = 0;
-    }
-  }
-  if (match)
-    return babl_trc ("sRGB");
-
-
-  return NULL;
-}
-
 static const Babl *babl_trc_from_icc (ICC  *state, int offset,
                                       char **error)
 {
@@ -465,10 +374,9 @@ switch (trc->type)
     icc_write (u32, state->o + 8, 1);
     icc_write (u8f8, state->o + 12, trc->gamma);
     break;
-
   case BABL_TRC_SRGB:
     {
-      int lut_size = 1024;
+      int lut_size = 512;
       icc_allocate_tag (state, name, 13 + lut_size * 2);
       icc_write (sign, state->o, "curv");
       icc_write (u32, state->o + 4, 0);
@@ -476,12 +384,11 @@ switch (trc->type)
       {
         int j;
         for (j = 0; j < lut_size; j ++)
-        icc_write (u16, state->o + 12 + j * 2, 
+        icc_write (u16, state->o + 12 + j * 2,
             gamma_2_2_to_linear (j / (lut_size-1.0)) * 65535.5);
       }
     }
     break;
-
   case BABL_TRC_LUT:
     icc_allocate_tag (state, name, 13 + trc->lut_size * 2);
     icc_write (sign, state->o, "curv");
@@ -505,7 +412,7 @@ switch (trc->type)
 
 static void symmetry_test (ICC *state);
 
-const char *babl_space_rgb_to_icc (const Babl *babl, int *ret_length)
+const char *babl_space_to_icc (const Babl *babl, int *ret_length)
 {
   const BablSpace *space = &babl->space;
   static char icc[65536];
@@ -627,11 +534,11 @@ const char *babl_space_rgb_to_icc (const Babl *babl, int *ret_length)
 }
 
 const Babl *
-babl_space_rgb_icc (const char *icc,
-                    int         length,
-                    char      **error)
+babl_space_from_icc (const char *icc_data,
+                     int         icc_length,
+                     char      **error)
 {
-  ICC *state = icc_state_new ((char*)icc, length, 0);
+  ICC *state = icc_state_new ((char*)icc_data, icc_length, 0);
 
   int  profile_size     = icc_read (u32, 0);
   int  icc_ver_major    = icc_read (u8, 8);
@@ -640,7 +547,7 @@ babl_space_rgb_icc (const char *icc,
   const Babl *trc_blue  = NULL;
   sign_t profile_class, color_space;
 
-  if (profile_size != length)
+  if (profile_size != icc_length)
   {
     *error = "icc profile length inconsistency";
   }
@@ -719,7 +626,7 @@ babl_space_rgb_icc (const char *icc,
     
      babl_free (state);
 
-     return babl_space_rgb_matrix (NULL,
+     return babl_space_from_rgbxyz_matrix (NULL,
                 wX, wY, wZ,
                 rx, gx, bx,
                 ry, gy, by,
@@ -762,7 +669,7 @@ babl_space_rgb_icc (const char *icc,
        double wZ = icc_read (s15f16, offset + 8 + 4 * 2);
        babl_free (state);
 
-       return babl_space_rgb_chromaticities (NULL,
+       return babl_space_from_chromaticities (NULL,
                        wX / (wX + wY + wZ),
                        wY / (wX + wY + wZ),
                        red_x, red_y,

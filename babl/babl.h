@@ -96,7 +96,6 @@ const Babl * babl_trc       (const char *name);
  */
 const Babl * babl_trc_gamma (double gamma);
 
-const Babl * babl_trc_lut   (const char *name, int n, float *entries);
 
 
 /**
@@ -109,54 +108,86 @@ const Babl * babl_trc_lut   (const char *name, int n, float *entries);
 const Babl * babl_space (const char *name);
 
 /**
- * babl_space_rgb_chromaticities:
+ * babl_space_from_chromaticities:
  *
- * Creates a new RGB matrix color space definition with the specified
- * white point wx, wy, primary chromaticities rx,ry,gx,gy,bx,by and
- * TRCs to be used. After registering a new babl-space it can be used
- * with babl_space() passing its name;
+ * Creates a new babl-space/ RGB matrix color space definition with the
+ * specified CIE xy(Y) values for white point: wx, wy and primary
+ * chromaticities: rx,ry,gx,gy,bx,by and TRCs to be used. After registering a
+ * new babl-space it can be used with babl_space() passing its name;
+ *
+ * Internally this does the math to derive the RGBXYZ matrix as used in an ICC
+ * profile.
  */
-const Babl * babl_space_rgb_chromaticities (const char *name,
-                                            double wx, double wy,
-                                            double rx, double ry,
-                                            double gx, double gy,
-                                            double bx, double by,
-                                            const Babl *trc_red,
-                                            const Babl *trc_green,
-                                            const Babl *trc_blue);
+const Babl * babl_space_from_chromaticities (const char *name,
+                                             double wx, double wy,
+                                             double rx, double ry,
+                                             double gx, double gy,
+                                             double bx, double by,
+                                             const Babl *trc_red,
+                                             const Babl *trc_green,
+                                             const Babl *trc_blue);
 
 /**
- * babl_space_rgb_matrix:
+ * babl_space_from_rgbxyz_matrix:
  *
- * Creates a new RGB matrix color space definition using a precomputed
- * D50 adapted 3x3 matrix, as possibly read from an ICC profile.
+ * Creates a new RGB matrix color space definition using a precomputed D50
+ * adapted 3x3 matrix and associated CIE XYZ whitepoint, as possibly read from
+ * an ICC profile.
  */
 const Babl *
-babl_space_rgb_matrix (const char *name,
-                       double wx, double wy, double wz,
-                       double rx, double gx, double bx,
-                       double ry, double gy, double by,
-                       double rz, double gz, double bz,
-                       const Babl *trc_red,
-                       const Babl *trc_green,
-                       const Babl *trc_blue);
+babl_space_from_rgbxyz_matrix (const char *name,
+                               double wx, double wy, double wz,
+                               double rx, double gx, double bx,
+                               double ry, double gy, double by,
+                               double rz, double gz, double bz,
+                               const Babl *trc_red,
+                               const Babl *trc_green,
+                               const Babl *trc_blue);
 /**
- * babl_space_rgb_icc:
+ * babl_space_from_icc:
  *
  * Create a babl space from an in memory ICC profile, the
  * profile does no longer need to be loaded for the space to work,
  * multiple calls with the same icc profile will result in the
  * same space.
  *
+ * For now, limited to v2 ICC profiles, support for v4 profiles will be added.
+ *
+ * babl uses internal parametric TRCs when the provided LUTs are sufficiently
+ * similar.
+ *
  * If a BablSpace cannot be created from the profile NULL is returned and
  * a static string is set on the provided error location.
  */
-const Babl *babl_space_rgb_icc (const char *icc,
-                                int         length,
-                                char      **error);
+const Babl *babl_space_from_icc (const char *icc_data,
+                                 int         icc_length,
+                                 char      **error);
 
+
+/* babl_space_to_icc:
+ *
+ * Creates an ICCv2 RGB matrix profile for a babl space. The profiles strive to
+ * be as small and compact as possible, TRCs are stored as 1024 entry LUT(s).
+ */
+const char *babl_space_to_icc (const Babl *space, int *icc_length);
+
+/* babl_space_get_rgbtoxyz:
+
+   Returns the internal, double-precision 3x3 matrix used to convert linear
+   RGB data to CIE XYZ.
+ */
 const double * babl_space_get_rgbtoxyz (const Babl *space);
+
+/* babl_space_to_xyz:
+ *
+ * converts a double triplet from linear RGB to CIE XYZ.
+ */
 void babl_space_to_xyz   (const Babl *space, const double *rgb, double *xyz);
+
+/* babl_space_from_xyz:
+ *
+ * converts double triplet from CIE XYZ to linear RGB
+ */
 void babl_space_from_xyz (const Babl *space, const double *xyz, double *rgb);
 
 /**

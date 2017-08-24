@@ -32,8 +32,8 @@ main (int    argc,
       char **argv)
 {
   const Babl *babl;
-  char *icc = NULL;
-  long  len;
+  char *icc_data = NULL;
+  long  icc_len;
   int genlen;
   char *error = NULL;
   babl_init ();
@@ -44,16 +44,16 @@ main (int    argc,
     return -1;
   }
 
-  if (file_get_contents (argv[1], &icc, &len, NULL))
+  if (file_get_contents (argv[1], &icc_data, &icc_len, NULL))
     return -1;
 
-  babl = babl_space_rgb_icc (icc, len, &error);
-  free (icc);
+  babl = babl_space_from_icc (icc_data, icc_len, &error);
+  free (icc_data);
 
-  icc = (char *)babl_space_rgb_to_icc (babl, &genlen);
-  if (icc)
+  icc_data = (char *)babl_space_to_icc (babl, &genlen);
+  if (icc_data)
   {
-    file_set_contents (argv[2], icc, genlen);
+    file_set_contents (argv[2], icc_data, genlen);
   }
 
   babl_exit ();

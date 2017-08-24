@@ -398,7 +398,8 @@ void babl_space_from_xyz (const Babl *space, const double *xyz, double *rgb);
 const Babl *babl_space_from_icc (const char *icc,
                                  int         length,
                                  char      **error);
+const Babl *babl_trc_lut_find (float *lut, int lut_size);
+const Babl * babl_trc_lut   (const char *name, int n, float *entries);
 
-const char *babl_space_rgb_to_icc (const Babl *space, int *ret_length);
 
 #endif

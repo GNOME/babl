@@ -144,14 +144,14 @@ babl_space (const char *name)
 }
 
 const Babl *
-babl_space_rgb_matrix (const char *name,
-                       double wx, double wy, double wz,
-                       double rx, double gx, double bx,
-                       double ry, double gy, double by,
-                       double rz, double gz, double bz,
-                       const Babl *trc_red,
-                       const Babl *trc_green,
-                       const Babl *trc_blue)
+babl_space_from_rgbxyz_matrix (const char *name,
+                               double wx, double wy, double wz,
+                               double rx, double gx, double bx,
+                               double ry, double gy, double by,
+                               double rz, double gz, double bz,
+                               const Babl *trc_red,
+                               const Babl *trc_green,
+                               const Babl *trc_blue)
 {
   int i=0;
   static BablSpace space;
@@ -222,14 +222,14 @@ babl_space_rgb_matrix (const char *name,
 
 
 const Babl *
-babl_space_rgb_chromaticities (const char *name,
-                               double wx, double wy,
-                               double rx, double ry,
-                               double gx, double gy,
-                               double bx, double by,
-                               const Babl *trc_red,
-                               const Babl *trc_green,
-                               const Babl *trc_blue)
+babl_space_from_chromaticities (const char *name,
+                                double wx, double wy,
+                                double rx, double ry,
+                                double gx, double gy,
+                                double bx, double by,
+                                const Babl *trc_red,
+                                const Babl *trc_green,
+                                const Babl *trc_blue)
 {
   int i=0;
   static BablSpace space;
@@ -295,14 +295,14 @@ babl_space_class_for_each (BablEachFunction each_fun,
 void
 babl_space_class_init (void)
 {
-  babl_space_rgb_chromaticities ("sRGB",
+  babl_space_from_chromaticities ("sRGB",
                0.3127,  0.3290, /* D65 */
                0.6400,  0.3300,
                0.3000,  0.6000,
                0.1500,  0.0600,
                babl_trc("sRGB"), NULL, NULL);
 
-  babl_space_rgb_chromaticities (
+  babl_space_from_chromaticities (
       "Adobe",
       0.3127,  0.3290, /* D65 */
       0.6400,  0.3300,
@@ -310,7 +310,7 @@ babl_space_class_init (void)
       0.1500,  0.0600,
       babl_trc("2.2"), NULL, NULL);
 
-  babl_space_rgb_chromaticities (
+  babl_space_from_chromaticities (
       "ProPhoto",
       0.34567, 0.3585,  /* D50 */
       0.7347,  0.2653,
@@ -318,7 +318,7 @@ babl_space_class_init (void)
       0.0366,  0.0001,
       babl_trc("1.8"), NULL, NULL);
 
-  babl_space_rgb_chromaticities (
+  babl_space_from_chromaticities (
       "Apple",
       0.3127,  0.3290, /* D65 */
       0.6250,  0.3400,
@@ -326,7 +326,7 @@ babl_space_class_init (void)
       0.1550,  0.0700,
       babl_trc("1.8"), NULL, NULL);
 
-  babl_space_rgb_chromaticities (
+  babl_space_from_chromaticities (
       "Best",
       0.34567, 0.3585,  /* D50 */
       0.7347,  0.2653,
@@ -334,7 +334,7 @@ babl_space_class_init (void)
       0.1300,  0.0350,
       babl_trc("2.2"), NULL, NULL);
 
-  babl_space_rgb_chromaticities (
+  babl_space_from_chromaticities (
       "Beta",
       0.34567, 0.3585,  /* D50 */
       0.6888,  0.3112,
@@ -342,7 +342,7 @@ babl_space_class_init (void)
       0.1265,  0.0352,
       babl_trc("2.2"), NULL, NULL);
 
-  babl_space_rgb_chromaticities (
+  babl_space_from_chromaticities (
       "Bruce",
       0.3127,  0.3290, /* D65 */
       0.6400,  0.3300,
@@ -350,7 +350,7 @@ babl_space_class_init (void)
       0.1500,  0.0600,
       babl_trc("1.8"), NULL, NULL);
 
-  babl_space_rgb_chromaticities (
+  babl_space_from_chromaticities (
       "PAL",
       0.3127,  0.3290, /* D65 */
       0.6400,  0.3300,
@@ -358,7 +358,7 @@ babl_space_class_init (void)
       0.1500,  0.0600,
       babl_trc("2.2"), NULL, NULL);
 
-  babl_space_rgb_chromaticities (
+  babl_space_from_chromaticities (
       "SMPTE-C",
       0.3127,  0.3290, /* D65 */
       0.6300,  0.3300,
@@ -366,7 +366,7 @@ babl_space_class_init (void)
       0.1550,  0.0700,
       babl_trc("2.2"), NULL, NULL);
 
-  babl_space_rgb_chromaticities (
+  babl_space_from_chromaticities (
       "ColorMatch",
       0.34567, 0.3585,  /* D50 */
       0.6300,  0.3400,
@@ -374,7 +374,7 @@ babl_space_class_init (void)
       0.1500,  0.0750,
       babl_trc("1.8"), NULL, NULL);
 
-  babl_space_rgb_chromaticities (
+  babl_space_from_chromaticities (
      "Don RGB 4",
      0.34567, 0.3585,  /* D50 */
      0.6960,  0.3000,
@@ -382,7 +382,7 @@ babl_space_class_init (void)
      0.1300,  0.0350,
      babl_trc("1.8"), NULL, NULL);
 
-  babl_space_rgb_chromaticities (
+  babl_space_from_chromaticities (
      "WideGamutRGB",
      0.34567, 0.3585,  /* D50 */
      0.7350,  0.2650,
