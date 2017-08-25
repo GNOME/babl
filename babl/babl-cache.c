@@ -214,7 +214,7 @@ babl_file_get_contents (const char  *path,
   size = ftell (file);
   if (length) *length = size;
   rewind (file);
-  buffer = malloc(size + 8);
+  buffer = calloc(size + 8, 1);
 
   if (!buffer)
     {
