@@ -71,6 +71,7 @@ model_new (const char     *name,
   babl->instance.id      = id;
   babl->model.components = components;
   babl->model.space      = space;
+  babl->model.data       = NULL;
   strcpy (babl->instance.name, name);
   memcpy (babl->model.component, component, sizeof (BablComponent *) * components);
 
