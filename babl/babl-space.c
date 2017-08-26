@@ -22,8 +22,6 @@
 #include "babl-internal.h"
 #include "base/util.h"
 
-
-
 static BablSpace space_db[MAX_SPACES];
 
 static void babl_chromatic_adaptation_matrix (const double *whitepoint,

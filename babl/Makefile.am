@@ -28,7 +28,7 @@ c_sources =				\
 	babl-memory.c			\
 	babl-model.c			\
 	babl-mutex.c			\
-	babl-palette.c    \
+	babl-palette.c			\
 	babl-ref-pixels.c		\
 	babl-sampling.c			\
 	babl-sanity.c			\
@@ -59,6 +59,7 @@ h_sources  =				\
 	babl-macros.h			\
 	babl-memory.h			\
 	babl-model.h			\
+	babl-matrix.h			\
 	babl-mutex.h			\
 	babl-ref-pixels.h		\
 	babl-sampling.h			\
@@ -70,28 +71,30 @@ h_sources  =				\
 
 library_includedir=$(includedir)/babl-$(BABL_API_VERSION)/babl
 libinc_hdrs = \
-	babl-introspect.h       \
-	babl-macros.h           \
-	babl-types.h            \
+	babl-introspect.h		\
+	babl-macros.h			\
+	babl-types.h			\
 	babl.h
-libinc_generated_hdrs = \
+
+libinc_generated_hdrs =			\
 	babl-version.h
-library_include_HEADERS = \
+
+library_include_HEADERS =		\
 	$(libinc_hdrs) $(libinc_generated_hdrs)
 
-AM_CPPFLAGS = \
+AM_CPPFLAGS =				\
 	-DLIBDIR=\""$(libdir)"\"	\
 	-I$(top_srcdir)			\
 	-I$(top_srcdir)/babl/base
 
 lib_LTLIBRARIES= libbabl-@BABL_API_VERSION@.la
 libbabl_@BABL_API_VERSION@_la_SOURCES= $(h_sources) $(c_sources)
-libbabl_@BABL_API_VERSION@_la_LIBADD=\
-	base/libbase.la \
+libbabl_@BABL_API_VERSION@_la_LIBADD=	\
+	base/libbase.la			\
 	@LTLIBOBJS@
 
-libbabl_@BABL_API_VERSION@_la_LDFLAGS= 		\
-	${no_undefined} $(MATH_LIB) $(THREAD_LIB) \
+libbabl_@BABL_API_VERSION@_la_LDFLAGS=			\
+	${no_undefined} $(MATH_LIB) $(THREAD_LIB)	\
 	-version-info $(BABL_LIBRARY_VERSION)
 
 EXTRA_DIST = babl-ref-pixels.inc
