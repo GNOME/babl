@@ -46,8 +46,11 @@ typedef struct
   const Babl      *trc[3];
   char             name[128];
   double whitepoint[3]; /* CIE XYZ whitepoint */
+
   double RGBtoXYZ[9]; /* matrices for conversions */
   double XYZtoRGB[9];
+  float  RGBtoXYZf[9]; /* matrices for conversions */
+  float  XYZtoRGBf[9];
 
   /* the space should contain matrix to/from XYZ */
   /* and before converting a span, all that needs to be

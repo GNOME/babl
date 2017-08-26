@@ -183,6 +183,9 @@ babl_space_from_rgbxyz_matrix (const char *name,
   space.RGBtoXYZ[8] = bz;
   babl_matrix_invert (space.RGBtoXYZ, space.XYZtoRGB);
 
+  babl_matrix_to_float (space.RGBtoXYZ, space.RGBtoXYZf);
+  babl_matrix_to_float (space.XYZtoRGB, space.XYZtoRGBf);
+
   space_db[i]=space;
   space_db[i].instance.name = space_db[i].name;
   if (name)
