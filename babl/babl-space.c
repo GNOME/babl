@@ -22,6 +22,8 @@
 #include "babl-internal.h"
 #include "base/util.h"
 
+
+
 static BablSpace space_db[MAX_SPACES];
 
 static void babl_chromatic_adaptation_matrix (const double *whitepoint,
@@ -110,27 +112,6 @@ static void babl_space_compute_matrices (BablSpace *space)
 #endif
 
   memcpy (space->XYZtoRGB, mat, sizeof (mat));
-}
-
-void
-babl_space_get_chromaticities (const Babl *space,
-                               double *xw, double *yw,
-                               double *xr, double *yr,
-                               double *xg, double *yg,
-                               double *xb, double *yb)
-{
-  if (!space)
-    return;
-
-  if (xw) *xw = space->space.xw;
-  if (yw) *yw = space->space.yw;
-
-  if (xr) *xr = space->space.xr;
-  if (yr) *yr = space->space.yr;
-  if (xg) *xg = space->space.xg;
-  if (yg) *yg = space->space.yg;
-  if (xb) *xb = space->space.xb;
-  if (yb) *yb = space->space.yb;
 }
 
 const Babl *
