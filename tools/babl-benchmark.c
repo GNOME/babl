@@ -81,6 +81,7 @@ test (void)
 #endif
      babl_format("CIE Lab float"),
      babl_format("RGBA float"),
+     babl_format("R'G'B'A float"),
      babl_format("Y float"),
      babl_format("R'G'B'A u8"),
      babl_format_with_space("RGBA float",    babl_space("ProPhoto")),
@@ -90,6 +91,7 @@ test (void)
      babl_format_with_space("R'G'B'A u8",     babl_space("ProPhoto")),
      };
   int n_formats = sizeof (formats) / sizeof (formats[0]);
+  const Babl *fishes[50 * 50];
   double mbps[50 * 50] = {0,};
   int n;
   double max = 0.0;
@@ -105,6 +107,7 @@ test (void)
  n = 0;
  for (i = 0; i < n_formats; i++)
    for (j = 0; j < n_formats; j++)
+   if (i != j)
    {
       const Babl *fish = babl_fish (formats[i], formats[j]);
       long end, start;
@@ -122,6 +125,7 @@ test (void)
         babl_process (fish, src_data, dst_data, N_PIXELS);
       }
       end = babl_ticks ();
+      fishes[n] = fish;
       mbps [n] = (babl_format_get_bytes_per_pixel (formats[i]) +
                            babl_format_get_bytes_per_pixel (formats[j])) *
               (N_PIXELS * ITERATIONS / 1024.0 / 1024.0) / ((end-start)/(1000.0*1000.0));
@@ -135,17 +139,19 @@ test (void)
  n = 0;
  for (i = 0; i < n_formats; i++)
    for (j = 0; j < n_formats; j++)
+   if (i != j)
    {
-      fprintf (stdout, "%s %03.1f mb/s\t%s to %s\n",
+      fprintf (stdout, "%s %03.1f mb/s\t%s to %s   %s\n",
                       unicode_hbar(16, mbps[n] / max),
                       mbps[n],
                       babl_get_name (formats[i]),
-                      babl_get_name (formats[j]));
+                      babl_get_name (formats[j]),
+                      fishes[n]->class_type == BABL_FISH_REFERENCE?"REF":"");
       n++;
    }
   fprintf (stdout, "\n%s %03.1f mb/s\taverage\n",
-                      unicode_hbar(16, sum / (n_formats * n_formats) / max),
-                      sum / (n_formats * n_formats));
+                      unicode_hbar(16, sum / (n_formats * n_formats - n_formats) / max),
+                      sum / (n_formats * n_formats - n_formats));
 
   fflush (0);
 
