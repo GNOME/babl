@@ -389,5 +389,12 @@ const Babl *babl_space_from_icc (const char *icc,
 const Babl *babl_trc_lut_find (float *lut, int lut_size);
 const Babl * babl_trc_lut   (const char *name, int n, float *entries);
 
+Babl *
+format_new_from_format_with_space (const Babl *format, const Babl *space);
+int
+babl_list_destroy (void *data);
+
+const char *
+babl_conversion_create_name (Babl *source, Babl *destination, int is_reference);
 
 #endif

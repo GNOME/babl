@@ -202,7 +202,7 @@ get_conversion_path (PathContext *pc,
 
           get_path_instrumentation (&fpi, pc->current_path, &path_cost, &ref_cost, &path_error);
           if(debug_conversions && current_length == 1)
-            fprintf (stderr, "%s  error:%f cost:%f  \n", 
+            fprintf (stderr, "%s  error:%f cost:%f  \n",
                  babl_get_name (pc->current_path->items[0]),
                  /*babl_get_name (pc->fish_path->fish.source),
                  babl_get_name (pc->fish_path->fish.destination),*/
@@ -227,7 +227,7 @@ get_conversion_path (PathContext *pc,
   else
     {
       /*
-       * Bummer, we have to search deeper... 
+       * we have to search deeper...
        */
       BablList *list;
       int i;
@@ -265,8 +265,8 @@ _babl_fish_create_name (char       *buf,
                         int         is_reference)
 {
   /* fish names are intentionally kept short */
-  snprintf (buf, BABL_MAX_NAME_LEN, "%s %p %p", "",
-            source, destination);
+  snprintf (buf, BABL_MAX_NAME_LEN, "%s %p %p %i", "",
+            source, destination, is_reference);
   return buf;
 }
 
@@ -283,11 +283,143 @@ _babl_fish_path_destroy (void *data)
   return 0;
 }
 
+BablList *accum = NULL;
+
+static int
+show_item (Babl *babl,
+           void *user_data)
+{
+  BablConversion *conv = (void *)babl;
+  //BablSpace *space = user_data;
+
+  if (conv->destination->class_type == BABL_FORMAT)
+  {
+    fprintf (stderr, "%s : %.9f\n", babl_get_name (babl), babl_conversion_error(conv));
+  }
+
+  return 0;
+}
+
+
+static int
+show_fmt (Babl *babl,
+          void *user_data)
+{
+  BablConversion *conv = (void *)babl;
+
+  fprintf (stderr, "[[%s\n", babl_get_name (babl));
+
+  return 0;
+}
+
+
+static int
+alias_conversion (Babl *babl,
+                  void *user_data)
+{
+  BablConversion *conv = (void *)babl;
+  BablSpace *space = user_data;
+
+  if ((conv->source->class_type == BABL_FORMAT) &&
+      (conv->destination->class_type == BABL_FORMAT))
+  {
+    if ((conv->source->format.space == (void*)babl_space ("sRGB")) &&
+        (conv->destination->format.space == babl_space ("sRGB")))
+  {
+    Babl *foo;
+    switch (conv->instance.class_type)
+    {
+      case BABL_CONVERSION_LINEAR:
+       foo= babl_conversion_new (
+              babl_format_with_space (
+                    (void*)conv->source->instance.name, (void*)space),
+              babl_format_with_space (
+                    (void*)conv->destination->instance.name, (void*)space),
+              "linear", conv->function.linear,
+              "data", conv->data,
+              NULL);
+        break;
+      case BABL_CONVERSION_PLANAR:
+       foo= babl_conversion_new (
+              babl_format_with_space (
+                    (void*)conv->source->instance.name, (void*)space),
+              babl_format_with_space (
+                    (void*)conv->destination->instance.name, (void*)space),
+              "planar", conv->function.planar,
+              "data", conv->data,
+              NULL);
+        break;
+      case BABL_CONVERSION_PLANE:
+        babl_conversion_new (
+              babl_format_with_space (
+                    (void*)conv->source->instance.name, (void*)space),
+              babl_format_with_space (
+                    (void*)conv->destination->instance.name, (void*)space),
+              "plane", conv->function.plane,
+              "data", conv->data,
+              NULL);
+        break;
+      default:
+        break;
+    }
+    if(0)fprintf (stderr, "{%s}\n", babl_get_name (foo));
+  }
+  }
+  else
+  if ((conv->source->class_type == BABL_MODEL) &&
+      (conv->destination->class_type == BABL_MODEL))
+  {
+    if ((conv->source->model.space == (void*)babl_space ("sRGB")) &&
+        (conv->destination->model.space == babl_space ("sRGB")))
+  {
+    switch (conv->instance.class_type)
+    {
+      case BABL_CONVERSION_LINEAR:
+        babl_conversion_new (
+              babl_remodel_with_space (
+                    (void*)conv->source, (void*)space),
+              babl_remodel_with_space (
+                    (void*)conv->destination, (void*)space),
+              "linear", conv->function,
+              NULL);
+        break;
+      case BABL_CONVERSION_PLANAR:
+        babl_conversion_new (
+              babl_remodel_with_space (
+                    (void*)conv->source, (void*)space),
+              babl_remodel_with_space (
+                    (void*)conv->destination, (void*)space),
+              "planar", conv->function,
+              NULL);
+        break;
+      case BABL_CONVERSION_PLANE:
+        babl_conversion_new (
+              babl_remodel_with_space (
+                    (void*)conv->source, (void*)space),
+              babl_remodel_with_space (
+                    (void*)conv->destination, (void*)space),
+              "plane", conv->function,
+              NULL);
+        break;
+      default:
+        break;
+    }
+  }
+  }
+  else
+  if ((conv->source->class_type == BABL_TYPE) &&
+      (conv->destination->class_type == BABL_TYPE))
+  {
+  }
+  return 0;
+}
+
 Babl *
 babl_fish_path (const Babl *source,
                 const Babl *destination)
 {
   Babl *babl = NULL;
+  const Babl *sRGB = babl_space ("sRGB");
   char name[BABL_MAX_NAME_LEN];
 
   _babl_fish_create_name (name, source, destination, 1);
@@ -301,6 +433,39 @@ babl_fish_path (const Babl *source,
       babl_mutex_unlock (babl_format_mutex);
       return babl;
     }
+
+  if ((source->format.space != sRGB) ||
+      (destination->format.space != sRGB))
+  {
+    static const Babl *run_once[512]={NULL};
+    int i;
+    int done = 0;
+    for (i = 0; run_once[i]; i++)
+    {
+      if (run_once[i] == source->format.space)
+        done |= 1;
+      else if (run_once[i] == destination->format.space)
+        done |= 2;
+    }
+
+    if ((done & 1) == 0 && (source->format.space != sRGB))
+    {
+      run_once[i++] = source->format.space;
+      babl_conversion_class_for_each (alias_conversion, (void*)source->format.space);
+    }
+    if ((done & 2) == 0 && (destination->format.space != source->format.space) && (destination->format.space != sRGB))
+    {
+      run_once[i++] = destination->format.space;
+      babl_conversion_class_for_each (alias_conversion, (void*)destination->format.space);
+    }
+
+    if (!done)
+    {
+      //babl_conversion_class_for_each (show_item, (void*)source->format.space);
+      //babl_format_class_for_each (show_fmt, NULL);
+      //babl_model_class_for_each (show_fmt, NULL);
+    }
+  }
 
   babl = babl_calloc (1, sizeof (BablFishPath) +
                       strlen (name) + 1);
@@ -543,9 +708,6 @@ process_conversion_path (BablList   *path,
           temp_buffer2 = align_16 (alloca (MIN(n, MAX_BUFFER_SIZE) * sizeof (double) * 5 + 16));
         }
 
-
-
-
       for (j = 0; j < n; j+= MAX_BUFFER_SIZE)
         {
           long c = MIN (n - j, MAX_BUFFER_SIZE);
@@ -602,6 +764,7 @@ init_path_instrumentation (FishPathInstrumentation *fpi,
     {
       fpi->fmt_rgba_double = babl_format_new (
         babl_model ("RGBA"),
+        babl_space ("sRGB"),
         babl_type ("double"),
         babl_component ("R"),
         babl_component ("G"),
@@ -726,16 +889,6 @@ get_path_instrumentation (FishPathInstrumentation *fpi,
   *path_error = babl_rel_avg_error (fpi->destination_rgba_double,
                                     fpi->ref_destination_rgba_double,
                                      fpi->num_test_pixels * 4);
-
-#if 0
-  fpi->fish_rgba_to_source->fish.processings--;
-  fpi->fish_reference->fish.processings--;
-  fpi->fish_destination_to_rgba->fish.processings -= 2;
-
-  fpi->fish_rgba_to_source->fish.pixels      -= fpi->num_test_pixels;
-  fpi->fish_reference->fish.pixels           -= fpi->num_test_pixels;
-  fpi->fish_destination_to_rgba->fish.pixels -= 2 * fpi->num_test_pixels;
-#endif
 
   *ref_cost = fpi->reference_cost;
 }

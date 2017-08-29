@@ -130,13 +130,16 @@ format_new (const char      *name,
   return babl;
 }
 
-static Babl *
+Babl *
 format_new_from_format_with_space (const Babl *format, const Babl *space)
 {
   Babl *ret;
   char new_name[256];
   sprintf (new_name, "%s-%s", babl_get_name ((void*)format),
                               babl_get_name ((void*)space));
+  ret = babl_db_find (babl_format_db(), new_name);
+  if (ret)
+    return ret;
 
   ret = format_new (new_name,
                     0,
@@ -726,7 +729,7 @@ babl_format_with_space (const char *name, const Babl *space)
 
   {
     char *new_name = babl_malloc (strlen (name) +
-                                  strlen (babl_get_name ((Babl*)space)) + 1);
+                                  strlen (babl_get_name ((Babl*)space)) + 2);
     sprintf (new_name, "%s-%s", name, babl_get_name ((Babl*)space));
 
     ret = babl_db_exist_by_name (db, new_name);

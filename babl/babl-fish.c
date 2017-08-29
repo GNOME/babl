@@ -169,9 +169,9 @@ babl_fish_get_id (const Babl *source,
   /* value of 'id' will be used as argument for hash function,
    * substraction serves as simple combination of
    * source/destination values. */
-  ptrdiff_t id = source - destination;
+  int id = (((int)source * 93)) ^ ((int)destination);
   /* instances with id 0 won't be inserted into database */
-  id *= ((((size_t)  (source))) % 37);
+  id *= ((((size_t)  (destination))) % 37);
 
   if (id == 0)
     id = 1;
@@ -254,12 +254,12 @@ babl_fish (const void *source,
          * path.
          */
         babl_hash_table_find (id_htable, hashval, find_fish_path, (void *) &ffish);
-
         if (ffish.fish_path)
           {
             /* we have found suitable fish path in the database */
             return ffish.fish_path;
           }
+
         if (!ffish.fish_fish)
           {
             /* we haven't tried to search for suitable path yet */
@@ -269,6 +269,7 @@ babl_fish (const void *source,
               {
                 return fish_path;
               }
+#if 1
             else
               {
                 /* there isn't a suitable path for requested formats,
@@ -287,6 +288,7 @@ babl_fish (const void *source,
                 fish->fish.destination          = destination_format;
                 babl_db_insert (babl_fish_db (), fish);
               }
+#endif
           }
       }
 

@@ -31,7 +31,7 @@ babl_list_init (void)
   return babl_list_init_with_size (BABL_LIST_INITIAL_SIZE);
 }
 
-static int
+int
 babl_list_destroy (void *data)
 {
   BablList *list = data;

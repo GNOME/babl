@@ -177,6 +177,29 @@ create_name (Babl *source, Babl *destination, int type)
     }
   return buf;
 }
+const char *
+babl_conversion_create_name (Babl *source, Babl *destination, int type);
+
+const char *
+babl_conversion_create_name (Babl *source, Babl *destination, int type)
+{
+  Babl *babl;
+  char *name;
+  int id = 0;
+  collisions = 0;
+  name = create_name (source, destination, type);
+  babl = babl_db_exist (db, id, name);
+  while (babl)
+    {
+      /* we allow multiple conversions to be registered per extender, each
+         of them ending up with their own unique name
+       */
+      collisions++;
+      name = create_name (source, destination, type);
+      babl = babl_db_exist (db, id, name);
+    }
+  return name;
+}
 
 const Babl *
 babl_conversion_new (const void *first_arg,
@@ -273,19 +296,7 @@ babl_conversion_new (const void *first_arg,
       type = BABL_CONVERSION_PLANAR;
     }
 
-  collisions = 0;
-  name = create_name (source, destination, type);
-
-  babl = babl_db_exist (db, id, name);
-  while (babl)
-    {
-      /* we allow multiple conversions to be registered per extender, each
-         of them ending up with their own unique name
-       */
-      collisions++;
-      name = create_name (source, destination, type);
-      babl = babl_db_exist (db, id, name);
-    }
+  name = (void*) babl_conversion_create_name (source, destination, type);
 
   babl = _conversion_new (name, id, source, destination, linear, plane, planar,
                          user_data);
@@ -505,7 +516,7 @@ babl_conversion_error (BablConversion *conversion)
         fmt_source->class_type == BABL_FORMAT &&
         fmt_destination->class_type == BABL_FORMAT))
     {
-      conversion->error = 0.000042;
+      conversion->error = 0.0000042;
     }
 
   source                      = babl_calloc (test_pixels, fmt_source->format.bytes_per_pixel);
