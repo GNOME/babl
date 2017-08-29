@@ -144,6 +144,8 @@ format_new_from_format_with_space (const Babl *format, const Babl *space)
                     (void*)babl_remodel_with_space (BABL(format->format.model), space),
                     space,
                     format->format.component, format->format.sampling, (void*)format->format.type);
+
+
   return ret;
 }
 
@@ -732,6 +734,7 @@ babl_format_with_space (const char *name, const Babl *space)
       return ret;
 
     ret = format_new_from_format_with_space (babl_format (name), space);
+    babl_db_insert (db, ret);
   }
   return ret;
 }
