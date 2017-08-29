@@ -19,7 +19,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
-#include "babl.h"
+#include "config.h"
+#include "babl-internal.h"
 
 #include "base/util.h"
 
@@ -284,6 +285,9 @@ conv_rgbafloat_cairo32_le (const Babl *conversion,unsigned char *src,
                            unsigned char *dst,
                            long           samples)
 {
+  const Babl  *space = babl_conversion_get_destination_space (conversion);
+  const Babl **trc   = (void*)space->space.trc;
+
   float *fsrc = (float *) src;
   unsigned char *cdst = (unsigned char *) dst;
   int n = samples;
@@ -296,11 +300,11 @@ conv_rgbafloat_cairo32_le (const Babl *conversion,unsigned char *src,
       float alpha  = *fsrc++;
       if (alpha >= 1.0)
       {
-        int val = babl_linear_to_gamma_2_2f (blue) * 0xff + 0.5f;
+        int val = _babl_trc_from_linearf (trc[2], blue) * 0xff + 0.5f;
         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-        val = babl_linear_to_gamma_2_2f (green) * 0xff + 0.5f;
+        val = _babl_trc_from_linearf (trc[1], green) * 0xff + 0.5f;
         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-        val = babl_linear_to_gamma_2_2f (red) * 0xff + 0.5f;
+        val = _babl_trc_from_linearf (trc[0], red) * 0xff + 0.5f;
         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
         *cdst++ = 0xff;
       }
@@ -312,11 +316,11 @@ conv_rgbafloat_cairo32_le (const Babl *conversion,unsigned char *src,
       else
       {
         float balpha = alpha * 0xff;
-        int val = babl_linear_to_gamma_2_2f (blue) * balpha + 0.5f;
+        int val = _babl_trc_from_linearf (trc[2], blue) * balpha + 0.5f;
         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-        val = babl_linear_to_gamma_2_2f (green) * balpha + 0.5f;
+        val = _babl_trc_from_linearf (trc[1], green) * balpha + 0.5f;
         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-        val = babl_linear_to_gamma_2_2f (red) * balpha + 0.5f;
+        val = _babl_trc_from_linearf (trc[0], red) * balpha + 0.5f;
         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
         *cdst++ = balpha + 0.5f;
       }
@@ -330,6 +334,8 @@ conv_yafloat_cairo32_le (const Babl *conversion,unsigned char *src,
                          unsigned char *dst,
                          long           samples)
 {
+  const Babl  *space = babl_conversion_get_destination_space (conversion);
+  const Babl **trc   = (void*)space->space.trc;
   float *fsrc = (float *) src;
   unsigned char *cdst = (unsigned char *) dst;
   int n = samples;
@@ -340,7 +346,7 @@ conv_yafloat_cairo32_le (const Babl *conversion,unsigned char *src,
       float alpha  = *fsrc++;
       if (alpha >= 1.0)
       {
-        int val = babl_linear_to_gamma_2_2f (gray) * 0xff + 0.5f;
+        int val = _babl_trc_from_linearf (trc[0], gray) * 0xff + 0.5f;
         val = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
         *cdst++ = val;
         *cdst++ = val;
@@ -355,7 +361,7 @@ conv_yafloat_cairo32_le (const Babl *conversion,unsigned char *src,
       else
       {
         float balpha = alpha * 0xff;
-        int val = babl_linear_to_gamma_2_2f (gray) * balpha + 0.5f;
+        int val = _babl_trc_from_linearf (trc[0], gray) * balpha + 0.5f;
         val = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
         *cdst++ = val;
         *cdst++ = val;
