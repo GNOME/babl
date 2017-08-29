@@ -22,7 +22,7 @@
 #include "config.h"
 #include <stdio.h>
 
-#include "babl.h"
+#include "babl-internal.h"
 
 #include "base/util.h"
 #include "extensions/util.h"
@@ -32,23 +32,41 @@
 
 /* lookup tables used in conversion */
 
+#define MAX_SPACES 32
+static const Babl *spaces[MAX_SPACES]={NULL,};
+
 static float lut_linear[1 << 8];
-static float lut_gamma_2_2[1 << 8];
+static float lut_gamma_2_2[MAX_SPACES][1 << 8];
 
 
-static void
-tables_init (void)
+static int
+tables_init (const Babl *space)
 {
-  int i;
+  int i, j;
+
+  for (j = 0; spaces[j]; j++)
+  {
+    if (spaces[j] == space)
+      return j;
+  }
+  spaces[j] = space;
+
+  /* fill tables for conversion from 8 bit integer to float */
+  if (j == 0)
+  for (i = 0; i < 1 << 8; i++)
+    {
+      double value = i / 255.0;
+      lut_linear[i]    = value;
+    }
 
   /* fill tables for conversion from 8 bit integer to float */
   for (i = 0; i < 1 << 8; i++)
     {
       double value = i / 255.0;
-
-      lut_linear[i]    = value;
-      lut_gamma_2_2[i] = gamma_2_2_to_linear (value);
+      lut_gamma_2_2[j][i] = _babl_trc_to_linear (space->space.trc[0], value);
     }
+
+  return j;
 }
 
 static INLINE long
@@ -92,11 +110,12 @@ u8_gamma_2_2_to_float_linear (const Babl *conversion,unsigned char *src,
                               unsigned char *dst,
                               long           samples)
 {
+  int   space_no = tables_init (conversion->conversion.source->format.space);
   float *d = (float *) dst;
   long   n = samples;
 
   while (n--)
-    *d++ = lut_gamma_2_2[*src++];
+    *d++ = lut_gamma_2_2[space_no][*src++];
 
   return samples;
 }
@@ -127,14 +146,15 @@ conv_rgba8_gamma_2_2_rgbaF_linear (const Babl *conversion,unsigned char *src,
                                    unsigned char *dst,
                                    long           samples)
 {
+  int   space_no = tables_init (conversion->conversion.source->format.space);
   float *d = (float *) dst;
   long   n = samples;
 
   while (n--)
     {
-      *d++ = lut_gamma_2_2[*src++];
-      *d++ = lut_gamma_2_2[*src++];
-      *d++ = lut_gamma_2_2[*src++];
+      *d++ = lut_gamma_2_2[space_no][*src++];
+      *d++ = lut_gamma_2_2[space_no][*src++];
+      *d++ = lut_gamma_2_2[space_no][*src++];
       *d++ = lut_linear[*src++];
     }
 
@@ -187,14 +207,15 @@ conv_rgb8_gamma_2_2_rgbaF_linear (const Babl *conversion,unsigned char *src,
                                   unsigned char *dst,
                                   long           samples)
 {
+  int   space_no = tables_init (conversion->conversion.source->format.space);
   float *d = (float *) dst;
   long   n = samples;
 
   while (n--)
     {
-      *d++ = lut_gamma_2_2[*src++];
-      *d++ = lut_gamma_2_2[*src++];
-      *d++ = lut_gamma_2_2[*src++];
+      *d++ = lut_gamma_2_2[space_no][*src++];
+      *d++ = lut_gamma_2_2[space_no][*src++];
+      *d++ = lut_gamma_2_2[space_no][*src++];
       *d++ = 1.0;
     }
 
@@ -216,12 +237,13 @@ conv_ga8_gamma_2_2_gaF_linear (const Babl *conversion,unsigned char *src,
                                unsigned char *dst,
                                long           samples)
 {
+  int   space_no = tables_init (conversion->conversion.source->format.space);
   float *d = (float *) dst;
   long   n = samples;
 
   while (n--)
     {
-      *d++ = lut_gamma_2_2[*src++];
+      *d++ = lut_gamma_2_2[space_no][*src++];
       *d++ = lut_linear[*src++];
     }
 
@@ -272,12 +294,13 @@ conv_ga8_gamma_2_2_rgbaF_linear (const Babl *conversion,unsigned char *src,
                                  unsigned char *dst,
                                  long           samples)
 {
+  int   space_no = tables_init (conversion->conversion.source->format.space);
   float *d = (float *) dst;
   long   n = samples;
 
   while (n--)
     {
-      float value = lut_gamma_2_2[*src++];
+      float value = lut_gamma_2_2[space_no][*src++];
 
       *d++ = value;
       *d++ = value;
@@ -333,12 +356,13 @@ conv_g8_gamma_2_2_rgbaF_linear (const Babl *conversion,unsigned char *src,
                                 unsigned char *dst,
                                 long           samples)
 {
+  int   space_no = tables_init (conversion->conversion.source->format.space);
   float *d = (float *) dst;
   long   n = samples;
 
   while (n--)
     {
-      float value = lut_gamma_2_2[*src++];
+      float value = lut_gamma_2_2[space_no][*src++];
 
       *d++ = value;
       *d++ = value;
@@ -494,7 +518,7 @@ init (void)
     babl_component ("Y'"),
     NULL);
 
-  tables_init ();
+  tables_init (babl_space("sRGB"));
 
 #define o(src, dst) \
   babl_conversion_new (src, dst, "linear", conv_ ## src ## _ ## dst, NULL)
