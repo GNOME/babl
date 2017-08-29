@@ -21,19 +21,23 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "babl.h"
+#include "babl-internal.h"
 #include "babl-cpuaccel.h"
 #include "extensions/util.h"
 #include "base/util.h"
+
 
 #define INLINE inline
 
 
 static INLINE long
-conv_rgbaF_linear_rgbAF_gamma (const Babl *conversion,unsigned char *src, 
-                               unsigned char *dst, 
+conv_rgbaF_linear_rgbAF_gamma (const Babl *conversion,unsigned char *src,
+                               unsigned char *dst,
                                long           samples)
 {
+   const Babl  *space = babl_conversion_get_destination_space (conversion);
+   const Babl **trc   = (void*)space->space.trc;
+
    float *fsrc = (float *) src;
    float *fdst = (float *) dst;
    int n = samples;
@@ -41,9 +45,9 @@ conv_rgbaF_linear_rgbAF_gamma (const Babl *conversion,unsigned char *src,
    while (n--)
      {
        float alpha = fsrc[3];
-       *fdst++ = babl_linear_to_gamma_2_2f (*fsrc++) * alpha;
-       *fdst++ = babl_linear_to_gamma_2_2f (*fsrc++) * alpha;
-       *fdst++ = babl_linear_to_gamma_2_2f (*fsrc++) * alpha;
+       *fdst++ = _babl_trc_from_linearf (trc[0], *fsrc++) * alpha;
+       *fdst++ = _babl_trc_from_linearf (trc[1], *fsrc++) * alpha;
+       *fdst++ = _babl_trc_from_linearf (trc[2], *fsrc++) * alpha;
        *fdst++ = *fsrc++;
      }
   return samples;
@@ -54,6 +58,9 @@ conv_rgbAF_linear_rgbAF_gamma (const Babl *conversion,unsigned char *src,
                                unsigned char *dst, 
                                long           samples)
 {
+   const Babl  *space = babl_conversion_get_destination_space (conversion);
+   const Babl **trc   = (void*)space->space.trc;
+
    float *fsrc = (float *) src;
    float *fdst = (float *) dst;
    int n = samples;
@@ -71,17 +78,17 @@ conv_rgbAF_linear_rgbAF_gamma (const Babl *conversion,unsigned char *src,
          }
        else if (alpha >= 1.0)
          {
-           *fdst++ = babl_linear_to_gamma_2_2f (*fsrc++);
-           *fdst++ = babl_linear_to_gamma_2_2f (*fsrc++);
-           *fdst++ = babl_linear_to_gamma_2_2f (*fsrc++);
+           *fdst++ = _babl_trc_from_linearf (trc[0], *fsrc++);
+           *fdst++ = _babl_trc_from_linearf (trc[1], *fsrc++);
+           *fdst++ = _babl_trc_from_linearf (trc[2], *fsrc++);
            *fdst++ = *fsrc++;
          }
        else
          {
            float alpha_recip = 1.0 / alpha;
-           *fdst++ = babl_linear_to_gamma_2_2f (*fsrc++ * alpha_recip) * alpha;
-           *fdst++ = babl_linear_to_gamma_2_2f (*fsrc++ * alpha_recip) * alpha;
-           *fdst++ = babl_linear_to_gamma_2_2f (*fsrc++ * alpha_recip) * alpha;
+           *fdst++ = _babl_trc_from_linearf (trc[0], *fsrc++ * alpha_recip) * alpha;
+           *fdst++ = _babl_trc_from_linearf (trc[1], *fsrc++ * alpha_recip) * alpha;
+           *fdst++ = _babl_trc_from_linearf (trc[2], *fsrc++ * alpha_recip) * alpha;
            *fdst++ = *fsrc++;
          }
      }
@@ -93,15 +100,18 @@ conv_rgbaF_linear_rgbaF_gamma (const Babl *conversion,unsigned char *src,
                                unsigned char *dst, 
                                long           samples)
 {
+   const Babl  *space = babl_conversion_get_destination_space (conversion);
+   const Babl **trc   = (void*)space->space.trc;
+
    float *fsrc = (float *) src;
    float *fdst = (float *) dst;
    int n = samples;
 
    while (n--)
      {
-       *fdst++ = babl_linear_to_gamma_2_2f (*fsrc++);
-       *fdst++ = babl_linear_to_gamma_2_2f (*fsrc++);
-       *fdst++ = babl_linear_to_gamma_2_2f (*fsrc++);
+       *fdst++ = _babl_trc_from_linearf (trc[0], *fsrc++);
+       *fdst++ = _babl_trc_from_linearf (trc[1], *fsrc++);
+       *fdst++ = _babl_trc_from_linearf (trc[2], *fsrc++);
        *fdst++ = *fsrc++;
      }
   return samples;
@@ -112,15 +122,17 @@ conv_rgbF_linear_rgbF_gamma (const Babl *conversion,unsigned char *src,
                              unsigned char *dst, 
                              long           samples)
 {
+   const Babl  *space = babl_conversion_get_destination_space (conversion);
+   const Babl **trc   = (void*)space->space.trc;
    float *fsrc = (float *) src;
    float *fdst = (float *) dst;
    int n = samples;
 
    while (n--)
      {
-       *fdst++ = babl_linear_to_gamma_2_2f (*fsrc++);
-       *fdst++ = babl_linear_to_gamma_2_2f (*fsrc++);
-       *fdst++ = babl_linear_to_gamma_2_2f (*fsrc++);
+       *fdst++ = _babl_trc_from_linearf (trc[0], *fsrc++);
+       *fdst++ = _babl_trc_from_linearf (trc[1], *fsrc++);
+       *fdst++ = _babl_trc_from_linearf (trc[2], *fsrc++);
      }
   return samples;
 }
@@ -131,15 +143,17 @@ conv_rgbaF_gamma_rgbaF_linear (const Babl *conversion,unsigned char *src,
                                unsigned char *dst, 
                                long           samples)
 {
+   const Babl  *space = babl_conversion_get_destination_space (conversion);
+   const Babl **trc   = (void*)space->space.trc;
    float *fsrc = (float *) src;
    float *fdst = (float *) dst;
    int n = samples;
 
    while (n--)
      {
-       *fdst++ = babl_gamma_2_2_to_linearf (*fsrc++);
-       *fdst++ = babl_gamma_2_2_to_linearf (*fsrc++);
-       *fdst++ = babl_gamma_2_2_to_linearf (*fsrc++);
+       *fdst++ = _babl_trc_to_linearf (trc[0], *fsrc++);
+       *fdst++ = _babl_trc_to_linearf (trc[1], *fsrc++);
+       *fdst++ = _babl_trc_to_linearf (trc[2], *fsrc++);
        *fdst++ = *fsrc++;
      }
   return samples;
@@ -150,15 +164,17 @@ conv_rgbF_gamma_rgbF_linear (const Babl *conversion,unsigned char *src,
                              unsigned char *dst, 
                              long           samples)
 {
+   const Babl  *space = babl_conversion_get_destination_space (conversion);
+   const Babl **trc   = (void*)space->space.trc;
    float *fsrc = (float *) src;
    float *fdst = (float *) dst;
    int n = samples;
 
    while (n--)
      {
-       *fdst++ = babl_gamma_2_2_to_linearf (*fsrc++);
-       *fdst++ = babl_gamma_2_2_to_linearf (*fsrc++);
-       *fdst++ = babl_gamma_2_2_to_linearf (*fsrc++);
+       *fdst++ = _babl_trc_to_linearf (trc[0], *fsrc++);
+       *fdst++ = _babl_trc_to_linearf (trc[1], *fsrc++);
+       *fdst++ = _babl_trc_to_linearf (trc[2], *fsrc++);
      }
   return samples;
 }
