@@ -206,7 +206,7 @@ rgb_to_gray_2_2 (Babl  *conversion,
       luminance = red   * RGB_LUMINANCE_RED +    // XXX: should be taken from BablSpace
                   green * RGB_LUMINANCE_GREEN +
                   blue  * RGB_LUMINANCE_BLUE;
-      *(double *) dst[0] = _babl_trc_from_linear (trc, luminance);
+      *(double *) dst[0] = trc->trc.fun_from_linear (trc, luminance);
 
       if (dst_bands == 2)
         *(double *) dst[1] = alpha;
@@ -237,7 +237,7 @@ gray_2_2_to_rgb (Babl *conversion,
       double red, green, blue;
       double alpha;
 
-      luminance = _babl_trc_to_linear (trc, *(double *) src[0]);
+      luminance = trc->trc.fun_to_linear (trc, *(double *) src[0]);
       red       = luminance;
       green     = luminance;
       blue      = luminance;
@@ -485,7 +485,7 @@ rgba2gray_gamma_2_2_premultiplied (Babl *conversion,
       luminance = red * RGB_LUMINANCE_RED +
                   green * RGB_LUMINANCE_GREEN +
                   blue * RGB_LUMINANCE_BLUE;
-      luma = _babl_trc_from_linear (trc, luminance);
+      luma = trc->trc.fun_from_linear (trc, luminance);
 
       ((double *) dst)[0] = luma * alpha;
       ((double *) dst)[1] = alpha;
@@ -513,7 +513,7 @@ gray_gamma_2_2_premultiplied2rgba (Babl *conversion,
       double luminance;
 
       luma      = luma / alpha;
-      luminance = _babl_trc_to_linear (trc, luma);
+      luminance = trc->trc.fun_to_linear (trc, luma);
 
       ((double *) dst)[0] = luminance;
       ((double *) dst)[1] = luminance;

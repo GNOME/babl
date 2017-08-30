@@ -201,7 +201,7 @@ g3_gamma_2_2 (Babl  *conversion,
     {
       int band;
       for (band = 0; band < 3; band++)
-        *(double *) dst[band] = _babl_trc_from_linear (trc[band], (*(double *) src[band]));
+        *(double *) dst[band] = trc[band]->trc.fun_from_linear (trc[band], (*(double *) src[band]));
       for (; band < dst_bands; band++)
         *(double *) dst[band] = *(double *) src[band];
 
@@ -231,7 +231,7 @@ g3_inv_gamma_2_2 (Babl  *conversion,
       int band;
       for (band = 0; band < 3; band++)
         {
-          *(double *) dst[band] = _babl_trc_to_linear (trc[band], (*(double *) src[band]));
+          *(double *) dst[band] = trc[band]->trc.fun_to_linear (trc[band], (*(double *) src[band]));
         }
       for (; band < dst_bands; band++)
         {
@@ -327,9 +327,9 @@ rgba2rgba_gamma_2_2_premultiplied (Babl *conversion,
   while (n--)
     {
       double alpha = ((double *) src)[3];
-      ((double *) dst)[0] = _babl_trc_from_linear (trc[0], ((double *) src)[0]) * alpha;
-      ((double *) dst)[1] = _babl_trc_from_linear (trc[1], ((double *) src)[1]) * alpha;
-      ((double *) dst)[2] = _babl_trc_from_linear (trc[2], ((double *) src)[2]) * alpha;
+      ((double *) dst)[0] = trc[0]->trc.fun_from_linear (trc[0], ((double *) src)[0]) * alpha;
+      ((double *) dst)[1] = trc[0]->trc.fun_from_linear (trc[1], ((double *) src)[1]) * alpha;
+      ((double *) dst)[2] = trc[0]->trc.fun_from_linear (trc[2], ((double *) src)[2]) * alpha;
       ((double *) dst)[3] = alpha;
       src                += 4 * sizeof (double);
       dst                += 4 * sizeof (double);
@@ -353,9 +353,9 @@ rgba_gamma_2_2_premultiplied2rgba (Babl *conversion,
       double alpha = ((double *) src)[3];
       if (alpha > BABL_ALPHA_THRESHOLD)
         {
-          ((double *) dst)[0] = _babl_trc_to_linear (trc[0], ((double *) src)[0] / alpha);
-          ((double *) dst)[1] = _babl_trc_to_linear (trc[1], ((double *) src)[1] / alpha);
-          ((double *) dst)[2] = _babl_trc_to_linear (trc[2], ((double *) src)[2] / alpha);
+          ((double *) dst)[0] = trc[0]->trc.fun_to_linear (trc[0], ((double *) src)[0] / alpha);
+          ((double *) dst)[1] = trc[1]->trc.fun_to_linear (trc[1], ((double *) src)[1] / alpha);
+          ((double *) dst)[2] = trc[2]->trc.fun_to_linear (trc[2], ((double *) src)[2] / alpha);
         }
       else
         {
@@ -385,9 +385,9 @@ rgba2rgba_gamma_2_2 (Babl *conversion,
   while (n--)
     {
       double alpha = ((double *) src)[3];
-      ((double *) dst)[0] = _babl_trc_from_linear (trc[0], ((double *) src)[0]);
-      ((double *) dst)[1] = _babl_trc_from_linear (trc[1], ((double *) src)[1]);
-      ((double *) dst)[2] = _babl_trc_from_linear (trc[2], ((double *) src)[2]);
+      ((double *) dst)[0] = trc[0]->trc.fun_from_linear (trc[0], ((double *) src)[0]);
+      ((double *) dst)[1] = trc[1]->trc.fun_from_linear (trc[1], ((double *) src)[1]);
+      ((double *) dst)[2] = trc[2]->trc.fun_from_linear (trc[2], ((double *) src)[2]);
       ((double *) dst)[3] = alpha;
       src                += 4 * sizeof (double);
       dst                += 4 * sizeof (double);
@@ -409,9 +409,9 @@ rgba_gamma_2_22rgba (Babl *conversion,
   while (n--)
     {
       double alpha = ((double *) src)[3];
-      ((double *) dst)[0] = _babl_trc_to_linear (trc[0], ((double *) src)[0]);
-      ((double *) dst)[1] = _babl_trc_to_linear (trc[1], ((double *) src)[1]);
-      ((double *) dst)[2] = _babl_trc_to_linear (trc[2], ((double *) src)[2]);
+      ((double *) dst)[0] = trc[0]->trc.fun_to_linear (trc[0], ((double *) src)[0]);
+      ((double *) dst)[1] = trc[1]->trc.fun_to_linear (trc[1], ((double *) src)[1]);
+      ((double *) dst)[2] = trc[2]->trc.fun_to_linear (trc[2], ((double *) src)[2]);
       ((double *) dst)[3] = alpha;
 
       src += 4 * sizeof (double);
