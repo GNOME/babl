@@ -103,20 +103,20 @@ babl_trc_new (const char *name,
   switch (trc_db[i].type)
   {
     case BABL_TRC_LINEAR:
-      trc_db[i].fun_to_linear = _babl_trc_linearf;
-      trc_db[i].fun_from_linear = _babl_trc_linearf;
+      trc_db[i].fun_to_linear = _babl_trc_linear;
+      trc_db[i].fun_from_linear = _babl_trc_linear;
       break;
     case BABL_TRC_GAMMA:
-      trc_db[i].fun_to_linear = _babl_trc_gamma_to_linearf;
-      trc_db[i].fun_from_linear = _babl_trc_gamma_from_linearf;
+      trc_db[i].fun_to_linear = _babl_trc_gamma_to_linear;
+      trc_db[i].fun_from_linear = _babl_trc_gamma_from_linear;
       break;
     case BABL_TRC_SRGB:
-      trc_db[i].fun_to_linear = _babl_trc_srgb_to_linearf;
-      trc_db[i].fun_from_linear = _babl_trc_srgb_from_linearf;
+      trc_db[i].fun_to_linear = _babl_trc_srgb_to_linear;
+      trc_db[i].fun_from_linear = _babl_trc_srgb_from_linear;
       break;
     case BABL_TRC_LUT:
-      trc_db[i].fun_to_linear = babl_trc_lut_to_linearf;
-      trc_db[i].fun_from_linear = babl_trc_lut_from_linearf;
+      trc_db[i].fun_to_linear = babl_trc_lut_to_linear;
+      trc_db[i].fun_from_linear = babl_trc_lut_from_linear;
       break;
   }
   return (Babl*)&trc_db[i];
@@ -162,24 +162,14 @@ babl_trc_class_init (void)
   babl_trc_new ("linear", BABL_TRC_LINEAR, 1.0, 0, NULL);
 }
 
-double babl_trc_from_linear (const Babl *trc_, double value)
+float babl_trc_from_linear (const Babl *trc_, float value)
 {
   return _babl_trc_from_linear (trc_, value);
 }
 
-double babl_trc_to_linear (const Babl *trc_, double value)
+float babl_trc_to_linear (const Babl *trc_, float value)
 {
   return _babl_trc_to_linear (trc_, value);
-}
-
-float babl_trc_from_linearf (const Babl *trc_, float value)
-{
-  return _babl_trc_from_linearf (trc_, value);
-}
-
-float babl_trc_to_linearf (const Babl *trc_, float value)
-{
-  return _babl_trc_to_linearf (trc_, value);
 }
 
 const Babl *babl_trc_lut_find (float *lut, int lut_size)

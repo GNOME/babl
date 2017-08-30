@@ -338,10 +338,6 @@ void babl_init_db (void);
 void babl_store_db (void);
 int _babl_max_path_len (void);
 
-double babl_trc_from_linear (const Babl *trc, double value);
-double babl_trc_to_linear   (const Babl *trc, double value);
-float babl_trc_from_linearf (const Babl *trc, float value);
-float babl_trc_to_linearf   (const Babl *trc, float value);
 
 const Babl *
 babl_trc_new (const char *name,
@@ -355,30 +351,15 @@ babl_trc_new (const char *name,
  *
  * Makes linear data non-linear according to the trc.
  */
-double babl_trc_from_linear (const Babl *trc, double value);
+float babl_trc_from_linear (const Babl *trc, float value);
 
 /**
  * babl_trc_from_linear:
  *
  * Makes non-linear data with the TRC linear data.
  */
-double babl_trc_to_linear   (const Babl *trc, double value);
+float babl_trc_to_linear   (const Babl *trc, float value);
 
-/**
- * babl_trc_from_linearf:
- *
- * Makes linear data non-linear according to the trc, single precision float,
- * a little bit faster than the double version.
- */
-float babl_trc_from_linearf (const Babl *trc, float value);
-
-/**
- * babl_trc_from_linearf:
- *
- * Makes non-linear data with the TRC linear data, single precision float
- * alittle bit faster than the double version.
- */
-float babl_trc_to_linearf   (const Babl *trc, float value);
 
 void babl_space_to_xyz   (const Babl *space, const double *rgb, double *xyz);
 void babl_space_from_xyz (const Babl *space, const double *xyz, double *rgb);
