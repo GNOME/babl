@@ -154,48 +154,6 @@ static inline void LAB_to_XYZ     (double L,
                                    double *to_Z
                                    );
 
-static inline void XYZ_to_RGB     (double X,
-                                   double Y,
-                                   double Z,
-                                   double *to_R,
-                                   double *to_G,
-                                   double *to_B);
-
-static inline void
-XYZ_to_RGB (double X,
-            double Y,
-            double Z,
-            double *to_R,
-            double *to_G,
-            double *to_B)
-{
-  double XYZtoRGB[3][3];
-
-/*
- * The variables below hard-code the inverse of
- * the D50-adapted sRGB RGB to XYZ matrix.
- *
- * In a properly ICC profile color-managed application,
- * this matrix is the inverse of the matrix
- * retrieved from the image's ICC profile's RGB colorants.
- *
- */
-  XYZtoRGB[0][0]=  3.134274799724;
-  XYZtoRGB[0][1]= -1.617275708956;
-  XYZtoRGB[0][2]= -0.490724283042;
-  XYZtoRGB[1][0]= -0.978795575994;
-  XYZtoRGB[1][1]=  1.916161689117;
-  XYZtoRGB[1][2]=  0.033453331711;
-  XYZtoRGB[2][0]=  0.071976988401;
-  XYZtoRGB[2][1]= -0.228984974402;
-  XYZtoRGB[2][2]=  1.405718224383;
-
-/* Convert XYZ to RGB */
-  *to_R = XYZtoRGB[0][0] * X + XYZtoRGB[0][1] * Y + XYZtoRGB[0][2] * Z;
-  *to_G = XYZtoRGB[1][0] * X + XYZtoRGB[1][1] * Y + XYZtoRGB[1][2] * Z;
-  *to_B = XYZtoRGB[2][0] * X + XYZtoRGB[2][1] * Y + XYZtoRGB[2][2] * Z;
-}
-
 static inline void
 XYZ_to_LAB (double X,
             double Y,
@@ -292,6 +250,7 @@ lab_to_rgba (const Babl *conversion,char *src,
              char *dst,
              long  n)
 {
+  const Babl *space = babl_conversion_get_destination_space (conversion);
   while (n--)
     {
       double L = ((double *) src)[0];
@@ -304,7 +263,15 @@ lab_to_rgba (const Babl *conversion,char *src,
       LAB_to_XYZ (L, a, b, &X, &Y, &Z);
 
       //convert XYZ to RGB
-      XYZ_to_RGB (X, Y, Z, &R, &G, &B);
+      {
+        double XYZ[3]  = {X,Y,Z};
+        double RGB[3];
+        babl_space_from_xyz (space, XYZ, RGB);
+        R = RGB[0];
+        G = RGB[1];
+        B = RGB[2];
+      }
+
       ((double *) dst)[0] = R;
       ((double *) dst)[1] = G;
       ((double *) dst)[2] = B;
@@ -352,6 +319,7 @@ laba_to_rgba (const Babl *conversion,char *src,
               char *dst,
               long  n)
 {
+  const Babl *space = babl_conversion_get_destination_space (conversion);
   while (n--)
     {
       double L     = ((double *) src)[0];
@@ -365,7 +333,17 @@ laba_to_rgba (const Babl *conversion,char *src,
       LAB_to_XYZ (L, a, b, &X, &Y, &Z);
 
       //convert XYZ to RGB
-      XYZ_to_RGB (X, Y, Z, &R, &G, &B);
+      //XYZ_to_RGB (X, Y, Z, &R, &G, &B);
+
+      {
+        double XYZ[3]  = {X,Y,Z};
+        double RGB[3];
+        babl_space_from_xyz (space, XYZ, RGB);
+        R = RGB[0];
+        G = RGB[1];
+        B = RGB[2];
+      }
+
       ((double *) dst)[0] = R;
       ((double *) dst)[1] = G;
       ((double *) dst)[2] = B;
@@ -440,6 +418,8 @@ lchab_to_rgba (const Babl *conversion,char *src,
                char *dst,
                long  n)
 {
+  const Babl *space = babl_conversion_get_source_space (conversion);
+
   while (n--)
     {
       double L = ((double *) src)[0];
@@ -454,7 +434,15 @@ lchab_to_rgba (const Babl *conversion,char *src,
       LAB_to_XYZ (L, a, b, &X, &Y, &Z);
 
       //Convert XYZ to RGB
-      XYZ_to_RGB (X, Y, Z, &R, &G, &B);
+      {
+        double XYZ[3]  = {X,Y,Z};
+        double RGB[3];
+        babl_space_from_xyz (space, XYZ, RGB);
+        R = RGB[0];
+        G = RGB[1];
+        B = RGB[2];
+      }
+
 
       ((double *) dst)[0] = R;
       ((double *) dst)[1] = G;
@@ -507,6 +495,7 @@ lchaba_to_rgba (const Babl *conversion,char *src,
                 char *dst,
                 long  n)
 {
+  const Babl *space = babl_conversion_get_destination_space (conversion);
   while (n--)
     {
       double L     = ((double *) src)[0];
@@ -522,7 +511,14 @@ lchaba_to_rgba (const Babl *conversion,char *src,
       LAB_to_XYZ (L, a, b, &X, &Y, &Z);
 
       //Convert XYZ to RGB
-      XYZ_to_RGB (X, Y, Z, &R, &G, &B);
+      {
+        double XYZ[3]  = {X,Y,Z};
+        double RGB[3];
+        babl_space_from_xyz (space, XYZ, RGB);
+        R = RGB[0];
+        G = RGB[1];
+        B = RGB[2];
+      }
 
       ((double *) dst)[0] = R;
       ((double *) dst)[1] = G;
