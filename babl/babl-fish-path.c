@@ -666,7 +666,7 @@ babl_fish_path (const Babl *source,
 
     if (!done)
     {
-      if(1)babl_conversion_class_for_each (show_item, (void*)source->format.space);
+      if(0)babl_conversion_class_for_each (show_item, (void*)source->format.space);
       //babl_format_class_for_each (show_fmt, NULL);
       //babl_model_class_for_each (show_fmt, NULL);
     }
