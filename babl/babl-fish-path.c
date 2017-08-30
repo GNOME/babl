@@ -21,7 +21,7 @@
 #include "babl-internal.h"
 #include "babl-ref-pixels.h"
 
-#define BABL_TOLERANCE             0.000001
+#define BABL_TOLERANCE             0.000005
 #define BABL_MAX_COST_VALUE        2000000
 #define BABL_HARD_MAX_PATH_LENGTH  8
 #define BABL_MAX_NAME_LEN          1024
@@ -190,7 +190,7 @@ get_conversion_path (PathContext *pc,
           path_error *= (1.0 + babl_conversion_error ((BablConversion *) pc->current_path->items[i]));
         }
 
-      if (path_error - 1.0 <= _babl_legal_error ())
+      //if (path_error - 1.0 <= _babl_legal_error ())
                 /* check this before the more accurate measurement of error -
                    to bail earlier */
         {
@@ -441,11 +441,11 @@ universal_nonlinear_rgb_converter (const Babl *conversion,unsigned char *src_cha
     float rgba_tmp[4];
     int c;
     for (c = 0; c < 3; c ++)
-      rgba_tmp[c] = _babl_trc_to_linear (source_space->space.trc[0], rgba_in[c]);
+      rgba_tmp[c] = _babl_trc_to_linear (source_space->space.trc[c], rgba_in[c]);
     babl_matrix_mul_vectorff (matrixf, rgba_tmp, rgba_out);
 
     for (c = 0; c < 3; c ++)
-      rgba_out[c] = _babl_trc_from_linear (destination_space->space.trc[0], rgba_out[c]);
+      rgba_out[c] = _babl_trc_from_linear (destination_space->space.trc[c], rgba_out[c]);
 
     rgba_out[3] = rgba_in[3];
     rgba_in  += 4;
@@ -454,6 +454,47 @@ universal_nonlinear_rgb_converter (const Babl *conversion,unsigned char *src_cha
 
   return samples;
 }
+
+#if 0
+// does not seem to be valid
+static inline long
+universal_nonlinear_rgba_u8_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
+{
+  const Babl *source_space = babl_conversion_get_source_space (conversion);
+  const Babl *destination_space = babl_conversion_get_destination_space (conversion);
+
+  float * matrixf = conversion->conversion.data;
+  int i;
+  uint8_t *rgba_in_u8 = (void*)src_char;
+  uint8_t *rgba_out_u8 = (void*)dst_char;
+
+  assert (source_space);
+  assert (destination_space);
+
+  for (i = 0; i < samples; i++)
+  {
+    float rgba_tmp[4];
+    float rgba_out[4];
+    int c;
+    for (c = 0; c < 3; c ++)
+      rgba_tmp[c] = _babl_trc_to_linear (source_space->space.trc[c], rgba_in_u8[c]/255.0);
+
+    babl_matrix_mul_vectorff (matrixf, rgba_tmp, rgba_out);
+
+    for (c = 0; c < 3; c ++)
+    {
+      int v = _babl_trc_from_linear (destination_space->space.trc[c], rgba_out[c]) * 255.5;
+      rgba_out_u8[c] = v < 0 ?  0 : v > 255 ? 255 : v;
+    }
+
+    rgba_out_u8[3] = rgba_in_u8[3];
+    rgba_in_u8  += 4;
+    rgba_out_u8 += 4;
+  }
+
+  return samples;
+}
+#endif
 
 static inline long
 universal_rgb_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
@@ -534,6 +575,16 @@ add_rgb_adapter (Babl *babl,
                         babl_format_with_space("R'G'B'A float", space),
                         "linear", universal_nonlinear_rgb_converter,
                         NULL));
+#if 0
+    prep_conversion(babl_conversion_new(babl_format_with_space("R'G'B'A u8", space),
+                        babl_format_with_space("R'G'B'A u8", babl),
+                        "linear", universal_nonlinear_rgba_u8_converter,
+                        NULL));
+    prep_conversion(babl_conversion_new(babl_format_with_space("R'G'B'A u8", babl),
+                        babl_format_with_space("R'G'B'A u8", space),
+                        "linear", universal_nonlinear_rgba_u8_converter,
+                        NULL));
+#endif
   }
   return 0;
 }
