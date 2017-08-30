@@ -39,7 +39,34 @@ typedef struct
   char             name[128];
   float           *lut;
   float           *inv_lut;
+  float          (*fun_to_linear)(const Babl *trc_, float val);
+  float          (*fun_from_linear)(const Babl *trc_, float val);
 } BablTRC;
+
+
+static inline float babl_trc_lut_from_linearf (const Babl *trc_, float value)
+{
+  BablTRC *trc = (void*)trc_;
+  int entry = value * trc->lut_size + 0.5;
+  float ret = trc->inv_lut[
+    (entry >= 0 && entry < trc->lut_size) ?
+                               entry :
+                               trc->lut_size-1];
+  /* XXX: fixme, do linear interpolation */
+  return ret;
+}
+
+static inline float babl_trc_lut_to_linearf (const Babl *trc_, float value)
+{
+  BablTRC *trc = (void*)trc_;
+  int entry = value * trc->lut_size + 0.5;
+  float ret = trc->lut[
+    (entry >= 0 && entry < trc->lut_size) ?
+                               entry :
+                               trc->lut_size-1];
+  /* XXX: fixme, do linear interpolation */
+  return ret;
+}
 
 static inline double babl_trc_lut_from_linear (const Babl *trc_, double value)
 {
@@ -70,14 +97,10 @@ static inline double _babl_trc_from_linear (const Babl *trc_, double value)
   BablTRC *trc = (void*)trc_;
   switch (trc->type)
   {
-    case BABL_TRC_LINEAR:
-            return value;
-    case BABL_TRC_GAMMA:
-            return pow (value, 1.0/trc->gamma);
-    case BABL_TRC_SRGB:
-            return babl_linear_to_gamma_2_2 (value);
-    case BABL_TRC_LUT:
-            return babl_trc_lut_from_linear (trc_, value);
+    case BABL_TRC_LINEAR: return value;
+    case BABL_TRC_GAMMA:  return pow (value, 1.0/trc->gamma);
+    case BABL_TRC_SRGB:   return babl_linear_to_gamma_2_2 (value);
+    case BABL_TRC_LUT:    return babl_trc_lut_from_linear (trc_, value);
   }
   return value;
 }
@@ -87,42 +110,51 @@ static inline double _babl_trc_to_linear (const Babl *trc_, double value)
   BablTRC *trc = (void*)trc_;
   switch (trc->type)
   {
-    case BABL_TRC_LINEAR:
-            return value;
-    case BABL_TRC_GAMMA:
-            return pow (value, trc->gamma);
-    case BABL_TRC_SRGB:
-            return babl_gamma_2_2_to_linear (value);
-    case BABL_TRC_LUT:
-            return babl_trc_lut_to_linear (trc_, value);
+    case BABL_TRC_LINEAR: return value;
+    case BABL_TRC_GAMMA:  return pow (value, trc->gamma);
+    case BABL_TRC_SRGB:   return babl_gamma_2_2_to_linear (value);
+    case BABL_TRC_LUT:    return babl_trc_lut_to_linear (trc_, value);
   }
   return value;
+}
+
+static inline float _babl_trc_linearf (const Babl *trc_, float value)
+{
+  return 1.0;
+}
+
+static inline float _babl_trc_gamma_to_linearf (const Babl *trc_, float value)
+{
+  BablTRC *trc = (void*)trc_;
+  return powf (value, trc->gamma);
+}
+
+static inline float _babl_trc_gamma_from_linearf (const Babl *trc_, float value)
+{
+  BablTRC *trc = (void*)trc_;
+  return powf (value, 1.0f/trc->gamma);
+}
+
+static inline float _babl_trc_srgb_to_linearf (const Babl *trc_, float value)
+{
+  return babl_gamma_2_2_to_linearf (value);
+}
+
+static inline float _babl_trc_srgb_from_linearf (const Babl *trc_, float value)
+{
+  return babl_linear_to_gamma_2_2f (value);
 }
 
 static inline float _babl_trc_from_linearf (const Babl *trc_, float value)
 {
   BablTRC *trc = (void*)trc_;
-  switch (trc->type)
-  {
-    case BABL_TRC_LINEAR: return value;
-    case BABL_TRC_GAMMA:  return powf (value, 1.0f/trc->gamma);
-    case BABL_TRC_SRGB:   return babl_linear_to_gamma_2_2f (value);
-    case BABL_TRC_LUT:    return babl_trc_lut_from_linear (trc_, value);
-  }
-  return value;
+  return trc->fun_from_linear (trc_, value);
 }
 
 static inline float _babl_trc_to_linearf (const Babl *trc_, float value)
 {
   BablTRC *trc = (void*)trc_;
-  switch (trc->type)
-  {
-    case BABL_TRC_LINEAR: return value;
-    case BABL_TRC_GAMMA:  return powf (value, trc->gamma);
-    case BABL_TRC_SRGB:   return babl_gamma_2_2_to_linearf (value);
-    case BABL_TRC_LUT:    return babl_trc_lut_to_linear (trc_, value);
-  }
-  return value;
+  return trc->fun_to_linear (trc_, value);
 }
 
 void

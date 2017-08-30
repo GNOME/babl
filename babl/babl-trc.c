@@ -98,9 +98,27 @@ babl_trc_new (const char *name,
     for (j = 0; j < n_lut; j++)
       trc_db[i].inv_lut[j] =
         babl_trc_to_linear (BABL(&trc_db[i]), trc_db[i].lut[(int) ( j/(n_lut-1.0) * (n_lut-1))]);
-    
   }
- 
+
+  switch (trc_db[i].type)
+  {
+    case BABL_TRC_LINEAR:
+      trc_db[i].fun_to_linear = _babl_trc_linearf;
+      trc_db[i].fun_from_linear = _babl_trc_linearf;
+      break;
+    case BABL_TRC_GAMMA:
+      trc_db[i].fun_to_linear = _babl_trc_gamma_to_linearf;
+      trc_db[i].fun_from_linear = _babl_trc_gamma_from_linearf;
+      break;
+    case BABL_TRC_SRGB:
+      trc_db[i].fun_to_linear = _babl_trc_srgb_to_linearf;
+      trc_db[i].fun_from_linear = _babl_trc_srgb_from_linearf;
+      break;
+    case BABL_TRC_LUT:
+      trc_db[i].fun_to_linear = babl_trc_lut_to_linearf;
+      trc_db[i].fun_from_linear = babl_trc_lut_from_linearf;
+      break;
+  }
   return (Babl*)&trc_db[i];
 }
 

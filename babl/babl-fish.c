@@ -169,7 +169,7 @@ babl_fish_get_id (const Babl *source,
   /* value of 'id' will be used as argument for hash function,
    * substraction serves as simple combination of
    * source/destination values. */
-  int id = (((int)source * 93)) ^ ((int)destination);
+  int id = (((size_t)source * 93)) ^ ((size_t)destination);
   /* instances with id 0 won't be inserted into database */
   id *= ((((size_t)  (destination))) % 37);
 
