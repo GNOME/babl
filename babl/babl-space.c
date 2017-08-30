@@ -309,6 +309,15 @@ babl_space_class_init (void)
       babl_trc("1.8"), NULL, NULL);
 
   babl_space_from_chromaticities (
+     "WideGamutRGB",
+     0.34567, 0.3585,  /* D50 */
+     0.7350,  0.2650,
+     0.1150,  0.8260,
+     0.1570,  0.0180,
+     babl_trc("2.2"), NULL, NULL);
+
+#if 0
+  babl_space_from_chromaticities (
       "Best",
       0.34567, 0.3585,  /* D50 */
       0.7347,  0.2653,
@@ -363,14 +372,7 @@ babl_space_class_init (void)
      0.2150,  0.7650,
      0.1300,  0.0350,
      babl_trc("1.8"), NULL, NULL);
-
-  babl_space_from_chromaticities (
-     "WideGamutRGB",
-     0.34567, 0.3585,  /* D50 */
-     0.7350,  0.2650,
-     0.1150,  0.8260,
-     0.1570,  0.0180,
-     babl_trc("2.2"), NULL, NULL);
+#endif
 }
 
 void babl_space_to_xyz (const Babl *space, const double *rgb, double *xyz)
