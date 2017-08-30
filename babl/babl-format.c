@@ -737,7 +737,7 @@ babl_format_with_space (const char *name, const Babl *space)
       return ret;
 
     ret = format_new_from_format_with_space (babl_format (name), space);
-    babl_db_insert (db, ret);
+    babl_db_insert (db, (void*)ret);
   }
   return ret;
 }
