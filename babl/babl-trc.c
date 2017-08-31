@@ -470,7 +470,7 @@ static inline float _babl_trc_gamma_2_2_from_linear (const Babl *trc_, float x)
 
 static inline float _babl_trc_srgb_to_linear (const Babl *trc_, float value)
 {
-  return babl_gamma_2_2_to_linear (value);
+  return babl_gamma_2_2_to_linearf (value);
 }
 
 static inline float _babl_trc_srgb_from_linear (const Babl *trc_, float value)
