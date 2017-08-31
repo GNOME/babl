@@ -141,7 +141,7 @@ test (void)
    for (j = 0; j < n_formats; j++)
    if (i != j)
    {
-      fprintf (stdout, "%s %03.1f mb/s\t%s to %s %f",
+      fprintf (stdout, "%s %03.1f mb/s\t%s to %s %.9f",
                       unicode_hbar(16, mbps[n] / max),
                       mbps[n],
                       babl_get_name (formats[i]),
@@ -154,7 +154,7 @@ test (void)
       else if (fishes[n]->class_type == BABL_FISH_PATH)
       {
         int k;
-        fprintf (stdout, "[%d]", fishes[n]->fish_path.conversion_list->count);
+        //fprintf (stdout, "[%d]", fishes[n]->fish_path.conversion_list->count);
         for (k = 0; k < fishes[n]->fish_path.conversion_list->count; k++)
         {
           fprintf (stdout, "\n\t\t\t\t%s", babl_get_name (
