@@ -141,12 +141,27 @@ test (void)
    for (j = 0; j < n_formats; j++)
    if (i != j)
    {
-      fprintf (stdout, "%s %03.1f mb/s\t%s to %s   %s\n",
+      fprintf (stdout, "%s %03.1f mb/s\t%s to %s %f",
                       unicode_hbar(16, mbps[n] / max),
                       mbps[n],
                       babl_get_name (formats[i]),
                       babl_get_name (formats[j]),
-                      fishes[n]->class_type == BABL_FISH_REFERENCE?"REF":"");
+                      fishes[n]->fish.error);
+      if (fishes[n]->class_type == BABL_FISH_REFERENCE)
+      {
+        fprintf (stdout, "[R]");
+      }
+      else if (fishes[n]->class_type == BABL_FISH_PATH)
+      {
+        int k;
+        fprintf (stdout, "[%d]", fishes[n]->fish_path.conversion_list->count);
+        for (k = 0; k < fishes[n]->fish_path.conversion_list->count; k++)
+        {
+          fprintf (stdout, "\n\t\t\t\t%s", babl_get_name (
+                   fishes[n]->fish_path.conversion_list->items[k]));
+        }
+      }
+      fprintf (stdout, "\n");
       n++;
    }
   fprintf (stdout, "\n%s %03.1f mb/s\taverage\n",
