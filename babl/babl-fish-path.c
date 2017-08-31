@@ -431,7 +431,7 @@ static void prep_conversion (const Babl *babl)
   lut = matrixf + 9;
   for (i = 0; i < 256; i++)
   {
-    lut[i] = _babl_trc_to_linear (source_space->space.trc[0], i/255.0);
+    lut[i] = babl_trc_to_linear (source_space->space.trc[0], i/255.0);
     // XXX: should have green and blue luts as well
   }
 }
@@ -698,7 +698,7 @@ babl_fish_path (const Babl *source,
 
     if (!done)
     {
-      if(0)babl_conversion_class_for_each (show_item, (void*)source->format.space);
+      if(1)babl_conversion_class_for_each (show_item, (void*)source->format.space);
       //babl_format_class_for_each (show_fmt, NULL);
       //babl_model_class_for_each (show_fmt, NULL);
     }
