@@ -40,12 +40,24 @@ typedef struct
   int              lut_size;
   double           gamma;
   float            rgamma;
-  char             name[128];
+  float          (*fun_to_linear)(const Babl *trc, float val);
+  float          (*fun_from_linear)(const Babl *trc, float val);
   float           *lut;
   float           *inv_lut;
-  float          (*fun_to_linear)(const Babl *trc_, float val);
-  float          (*fun_from_linear)(const Babl *trc_, float val);
+  char             name[128];
 } BablTRC;
+
+static inline float babl_trc_from_linear (const Babl *trc_, float value)
+{
+  BablTRC *trc = (void*)trc_;
+  return trc->fun_from_linear (trc_, value);
+}
+
+static inline float babl_trc_to_linear (const Babl *trc_, float value)
+{
+  BablTRC *trc = (void*)trc_;
+  return trc->fun_to_linear (trc_, value);
+}
 
 void
 babl_trc_class_init (void);

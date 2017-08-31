@@ -346,21 +346,6 @@ babl_trc_new (const char *name,
               int         n_lut,
               float      *lut);
 
-/**
- * babl_trc_from_linear:
- *
- * Makes linear data non-linear according to the trc.
- */
-float babl_trc_from_linear (const Babl *trc, float value);
-
-/**
- * babl_trc_from_linear:
- *
- * Makes non-linear data with the TRC linear data.
- */
-float babl_trc_to_linear   (const Babl *trc, float value);
-
-
 void babl_space_to_xyz   (const Babl *space, const double *rgb, double *xyz);
 void babl_space_from_xyz (const Babl *space, const double *xyz, double *rgb);
 
@@ -368,12 +353,11 @@ const Babl *babl_space_from_icc (const char *icc,
                                  int         length,
                                  char      **error);
 const Babl *babl_trc_lut_find (float *lut, int lut_size);
-const Babl * babl_trc_lut   (const char *name, int n, float *entries);
+const Babl *babl_trc_lut      (const char *name, int n, float *entries);
 
-Babl *
-format_new_from_format_with_space (const Babl *format, const Babl *space);
-int
-babl_list_destroy (void *data);
+Babl * format_new_from_format_with_space (const Babl *format, const Babl *space);
+
+int babl_list_destroy (void *data);
 
 const char *
 babl_conversion_create_name (Babl *source, Babl *destination, int is_reference);

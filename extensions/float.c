@@ -45,9 +45,9 @@ conv_rgbaF_linear_rgbAF_gamma (const Babl *conversion,unsigned char *src,
    while (n--)
      {
        float alpha = fsrc[3];
-       *fdst++ = trc[0]->trc.fun_from_linear (trc[0], *fsrc++) * alpha;
-       *fdst++ = trc[1]->trc.fun_from_linear (trc[1], *fsrc++) * alpha;
-       *fdst++ = trc[2]->trc.fun_from_linear (trc[2], *fsrc++) * alpha;
+       *fdst++ = babl_trc_from_linear (trc[0], *fsrc++) * alpha;
+       *fdst++ = babl_trc_from_linear (trc[1], *fsrc++) * alpha;
+       *fdst++ = babl_trc_from_linear (trc[2], *fsrc++) * alpha;
        *fdst++ = *fsrc++;
      }
   return samples;
@@ -78,17 +78,17 @@ conv_rgbAF_linear_rgbAF_gamma (const Babl *conversion,unsigned char *src,
          }
        else if (alpha >= 1.0)
          {
-           *fdst++ = trc[0]->trc.fun_from_linear (trc[0], *fsrc++) * alpha;
-           *fdst++ = trc[1]->trc.fun_from_linear (trc[1], *fsrc++) * alpha;
-           *fdst++ = trc[2]->trc.fun_from_linear (trc[2], *fsrc++) * alpha;
+           *fdst++ = babl_trc_from_linear (trc[0], *fsrc++) * alpha;
+           *fdst++ = babl_trc_from_linear (trc[1], *fsrc++) * alpha;
+           *fdst++ = babl_trc_from_linear (trc[2], *fsrc++) * alpha;
            *fdst++ = *fsrc++;
          }
        else
          {
            float alpha_recip = 1.0 / alpha;
-           *fdst++ = trc[0]->trc.fun_from_linear (trc[0], *fsrc++ * alpha_recip) * alpha;
-           *fdst++ = trc[1]->trc.fun_from_linear (trc[1], *fsrc++ * alpha_recip) * alpha;
-           *fdst++ = trc[2]->trc.fun_from_linear (trc[2], *fsrc++ * alpha_recip) * alpha;
+           *fdst++ = babl_trc_from_linear (trc[0], *fsrc++ * alpha_recip) * alpha;
+           *fdst++ = babl_trc_from_linear (trc[1], *fsrc++ * alpha_recip) * alpha;
+           *fdst++ = babl_trc_from_linear (trc[2], *fsrc++ * alpha_recip) * alpha;
            *fdst++ = *fsrc++;
          }
      }
@@ -109,9 +109,9 @@ conv_rgbaF_linear_rgbaF_gamma (const Babl *conversion,unsigned char *src,
 
    while (n--)
      {
-       *fdst++ = trc[0]->trc.fun_from_linear (trc[0], *fsrc++);
-       *fdst++ = trc[1]->trc.fun_from_linear (trc[1], *fsrc++);
-       *fdst++ = trc[2]->trc.fun_from_linear (trc[2], *fsrc++);
+       *fdst++ = babl_trc_from_linear (trc[0], *fsrc++);
+       *fdst++ = babl_trc_from_linear (trc[1], *fsrc++);
+       *fdst++ = babl_trc_from_linear (trc[2], *fsrc++);
        *fdst++ = *fsrc++;
      }
   return samples;
@@ -130,9 +130,9 @@ conv_rgbF_linear_rgbF_gamma (const Babl *conversion,unsigned char *src,
 
    while (n--)
      {
-       *fdst++ = trc[0]->trc.fun_from_linear (trc[0], *fsrc++);
-       *fdst++ = trc[1]->trc.fun_from_linear (trc[1], *fsrc++);
-       *fdst++ = trc[2]->trc.fun_from_linear (trc[2], *fsrc++);
+       *fdst++ = babl_trc_from_linear (trc[0], *fsrc++);
+       *fdst++ = babl_trc_from_linear (trc[1], *fsrc++);
+       *fdst++ = babl_trc_from_linear (trc[2], *fsrc++);
      }
   return samples;
 }
@@ -151,9 +151,9 @@ conv_rgbaF_gamma_rgbaF_linear (const Babl *conversion,unsigned char *src,
 
    while (n--)
      {
-       *fdst++ = trc[0]->trc.fun_to_linear (trc[0], *fsrc++);
-       *fdst++ = trc[1]->trc.fun_to_linear (trc[1], *fsrc++);
-       *fdst++ = trc[2]->trc.fun_to_linear (trc[2], *fsrc++);
+       *fdst++ = babl_trc_to_linear (trc[0], *fsrc++);
+       *fdst++ = babl_trc_to_linear (trc[1], *fsrc++);
+       *fdst++ = babl_trc_to_linear (trc[2], *fsrc++);
        *fdst++ = *fsrc++;
      }
   return samples;
@@ -172,9 +172,9 @@ conv_rgbF_gamma_rgbF_linear (const Babl *conversion,unsigned char *src,
 
    while (n--)
      {
-       *fdst++ = trc[0]->trc.fun_to_linear (trc[0], *fsrc++);
-       *fdst++ = trc[1]->trc.fun_to_linear (trc[1], *fsrc++);
-       *fdst++ = trc[2]->trc.fun_to_linear (trc[2], *fsrc++);
+       *fdst++ = babl_trc_to_linear (trc[0], *fsrc++);
+       *fdst++ = babl_trc_to_linear (trc[1], *fsrc++);
+       *fdst++ = babl_trc_to_linear (trc[2], *fsrc++);
      }
   return samples;
 }

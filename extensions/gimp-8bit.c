@@ -63,7 +63,7 @@ tables_init (const Babl *space)
   for (i = 0; i < 1 << 8; i++)
     {
       double value = i / 255.0;
-      lut_gamma_2_2[j][i] = _babl_trc_to_linear (space->space.trc[0], value);
+      lut_gamma_2_2[j][i] = babl_trc_to_linear (space->space.trc[0], value);
     }
 
   return j;

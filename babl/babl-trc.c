@@ -24,6 +24,10 @@
 
 static BablTRC trc_db[MAX_TRCS];
 
+static inline float _babl_trc_linear (const Babl *trc_, float value)
+{
+  return value;
+}
 
 static inline float babl_trc_lut_from_linear (const Babl *trc_, float value)
 {
@@ -47,11 +51,6 @@ static inline float babl_trc_lut_to_linear (const Babl *trc_, float value)
                                trc->lut_size-1];
   /* XXX: fixme, do linear interpolation */
   return ret;
-}
-
-static inline float _babl_trc_linear (const Babl *trc_, float value)
-{
-  return 1.0;
 }
 
 /* origin: FreeBSD /usr/src/lib/msun/src/e_powf.c, copied from musl */
@@ -356,136 +355,118 @@ static inline float _babl_trc_gamma_from_linear (const Babl *trc_, float value)
   return babl_powf (value, trc->rgamma);
 }
 
-#define POLY_DEGREE 9
-
 static inline float _babl_trc_gamma_1_8_to_linear (const Babl *trc_, float x)
 {
-  if (x >= 0.01f && x <= 1.0f)
+  if (x >= 0.01f && x < 0.7f)
   {
-#if POLY_DEGREE==9
-    float u = -2.9976517e+1f;
-    u = u * x + 1.2166704e+2f;
-    u = u * x + -2.0336221e+2f;
-    u = u * x + 1.8145976e+2f;
-    u = u * x + -9.4187362e+1f;
-    u = u * x + 2.9529147e+1f;
-    u = u * x + -6.013473f;
-    u = u * x + 1.8725695f;
-    u = u * x + 9.9435057e-3f;
-    return u * x + -3.0061697e-5f;
-#elif POLY_DEGREE==10
-    float u = 7.7739437e+1f;
-    u = u * x + -3.5356881e+2f;
-    u = u * x + 6.7648456e+2f;
-    u = u * x + -7.0946645e+2f;
-    u = u * x + 4.4648413e+2f;
-    u = u * x + -1.7452451e+2f;
-    u = u * x + 4.3126128e+1f;
-    u = u * x + -7.2036142f;
-    u = u * x + 1.9207626f;
-    u = u * x + 9.14659e-3f;
-    return u * x + -2.575215e-5f;
-#endif
+    double u = -1.326432065236105e+1;
+    u = u * x + 7.7192973347868776e+1;
+    u = u * x + -1.9639662782311719e+2;
+    u = u * x + 2.8719828602066411e+2;
+    u = u * x + -2.6718118019754855e+2;
+    u = u * x + 1.6562450069335532e+2;
+    u = u * x + -6.9988172743274441e+1;
+    u = u * x + 2.0568254985551865e+1;
+    u = u * x + -4.5302829214271245;
+    u = u * x + 1.7636048338730889;
+    u = u * x + 1.3015451332543148e-2;
+    return u * x + -5.4445726922508747e-5;
   }
-  return babl_powf (x, 1.8);
+  else if (x >= 0.7f && x < 1.4f)
+  {
+    double u = 2.4212422421184617e-3;
+    u = u * x + -2.0853930731707795e-2;
+    u = u * x + 8.2416801461966525e-2;
+    u = u * x + -2.1755799369117727e-1;
+    u = u * x + 1.0503926510667593;
+    u = u * x + 1.1196374095271941e-1;
+    return u * x + -8.7825075945914206e-3;
+  }
+  return babl_powf (x, 1.8f);
 }
 
 static inline float _babl_trc_gamma_1_8_from_linear (const Babl *trc_, float x)
 {
-  if (x >= 0.01f && x <= 1.0f)
+  if (x >= 0.01f && x < 0.25f)
   {
-#if POLY_DEGREE==9
-    float u = 7.6987344e+2f;
-    u = u * x + -3.4624161e+3f;
-    u = u * x + 6.5169973e+3f;
-    u = u * x + -6.6683502e+3f;
-    u = u * x + 4.037826e+3f;
-    u = u * x + -1.4810227e+3f;
-    u = u * x + 3.2670293e+2f;
-    u = u * x + -4.3240358e+1f;
-    u = u * x + 4.6009555f;
-    return u * x + 3.6000385e-2f;
-#elif POLY_DEGREE==10
-    float u = -2.2269134e+3f;
-    u = u * x + 1.1122916e+4f;
-    u = u * x + -2.3689515e+4f;
-    u = u * x + 2.8091743e+4f;
-    u = u * x + -2.0332165e+4f;
-    u = u * x + 9.2757293e+3f;
-    u = u * x + -2.6697086e+3f;
-    u = u * x + 4.7661489e+2f;
-    u = u * x + -5.2577079e+1f;
-    u = u * x + 4.8359543f;
-    return u * x + 3.4288484e-2f;
-#endif
+    double u = -7.0287082190390287e+7;
+    u = u * x + 9.6393346352028194e+7;
+    u = u * x + -5.734540040993472e+7;
+    u = u * x + 1.9423130902481005e+7;
+    u = u * x + -4.1360185772523716e+6;
+    u = u * x + 5.7798684366021459e+5;
+    u = u * x + -5.3914765738125787e+4;
+    u = u * x + 3.3827381495697474e+3;
+    u = u * x + -1.4758049734050082e+2;
+    u = u * x + 6.34823684277896;
+    return u * x + 2.5853366952641552e-2;
+  } else if (x >= 0.25f && x < 1.1f)
+  {
+    double u = -1.0514013917303294;
+    u = u * x + 7.7742547018698687;
+    u = u * x + -2.5688463052927626e+1;
+    u = u * x + 5.009448068094152e+1;
+    u = u * x + -6.4160579394623318e+1;
+    u = u * x + 5.6890996491836047e+1;
+    u = u * x + -3.5956430472666212e+1;
+    u = u * x + 1.6565821666356617e+1;
+    u = u * x + -5.8508167212560416;
+    u = u * x + 2.2859969154731878;
+    return u * x + 9.6140522367339399e-2;
   }
   return babl_powf (x, 1.0f/1.8f);
 }
 
 static inline float _babl_trc_gamma_2_2_to_linear (const Babl *trc_, float x)
 {
-  if (x >= 0.01f && x <= 1.0f)
+  if (x >= 0.01f && x < 1.0f)
   {
-#if POLY_DEGREE==9
-    float u = 1.4519824e+1f;
-    u = u * x + -5.6919938e+1f;
-    u = u * x + 9.1404232e+1f;
-    u = u * x + -7.7951568e+1f;
-    u = u * x + 3.8593448e+1f;
-    u = u * x + -1.1709313e+1f;
-    u = u * x + 2.594042f;
-    u = u * x + 4.716017e-1f;
-    u = u * x + -1.478392e-3f;
-    return u * x + 4.987805e-6f;
-#elif POLY_DEGREE==10
-    float u = -3.6278814e+1f;
-    u = u * x + 1.5984863e+2f;
-    u = u * x + -2.9493194e+2f;
-    u = u * x + 2.9678744e+2f;
-    u = u * x + -1.7840175e+2f;
-    u = u * x + 6.6563304e+1f;
-    u = u * x + -1.5968574e+1f;
-    u = u * x + 2.9224961f;
-    u = u * x + 4.5996165e-1f;
-    u = u * x + -1.306086e-3f;
-    return u * x + 4.1278131e-6f;
-#endif
+    double u = -1.7565198334207539;
+    u = u * x + 9.4503605497836926;
+    u = u * x + -2.2016178903082791e+1;
+    u = u * x + 2.9177361786084179e+1;
+    u = u * x + -2.4368251609523336e+1;
+    u = u * x + 1.3522663223248737e+1;
+    u = u * x + -5.253344907664925;
+    u = u * x + 1.7182864905042889;
+    u = u * x + 5.2860458501353106e-1;
+    u = u * x + -3.0000031884069502e-3;
+    return u * x + 1.6952727496833812e-5;
   }
   return babl_powf (x, 2.2f);
 }
 
 static inline float _babl_trc_gamma_2_2_from_linear (const Babl *trc_, float x)
 {
-  if (x >= 0.01f && x <= 1.0f)
+  if (x >= 0.01f && x < 0.25f)
   {
-#if POLY_DEGREE==9
-    float u = 1.0084733e+3f;
-    u = u * x + -4.5716932e+3f;
-    u = u * x + 8.6843755e+3f;
-    u = u * x + -8.9814293e+3f;
-    u = u * x + 5.5060078e+3f;
-    u = u * x + -2.0477969e+3f;
-    u = u * x + 4.5804658e+2f;
-    u = u * x + -6.0913328e+1f;
-    u = u * x + 5.8668695f;
-    return u * x + 7.1335777e-2f;
-#elif POLY_DEGREE==10
-    float u = -2.9423332e+3f;
-    u = u * x + 1.4803473e+4f;
-    u = u * x + -3.1791125e+4f;
-    u = u * x + 3.805972e+4f;
-    u = u * x + -2.7850114e+4f;
-    u = u * x + 1.2865342e+4f;
-    u = u * x + -3.7543241e+3f;
-    u = u * x + 6.7921578e+2f;
-    u = u * x + -7.5167916e+1f;
-    u = u * x + 6.239892f;
-    return u * x + 6.8539291e-2f;
-#endif
+    double u = -1.1853049266795914e+8;
+    u = u * x + 1.6235355750617304e+8;
+    u = u * x + -9.6434183855508922e+7;
+    u = u * x + 3.2595749146174438e+7;
+    u = u * x + -6.9216734175519044e+6;
+    u = u * x + 9.6337373983643336e+5;
+    u = u * x + -8.9295299887376452e+4;
+    u = u * x + 5.5387559329470092e+3;
+    u = u * x + -2.3522564268245811e+2;
+    u = u * x + 8.8234901614165394;
+    return u * x + 5.3919966190648492e-2;
+  } else if (x >= 0.25f && x < 1.0f)
+  {
+    double u = -2.1065242890384543e-1;
+    u = u * x + 1.7554867367832886;
+    u = u * x + -6.6371047248064382;
+    u = u * x + 1.5049549954517457e+1;
+    u = u * x + -2.279671781745644e+1;
+    u = u * x + 2.4331499227325978e+1;
+    u = u * x + -1.8839523095731037e+1;
+    u = u * x + 1.0802279176589768e+1;
+    u = u * x + -4.7776729355620852;
+    u = u * x + 2.1410886948010769;
+    return u * x + 1.817672123838504e-1;
   }
   return babl_powf (x, 1.0/2.2);
 }
-
 
 static inline float _babl_trc_srgb_to_linear (const Babl *trc_, float value)
 {
@@ -495,18 +476,6 @@ static inline float _babl_trc_srgb_to_linear (const Babl *trc_, float value)
 static inline float _babl_trc_srgb_from_linear (const Babl *trc_, float value)
 {
   return babl_linear_to_gamma_2_2f (value);
-}
-
-static inline float _babl_trc_from_linear (const Babl *trc_, float value)
-{
-  BablTRC *trc = (void*)trc_;
-  return trc->fun_from_linear (trc_, value);
-}
-
-static inline float _babl_trc_to_linear (const Babl *trc_, float value)
-{
-  BablTRC *trc = (void*)trc_;
-  return trc->fun_to_linear (trc_, value);
 }
 
 
@@ -663,15 +632,17 @@ babl_trc_class_init (void)
   babl_trc_new ("linear", BABL_TRC_LINEAR, 1.0, 0, NULL);
 }
 
+#if 0
 float babl_trc_from_linear (const Babl *trc_, float value)
 {
-  return _babl_trc_from_linear (trc_, value);
+  return babl_trc_from_linear (trc_, value);
 }
 
 float babl_trc_to_linear (const Babl *trc_, float value)
 {
-  return _babl_trc_to_linear (trc_, value);
+  return babl_trc_to_linear (trc_, value);
 }
+#endif
 
 const Babl *babl_trc_lut_find (float *lut, int lut_size)
 {
