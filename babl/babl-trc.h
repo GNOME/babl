@@ -27,8 +27,11 @@ BABL_CLASS_DECLARE (trc);
 
 typedef enum {BABL_TRC_LINEAR,
               BABL_TRC_GAMMA,
+              BABL_TRC_GAMMA_1_8,
+              BABL_TRC_GAMMA_2_2,
               BABL_TRC_SRGB,
-              BABL_TRC_LUT} BablTRCType;
+              BABL_TRC_LUT}
+BablTRCType;
 
 typedef struct
 {
@@ -372,6 +375,26 @@ static inline float _babl_trc_gamma_from_linear (const Babl *trc_, float value)
 {
   BablTRC *trc = (void*)trc_;
   return babl_powf (value, trc->rgamma);
+}
+
+static inline float _babl_trc_gamma_2_2_to_linear (const Babl *trc_, float value)
+{
+  return babl_powf (value, 2.2);
+}
+
+static inline float _babl_trc_gamma_2_2_from_linear (const Babl *trc_, float value)
+{
+  return babl_powf (value, 1.0/2.2);
+}
+
+static inline float _babl_trc_gamma_1_8_to_linear (const Babl *trc_, float value)
+{
+  return babl_powf (value, 1.8);
+}
+
+static inline float _babl_trc_gamma_1_8_from_linear (const Babl *trc_, float value)
+{
+  return babl_powf (value, 1.0/1.8);
 }
 
 static inline float _babl_trc_srgb_to_linear (const Babl *trc_, float value)

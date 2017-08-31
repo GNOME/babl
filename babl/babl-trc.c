@@ -112,6 +112,14 @@ babl_trc_new (const char *name,
       trc_db[i].fun_to_linear = _babl_trc_gamma_to_linear;
       trc_db[i].fun_from_linear = _babl_trc_gamma_from_linear;
       break;
+    case BABL_TRC_GAMMA_2_2:
+      trc_db[i].fun_to_linear = _babl_trc_gamma_2_2_to_linear;
+      trc_db[i].fun_from_linear = _babl_trc_gamma_2_2_from_linear;
+      break;
+    case BABL_TRC_GAMMA_1_8:
+      trc_db[i].fun_to_linear = _babl_trc_gamma_1_8_to_linear;
+      trc_db[i].fun_from_linear = _babl_trc_gamma_1_8_from_linear;
+      break;
     case BABL_TRC_SRGB:
       trc_db[i].fun_to_linear = _babl_trc_srgb_to_linear;
       trc_db[i].fun_from_linear = _babl_trc_srgb_from_linear;
@@ -144,14 +152,19 @@ babl_trc_gamma (double gamma)
 {
   char name[32];
   int i;
-  if (fabs (gamma - 1.0) < 0.0001)
+  if (fabs (gamma - 1.0) < 0.01)
      return babl_trc_new ("linear", BABL_TRC_LINEAR, 1.0, 0, NULL);
+  if (fabs (gamma - 1.8) < 0.01)
+     return babl_trc_new ("1.8", BABL_TRC_GAMMA_1_8, 1.8, 0, NULL);
+  if (fabs (gamma - 2.2) < 0.01)
+     return babl_trc_new ("2.2", BABL_TRC_GAMMA_2_2, 2.2, 0, NULL);
+
   sprintf (name, "%.6f", gamma);
   for (i = 0; name[i]; i++)
     if (name[i] == ',') name[i] = '.';
   while (name[strlen(name)-1]=='0')
     name[strlen(name)-1]='\0';
-  return babl_trc_new (name,   BABL_TRC_GAMMA, gamma, 0, NULL);
+  return babl_trc_new (name, BABL_TRC_GAMMA, gamma, 0, NULL);
 }
 
 void
