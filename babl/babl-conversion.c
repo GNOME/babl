@@ -463,14 +463,8 @@ babl_conversion_error (BablConversion *conversion)
   Babl *fmt_source;
   Babl *fmt_destination;
 
-  const Babl *fmt_rgba_double = babl_format_new (babl_model ("RGBA"),
-                                                 babl_type ("double"),
-                                                 babl_component ("R"),
-                                                 babl_component ("G"),
-                                                 babl_component ("B"),
-                                                 babl_component ("A"),
-                                                 NULL);
-
+  const Babl *fmt_rgba_double = babl_format_with_space ("RGBA double",
+                                                 conversion->destination->format.space);
   double  error       = 0.0;
   long    ticks_start = 0;
   long    ticks_end   = 0;
