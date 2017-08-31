@@ -183,7 +183,7 @@ get_conversion_path (PathContext *pc,
       double path_cost  = 0.0;
       double ref_cost   = 0.0;
       double path_error = 1.0;
-#if 0
+#if 1
       int    i;
       for (i = 0; i < babl_list_size (pc->current_path); i++)
         {
@@ -294,7 +294,7 @@ show_item (Babl *babl,
 
   if (conv->destination->class_type == BABL_FORMAT)
   {
-    fprintf (stderr, "%s : %.9f\n", babl_get_name (babl), babl_conversion_error(conv));
+    fprintf (stderr, "%s : %.12f\n", babl_get_name (babl), babl_conversion_error(conv));
   }
 
   return 0;
@@ -322,11 +322,10 @@ alias_conversion (Babl *babl,
     if ((conv->source->format.space == (void*)babl_space ("sRGB")) &&
         (conv->destination->format.space == babl_space ("sRGB")))
   {
-    const Babl *foo;
     switch (conv->instance.class_type)
     {
       case BABL_CONVERSION_LINEAR:
-       foo= babl_conversion_new (
+       babl_conversion_new (
               babl_format_with_space (
                     (void*)conv->source->instance.name, (void*)space),
               babl_format_with_space (
@@ -336,7 +335,7 @@ alias_conversion (Babl *babl,
               NULL);
         break;
       case BABL_CONVERSION_PLANAR:
-       foo= babl_conversion_new (
+       babl_conversion_new (
               babl_format_with_space (
                     (void*)conv->source->instance.name, (void*)space),
               babl_format_with_space (
@@ -358,7 +357,6 @@ alias_conversion (Babl *babl,
       default:
         break;
     }
-    if(0)fprintf (stderr, "{%s}\n", babl_get_name (foo));
   }
   }
   else
@@ -456,9 +454,9 @@ universal_nonlinear_rgb_converter (const Babl *conversion,unsigned char *src_cha
   float (*from_linear_blue) (void *trc, float value);
 
   float * matrixf = conversion->conversion.data;
-  float  mat[9] = {matrixf[0], matrixf[1],matrixf[2],
-                   matrixf[3], matrixf[4],matrixf[5],
-                   matrixf[6], matrixf[7],matrixf[8]};
+  const float mat[9] = {matrixf[0], matrixf[1],matrixf[2],
+                        matrixf[3], matrixf[4],matrixf[5],
+                        matrixf[6], matrixf[7],matrixf[8]};
   int i;
   float *rgba_in = (void*)src_char;
   float *rgba_out = (void*)dst_char;
@@ -480,18 +478,16 @@ universal_nonlinear_rgb_converter (const Babl *conversion,unsigned char *src_cha
 
   for (i = 0; i < samples; i++)
   {
-    float rgb_tmp[3]={
-       to_linear_red(to_trc_red, rgba_in[0]),
-       to_linear_green(to_trc_green, rgba_in[1]),
-       to_linear_blue(to_trc_blue, rgba_in[2])
-    };
+    rgba_out[0]=to_linear_red(to_trc_red, rgba_in[0]);
+    rgba_out[1]=to_linear_green(to_trc_green, rgba_in[1]);
+    rgba_out[2]=to_linear_blue(to_trc_blue, rgba_in[2]);
+    rgba_out[3]=rgba_in[3];
 
-    babl_matrix_mul_vectorff (mat, rgb_tmp, rgba_out);
+    babl_matrix_mul_vectorff (mat, rgba_out, rgba_out);
 
     rgba_out[0] = from_linear_red(from_trc_red, rgba_out[0]);
     rgba_out[1] = from_linear_green(from_trc_green, rgba_out[1]);
     rgba_out[2] = from_linear_blue(from_trc_blue, rgba_out[2]);
-    rgba_out[3] = rgba_in[3];
     rgba_in  += 4;
     rgba_out += 4;
   }
@@ -499,93 +495,120 @@ universal_nonlinear_rgb_converter (const Babl *conversion,unsigned char *src_cha
   return samples;
 }
 
-#if 0
+static inline long
+universal_nonlinear_rgb_linear_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
+{
+  const Babl *source_space = babl_conversion_get_source_space (conversion);
+
+  void   *to_trc_red;
+  void   *to_trc_green;
+  void   *to_trc_blue;
+  float (*to_linear_red) (void *trc, float value);
+  float (*to_linear_green) (void *trc, float value);
+  float (*to_linear_blue) (void *trc, float value);
+
+  float * matrixf = conversion->conversion.data;
+  const float mat[9] = {matrixf[0], matrixf[1],matrixf[2],
+                        matrixf[3], matrixf[4],matrixf[5],
+                        matrixf[6], matrixf[7],matrixf[8]};
+  int i;
+  float *rgba_in = (void*)src_char;
+  float *rgba_out = (void*)dst_char;
+
+  to_linear_red   = (void*)source_space->space.trc[0]->trc.fun_to_linear;
+  to_trc_red      = (void*)source_space->space.trc[0];
+  to_linear_green = (void*)source_space->space.trc[1]->trc.fun_to_linear;
+  to_trc_green    = (void*)source_space->space.trc[1];
+  to_linear_blue  = (void*)source_space->space.trc[2]->trc.fun_to_linear;
+  to_trc_blue     = (void*)source_space->space.trc[2];
+
+  for (i = 0; i < samples; i++)
+  {
+    rgba_out[0]=to_linear_red(to_trc_red, rgba_in[0]);
+    rgba_out[1]=to_linear_green(to_trc_green, rgba_in[1]);
+    rgba_out[2]=to_linear_blue(to_trc_blue, rgba_in[2]);
+    rgba_out[3]=rgba_in[3];
+
+    babl_matrix_mul_vectorff (mat, rgba_out, rgba_out);
+
+    rgba_in  += 4;
+    rgba_out += 4;
+  }
+
+  return samples;
+}
+
+
 static inline long
 universal_nonlinear_rgba_u8_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   const Babl *destination_space = conversion->conversion.destination->format.space;
 
   float * matrixf = conversion->conversion.data;
-  float  mat[9] = {matrixf[0], matrixf[1],matrixf[2],
-                   matrixf[3], matrixf[4],matrixf[5],
-                   matrixf[6], matrixf[7],matrixf[8]};
   float * in_trc_lut = matrixf + 9;
   int i;
   uint8_t *rgba_in_u8 = (void*)src_char;
   uint8_t *rgba_out_u8 = (void*)dst_char;
 
+  float *rgb = alloca (sizeof(float) * 3 * samples);
+
+  for (i = 0; i < samples; i++)
+  {
+    rgb[i*3+0]=in_trc_lut[rgba_in_u8[i*4+0]];
+    rgb[i*3+1]=in_trc_lut[rgba_in_u8[i*4+1]];
+    rgb[i*3+2]=in_trc_lut[rgba_in_u8[i*4+2]];
+  }
+
+  for (i = 0; i < samples; i++)
+  {
+    babl_matrix_mul_vectorff (matrixf, &rgb[i*3], &rgb[i*3]);
+  }
+
+  {
   const Babl *from_trc_red   = (void*)destination_space->space.trc[0];
   const Babl *from_trc_green = (void*)destination_space->space.trc[1];
   const Babl *from_trc_blue  = (void*)destination_space->space.trc[2];
   float (*from_linear_red)   (const Babl *trc, float value) = from_trc_red->trc.fun_from_linear;
   float (*from_linear_green) (const Babl *trc, float value) = from_trc_green->trc.fun_from_linear;
   float (*from_linear_blue)  (const Babl *trc, float value) = from_trc_blue->trc.fun_from_linear;
-
-
   for (i = 0; i < samples; i++)
   {
-    float rgb[3]={in_trc_lut[rgba_in_u8[0]],
-                  in_trc_lut[rgba_in_u8[1]],
-                  in_trc_lut[rgba_in_u8[2]]};
-
-    babl_matrix_mul_vectorff (mat, rgb, rgb);
-
-    rgba_out_u8[0] = from_linear_red (from_trc_red, rgb[0]) * 255.5f;
-    rgba_out_u8[1] = from_linear_green (from_trc_green, rgb[1]) * 255.5f;
-    rgba_out_u8[2] = from_linear_blue (from_trc_blue , rgb[2]) * 255.5f;
+    rgba_out_u8[0] = from_linear_red (from_trc_red,     rgb[i*3+0]) * 255.5f;
+    rgba_out_u8[1] = from_linear_green (from_trc_green, rgb[i*3+1]) * 255.5f;
+    rgba_out_u8[2] = from_linear_blue (from_trc_blue ,  rgb[i*3+2]) * 255.5f;
     rgba_out_u8[3] = rgba_in_u8[3];
     rgba_in_u8  += 4;
     rgba_out_u8 += 4;
   }
+  }
 
   return samples;
 }
-#else
+
 
 static inline long
-universal_nonlinear_rgba_u8_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
+universal_nonlinear_rgba_u8_float_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
-  const Babl *destination_space = conversion->conversion.destination->format.space;
-
   float * matrixf = conversion->conversion.data;
-  float  mat[9] = {matrixf[0], matrixf[1],matrixf[2],
-                   matrixf[3], matrixf[4],matrixf[5],
-                   matrixf[6], matrixf[7],matrixf[8]};
   float * in_trc_lut = matrixf + 9;
   int i;
   uint8_t *rgba_in_u8 = (void*)src_char;
-  uint8_t *rgba_out_u8 = (void*)dst_char;
-
-  const Babl *from_trc_red   = (void*)destination_space->space.trc[0];
-  const Babl *from_trc_green = (void*)destination_space->space.trc[1];
-  const Babl *from_trc_blue  = (void*)destination_space->space.trc[2];
-  float (*from_linear_red)   (const Babl *trc, float value) = from_trc_red->trc.fun_from_linear;
-  float (*from_linear_green) (const Babl *trc, float value) = from_trc_green->trc.fun_from_linear;
-  float (*from_linear_blue)  (const Babl *trc, float value) = from_trc_blue->trc.fun_from_linear;
-
+  float   *rgba_out   = (void*)dst_char;
 
   for (i = 0; i < samples; i++)
   {
-    float rgb[3]={in_trc_lut[rgba_in_u8[0]],
-                  in_trc_lut[rgba_in_u8[1]],
-                  in_trc_lut[rgba_in_u8[2]]};
-
-    babl_matrix_mul_vectorff (mat, rgb, rgb);
-
-    rgba_out_u8[0] = from_linear_red (from_trc_red, rgb[0]) * 255.5f;
-    rgba_out_u8[1] = from_linear_green (from_trc_green, rgb[1]) * 255.5f;
-    rgba_out_u8[2] = from_linear_blue (from_trc_blue , rgb[2]) * 255.5f;
-    rgba_out_u8[3] = rgba_in_u8[3];
-    rgba_in_u8  += 4;
-    rgba_out_u8 += 4;
+    rgba_out[i*3+0]=in_trc_lut[rgba_in_u8[i*4+0]];
+    rgba_out[i*3+1]=in_trc_lut[rgba_in_u8[i*4+1]];
+    rgba_out[i*3+2]=in_trc_lut[rgba_in_u8[i*4+2]];
+    rgba_out[i*3+2]=rgba_in_u8[i*4+3] / 255.0;
+    babl_matrix_mul_vectorff (matrixf, &rgba_out[i*4], &rgba_out[i*4]);
   }
 
   return samples;
 }
-#endif
 
 static inline long
-universal_rgb_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
+universal_rgba_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   float *matrixf = conversion->conversion.data;
   float  mat[9] = {matrixf[0], matrixf[1],matrixf[2],
@@ -606,22 +629,50 @@ universal_rgb_converter (const Babl *conversion,unsigned char *src_char, unsigne
   return samples;
 }
 
+
+static inline long
+universal_rgb_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
+{
+  float *matrixf = conversion->conversion.data;
+  float  mat[9] = {matrixf[0], matrixf[1],matrixf[2],
+                   matrixf[3], matrixf[4],matrixf[5],
+                   matrixf[6], matrixf[7],matrixf[8]};
+  int i;
+  float *rgb_in = (void*)src_char;
+  float *rgb_out = (void*)dst_char;
+
+  for (i = 0; i < samples; i++)
+  {
+    babl_matrix_mul_vectorff (mat, rgb_in, rgb_out);
+    rgb_in  += 3;
+    rgb_out += 3;
+  }
+
+  return samples;
+}
+
 static int
 add_rgb_adapter (Babl *babl,
                  void *space)
 {
   if (babl != space)
   {
-#if 1
     prep_conversion(babl_conversion_new(babl_format_with_space("RGBA float", space),
                         babl_format_with_space("RGBA float", babl),
-                        "linear", universal_rgb_converter,
+                        "linear", universal_rgba_converter,
                         NULL));
     prep_conversion(babl_conversion_new(babl_format_with_space("RGBA float", babl),
                         babl_format_with_space("RGBA float", space),
+                        "linear", universal_rgba_converter,
+                        NULL));
+    prep_conversion(babl_conversion_new(babl_format_with_space("RGB float", space),
+                        babl_format_with_space("RGB float", babl),
                         "linear", universal_rgb_converter,
                         NULL));
-#endif
+    prep_conversion(babl_conversion_new(babl_format_with_space("RGB float", babl),
+                        babl_format_with_space("RGB float", space),
+                        "linear", universal_rgb_converter,
+                        NULL));
     prep_conversion(babl_conversion_new(babl_format_with_space("R'G'B'A float", space),
                         babl_format_with_space("R'G'B'A float", babl),
                         "linear", universal_nonlinear_rgb_converter,
@@ -630,6 +681,14 @@ add_rgb_adapter (Babl *babl,
                         babl_format_with_space("R'G'B'A float", space),
                         "linear", universal_nonlinear_rgb_converter,
                         NULL));
+    prep_conversion(babl_conversion_new(babl_format_with_space("R'G'B'A float", space),
+                        babl_format_with_space("RGBA float", babl),
+                        "linear", universal_nonlinear_rgb_linear_converter,
+                        NULL));
+    prep_conversion(babl_conversion_new(babl_format_with_space("R'G'B'A float", babl),
+                        babl_format_with_space("RGBA float", space),
+                        "linear", universal_nonlinear_rgb_linear_converter,
+                        NULL));
     prep_conversion(babl_conversion_new(babl_format_with_space("R'G'B'A u8", space),
                         babl_format_with_space("R'G'B'A u8", babl),
                         "linear", universal_nonlinear_rgba_u8_converter,
@@ -637,6 +696,14 @@ add_rgb_adapter (Babl *babl,
     prep_conversion(babl_conversion_new(babl_format_with_space("R'G'B'A u8", babl),
                         babl_format_with_space("R'G'B'A u8", space),
                         "linear", universal_nonlinear_rgba_u8_converter,
+                        NULL));
+    prep_conversion(babl_conversion_new(babl_format_with_space("R'G'B'A u8", space),
+                        babl_format_with_space("RGBA float", babl),
+                        "linear", universal_nonlinear_rgba_u8_float_converter,
+                        NULL));
+    prep_conversion(babl_conversion_new(babl_format_with_space("R'G'B'A u8", babl),
+                        babl_format_with_space("RGBA float", space),
+                        "linear", universal_nonlinear_rgba_u8_float_converter,
                         NULL));
   }
   return 0;
@@ -698,11 +765,10 @@ babl_fish_path (const Babl *source,
 
     if (!done)
     {
-      if(1)babl_conversion_class_for_each (show_item, (void*)source->format.space);
+      if(0)babl_conversion_class_for_each (show_item, (void*)source->format.space);
       //babl_format_class_for_each (show_fmt, NULL);
       //babl_model_class_for_each (show_fmt, NULL);
     }
-
 
   }
 
