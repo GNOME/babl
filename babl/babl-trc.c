@@ -50,6 +50,8 @@ babl_trc_new (const char *name,
   trc.instance.id         = 0;
   trc.type = type;
   trc.gamma = gamma;
+  if (gamma > 0.0001)
+    trc.rgamma = 1.0 / gamma;
 
   if (n_lut )
   {
