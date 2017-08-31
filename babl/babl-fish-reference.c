@@ -496,15 +496,13 @@ babl_fish_reference_process (const Babl *babl,
       ((babl->fish.destination)->format.space)))
   {
     double matrix[9];
-    int i;
     double *rgba = rgba_double_buf;
     babl_matrix_mul_matrix (
       (babl->fish.destination)->format.space->space.XYZtoRGB,
       (babl->fish.source)->format.space->space.RGBtoXYZ,
       matrix);
 
-    for (i = 0; i < n; i++)
-      babl_matrix_mul_vector (matrix, &rgba[i * 4], &rgba[i * 4]);
+    babl_matrix_mul_vector_buf4 (matrix, rgba, rgba, n);
   }
 
   {
