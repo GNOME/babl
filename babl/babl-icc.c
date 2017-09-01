@@ -305,6 +305,38 @@ static const Babl *babl_trc_from_icc (ICC  *state, int offset,
   {
     int count = icc_read (u32, offset + 8);
     int i;
+    if (!strcmp (state->data + offset, "para"))
+    {
+         int function_type = icc_read (u16, offset + 8);
+         float g;
+         switch (function_type)
+         {
+            case 0:
+              g = icc_read (s15f16, offset + 12 + 2 * 0);
+              return babl_trc_gamma (g);
+              break;
+
+            case 3:
+#if 0
+         float a,b,c,d,e,f;
+              g = icc_read (s15f16, offset + 12 + 2 * 0);
+              a = icc_read (s15f16, offset + 12 + 2 * 1);
+              b = icc_read (s15f16, offset + 12 + 2 * 2);
+              c = icc_read (s15f16, offset + 12 + 2 * 3);
+              d = icc_read (s15f16, offset + 12 + 2 * 4);
+              e = icc_read (s15f16, offset + 12 + 2 * 5);
+              f = icc_read (s15f16, offset + 12 + 2 * 6);
+#endif
+              return babl_trc ("sRGB"); // XXX: not true... and I suspect the CIE L* curve might be expressed as this,
+                                        // formula as well, depending on arguments.
+              break;
+            default:
+              fprintf (stdout, "unhandled parametric TRC type %i\n", function_type);
+              return babl_trc_gamma (2.2);
+            break;
+         }
+    }
+    else
     {
       if (count == 0)
       {
@@ -401,11 +433,11 @@ switch (trc->type)
     }
     break;
   default:
-    icc_allocate_tag (state, "rTRC", 14);
+    icc_allocate_tag (state, name, 14);
     icc_write (sign, state->o, "curv");
     icc_write (u32, state->o + 4, 0);
     icc_write (u32, state->o + 8, 1);
-    icc_write (u16, state->o + 12, 0);
+    icc_write (u8f8, state->o + 12, trc->gamma);
     break;
 }
 }
@@ -423,10 +455,10 @@ const char *babl_space_to_icc (const Babl *babl, int *ret_length)
 
   symmetry_test (state);
 
-  icc_write (sign, 4, "babl");     // ICC verison
-  icc_write (u8, 8, 2);     // ICC verison
-  icc_write (u8, 9, 0x20);  // 2.2 for now..
-  icc_write (u32,64, 0);    // rendering intent
+  icc_write (sign, 4, "babl");  // ICC verison
+  icc_write (u8, 8, 2);         // ICC verison
+  icc_write (u8, 9, 0x20);      // 2.2 for now..
+  icc_write (u32,64, 0);        // rendering intent
 
   icc_write (s15f16,68, 0.96421); // Illuminant
   icc_write (s15f16,72, 1.0);
@@ -438,12 +470,12 @@ const char *babl_space_to_icc (const Babl *babl, int *ret_length)
   icc_write (sign, 16, "RGB ");
   icc_write (sign, 20, "XYZ ");
 
-  icc_write (u16, 24, 2222); // babl profiles
+  icc_write (u16, 24, 2222);  // babl profiles
   icc_write (u16, 26, 11);    // should
-  icc_write (u16, 28, 11);   // use a fixed
+  icc_write (u16, 28, 11);    // use a fixed
   icc_write (u16, 30,  3);    // date
-  icc_write (u16, 32, 44);   // that gets updated
-  icc_write (u16, 34, 55);   // when the generator
+  icc_write (u16, 32, 44);    // that gets updated
+  icc_write (u16, 34, 55);    // when the generator changes
 
   icc_write (sign, 36, "acsp"); // changes
 
@@ -538,23 +570,27 @@ babl_space_from_icc (const char *icc_data,
                      int         icc_length,
                      char      **error)
 {
-  ICC *state = icc_state_new ((char*)icc_data, icc_length, 0);
-
-  int  profile_size     = icc_read (u32, 0);
-  int  icc_ver_major    = icc_read (u8, 8);
+  ICC  *state = icc_state_new ((char*)icc_data, icc_length, 0);
+  int   profile_size    = icc_read (u32, 0);
+  //int   icc_ver_major   = icc_read (u8, 8);
   const Babl *trc_red   = NULL;
   const Babl *trc_green = NULL;
   const Babl *trc_blue  = NULL;
+  char *descr     = NULL;
+  char *copyright = NULL;
+
   sign_t profile_class, color_space;
 
   if (profile_size != icc_length)
   {
     *error = "icc profile length inconsistency";
   }
+#if 0
   else if (icc_ver_major > 2)
   {
     *error = "only ICC v2 profiles supported";
   }
+#endif
   else
   {
   profile_class = icc_read (sign, 12);
@@ -595,10 +631,31 @@ babl_space_from_icc (const char *icc_data,
     return NULL;
   }
 
+
+  {
+     int offset, element_size;
+     icc_tag (state, "desc", &offset, &element_size);
+     if (!strcmp (state->data + offset, "mluc"))
+     {
+       descr = babl_strdup ("[babl-icc doesnt decode unicode]");
+     }
+     else
+     if (!strcmp (state->data + offset, "desc"))
+     {
+       descr = babl_strdup (state->data + offset + 12);
+     }
+  }
+
+  {
+     int offset, element_size;
+     icc_tag (state, "cprt", &offset, &element_size);
+     copyright = babl_strdup (state->data + offset + 8);
+  }
+
   if (icc_tag (state, "rXYZ", NULL, NULL) &&
-           icc_tag (state, "gXYZ", NULL, NULL) &&
-           icc_tag (state, "bXYZ", NULL, NULL) &&
-           icc_tag (state, "wtpt", NULL, NULL))
+      icc_tag (state, "gXYZ", NULL, NULL) &&
+      icc_tag (state, "bXYZ", NULL, NULL) &&
+      icc_tag (state, "wtpt", NULL, NULL))
   {
      int offset, element_size;
      double rx, gx, bx;
@@ -623,15 +680,20 @@ babl_space_from_icc (const char *icc_data,
      wX = icc_read (s15f16, offset + 8);
      wY = icc_read (s15f16, offset + 8 + 4);
      wZ = icc_read (s15f16, offset + 8 + 4 * 2);
-    
+
      babl_free (state);
 
-     return babl_space_from_rgbxyz_matrix (NULL,
+     {
+       Babl *ret = (void*)babl_space_from_rgbxyz_matrix (NULL,
                 wX, wY, wZ,
                 rx, gx, bx,
                 ry, gy, by,
                 rz, gz, bz,
                 trc_red, trc_green, trc_blue);
+       ret->space.description = descr;
+       ret->space.copyright = copyright;
+       return ret;
+     }
   }
   else if (icc_tag (state, "chrm", NULL, NULL) &&
            icc_tag (state, "wtpt", NULL, NULL))
@@ -669,13 +731,18 @@ babl_space_from_icc (const char *icc_data,
        double wZ = icc_read (s15f16, offset + 8 + 4 * 2);
        babl_free (state);
 
-       return babl_space_from_chromaticities (NULL,
+       {
+         Babl *ret = (void*) babl_space_from_chromaticities (NULL,
                        wX / (wX + wY + wZ),
                        wY / (wX + wY + wZ),
                        red_x, red_y,
                        green_x, green_y,
                        blue_x, blue_y,
                        trc_red, trc_green, trc_blue);
+         ret->space.description = descr;
+         ret->space.copyright = copyright;
+         return ret;
+       }
 
      }
   }
@@ -689,22 +756,22 @@ static void symmetry_test (ICC *state)
 {
   icc_write (s8, 8,-2);
   assert (icc_read (s8, 8) == -2);
-  icc_write (s8, 8, 3);     // ICC verison
+  icc_write (s8, 8, 3);
   assert (icc_read (s8, 8) == 3);
 
-  icc_write (u8, 8, 2);     // ICC verison
+  icc_write (u8, 8, 2);
   assert (icc_read (u8, 8) == 2);
 
-  icc_write (u16, 8, 3);     // ICC verison
+  icc_write (u16, 8, 3);
   assert (icc_read (u16, 8) == 3);
 
-  icc_write (s16, 8, -3);     // ICC verison
+  icc_write (s16, 8, -3);
   assert (icc_read (s16, 8) == -3);
 
-  icc_write (s16, 8, 9);     // ICC verison
+  icc_write (s16, 8, 9);
   assert (icc_read (s16, 8) == 9);
 
-  icc_write (u32, 8, 4);     // ICC verison
+  icc_write (u32, 8, 4);
   assert (icc_read (u32, 8) == 4);
 }
 

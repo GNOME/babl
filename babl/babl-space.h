@@ -56,6 +56,13 @@ typedef struct
   /* and before converting a span, all that needs to be
      rigged is merging matrices */
 
+  /* we should here also add more things read from ICC profile,
+   * making it possible to round-trip data. Unless it is sRGB, when
+   * standard should win.
+   */
+
+   char  *description;  /* meta data possibly read from ICC */
+   char  *copyright;
 } BablSpace;
 
 
