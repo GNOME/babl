@@ -42,10 +42,41 @@ typedef struct
   float            rgamma;
   float          (*fun_to_linear)(const Babl *trc, float val);
   float          (*fun_from_linear)(const Babl *trc, float val);
+
+  void           (*fun_to_linear_buf)(const Babl *trc,
+                                      const float *in,
+                                      float *out,
+                                      int in_gap,
+                                      int out_gap,
+                                      int count);
+  void           (*fun_from_linear_buf)(const Babl *trc,
+                                      const float *in,
+                                      float *out,
+                                      int in_gap,
+                                      int out_gap,
+                                      int count);
   float           *lut;
   float           *inv_lut;
   char             name[128];
 } BablTRC;
+
+static inline void babl_trc_from_linear_buf (const Babl *trc_,
+                                             const float *in, float *out,
+                                             int in_gap, int out_gap,
+                                             int count)
+{
+  BablTRC *trc = (void*)trc_;
+  trc->fun_from_linear_buf (trc_, in, out, in_gap, out_gap, count);
+}
+
+static inline void babl_trc_to_linear_buf (const Babl *trc_,
+                                           const float *in, float *out,
+                                           int in_gap, int out_gap,
+                                           int count)
+{
+  BablTRC *trc = (void*)trc_;
+  trc->fun_to_linear_buf (trc_, in, out, in_gap, out_gap, count);
+}
 
 static inline float babl_trc_from_linear (const Babl *trc_, float value)
 {
