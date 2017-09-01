@@ -88,6 +88,9 @@ AM_CPPFLAGS =				\
 	-I$(top_srcdir)/babl/base
 
 lib_LTLIBRARIES= libbabl-@BABL_API_VERSION@.la
+
+libbabl_@BABL_API_VERSION@_la_CFLAGS= $(SSE2_EXTRA_CFLAGS)
+
 libbabl_@BABL_API_VERSION@_la_SOURCES= $(h_sources) $(c_sources)
 libbabl_@BABL_API_VERSION@_la_LIBADD=	\
 	base/libbase.la			\
