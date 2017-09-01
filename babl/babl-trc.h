@@ -48,12 +48,14 @@ typedef struct
                                       float *out,
                                       int in_gap,
                                       int out_gap,
+                                      int components,
                                       int count);
   void           (*fun_from_linear_buf)(const Babl *trc,
                                       const float *in,
                                       float *out,
                                       int in_gap,
                                       int out_gap,
+                                      int components,
                                       int count);
   float           *lut;
   float           *inv_lut;
@@ -63,19 +65,21 @@ typedef struct
 static inline void babl_trc_from_linear_buf (const Babl *trc_,
                                              const float *in, float *out,
                                              int in_gap, int out_gap,
+                                             int components,
                                              int count)
 {
   BablTRC *trc = (void*)trc_;
-  trc->fun_from_linear_buf (trc_, in, out, in_gap, out_gap, count);
+  trc->fun_from_linear_buf (trc_, in, out, in_gap, out_gap, components, count);
 }
 
 static inline void babl_trc_to_linear_buf (const Babl *trc_,
                                            const float *in, float *out,
                                            int in_gap, int out_gap,
+                                           int components,
                                            int count)
 {
   BablTRC *trc = (void*)trc_;
-  trc->fun_to_linear_buf (trc_, in, out, in_gap, out_gap, count);
+  trc->fun_to_linear_buf (trc_, in, out, in_gap, out_gap, components, count);
 }
 
 static inline float babl_trc_from_linear (const Babl *trc_, float value)

@@ -350,23 +350,24 @@ static inline float _babl_trc_gamma_to_linear (const Babl *trc_, float value)
 }
 
 
-static inline void _babl_trc_gamma_to_linear_buf (const Babl *trc_, const float *in, float *out, int in_gap, int out_gap, int count)
+static inline void _babl_trc_gamma_to_linear_buf (const Babl *trc_, const float *in, float *out, int in_gap, int out_gap, int components, int count)
 {
   BablTRC *trc = (void*)trc_;
   float gamma = trc->gamma;
-  int i;
+  int i, c;
   for (i = 0; i < count; i ++)
-    out[out_gap * i] = babl_powf (in[in_gap *i], gamma);
+    for (c = 0; c < components; c ++)
+      out[out_gap * i + c] = babl_powf (in[in_gap *i + c], gamma);
 }
 
-
-static inline void _babl_trc_gamma_from_linear_buf (const Babl *trc_, const float *in, float *out, int in_gap, int out_gap, int count)
+static inline void _babl_trc_gamma_from_linear_buf (const Babl *trc_, const float *in, float *out, int in_gap, int out_gap, int components, int count)
 {
   BablTRC *trc = (void*)trc_;
   float gamma = trc->rgamma;
-  int i;
+  int i, c;
   for (i = 0; i < count; i ++)
-    out[out_gap * i] = babl_powf (in[in_gap *i], gamma);
+    for (c = 0; c < components; c ++)
+      out[out_gap * i + c] = babl_powf (in[in_gap *i + c], gamma);
 }
 
 static inline float _babl_trc_gamma_from_linear (const Babl *trc_, float value)
@@ -498,90 +499,106 @@ static inline float _babl_trc_srgb_from_linear (const Babl *trc_, float value)
   return babl_linear_to_gamma_2_2f (value);
 }
 
-static inline void _babl_trc_srgb_to_linear_buf (const Babl *trc_, const float *in, float *out, int in_gap, int out_gap, int count)
+static inline void _babl_trc_srgb_to_linear_buf (const Babl *trc_, const float *in, float *out, int in_gap, int out_gap, int components, int count)
 {
-  int i;
+  int i, c;
   for (i = 0; i < count; i ++)
-    out[out_gap * i] = babl_gamma_2_2_to_linearf (in[in_gap * i]);
+    for (c = 0; c < components; c++)
+      out[out_gap * i + c] = babl_gamma_2_2_to_linearf (in[in_gap * i + c]);
 }
 
 static inline void _babl_trc_srgb_from_linear_buf (const Babl *trc_,
                                                    const float *in, float *out,
                                                    int in_gap, int out_gap,
+                                                   int components,
                                                    int count)
 {
-  int i;
+  int i, c;
   for (i = 0; i < count; i ++)
-    out[out_gap * i] = babl_linear_to_gamma_2_2f (in[in_gap * i]);
+    for (c = 0; c < components; c++)
+      out[out_gap * i + c] = babl_linear_to_gamma_2_2f (in[in_gap * i + c]);
 }
 
-static inline void _babl_trc_to_linear_buf_generic (const Babl *trc_, const float *in, float *out, int in_gap, int out_gap, int count)
+static inline void _babl_trc_to_linear_buf_generic (const Babl *trc_, const float *in, float *out, int in_gap, int out_gap, int components, int count)
 {
-  int i;
+  int i, c;
   BablTRC *trc = (void*)trc_;
   for (i = 0; i < count; i ++)
-    out[out_gap * i] = trc->fun_to_linear (trc_, in[in_gap * i]);
+    for (c = 0; c < components; c ++)
+      out[out_gap * i + c] = trc->fun_to_linear (trc_, in[in_gap * i + c]);
 }
 
 static inline void _babl_trc_from_linear_buf_generic (const Babl *trc_,
                                                       const float *in, float *out,
                                                       int in_gap, int out_gap,
+                                                      int components,
                                                       int count)
 {
-  int i;
+  int i, c;
   BablTRC *trc = (void*)trc_;
   for (i = 0; i < count; i ++)
-    out[out_gap * i] = trc->fun_from_linear (trc_, in[in_gap * i]);
+    for (c = 0; c < components; c ++)
+      out[out_gap * i + c] = trc->fun_from_linear (trc_, in[in_gap * i + c]);
 }
 
 static inline void _babl_trc_gamma_1_8_from_linear_buf (const Babl *trc_,
                                                         const float *in, float *out,
                                                         int in_gap, int out_gap,
+                                                        int components,
                                                         int count)
 {
-  int i;
+  int i, c;
   for (i = 0; i < count; i ++)
-    out[i * out_gap] = _babl_trc_gamma_1_8_from_linear (trc_, in[i * in_gap]);
+    for (c = 0; c < components; c ++)
+      out[i * out_gap + c] = _babl_trc_gamma_1_8_from_linear (trc_, in[i * in_gap + c]);
 }
 
 static inline void _babl_trc_gamma_2_2_from_linear_buf (const Babl *trc_,
                                                         const float *in, float *out,
                                                         int in_gap, int out_gap,
+                                                        int components,
                                                         int count)
 {
-  int i;
+  int i, c;
   for (i = 0; i < count; i ++)
-    out[i * out_gap] = _babl_trc_gamma_2_2_from_linear (trc_, in[i * in_gap]);
+    for (c = 0; c < components; c ++)
+      out[i * out_gap + c] = _babl_trc_gamma_2_2_from_linear (trc_, in[i * in_gap + c]);
 }
 
 static inline void _babl_trc_linear_buf (const Babl *trc_,
                                          const float *in, float *out,
                                          int in_gap, int out_gap,
+                                         int components,
                                          int count)
 {
-  int i;
+  int i, c;
   for (i = 0; i < count; i ++)
-    out[i * out_gap] = in[i * in_gap];
+    for (c = 0; c < components; c ++)
+      out[i * out_gap + c] = in[i * in_gap + c];
 }
 
 static inline void _babl_trc_gamma_1_8_to_linear_buf (const Babl *trc_,
                                                       const float *in, float *out,
                                                       int in_gap, int out_gap,
+                                                      int components,
                                                       int count)
 {
-  int i;
+  int i, c;
   for (i = 0; i < count; i ++)
-    out[i * out_gap] = _babl_trc_gamma_1_8_to_linear (trc_, in[i * in_gap]);
+    for (c = 0; c < components; c ++)
+      out[i * out_gap + c] = _babl_trc_gamma_1_8_to_linear (trc_, in[i * in_gap + c]);
 }
 
 static inline void _babl_trc_gamma_2_2_to_linear_buf (const Babl *trc_,
                                                         const float *in, float *out,
                                                         int in_gap, int out_gap,
+                                                        int components,
                                                         int count)
 {
-  int i;
+  int i, c;
   for (i = 0; i < count; i ++)
-    out[i * out_gap] = _babl_trc_gamma_2_2_to_linear (trc_, in[i * in_gap]);
+    for (c = 0; c < components; c ++)
+      out[i * out_gap + c] = _babl_trc_gamma_2_2_to_linear (trc_, in[i * in_gap + c]);
 }
 
 

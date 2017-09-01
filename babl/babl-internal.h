@@ -361,5 +361,6 @@ int babl_list_destroy (void *data);
 
 const char *
 babl_conversion_create_name (Babl *source, Babl *destination, int is_reference);
+void _babl_space_add_universal_rgb (const Babl *space);
 
 #endif
