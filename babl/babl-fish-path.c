@@ -607,14 +607,11 @@ static inline void babl_matrix_mul_vectorff_buf4_sse2 (const float *mat,
   int i;
   for (i = 0; i < samples; i ++)
   {
-    const __v4sf a = _mm_load1_ps(&v_in[0]);
-    const __v4sf b = _mm_load1_ps(&v_in[1]);
-    const __v4sf c = _mm_load1_ps(&v_in[2]);
-    __v4sf out; // = m___0 * a + m___1 * b + m___2 * c;
-    out = _mm_mul_ps (m___0, a);
-    out = _mm_add_ps (out, _mm_mul_ps (m___1, b));
-    out = _mm_add_ps (out, _mm_mul_ps (m___2, c));
-    _mm_store_ps (v_out, out);
+    __v4sf a, b, c = _mm_load_ps(&v_in[0]);
+    a = (__v4sf) _mm_shuffle_epi32((__m128i)c, _MM_SHUFFLE(0,0,0,0));
+    b = (__v4sf) _mm_shuffle_epi32((__m128i)c, _MM_SHUFFLE(1,1,1,1));
+    c = (__v4sf) _mm_shuffle_epi32((__m128i)c, _MM_SHUFFLE(2,2,2,2));
+    _mm_store_ps (v_out, m___0 * a + m___1 * b + m___2 * c);
     v_out[3] = v_in[3];
     v_out += 4;
     v_in  += 4;
