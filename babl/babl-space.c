@@ -500,7 +500,11 @@ universal_nonlinear_rgba_u8_converter (const Babl *conversion,unsigned char *src
   uint8_t *rgba_in_u8 = (void*)src_char;
   uint8_t *rgba_out_u8 = (void*)dst_char;
 
+#ifndef  _WIN32
   float *rgb = aligned_alloc (16, sizeof(float) * 4 * samples);
+#else
+  float *rgb = _aligned_malloc (sizeof(float) * 4 * samples, 16);
+#endif
 
   for (i = 0; i < samples; i++)
   {
@@ -642,7 +646,11 @@ universal_nonlinear_rgba_u8_converter_sse2 (const Babl *conversion,unsigned char
   uint8_t *rgba_in_u8 = (void*)src_char;
   uint8_t *rgba_out_u8 = (void*)dst_char;
 
+#ifndef  _WIN32
   float *rgb = aligned_alloc (16, sizeof(float) * 4 * samples);
+#else
+  float *rgb = _aligned_malloc (sizeof(float) * 4 * samples, 16);
+#endif
 
   for (i = 0; i < samples; i++)
   {
