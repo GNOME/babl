@@ -55,6 +55,14 @@ main (int    argc,
     return -1;
   }
 
+  {
+    BablSpace *space = (void*)babl;
+    if (space->description)
+      fprintf (stderr, "description: %s\n", space->description);
+    if (space->copyright)
+      fprintf (stderr, "copyright: %s\n", space->copyright);
+  }
+
   icc_data = (char *)babl_space_to_icc (babl, &genlen);
   if (icc_data)
   {

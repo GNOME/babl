@@ -597,6 +597,48 @@ const char *babl_space_to_icc (const Babl *babl, int *ret_length)
   return icc;
 }
 
+static char *icc_decode_mluc (ICC *state, int offset, int element_length, char *lang, char *country)
+{
+  int n_records   = icc_read (u32, offset + 8);
+  int record_size = icc_read (u32, offset + 12);
+  int i;
+  int o = 16;
+  for (i = 0; i < n_records; i++)
+  {
+    char icountry[3]="  ";
+    char ilang[3]="  ";
+
+    ilang[0]    = icc_read(u8, offset + o + 0);
+    ilang[1]    = icc_read(u8, offset + o + 1);
+    icountry[0] = icc_read(u8, offset + o + 2);
+    icountry[1] = icc_read(u8, offset + o + 3);
+
+    if (((!lang || !strcmp (lang, ilang)) &&
+         (!country || !strcmp (country, icountry))) ||
+         (i == n_records - 1))
+    {
+      int slength = icc_read(u32, offset + o + 4);
+      int soffset = icc_read(u32, offset + o + 8);
+      char *ret = babl_malloc (slength * 2);
+      int j;
+
+      for (j = 0; j < slength/2; j++)
+      {
+        int hi = icc_read(u8, offset + soffset + j * 2 + 0);
+        int lo = icc_read(u8, offset + soffset + j * 2 + 1);
+
+        ret[j] = lo + hi * 0; // only ASCII survives this
+                              // brute utf16 decoding, so it is
+                              // good we ask for english.
+      }
+      ret[j] = 0;
+      return ret;
+    }
+    o+=record_size;
+  }
+  return babl_strdup ("");
+}
+
 const Babl *
 babl_space_from_icc (const char *icc_data,
                      int         icc_length,
@@ -663,13 +705,12 @@ babl_space_from_icc (const char *icc_data,
     return NULL;
   }
 
-
   {
      int offset, element_size;
      icc_tag (state, "desc", &offset, &element_size);
      if (!strcmp (state->data + offset, "mluc"))
      {
-       descr = babl_strdup ("[babl-icc doesnt decode unicode]");
+       descr = icc_decode_mluc (state, offset, element_size, "en", NULL);
      }
      else
      if (!strcmp (state->data + offset, "desc"))
@@ -681,7 +722,15 @@ babl_space_from_icc (const char *icc_data,
   {
      int offset, element_size;
      icc_tag (state, "cprt", &offset, &element_size);
-     copyright = babl_strdup (state->data + offset + 8);
+     if (!strcmp (state->data + offset, "mluc"))
+     {
+       copyright = icc_decode_mluc (state, offset, element_size, "en", NULL);
+     }
+     else
+     if (!strcmp (state->data + offset, "desc"))
+     {
+       copyright = babl_strdup (state->data + offset + 8);
+     }
   }
 
   if (icc_tag (state, "rXYZ", NULL, NULL) &&
