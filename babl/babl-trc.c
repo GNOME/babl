@@ -677,7 +677,7 @@ babl_trc_new (const char *name,
     trc_db[i].inv_lut = babl_calloc (sizeof (float), n_lut);
     for (j = 0; j < n_lut; j++)
       trc_db[i].inv_lut[j] =
-        babl_trc_to_linear (BABL(&trc_db[i]), trc_db[i].lut[(int) ( j/(n_lut-1.0) * (n_lut-1))]);
+        babl_trc_lut_to_linear (BABL(&trc_db[i]), trc_db[i].lut[(int) ( j/(n_lut-1.0) * (n_lut-1))]);
   }
 
   trc_db[i].fun_to_linear_buf = _babl_trc_to_linear_buf_generic;
