@@ -419,6 +419,51 @@ static void prep_conversion (const Babl *babl)
   }
 }
 
+#define TRC_IN(rgba_in, rgba_out)  do{ int i;\
+  for (i = 0; i < samples; i++) \
+  { \
+    rgba_out[i*4+3] = rgba_in[i*4+3]; \
+  } \
+  if ((source_space->space.trc[0] == source_space->space.trc[1]) && \
+      (source_space->space.trc[1] == source_space->space.trc[2])) \
+  { \
+    const Babl *trc = (void*)source_space->space.trc[0]; \
+    babl_trc_to_linear_buf(trc, rgba_in, rgba_out, 4, 4, 3, samples); \
+  } \
+  else \
+  { \
+    int c; \
+    for (c = 0; c < 3; c ++) \
+    { \
+      const Babl *trc = (void*)source_space->space.trc[c]; \
+      babl_trc_to_linear_buf(trc, rgba_in + c, rgba_out + c, 4, 4, 1, samples); \
+    } \
+  } \
+}while(0)
+
+#define TRC_OUT(rgba_in, rgba_out)  do{\
+  { \
+    int c; \
+    if ((destination_space->space.trc[0] == destination_space->space.trc[1]) && \
+        (destination_space->space.trc[1] == destination_space->space.trc[2])) \
+    { \
+      const Babl *trc = (void*)destination_space->space.trc[0]; \
+      babl_trc_from_linear_buf(trc, rgba_in, rgba_out, 4, 4, 3, samples); \
+    } \
+    else \
+    { \
+      for (c = 0; c < 3; c ++) \
+      { \
+        const Babl *trc = (void*)destination_space->space.trc[c]; \
+        babl_trc_from_linear_buf(trc, rgba_in + c, rgba_out + c, 4, 4, 1, samples); \
+      } \
+    } \
+  }\
+} while(0)
+
+
+
+
 static inline long
 universal_nonlinear_rgb_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
@@ -429,32 +474,11 @@ universal_nonlinear_rgb_converter (const Babl *conversion,unsigned char *src_cha
   float *rgba_in = (void*)src_char;
   float *rgba_out = (void*)dst_char;
 
-  {
-    int i;
-  for (i = 0; i < samples; i++)
-  {
-    rgba_out[i*4+3] = rgba_in[i*4+3];
-  }
-  }
-  {
-    int c;
-    for (c = 0; c < 3; c ++)
-    {
-      const Babl *trc = (void*)source_space->space.trc[c];
-      babl_trc_to_linear_buf(trc, rgba_in + c, rgba_out + c, 4, 4, 1, samples);
-    }
-  }
+  TRC_IN(rgba_in, rgba_out);
 
   babl_matrix_mul_vectorff_buf4 (matrixf, rgba_out, rgba_out, samples);
 
-  {
-    int c;
-    for (c = 0; c < 3; c ++)
-    {
-      const Babl *trc = (void*)destination_space->space.trc[c];
-      babl_trc_from_linear_buf(trc, rgba_out + c, rgba_out + c, 4, 4, 1, samples);
-    }
-  }
+  TRC_OUT(rgba_out, rgba_out);
 
   return samples;
 }
@@ -467,27 +491,12 @@ universal_nonlinear_rgb_linear_converter (const Babl *conversion,unsigned char *
   float *rgba_in = (void*)src_char;
   float *rgba_out = (void*)dst_char;
 
-  {
-    int i;
-  for (i = 0; i < samples; i++)
-  {
-    rgba_out[i*4+3] = rgba_in[i*4+3];
-  }
-  }
-  {
-    int c;
-    for (c = 0; c < 3; c ++)
-    {
-      const Babl *trc = (void*)source_space->space.trc[c];
-      babl_trc_to_linear_buf(trc, rgba_in + c, rgba_out + c, 4, 4, 1, samples);
-    }
-  }
+  TRC_IN(rgba_in, rgba_out);
 
   babl_matrix_mul_vectorff_buf4 (matrixf, rgba_out, rgba_out, samples);
 
   return samples;
 }
-
 
 static inline long
 universal_nonlinear_rgba_u8_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
@@ -500,35 +509,30 @@ universal_nonlinear_rgba_u8_converter (const Babl *conversion,unsigned char *src
   uint8_t *rgba_in_u8 = (void*)src_char;
   uint8_t *rgba_out_u8 = (void*)dst_char;
 
-#ifndef  _WIN32
-  float *rgb = aligned_alloc (16, sizeof(float) * 4 * samples);
-#else
-  float *rgb = _aligned_malloc (sizeof(float) * 4 * samples, 16);
-#endif
+  float *rgb = babl_malloc (sizeof(float) * 4 * samples);
 
   for (i = 0; i < samples; i++)
   {
     rgb[i*4+0]=in_trc_lut[rgba_in_u8[i*4+0]];
     rgb[i*4+1]=in_trc_lut[rgba_in_u8[i*4+1]];
     rgb[i*4+2]=in_trc_lut[rgba_in_u8[i*4+2]];
+    rgba_out_u8[i*4+3] = rgba_in_u8[i*4+3];
   }
 
   babl_matrix_mul_vectorff_buf4 (matrixf, rgb, rgb, samples);
 
   {
-  const Babl *from_trc_red   = (void*)destination_space->space.trc[0];
-  const Babl *from_trc_green = (void*)destination_space->space.trc[1];
-  const Babl *from_trc_blue  = (void*)destination_space->space.trc[2];
-  for (i = 0; i < samples; i++)
-  {
-    rgba_out_u8[0] = babl_trc_from_linear (from_trc_red,   rgb[i*4+0]) * 255.5f;
-    rgba_out_u8[1] = babl_trc_from_linear (from_trc_green, rgb[i*4+1]) * 255.5f;
-    rgba_out_u8[2] = babl_trc_from_linear (from_trc_blue,  rgb[i*4+2]) * 255.5f;
-    rgba_out_u8[3] = rgba_in_u8[3];
-    rgba_in_u8  += 4;
-    rgba_out_u8 += 4;
+    const Babl *from_trc_red   = (void*)destination_space->space.trc[0];
+    const Babl *from_trc_green = (void*)destination_space->space.trc[1];
+    const Babl *from_trc_blue  = (void*)destination_space->space.trc[2];
+    for (i = 0; i < samples * 4; i+=4)
+    {
+      rgba_out_u8[i+0] = babl_trc_from_linear (from_trc_red,   rgb[i+0]) * 255.5f;
+      rgba_out_u8[i+1] = babl_trc_from_linear (from_trc_green, rgb[i+1]) * 255.5f;
+      rgba_out_u8[i+2] = babl_trc_from_linear (from_trc_blue,  rgb[i+2]) * 255.5f;
+    }
   }
-  }
+  babl_free (rgb);
 
   return samples;
 }
@@ -571,16 +575,15 @@ static inline void babl_matrix_mul_vectorff_buf4_sse2 (const float *mat,
 {
   const __v4sf m___0 = {m(mat, 0, 0), m(mat, 1, 0), m(mat, 2, 0), 0};
   const __v4sf m___1 = {m(mat, 0, 1), m(mat, 1, 1), m(mat, 2, 1), 0};
-  const __v4sf m___2 = {m(mat, 0, 2), m(mat, 1, 2), m(mat, 2, 2), 0};
+  const __v4sf m___2 = {m(mat, 0, 2), m(mat, 1, 2), m(mat, 2, 2), 1};
   int i;
   for (i = 0; i < samples; i ++)
   {
     __v4sf a, b, c = _mm_load_ps(&v_in[0]);
     a = (__v4sf) _mm_shuffle_epi32((__m128i)c, _MM_SHUFFLE(0,0,0,0));
     b = (__v4sf) _mm_shuffle_epi32((__m128i)c, _MM_SHUFFLE(1,1,1,1));
-    c = (__v4sf) _mm_shuffle_epi32((__m128i)c, _MM_SHUFFLE(2,2,2,2));
+    c = (__v4sf) _mm_shuffle_epi32((__m128i)c, _MM_SHUFFLE(3,2,2,2));
     _mm_store_ps (v_out, m___0 * a + m___1 * b + m___2 * c);
-    v_out[3] = v_in[3];
     v_out += 4;
     v_in  += 4;
   }
@@ -589,36 +592,22 @@ static inline void babl_matrix_mul_vectorff_buf4_sse2 (const float *mat,
 
 #undef m
 
+
 static inline long
 universal_nonlinear_rgb_converter_sse2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   const Babl *source_space = babl_conversion_get_source_space (conversion);
   const Babl *destination_space = babl_conversion_get_destination_space (conversion);
   float * matrixf = conversion->conversion.data;
-  int i;
   float *rgba_in = (void*)src_char;
   float *rgba_out = (void*)dst_char;
-  {
-    int c;
-    for (c = 0; c < 3; c ++)
-    {
-      const Babl *trc = (void*)source_space->space.trc[c];
-      babl_trc_to_linear_buf(trc, rgba_in + c, rgba_out + c, 4, 4, 1, samples);
-    }
-  }
-  for (i = 0; i < samples; i++)
-  {
-    rgba_out[i*4+3]=rgba_in[3];
-  }
+
+  TRC_IN(rgba_in, rgba_out);
+
   babl_matrix_mul_vectorff_buf4_sse2 (matrixf, rgba_out, rgba_out, samples);
-  {
-    int c;
-    for (c = 0; c < 3; c ++)
-    {
-      const Babl *trc = (void*)destination_space->space.trc[c];
-      babl_trc_from_linear_buf(trc, rgba_out + c, rgba_out + c, 4, 4, 1, samples);
-    }
-  }
+
+  TRC_OUT(rgba_out, rgba_out);
+
   return samples;
 }
 
@@ -646,35 +635,35 @@ universal_nonlinear_rgba_u8_converter_sse2 (const Babl *conversion,unsigned char
   uint8_t *rgba_in_u8 = (void*)src_char;
   uint8_t *rgba_out_u8 = (void*)dst_char;
 
-#ifndef  _WIN32
-  float *rgb = aligned_alloc (16, sizeof(float) * 4 * samples);
-#else
-  float *rgb = _aligned_malloc (sizeof(float) * 4 * samples, 16);
-#endif
+  float *rgba_out = babl_malloc (sizeof(float) * 4 * samples);
+  static float linear_lut_u8[258]={-1.0,};
 
-  for (i = 0; i < samples; i++)
+  if (linear_lut_u8[0] < 0)
   {
-    rgb[i*4+0]=in_trc_lut[rgba_in_u8[i*4+0]];
-    rgb[i*4+1]=in_trc_lut[rgba_in_u8[i*4+1]];
-    rgb[i*4+2]=in_trc_lut[rgba_in_u8[i*4+2]];
-    rgba_out_u8[i*4+3] = rgba_in_u8[i*4+3];
+    for (i = 0; i < 256; i++)
+      linear_lut_u8[i] = i / 255.0;
   }
 
-  babl_matrix_mul_vectorff_buf4_sse2 (matrixf, rgb, rgb, samples);
+  for (i = 0; i < samples * 4; i+= 4)
+  {
+    rgba_out[i+0]=in_trc_lut[rgba_in_u8[i+0]];
+    rgba_out[i+1]=in_trc_lut[rgba_in_u8[i+1]];
+    rgba_out[i+2]=in_trc_lut[rgba_in_u8[i+2]];
+    rgba_out_u8[i+3] = rgba_in_u8[i+3];
+  }
+
+  babl_matrix_mul_vectorff_buf4_sse2 (matrixf, rgba_out, rgba_out, samples);
 
   {
     int c;
-    for (c = 0; c < 3; c ++)
-    {
-      const Babl *trc = (void*)destination_space->space.trc[0];
-      babl_trc_from_linear_buf(trc, rgb + c, rgb + c, 4, 4, 1, samples);
-    }
+    TRC_OUT(rgba_out, rgba_out);
 
-    /* XXX: this is a prime candidate for sseification */
-    for (i = 0; i < samples; i++)
+    for (i = 0; i < samples * 4; i+= 4)
       for (c = 0; c < 3; c ++)
-        rgba_out_u8[i*4+c] = rgb[i*4+c] * 255.5f;
+        rgba_out_u8[i+c] = rgba_out[i+c] * 255.5f;
   }
+
+  babl_free (rgba_out);
 
   return samples;
 }
@@ -687,21 +676,7 @@ universal_nonlinear_rgb_linear_converter_sse2 (const Babl *conversion,unsigned c
   float *rgba_in = (void*)src_char;
   float *rgba_out = (void*)dst_char;
 
-  {
-    int i;
-  for (i = 0; i < samples; i++)
-  {
-    rgba_out[i*4+3] = rgba_in[i*4+3];
-  }
-  }
-  {
-    int c;
-    for (c = 0; c < 3; c ++)
-    {
-      const Babl *trc = (void*)source_space->space.trc[c];
-      babl_trc_to_linear_buf(trc, rgba_in + c, rgba_out + c, 4, 4, 1, samples);
-    }
-  }
+  TRC_IN(rgba_in, rgba_out);
 
   babl_matrix_mul_vectorff_buf4_sse2 (matrixf, rgba_out, rgba_out, samples);
 
