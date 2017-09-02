@@ -29,27 +29,49 @@ static inline float _babl_trc_linear (const Babl *trc_, float value)
   return value;
 }
 
-static inline float babl_trc_lut_from_linear (const Babl *trc_, float value)
+static inline float babl_trc_lut_from_linear (const Babl *trc_, float x)
 {
   BablTRC *trc = (void*)trc_;
-  int entry = value * trc->lut_size + 0.5;
-  float ret = trc->inv_lut[
-    (entry >= 0 && entry < trc->lut_size) ?
-                               entry :
-                               trc->lut_size-1];
-  /* XXX: fixme, do linear interpolation */
+  int entry;
+  float ret, diff;
+
+  entry = x * (trc->lut_size-1);
+  diff =  ( (x * (trc->lut_size-1)) - entry);
+
+  if (entry >= trc->lut_size) entry = trc->lut_size - 1;
+  else if (entry < 0) entry = 0;
+
+  if (diff > 0.0 && entry < trc->lut_size)
+  {
+    ret = trc->inv_lut[entry] * (1.0 - diff) + trc->inv_lut[entry+1] * diff;
+  }
+  else
+  {
+    ret = trc->inv_lut[entry];
+  }
   return ret;
 }
 
-static inline float babl_trc_lut_to_linear (const Babl *trc_, float value)
+static inline float babl_trc_lut_to_linear (const Babl *trc_, float x)
 {
   BablTRC *trc = (void*)trc_;
-  int entry = value * trc->lut_size + 0.5;
-  float ret = trc->lut[
-    (entry >= 0 && entry < trc->lut_size) ?
-                               entry :
-                               trc->lut_size-1];
-  /* XXX: fixme, do linear interpolation */
+  int entry;
+  float ret, diff;
+
+  entry = x * (trc->lut_size-1);
+  diff =  ( (x * (trc->lut_size-1)) - entry);
+
+  if (entry >= trc->lut_size) entry = trc->lut_size - 1;
+  else if (entry < 0) entry = 0;
+
+  if (diff > 0.0 && entry < trc->lut_size)
+  {
+    ret = trc->lut[entry] * (1.0 - diff) + trc->lut[entry+1] * diff;
+  }
+  else
+  {
+    ret = trc->lut[entry];
+  }
   return ret;
 }
 
@@ -711,9 +733,25 @@ babl_trc_new (const char *name,
     trc_db[i].lut = babl_calloc (sizeof (float), n_lut);
     memcpy (trc_db[i].lut, lut, sizeof (float) * n_lut);
     trc_db[i].inv_lut = babl_calloc (sizeof (float), n_lut);
+
     for (j = 0; j < n_lut; j++)
-      trc_db[i].inv_lut[j] =
-        babl_trc_lut_to_linear (BABL(&trc_db[i]), trc_db[i].lut[(int) ( j/(n_lut-1.0) * (n_lut-1))]);
+    {
+      float k;
+      float best_guess = 1.0;
+      float best_diff = 1.0;
+      for (k = 0.0; k <= 1.0; k+=0.0001)
+      {
+         float guess = babl_trc_lut_to_linear (BABL(&trc_db[i]), k); 
+	 float diff = fabs (guess - (j / (n_lut-1.0)));
+         if (diff < best_diff)
+         {
+            best_diff = diff;
+            best_guess = k;
+         }
+      }
+
+      trc_db[i].inv_lut[j] = best_guess;
+    }
   }
 
   trc_db[i].fun_to_linear_buf = _babl_trc_to_linear_buf_generic;
