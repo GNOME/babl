@@ -26,10 +26,11 @@
 BABL_CLASS_DECLARE (trc);
 
 typedef enum {BABL_TRC_LINEAR,
-              BABL_TRC_GAMMA,
+              BABL_TRC_FORMULA_GAMMA,
               BABL_TRC_GAMMA_1_8,
               BABL_TRC_GAMMA_2_2,
               BABL_TRC_SRGB,
+              BABL_TRC_FORMULA_SRGB,
               BABL_TRC_LUT}
 BablTRCType;
 

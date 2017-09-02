@@ -315,22 +315,45 @@ static const Babl *babl_trc_from_icc (ICC  *state, int offset,
               g = icc_read (s15f16, offset + 12 + 2 * 0);
               return babl_trc_gamma (g);
               break;
-
             case 3:
-#if 0
-         float a,b,c,d,e,f;
-              g = icc_read (s15f16, offset + 12 + 2 * 0);
-              a = icc_read (s15f16, offset + 12 + 2 * 1);
-              b = icc_read (s15f16, offset + 12 + 2 * 2);
-              c = icc_read (s15f16, offset + 12 + 2 * 3);
-              d = icc_read (s15f16, offset + 12 + 2 * 4);
-              e = icc_read (s15f16, offset + 12 + 2 * 5);
-              f = icc_read (s15f16, offset + 12 + 2 * 6);
-#endif
-              return babl_trc ("sRGB"); // XXX: not true... and I suspect the CIE L* curve might be expressed as this,
-                                        // formula as well, depending on arguments.
+              {
+                float a,b,c,d;
+                g = icc_read (s15f16, offset + 12 + 2 * 0);
+                a = icc_read (s15f16, offset + 12 + 2 * 1);
+                b = icc_read (s15f16, offset + 12 + 2 * 2);
+                c = icc_read (s15f16, offset + 12 + 2 * 3);
+                d = icc_read (s15f16, offset + 12 + 2 * 4);
+                //fprintf (stderr, "%f %f %f %f %f\n", g, a, b, c, d);
+                if (fabs (g - 2.40)     < 0.01 &&
+                    fabs (a - 26214)    < 0.01 &&
+                    fabs (b - 0.947875) < 0.01 &&
+                    fabs (c - (-3417))  < 0.01)
+                  return babl_trc ("sRGB");
+                else
+                  return babl_trc_formula_srgb (g, a, b, c, d);
+              }
+              break;
+            case 4:
+              {
+                float a,b,c,d,e,f;
+                g = icc_read (s15f16, offset + 12 + 2 * 0);
+                a = icc_read (s15f16, offset + 12 + 2 * 1);
+                b = icc_read (s15f16, offset + 12 + 2 * 2);
+                c = icc_read (s15f16, offset + 12 + 2 * 3);
+                d = icc_read (s15f16, offset + 12 + 2 * 4);
+                e = icc_read (s15f16, offset + 12 + 2 * 5);
+                f = icc_read (s15f16, offset + 12 + 2 * 6);
+                fprintf (stderr, "%f %f %f %f %f %f %f\n",
+                              g, a, b, c, d, e, f);
+            {
+              fprintf (stdout, "unhandled parametric sRGB formula TRC type %i\n", function_type);
+              *error = "unhandled sRGB formula like TRC";
+              return babl_trc_gamma (2.2);
+            }
+                              }
               break;
             default:
+              *error = "unhandled parametric TRC";
               fprintf (stdout, "unhandled parametric TRC type %i\n", function_type);
               return babl_trc_gamma (2.2);
             break;
@@ -399,27 +422,26 @@ switch (trc->type)
     icc_write (u32, state->o + 4, 0);
     icc_write (u32, state->o + 8, 0);
     break;
-  case BABL_TRC_GAMMA:
+  case BABL_TRC_FORMULA_GAMMA:
     icc_allocate_tag (state, name, 14);
     icc_write (sign, state->o, "curv");
     icc_write (u32, state->o + 4, 0);
     icc_write (u32, state->o + 8, 1);
     icc_write (u8f8, state->o + 12, trc->gamma);
     break;
-  case BABL_TRC_SRGB:
-    {
-      int lut_size = 512;
-      icc_allocate_tag (state, name, 13 + lut_size * 2);
-      icc_write (sign, state->o, "curv");
-      icc_write (u32, state->o + 4, 0);
-      icc_write (u32, state->o + 8, lut_size);
-      {
-        int j;
-        for (j = 0; j < lut_size; j ++)
-        icc_write (u16, state->o + 12 + j * 2,
-            gamma_2_2_to_linear (j / (lut_size-1.0)) * 65535.5);
-      }
-    }
+  case BABL_TRC_GAMMA_1_8:
+    icc_allocate_tag (state, name, 14);
+    icc_write (sign, state->o, "curv");
+    icc_write (u32, state->o + 4, 0);
+    icc_write (u32, state->o + 8, 1);
+    icc_write (u8f8, state->o + 12, 1.8);
+    break;
+  case BABL_TRC_GAMMA_2_2:
+    icc_allocate_tag (state, name, 14);
+    icc_write (sign, state->o, "curv");
+    icc_write (u32, state->o + 4, 0);
+    icc_write (u32, state->o + 8, 1);
+    icc_write (u8f8, state->o + 12, 2.2);
     break;
   case BABL_TRC_LUT:
     icc_allocate_tag (state, name, 13 + trc->lut_size * 2);
@@ -432,13 +454,23 @@ switch (trc->type)
         icc_write (u16, state->o + 12 + j * 2, (int)(trc->lut[j]*65535.5f));
     }
     break;
-  default:
-    icc_allocate_tag (state, name, 14);
-    icc_write (sign, state->o, "curv");
-    icc_write (u32, state->o + 4, 0);
-    icc_write (u32, state->o + 8, 1);
-    icc_write (u8f8, state->o + 12, trc->gamma);
-    break;
+  // this is the case catching things not directly representable in v2
+  case BABL_TRC_SRGB:
+  case BABL_TRC_FORMULA_SRGB:
+//  default:
+    {
+      int lut_size = 512;
+      icc_allocate_tag (state, name, 13 + lut_size * 2);
+      icc_write (sign, state->o, "curv");
+      icc_write (u32, state->o + 4, 0);
+      icc_write (u32, state->o + 8, lut_size);
+      {
+        int j;
+        for (j = 0; j < lut_size; j ++)
+        icc_write (u16, state->o + 12 + j * 2,
+            babl_trc_to_linear ((void*)trc, j / (lut_size-1.0)) * 65535.5);
+      }
+    }
 }
 }
 

@@ -343,12 +343,6 @@ static inline float babl_powf (float x, float y)
   return expf (y * logf (x));
 }
 
-static inline float _babl_trc_gamma_to_linear (const Babl *trc_, float value)
-{
-  BablTRC *trc = (void*)trc_;
-  return babl_powf (value, trc->gamma);
-}
-
 
 static inline void _babl_trc_gamma_to_linear_buf (const Babl *trc_, const float *in, float *out, int in_gap, int out_gap, int components, int count)
 {
@@ -375,6 +369,48 @@ static inline float _babl_trc_gamma_from_linear (const Babl *trc_, float value)
   BablTRC *trc = (void*)trc_;
   return babl_powf (value, trc->rgamma);
 }
+
+static inline float _babl_trc_gamma_to_linear (const Babl *trc_, float value)
+{
+  BablTRC *trc = (void*)trc_;
+  return babl_powf (value, trc->gamma);
+}
+
+static inline float _babl_trc_formula_srgb_from_linear (const Babl *trc_, float value)
+{
+  BablTRC *trc = (void*)trc_;
+  float x= value;
+  float g = trc->lut[0];
+  float a = trc->lut[1];
+  float b = trc->lut[2];
+  float c = trc->lut[3];
+  float d = trc->lut[4];
+  if (x > c * d)  // XXX: verify that this math is the correct inverse
+  {
+    float v = babl_powf (x, 1.0/g);
+    v = (v-b)/a;
+    return v;
+  }
+  return x / c;
+}
+
+static inline float _babl_trc_formula_srgb_to_linear (const Babl *trc_, float value)
+{
+  BablTRC *trc = (void*)trc_;
+  float x= value;
+  float g = trc->lut[0];
+  float a = trc->lut[1];
+  float b = trc->lut[2];
+  float c = trc->lut[3];
+  float d = trc->lut[4];
+
+  if (x >= d)
+  {
+    return babl_powf (a * x + b, g);
+  }
+  return c * x;
+}
+
 
 static inline float _babl_trc_gamma_1_8_to_linear (const Babl *trc_, float x)
 {
@@ -691,11 +727,21 @@ babl_trc_new (const char *name,
       trc_db[i].fun_from_linear_buf = _babl_trc_linear_buf;
       trc_db[i].fun_to_linear_buf = _babl_trc_linear_buf;
       break;
-    case BABL_TRC_GAMMA:
+    case BABL_TRC_FORMULA_GAMMA:
       trc_db[i].fun_to_linear = _babl_trc_gamma_to_linear;
       trc_db[i].fun_from_linear = _babl_trc_gamma_from_linear;
       trc_db[i].fun_to_linear_buf = _babl_trc_gamma_to_linear_buf;
       trc_db[i].fun_from_linear_buf = _babl_trc_gamma_from_linear_buf;
+      break;
+    case BABL_TRC_FORMULA_SRGB:
+      trc_db[i].lut = babl_calloc (sizeof (float), 5);
+      {
+        int j;
+        for (j = 0; j < 5; j++)
+          trc_db[i].lut[j] = lut[j];
+      }
+      trc_db[i].fun_to_linear = _babl_trc_formula_srgb_to_linear;
+      trc_db[i].fun_from_linear = _babl_trc_formula_srgb_from_linear;
       break;
     case BABL_TRC_GAMMA_2_2:
       trc_db[i].fun_to_linear = _babl_trc_gamma_2_2_to_linear;
@@ -739,6 +785,21 @@ babl_trc_class_for_each (BablEachFunction each_fun,
 }
 
 const Babl *
+babl_trc_formula_srgb (double gamma, double a, double b, double c, double d)
+{
+  char name[32];
+  int i;
+  float params[5]={gamma, a, b, c, d};
+
+  sprintf (name, "%.6f %.6f %.4f %.4f %.4f", gamma, a, b, c, d);
+  for (i = 0; name[i]; i++)
+    if (name[i] == ',') name[i] = '.';
+  while (name[strlen(name)-1]=='0')
+    name[strlen(name)-1]='\0';
+  return babl_trc_new (name, BABL_TRC_FORMULA_SRGB, gamma, 0, params);
+}
+
+const Babl *
 babl_trc_gamma (double gamma)
 {
   char name[32];
@@ -755,7 +816,7 @@ babl_trc_gamma (double gamma)
     if (name[i] == ',') name[i] = '.';
   while (name[strlen(name)-1]=='0')
     name[strlen(name)-1]='\0';
-  return babl_trc_new (name, BABL_TRC_GAMMA, gamma, 0, NULL);
+  return babl_trc_new (name, BABL_TRC_FORMULA_GAMMA, gamma, 0, NULL);
 }
 
 void
