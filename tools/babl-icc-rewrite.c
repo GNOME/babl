@@ -49,6 +49,11 @@ main (int    argc,
 
   babl = babl_space_from_icc (icc_data, icc_len, &error);
   free (icc_data);
+  if (error || !babl)
+  {
+    fprintf (stderr, "%s error %s", argv[0], error);
+    return -1;
+  }
 
   icc_data = (char *)babl_space_to_icc (babl, &genlen);
   if (icc_data)
