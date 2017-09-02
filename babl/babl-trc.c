@@ -739,10 +739,10 @@ babl_trc_new (const char *name,
       float k;
       float best_guess = 1.0;
       float best_diff = 1.0;
-      for (k = 0.0; k <= 1.0; k+=0.0001)
+      for (k = 0.0; k <= 1.0; k+=0.0001) /* XXX: a binary search would be faster */
       {
-         float guess = babl_trc_lut_to_linear (BABL(&trc_db[i]), k); 
-	 float diff = fabs (guess - (j / (n_lut-1.0)));
+         float guess = babl_trc_lut_to_linear (BABL(&trc_db[i]), k);
+         float diff = fabs (guess - (j / (n_lut-1.0)));
          if (diff < best_diff)
          {
             best_diff = diff;
@@ -807,7 +807,7 @@ babl_trc_new (const char *name,
   return (Babl*)&trc_db[i];
 }
 
-const Babl * babl_trc_lut   (const char *name, int n, float *entries)
+const Babl * babl_trc_lut (const char *name, int n, float *entries)
 {
   return babl_trc_new (name, BABL_TRC_LUT, 0, n, entries);
 }
