@@ -324,13 +324,7 @@ static const Babl *babl_trc_from_icc (ICC  *state, int offset,
                 c = icc_read (s15f16, offset + 12 + 2 * 3);
                 d = icc_read (s15f16, offset + 12 + 2 * 4);
                 //fprintf (stderr, "%f %f %f %f %f\n", g, a, b, c, d);
-                if (fabs (g - 2.40)     < 0.01 &&
-                    fabs (a - 26214)    < 0.01 &&
-                    fabs (b - 0.947875) < 0.01 &&
-                    fabs (c - (-3417))  < 0.01)
-                  return babl_trc ("sRGB");
-                else
-                  return babl_trc_formula_srgb (g, a, b, c, d);
+                return babl_trc_formula_srgb (g, a, b, c, d);
               }
               break;
             case 4:

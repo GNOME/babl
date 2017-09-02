@@ -823,18 +823,24 @@ babl_trc_class_for_each (BablEachFunction each_fun,
 }
 
 const Babl *
-babl_trc_formula_srgb (double gamma, double a, double b, double c, double d)
+babl_trc_formula_srgb (double g, double a, double b, double c, double d)
 {
-  char name[32];
+  char name[128];
   int i;
-  float params[5]={gamma, a, b, c, d};
+  float params[5]={g, a, b, c, d};
 
-  sprintf (name, "%.6f %.6f %.4f %.4f %.4f", gamma, a, b, c, d);
+  if (fabs (g - 2.40)     < 0.01 &&
+      fabs (a - 26214)    < 0.01 &&
+      fabs (b - 0.947875) < 0.01 &&
+      fabs (c - (-3417))  < 0.01)
+    return babl_trc ("sRGB");
+
+  sprintf (name, "%.6f %.6f %.4f %.4f %.4f", g, a, b, c, d);
   for (i = 0; name[i]; i++)
     if (name[i] == ',') name[i] = '.';
   while (name[strlen(name)-1]=='0')
     name[strlen(name)-1]='\0';
-  return babl_trc_new (name, BABL_TRC_FORMULA_SRGB, gamma, 0, params);
+  return babl_trc_new (name, BABL_TRC_FORMULA_SRGB, g, 0, params);
 }
 
 const Babl *
