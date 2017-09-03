@@ -635,6 +635,7 @@ babl_space_from_icc (const char  *icc_data,
   const char *int_err;
   char *descr     = NULL;
   char *copyright = NULL;
+  Babl *ret = NULL;
 
   sign_t profile_class, color_space;
 
@@ -748,25 +749,16 @@ babl_space_from_icc (const char  *icc_data,
      wY = icc_read (s15f16, offset + 8 + 4);
      wZ = icc_read (s15f16, offset + 8 + 4 * 2);
 
-     if (trc_red == babl_trc ("sRGB") &&
-         trc_green == babl_trc ("sRGB") &&
-         trc_blue == babl_trc ("sRGB") &&
-         fabs(rx - 0.436042) < 0.001 &&
-         fabs(ry - 0.222492) < 0.001 &&
-         fabs(rz - 0.013916) < 0.001 &&
-         fabs(gx - 0.385122) < 0.001 &&
-         fabs(gy - 0.716915) < 0.001 &&
-         fabs(gz - 0.097063) < 0.001 &&
-         fabs(bx - 0.143053) < 0.001 &&
-         fabs(by - 0.060609) < 0.001 &&
-         fabs(bz - 0.713939) < 0.001)
+     ret = (void*)babl_space_match_trc_matrix (trc_red, trc_green, trc_blue,
+                                        rx, ry, rz, gx, gy, gz, bx, by, bz);
+     if (ret)
      {
         babl_free (state);
-        return babl_space ("sRGB");
+        return ret;
      }
 
      {
-       Babl *ret = (void*)babl_space_from_rgbxyz_matrix (NULL,
+       ret  = (void*)babl_space_from_rgbxyz_matrix (NULL,
                 wX, wY, wZ,
                 rx, gx, bx,
                 ry, gy, by,
@@ -792,7 +784,7 @@ babl_space_from_icc (const char  *icc_data,
 
      if (phosporant != 0)
      {
-       *error = "unhandled phosporants, please report bug";
+       *error = "unhandled phosporants, please report bug against babl with profile";
        return NULL;
      }
      if (channels != 3)
@@ -815,19 +807,16 @@ babl_space_from_icc (const char  *icc_data,
        double wZ = icc_read (s15f16, offset + 8 + 4 * 2);
        babl_free (state);
 
-       {
-         Babl *ret = (void*) babl_space_from_chromaticities (NULL,
-                       wX / (wX + wY + wZ),
-                       wY / (wX + wY + wZ),
-                       red_x, red_y,
-                       green_x, green_y,
-                       blue_x, blue_y,
-                       trc_red, trc_green, trc_blue);
-         ret->space.description = descr;
-         ret->space.copyright = copyright;
-         return ret;
-       }
-
+       ret = (void*) babl_space_from_chromaticities (NULL,
+                     wX / (wX + wY + wZ),
+                     wY / (wX + wY + wZ),
+                     red_x, red_y,
+                     green_x, green_y,
+                     blue_x, blue_y,
+                     trc_red, trc_green, trc_blue);
+       ret->space.description = descr;
+       ret->space.copyright = copyright;
+       return ret;
      }
   }
 

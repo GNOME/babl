@@ -92,11 +92,9 @@ const Babl * babl_trc       (const char *name);
  * babl_trc_gamma:
  *
  * Creates a Babl TRC for a specific gamma value, it will be given
- * a name 
+ * a name that is a short string representation of the value.
  */
 const Babl * babl_trc_gamma (double gamma);
-
-
 
 /**
  * babl_space:

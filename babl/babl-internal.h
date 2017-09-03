@@ -362,4 +362,12 @@ void _babl_space_add_universal_rgb (const Babl *space);
 const Babl *
 babl_trc_formula_srgb (double gamma, double a, double b, double c, double d);
 
+
+const Babl *babl_space_match_trc_matrix (const Babl *trc_red,
+                                         const Babl *trc_green,
+                                         const Babl *trc_blue,
+                                         float rx, float ry, float rz,
+                                         float gx, float gy, float gz,
+                                         float bx, float by, float bz);
+
 #endif

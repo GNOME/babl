@@ -772,3 +772,34 @@ void _babl_space_add_universal_rgb (const Babl *space)
   babl_space_class_for_each (add_rgb_adapter, (void*)space);
 }
 
+
+const Babl *babl_space_match_trc_matrix (const Babl *trc_red,
+                                         const Babl *trc_green,
+                                         const Babl *trc_blue,
+                                         float rx, float ry, float rz,
+                                         float gx, float gy, float gz,
+                                         float bx, float by, float bz)
+{
+  // XXX: extend to iteratre through registered spaces and finding
+  //      already registered ones that are close enough duplicates
+  //      first registered space (thus also internal babl ones) wins.
+  //      this makes using babl to get icc meta data difficult, perhaps
+  //      the icc meta data should be passed out-of-band?
+
+  if (trc_red == babl_trc ("sRGB") &&
+      trc_green == babl_trc ("sRGB") &&
+      trc_blue == babl_trc ("sRGB") &&
+      fabs(rx - 0.436042) < 0.001 &&
+      fabs(ry - 0.222492) < 0.001 &&
+      fabs(rz - 0.013916) < 0.001 &&
+      fabs(gx - 0.385122) < 0.001 &&
+      fabs(gy - 0.716915) < 0.001 &&
+      fabs(gz - 0.097063) < 0.001 &&
+      fabs(bx - 0.143053) < 0.001 &&
+      fabs(by - 0.060609) < 0.001 &&
+      fabs(bz - 0.713939) < 0.001)
+   {
+     return babl_space ("sRGB");
+   }
+  return NULL;
+}
