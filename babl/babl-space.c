@@ -780,26 +780,26 @@ const Babl *babl_space_match_trc_matrix (const Babl *trc_red,
                                          float gx, float gy, float gz,
                                          float bx, float by, float bz)
 {
-  // XXX: extend to iteratre through registered spaces and finding
-  //      already registered ones that are close enough duplicates
-  //      first registered space (thus also internal babl ones) wins.
-  //      this makes using babl to get icc meta data difficult, perhaps
-  //      the icc meta data should be passed out-of-band?
-
-  if (trc_red == babl_trc ("sRGB") &&
-      trc_green == babl_trc ("sRGB") &&
-      trc_blue == babl_trc ("sRGB") &&
-      fabs(rx - 0.436042) < 0.001 &&
-      fabs(ry - 0.222492) < 0.001 &&
-      fabs(rz - 0.013916) < 0.001 &&
-      fabs(gx - 0.385122) < 0.001 &&
-      fabs(gy - 0.716915) < 0.001 &&
-      fabs(gz - 0.097063) < 0.001 &&
-      fabs(bx - 0.143053) < 0.001 &&
-      fabs(by - 0.060609) < 0.001 &&
-      fabs(bz - 0.713939) < 0.001)
-   {
-     return babl_space ("sRGB");
-   }
+  int i;
+  double delta = 0.001;
+  for (i = 0; space_db[i].instance.class_type; i++)
+  {
+    BablSpace *space = &space_db[i];
+    if (trc_red == space->trc[0] &&
+        trc_green == space->trc[1] &&
+        trc_blue == space->trc[2] &&
+        fabs(rx - space->RGBtoXYZ[0]) < delta &&
+        fabs(ry - space->RGBtoXYZ[3]) < delta &&
+        fabs(rz - space->RGBtoXYZ[6]) < delta &&
+        fabs(gx - space->RGBtoXYZ[1]) < delta &&
+        fabs(gy - space->RGBtoXYZ[4]) < delta &&
+        fabs(gz - space->RGBtoXYZ[7]) < delta &&
+        fabs(bx - space->RGBtoXYZ[2]) < delta &&
+        fabs(by - space->RGBtoXYZ[5]) < delta &&
+        fabs(bz - space->RGBtoXYZ[8]) < delta)
+     {
+       return (void*)&space_db[i];
+     }
+  }
   return NULL;
 }
