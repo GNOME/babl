@@ -699,6 +699,90 @@ static char *decode_string (ICC *state, const char *tag, const char *lang, const
   return NULL;
 }
 
+static ICCv2CLUT *load_mft2 (ICC *state, int offset)
+{
+  int i, c;
+  int o;
+  ICCv2CLUT *clut = babl_calloc (sizeof (ICCv2CLUT), 1);
+  clut->clut_size = icc_read (u8,  offset + 10);
+  clut->in_table_size = icc_read (u16, offset + 48);
+  clut->out_table_size = icc_read (u16, offset + 50);
+
+  for (i = 0; i < 9; i++)
+    clut->matrix[i] = icc_read (s15f16, offset + 12 + i * 4);
+
+  clut->clut = babl_calloc (sizeof (float), 3 * clut->clut_size * clut->clut_size * clut->clut_size);
+  for (c = 0; c < 3; c++)
+    clut->in_table[c] = babl_calloc (sizeof (float), clut->in_table_size);
+  for (c = 0; c < 3; c++)
+    clut->out_table[c] = babl_calloc (sizeof (float), clut->out_table_size);
+
+  for (i = 0; i < 9; i++)
+    clut->matrix[i] = icc_read (s15f16, offset + 12 + i * 4);
+
+  o = 52;
+  for (c = 0; c < 3; c++)
+    for (i = 0; i < clut->in_table_size; i++)
+    {
+      clut->in_table[c][i] = icc_read (u16, offset + o) / 65535.0;
+      o+=2;
+    }
+  for (i = 0; i < 3 * clut->clut_size * clut->clut_size * clut->clut_size; i++)
+    {
+      clut->clut[i] = icc_read (u16, offset + o) / 65535.0;
+      o+=2;
+    }
+  for (c = 0; c < 3; c++)
+    for (i = 0; i < clut->out_table_size; i++)
+    {
+      clut->out_table[c][i] = icc_read (u16, offset + o) / 65535.0;
+      o+=2;
+    }
+  return clut;
+}
+
+static ICCv2CLUT *load_mft1 (ICC *state, int offset)
+{
+  int i, c;
+  int o;
+  ICCv2CLUT *clut = babl_calloc (sizeof (ICCv2CLUT), 1);
+  clut->clut_size = icc_read (u8,  offset + 10);
+  clut->in_table_size = 256;
+  clut->out_table_size = 256;
+
+  for (i = 0; i < 9; i++)
+    clut->matrix[i] = icc_read (s15f16, offset + 12 + i * 4);
+
+  clut->clut = babl_calloc (sizeof (float), 3 * clut->clut_size * clut->clut_size * clut->clut_size);
+  for (c = 0; c < 3; c++)
+    clut->in_table[c] = babl_calloc (sizeof (float), clut->in_table_size);
+  for (c = 0; c < 3; c++)
+    clut->out_table[c] = babl_calloc (sizeof (float), clut->out_table_size);
+
+  for (i = 0; i < 9; i++)
+    clut->matrix[i] = icc_read (s15f16, offset + 12 + i * 4);
+
+  o = 52;
+  for (c = 0; c < 3; c++)
+    for (i = 0; i < clut->in_table_size; i++)
+    {
+      clut->in_table[c][i] = icc_read (u8, offset + o) / 255.0;
+      o++;
+    }
+  for (i = 0; i < 3 * clut->clut_size * clut->clut_size * clut->clut_size; i++)
+    {
+      clut->clut[i] = icc_read (u8, offset + o) / 255.0;
+      o++;
+    }
+  for (c = 0; c < 3; c++)
+    for (i = 0; i < clut->out_table_size; i++)
+    {
+      clut->out_table[c][i] = icc_read (u8, offset + o) / 255.0;
+      o++;
+    }
+  return clut;
+}
+
 const Babl *
 babl_icc_make_space (const char   *icc_data,
                      int           icc_length,
@@ -707,11 +791,13 @@ babl_icc_make_space (const char   *icc_data,
 {
   ICC  *state = icc_state_new ((char*)icc_data, icc_length, 0);
   int   profile_size    = icc_read (u32, 0);
-  //int   icc_ver_major   = icc_read (u8, 8);
+  int   icc_ver_major   = icc_read (u8, 8);
   const Babl *trc_red   = NULL;
   const Babl *trc_green = NULL;
   const Babl *trc_blue  = NULL;
   const char *int_err;
+  ICCv2CLUT *a2b0 = NULL;
+  ICCv2CLUT *b2a0 = NULL;
   Babl *ret = NULL;
 
   sign_t profile_class, color_space;
@@ -724,24 +810,22 @@ babl_icc_make_space (const char   *icc_data,
   {
     *error = "icc profile length inconsistency";
   }
-#if 0
-  else if (icc_ver_major > 2)
+  if (!*error && (icc_ver_major < 2 || icc_ver_major > 4))
   {
-    *error = "only ICC v2 profiles supported";
+    *error = "icc version out of 2-4 range";
   }
-#endif
-  else
+  if (!*error)
   {
-  profile_class = icc_read (sign, 12);
-  if (strcmp (profile_class.str, "mntr"))
-    *error = "not a monitor-class profile";
-  else
+    profile_class = icc_read (sign, 12);
+    if (strcmp (profile_class.str, "mntr"))
+      *error = "not a monitor-class profile";
+  }
+  if (!*error)
   {
-  color_space = icc_read (sign, 16);
-  if (strcmp (color_space.str, "RGB "))
-    *error = "not defining an RGB space";
-  }
-  }
+    color_space = icc_read (sign, 16);
+    if (strcmp (color_space.str, "RGB "))
+      *error = "not defining an RGB space";
+    }
 
   switch (intent)
   {
@@ -798,6 +882,29 @@ babl_icc_make_space (const char   *icc_data,
     return NULL;
   }
 
+  {
+    int offset, element_size;
+    if (icc_tag (state, "A2B0", &offset, &element_size))
+    {
+      if (!strcmp (state->data + offset, "mft2"))
+        a2b0 = load_mft2 (state, offset);
+      else if (!strcmp (state->data + offset, "mft1"))
+        a2b0 = load_mft1 (state, offset);
+    }
+  }
+
+  {
+    int offset, element_size;
+    if (icc_tag (state, "B2A0", &offset, &element_size))
+    {
+      if (!strcmp (state->data + offset, "mft2"))
+        b2a0 = load_mft2 (state, offset);
+      else if (!strcmp (state->data + offset, "mft1"))
+        b2a0 = load_mft1 (state, offset);
+    }
+  }
+
+
   if (icc_tag (state, "rXYZ", NULL, NULL) &&
       icc_tag (state, "gXYZ", NULL, NULL) &&
       icc_tag (state, "bXYZ", NULL, NULL) &&
@@ -842,6 +949,8 @@ babl_icc_make_space (const char   *icc_data,
                 ry, gy, by,
                 rz, gz, bz,
                 trc_red, trc_green, trc_blue);
+       ret->space.b2a0 = b2a0;
+       ret->space.a2b0 = a2b0;
 
        babl_free (state);
        return ret;
@@ -890,6 +999,8 @@ babl_icc_make_space (const char   *icc_data,
                      green_x, green_y,
                      blue_x, blue_y,
                      trc_red, trc_green, trc_blue);
+       ret->space.b2a0 = b2a0;
+       ret->space.a2b0 = a2b0;
        return ret;
      }
   }

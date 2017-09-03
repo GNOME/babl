@@ -28,6 +28,17 @@ BABL_CLASS_DECLARE (space);
 
 typedef struct
 {
+  float  *clut;
+  int     clut_size;
+  int     in_table_size;
+  int     out_table_size;
+  float   matrix[9];
+  float  *in_table[3];
+  float  *out_table[3];
+} ICCv2CLUT;
+
+typedef struct
+{
   BablInstance     instance;
   double           xw;  // white-point chromaticity
   double           yw;
@@ -61,6 +72,9 @@ typedef struct
    * making it possible to round-trip data. Unless it is sRGB, when
    * standard should win.
    */
+
+   ICCv2CLUT *a2b0;
+   ICCv2CLUT *b2a0;
 
 } BablSpace;
 
