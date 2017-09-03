@@ -349,9 +349,6 @@ babl_trc_new (const char *name,
 void babl_space_to_xyz   (const Babl *space, const double *rgb, double *xyz);
 void babl_space_from_xyz (const Babl *space, const double *xyz, double *rgb);
 
-const Babl *babl_space_from_icc (const char *icc,
-                                 int         length,
-                                 char      **error);
 const Babl *babl_trc_lut_find (float *lut, int lut_size);
 const Babl *babl_trc_lut      (const char *name, int n, float *entries);
 

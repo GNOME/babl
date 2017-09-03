@@ -146,28 +146,32 @@ babl_space_from_rgbxyz_matrix (const char *name,
 /**
  * babl_space_from_icc:
  *
+ * @icc_data: pointer to icc profile in memory
+ * @icc_length: length of icc profile in bytes
+ " @error: pointer to a string where decoding errors can be stored,
+ *         if an error occurs, NULL is returned and an error message
+ *         is provided in error.
+ *
  * Create a babl space from an in memory ICC profile, the
  * profile does no longer need to be loaded for the space to work,
  * multiple calls with the same icc profile will result in the
  * same space.
  *
- * For now, limited to v2 ICC profiles, support for v4 profiles will be added.
- *
- * babl uses internal parametric TRCs when the provided LUTs are sufficiently
- * similar.
- *
  * If a BablSpace cannot be created from the profile NULL is returned and
  * a static string is set on the provided error location.
  */
-const Babl *babl_space_from_icc (const char *icc_data,
-                                 int         icc_length,
-                                 char      **error);
+const Babl *babl_space_from_icc (const char  *icc_data,
+                                 int          icc_length,
+                                 const char **error);
 
 
 /* babl_space_to_icc:
  *
  * Creates an ICCv2 RGB matrix profile for a babl space. The profiles strive to
  * be as small and compact as possible, TRCs are stored as 1024 entry LUT(s).
+ *
+ * you should make a copy of the profile before making another call to this
+ * function.
  */
 const char *babl_space_to_icc (const Babl *space, int *icc_length);
 

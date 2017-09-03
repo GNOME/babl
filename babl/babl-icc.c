@@ -300,7 +300,7 @@ static int icc_tag (ICC *state,
 }
 
 static const Babl *babl_trc_from_icc (ICC  *state, int offset,
-                                      char **error)
+                                      const char **error)
 {
   {
     int count = icc_read (u32, offset + 8);
@@ -417,25 +417,13 @@ switch (trc->type)
     icc_write (u32, state->o + 8, 0);
     break;
   case BABL_TRC_FORMULA_GAMMA:
-    icc_allocate_tag (state, name, 14);
-    icc_write (sign, state->o, "curv");
-    icc_write (u32, state->o + 4, 0);
-    icc_write (u32, state->o + 8, 1);
-    icc_write (u8f8, state->o + 12, trc->gamma);
-    break;
   case BABL_TRC_GAMMA_1_8:
-    icc_allocate_tag (state, name, 14);
-    icc_write (sign, state->o, "curv");
-    icc_write (u32, state->o + 4, 0);
-    icc_write (u32, state->o + 8, 1);
-    icc_write (u8f8, state->o + 12, 1.8);
-    break;
   case BABL_TRC_GAMMA_2_2:
     icc_allocate_tag (state, name, 14);
     icc_write (sign, state->o, "curv");
     icc_write (u32, state->o + 4, 0);
     icc_write (u32, state->o + 8, 1);
-    icc_write (u8f8, state->o + 12, 2.2);
+    icc_write (u8f8, state->o + 12, trc->gamma);
     break;
   case BABL_TRC_LUT:
     icc_allocate_tag (state, name, 13 + trc->lut_size * 2);
@@ -634,9 +622,9 @@ static char *icc_decode_mluc (ICC *state, int offset, int element_length, char *
 }
 
 const Babl *
-babl_space_from_icc (const char *icc_data,
-                     int         icc_length,
-                     char      **error)
+babl_space_from_icc (const char  *icc_data,
+                     int          icc_length,
+                     const char **error)
 {
   ICC  *state = icc_state_new ((char*)icc_data, icc_length, 0);
   int   profile_size    = icc_read (u32, 0);
@@ -644,10 +632,14 @@ babl_space_from_icc (const char *icc_data,
   const Babl *trc_red   = NULL;
   const Babl *trc_green = NULL;
   const Babl *trc_blue  = NULL;
+  const char *int_err;
   char *descr     = NULL;
   char *copyright = NULL;
 
   sign_t profile_class, color_space;
+
+  if (!error) error = &int_err;
+  *error = NULL;
 
   if (profile_size != icc_length)
   {
