@@ -283,6 +283,13 @@ babl_space_class_init (void)
                0.3000,  0.6000,
                0.1500,  0.0600,
                babl_trc("sRGB"), NULL, NULL);
+  babl_space_from_chromaticities ("Rec2020",
+               0.3127,  0.3290, /* D65 */
+               0.708,  0.292,
+               0.170,  0.797,
+               0.131,  0.046,
+               // XXX: is using sRGB TRC right?
+               babl_trc("sRGB"), NULL, NULL);
 
   babl_space_from_chromaticities (
       "Adobe",
@@ -308,15 +315,15 @@ babl_space_class_init (void)
       0.1550,  0.0700,
       babl_trc("1.8"), NULL, NULL);
 
+#if 0
   babl_space_from_chromaticities (
-     "WideGamutRGB",
+     "WideGamut",
      0.34567, 0.3585,  /* D50 */
      0.7350,  0.2650,
      0.1150,  0.8260,
      0.1570,  0.0180,
      babl_trc("2.2"), NULL, NULL);
 
-#if 0
   babl_space_from_chromaticities (
       "Best",
       0.34567, 0.3585,  /* D50 */
