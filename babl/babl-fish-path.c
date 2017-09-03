@@ -84,9 +84,10 @@ process_conversion_path (BablList   *path,
 
 static void
 get_conversion_path (PathContext *pc,
-                     Babl *current_format,
-                     int current_length,
-                     int max_length);
+                     Babl        *current_format,
+                     int          current_length,
+                     int          max_length,
+                     double       legal_error);
 
 char *
 _babl_fish_create_name (char       *buf,
@@ -168,7 +169,8 @@ static void
 get_conversion_path (PathContext *pc,
                      Babl        *current_format,
                      int          current_length,
-                     int          max_length)
+                     int          max_length,
+                     double       legal_error)
 {
   if (current_length > max_length)
     {
@@ -190,7 +192,7 @@ get_conversion_path (PathContext *pc,
           path_error *= (1.0 + babl_conversion_error ((BablConversion *) pc->current_path->items[i]));
         }
 
-      if (path_error - 1.0 <= _babl_legal_error ())
+      if (path_error - 1.0 <= legal_error )
                 /* check this before the more accurate measurement of error -
                    to bail earlier */
 #endif
@@ -213,7 +215,7 @@ get_conversion_path (PathContext *pc,
 
           if ((path_cost < ref_cost) && /* do not use paths that took longer to compute than reference */
               (path_cost < pc->fish_path->fish_path.cost) &&
-              (path_error <= _babl_legal_error ())
+              (path_error <= legal_error )
               )
             {
               /* We have found the best path so far,
@@ -250,7 +252,7 @@ get_conversion_path (PathContext *pc,
                 {
                   /* next_format is not in the current path, we can pay a visit */
                   babl_list_insert_last (pc->current_path, next_conversion);
-                  get_conversion_path (pc, next_format, current_length + 1, max_length);
+                  get_conversion_path (pc, next_format, current_length + 1, max_length, legal_error);
                   babl_list_remove_last (pc->current_path);
                 }
             }
@@ -399,17 +401,31 @@ alias_conversion (Babl *babl,
   return 0;
 }
 
-Babl *
-babl_fish_path (const Babl *source,
-                const Babl *destination)
+
+static Babl *
+babl_fish_path2 (const Babl *source,
+                 const Babl *destination,
+                 double      tolerance)
 {
   Babl *babl = NULL;
   const Babl *sRGB = babl_space ("sRGB");
   char name[BABL_MAX_NAME_LEN];
+  int is_fast = 0;
 
   _babl_fish_create_name (name, source, destination, 1);
   babl_mutex_lock (babl_format_mutex);
   babl = babl_db_exist_by_name (babl_fish_db (), name);
+
+  if (tolerance <= 0.0)
+  {
+    is_fast = 0;
+    tolerance = _babl_legal_error ();
+  }
+  else
+    is_fast = 1;
+
+  if (!is_fast)
+  {
   if (babl)
     {
       /* There is an instance already registered by the required name,
@@ -418,6 +434,7 @@ babl_fish_path (const Babl *source,
       babl_mutex_unlock (babl_format_mutex);
       return babl;
     }
+  }
 
   if ((source->format.space != sRGB) ||
       (destination->format.space != sRGB))
@@ -484,12 +501,12 @@ babl_fish_path (const Babl *source,
      */
     babl_in_fish_path++;
 
-    get_conversion_path (&pc, (Babl *) source, 0, max_path_length ());
+    get_conversion_path (&pc, (Babl *) source, 0, max_path_length (), tolerance);
 
     /* second attempt,. at path length + 1*/
     if (babl->fish_path.conversion_list->count == 0 &&
         max_path_length () + 1 <= BABL_HARD_MAX_PATH_LENGTH)
-      get_conversion_path (&pc, (Babl *) source, 0, max_path_length () + 1);
+      get_conversion_path (&pc, (Babl *) source, 0, max_path_length () + 1, tolerance);
 
     babl_in_fish_path--;
     babl_free (pc.current_path);
@@ -528,9 +545,43 @@ babl_fish_path (const Babl *source,
   /* Since there is not an already registered instance by the required
    * name, inserting newly created class into database.
    */
-  babl_db_insert (babl_fish_db (), babl);
+  if (!is_fast)
+  {
+    babl_db_insert (babl_fish_db (), babl);
+  }
   babl_mutex_unlock (babl_format_mutex);
   return babl;
+}
+
+const Babl * babl_fast_fish (const void *source_format,
+                             const void *destination_format,
+                             const char *performance)
+{
+  double tolerance = 0.0;
+
+  if (!performance || !strcmp (performance, "default"))
+    tolerance = 0.0; // note: not _babl_legal_error() to trigger,
+                      // right code paths in babl_fish_path2
+  else if (!strcmp (performance, "exact"))
+    tolerance=0.0000000001;
+  else if (!strcmp (performance, "precise"))
+    tolerance=0.00001;
+  if (!strcmp (performance, "fast"))
+    tolerance=0.001;
+  else if (!strcmp (performance, "glitch"))
+    tolerance=0.01;
+  else {
+    tolerance = babl_parse_double (performance);
+  }
+
+  return babl_fish_path2 (source_format, destination_format, tolerance);
+}
+
+Babl *
+babl_fish_path (const Babl *source,
+                const Babl *destination)
+{
+  return babl_fish_path2 (source, destination, 0.0);
 }
 
 static long

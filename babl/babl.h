@@ -104,8 +104,9 @@ const Babl * babl_space (const char *name);
  * multiple calls with the same icc profile will result in the
  * same space.
  *
- * If a BablSpace cannot be created from the profile NULL is returned and
- * a static string is set on the provided error location.
+ * If a BablSpace cannot be created from the profile NULL is returned and a
+ * static string is set on the const char *value pointed at with &value
+ * containing a message describing why the icc does not yield a babl space.
  */
 const Babl *babl_space_from_icc (const char  *icc_data,
                                  int          icc_length,
@@ -178,6 +179,25 @@ const Babl * babl_format_get_space  (const Babl *format);
  */
 const Babl * babl_fish      (const void *source_format,
                              const void *destination_format);
+
+
+/**
+ * babl_fast_fish:
+ *
+ * Creae a faster than normal fish with specified performance (and thus
+ * corresponding precision tradeoff), values tolerance can hold: NULL and
+ * "default", means do same as babl_fish(), other values understood in
+ * increasing order of speed gain are:
+ *    "exact" "precise" "fast" "glitch"
+ *
+ * Fast fishes should be cached, since they are not internally kept track
+ * of/made into singletons by babl and many creations of fast fishes will
+ * otherwise be a leak.
+ *
+ */
+const Babl * babl_fast_fish (const void *source_format,
+                             const void *destination_format,
+                             const char *performance);
 
 /**
  * babl_process:
