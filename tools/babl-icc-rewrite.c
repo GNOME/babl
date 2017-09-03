@@ -35,7 +35,7 @@ main (int    argc,
   char *icc_data = NULL;
   long  icc_len;
   int genlen;
-  char *error = NULL;
+  const char *error;
   babl_init ();
 
   if (!argv[1] || !argv[2])
