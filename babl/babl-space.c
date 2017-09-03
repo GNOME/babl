@@ -283,6 +283,7 @@ babl_space_class_init (void)
                0.3000,  0.6000,
                0.1500,  0.0600,
                babl_trc("sRGB"), NULL, NULL);
+
   babl_space_from_chromaticities ("Rec2020",
                0.3127,  0.3290, /* D65 */
                0.708,  0.292,
@@ -569,6 +570,51 @@ universal_rgb_converter (const Babl *conversion,unsigned char *src_char, unsigne
   return samples;
 }
 
+
+static inline long
+universal_nonlinear_rgb_u8_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
+{
+  const Babl *destination_space = conversion->conversion.destination->format.space;
+
+  float * matrixf = conversion->conversion.data;
+  float * in_trc_lut = matrixf + 9;
+  int i;
+  uint8_t *rgb_in_u8 = (void*)src_char;
+  uint8_t *rgb_out_u8 = (void*)dst_char;
+
+  float *rgba_out = babl_malloc (sizeof(float) * 4 * samples);
+  static float linear_lut_u8[258]={-1.0,};
+
+  if (linear_lut_u8[0] < 0)
+  {
+    for (i = 0; i < 256; i++)
+      linear_lut_u8[i] = i / 255.0;
+  }
+
+  for (i = 0; i < samples; i++)
+  {
+    rgba_out[i*4+0]=in_trc_lut[rgb_in_u8[i*3+0]];
+    rgba_out[i*4+1]=in_trc_lut[rgb_in_u8[i*3+1]];
+    rgba_out[i*4+2]=in_trc_lut[rgb_in_u8[i*3+2]];
+  }
+
+  babl_matrix_mul_vectorff_buf4 (matrixf, rgba_out, rgba_out, samples);
+
+  {
+    int c;
+    TRC_OUT(rgba_out, rgba_out);
+
+    for (i = 0; i < samples; i++)
+      for (c = 0; c < 3; c ++)
+        rgb_out_u8[i*3+c] = rgba_out[i*4+c] * 255.5f;
+  }
+
+  babl_free (rgba_out);
+
+  return samples;
+}
+
+
 #if defined(USE_SSE2)
 
 #define m(matr, j, i)  matr[j*3+i]
@@ -676,6 +722,50 @@ universal_nonlinear_rgba_u8_converter_sse2 (const Babl *conversion,unsigned char
 }
 
 static inline long
+universal_nonlinear_rgb_u8_converter_sse2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
+{
+  const Babl *destination_space = conversion->conversion.destination->format.space;
+
+  float * matrixf = conversion->conversion.data;
+  float * in_trc_lut = matrixf + 9;
+  int i;
+  uint8_t *rgb_in_u8 = (void*)src_char;
+  uint8_t *rgb_out_u8 = (void*)dst_char;
+
+  float *rgba_out = babl_malloc (sizeof(float) * 4 * samples);
+  static float linear_lut_u8[258]={-1.0,};
+
+  if (linear_lut_u8[0] < 0)
+  {
+    for (i = 0; i < 256; i++)
+      linear_lut_u8[i] = i / 255.0;
+  }
+
+  for (i = 0; i < samples; i++)
+  {
+    rgba_out[i*4+0]=in_trc_lut[rgb_in_u8[i*3+0]];
+    rgba_out[i*4+1]=in_trc_lut[rgb_in_u8[i*3+1]];
+    rgba_out[i*4+2]=in_trc_lut[rgb_in_u8[i*3+2]];
+  }
+
+  babl_matrix_mul_vectorff_buf4_sse2 (matrixf, rgba_out, rgba_out, samples);
+
+  {
+    int c;
+    TRC_OUT(rgba_out, rgba_out);
+
+    for (i = 0; i < samples; i++)
+      for (c = 0; c < 3; c ++)
+        rgb_out_u8[i*3+c] = rgba_out[i*4+c] * 255.5f;
+  }
+
+  babl_free (rgba_out);
+
+  return samples;
+}
+
+
+static inline long
 universal_nonlinear_rgb_linear_converter_sse2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   const Babl *source_space = babl_conversion_get_source_space (conversion);
@@ -727,6 +817,15 @@ add_rgb_adapter (Babl *babl,
                        babl_format_with_space("R'G'B'A u8", space),
                        "linear", universal_nonlinear_rgba_u8_converter_sse2,
                        NULL));
+
+       prep_conversion(babl_conversion_new(babl_format_with_space("R'G'B' u8", space),
+                       babl_format_with_space("R'G'B' u8", babl),
+                       "linear", universal_nonlinear_rgb_u8_converter_sse2,
+                       NULL));
+       prep_conversion(babl_conversion_new(babl_format_with_space("R'G'B' u8", babl),
+                       babl_format_with_space("R'G'B' u8", space),
+                       "linear", universal_nonlinear_rgb_u8_converter_sse2,
+                       NULL));
     }
     else
 #endif
@@ -754,6 +853,15 @@ add_rgb_adapter (Babl *babl,
        prep_conversion(babl_conversion_new(babl_format_with_space("R'G'B'A u8", babl),
                        babl_format_with_space("R'G'B'A u8", space),
                        "linear", universal_nonlinear_rgba_u8_converter,
+                       NULL));
+
+       prep_conversion(babl_conversion_new(babl_format_with_space("R'G'B' u8", space),
+                       babl_format_with_space("R'G'B' u8", babl),
+                       "linear", universal_nonlinear_rgb_u8_converter,
+                       NULL));
+       prep_conversion(babl_conversion_new(babl_format_with_space("R'G'B' u8", babl),
+                       babl_format_with_space("R'G'B' u8", space),
+                       "linear", universal_nonlinear_rgb_u8_converter,
                        NULL));
     }
 

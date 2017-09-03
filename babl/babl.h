@@ -86,7 +86,7 @@ const Babl * babl_model     (const char *name);
  *
  * Returns the babl object representing the specific RGB matrix color
  * working space referred to by name. Babl knows of:
- *    sRGB, Rec2020, Adobe, Apple and ProPhoto, Widegamut
+ *    sRGB, Rec2020, Adobe, Apple and ProPhoto
  */
 const Babl * babl_space (const char *name);
 
