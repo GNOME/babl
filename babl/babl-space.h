@@ -79,23 +79,40 @@ typedef struct
 
 } BablSpace;
 
+static inline int lut_init (int lut_size, float value, float *rdiff)
+{
+  float fentry = value * (lut_size-1);
+  int entry    = fentry;
+  float diff   = fentry - entry;
+
+  if (entry >= lut_size - 1) {
+    entry = lut_size - 1;
+    diff = 0.0;
+  }
+  else
+  {
+    if (entry < 0)
+    {
+      entry = 0;
+      diff = 0.0;
+    }
+  }
+  *rdiff = diff;
+  return entry;
+}
 
 static inline float do_lut (float *lut, int lut_size, float value)
 {
   int entry;
   float diff;
-  entry = value * (lut_size-1);
-  diff = ( (value * (lut_size-1)) - entry);
-  if (entry >= lut_size) entry = lut_size - 1;
-  else if (entry < 0) entry = 0;
-
-  if (diff > 0.0 && entry < lut_size - 1)
+  entry = lut_init (lut_size, value, &diff);
+  if (diff <= 0.0)
   {
-    return lut[entry] * (1.0 - diff) + lut[entry+1] * diff;
+    return lut[entry];
   }
   else
   {
-    return lut[entry];
+    return lut[entry] * (1.0 - diff) + lut[entry+1] * diff;
   }
 }
 
@@ -116,19 +133,7 @@ static inline void clut_interpol (ICCv2CLUT *clut, const double *ind, double *ou
 
   for (c = 0; c < 3; c++)
   {
-     entry[c] = val[c] * (dim[c]-1);
-     diff[c] = ((val[c] * (dim[c]-1)) - entry[c]);
-
-     if (entry[c] >= dim[c] - 1)
-     {
-       entry[c] = dim[c] - 1;
-       diff[c] = 0.0;
-     }
-     else if (entry[c] <= 0.0001)
-     {
-       entry[c] = 0;
-       diff[c] = 0.0;
-     }
+     entry[c] = lut_init (dim[c], val[c], &diff[c]);
   }
 
   // needs rework for non-same sized acceses
@@ -153,13 +158,9 @@ static inline void clut_interpol (ICCv2CLUT *clut, const double *ind, double *ou
 #else
      val[c] = clut->clut[IDX(entry[0], entry[1], entry[2],c)];
 #endif
+    outd[c] = do_lut (clut->out_table[c], clut->out_table_size, val[c]);
   }
-  for (c = 0; c < 3; c ++)
-    val[c] = do_lut (clut->out_table[c], clut->out_table_size, val[c]);
-  for (c = 0; c < 3; c ++)
-     outd[c] = val[c];
 }
-
 
 static inline void babl_space_to_xyzf (const Babl *space, const float *rgb, float *xyz)
 {

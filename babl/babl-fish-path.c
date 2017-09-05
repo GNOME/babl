@@ -235,8 +235,7 @@ get_conversion_path (PathContext *pc,
 
           if ((path_cost < ref_cost) && /* do not use paths that took longer to compute than reference */
               (path_cost < pc->fish_path->fish_path.cost) && // best thus far
-              (path_error <= legal_error )               // within tolerance
-              )
+              (path_error <= legal_error ))               // within tolerance
             {
               /* We have found the best path so far,
                * let's copy it into our new fish */

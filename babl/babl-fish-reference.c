@@ -493,10 +493,9 @@ babl_fish_reference_process (const Babl *babl,
     else babl_fatal ("oops");
   }
 
-  if (source_space != destination_space || 1)
+  if (source_space != destination_space)
   {
-    // if neither space has luts we use the matrix
-    if (destination_space->b2a0 || source_space->a2b0)
+    if (destination_space->a2b0 || source_space->b2a0)
     {
       int i;
 
@@ -505,7 +504,7 @@ babl_fish_reference_process (const Babl *babl,
       {
         double  xyz[4];
         static int counter = 0;
-  if (counter ++ % 100000 == 0)
+        if (counter ++ % 1000000 == 0)
           fprintf (stderr, "!");
 
         babl_space_to_xyz ((void*)source_space, rgba, xyz);

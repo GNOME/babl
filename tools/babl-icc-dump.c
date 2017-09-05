@@ -295,7 +295,7 @@ static int load_icc_from_memory (const char *icc, long length, char **error)
   load_sign (icc, length, 20, pcs_space);
   load_sign (icc, length, 12, profile_class);
 
-  if (strcmp (profile_class, "mntr"))
+  if (0 && strcmp (profile_class, "mntr"))
   {
     *error = "not a monitor-class profile";
     return -1;
@@ -327,6 +327,57 @@ static int load_icc_from_memory (const char *icc, long length, char **error)
      int offset, element_size;
      icc_tag (icc, length, "cprt", &offset, &element_size);
      fprintf (stdout, "copyright: %s\n", icc + offset + 8);
+  }
+  {
+     int offset, element_size;
+     icc_tag (icc, length, "A2B0", &offset, &element_size);
+     fprintf (stdout, "A2B0: %s\n", icc + offset);
+
+     if (!strcmp (icc + offset, "mft2"))
+     {
+       int input_channels = load_u8 (icc, length, offset + 8);
+       int output_channels = load_u8 (icc, length, offset + 9);
+       int grid_points = load_u8 (icc, length, offset + 10);
+
+       // 12 , 16, 20, .. 44 is matrix
+
+       int input_table_entries = load_u16 (icc, length, offset + 48);
+       int output_table_entries = load_u16 (icc, length, offset + 50);
+
+       fprintf (stdout, "in: %i out: %i grid-points:%i\n", input_channels, output_channels, grid_points);
+
+       fprintf (stdout, "%i %i\n", input_table_entries, output_table_entries);
+
+     }
+     else
+     {
+
+     int input_channels = load_u8 (icc, length, offset + 8);
+     int output_channels = load_u8 (icc, length, offset + 9);
+     int b_offset = load_u32 (icc, length, offset + 12);
+     int mat_offset = load_u32 (icc, length, offset + 16);
+     int m_offset = load_u32 (icc, length, offset + 20);
+     int clut_offset = load_u32 (icc, length, offset + 24);
+     int a_offset = load_u32 (icc, length, offset + 28);
+
+     fprintf (stdout, "in: %i out: %i\n", input_channels, output_channels);
+     fprintf (stdout, " %i %i %i %i %i %i %i \n",
+     input_channels, output_channels, b_offset, mat_offset, m_offset, clut_offset, a_offset);
+     int clut_precision = load_u8 (icc, length, offset + clut_offset + 16);
+
+     fprintf (stdout, "precision: %i\n", clut_precision);
+     {
+        int i;
+        for (i = 0; i < input_channels; i++)
+          fprintf (stdout, "%i:%i\n", i, load_u8 (icc, length, offset + clut_offset +i));
+     }
+     }
+
+  }
+  {
+     int offset, element_size;
+     icc_tag (icc, length, "B2A0", &offset, &element_size);
+     fprintf (stdout, "B2A0: %s\n", icc + offset);
   }
 
 #if 1

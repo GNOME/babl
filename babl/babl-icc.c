@@ -710,15 +710,11 @@ static ICCv2CLUT *load_mft2 (ICC *state, int offset, int size)
   clut->in_table_size = icc_read (u16, offset + 48);
   clut->out_table_size = icc_read (u16, offset + 50);
 
-
   for (i = 0; i < 9; i++)
     clut->matrix[i] = icc_read (s15f16, offset + 12 + i * 4);
 
-  clut->clut = babl_calloc (sizeof (float), 3 * clut->clut_size[0] * clut->clut_size[1] * (clut->clut_size[2]+1));
   for (c = 0; c < 3; c++)
     clut->in_table[c] = babl_calloc (sizeof (float), clut->in_table_size);
-  for (c = 0; c < 3; c++)
-    clut->out_table[c] = babl_calloc (sizeof (float), clut->out_table_size);
 
   o = 52;
   for (c = 0; c < 3; c++)
@@ -727,11 +723,18 @@ static ICCv2CLUT *load_mft2 (ICC *state, int offset, int size)
       clut->in_table[c][i] = icc_read (u16, offset + o) / 65535.0;
       o+=2;
     }
+
+  clut->clut = babl_calloc (sizeof (float), 3 * clut->clut_size[0] * clut->clut_size[1] * (clut->clut_size[2]+1));
+
   for (i = 0; i < 3 * clut->clut_size[0] * clut->clut_size[1] * clut->clut_size[2]; i++)
     {
       clut->clut[i] = icc_read (u16, offset + o) / 65535.0;
       o+=2;
     }
+
+  for (c = 0; c < 3; c++)
+    clut->out_table[c] = babl_calloc (sizeof (float), clut->out_table_size);
+
   for (c = 0; c < 3; c++)
     for (i = 0; i < clut->out_table_size; i++)
     {

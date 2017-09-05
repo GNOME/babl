@@ -849,10 +849,8 @@ universal_generic_rgba_converter (const Babl *conversion,unsigned char *src_char
   for (i = 0; i < samples; i++)
   {
      double rgba[4] = {rgba_in[0], rgba_in[1], rgba_in[2]};
-     babl_space_to_xyz (source_space,
-                        rgba, rgba);
-     babl_space_from_xyz (destination_space,
-                          rgba, rgba);
+     _babl_space_to_xyz (source_space, rgba, rgba);
+     _babl_space_from_xyz (destination_space, rgba, rgba);
      rgba_out[0] = rgba[0];
      rgba_out[1] = rgba[1];
      rgba_out[2] = rgba[2];
@@ -880,8 +878,8 @@ universal_generic_rgb_converter (const Babl *conversion,unsigned char *src_char,
   for (i = 0; i < samples; i++)
   {
      double rgba[4] = {rgba_in[0], rgba_in[1], rgba_in[2]};
-     babl_space_to_xyz (source_space, rgba, rgba);
-     babl_space_from_xyz (destination_space, rgba, rgba);
+     _babl_space_to_xyz (source_space, rgba, rgba);
+     _babl_space_from_xyz (destination_space, rgba, rgba);
      rgba_out[0] = rgba[0];
      rgba_out[1] = rgba[1];
      rgba_out[2] = rgba[2];
@@ -904,7 +902,7 @@ add_rgb_adapter (Babl *babl,
 {
   Babl *space = data;
 
-  if (space->space.a2b0 || babl->space.a2b0)
+  if ((space->space.a2b0 || babl->space.a2b0) && 0)
   {
     prep_conversion(babl_conversion_new(babl_format_with_space("RGBA float", (void*)space),
                     babl_format_with_space("RGBA float", babl),

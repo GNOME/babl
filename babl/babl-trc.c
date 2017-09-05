@@ -38,51 +38,13 @@ static inline float _babl_trc_linear (const Babl *trc_, float value)
 static inline float babl_trc_lut_from_linear (const Babl *trc_, float x)
 {
   BablTRC *trc = (void*)trc_;
-  int entry;
-  float ret, diff;
-
-  entry = x * (trc->lut_size-1);
-  diff =  ( (x * (trc->lut_size-1)) - entry);
-
-  if (entry >= trc->lut_size -1)
-  {
-    entry = trc->lut_size - 1;
-    diff = 0.0;
-  }
-  else if (entry < 0) entry = 0;
-
-  if (diff > 0.0)
-  {
-    ret = trc->inv_lut[entry] * (1.0 - diff) + trc->inv_lut[entry+1] * diff;
-  }
-  else
-  {
-    ret = trc->inv_lut[entry];
-  }
-  return ret;
+  return do_lut (trc->inv_lut, trc->lut_size, x);
 }
 
 static inline float babl_trc_lut_to_linear (const Babl *trc_, float x)
 {
   BablTRC *trc = (void*)trc_;
-  int entry;
-  float ret, diff;
-
-  entry = x * (trc->lut_size-1);
-  diff =  ( (x * (trc->lut_size-1)) - entry);
-
-  if (entry >= trc->lut_size) entry = trc->lut_size - 1;
-  else if (entry < 0) entry = 0;
-
-  if (diff > 0.0 && entry < trc->lut_size - 1)
-  {
-    ret = trc->lut[entry] * (1.0 - diff) + trc->lut[entry+1] * diff;
-  }
-  else
-  {
-    ret = trc->lut[entry];
-  }
-  return ret;
+  return do_lut (trc->lut, trc->lut_size, x);
 }
 
 static inline float _babl_trc_gamma_to_linear (const Babl *trc_, float value)
