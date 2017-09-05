@@ -699,26 +699,26 @@ static char *decode_string (ICC *state, const char *tag, const char *lang, const
   return NULL;
 }
 
-static ICCv2CLUT *load_mft2 (ICC *state, int offset)
+static ICCv2CLUT *load_mft2 (ICC *state, int offset, int size)
 {
   int i, c;
   int o;
   ICCv2CLUT *clut = babl_calloc (sizeof (ICCv2CLUT), 1);
-  clut->clut_size = icc_read (u8,  offset + 10);
+  clut->clut_size[0] = icc_read (u8,  offset + 10);
+  clut->clut_size[1] = icc_read (u8,  offset + 10);
+  clut->clut_size[2] = icc_read (u8,  offset + 10);
   clut->in_table_size = icc_read (u16, offset + 48);
   clut->out_table_size = icc_read (u16, offset + 50);
+
 
   for (i = 0; i < 9; i++)
     clut->matrix[i] = icc_read (s15f16, offset + 12 + i * 4);
 
-  clut->clut = babl_calloc (sizeof (float), 3 * clut->clut_size * clut->clut_size * clut->clut_size);
+  clut->clut = babl_calloc (sizeof (float), 3 * clut->clut_size[0] * clut->clut_size[1] * (clut->clut_size[2]+1));
   for (c = 0; c < 3; c++)
     clut->in_table[c] = babl_calloc (sizeof (float), clut->in_table_size);
   for (c = 0; c < 3; c++)
     clut->out_table[c] = babl_calloc (sizeof (float), clut->out_table_size);
-
-  for (i = 0; i < 9; i++)
-    clut->matrix[i] = icc_read (s15f16, offset + 12 + i * 4);
 
   o = 52;
   for (c = 0; c < 3; c++)
@@ -727,7 +727,7 @@ static ICCv2CLUT *load_mft2 (ICC *state, int offset)
       clut->in_table[c][i] = icc_read (u16, offset + o) / 65535.0;
       o+=2;
     }
-  for (i = 0; i < 3 * clut->clut_size * clut->clut_size * clut->clut_size; i++)
+  for (i = 0; i < 3 * clut->clut_size[0] * clut->clut_size[1] * clut->clut_size[2]; i++)
     {
       clut->clut[i] = icc_read (u16, offset + o) / 65535.0;
       o+=2;
@@ -746,21 +746,28 @@ static ICCv2CLUT *load_mft1 (ICC *state, int offset)
   int i, c;
   int o;
   ICCv2CLUT *clut = babl_calloc (sizeof (ICCv2CLUT), 1);
-  clut->clut_size = icc_read (u8,  offset + 10);
+
+  clut->clut_size[0] = icc_read (u8,  offset + 10);
+  clut->clut_size[1] = icc_read (u8,  offset + 10);
+  clut->clut_size[2] = icc_read (u8,  offset + 10);
   clut->in_table_size = 256;
   clut->out_table_size = 256;
 
-  for (i = 0; i < 9; i++)
-    clut->matrix[i] = icc_read (s15f16, offset + 12 + i * 4);
+  clut->matrix[0] = icc_read (s15f16, offset + 12 + 0 * 4);
+  clut->matrix[1] = icc_read (s15f16, offset + 12 + 3 * 4);
+  clut->matrix[2] = icc_read (s15f16, offset + 12 + 6 * 4);
+  clut->matrix[3] = icc_read (s15f16, offset + 12 + 1 * 4);
+  clut->matrix[4] = icc_read (s15f16, offset + 12 + 4 * 4);
+  clut->matrix[5] = icc_read (s15f16, offset + 12 + 7 * 4);
+  clut->matrix[6] = icc_read (s15f16, offset + 12 + 2 * 4);
+  clut->matrix[7] = icc_read (s15f16, offset + 12 + 5 * 4);
+  clut->matrix[8] = icc_read (s15f16, offset + 12 + 8 * 4);
 
-  clut->clut = babl_calloc (sizeof (float), 3 * clut->clut_size * clut->clut_size * clut->clut_size);
+  clut->clut = babl_calloc (sizeof (float), 3 * clut->clut_size[0] * clut->clut_size[1] * (clut->clut_size[2]+1));
   for (c = 0; c < 3; c++)
     clut->in_table[c] = babl_calloc (sizeof (float), clut->in_table_size);
   for (c = 0; c < 3; c++)
     clut->out_table[c] = babl_calloc (sizeof (float), clut->out_table_size);
-
-  for (i = 0; i < 9; i++)
-    clut->matrix[i] = icc_read (s15f16, offset + 12 + i * 4);
 
   o = 52;
   for (c = 0; c < 3; c++)
@@ -769,7 +776,7 @@ static ICCv2CLUT *load_mft1 (ICC *state, int offset)
       clut->in_table[c][i] = icc_read (u8, offset + o) / 255.0;
       o++;
     }
-  for (i = 0; i < 3 * clut->clut_size * clut->clut_size * clut->clut_size; i++)
+  for (i = 0; i < 3 * clut->clut_size[0] * clut->clut_size[1] * clut->clut_size[2]; i++)
     {
       clut->clut[i] = icc_read (u8, offset + o) / 255.0;
       o++;
@@ -887,7 +894,7 @@ babl_icc_make_space (const char   *icc_data,
     if (icc_tag (state, "A2B0", &offset, &element_size))
     {
       if (!strcmp (state->data + offset, "mft2"))
-        a2b0 = load_mft2 (state, offset);
+        a2b0 = load_mft2 (state, offset, element_size);
       else if (!strcmp (state->data + offset, "mft1"))
         a2b0 = load_mft1 (state, offset);
     }
@@ -898,7 +905,7 @@ babl_icc_make_space (const char   *icc_data,
     if (icc_tag (state, "B2A0", &offset, &element_size))
     {
       if (!strcmp (state->data + offset, "mft2"))
-        b2a0 = load_mft2 (state, offset);
+        b2a0 = load_mft2 (state, offset, element_size);
       else if (!strcmp (state->data + offset, "mft1"))
         b2a0 = load_mft1 (state, offset);
     }

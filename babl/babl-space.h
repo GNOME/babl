@@ -29,13 +29,14 @@ BABL_CLASS_DECLARE (space);
 typedef struct
 {
   float  *clut;
-  int     clut_size;
+  int     clut_size[3];
   int     in_table_size;
   int     out_table_size;
   float   matrix[9];
   float  *in_table[3];
   float  *out_table[3];
 } ICCv2CLUT;
+
 
 typedef struct
 {
@@ -78,28 +79,160 @@ typedef struct
 
 } BablSpace;
 
+
+static inline float do_lut (float *lut, int lut_size, float value)
+{
+  int entry;
+  float diff;
+  entry = value * (lut_size-1);
+  diff = ( (value * (lut_size-1)) - entry);
+  if (entry >= lut_size) entry = lut_size - 1;
+  else if (entry < 0) entry = 0;
+
+  if (diff > 0.0 && entry < lut_size - 1)
+  {
+    return lut[entry] * (1.0 - diff) + lut[entry+1] * diff;
+  }
+  else
+  {
+    return lut[entry];
+  }
+}
+
+static inline void clut_interpol (ICCv2CLUT *clut, const double *ind, double *outd)
+{
+  float val[3] = {ind[0], ind[1], ind[2]};
+  int   entry[3];
+  float diff[3];
+  int *dim = clut->clut_size;
+  int c;
+
+  babl_matrix_mul_vectorff (clut->matrix, val, val);
+
+  for (c = 0; c < 3; c ++)
+  {
+     val[c] = do_lut (clut->in_table[c], clut->in_table_size, val[c]);
+  }
+
+  for (c = 0; c < 3; c++)
+  {
+     entry[c] = val[c] * (dim[c]-1);
+     diff[c] = ((val[c] * (dim[c]-1)) - entry[c]);
+
+     if (entry[c] >= dim[c] - 1)
+     {
+       entry[c] = dim[c] - 1;
+       diff[c] = 0.0;
+     }
+     else if (entry[c] <= 0.0001)
+     {
+       entry[c] = 0;
+       diff[c] = 0.0;
+     }
+  }
+
+  // needs rework for non-same sized acceses
+#define IDX(a,b,c,comp) (((a) * dim[0] * dim[1] + (b) * dim[0] + (c)) * 3 + comp)
+
+  for (c = 0; c < 3; c ++)
+  {
+#if 1
+     val[c] =
+        ((clut->clut[IDX(entry[0],  entry[1],   entry[2],c  )] * (1.0 - diff[0]) +
+         clut->clut[IDX(entry[0]+1, entry[1],   entry[2],c  )] * (diff[0])) * (1.0 - diff[1]) +
+
+        (clut->clut[IDX(entry[0],   entry[1]+1, entry[2],c  )] * (1.0 - diff[0]) +
+         clut->clut[IDX(entry[0]+1, entry[1]+1, entry[2],c  )] * (diff[0])) * diff[1]) *
+                        (1.0-diff[2]) +
+
+        ((clut->clut[IDX(entry[0],  entry[1],   entry[2]+1,c)] * (1.0 - diff[0]) +
+         clut->clut[IDX(entry[0]+1, entry[1],   entry[2]+1,c)] * (diff[0])) * (1.0 - diff[1]) +
+
+        (clut->clut[IDX(entry[0],   entry[1]+1, entry[2]+1,c)] * (1.0 - diff[0]) +
+         clut->clut[IDX(entry[0]+1, entry[1]+1, entry[2]+1,c)] * (diff[0])) * diff[1]) * diff[2];
+#else
+     val[c] = clut->clut[IDX(entry[0], entry[1], entry[2],c)];
+#endif
+  }
+  for (c = 0; c < 3; c ++)
+    val[c] = do_lut (clut->out_table[c], clut->out_table_size, val[c]);
+  for (c = 0; c < 3; c ++)
+     outd[c] = val[c];
+}
+
+
 static inline void babl_space_to_xyzf (const Babl *space, const float *rgb, float *xyz)
 {
   BablSpace *space_ = (void*)space;
-  babl_matrix_mul_vectorff (space_->RGBtoXYZf, rgb, xyz);
+  double rgbmat[3] = {rgb[0], rgb[1], rgb[2]};
+  double xyzmat[3];
+  if (space_->a2b0)
+  {
+    int c;
+    for (c = 0; c < 3; c++)
+      rgbmat[c] = babl_trc_from_linear (space_->trc[c], rgbmat[c]);
+    clut_interpol (space_->a2b0, rgbmat, xyzmat);
+  }
+  else
+  {
+    babl_matrix_mul_vector (space_->RGBtoXYZ, rgbmat, xyzmat);
+  }
+  xyz[0] = xyzmat[0];
+  xyz[1] = xyzmat[1];
+  xyz[2] = xyzmat[2];
 }
+
 
 static inline void babl_space_from_xyzf (const Babl *space, const float *xyz, float *rgb)
 {
   BablSpace *space_ = (void*)space;
-  babl_matrix_mul_vectorff (space_->XYZtoRGBf, xyz, rgb);
+  double xyzmat[3] = {xyz[0], xyz[1], xyz[2]};
+  double rgbmat[3];
+  if (space_->b2a0)
+  {
+    int c;
+    clut_interpol (space_->b2a0, xyzmat, rgbmat);
+    for (c = 0; c < 3; c++)
+      rgbmat[c] = babl_trc_to_linear (space_->trc[c], rgbmat[c]);
+  }
+  else
+  {
+    babl_matrix_mul_vector (space_->XYZtoRGB, xyzmat, rgbmat);
+  }
+  rgb[0] = rgbmat[0];
+  rgb[1] = rgbmat[1];
+  rgb[2] = rgbmat[2];
 }
 
-static inline void _babl_space_to_xyz (const Babl *space, const double *rgb, double *xyz)
+
+static inline void _babl_space_to_xyz (const Babl *space_, const double *rgb, double *xyz)
 {
-  BablSpace *space_ = (void*)space;
-  babl_matrix_mul_vector (space_->RGBtoXYZ, rgb, xyz);
+  BablSpace *space = (void*)space_;
+  if (space->a2b0)
+  {
+    int c;
+    for (c = 0; c < 3; c++)
+      xyz[c] = babl_trc_from_linear (space->trc[c], rgb[c]);
+    clut_interpol (space->a2b0, xyz, xyz);
+  }
+  else
+    babl_matrix_mul_vector (space->RGBtoXYZ, rgb, xyz);
 }
 
-static inline void _babl_space_from_xyz (const Babl *space, const double *xyz, double *rgb)
+static inline void _babl_space_from_xyz (const Babl *space_, const double *xyz, double *rgb)
 {
-  BablSpace *space_ = (void*)space;
-  babl_matrix_mul_vector (space_->XYZtoRGB, xyz, rgb);
+  BablSpace *space = (void*)space_;
+  if (space->b2a0)
+  {
+    clut_interpol (space->b2a0, xyz, rgb);
+    {
+      int c;
+      for (c = 0; c < 3; c++)
+        rgb[c] = babl_trc_to_linear (space->trc[c], rgb[c]);
+    }
+  }
+  else
+    babl_matrix_mul_vector (space->XYZtoRGB, xyz, rgb);
 }
 
 void

@@ -434,11 +434,12 @@ babl_fish_reference_process (const Babl *babl,
   Babl *source_image;
   Babl *rgba_image;
   Babl *destination_image;
+  BablSpace *destination_space = (void*)&((babl->fish.destination)->format.space->space);
+  BablSpace *source_space = (void*)&((babl->fish.source)->format.space->space);
 
   if ((BABL (babl->fish.source)->format.model ==
        BABL (babl->fish.destination)->format.model) &&
-      (BABL (babl->fish.source)->format.space ==
-       BABL (babl->fish.destination)->format.space)
+       (source_space == destination_space)
       )
     return process_same_model (babl, source, destination, n);
 
@@ -492,17 +493,37 @@ babl_fish_reference_process (const Babl *babl,
     else babl_fatal ("oops");
   }
 
-  if (((babl->fish.source)->format.space !=
-      ((babl->fish.destination)->format.space)))
+  if (source_space != destination_space || 1)
   {
-    double matrix[9];
-    double *rgba = rgba_double_buf;
-    babl_matrix_mul_matrix (
-      (babl->fish.destination)->format.space->space.XYZtoRGB,
-      (babl->fish.source)->format.space->space.RGBtoXYZ,
-      matrix);
+    // if neither space has luts we use the matrix
+    if (destination_space->b2a0 || source_space->a2b0)
+    {
+      int i;
 
-    babl_matrix_mul_vector_buf4 (matrix, rgba, rgba, n);
+      double *rgba = rgba_double_buf;
+      for (i = 0; i < n; i++)
+      {
+        double  xyz[4];
+        static int counter = 0;
+  if (counter ++ % 100000 == 0)
+          fprintf (stderr, "!");
+
+        babl_space_to_xyz ((void*)source_space, rgba, xyz);
+        babl_space_from_xyz ((void*)destination_space, xyz, rgba);
+        rgba += 4;
+      }
+    }
+    else
+    {
+      double matrix[9];
+      double *rgba = rgba_double_buf;
+      babl_matrix_mul_matrix (
+        (babl->fish.destination)->format.space->space.XYZtoRGB,
+        (babl->fish.source)->format.space->space.RGBtoXYZ,
+        matrix);
+
+      babl_matrix_mul_vector_buf4 (matrix, rgba, rgba, n);
+    }
   }
 
   {

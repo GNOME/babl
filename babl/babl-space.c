@@ -571,8 +571,6 @@ static void prep_conversion (const Babl *babl)
 } while(0)
 
 
-
-
 static inline void
 universal_nonlinear_rgb_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
@@ -839,11 +837,86 @@ universal_nonlinear_rgb_linear_converter_sse2 (const Babl *conversion,unsigned c
 }
 #endif
 
+static inline long
+universal_generic_rgba_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
+{
+  const Babl *source_space = babl_conversion_get_source_space (conversion);
+  const Babl *destination_space = babl_conversion_get_destination_space (conversion);
+  float *rgba_in = (void*)src_char;
+  float *rgba_out = (void*)dst_char;
+
+  int i;
+  for (i = 0; i < samples; i++)
+  {
+     double rgba[4] = {rgba_in[0], rgba_in[1], rgba_in[2]};
+     babl_space_to_xyz (source_space,
+                        rgba, rgba);
+     babl_space_from_xyz (destination_space,
+                          rgba, rgba);
+     rgba_out[0] = rgba[0];
+     rgba_out[1] = rgba[1];
+     rgba_out[2] = rgba[2];
+     rgba_out[3] = rgba_in[3];
+     rgba_in += 4;
+     rgba_out += 4;
+     {
+        static int counter = 0;
+  if (counter ++ % 100000 == 0)
+          fprintf (stderr, "%%");
+  }
+  }
+  return samples;
+}
+
+static inline long
+universal_generic_rgb_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
+{
+  const Babl *source_space = babl_conversion_get_source_space (conversion);
+  const Babl *destination_space = babl_conversion_get_destination_space (conversion);
+  float *rgba_in = (void*)src_char;
+  float *rgba_out = (void*)dst_char;
+
+  int i;
+  for (i = 0; i < samples; i++)
+  {
+     double rgba[4] = {rgba_in[0], rgba_in[1], rgba_in[2]};
+     babl_space_to_xyz (source_space, rgba, rgba);
+     babl_space_from_xyz (destination_space, rgba, rgba);
+     rgba_out[0] = rgba[0];
+     rgba_out[1] = rgba[1];
+     rgba_out[2] = rgba[2];
+     rgba_in += 3;
+     rgba_out += 3;
+
+
+     {
+        static int counter = 0;
+  if (counter ++ % 100000 == 0)
+          fprintf (stderr, ":");
+  }
+  }
+  return samples;
+}
 
 static int
 add_rgb_adapter (Babl *babl,
-                 void *space)
+                 void *data)
 {
+  Babl *space = data;
+
+  if (space->space.a2b0 || babl->space.a2b0)
+  {
+    prep_conversion(babl_conversion_new(babl_format_with_space("RGBA float", (void*)space),
+                    babl_format_with_space("RGBA float", babl),
+                    "linear", universal_generic_rgba_converter,
+                    NULL));
+    prep_conversion(babl_conversion_new(babl_format_with_space("RGB float", (void*)space),
+                    babl_format_with_space("RGB float", babl),
+                    "linear", universal_generic_rgb_converter,
+                    NULL));
+    return 0;
+  }
+
   if (babl != space)
   {
 
