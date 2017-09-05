@@ -151,6 +151,24 @@ int _babl_max_path_len (void)
   return max_path_length ();
 }
 
+static int
+bad_idea (const Babl *from, const Babl *to, const Babl *format)
+{
+  if (babl_format_has_alpha (from) &&
+      babl_format_has_alpha (to) &&
+      !babl_format_has_alpha (format))
+  {
+    return 1;
+  }
+  if (from->format.components > format->format.components &&
+      to->format.components > format->format.components)
+  {
+    return 1;
+  }
+  return 0;
+}
+
+
 /* The task of BablFishPath construction is to compute
  * the shortest path in a graph where formats are the vertices
  * and conversions are the edges. However, there is an additional
@@ -163,7 +181,6 @@ int _babl_max_path_len (void)
  * conversion errors and backtracking. The backtracking is
  * implemented by recursive function get_conversion_path ().
  */
-
 
 static void
 get_conversion_path (PathContext *pc,
@@ -185,7 +202,7 @@ get_conversion_path (PathContext *pc,
       double path_cost  = 0.0;
       double ref_cost   = 0.0;
       double path_error = 1.0;
-#if 1
+#if 0
       int    i;
       for (i = 0; i < babl_list_size (pc->current_path); i++)
         {
@@ -248,7 +265,7 @@ get_conversion_path (PathContext *pc,
             {
               Babl *next_conversion = BABL (list->items[i]);
               Babl *next_format = BABL (next_conversion->conversion.destination);
-              if (!next_format->format.visited)
+              if (!next_format->format.visited && !bad_idea (current_format, pc->to_format, next_format))
                 {
                   /* next_format is not in the current path, we can pay a visit */
                   babl_list_insert_last (pc->current_path, next_conversion);
