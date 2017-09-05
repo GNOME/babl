@@ -135,7 +135,7 @@ static int max_path_length (void)
   if (env)
     max_length = atoi (env);
   else
-    max_length = 3; /* reducing this number makes finding short fishes much
+    max_length = 4; /* reducing this number makes finding short fishes much
                        faster - even if we lose out on some of the fast
                        bigger fish
                      */
