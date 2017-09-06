@@ -38,10 +38,14 @@ static inline float babl_trc_lut_from_linear (const Babl *trc_, float x)
   entry = x * (trc->lut_size-1);
   diff =  ( (x * (trc->lut_size-1)) - entry);
 
-  if (entry >= trc->lut_size) entry = trc->lut_size - 1;
+  if (entry >= trc->lut_size -1)
+  {
+    entry = trc->lut_size - 1;
+    diff = 0.0;
+  }
   else if (entry < 0) entry = 0;
 
-  if (diff > 0.0 && entry < trc->lut_size-1)
+  if (diff > 0.0)
   {
     ret = trc->inv_lut[entry] * (1.0 - diff) + trc->inv_lut[entry+1] * diff;
   }

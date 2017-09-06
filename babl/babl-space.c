@@ -583,13 +583,6 @@ universal_nonlinear_rgb_u8_converter (const Babl *conversion,unsigned char *src_
   uint8_t *rgb_out_u8 = (void*)dst_char;
 
   float *rgba_out = babl_malloc (sizeof(float) * 4 * samples);
-  static float linear_lut_u8[258]={-1.0,};
-
-  if (linear_lut_u8[0] < 0)
-  {
-    for (i = 0; i < 256; i++)
-      linear_lut_u8[i] = i / 255.0;
-  }
 
   for (i = 0; i < samples; i++)
   {
@@ -689,13 +682,6 @@ universal_nonlinear_rgba_u8_converter_sse2 (const Babl *conversion,unsigned char
   uint8_t *rgba_out_u8 = (void*)dst_char;
 
   float *rgba_out = babl_malloc (sizeof(float) * 4 * samples);
-  static float linear_lut_u8[258]={-1.0,};
-
-  if (linear_lut_u8[0] < 0)
-  {
-    for (i = 0; i < 256; i++)
-      linear_lut_u8[i] = i / 255.0;
-  }
 
   for (i = 0; i < samples * 4; i+= 4)
   {
@@ -733,13 +719,6 @@ universal_nonlinear_rgb_u8_converter_sse2 (const Babl *conversion,unsigned char 
   uint8_t *rgb_out_u8 = (void*)dst_char;
 
   float *rgba_out = babl_malloc (sizeof(float) * 4 * samples);
-  static float linear_lut_u8[258]={-1.0,};
-
-  if (linear_lut_u8[0] < 0)
-  {
-    for (i = 0; i < 256; i++)
-      linear_lut_u8[i] = i / 255.0;
-  }
 
   for (i = 0; i < samples; i++)
   {
@@ -827,7 +806,7 @@ add_rgb_adapter (Babl *babl,
                        "linear", universal_nonlinear_rgb_u8_converter_sse2,
                        NULL));
     }
-    else
+    //else
 #endif
     {
        prep_conversion(babl_conversion_new(babl_format_with_space("RGBA float", space),

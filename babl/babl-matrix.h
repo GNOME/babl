@@ -97,16 +97,16 @@ static inline void babl_matrix_mul_vectorf (const double *mat, const float *v_in
 
 static inline void babl_matrix_mul_vectorff (const float *mat, const float *v_in, float *v_out)
 {
-  float a = v_in[0], b = v_in[1], c = v_in[2];
-  float m_0_0 = m(mat, 0, 0);
-  float m_0_1 = m(mat, 0, 1);
-  float m_0_2 = m(mat, 0, 2);
-  float m_1_0 = m(mat, 1, 0);
-  float m_1_1 = m(mat, 1, 1);
-  float m_1_2 = m(mat, 1, 2);
-  float m_2_0 = m(mat, 2, 0);
-  float m_2_1 = m(mat, 2, 1);
-  float m_2_2 = m(mat, 2, 2);
+  const float a = v_in[0], b = v_in[1], c = v_in[2];
+  const float m_0_0 = m(mat, 0, 0);
+  const float m_0_1 = m(mat, 0, 1);
+  const float m_0_2 = m(mat, 0, 2);
+  const float m_1_0 = m(mat, 1, 0);
+  const float m_1_1 = m(mat, 1, 1);
+  const float m_1_2 = m(mat, 1, 2);
+  const float m_2_0 = m(mat, 2, 0);
+  const float m_2_1 = m(mat, 2, 1);
+  const float m_2_2 = m(mat, 2, 2);
 
   v_out[0] = m_0_0 * a + m_0_1 * b + m_0_2 * c;
   v_out[1] = m_1_0 * a + m_1_1 * b + m_1_2 * c;
@@ -117,18 +117,18 @@ static inline void babl_matrix_mul_vectorff_buf3 (const float *mat, const float 
                                                   int samples)
 {
   int i;
-  float m_0_0 = m(mat, 0, 0);
-  float m_0_1 = m(mat, 0, 1);
-  float m_0_2 = m(mat, 0, 2);
-  float m_1_0 = m(mat, 1, 0);
-  float m_1_1 = m(mat, 1, 1);
-  float m_1_2 = m(mat, 1, 2);
-  float m_2_0 = m(mat, 2, 0);
-  float m_2_1 = m(mat, 2, 1);
-  float m_2_2 = m(mat, 2, 2);
+  const float m_0_0 = m(mat, 0, 0);
+  const float m_0_1 = m(mat, 0, 1);
+  const float m_0_2 = m(mat, 0, 2);
+  const float m_1_0 = m(mat, 1, 0);
+  const float m_1_1 = m(mat, 1, 1);
+  const float m_1_2 = m(mat, 1, 2);
+  const float m_2_0 = m(mat, 2, 0);
+  const float m_2_1 = m(mat, 2, 1);
+  const float m_2_2 = m(mat, 2, 2);
   for (i = 0; i < samples; i ++)
   {
-    float a = v_in[0], b = v_in[1], c = v_in[2];
+    const float a = v_in[0], b = v_in[1], c = v_in[2];
 
     v_out[0] = m_0_0 * a + m_0_1 * b + m_0_2 * c;
     v_out[1] = m_1_0 * a + m_1_1 * b + m_1_2 * c;
@@ -141,16 +141,16 @@ static inline void babl_matrix_mul_vectorff_buf3 (const float *mat, const float 
 static inline void babl_matrix_mul_vectorff_buf4 (const float *mat, const float *v_in, float *v_out,
                                                   int samples)
 {
+  const float m_0_0 = m(mat, 0, 0);
+  const float m_0_1 = m(mat, 0, 1);
+  const float m_0_2 = m(mat, 0, 2);
+  const float m_1_0 = m(mat, 1, 0);
+  const float m_1_1 = m(mat, 1, 1);
+  const float m_1_2 = m(mat, 1, 2);
+  const float m_2_0 = m(mat, 2, 0);
+  const float m_2_1 = m(mat, 2, 1);
+  const float m_2_2 = m(mat, 2, 2);
   int i;
-  float m_0_0 = m(mat, 0, 0);
-  float m_0_1 = m(mat, 0, 1);
-  float m_0_2 = m(mat, 0, 2);
-  float m_1_0 = m(mat, 1, 0);
-  float m_1_1 = m(mat, 1, 1);
-  float m_1_2 = m(mat, 1, 2);
-  float m_2_0 = m(mat, 2, 0);
-  float m_2_1 = m(mat, 2, 1);
-  float m_2_2 = m(mat, 2, 2);
   for (i = 0; i < samples; i ++)
   {
     float a = v_in[0], b = v_in[1], c = v_in[2];
@@ -168,18 +168,18 @@ static inline void babl_matrix_mul_vector_buf4 (const double *mat, const double 
                                                 int samples)
 {
   int i;
-  double m_0_0 = m(mat, 0, 0);
-  double m_0_1 = m(mat, 0, 1);
-  double m_0_2 = m(mat, 0, 2);
-  double m_1_0 = m(mat, 1, 0);
-  double m_1_1 = m(mat, 1, 1);
-  double m_1_2 = m(mat, 1, 2);
-  double m_2_0 = m(mat, 2, 0);
-  double m_2_1 = m(mat, 2, 1);
-  double m_2_2 = m(mat, 2, 2);
+  const double m_0_0 = m(mat, 0, 0);
+  const double m_0_1 = m(mat, 0, 1);
+  const double m_0_2 = m(mat, 0, 2);
+  const double m_1_0 = m(mat, 1, 0);
+  const double m_1_1 = m(mat, 1, 1);
+  const double m_1_2 = m(mat, 1, 2);
+  const double m_2_0 = m(mat, 2, 0);
+  const double m_2_1 = m(mat, 2, 1);
+  const double m_2_2 = m(mat, 2, 2);
   for (i = 0; i < samples; i ++)
   {
-    double a = v_in[0], b = v_in[1], c = v_in[2];
+    const double a = v_in[0], b = v_in[1], c = v_in[2];
 
     v_out[0] = m_0_0 * a + m_0_1 * b + m_0_2 * c;
     v_out[1] = m_1_0 * a + m_1_1 * b + m_1_2 * c;

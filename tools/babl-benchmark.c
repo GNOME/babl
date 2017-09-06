@@ -75,20 +75,18 @@ test (void)
      babl_format("R'G'B'A u8"),
      babl_format("Y float"),
      babl_format("R'G'B'A u16"),
-     babl_format_with_space("R'G'B'A u8",     babl_space("ProPhoto")),
      babl_format_with_space("RGBA float",     babl_space("ProPhoto")),
      babl_format_with_space("R'G'B' u16",     babl_space("ProPhoto")),
 #endif
-     babl_format("CIE Lab float"),
-     babl_format("RGBA float"),
-     babl_format("R'G'B'A float"),
-     babl_format("Y float"),
-     babl_format("R'G'B'A u8"),
-     babl_format_with_space("RGBA float",    babl_space("ProPhoto")),
-     babl_format_with_space("R'G'B'A float", babl_space("ProPhoto")),
-     babl_format_with_space("Y float",       babl_space("ProPhoto")),
-     babl_format_with_space("R'G'B'A u8",     babl_space("Adobe")),
-     babl_format_with_space("R'G'B'A u8",     babl_space("ProPhoto")),
+     //babl_format("R'G'B'A u8"),
+     //babl_format("R'G'B'A u16"),
+       babl_format_with_space("R'G'B'A u8", babl_space("ProPhoto")),
+       babl_format_with_space("R'G'B'A half", babl_space("ProPhoto")),
+       babl_format_with_space("R'G'B'A float", babl_space("ProPhoto")),
+       babl_format_with_space("R'G'B'A double", babl_space("ProPhoto")),
+       babl_format_with_space("cairo-RGB24", babl_space("Adobe")),
+       babl_format_with_space("cairo-ARGB32", babl_space("Adobe")),
+
      };
   int n_formats = sizeof (formats) / sizeof (formats[0]);
   const Babl *fishes[50 * 50];

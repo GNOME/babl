@@ -221,18 +221,13 @@ get_conversion_path (PathContext *pc,
           fpi.destination = pc->to_format;
 
           get_path_instrumentation (&fpi, pc->current_path, &path_cost, &ref_cost, &path_error);
-          //path_cost += pc->current_path->count * 1000; // punish long chains
           if(debug_conversions && current_length == 1)
             fprintf (stderr, "%s  error:%f cost:%f  \n",
-                 babl_get_name (pc->current_path->items[0]),
-                 /*babl_get_name (pc->fish_path->fish.source),
-                 babl_get_name (pc->fish_path->fish.destination),*/
-                 path_error,
-                 path_cost /*, current_length*/);
+                 babl_get_name (pc->current_path->items[0]), path_error, path_cost);
 
           if ((path_cost < ref_cost) && /* do not use paths that took longer to compute than reference */
-              (path_cost < pc->fish_path->fish_path.cost) &&
-              (path_error <= legal_error )
+              (path_cost < pc->fish_path->fish_path.cost) && // best thus far
+              (path_error <= legal_error )               // within tolerance
               )
             {
               /* We have found the best path so far,
