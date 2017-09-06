@@ -65,29 +65,16 @@ typedef struct
    char  *copyright;
 } BablSpace;
 
-
-
-
 static inline void babl_space_to_xyzf (const Babl *space, const float *rgb, float *xyz)
 {
   BablSpace *space_ = (void*)space;
-  double rgbmat[3] = {rgb[0], rgb[1], rgb[2]};
-  double xyzmat[3];
-  babl_matrix_mul_vector (space_->RGBtoXYZ, rgbmat, xyzmat);
-  xyz[0] = xyzmat[0];
-  xyz[1] = xyzmat[1];
-  xyz[2] = xyzmat[2];
+  babl_matrix_mul_vectorff (space_->RGBtoXYZf, rgb, xyz);
 }
 
 static inline void babl_space_from_xyzf (const Babl *space, const float *xyz, float *rgb)
 {
   BablSpace *space_ = (void*)space;
-  double xyzmat[3] = {xyz[0], xyz[1], xyz[2]};
-  double rgbmat[3];
-  babl_matrix_mul_vector (space_->XYZtoRGB, xyzmat, rgbmat);
-  rgb[0] = rgbmat[0];
-  rgb[1] = rgbmat[1];
-  rgb[2] = rgbmat[2];
+  babl_matrix_mul_vectorff (space_->XYZtoRGBf, xyz, rgb);
 }
 
 static inline void _babl_space_to_xyz (const Babl *space, const double *rgb, double *xyz)
