@@ -210,16 +210,19 @@ static inline unsigned short float_to_half_float(float f)
   union {
     float    f;
     uint32_t u;
-  } u = {f};
-  unsigned temp = u.u;
-  unsigned signexp = (temp >> 23) & 0x1ff;
+  } u;
+  unsigned int temp;
+  unsigned int signexp;
+  u.f = f;
+  temp  = u.u;
+  signexp  = (temp >> 23) & 0x1ff;
   return half_float_base_table[signexp] + ((temp & 0x007fffff) >> half_float_shift_table[signexp]);
 }
 
 static void singles2halfp(void *target, const void *source, long numel)
 {
   const float *src = source;
-  uint8_t     *dst = target;
+  uint16_t    *dst = target;
   int i;
   for (i = 0; i < numel; i++)
     dst[i] = float_to_half_float (src[i]);
