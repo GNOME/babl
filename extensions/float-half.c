@@ -278,6 +278,86 @@ conv_rgbaF_rgbaHalf (const Babl *conversion,const float *src, uint16_t *dst, lon
   return conv_yF_yHalf (conversion, src, dst, samples * 4) / 4;
 }
 
+static void singles2halfp2(void *target, const void *source, long numel)
+{
+    uint16_t *hp = (uint16_t *) target; // Type pun output as an unsigned 16-bit int
+    uint32_t *xp = (uint32_t *) source; // Type pun input as an unsigned 32-bit int
+    uint16_t    hs, he, hm;
+    uint32_t x, xs, xe, xm;
+    int hes;
+    
+    if( source == NULL || target == NULL ) { // Nothing to convert (e.g., imag part of pure real)
+        return;
+    }
+    while( numel-- ) {
+        x = *xp++;
+        if( (x & 0x7FFFFFFFu) == 0 ) {  // Signed zero
+            *hp++ = (uint16_t) (x >> 16);  // Return the signed zero
+        } else { // Not zero
+            xs = x & 0x80000000u;  // Pick off sign bit
+            xe = x & 0x7F800000u;  // Pick off exponent bits
+            xm = x & 0x007FFFFFu;  // Pick off mantissa bits
+            if( xe == 0 ) {  // Denormal will underflow, return a signed zero
+                *hp++ = (uint16_t) (xs >> 16);
+            } else if( xe == 0x7F800000u ) {  // Inf or NaN (all the exponent bits are set)
+                if( xm == 0 ) { // If mantissa is zero ...
+                    *hp++ = (uint16_t) ((xs >> 16) | 0x7C00u); // Signed Inf
+                } else {
+                    *hp++ = (uint16_t) 0xFE00u; // NaN, only 1st mantissa bit set
+                }
+            } else { // Normalized number
+                hs = (uint16_t) (xs >> 16); // Sign bit
+                hes = ((int)(xe >> 23)) - 127 + 15; // Exponent unbias the single, then bias the halfp
+                if( hes >= 0x1F ) {  // Overflow
+                    *hp++ = (uint16_t) ((xs >> 16) | 0x7C00u); // Signed Inf
+                } else if( hes <= 0 ) {  // Underflow
+                    if( (14 - hes) > 24 ) {  // Mantissa shifted all the way off & no rounding possibility
+                        hm = (uint16_t) 0u;  // Set mantissa to zero
+                    } else {
+                        xm |= 0x00800000u;  // Add the hidden leading bit
+                        hm = (uint16_t) (xm >> (14 - hes)); // Mantissa
+                        if( (xm >> (13 - hes)) & 0x00000001u ) // Check for rounding
+                            hm += (uint16_t) 1u; // Round, might overflow into exp bit, but this is OK
+                    }
+                    *hp++ = (hs | hm); // Combine sign bit and mantissa bits, biased exponent is zero
+                } else {
+                   he = (uint16_t) (hes << 10); // Exponent
+                    hm = (uint16_t) (xm >> 13); // Mantissa
+                    if( xm & 0x00001000u ) // Check for rounding
+                        *hp++ = (hs | he | hm) + (uint16_t) 1u; // Round, might overflow to inf, this is OK
+                    else
+                        *hp++ = (hs | he | hm);  // No rounding
+                }
+            }
+        }
+    }
+}
+
+static inline long
+conv2_yF_yHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
+{
+  singles2halfp2 (dst, src, samples);
+  return samples;
+}
+
+static long
+conv2_yaF_yaHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
+{
+  return conv2_yF_yHalf (conversion, src, dst, samples * 2) / 2;
+}
+
+static long
+conv2_rgbF_rgbHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
+{
+  return conv2_yF_yHalf (conversion, src, dst, samples * 3) / 3;
+}
+
+static long
+conv2_rgbaF_rgbaHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
+{
+  return conv2_yF_yHalf (conversion, src, dst, samples * 4) / 4;
+}
+
 int init (void);
 
 int
@@ -402,6 +482,11 @@ init (void)
   babl_conversion_new (src ## _linear, dst ## _linear, "linear", conv_ ## src ## _ ## dst, NULL); \
   babl_conversion_new (src ## _gamma, dst ## _gamma, "linear", conv_ ## src ## _ ## dst, NULL); \
 }
+#define CONV2(src, dst) \
+{ \
+  babl_conversion_new (src ## _linear, dst ## _linear, "linear", conv2_ ## src ## _ ## dst, NULL); \
+  babl_conversion_new (src ## _gamma, dst ## _gamma, "linear", conv2_ ## src ## _ ## dst, NULL); \
+}
 
   CONV(rgbaHalf, rgbaF);
   CONV(rgbHalf,  rgbF);
@@ -411,6 +496,10 @@ init (void)
   CONV(rgbF,     rgbHalf);
   CONV(yaF,      yaHalf);
   CONV(yF,       yHalf);
+  CONV2(rgbaF,    rgbaHalf);
+  CONV2(rgbF,     rgbHalf);
+  CONV2(yaF,      yaHalf);
+  CONV2(yF,       yHalf);
 
   return 0;
 }
