@@ -292,8 +292,6 @@ rgba_to_hsva (const Babl *conversion,char *src,
       src += 4 * sizeof (double);
       dst += 4 * sizeof (double);
     }
-
-  return samples;
 }
 
 static void
@@ -314,8 +312,6 @@ hsva_to_rgba (const Babl *conversion,char *src,
       src += 4 * sizeof (double);
       dst += 4 * sizeof (double);
     }
-
-  return samples;
 }
 
 static void
@@ -332,8 +328,6 @@ rgba_to_hsv (const Babl *conversion,char *src,
       src += 4 * sizeof (double);
       dst += 3 * sizeof (double);
     }
-
-  return samples;
 }
 
 static void
@@ -352,6 +346,4 @@ hsv_to_rgba (const Babl *conversion,char *src,
       src += 3 * sizeof (double);
       dst += 4 * sizeof (double);
     }
-
-  return samples;
 }

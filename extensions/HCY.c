@@ -304,8 +304,6 @@ rgba_to_hcya (const Babl *conversion,char *src,
     src += 4 * sizeof (double);
     dst += 4 * sizeof (double);
   }
-
-  return samples;
 }
 
 static void
@@ -326,8 +324,6 @@ hcya_to_rgba (const Babl *conversion,char *src,
     src += 4 * sizeof (double);
     dst += 4 * sizeof (double);
   }
-
-  return samples;
 }
 
 static void
@@ -344,8 +340,6 @@ rgba_to_hcy (const Babl *conversion,char *src,
     src += 4 * sizeof (double);
     dst += 3 * sizeof (double);
   }
-
-  return samples;
 }
 
 static void
@@ -364,6 +358,4 @@ hcy_to_rgba (const Babl *conversion,char *src,
     src += 3 * sizeof (double);
     dst += 4 * sizeof (double);
   }
-
-  return samples;
 }
