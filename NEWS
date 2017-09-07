@@ -4,6 +4,10 @@ the news section both in the README and the webpage.
 
 
                                                                           -->
+2017-09-?? babl-0.1.32                                              </dt><dd>
+Added custom primaries and TRC support, improved float<->half performance,
+rewrite of all conversions functions to adhere to new signature.
+                                                                    </dd><dt>
 2017-07-15 babl-0.1.30                                              </dt><dd>
 Thread stability for palette modes, stricter alpha preservation, now
 cross-compilable on android.
