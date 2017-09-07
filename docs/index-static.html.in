@@ -101,47 +101,31 @@
     <strong>babl is a dynamic, any to any, pixel format translation library</strong>.
     <br/>
     </p>
-    
-    <p>It allows converting between different methods of storing <a href='http://en.wikipedia.org/wiki/Pixel'>pixels</a> known as <em>pixel formats</em> that have
-    with different bitdepths and other data representations, color models and
-    component permutations.</p>
-      
+    <p>It allows converting between different methods of storing <a
+            href='http://en.wikipedia.org/wiki/Pixel'>pixels</a> known as
+    <em>pixel formats</em> that have with different bitdepths and other data
+    representations, color models, color spaces and component permutations.</p>
+
     <p> A vocabulary to formulate new <em>pixel formats</em> from existing
-    primitives is provided as well as the framework to add new color models and
-    data types.
-    </p>
-
-
-
-    <!--<a name='Background'></a>
-    <h2>Background</h2>
-    <p> When creating various libraries and small tools that deal with
-    computer graphics I have often created functions for converting
-    raster images between different representations.
-    </p>
-
-    <p>Libraries to help with such conversions already do exist, but no
-    extendable candidates have surfaced in my searches.
-    </p>
-
-    <p>The vocabulary developed in babl will most likely be part of
-    <a href='http://www.gegl.org/'>GEGL</a>'s vocabulary to describe image
-    buffers.
-    </p>-->
-
+    primitives is provided as well as the framework to add new color models,
+   spaces and data types.  </p>
 
     <a name='Features'></a>
     <h2>Features</h2>
 
     <ul>
-      <li>Fast.</li>
-      <li>Accurate.</li>
-      <li>Stable, small API.</li>
-      <li>Self profiling and optimizing.</li>
-      <li>ANSI C, works on win32, linux and mac, 32bit and 64bit systems.</li>
+      <li>ANSI C without external dependencies, works on win32, linux and mac,
+          32bit and 64bit systems.</li>
+      <li>Stable, small API, with singleton objects returned.</li>
       <li>Extendable with new formats, color models, components
       and datatypes.</li>
-      <li>Reference 64bit floating point conversions for datatypes and color models.</li>
+      <li>Can load color spaces from ICC v2 and v4 profiles containing RGB
+          matrix + TRC.</li>
+      <li>Reference 64bit floating point conversions for datatypes and color
+          models.</li>
+      <li>Self profiling and optimizing, optimizing accuracy and performance at
+          runtime when the best performing single or multi-step conversion
+          path is chosen.</li>
     </ul>
 
     <p><a href='http://www.gegl.org/'>GEGL</a> through <a
@@ -161,6 +145,10 @@
     It can be <a href='http://git.gnome.org/cgit/babl'>browsed online</a> and cloned with:
     </p>
     <pre>git clone git://git.gnome.org/babl</pre>
+
+
+    <a name='NEWS'></a>
+    <h2>NEWS</h2>
 
     <p>The following is a list of the major changes that have gone into
     each babl release. If there are significant improvements to babl when
@@ -241,7 +229,7 @@ lab_buffer  = malloc (pixel_count * 3 * sizeof (float));
               lab_buffer, srgb_buffer, pixel_count<span class='paren'>);</span>
 
 /* the data has now been transformed back to srgb data */</pre>
-        
+
         <p>If the existing pixel formats are not sufficient for your conversion
         needs, new ones can be created on the fly. The constructor
         will provide the prior created one if duplicates are registered. </p>
@@ -269,12 +257,42 @@ lab_buffer  = malloc (pixel_count * 3 * sizeof (float));
 </pre>
 -->
 
+  <a name='ColorManagement'></a>
+  <h2>Color Management</h2>
 
-    <a name='Vocabulary'></a>
-    <h3 style='margin-bottom:0em;'>Vocabulary</h3>
+  <p>By default the babl API is assuming data to be (unbounded) sRGB data, data
+  being sRGB defines the conversion to and from gray-scale as well as the gamma
+  - or Transfer Response Curve, TRC, used for converting between linear and
+  non-linear variants of the data.
+  </p>
+
+  <p>There is also a babl API call for creating a format for a specific space.
+  <tt>babl_format_with_space("R'G'B' u16", babl_space ("Rec2020"))</tt> creates
+  a 16 bit integer format for the Rec2020 color space. Babl knows internally
+  about "sRGB", "Rec2020", "Adobe", "Apple" and "ProPhoto" spaces, as they are
+  defined with constants on their wikipedia pages.
+  </p>
+
+  <p>Additional spaces can be loaded from monitor-class matrix+TRC ICC v2 and
+  v4 profiles. Using babl_space_from_icc (see babl.h for details). The space of
+  a babl format can be queried with babl_format_get_space, such a space can
+  also be turned into a compact icc profile for embedding in images with
+  <tt>babl_space_to_icc.</tt></p>
+
+  <p>The conversions babl does with ICC profiles are according to what is known
+  as the relative-colorimetric intent, monitor profiles containing both the
+  matrices used by babl and 3d CLUTs (color look up tables) most often also do
+  relative-colorimetric transfer for the "perceptual" intent CLUTs, but with
+  more flexible and possibly higher accuracy conversions. If babl adds support
+  for loading and using CLUTs it will be  thus the perceptual
+  intent will by babl be considered a different albeit more accurate
+  relative-colorimetric RGB space.</p>
+
+  <a name='Vocabulary'></a>
+  <h3 style='margin-bottom:0em;'>Vocabulary</h3>
 <!--BablBase-->
 
-<!-- 
+<!--
     <a name='Extensions'></a>
     <h3>Extensions</h3>
     <p>
@@ -304,19 +322,13 @@ lab_buffer  = malloc (pixel_count * 3 * sizeof (float));
         <a name='Environment'></a>
         <h2>Environment</h2>
 
-        <p>If the environment variable <tt>BABL_STATS</tt> is set  containting
-        a html pixel format conversion usage matrix will be written to
-        <tt>/tmp/babl-stats.html</tt>. This allows figuring out which
-        conversions is taking up time during processing, and what shortcuts <a
-            href='#Extending'>extensions</a> might be created or improved to
-        make babl do it's job faster.
-        </p>
-
     <p>Through the environment variable <tt>BABL_TOLERANCE</tt> you can control
     a speed/performance trade off that by default is set very low (0.000001)
     values in the range 0.01-0.1 can provide reasonable preview performance
     by allowing lower numerical accuracy</p>.
 
+    <p><tt>BABL_PATH</tt> contains the path of the directory, containing the .so extensions to babl.
+    </p>
 
     <a name='Extending'></a>
     <h2>Extending</h2>
@@ -355,32 +367,19 @@ lab_buffer  = malloc (pixel_count * 3 * sizeof (float));
         -->
 
 
-        <!--
-        <a name='ColorManagement'></a>
-        <h2>Color Management</h2>
-        <p> Babl is not a color management system, since it doesn't deal with
-        ICC profiles. Babl is designed primarily for internal use when the
-        color space is already known (sRGB, CIE Lab, Luminance or similar).</p>
-
-        <p>
-        It is also possible to register new color models that are managed by a
-        color management system like <em>lcms</em>, take a look at the <em>lcms-lab</em>
-        extensions for an example.</p>
-        -->
-
-        <a name='TODO'></a>
+  <a name='TODO'></a>
 <!--TODO-->          
 
-        <a name='Copyright'></a>
-        <h2>Copyright</h2>
+  <a name='Copyright'></a>
+  <h2>Copyright</h2>
 
-        <p> Babl is free software; you can redistribute it and/or modify it
-        under the terms of the <a href='COPYING.LESSER'>GNU Lesser General Public
-          License</a> as published by the Free Software Foundation; either
-        version 3 of the License, or (at your option) any later version. </p>
+  <p> Babl is free software; you can redistribute it and/or modify it
+  under the terms of the <a href='COPYING.LESSER'>GNU Lesser General Public
+  License</a> as published by the Free Software Foundation; either
+  version 3 of the License, or (at your option) any later version. </p>
 
-        <a name='Authors'></a>
-        <h3>Authors</h3>
+  <a name='Authors'></a>
+  <h3>Authors</h3>
 
 <!--AUTHORS-->          
      

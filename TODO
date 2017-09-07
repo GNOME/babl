@@ -1,10 +1,6 @@
 <h2>TODO</h2>
-        
+
 <ul>
-  <li>Support for conversions between formats that have higher dimensionality than RGBA. (arbitrary meaningless components)</li>
+  <li>Support for conversions between formats that have higher dimensionality than RGBA.</li>
   <li>Support for datatypes that are not a multiple of 8bit.</li>
-  <li>dynamic data attached to format, or internal handling of icc through
-  a registered set of profiles</li>
-  <li>handling of custom RGB primaries and gamma</li>
-  <li>dithering</li>
 </ul>
