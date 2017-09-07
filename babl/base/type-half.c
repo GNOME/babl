@@ -183,7 +183,7 @@ static void halfp2doubles(void *target, void *source, long numel)
     }
 }
 
-static long
+static void
 convert_double_half (BablConversion *conversion,
                      char *src,
                      char *dst,
@@ -197,10 +197,9 @@ convert_double_half (BablConversion *conversion,
       dst             += dst_pitch;
       src             += src_pitch;
     }
-  return n;
 }
 
-static long
+static void
 convert_half_double (BablConversion *conversion,
                      char *src,
                      char *dst,
@@ -214,7 +213,6 @@ convert_half_double (BablConversion *conversion,
       dst              += dst_pitch;
       src              += src_pitch;
     }
-  return n;
 }
 
 void

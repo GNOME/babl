@@ -472,7 +472,7 @@ static void prep_conversion (const Babl *babl)
 
 
 
-static inline long
+static inline void
 universal_nonlinear_rgb_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   const Babl *source_space = babl_conversion_get_source_space (conversion);
@@ -487,11 +487,9 @@ universal_nonlinear_rgb_converter (const Babl *conversion,unsigned char *src_cha
   babl_matrix_mul_vectorff_buf4 (matrixf, rgba_out, rgba_out, samples);
 
   TRC_OUT(rgba_out, rgba_out);
-
-  return samples;
 }
 
-static inline long
+static inline void
 universal_nonlinear_rgb_linear_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   const Babl *source_space = babl_conversion_get_source_space (conversion);
@@ -502,11 +500,9 @@ universal_nonlinear_rgb_linear_converter (const Babl *conversion,unsigned char *
   TRC_IN(rgba_in, rgba_out);
 
   babl_matrix_mul_vectorff_buf4 (matrixf, rgba_out, rgba_out, samples);
-
-  return samples;
 }
 
-static inline long
+static inline void
 universal_nonlinear_rgba_u8_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   const Babl *destination_space = conversion->conversion.destination->format.space;
@@ -541,12 +537,10 @@ universal_nonlinear_rgba_u8_converter (const Babl *conversion,unsigned char *src
     }
   }
   babl_free (rgb);
-
-  return samples;
 }
 
 
-static inline long
+static inline void
 universal_rgba_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   float *matrixf = conversion->conversion.data;
@@ -554,11 +548,9 @@ universal_rgba_converter (const Babl *conversion,unsigned char *src_char, unsign
   float *rgba_out = (void*)dst_char;
 
   babl_matrix_mul_vectorff_buf4 (matrixf, rgba_in, rgba_out, samples);
-
-  return samples;
 }
 
-static inline long
+static inline void
 universal_rgb_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   float *matrixf = conversion->conversion.data;
@@ -566,12 +558,10 @@ universal_rgb_converter (const Babl *conversion,unsigned char *src_char, unsigne
   float *rgb_out = (void*)dst_char;
 
   babl_matrix_mul_vectorff_buf3 (matrixf, rgb_in, rgb_out, samples);
-
-  return samples;
 }
 
 
-static inline long
+static inline void
 universal_nonlinear_rgb_u8_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   const Babl *destination_space = conversion->conversion.destination->format.space;
@@ -603,8 +593,6 @@ universal_nonlinear_rgb_u8_converter (const Babl *conversion,unsigned char *src_
   }
 
   babl_free (rgba_out);
-
-  return samples;
 }
 
 
@@ -639,7 +627,7 @@ static inline void babl_matrix_mul_vectorff_buf4_sse2 (const float *mat,
 #undef m
 
 
-static inline long
+static inline void
 universal_nonlinear_rgb_converter_sse2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   const Babl *source_space = babl_conversion_get_source_space (conversion);
@@ -653,12 +641,10 @@ universal_nonlinear_rgb_converter_sse2 (const Babl *conversion,unsigned char *sr
   babl_matrix_mul_vectorff_buf4_sse2 (matrixf, rgba_out, rgba_out, samples);
 
   TRC_OUT(rgba_out, rgba_out);
-
-  return samples;
 }
 
 
-static inline long
+static inline void
 universal_rgba_converter_sse2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   float *matrixf = conversion->conversion.data;
@@ -666,11 +652,9 @@ universal_rgba_converter_sse2 (const Babl *conversion,unsigned char *src_char, u
   float *rgba_out = (void*)dst_char;
 
   babl_matrix_mul_vectorff_buf4_sse2 (matrixf, rgba_in, rgba_out, samples);
-
-  return samples;
 }
 
-static inline long
+static inline void
 universal_nonlinear_rgba_u8_converter_sse2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   const Babl *destination_space = conversion->conversion.destination->format.space;
@@ -703,11 +687,9 @@ universal_nonlinear_rgba_u8_converter_sse2 (const Babl *conversion,unsigned char
   }
 
   babl_free (rgba_out);
-
-  return samples;
 }
 
-static inline long
+static inline void
 universal_nonlinear_rgb_u8_converter_sse2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   const Babl *destination_space = conversion->conversion.destination->format.space;
@@ -739,12 +721,10 @@ universal_nonlinear_rgb_u8_converter_sse2 (const Babl *conversion,unsigned char 
   }
 
   babl_free (rgba_out);
-
-  return samples;
 }
 
 
-static inline long
+static inline void
 universal_nonlinear_rgb_linear_converter_sse2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   const Babl *source_space = babl_conversion_get_source_space (conversion);
@@ -755,8 +735,6 @@ universal_nonlinear_rgb_linear_converter_sse2 (const Babl *conversion,unsigned c
   TRC_IN(rgba_in, rgba_out);
 
   babl_matrix_mul_vectorff_buf4_sse2 (matrixf, rgba_out, rgba_out, samples);
-
-  return samples;
 }
 #endif
 

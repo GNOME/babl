@@ -29,13 +29,13 @@ typedef struct _BablConversion BablConversion;
 /* Signature of functions registered for reference type
  * conversions,
  */
-typedef long (*BablFuncPlane)     (BablConversion *conversion,
-                                   const char     *src,
-                                   char           *dst,
-                                   int             src_pitch,
-                                   int             dst_pitch,
-                                   long            n,
-                                   void           *user_data);
+typedef void (*BablFuncPlane) (BablConversion *conversion,
+                               const char     *src,
+                               char           *dst,
+                               int             src_pitch,
+                               int             dst_pitch,
+                               long            n,
+                               void           *user_data);
 
 struct
 _BablConversion {

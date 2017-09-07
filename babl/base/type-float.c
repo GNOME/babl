@@ -25,7 +25,7 @@
 #include "babl-ids.h"
 #include "babl-base.h"
 
-static long
+static void
 convert_double_float (BablConversion *conversion,
                       char *src,
                       char *dst,
@@ -39,10 +39,9 @@ convert_double_float (BablConversion *conversion,
       dst             += dst_pitch;
       src             += src_pitch;
     }
-  return n;
 }
 
-static long
+static void
 convert_float_double (BablConversion *conversion,
                       char *src,
                       char *dst,
@@ -56,7 +55,6 @@ convert_float_double (BablConversion *conversion,
       dst              += dst_pitch;
       src              += src_pitch;
     }
-  return n;
 }
 
 void

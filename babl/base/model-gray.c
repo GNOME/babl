@@ -107,7 +107,7 @@ models (void)
 }
 
 
-static long
+static void
 rgba_to_graya (Babl *conversion,
                char *src,
                char *dst,
@@ -138,10 +138,9 @@ rgba_to_graya (Babl *conversion,
       src += sizeof (double) * 4;
       dst += sizeof (double) * 2;
     }
-  return n;
 }
 
-static long
+static void
 rgba_to_gray (Babl *conversion,
               char *src,
               char *dst,
@@ -170,10 +169,9 @@ rgba_to_gray (Babl *conversion,
       src += sizeof (double) * 4;
       dst += sizeof (double) * 1;
     }
-  return n;
 }
 
-static long
+static void
 rgb_to_gray_2_2 (Babl  *conversion,
                  int    src_bands,
                  char **src,
@@ -213,11 +211,10 @@ rgb_to_gray_2_2 (Babl  *conversion,
 
       BABL_PLANAR_STEP
     }
-  return n;
 }
 
 
-static long
+static void
 gray_2_2_to_rgb (Babl *conversion,
                  int    src_bands,
                  char **src,
@@ -255,12 +252,9 @@ gray_2_2_to_rgb (Babl *conversion,
 
       BABL_PLANAR_STEP
     }
-  return n;
 }
 
-
-
-static long
+static void
 graya_to_rgba (Babl *conversion,
                char *src,
                char *dst,
@@ -286,11 +280,10 @@ graya_to_rgba (Babl *conversion,
       src += sizeof (double) * 2;
       dst += sizeof (double) * 4;
     }
-  return n;
 }
 
 
-static long
+static void
 gray_to_rgba (Babl *conversion,
               char *src,
               char *dst,
@@ -314,10 +307,9 @@ gray_to_rgba (Babl *conversion,
       src += sizeof (double) * 1;
       dst += sizeof (double) * 4;
     }
-  return n;
 }
 
-static long
+static void
 gray_alpha_premultiplied_to_rgba (Babl   *conversion,
                                   int    src_bands,
                                   char **src,
@@ -351,11 +343,10 @@ gray_alpha_premultiplied_to_rgba (Babl   *conversion,
       *(double *) dst[3] = alpha;
       BABL_PLANAR_STEP
     }
-  return n;
 }
 
 
-static long
+static void
 rgba_to_gray_alpha_premultiplied (Babl   *conversion,
                                   int    src_bands,
                                   char **src,
@@ -392,10 +383,9 @@ rgba_to_gray_alpha_premultiplied (Babl   *conversion,
       *(double *) dst[1] = alpha;
       BABL_PLANAR_STEP
     }
-  return n;
 }
 
-static long
+static void
 non_premultiplied_to_premultiplied (Babl  *conversion,
                                     int    src_bands,
                                     char **src,
@@ -421,10 +411,9 @@ non_premultiplied_to_premultiplied (Babl  *conversion,
 
       BABL_PLANAR_STEP
     }
-  return n;
 }
 
-static long
+static void
 premultiplied_to_non_premultiplied (Babl  *conversion,
                                     int    src_bands,
                                     char **src,
@@ -457,10 +446,9 @@ premultiplied_to_non_premultiplied (Babl  *conversion,
 
       BABL_PLANAR_STEP
     }
-  return n;
 }
 
-static long
+static void
 rgba2gray_gamma_2_2_premultiplied (Babl *conversion,
                                    char *src,
                                    char *dst,
@@ -493,11 +481,10 @@ rgba2gray_gamma_2_2_premultiplied (Babl *conversion,
       src += 4 * sizeof (double);
       dst += 2 * sizeof (double);
     }
-  return n;
 }
 
 
-static long
+static void
 gray_gamma_2_2_premultiplied2rgba (Babl *conversion,
                                    char *src,
                                    char *dst,
@@ -523,7 +510,6 @@ gray_gamma_2_2_premultiplied2rgba (Babl *conversion,
       src += 2 * sizeof (double);
       dst += 4 * sizeof (double);
     }
-  return n;
 }
 
 

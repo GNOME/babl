@@ -77,7 +77,7 @@ models (void)
     NULL);
 }
 
-static long
+static void
 rgba_to_ycbcra (BablConversion *conversion,
                 char *src,
                 char *dst,
@@ -108,11 +108,10 @@ rgba_to_ycbcra (BablConversion *conversion,
       src += sizeof (double) * 4;
       dst += sizeof (double) * 4;
     }
-  return n;
 }
 
 
-static long
+static void
 rgba_to_ycbcr (BablConversion *conversion,
                char *src,
                char *dst,
@@ -141,10 +140,9 @@ rgba_to_ycbcr (BablConversion *conversion,
       src += sizeof (double) * 4;
       dst += sizeof (double) * 3;
     }
-  return n;
 }
 
-static long
+static void
 ycbcra_to_rgba (BablConversion *conversion,
                 char *src,
                 char *dst,
@@ -175,11 +173,9 @@ ycbcra_to_rgba (BablConversion *conversion,
       src += sizeof (double) * 4;
       dst += sizeof (double) * 4;
     }
-  return n;
 }
 
-
-static long
+static void
 ycbcr_to_rgba (BablConversion *conversion,
                char *src,
                char *dst,
@@ -209,7 +205,6 @@ ycbcr_to_rgba (BablConversion *conversion,
       src += sizeof (double) * 3;
       dst += sizeof (double) * 4;
     }
-  return n;
 }
 
 static void

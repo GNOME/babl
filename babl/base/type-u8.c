@@ -25,7 +25,7 @@
 #include "babl-base.h"
 
 #include <math.h>
-static inline long
+static inline void
 convert_double_u8_scaled (BablConversion *c,
                           double        min_val,
                           double        max_val,
@@ -53,10 +53,9 @@ convert_double_u8_scaled (BablConversion *c,
       src                   += src_pitch;
       dst                   += dst_pitch;
     }
-  return n;
 }
 
-static inline long
+static inline void
 convert_u8_double_scaled (BablConversion *c,
                           double        min_val,
                           double        max_val,
@@ -85,29 +84,28 @@ convert_u8_double_scaled (BablConversion *c,
       dst += dst_pitch;
       src += src_pitch;
     }
-  return n;
 }
 
 #define MAKE_CONVERSIONS(name, min_val, max_val, min, max)      \
-  static long \
+  static void \
   convert_ ## name ## _double (BablConversion *c, void *src, \
                                void *dst, \
                                int src_pitch, \
                                int dst_pitch, \
                                long n)                               \
   { \
-    return convert_u8_double_scaled (c, min_val, max_val, min, max, \
-                                     src, dst, src_pitch, dst_pitch, n); \
+    convert_u8_double_scaled (c, min_val, max_val, min, max, \
+                              src, dst, src_pitch, dst_pitch, n); \
   }                                                               \
-  static long \
+  static void \
   convert_double_ ## name (BablConversion *c, void *src, \
                            void *dst, \
                            int src_pitch, \
                            int dst_pitch, \
                            long n)                                 \
   { \
-    return convert_double_u8_scaled (c, min_val, max_val, min, max, \
-                                     src, dst, src_pitch, dst_pitch, n); \
+    convert_double_u8_scaled (c, min_val, max_val, min, max, \
+                              src, dst, src_pitch, dst_pitch, n); \
   }
 
 MAKE_CONVERSIONS (u8, 0.0, 1.0, 0x00, UINT8_MAX)

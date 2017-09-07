@@ -149,7 +149,7 @@ models (void)
     NULL);
 }
 
-static long
+static void
 copy_strip_1 (Babl  *conversion,
               int    src_bands,
               char **src,
@@ -178,10 +178,9 @@ copy_strip_1 (Babl  *conversion,
 
       BABL_PLANAR_STEP
     }
-  return samples;
 }
 
-static long
+static void
 g3_gamma_2_2 (Babl  *conversion,
               int    src_bands,
               char **src,
@@ -207,11 +206,10 @@ g3_gamma_2_2 (Babl  *conversion,
 
       BABL_PLANAR_STEP
     }
-  return samples;
 }
 
 
-static long
+static void
 g3_inv_gamma_2_2 (Babl  *conversion,
                   int    src_bands,
                   char **src,
@@ -242,10 +240,9 @@ g3_inv_gamma_2_2 (Babl  *conversion,
         }
       BABL_PLANAR_STEP
     }
-  return samples;
 }
 
-static long
+static void
 non_premultiplied_to_premultiplied (Babl  *conversion,
                                     int    src_bands,
                                     char **src,
@@ -272,10 +269,9 @@ non_premultiplied_to_premultiplied (Babl  *conversion,
 
       BABL_PLANAR_STEP
     }
-  return samples;
 }
 
-static long
+static void
 premultiplied_to_non_premultiplied (Babl  *conversion,
                                     int    src_bands,
                                     char **src,
@@ -309,12 +305,10 @@ premultiplied_to_non_premultiplied (Babl  *conversion,
 
       BABL_PLANAR_STEP
     }
-  return samples;
 }
 
 
-
-static long
+static void
 rgba2rgba_gamma_2_2_premultiplied (Babl *conversion,
                                    char *src,
                                    char *dst,
@@ -334,11 +328,10 @@ rgba2rgba_gamma_2_2_premultiplied (Babl *conversion,
       src                += 4 * sizeof (double);
       dst                += 4 * sizeof (double);
     }
-  return samples;
 }
 
 
-static long
+static void
 rgba_gamma_2_2_premultiplied2rgba (Babl *conversion,
                                    char           *src,
                                    char           *dst,
@@ -368,11 +361,10 @@ rgba_gamma_2_2_premultiplied2rgba (Babl *conversion,
       src += 4 * sizeof (double);
       dst += 4 * sizeof (double);
     }
-  return samples;
 }
 
 
-static long
+static void
 rgba2rgba_gamma_2_2 (Babl *conversion,
                      char *src,
                      char *dst,
@@ -392,11 +384,10 @@ rgba2rgba_gamma_2_2 (Babl *conversion,
       src                += 4 * sizeof (double);
       dst                += 4 * sizeof (double);
     }
-  return samples;
 }
 
 
-static long
+static void
 rgba_gamma_2_22rgba (Babl *conversion,
                      char *src,
                      char *dst,
@@ -417,7 +408,6 @@ rgba_gamma_2_22rgba (Babl *conversion,
       src += 4 * sizeof (double);
       dst += 4 * sizeof (double);
     }
-  return samples;
 }
 
 static void

@@ -311,16 +311,16 @@ babl_conversion_new (const void *first_arg,
   return babl;
 }
 
-static long
+static void
 babl_conversion_linear_process (BablConversion *conversion,
                                 const void     *source,
                                 void           *destination,
                                 long            n)
 {
-  return conversion->function.linear ((void*)conversion, source, destination, n, conversion->data);
+  conversion->function.linear ((void*)conversion, source, destination, n, conversion->data);
 }
 
-static long
+static void
 babl_conversion_plane_process (BablConversion *conversion,
                                const void     *source,
                                void           *destination,
@@ -328,13 +328,13 @@ babl_conversion_plane_process (BablConversion *conversion,
                                int             dst_pitch,
                                long            n)
 {
-  return conversion->function.plane ((void*)conversion, source, destination,
-                                     src_pitch, dst_pitch,
-                                     n,
-                                     conversion->data);
+  conversion->function.plane ((void*)conversion, source, destination,
+                              src_pitch, dst_pitch,
+                              n,
+                              conversion->data);
 }
 
-static long
+static void
 babl_conversion_planar_process (BablConversion *conversion,
                                 BablImage      *source,
                                 BablImage      *destination,
@@ -350,7 +350,7 @@ babl_conversion_planar_process (BablConversion *conversion,
 
   memcpy (src_data, source->data, sizeof (void *) * source->components);
   memcpy (dst_data, destination->data, sizeof (void *) * destination->components);
-  return conversion->function.planar ((void*)conversion,
+  conversion->function.planar ((void*)conversion,
                                       source->components,
                                       src_data,
                                       source->pitch,

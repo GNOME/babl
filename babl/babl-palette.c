@@ -176,7 +176,7 @@ static BablPalette *default_palette (void)
   return &pal;
 }
 
-static long
+static void
 rgba_to_pal (Babl *conversion,
              char *src,
              char *dst,
@@ -215,10 +215,9 @@ rgba_to_pal (Babl *conversion,
       src += sizeof (double) * 4;
       dst += sizeof (double) * 1;
     }
-  return n;
 }
 
-static long
+static void
 rgba_to_pala (Babl *conversion,
               char *src,
               char *dst,
@@ -262,10 +261,9 @@ rgba_to_pala (Babl *conversion,
       src += sizeof (double) * 4;
       dst += sizeof (double) * 2;
     }
-  return n;
 }
 
-static long
+static void
 pal_to_rgba (Babl *conversion,
              char *src,
              char *dst,
@@ -289,10 +287,9 @@ pal_to_rgba (Babl *conversion,
       src += sizeof (double) * 1;
       dst += sizeof (double) * 4;
     }
-  return n;
 }
 
-static long
+static void
 pala_to_rgba (Babl *conversion,
               char *src,
               char *dst,
@@ -320,10 +317,9 @@ pala_to_rgba (Babl *conversion,
       src += sizeof (double) * 2;
       dst += sizeof (double) * 4;
     }
-  return n;
 }
 
-static long
+static void
 rgba_u8_to_pal (Babl          *conversion,
                 unsigned char *src,
                 unsigned char *dst,
@@ -342,11 +338,9 @@ rgba_u8_to_pal (Babl          *conversion,
       src += sizeof (char) * 4;
       dst += sizeof (char) * 1;
     }
-
-  return n;
 }
 
-static long
+static void
 rgba_u8_to_pal_a (Babl *conversion,
                   char *src,
                   char *dst,
@@ -366,7 +360,6 @@ rgba_u8_to_pal_a (Babl *conversion,
       src += sizeof (char) * 4;
       dst += sizeof (char) * 2;
     }
-  return n;
 }
 
 static long
