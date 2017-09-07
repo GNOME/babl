@@ -5,7 +5,7 @@
 int init (void);
 
 
-static inline long
+static inline void
 float_to_u8_x1 (const Babl *conversion,unsigned char *src_char, unsigned char *dst, long samples)
 {
   float *src = (float *)src_char;
@@ -20,19 +20,19 @@ float_to_u8_x1 (const Babl *conversion,unsigned char *src_char, unsigned char *d
   return samples;
 }
 
-static inline long
+static inline void
 float_to_u8_x4 (const Babl *conversion,unsigned char *src_char, unsigned char *dst, long samples)
 {
   return float_to_u8_x1 (conversion, src_char, dst, samples * 4);
 }
 
-static inline long
+static inline void
 float_to_u8_x3 (const Babl *conversion,unsigned char *src_char, unsigned char *dst, long samples)
 {
   return float_to_u8_x1 (conversion, src_char, dst, samples * 3);
 }
 
-static inline long
+static inline void
 float_to_u8_x2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst, long samples)
 {
   return float_to_u8_x1 (conversion, src_char, dst, samples * 2);
@@ -40,7 +40,7 @@ float_to_u8_x2 (const Babl *conversion,unsigned char *src_char, unsigned char *d
 
 
 
-static inline long
+static inline void
 float_pre_to_u8_pre (const Babl *conversion,unsigned char *src_char, unsigned char *dst, long samples)
 {
   float *src = (float *)src_char;
@@ -71,7 +71,7 @@ float_pre_to_u8_pre (const Babl *conversion,unsigned char *src_char, unsigned ch
   return samples;
 }
 
-static inline long
+static inline void
 float_to_u16_x1 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   float *src    = (float *)src_char;
@@ -86,23 +86,23 @@ float_to_u16_x1 (const Babl *conversion,unsigned char *src_char, unsigned char *
     }
   return samples;
 }
-static inline long
+static inline void
 float_to_u16_x2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   return float_to_u16_x1 (conversion, src_char, dst_char, samples * 2);
 }
-static inline long
+static inline void
 float_to_u16_x3 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   return float_to_u16_x1 (conversion, src_char, dst_char, samples * 3);
 }
-static inline long
+static inline void
 float_to_u16_x4 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   return float_to_u16_x1 (conversion, src_char, dst_char, samples * 4);
 }
 
-static inline long
+static inline void
 float_pre_to_u16_pre (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   float *src = (float *)src_char;
@@ -133,7 +133,7 @@ float_pre_to_u16_pre (const Babl *conversion,unsigned char *src_char, unsigned c
   return samples;
 }
 
-static inline long
+static inline void
 float_pre_to_u32_pre (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   float *src = (float *)src_char;
@@ -165,7 +165,7 @@ float_pre_to_u32_pre (const Babl *conversion,unsigned char *src_char, unsigned c
 }
 
 
-static inline long
+static inline void
 float_to_u32_x1 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   float *src    = (float *)src_char;
@@ -182,24 +182,24 @@ float_to_u32_x1 (const Babl *conversion,unsigned char *src_char, unsigned char *
     }
   return samples;
 }
-static inline long
+static inline void
 float_to_u32_x2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   return float_to_u32_x1 (conversion, src_char, dst_char, samples * 2);
 }
-static inline long
+static inline void
 float_to_u32_x3 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   return float_to_u32_x1 (conversion, src_char, dst_char, samples * 3);
 }
-static inline long
+static inline void
 float_to_u32_x4 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   return float_to_u32_x1 (conversion, src_char, dst_char, samples * 4);
 }
 
 
-static inline long
+static inline void
 u32_to_float (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   uint32_t *src = (uint32_t *)src_char;
@@ -214,14 +214,14 @@ u32_to_float (const Babl *conversion,unsigned char *src_char, unsigned char *dst
   return samples;
 }
 
-static inline long
+static inline void
 u32_to_float_x4 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   u32_to_float (conversion, src_char, dst_char, samples * 4);
   return samples;
 }
 
-static inline long
+static inline void
 u32_to_float_x3 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   u32_to_float (conversion, src_char, dst_char, samples * 3);
@@ -229,7 +229,7 @@ u32_to_float_x3 (const Babl *conversion,unsigned char *src_char, unsigned char *
 }
 
 
-static inline long
+static inline void
 u32_to_float_x2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   u32_to_float (conversion, src_char, dst_char, samples * 2);
@@ -237,7 +237,7 @@ u32_to_float_x2 (const Babl *conversion,unsigned char *src_char, unsigned char *
 }
 
 
-static inline long
+static inline void
 u16_to_float (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   uint16_t *src = (uint16_t *)src_char;
@@ -252,14 +252,14 @@ u16_to_float (const Babl *conversion,unsigned char *src_char, unsigned char *dst
   return samples;
 }
 
-static inline long
+static inline void
 u16_to_float_x4 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   u16_to_float (conversion, src_char, dst_char, samples * 4);
   return samples;
 }
 
-static inline long
+static inline void
 u16_to_float_x3 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   u16_to_float (conversion, src_char, dst_char, samples * 3);
@@ -267,14 +267,14 @@ u16_to_float_x3 (const Babl *conversion,unsigned char *src_char, unsigned char *
 }
 
 
-static inline long
+static inline void
 u16_to_float_x2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   u16_to_float (conversion, src_char, dst_char, samples * 2);
   return samples;
 }
 
-static inline long
+static inline void
 yau16_rgbaf (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   uint16_t *src = (uint16_t *)src_char;

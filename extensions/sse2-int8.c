@@ -30,7 +30,7 @@
 #include "babl-cpuaccel.h"
 #include "extensions/util.h"
 
-static inline long
+static inline void
 conv_yF_y8 (const Babl *conversion,const float *src, uint8_t *dst, long samples)
 {
   const __v4sf *s_vec;
@@ -123,33 +123,31 @@ conv_yF_y8 (const Babl *conversion,const float *src, uint8_t *dst, long samples)
 
       n -= 1;
     }
-
-  return samples;
 }
 
-static long
+static void
 conv_yaF_ya8 (const Babl *conversion,const float *src, uint8_t *dst, long samples)
 {
-  return conv_yF_y8 (conversion, src, dst, samples * 2) / 2;
+  conv_yF_y8 (conversion, src, dst, samples * 2);
 }
 
 
-static long
+static void
 conv_rgbF_rgb8 (const Babl *conversion,const float *src, uint8_t *dst, long samples)
 {
-  return conv_yF_y8 (conversion, src, dst, samples * 3) / 3;
+  conv_yF_y8 (conversion, src, dst, samples * 3);
 }
 
-static long
+static void
 conv_rgbaF_rgba8 (const Babl *conversion,const float *src, uint8_t *dst, long samples)
 {
-  return conv_yF_y8 (conversion, src, dst, samples * 4) / 4;
+  conv_yF_y8 (conversion, src, dst, samples * 4);
 }
 
-static long
+static void
 conv_rgbAF_rgbA8 (const Babl *conversion,const float *src, uint8_t *dst, long samples)
 {
-  return conv_yF_y8 (conversion, src, dst, samples * 4) / 4;
+  conv_yF_y8 (conversion, src, dst, samples * 4);
 }
 
 #endif

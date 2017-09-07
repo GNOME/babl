@@ -228,54 +228,52 @@ static void singles2halfp(void *target, const void *source, long numel)
     dst[i] = float_to_half_float (src[i]);
 }
 
-static inline long
+static inline void
 conv_yHalf_yF (const Babl *conversion,const uint16_t *src, float *dst, long samples)
 {
   halfp2singles(dst, src, samples);
-  return samples;
 }
 
-static long
+static void
 conv_yaHalf_yaF (const Babl *conversion,const uint16_t *src, float *dst, long samples)
 {
-  return conv_yHalf_yF (conversion, src, dst, samples * 2) / 2;
+  conv_yHalf_yF (conversion, src, dst, samples * 2);
 }
 
-static long
+static void
 conv_rgbHalf_rgbF (const Babl *conversion,const uint16_t *src, float *dst, long samples)
 {
-  return conv_yHalf_yF (conversion, src, dst, samples * 3) / 3;
+  conv_yHalf_yF (conversion, src, dst, samples * 3);
 }
 
-static long
+static void
 conv_rgbaHalf_rgbaF (const Babl *conversion,const uint16_t *src, float *dst, long samples)
 {
-  return conv_yHalf_yF (conversion, src, dst, samples * 4) / 4;
+  conv_yHalf_yF (conversion, src, dst, samples * 4);
 }
 
-static inline long
+static inline void
 conv_yF_yHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
 {
   singles2halfp (dst, src, samples);
-  return samples;
 }
 
-static long
+static void
 conv_yaF_yaHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
 {
-  return conv_yF_yHalf (conversion, src, dst, samples * 2) / 2;
+  conv_yF_yHalf (conversion, src, dst, samples * 2);
 }
 
-static long
+static void
 conv_rgbF_rgbHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
 {
-  return conv_yF_yHalf (conversion, src, dst, samples * 3) / 3;
+  conv_yF_yHalf (conversion, src, dst, samples * 3);
 }
 
-static long
+static void
 conv_rgbaF_rgbaHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
 {
-  return conv_yF_yHalf (conversion, src, dst, samples * 4) / 4;
+  conv_yF_yHalf (conversion, src, dst, samples * 4);
 }
 
 static void singles2halfp2(void *target, const void *source, long numel)
@@ -333,29 +331,28 @@ static void singles2halfp2(void *target, const void *source, long numel)
     }
 }
 
-static inline long
+static inline void
 conv2_yF_yHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
 {
   singles2halfp2 (dst, src, samples);
-  return samples;
 }
 
-static long
+static void
 conv2_yaF_yaHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
 {
-  return conv2_yF_yHalf (conversion, src, dst, samples * 2) / 2;
+  conv2_yF_yHalf (conversion, src, dst, samples * 2);
 }
 
-static long
+static void
 conv2_rgbF_rgbHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
 {
-  return conv2_yF_yHalf (conversion, src, dst, samples * 3) / 3;
+  conv2_yF_yHalf (conversion, src, dst, samples * 3);
 }
 
-static long
+static void
 conv2_rgbaF_rgbaHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
 {
-  return conv2_yF_yHalf (conversion, src, dst, samples * 4) / 4;
+  conv2_yF_yHalf (conversion, src, dst, samples * 4);
 }
 
 int init (void);

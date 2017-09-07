@@ -34,7 +34,7 @@
 #define Q(a) { a, a, a, a }
 static const __v4sf  u16_float = Q (1.f / 65535);
 
-static long
+static void
 conv_rgba16_rgbaF (const Babl *conversion,const uint16_t *src, float *dst, long samples)
 {
   long i = 0;
@@ -66,11 +66,9 @@ conv_rgba16_rgbaF (const Babl *conversion,const uint16_t *src, float *dst, long 
 
   for (i *= 2 * 4; i != 4 * samples; i++)
     dst[i] = src[i] * (1.f / 65535);
-
-  return samples;
 }
 
-static long
+static void
 conv_rgba16_rgbAF (const Babl *conversion,const uint16_t *src, float *dst, long samples)
 {
   long i = 0;
@@ -131,8 +129,6 @@ conv_rgba16_rgbAF (const Babl *conversion,const uint16_t *src, float *dst, long 
     src += 4;
     dst += 4;
   }
-
-  return samples;
 }
 
 #endif /* defined(USE_SSE2) */

@@ -216,7 +216,7 @@ LAB_to_XYZ (double L,
   *to_Z = zr * D50_WHITE_REF_Z;
 }
 
-static long
+static void
 rgba_to_lab (const Babl *conversion,char *src,
              char *dst,
              long  n)
@@ -242,10 +242,9 @@ rgba_to_lab (const Babl *conversion,char *src,
       src += sizeof (double) * 4;
       dst += sizeof (double) * 3;
     }
-  return n;
 }
 
-static long
+static void
 lab_to_rgba (const Babl *conversion,char *src,
              char *dst,
              long  n)
@@ -280,10 +279,9 @@ lab_to_rgba (const Babl *conversion,char *src,
       src += sizeof (double) * 3;
       dst += sizeof (double) * 4;
     }
-  return n;
 }
 
-static long
+static void
 rgba_to_laba (const Babl *conversion,char *src,
               char *dst,
               long  n)
@@ -311,10 +309,9 @@ rgba_to_laba (const Babl *conversion,char *src,
       src += sizeof (double) * 4;
       dst += sizeof (double) * 4;
     }
-  return n;
 }
 
-static long
+static void
 laba_to_rgba (const Babl *conversion,char *src,
               char *dst,
               long  n)
@@ -352,7 +349,6 @@ laba_to_rgba (const Babl *conversion,char *src,
       src += sizeof (double) * 4;
       dst += sizeof (double) * 4;
     }
-  return n;
 }
 
 static inline void
@@ -379,7 +375,7 @@ ab_to_CHab (double  a,
       *to_H += 360;
 }
 
-static long
+static void
 rgba_to_lchab (const Babl *conversion,char *src,
                char *dst,
                long  n)
@@ -410,10 +406,9 @@ rgba_to_lchab (const Babl *conversion,char *src,
       src += sizeof (double) * 4;
       dst += sizeof (double) * 3;
     }
-  return n;
 }
 
-static long
+static void
 lchab_to_rgba (const Babl *conversion,char *src,
                char *dst,
                long  n)
@@ -452,10 +447,9 @@ lchab_to_rgba (const Babl *conversion,char *src,
       src += sizeof (double) * 3;
       dst += sizeof (double) * 4;
     }
-  return n;
 }
 
-static long
+static void
 rgba_to_lchaba (const Babl *conversion,char *src,
                 char *dst,
                 long  n)
@@ -487,10 +481,9 @@ rgba_to_lchaba (const Babl *conversion,char *src,
       src += sizeof (double) * 4;
       dst += sizeof (double) * 4;
     }
-  return n;
 }
 
-static long
+static void
 lchaba_to_rgba (const Babl *conversion,char *src,
                 char *dst,
                 long  n)
@@ -528,7 +521,6 @@ lchaba_to_rgba (const Babl *conversion,char *src,
       src += sizeof (double) * 4;
       dst += sizeof (double) * 4;
     }
-  return n;
 }
 
 
@@ -599,7 +591,7 @@ cubef (float f)
   return f * f * f;
 }
 
-static long
+static void
 Yaf_to_Laf (const Babl *conversion,float *src,
             float *dst,
             long   samples)
@@ -618,11 +610,9 @@ Yaf_to_Laf (const Babl *conversion,float *src,
       src += 2;
       dst += 2;
     }
-
-  return samples;
 }
 
-static long
+static void
 rgbf_to_Labf (const Babl *conversion,float *src,
               float *dst,
               long   samples)
@@ -654,11 +644,9 @@ rgbf_to_Labf (const Babl *conversion,float *src,
       src += 3;
       dst += 3;
     }
-
-  return samples;
 }
 
-static long
+static void
 rgbaf_to_Labaf (const Babl *conversion,float *src,
                 float *dst,
                 long   samples)
@@ -692,11 +680,9 @@ rgbaf_to_Labaf (const Babl *conversion,float *src,
       src += 4;
       dst += 4;
     }
-
-  return samples;
 }
 
-static long
+static void
 Labf_to_rgbf (const Babl *conversion,float *src,
                 float *dst,
                 long   samples)
@@ -728,11 +714,9 @@ Labf_to_rgbf (const Babl *conversion,float *src,
       src += 3;
       dst += 3;
     }
-
-  return samples;
 }
 
-static long
+static void
 Labaf_to_rgbaf (const Babl *conversion,float *src,
                 float *dst,
                 long   samples)
@@ -766,11 +750,9 @@ Labaf_to_rgbaf (const Babl *conversion,float *src,
       src += 4;
       dst += 4;
     }
-
-  return samples;
 }
 
-static long
+static void
 Labf_to_Lchabf (const Babl *conversion,float *src,
                 float *dst,
                 long   samples)
@@ -797,11 +779,9 @@ Labf_to_Lchabf (const Babl *conversion,float *src,
       src += 3;
       dst += 3;
     }
-
-  return samples;
 }
 
-static long
+static void
 Lchabf_to_Labf (const Babl *conversion,float *src,
                 float *dst,
                 long   samples)
@@ -824,11 +804,9 @@ Lchabf_to_Labf (const Babl *conversion,float *src,
       src += 3;
       dst += 3;
     }
-
-  return samples;
 }
 
-static long
+static void
 Labaf_to_Lchabaf (const Babl *conversion,float *src,
                   float *dst,
                   long   samples)
@@ -857,11 +835,9 @@ Labaf_to_Lchabaf (const Babl *conversion,float *src,
       src += 4;
       dst += 4;
     }
-
-  return samples;
 }
 
-static long
+static void
 Lchabaf_to_Labaf (const Babl *conversion,float *src,
                   float *dst,
                   long   samples)
@@ -886,8 +862,6 @@ Lchabaf_to_Labaf (const Babl *conversion,float *src,
       src += 4;
       dst += 4;
     }
-
-  return samples;
 }
 
 static void
@@ -1104,7 +1078,7 @@ formats (void)
 
 /******** begin  integer RGB/CIE color space conversions **************/
 
-static inline long
+static inline void
 convert_double_u8_scaled (const Babl *conversion,
                           double          min_val,
                           double          max_val,
@@ -1132,10 +1106,9 @@ convert_double_u8_scaled (const Babl *conversion,
       src                   += src_pitch;
       dst                   += dst_pitch;
     }
-  return n;
 }
 
-static inline long
+static inline void
 convert_u8_double_scaled (const Babl *conversion,
                           double        min_val,
                           double        max_val,
@@ -1164,29 +1137,28 @@ convert_u8_double_scaled (const Babl *conversion,
       dst += dst_pitch;
       src += src_pitch;
     }
-  return n;
 }
 
 #define MAKE_CONVERSIONS(name, min_val, max_val, min, max) \
-  static long \
+  static void \
   convert_ ## name ## _double (const Babl *c, char *src, \
                                char *dst, \
                                int src_pitch, \
                                int dst_pitch, \
                                long n)        \
   { \
-    return convert_u8_double_scaled (c, min_val, max_val, min, max, \
-                                     src, dst, src_pitch, dst_pitch, n); \
+    convert_u8_double_scaled (c, min_val, max_val, min, max, \
+                              src, dst, src_pitch, dst_pitch, n); \
   }                                                               \
-  static long \
+  static void \
   convert_double_ ## name (const Babl *c, char *src, \
                            char *dst, \
                            int src_pitch, \
                            int dst_pitch, \
                            long n)        \
   { \
-    return convert_double_u8_scaled (c, min_val, max_val, min, max, \
-                                     src, dst, src_pitch, dst_pitch, n); \
+    convert_double_u8_scaled (c, min_val, max_val, min, max, \
+                              src, dst, src_pitch, dst_pitch, n); \
   }
 
 /* source ICC.1:2004-10 */
@@ -1246,7 +1218,7 @@ types_u8 (void)
   );
 }
 
-static inline long
+static inline void
 convert_double_u16_scaled (const Babl *conversion,
                            double         min_val,
                            double         max_val,
@@ -1274,10 +1246,9 @@ convert_double_u16_scaled (const Babl *conversion,
       dst                    += dst_pitch;
       src                    += src_pitch;
     }
-  return n;
 }
 
-static inline long
+static inline void
 convert_u16_double_scaled (const Babl *conversion,
                            double         min_val,
                            double         max_val,
@@ -1305,29 +1276,28 @@ convert_u16_double_scaled (const Babl *conversion,
       dst              += dst_pitch;
       src              += src_pitch;
     }
-  return n;
 }
 
 #define MAKE_CONVERSIONS(name, min_val, max_val, min, max)      \
-  static long \
+  static void \
   convert_ ## name ## _double (const Babl *c, char *src, \
                                char *dst, \
                                int src_pitch, \
                                int dst_pitch, \
                                long n)        \
   { \
-    return convert_u16_double_scaled (c, min_val, max_val, min, max, \
-                                      src, dst, src_pitch, dst_pitch, n); \
+    convert_u16_double_scaled (c, min_val, max_val, min, max, \
+                               src, dst, src_pitch, dst_pitch, n); \
   }                                                               \
-  static long \
+  static void \
   convert_double_ ## name (const Babl *c, char *src, \
                            char *dst, \
                            int src_pitch, \
                            int dst_pitch, \
                            long n)        \
   { \
-    return convert_double_u16_scaled (c, min_val, max_val, min, max, \
-                                      src, dst, src_pitch, dst_pitch, n); \
+    convert_double_u16_scaled (c, min_val, max_val, min, max, \
+                               src, dst, src_pitch, dst_pitch, n); \
   }
 
 MAKE_CONVERSIONS (u16_l, 0.0, 100.0, 0x00, 0xffff)

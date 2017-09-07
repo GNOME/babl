@@ -24,19 +24,19 @@
 #include "base/util.h"
 
 
-static long  rgba_to_cmyk (const Babl *conversion,char *src,
+static void  rgba_to_cmyk (const Babl *conversion,char *src,
                            char *dst,
                            long  n);
 
-static long  cmyk_to_rgba (const Babl *conversion,char *src,
+static void  cmyk_to_rgba (const Babl *conversion,char *src,
                            char *dst,
                            long  n);
 
-static long  rgba_to_cmy  (const Babl *conversion,char *src,
+static void  rgba_to_cmy  (const Babl *conversion,char *src,
                            char *dst,
                            long  n);
 
-static long  cmy_to_rgba  (const Babl *conversion,char *src,
+static void  cmy_to_rgba  (const Babl *conversion,char *src,
                            char *dst,
                            long  n);
 
@@ -126,7 +126,7 @@ init (void)
 }
 
 
-static long
+static void
 rgba_to_cmyk (const Babl *conversion,char *src,
               char *dst,
               long  n)
@@ -173,10 +173,9 @@ rgba_to_cmyk (const Babl *conversion,char *src,
       src += 4 * sizeof (double);
       dst += 4 * sizeof (double);
     }
-  return n;
 }
 
-static long
+static void
 cmyk_to_rgba (const Babl *conversion,char *src,
               char *dst,
               long  n)
@@ -214,10 +213,9 @@ cmyk_to_rgba (const Babl *conversion,char *src,
       src += 4 * sizeof (double);
       dst += 4 * sizeof (double);
     }
-  return n;
 }
 
-static long
+static void
 rgba_to_cmy (const Babl *conversion,char *src,
              char *dst,
              long  n)
@@ -241,10 +239,9 @@ rgba_to_cmy (const Babl *conversion,char *src,
       src += 4 * sizeof (double);
       dst += 3 * sizeof (double);
     }
-  return n;
 }
 
-static long
+static void
 cmy_to_rgba (const Babl *conversion,char *src,
               char *dst,
               long  n)
@@ -270,5 +267,4 @@ cmy_to_rgba (const Babl *conversion,char *src,
       src += 3 * sizeof (double);
       dst += 4 * sizeof (double);
     }
-  return n;
 }

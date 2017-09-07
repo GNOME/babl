@@ -30,7 +30,7 @@
 #define INLINE inline
 
 
-static INLINE long
+static INLINE void
 conv_rgbaF_linear_rgbAF_gamma (const Babl *conversion,unsigned char *src,
                                unsigned char *dst,
                                long           samples)
@@ -50,10 +50,9 @@ conv_rgbaF_linear_rgbAF_gamma (const Babl *conversion,unsigned char *src,
        *fdst++ = babl_trc_from_linear (trc[2], *fsrc++) * alpha;
        *fdst++ = *fsrc++;
      }
-  return samples;
 }
 
-static INLINE long
+static INLINE void
 conv_rgbAF_linear_rgbAF_gamma (const Babl *conversion,unsigned char *src, 
                                unsigned char *dst, 
                                long           samples)
@@ -92,10 +91,9 @@ conv_rgbAF_linear_rgbAF_gamma (const Babl *conversion,unsigned char *src,
            *fdst++ = *fsrc++;
          }
      }
-  return samples;
 }
 
-static INLINE long
+static INLINE void
 conv_rgbaF_linear_rgbaF_gamma (const Babl *conversion,unsigned char *src, 
                                unsigned char *dst, 
                                long           samples)
@@ -114,10 +112,9 @@ conv_rgbaF_linear_rgbaF_gamma (const Babl *conversion,unsigned char *src,
        *fdst++ = babl_trc_from_linear (trc[2], *fsrc++);
        *fdst++ = *fsrc++;
      }
-  return samples;
 }
 
-static INLINE long
+static INLINE void
 conv_rgbF_linear_rgbF_gamma (const Babl *conversion,unsigned char *src, 
                              unsigned char *dst, 
                              long           samples)
@@ -134,11 +131,10 @@ conv_rgbF_linear_rgbF_gamma (const Babl *conversion,unsigned char *src,
        *fdst++ = babl_trc_from_linear (trc[1], *fsrc++);
        *fdst++ = babl_trc_from_linear (trc[2], *fsrc++);
      }
-  return samples;
 }
 
 
-static INLINE long
+static INLINE void
 conv_rgbaF_gamma_rgbaF_linear (const Babl *conversion,unsigned char *src, 
                                unsigned char *dst, 
                                long           samples)
@@ -156,10 +152,9 @@ conv_rgbaF_gamma_rgbaF_linear (const Babl *conversion,unsigned char *src,
        *fdst++ = babl_trc_to_linear (trc[2], *fsrc++);
        *fdst++ = *fsrc++;
      }
-  return samples;
 }
 
-static INLINE long
+static INLINE void
 conv_rgbF_gamma_rgbF_linear (const Babl *conversion,unsigned char *src, 
                              unsigned char *dst, 
                              long           samples)
@@ -176,7 +171,6 @@ conv_rgbF_gamma_rgbF_linear (const Babl *conversion,unsigned char *src,
        *fdst++ = babl_trc_to_linear (trc[1], *fsrc++);
        *fdst++ = babl_trc_to_linear (trc[2], *fsrc++);
      }
-  return samples;
 }
 
 #define o(src, dst) \

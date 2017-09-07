@@ -27,16 +27,16 @@
 #define MAX(a,b) ((a < b) ? b : a)
 #define EPSILON  1.0e-10
 
-static long  rgba_to_hsla     (const Babl *conversion,char   *src,
+static void  rgba_to_hsla     (const Babl *conversion,char   *src,
                                char   *dst,
                                long    samples);
-static long  hsla_to_rgba     (const Babl *conversion,char   *src,
+static void  hsla_to_rgba     (const Babl *conversion,char   *src,
                                char   *dst,
                                long    samples);
-static long  rgba_to_hsl      (const Babl *conversion,char   *src,
+static void  rgba_to_hsl      (const Babl *conversion,char   *src,
                                char   *dst,
                                long    samples);
-static long  hsl_to_rgba      (const Babl *conversion,char   *src,
+static void  hsl_to_rgba      (const Babl *conversion,char   *src,
                                char   *dst,
                                long    samples);
 static void  rgb_to_hsl_step  (double *src,
@@ -156,7 +156,7 @@ rgb_to_hsl_step (double* src,
 }
 
 
-static long
+static void
 rgba_to_hsla (const Babl *conversion,char *src,
               char *dst,
               long  samples)
@@ -174,12 +174,10 @@ rgba_to_hsla (const Babl *conversion,char *src,
       src += 4 * sizeof (double);
       dst += 4 * sizeof (double);
     }
-
-  return samples;
 }
 
 
-static long
+static void
 rgba_to_hsl (const Babl *conversion,char *src,
              char *dst,
              long  samples)
@@ -193,8 +191,6 @@ rgba_to_hsl (const Babl *conversion,char *src,
       src += 4 * sizeof (double);
       dst += 3 * sizeof (double);
     }
-
-  return samples;
 }
 
 
@@ -243,7 +239,7 @@ hsl_to_rgb_step (double *src,
 }
 
 
-static long
+static void
 hsla_to_rgba (const Babl *conversion,char *src,
               char *dst,
               long  samples)
@@ -261,12 +257,10 @@ hsla_to_rgba (const Babl *conversion,char *src,
       src += 4 * sizeof (double);
       dst += 4 * sizeof (double);
     }
-
-  return samples;
 }
 
 
-static long
+static void
 hsl_to_rgba (const Babl *conversion,char *src,
              char *dst,
              long  samples)
@@ -282,6 +276,4 @@ hsl_to_rgba (const Babl *conversion,char *src,
       src += 3 * sizeof (double);
       dst += 4 * sizeof (double);
     }
-
-  return samples;
 }

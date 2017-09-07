@@ -71,7 +71,7 @@ models (void)
 }
 
 
-static long
+static void
 rgba_to_ycbcra709 (const Babl *conversion,char *src,
                    char *dst,
                    long  n)
@@ -101,11 +101,10 @@ rgba_to_ycbcra709 (const Babl *conversion,char *src,
       src += sizeof (double) * 4;
       dst += sizeof (double) * 4;
     }
-  return n;
 }
 
 
-static long
+static void
 rgba_to_ycbcr709 (const Babl *conversion,char *src,
                   char *dst,
                   long  n)
@@ -133,11 +132,10 @@ rgba_to_ycbcr709 (const Babl *conversion,char *src,
       src += sizeof (double) * 4;
       dst += sizeof (double) * 3;
     }
-  return n;
 }
 
 
-static long
+static void
 ycbcra709_to_rgba (const Babl *conversion,char *src,
                 char *dst,
                 long  n)
@@ -167,11 +165,10 @@ ycbcra709_to_rgba (const Babl *conversion,char *src,
       src += sizeof (double) * 4;
       dst += sizeof (double) * 4;
     }
-  return n;
 }
 
 
-static long
+static void
 ycbcr709_to_rgba (const Babl *conversion,char *src,
                char *dst,
                long  n)
@@ -200,7 +197,6 @@ ycbcr709_to_rgba (const Babl *conversion,char *src,
       src += sizeof (double) * 3;
       dst += sizeof (double) * 4;
     }
-  return n;
 }
 
 

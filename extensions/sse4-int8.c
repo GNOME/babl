@@ -30,7 +30,7 @@
 #include "babl-cpuaccel.h"
 #include "extensions/util.h"
 
-static inline long
+static inline void
 conv_y8_yF (const Babl *conversion,const uint8_t *src, float *dst, long samples)
 {
   const float     factor = 1.0f / 255.0f;
@@ -62,26 +62,24 @@ conv_y8_yF (const Babl *conversion,const uint8_t *src, float *dst, long samples)
       *dst++ = (float)(*src++) * factor;
       n -= 1;
     }
-
-  return samples;
 }
 
-static long
+static void
 conv_ya8_yaF (const Babl *conversion,const uint8_t *src, float *dst, long samples)
 {
-  return conv_y8_yF (conversion, src, dst, samples * 2) / 2;
+  conv_y8_yF (conversion, src, dst, samples * 2);
 }
 
-static long
+static void
 conv_rgb8_rgbF (const Babl *conversion,const uint8_t *src, float *dst, long samples)
 {
-  return conv_y8_yF (conversion, src, dst, samples * 3) / 3;
+  conv_y8_yF (conversion, src, dst, samples * 3);
 }
 
-static long
+static void
 conv_rgba8_rgbaF (const Babl *conversion,const uint8_t *src, float *dst, long samples)
 {
-  return conv_y8_yF (conversion, src, dst, samples * 4) / 4;
+  conv_y8_yF (conversion, src, dst, samples * 4);
 }
 
 #endif

@@ -32,7 +32,7 @@
 
 /* Float versions of the double constants in rgb-constants.h */
 
-static long
+static void
 conv_rgbaF_linear_y8_linear (const Babl *conversion,unsigned char *src,
                              unsigned char *dst,
                              long           samples)
@@ -58,11 +58,9 @@ conv_rgbaF_linear_y8_linear (const Babl *conversion,unsigned char *src,
       v = rint (value * 255.0);
       *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
     }
-
-  return samples;
 }
 
-static long
+static void
 conv_rgbaF_linear_yF_linear (const Babl *conversion,unsigned char *src,
                              unsigned char *dst,
                              long           samples)
@@ -86,11 +84,9 @@ conv_rgbaF_linear_yF_linear (const Babl *conversion,unsigned char *src,
       s++;
       *d++ = value;
     }
-
-  return samples;
 }
 
-static long
+static void
 conv_rgbaF_linear_yaF_linear (const Babl *conversion,unsigned char *src,
                               unsigned char *dst,
                               long           samples)
@@ -114,8 +110,6 @@ conv_rgbaF_linear_yaF_linear (const Babl *conversion,unsigned char *src,
       *d++ = value;
       *d++ = *s++;  /* alpha */
     }
-
-  return samples;
 }
 
 int init (void);

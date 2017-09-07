@@ -69,7 +69,7 @@ tables_init (const Babl *space)
   return j;
 }
 
-static INLINE long
+static INLINE void
 u8_linear_to_float_linear (const Babl *conversion,unsigned char *src,
                            unsigned char *dst,
                            long           samples)
@@ -79,12 +79,10 @@ u8_linear_to_float_linear (const Babl *conversion,unsigned char *src,
 
   while (n--)
     *d++ = lut_linear[*src++];
-
-  return samples;
 }
 
 
-static INLINE long
+static INLINE void
 u8_linear_to_float_linear_premul (const Babl *conversion,unsigned char *src,
                                   unsigned char *dst,
                                   long           samples)
@@ -102,10 +100,9 @@ u8_linear_to_float_linear_premul (const Babl *conversion,unsigned char *src,
       src += 4;
       d += 4;
     }
-  return samples;
 }
 
-static INLINE long
+static INLINE void
 u8_gamma_2_2_to_float_linear (const Babl *conversion,unsigned char *src,
                               unsigned char *dst,
                               long           samples)
@@ -116,32 +113,26 @@ u8_gamma_2_2_to_float_linear (const Babl *conversion,unsigned char *src,
 
   while (n--)
     *d++ = lut_gamma_2_2[space_no][*src++];
-
-  return samples;
 }
 
-static INLINE long
+static INLINE void
 conv_rgba8_linear_rgbaF_linear (const Babl *conversion,unsigned char *src,
                                 unsigned char *dst,
                                 long           samples)
 {
   u8_linear_to_float_linear (conversion, src, dst, samples * 4);
-
-  return samples;
 }
 
-static INLINE long
+static INLINE void
 conv_rgba8_linear_ragabaaF_linear (const Babl *conversion,unsigned char *src,
                                 unsigned char *dst,
                                 long           samples)
 {
   u8_linear_to_float_linear_premul (conversion, src, dst, samples);
-
-  return samples;
 }
 
 
-static INLINE long
+static INLINE void
 conv_rgba8_gamma_2_2_rgbaF_linear (const Babl *conversion,unsigned char *src,
                                    unsigned char *dst,
                                    long           samples)
@@ -157,31 +148,25 @@ conv_rgba8_gamma_2_2_rgbaF_linear (const Babl *conversion,unsigned char *src,
       *d++ = lut_gamma_2_2[space_no][*src++];
       *d++ = lut_linear[*src++];
     }
-
-  return samples;
 }
 
-static INLINE long
+static INLINE void
 conv_rgb8_linear_rgbF_linear (const Babl *conversion,unsigned char *src,
                               unsigned char *dst,
                               long           samples)
 {
   u8_linear_to_float_linear (conversion, src, dst, samples * 3);
-
-  return samples;
 }
 
-static INLINE long
+static INLINE void
 conv_rgb8_gamma_2_2_rgbF_linear (const Babl *conversion,unsigned char *src,
                                  unsigned char *dst,
                                  long           samples)
 {
   u8_gamma_2_2_to_float_linear (conversion, src, dst, samples * 3);
-
-  return samples;
 }
 
-static INLINE long
+static INLINE void
 conv_rgb8_linear_rgbaF_linear (const Babl *conversion,unsigned char *src,
                                unsigned char *dst,
                                long           samples)
@@ -196,13 +181,11 @@ conv_rgb8_linear_rgbaF_linear (const Babl *conversion,unsigned char *src,
       *d++ = lut_linear[*src++];
       *d++ = 1.0;
     }
-
-  return samples;
 }
 
 #define conv_rgb8_linear_ragabaaF_linear conv_rgb8_linear_rgbaF_linear
 
-static INLINE long
+static INLINE void
 conv_rgb8_gamma_2_2_rgbaF_linear (const Babl *conversion,unsigned char *src,
                                   unsigned char *dst,
                                   long           samples)
@@ -218,21 +201,17 @@ conv_rgb8_gamma_2_2_rgbaF_linear (const Babl *conversion,unsigned char *src,
       *d++ = lut_gamma_2_2[space_no][*src++];
       *d++ = 1.0;
     }
-
-  return samples;
 }
 
-static INLINE long
+static INLINE void
 conv_ga8_linear_gaF_linear (const Babl *conversion,unsigned char *src,
                             unsigned char *dst,
                             long           samples)
 {
   u8_linear_to_float_linear (conversion, src, dst, samples * 2);
-
-  return samples;
 }
 
-static INLINE long
+static INLINE void
 conv_ga8_gamma_2_2_gaF_linear (const Babl *conversion,unsigned char *src,
                                unsigned char *dst,
                                long           samples)
@@ -246,11 +225,9 @@ conv_ga8_gamma_2_2_gaF_linear (const Babl *conversion,unsigned char *src,
       *d++ = lut_gamma_2_2[space_no][*src++];
       *d++ = lut_linear[*src++];
     }
-
-  return samples;
 }
 
-static INLINE long
+static INLINE void
 conv_ga8_gamma_2_2_rgba8_gamma_2_2 (const Babl *conversion,unsigned char *src,
                                     unsigned char *dst,
                                     long           samples)
@@ -264,11 +241,9 @@ conv_ga8_gamma_2_2_rgba8_gamma_2_2 (const Babl *conversion,unsigned char *src,
       *dst++ = *src++;
       *dst++ = *src++;
     }
-
-  return samples;
 }
 
-static INLINE long
+static INLINE void
 conv_ga8_linear_rgbaF_linear (const Babl *conversion,unsigned char *src,
                               unsigned char *dst,
                               long           samples)
@@ -285,11 +260,9 @@ conv_ga8_linear_rgbaF_linear (const Babl *conversion,unsigned char *src,
       *d++ = value;
       *d++ = lut_linear[*src++];
     }
-
-  return samples;
 }
 
-static INLINE long
+static INLINE void
 conv_ga8_gamma_2_2_rgbaF_linear (const Babl *conversion,unsigned char *src,
                                  unsigned char *dst,
                                  long           samples)
@@ -307,31 +280,25 @@ conv_ga8_gamma_2_2_rgbaF_linear (const Babl *conversion,unsigned char *src,
       *d++ = value;
       *d++ = lut_linear[*src++];
     }
-
-  return samples;
 }
 
-static INLINE long
+static INLINE void
 conv_g8_linear_gF_linear (const Babl *conversion,unsigned char *src,
                           unsigned char *dst,
                           long           samples)
 {
   u8_linear_to_float_linear (conversion, src, dst, samples);
-
-  return samples;
 }
 
-static INLINE long
+static INLINE void
 conv_g8_gamma_2_2_gF_linear (const Babl *conversion,unsigned char *src,
                              unsigned char *dst,
                              long           samples)
 {
   u8_gamma_2_2_to_float_linear (conversion, src, dst, samples);
-
-  return samples;
 }
 
-static INLINE long
+static INLINE void
 conv_g8_linear_rgbaF_linear (const Babl *conversion,unsigned char *src,
                              unsigned char *dst,
                              long           samples)
@@ -348,10 +315,8 @@ conv_g8_linear_rgbaF_linear (const Babl *conversion,unsigned char *src,
       *d++ = value;
       *d++ = 1.0;
     }
-
-  return samples;
 }
-static INLINE long
+static INLINE void
 conv_g8_gamma_2_2_rgbaF_linear (const Babl *conversion,unsigned char *src,
                                 unsigned char *dst,
                                 long           samples)
@@ -369,13 +334,11 @@ conv_g8_gamma_2_2_rgbaF_linear (const Babl *conversion,unsigned char *src,
       *d++ = value;
       *d++ = 1.0;
     }
-
-  return samples;
 }
 
-static INLINE long
-conv_rgbaF_linear_rgb8_linear (const Babl *conversion,unsigned char *src, 
-                               unsigned char *dst, 
+static INLINE void
+conv_rgbaF_linear_rgb8_linear (const Babl *conversion,unsigned char *src,
+                               unsigned char *dst,
                                long           samples)
 {
   float *fsrc = (float *) src;
@@ -389,19 +352,17 @@ conv_rgbaF_linear_rgb8_linear (const Babl *conversion,unsigned char *src,
 
       v = rint (*fsrc++ * 255.0);
       *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
-     
+
       v = rint (*fsrc++ * 255.0);
       *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
 
       fsrc++;
     }
-
-  return samples;
 }
 
-static INLINE long
-conv_rgbaF_linear_rgba8_linear (const Babl *conversion,unsigned char *src, 
-                                unsigned char *dst, 
+static INLINE void
+conv_rgbaF_linear_rgba8_linear (const Babl *conversion,unsigned char *src,
+                                unsigned char *dst,
                                 long           samples)
 {
   float *fsrc = (float *) src;
@@ -415,15 +376,13 @@ conv_rgbaF_linear_rgba8_linear (const Babl *conversion,unsigned char *src,
 
       v = rint (*fsrc++ * 255.0);
       *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
-     
+
       v = rint (*fsrc++ * 255.0);
       *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
 
       v = rint (*fsrc++ * 255.0);
       *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
     }
-
-  return samples;
 }
 
 int init (void);

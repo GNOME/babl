@@ -35,19 +35,19 @@
 #define RGB_LUMA_BLUE 0.114 //0.0722
 #define EPSILON 1e-10
 
-static long rgba_to_hcya     (const Babl *conversion,char *src,
+static void rgba_to_hcya     (const Babl *conversion,char *src,
                               char *dst,
                               long  samples);
 
-static long hcya_to_rgba     (const Babl *conversion,char *src,
+static void hcya_to_rgba     (const Babl *conversion,char *src,
                               char *dst,
                               long  samples);
 
-static long rgba_to_hcy      (const Babl *conversion,char *src,
+static void rgba_to_hcy      (const Babl *conversion,char *src,
                               char *dst,
                               long  samples);
 
-static long hcy_to_rgba      (const Babl *conversion,char *src,
+static void hcy_to_rgba      (const Babl *conversion,char *src,
                               char *dst,
                               long  samples);
 
@@ -286,7 +286,7 @@ hcy_to_rgba_step (char *src,
   ((double *) dst)[2] = gamma_2_2_to_linear (blue);
 }
 
-static long
+static void
 rgba_to_hcya (const Babl *conversion,char *src,
               char *dst,
               long  samples)
@@ -308,7 +308,7 @@ rgba_to_hcya (const Babl *conversion,char *src,
   return samples;
 }
 
-static long
+static void
 hcya_to_rgba (const Babl *conversion,char *src,
               char *dst,
               long  samples)
@@ -330,7 +330,7 @@ hcya_to_rgba (const Babl *conversion,char *src,
   return samples;
 }
 
-static long
+static void
 rgba_to_hcy (const Babl *conversion,char *src,
              char *dst,
              long  samples)
@@ -348,7 +348,7 @@ rgba_to_hcy (const Babl *conversion,char *src,
   return samples;
 }
 
-static long
+static void
 hcy_to_rgba (const Babl *conversion,char *src,
              char *dst,
              long  samples)

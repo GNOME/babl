@@ -42,7 +42,7 @@ conv_float_u8_two_table_map (float value)
   return result;
 }
 
-static long
+static void
 conv_rgbafloat_linear_cairo24_le (const Babl *conversion,unsigned char *src_char,
                                   unsigned char *dst,
                                   long           samples)
@@ -65,10 +65,9 @@ conv_rgbafloat_linear_cairo24_le (const Babl *conversion,unsigned char *src_char
       src += 4;
       dst += 4;
     }
-  return samples;
 }
 
-static long
+static void
 conv_rgbfloat_linear_cairo24_le (const Babl *conversion,unsigned char *src_char,
                                  unsigned char *dst,
                                  long           samples)
@@ -85,10 +84,9 @@ conv_rgbfloat_linear_cairo24_le (const Babl *conversion,unsigned char *src_char,
       src += 3;
       dst += 4;
     }
-  return samples;
 }
 
-static long
+static void
 conv_rgbafloat_linear_rgbu8_gamma (const Babl *conversion,unsigned char *src_char,
                                    unsigned char *dst,
                                    long           samples)
@@ -113,11 +111,10 @@ conv_rgbafloat_linear_rgbu8_gamma (const Babl *conversion,unsigned char *src_cha
       src += 4;
       dst += 3;
     }
-  return samples;
 }
 
 
-static long
+static void
 conv_rgbafloat_linear_rgbau8_gamma (const Babl *conversion,unsigned char *src_char,
                                     unsigned char *dst,
                                     long           samples)
@@ -144,10 +141,9 @@ conv_rgbafloat_linear_rgbau8_gamma (const Babl *conversion,unsigned char *src_ch
       src += 4;
       dst += 4;
     }
-  return samples;
 }
 
-static long
+static void
 conv_rgbfloat_linear_rgbu8_gamma (const Babl *conversion,unsigned char *src_char,
                                   unsigned char *dst,
                                   long           samples)
@@ -164,10 +160,9 @@ conv_rgbfloat_linear_rgbu8_gamma (const Babl *conversion,unsigned char *src_char
       src += 3;
       dst += 3;
     }
-  return samples;
 }
 
-static long
+static void
 conv_yfloat_linear_yu8_gamma (const Babl *conversion,unsigned char *src_char,
                               unsigned char *dst,
                               long           samples)
@@ -179,10 +174,9 @@ conv_yfloat_linear_yu8_gamma (const Babl *conversion,unsigned char *src_char,
     {
       *dst++ = conv_float_u8_two_table_map (*src++);
     }
-  return samples;
 }
 
-static long
+static void
 conv_yafloat_linear_yau8_gamma (const Babl *conversion,unsigned char *src_char,
                                 unsigned char *dst,
                                 long           samples)
@@ -198,7 +192,6 @@ conv_yafloat_linear_yau8_gamma (const Babl *conversion,unsigned char *src_char,
       alpha  = rint (*src++ * 255.0);
       *dst++ = (alpha < 0) ? 0 : ((alpha > 255) ? 255 : alpha);
     }
-  return samples;
 }
 
 int init (void);
