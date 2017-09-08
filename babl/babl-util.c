@@ -91,7 +91,7 @@ babl_rel_avg_error (const double *imgA,
   for (i = 0; i < samples; i++)
     error += fabs (imgA[i] - imgB[i]);
 
-  if (error >= 0.000001)
+  if (!(error < 0.000001))
     error /= samples;
   else
     error = 0.0;
