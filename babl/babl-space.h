@@ -44,7 +44,8 @@ typedef struct
   double           pad; // for when the numbers represent a matrix
 
   const Babl      *trc[3];
-  char             name[128];
+  char             name[512]; // XXX: allocate this dynamically instead -
+                              //      or use iccv4 style hashes for name.
   double whitepoint[3]; /* CIE XYZ whitepoint */
 
   double RGBtoXYZ[9]; /* matrices for conversions */

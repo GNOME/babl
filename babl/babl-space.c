@@ -110,6 +110,9 @@ static void babl_space_compute_matrices (BablSpace *space)
 #endif
 
   memcpy (space->XYZtoRGB, mat, sizeof (mat));
+
+  babl_matrix_to_float (space->RGBtoXYZ, space->RGBtoXYZf);
+  babl_matrix_to_float (space->XYZtoRGB, space->XYZtoRGBf);
 }
 
 const Babl *
@@ -136,7 +139,6 @@ babl_space_from_rgbxyz_matrix (const char *name,
   static BablSpace space;
   space.instance.class_type = BABL_SPACE;
   space.instance.id         = 0;
-
   space.xr = rx;
   space.yr = gx;
   space.xg = bx;
@@ -181,6 +183,7 @@ babl_space_from_rgbxyz_matrix (const char *name,
   space.RGBtoXYZ[6] = rz;
   space.RGBtoXYZ[7] = gz;
   space.RGBtoXYZ[8] = bz;
+
   babl_matrix_invert (space.RGBtoXYZ, space.XYZtoRGB);
 
   babl_matrix_to_float (space.RGBtoXYZ, space.RGBtoXYZf);
@@ -254,6 +257,7 @@ babl_space_from_chromaticities (const char *name,
   if (name)
     sprintf (space_db[i].name, "%s", name);
   else
+          /* XXX: this can get longer than 256bytes ! */
     sprintf (space_db[i].name, "space-%.4f,%.4f_%.4f,%.4f_%.4f,%.4f_%.4f,%.4f_%s,%s,%s",
              wx,wy,rx,ry,bx,by,gx,gy,babl_get_name (space.trc[0]),
              babl_get_name(space.trc[1]), babl_get_name(space.trc[2]));

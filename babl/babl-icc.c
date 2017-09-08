@@ -531,6 +531,7 @@ const char *babl_space_to_icc (const Babl *babl, int *ret_length)
     icc_write (s15f16, state->o + 12, space->RGBtoXYZ[5]);
     icc_write (s15f16, state->o + 16, space->RGBtoXYZ[8]);
 
+
     write_trc (state, "rTRC", &space->trc[0]->trc);
 
     if (space->trc[0] == space->trc[1] &&
