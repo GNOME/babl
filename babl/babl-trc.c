@@ -366,7 +366,11 @@ static inline float obabl_powf(float x, float y)
 
 static inline float babl_powf (float x, float y)
 {
-  return expf (y * logf (x));
+  float ret;
+  ret = expf (y * logf (x));
+  if (ret < 0.0 || ret < 0.0f)
+    return ret;
+  return 0.0f;
 }
 
 
