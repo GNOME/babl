@@ -90,6 +90,13 @@ const Babl * babl_model     (const char *name);
  */
 const Babl * babl_space (const char *name);
 
+typedef enum {
+  BABL_ICC_INTENT_PERCEPTUAL             = 0,
+  BABL_ICC_INTENT_RELATIVE_COLORIMETRIC  = 1,
+  BABL_ICC_INTENT_SATURATION             = 2,
+  BABL_ICC_INTENT_ABSOLUTE_COLORIMETRIC  = 3
+} BablIccIntent;
+
 /**
  * babl_space_from_icc:
  *
@@ -101,10 +108,12 @@ const Babl * babl_space (const char *name);
  *         if an error occurs, NULL is returned and an error message
  *         is provided in error.
  *
- * Create a babl space from an in memory ICC profile, the
- * profile does no longer need to be loaded for the space to work,
- * multiple calls with the same icc profile and same icc_transform 
- * will result in the same space.
+ * Create a babl space from an in memory ICC profile, the profile does no
+ * longer need to be loaded for the space to work, multiple calls with the same
+ * icc profile and same intent will result in the same babl space.
+ *
+ * On a profile that doesn't contain A2B0 and B2A0 CLUTs perceptual and
+ * relative-colorimetric intents are treated the same.
  *
  * If a BablSpace cannot be created from the profile NULL is returned and a
  * static string is set on the const char *value pointed at with &value
@@ -113,6 +122,7 @@ const Babl * babl_space (const char *name);
  */
 const Babl *babl_space_from_icc (const char       *icc_data,
                                  int               icc_length,
+                                 BablIccIntent     intent,
                                  const char      **error);
 
 /* babl_icc_get_key:
@@ -128,6 +138,7 @@ const Babl *babl_space_from_icc (const char       *icc_data,
  * "copyright", "manufacturer", "device", "profile-class", "color-space" and
  * "pcs".
  */
+
 char *babl_icc_get_key (const char *icc_data,
                         int         icc_length,
                         const char *key,

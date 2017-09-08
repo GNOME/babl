@@ -671,6 +671,7 @@ static char *decode_string (ICC *state, const char *tag, const char *lang, const
 const Babl *
 babl_space_from_icc (const char   *icc_data,
                      int           icc_length,
+                     BablIccIntent intent,
                      const char  **error)
 {
   ICC  *state = icc_state_new ((char*)icc_data, icc_length, 0);
@@ -683,6 +684,7 @@ babl_space_from_icc (const char   *icc_data,
   Babl *ret = NULL;
 
   sign_t profile_class, color_space;
+
 
   if (!error) error = &int_err;
   *error = NULL;
@@ -708,6 +710,34 @@ babl_space_from_icc (const char   *icc_data,
   if (strcmp (color_space.str, "RGB "))
     *error = "not defining an RGB space";
   }
+  }
+
+  switch (intent)
+  {
+    case BABL_ICC_INTENT_RELATIVE_COLORIMETRIC:
+      /* that is what we do well */
+      break;
+    case BABL_ICC_INTENT_PERCEPTUAL:
+      /* if there is an A2B0 and B2A0 tags, we do not do what that
+       * profile is capable of - since the CLUT code is work in progress
+       * not in git master yet.
+       */
+      if (icc_tag (state, "A2B0", NULL, NULL) &&
+          icc_tag (state, "B2A0", NULL, NULL))
+      {
+        *error = "profile contains perceptual luts and perceptual was explicitly asked for, babl does not yet support CLUTs";
+      }
+      else
+      {
+        intent = BABL_ICC_INTENT_RELATIVE_COLORIMETRIC;
+      }
+      break;
+    case BABL_ICC_INTENT_ABSOLUTE_COLORIMETRIC:
+      *error = "absolute colormetric not implemented";
+      break;
+    case BABL_ICC_INTENT_SATURATION:
+      *error = "absolute stauration not supported";
+      break;
   }
 
   {
