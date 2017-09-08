@@ -36,6 +36,8 @@ main (int    argc,
   long  icc_len;
   int genlen;
   const char *error;
+  const char *la = NULL;
+  const char *co = NULL;
   babl_init ();
 
   if (!argv[1] || !argv[2])
@@ -47,20 +49,42 @@ main (int    argc,
   if (file_get_contents (argv[1], &icc_data, &icc_len, NULL))
     return -1;
 
+  {
+    char *description = babl_icc_get_key (icc_data, icc_len, "description", la, co);
+    if (description)
+      fprintf (stderr, "description: %s\n", description);
+  }
+
+  {
+    char *str = babl_icc_get_key (icc_data, icc_len, "copyright", la, co);
+    if (str)
+    {
+      fprintf (stderr, "copyright: %s\n", str);
+      free (str);
+    }
+  }
+  {
+    char *str = babl_icc_get_key (icc_data, icc_len, "device", la, co);
+    if (str)
+    {
+      fprintf (stderr, "device: %s\n", str);
+      free (str);
+    }
+  }
+  {
+    char *str = babl_icc_get_key (icc_data, icc_len, "manufacturer", la, co);
+    if (str)
+    {
+      fprintf (stderr, "manufacturer: %s\n", str);
+      free (str);
+    }
+  }
   babl = babl_space_from_icc (icc_data, icc_len, &error);
   free (icc_data);
   if (error || !babl)
   {
     fprintf (stderr, "%s error %s", argv[0], error);
     return -1;
-  }
-
-  {
-    BablSpace *space = (void*)babl;
-    if (space->description)
-      fprintf (stderr, "description: %s\n", space->description);
-    if (space->copyright)
-      fprintf (stderr, "copyright: %s\n", space->copyright);
   }
 
   icc_data = (char *)babl_space_to_icc (babl, &genlen);

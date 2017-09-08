@@ -62,8 +62,6 @@ typedef struct
    * standard should win.
    */
 
-   char  *description;  /* meta data possibly read from ICC */
-   char  *copyright;
 } BablSpace;
 
 static inline void babl_space_to_xyzf (const Babl *space, const float *rgb, float *xyz)

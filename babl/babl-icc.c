@@ -578,7 +578,27 @@ const char *babl_space_to_icc (const Babl *babl, int *ret_length)
   return icc;
 }
 
-static char *icc_decode_mluc (ICC *state, int offset, int element_length, char *lang, char *country)
+
+typedef uint32_t UTF32;
+typedef uint16_t UTF16;
+typedef uint8_t  UTF8;
+
+typedef enum {
+  strictConversion = 0,
+  lenientConversion
+} ConversionFlags;
+
+static int ConvertUTF16toUTF8 (const UTF16** sourceStart,
+                               const UTF16* sourceEnd,
+                               UTF8** targetStart,
+                               UTF8* targetEnd,
+                               ConversionFlags flags);
+
+static char *icc_decode_mluc (ICC        *state,
+                              int         offset,
+                              int         element_length,
+                              const char *lang,
+                              const char *country)
 {
   int n_records   = icc_read (u32, offset + 8);
   int record_size = icc_read (u32, offset + 12);
@@ -598,32 +618,60 @@ static char *icc_decode_mluc (ICC *state, int offset, int element_length, char *
          (!country || !strcmp (country, icountry))) ||
          (i == n_records - 1))
     {
-      int slength = icc_read(u32, offset + o + 4);
+      int slength = (icc_read(u32, offset + o + 4))/2;
       int soffset = icc_read(u32, offset + o + 8);
-      char *ret = babl_malloc (slength * 2);
+      UTF16 *tmp_ret = babl_calloc (sizeof (uint16_t), slength + 1);
+      UTF16 *tmp_ret2 = tmp_ret;
+      unsigned char *ret = babl_calloc (1, slength * 4 + 1); // worst case scenario
+      unsigned char *ret2 = ret;
       int j;
 
-      for (j = 0; j < slength/2; j++)
+      for (j = 0; j < slength; j++)
       {
-        int hi = icc_read(u8, offset + soffset + j * 2 + 0);
-        int lo = icc_read(u8, offset + soffset + j * 2 + 1);
-
-        ret[j] = lo + hi * 0; // only ASCII survives this
-                              // brute utf16 decoding, so it is
-                              // good we ask for english.
+        tmp_ret[j] = icc_read(u16, offset + soffset + j * 2);
       }
-      ret[j] = 0;
-      return ret;
+      tmp_ret[j] = 0;
+      memset (ret, 0, slength * 4 + 1);
+      ConvertUTF16toUTF8 ((void*)&tmp_ret2, tmp_ret + slength, &ret2, ret + slength, lenientConversion);
+      babl_free(tmp_ret);
+      { // trim down to actually used utf8
+        unsigned char *tmp = (void*)strdup ((void*)ret);
+        babl_free (ret);
+        ret = tmp;
+      }
+      return (void*)ret;
     }
     o+=record_size;
   }
-  return babl_strdup ("");
+  return NULL;
+}
+
+static char *decode_string (ICC *state, const char *tag, const char *lang, const char *country)
+{
+  int offset, element_size;
+
+  if (!icc_tag (state, tag, &offset, &element_size))
+    return NULL;
+
+  if (!strcmp (state->data + offset, "mluc"))
+  {
+    return icc_decode_mluc (state, offset, element_size, lang, country);
+  }
+  else if (!strcmp (state->data + offset, "text"))
+  {
+    return strdup (state->data + offset + 8);
+  }
+  else if (!strcmp (state->data + offset, "desc"))
+  {
+    return strdup (state->data + offset + 12);
+  }
+  return NULL;
 }
 
 const Babl *
-babl_space_from_icc (const char  *icc_data,
-                     int          icc_length,
-                     const char **error)
+babl_space_from_icc (const char   *icc_data,
+                     int           icc_length,
+                     const char  **error)
 {
   ICC  *state = icc_state_new ((char*)icc_data, icc_length, 0);
   int   profile_size    = icc_read (u32, 0);
@@ -632,8 +680,6 @@ babl_space_from_icc (const char  *icc_data,
   const Babl *trc_green = NULL;
   const Babl *trc_blue  = NULL;
   const char *int_err;
-  char *descr     = NULL;
-  char *copyright = NULL;
   Babl *ret = NULL;
 
   sign_t profile_class, color_space;
@@ -691,34 +737,6 @@ babl_space_from_icc (const char  *icc_data,
     return NULL;
   }
 
-  {
-     int offset, element_size;
-     icc_tag (state, "desc", &offset, &element_size);
-     if (!strcmp (state->data + offset, "mluc"))
-     {
-       descr = icc_decode_mluc (state, offset, element_size, "en", NULL);
-     }
-     else
-     if (!strcmp (state->data + offset, "desc"))
-     {
-       descr = babl_strdup (state->data + offset + 12);
-     }
-  }
-
-  {
-     int offset, element_size;
-     icc_tag (state, "cprt", &offset, &element_size);
-     if (!strcmp (state->data + offset, "mluc"))
-     {
-       copyright = icc_decode_mluc (state, offset, element_size, "en", NULL);
-     }
-     else
-     if (!strcmp (state->data + offset, "desc"))
-     {
-       copyright = babl_strdup (state->data + offset + 8);
-     }
-  }
-
   if (icc_tag (state, "rXYZ", NULL, NULL) &&
       icc_tag (state, "gXYZ", NULL, NULL) &&
       icc_tag (state, "bXYZ", NULL, NULL) &&
@@ -763,8 +781,6 @@ babl_space_from_icc (const char  *icc_data,
                 ry, gy, by,
                 rz, gz, bz,
                 trc_red, trc_green, trc_blue);
-       ret->space.description = descr;
-       ret->space.copyright = copyright;
 
        babl_free (state);
        return ret;
@@ -813,8 +829,6 @@ babl_space_from_icc (const char  *icc_data,
                      green_x, green_y,
                      blue_x, blue_y,
                      trc_red, trc_green, trc_blue);
-       ret->space.description = descr;
-       ret->space.copyright = copyright;
        return ret;
      }
   }
@@ -847,3 +861,197 @@ static void symmetry_test (ICC *state)
   assert (icc_read (u32, 8) == 4);
 }
 
+char *babl_icc_get_key (const char *icc_data,
+                        int         icc_length,
+                        const char *key,
+                        const char *language,
+                        const char *country)
+{
+  char *ret = NULL;
+  ICC *state = icc_state_new ((void*)icc_data, icc_length, 0);
+
+  if (!state)
+    return ret;
+
+  if (!strcmp (key, "copyright") ||
+      !strcmp (key, "cprt"))
+  {
+    ret = decode_string (state, "cprt", language, country);
+
+  } else if (!strcmp (key, "description") ||
+             !strcmp (key, "profileDescriptionTag") ||
+             !strcmp (key, "desc"))
+  {
+    ret = decode_string (state, "desc", language, country);
+
+  } else if (!strcmp (key, "manufacturer") ||
+             !strcmp (key, "deviceMfgDescTag") ||
+             !strcmp (key, "dmnd"))
+  {
+    ret = decode_string (state, "dmnd", language, country);
+
+  } else if (!strcmp (key, "device") ||
+             !strcmp (key, "deviceModelDescTag") ||
+             !strcmp (key, "dmdd"))
+  {
+    ret = decode_string (state, "dmdd", language, country);
+  } else if (!strcmp (key, "class") ||
+             !strcmp (key, "profile-class"))
+  {
+    sign_t tag = icc_read (sign, 12);
+    return strdup (tag.str);
+  } else if (!strcmp (key, "color-space"))
+  {
+    sign_t tag = icc_read (sign, 16);
+    return strdup (tag.str);
+  } else if (!strcmp (key, "pcs"))
+  {
+    sign_t tag = icc_read (sign, 20);
+    return strdup (tag.str);
+  } else if (!strcmp (key, "intent"))
+  {
+    char tag[5];
+    int val = icc_read (u32, 64);
+    sprintf (tag, "%i", val);
+    return strdup (tag);
+  } else if (!strcmp (key, "tags"))
+  {
+    char tag[4096]="NYI";
+    return strdup (tag);
+  }
+  babl_free (state);
+  return ret;
+}
+
+
+/*
+ * Copyright 2001-2004 Unicode, Inc.
+ *
+ * Disclaimer
+ *
+ * This source code is provided as is by Unicode, Inc. No claims are
+ * made as to fitness for any particular purpose. No warranties of any
+ * kind are expressed or implied. The recipient agrees to determine
+ * applicability of information provided. If this file has been
+ * purchased on magnetic or optical media from Unicode, Inc., the
+ * sole remedy for any claim will be exchange of defective media
+ * within 90 days of receipt.
+ *
+ * Limitations on Rights to Redistribute This Code
+ *
+ * Unicode, Inc. hereby grants the right to freely use the information
+ * supplied in this file in the creation of products supporting the
+ * Unicode Standard, and to make copies of this file in any form
+ * for internal or external distribution as long as this notice
+ * remains attached.
+ */
+/* ---------------------------------------------------------------------
+
+    Conversions between UTF32, UTF-16, and UTF-8. Source code file.
+    Author: Mark E. Davis, 1994.
+    Rev History: Rick McGowan, fixes & updates May 2001.
+    Sept 2001: fixed const & error conditions per
+	mods suggested by S. Parent & A. Lillich.
+    June 2002: Tim Dodd added detection and handling of incomplete
+	source sequences, enhanced error detection, added casts
+	to eliminate compiler warnings.
+    July 2003: slight mods to back out aggressive FFFE detection.
+    Jan 2004: updated switches in from-UTF8 conversions.
+    Oct 2004: updated to use UNI_MAX_LEGAL_UTF32 in UTF-32 conversions.
+    Sep 2017: copied only the bits neccesary for utf16toutf8 into babl,
+              otherwise unchanged from upstream.
+
+    See the header file "ConvertUTF.h" for complete documentation.
+
+------------------------------------------------------------------------ */
+
+typedef uint32_t        UTF32;  /* at least 32 bits */
+typedef unsigned short  UTF16;  /* at least 16 bits */
+typedef unsigned char   UTF8;   /* typically 8 bits */
+typedef unsigned char   Boolean; /* 0 or 1 */
+typedef enum {
+  conversionOK,           /* conversion successful */
+  sourceExhausted,        /* partial character in source, but hit end */
+  targetExhausted,        /* insuff. room in target for conversion */
+  sourceIllegal           /* source sequence is illegal/malformed */
+} ConversionResult;
+
+#define UNI_REPLACEMENT_CHAR (UTF32)0x0000FFFD
+
+
+#define UNI_SUR_HIGH_START  (UTF32)0xD800
+#define UNI_SUR_HIGH_END    (UTF32)0xDBFF
+#define UNI_SUR_LOW_START   (UTF32)0xDC00
+#define UNI_SUR_LOW_END     (UTF32)0xDFFF
+static const int halfShift  = 10; /* used for shifting by 10 bits */
+
+static const UTF32 halfBase = 0x0010000UL;
+static const UTF8 firstByteMark[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
+
+static int ConvertUTF16toUTF8 (const UTF16** sourceStart, const UTF16* sourceEnd,
+	UTF8** targetStart, UTF8* targetEnd, ConversionFlags flags)
+{
+    ConversionResult result = conversionOK;
+    const UTF16* source = *sourceStart;
+    UTF8* target = *targetStart;
+    while (source < sourceEnd) {
+	UTF32 ch;
+	unsigned short bytesToWrite = 0;
+	const UTF32 byteMask = 0xBF;
+	const UTF32 byteMark = 0x80;
+	const UTF16* oldSource = source; /* In case we have to back up because of target overflow. */
+	ch = *source++;
+	/* If we have a surrogate pair, convert to UTF32 first. */
+	if (ch >= UNI_SUR_HIGH_START && ch <= UNI_SUR_HIGH_END) {
+	    /* If the 16 bits following the high surrogate are in the source buffer... */
+	    if (source < sourceEnd) {
+		UTF32 ch2 = *source;
+		/* If it's a low surrogate, convert to UTF32. */
+		if (ch2 >= UNI_SUR_LOW_START && ch2 <= UNI_SUR_LOW_END) {
+		    ch = ((ch - UNI_SUR_HIGH_START) << halfShift)
+			+ (ch2 - UNI_SUR_LOW_START) + halfBase;
+		    ++source;
+		} else if (flags == strictConversion) { /* it's an unpaired high surrogate */
+		    --source; /* return to the illegal value itself */
+		    result = sourceIllegal;
+		    break;
+		}
+	    } else { /* We don't have the 16 bits following the high surrogate. */
+		--source; /* return to the high surrogate */
+		result = sourceExhausted;
+		break;
+	    }
+	} else if (flags == strictConversion) {
+	    /* UTF-16 surrogate values are illegal in UTF-32 */
+	    if (ch >= UNI_SUR_LOW_START && ch <= UNI_SUR_LOW_END) {
+		--source; /* return to the illegal value itself */
+		result = sourceIllegal;
+		break;
+	    }
+	}
+	/* Figure out how many bytes the result will require */
+	if (ch < (UTF32)0x80) {	     bytesToWrite = 1;
+	} else if (ch < (UTF32)0x800) {     bytesToWrite = 2;
+	} else if (ch < (UTF32)0x10000) {   bytesToWrite = 3;
+	} else if (ch < (UTF32)0x110000) {  bytesToWrite = 4;
+	} else {			    bytesToWrite = 3;
+					    ch = UNI_REPLACEMENT_CHAR;
+	}
+
+	target += bytesToWrite;
+	if (target > targetEnd) {
+	    source = oldSource; /* Back up source pointer! */
+	    target -= bytesToWrite; result = targetExhausted; break;
+	}
+	switch (bytesToWrite) { /* note: everything falls through. */
+	    case 4: *--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
+	    case 3: *--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
+	    case 2: *--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
+	    case 1: *--target =  (UTF8)(ch | firstByteMark[bytesToWrite]);
+	}
+	target += bytesToWrite;
+    }
+    *sourceStart = source;
+    *targetStart = target;
+    return result;
+}

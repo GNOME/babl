@@ -95,22 +95,44 @@ const Babl * babl_space (const char *name);
  *
  * @icc_data: pointer to icc profile in memory
  * @icc_length: length of icc profile in bytes
+ * @intent: the intent from the ICC profile to use.
+ *
  " @error: pointer to a string where decoding errors can be stored,
  *         if an error occurs, NULL is returned and an error message
  *         is provided in error.
  *
  * Create a babl space from an in memory ICC profile, the
  * profile does no longer need to be loaded for the space to work,
- * multiple calls with the same icc profile will result in the
- * same space.
+ * multiple calls with the same icc profile and same icc_transform 
+ * will result in the same space.
  *
  * If a BablSpace cannot be created from the profile NULL is returned and a
  * static string is set on the const char *value pointed at with &value
- * containing a message describing why the icc does not yield a babl space.
+ * containing a message describing why the provided data does not yield a babl
+ * space.
  */
-const Babl *babl_space_from_icc (const char  *icc_data,
-                                 int          icc_length,
-                                 const char **error);
+const Babl *babl_space_from_icc (const char       *icc_data,
+                                 int               icc_length,
+                                 const char      **error);
+
+/* babl_icc_get_key:
+ *
+ * @icc_data: pointer to in-memory icc profile
+ * @icc_length: length of icc profile in bytes
+ * @key: the key we want to quey, see below for some supported values
+ * @language: 2 char code for language to extract or NULL
+ * @country: 2 char country code or NULL
+ *
+ * Returns NULL if key not found or a malloc allocated utf8 string of the key
+ * when found, free with free() when done. Supported keys: "description",
+ * "copyright", "manufacturer", "device", "profile-class", "color-space" and
+ * "pcs".
+ */
+char *babl_icc_get_key (const char *icc_data,
+                        int         icc_length,
+                        const char *key,
+                        const char *language,
+                        const char *counter);
 
 
 /* babl_space_to_icc:
