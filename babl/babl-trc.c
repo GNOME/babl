@@ -417,9 +417,13 @@ static inline float _babl_trc_formula_srgb_from_linear (const Babl *trc_, float 
   {
     float v = babl_powf (x, 1.0/g);
     v = (v-b)/a;
-    return v;
+    if (v < 0.0 || v >= 0.0)
+      return v;
+    return 0.0;
   }
-  return x / c;
+  if (c > 0.0)
+    return x / c;
+  return 0.0;
 }
 
 static inline float _babl_trc_formula_srgb_to_linear (const Babl *trc_, float value)
