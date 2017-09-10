@@ -18,6 +18,12 @@
 
 #define MAX_TRCS   100
 
+/* FIXME: choose parameters more intelligently */
+#define POLY_GAMMA_X0     (  0.5 / 255.0)
+#define POLY_GAMMA_X1     (254.5 / 255.0)
+#define POLY_GAMMA_DEGREE 6
+#define POLY_GAMMA_SCALE  2
+
 #include "config.h"
 #include "babl-internal.h"
 #include "base/util.h"
@@ -371,51 +377,61 @@ static inline float babl_powf (float x, float y)
   return 0.0f;
 }
 
-
-static inline void _babl_trc_gamma_to_linear_buf (const Babl *trc_, const float *in, float *out, int in_gap, int out_gap, int components, int count)
+static inline float _babl_trc_gamma_to_linear (const Babl *trc_, float value)
 {
   BablTRC *trc = (void*)trc_;
-  float gamma = trc->gamma;
-  int i, c;
-  for (i = 0; i < count; i ++)
-    for (c = 0; c < components; c ++)
-      out[out_gap * i + c] = babl_powf (in[in_gap *i + c], gamma);
-}
-
-static inline void _babl_trc_gamma_from_linear_buf (const Babl *trc_, const float *in, float *out, int in_gap, int out_gap, int components, int count)
-{
-  BablTRC *trc = (void*)trc_;
-  float gamma = trc->rgamma;
-  int i, c;
-  for (i = 0; i < count; i ++)
-    for (c = 0; c < components; c ++)
-      out[out_gap * i + c] = babl_powf (in[in_gap *i + c], gamma);
+  if (value >= trc->poly_gamma_to_linear_x0 &&
+      value <= trc->poly_gamma_to_linear_x1)
+    {
+      return babl_polynomial_eval (&trc->poly_gamma_to_linear, value);
+    }
+  else
+    {
+      return babl_powf (value, trc->gamma);
+    }
 }
 
 static inline float _babl_trc_gamma_from_linear (const Babl *trc_, float value)
 {
   BablTRC *trc = (void*)trc_;
-  return babl_powf (value, trc->rgamma);
+  if (value >= trc->poly_gamma_from_linear_x0 &&
+      value <= trc->poly_gamma_from_linear_x1)
+    {
+      return babl_polynomial_eval (&trc->poly_gamma_from_linear, value);
+    }
+  else
+    {
+      return babl_powf (value, trc->rgamma);
+    }
 }
 
-static inline float _babl_trc_gamma_to_linear (const Babl *trc_, float value)
+static inline void _babl_trc_gamma_to_linear_buf (const Babl *trc_, const float *in, float *out, int in_gap, int out_gap, int components, int count)
 {
-  BablTRC *trc = (void*)trc_;
-  return babl_powf (value, trc->gamma);
+  int i, c;
+  for (i = 0; i < count; i ++)
+    for (c = 0; c < components; c ++)
+      out[out_gap * i + c] = _babl_trc_gamma_to_linear (trc_, in[in_gap *i + c]);
+}
+
+static inline void _babl_trc_gamma_from_linear_buf (const Babl *trc_, const float *in, float *out, int in_gap, int out_gap, int components, int count)
+{
+  int i, c;
+  for (i = 0; i < count; i ++)
+    for (c = 0; c < components; c ++)
+      out[out_gap * i + c] = _babl_trc_gamma_from_linear (trc_, in[in_gap *i + c]);
 }
 
 static inline float _babl_trc_formula_srgb_from_linear (const Babl *trc_, float value)
 {
   BablTRC *trc = (void*)trc_;
   float x= value;
-  float g = trc->lut[0];
   float a = trc->lut[1];
   float b = trc->lut[2];
   float c = trc->lut[3];
   float d = trc->lut[4];
   if (x > c * d)  // XXX: verify that this math is the correct inverse
   {
-    float v = babl_powf (x, 1.0/g);
+    float v = _babl_trc_gamma_from_linear ((Babl *) trc, x);
     v = (v-b)/a;
     if (v < 0.0 || v >= 0.0)
       return v;
@@ -430,7 +446,6 @@ static inline float _babl_trc_formula_srgb_to_linear (const Babl *trc_, float va
 {
   BablTRC *trc = (void*)trc_;
   float x= value;
-  float g = trc->lut[0];
   float a = trc->lut[1];
   float b = trc->lut[2];
   float c = trc->lut[3];
@@ -438,123 +453,9 @@ static inline float _babl_trc_formula_srgb_to_linear (const Babl *trc_, float va
 
   if (x >= d)
   {
-    return babl_powf (a * x + b, g);
+    return _babl_trc_gamma_to_linear ((Babl *) trc, a * x + b);
   }
   return c * x;
-}
-
-
-static inline float _babl_trc_gamma_1_8_to_linear (const Babl *trc_, float x)
-{
-  if (x >= 0.01f && x < 0.7f)
-  {
-    double u = -1.326432065236105e+1;
-    u = u * x + 7.7192973347868776e+1;
-    u = u * x + -1.9639662782311719e+2;
-    u = u * x + 2.8719828602066411e+2;
-    u = u * x + -2.6718118019754855e+2;
-    u = u * x + 1.6562450069335532e+2;
-    u = u * x + -6.9988172743274441e+1;
-    u = u * x + 2.0568254985551865e+1;
-    u = u * x + -4.5302829214271245;
-    u = u * x + 1.7636048338730889;
-    u = u * x + 1.3015451332543148e-2;
-    return u * x + -5.4445726922508747e-5;
-  }
-  else if (x >= 0.7f && x < 1.4f)
-  {
-    double u = 2.4212422421184617e-3;
-    u = u * x + -2.0853930731707795e-2;
-    u = u * x + 8.2416801461966525e-2;
-    u = u * x + -2.1755799369117727e-1;
-    u = u * x + 1.0503926510667593;
-    u = u * x + 1.1196374095271941e-1;
-    return u * x + -8.7825075945914206e-3;
-  }
-  return babl_powf (x, 1.8f);
-}
-
-static inline float _babl_trc_gamma_1_8_from_linear (const Babl *trc_, float x)
-{
-  if (x >= 0.01f && x < 0.25f)
-  {
-    double u = -7.0287082190390287e+7;
-    u = u * x + 9.6393346352028194e+7;
-    u = u * x + -5.734540040993472e+7;
-    u = u * x + 1.9423130902481005e+7;
-    u = u * x + -4.1360185772523716e+6;
-    u = u * x + 5.7798684366021459e+5;
-    u = u * x + -5.3914765738125787e+4;
-    u = u * x + 3.3827381495697474e+3;
-    u = u * x + -1.4758049734050082e+2;
-    u = u * x + 6.34823684277896;
-    return u * x + 2.5853366952641552e-2;
-  } else if (x >= 0.25f && x < 1.1f)
-  {
-    double u = -1.0514013917303294;
-    u = u * x + 7.7742547018698687;
-    u = u * x + -2.5688463052927626e+1;
-    u = u * x + 5.009448068094152e+1;
-    u = u * x + -6.4160579394623318e+1;
-    u = u * x + 5.6890996491836047e+1;
-    u = u * x + -3.5956430472666212e+1;
-    u = u * x + 1.6565821666356617e+1;
-    u = u * x + -5.8508167212560416;
-    u = u * x + 2.2859969154731878;
-    return u * x + 9.6140522367339399e-2;
-  }
-  return babl_powf (x, 1.0f/1.8f);
-}
-
-static inline float _babl_trc_gamma_2_2_to_linear (const Babl *trc_, float x)
-{
-  if (x >= 0.01f && x < 1.0f)
-  {
-    double u = -1.7565198334207539;
-    u = u * x + 9.4503605497836926;
-    u = u * x + -2.2016178903082791e+1;
-    u = u * x + 2.9177361786084179e+1;
-    u = u * x + -2.4368251609523336e+1;
-    u = u * x + 1.3522663223248737e+1;
-    u = u * x + -5.253344907664925;
-    u = u * x + 1.7182864905042889;
-    u = u * x + 5.2860458501353106e-1;
-    u = u * x + -3.0000031884069502e-3;
-    return u * x + 1.6952727496833812e-5;
-  }
-  return babl_powf (x, 2.2f);
-}
-
-static inline float _babl_trc_gamma_2_2_from_linear (const Babl *trc_, float x)
-{
-  if (x >= 0.01f && x < 0.25f)
-  {
-    double u = -1.1853049266795914e+8;
-    u = u * x + 1.6235355750617304e+8;
-    u = u * x + -9.6434183855508922e+7;
-    u = u * x + 3.2595749146174438e+7;
-    u = u * x + -6.9216734175519044e+6;
-    u = u * x + 9.6337373983643336e+5;
-    u = u * x + -8.9295299887376452e+4;
-    u = u * x + 5.5387559329470092e+3;
-    u = u * x + -2.3522564268245811e+2;
-    u = u * x + 8.8234901614165394;
-    return u * x + 5.3919966190648492e-2;
-  } else if (x >= 0.25f && x < 1.0f)
-  {
-    double u = -2.1065242890384543e-1;
-    u = u * x + 1.7554867367832886;
-    u = u * x + -6.6371047248064382;
-    u = u * x + 1.5049549954517457e+1;
-    u = u * x + -2.279671781745644e+1;
-    u = u * x + 2.4331499227325978e+1;
-    u = u * x + -1.8839523095731037e+1;
-    u = u * x + 1.0802279176589768e+1;
-    u = u * x + -4.7776729355620852;
-    u = u * x + 2.1410886948010769;
-    return u * x + 1.817672123838504e-1;
-  }
-  return babl_powf (x, 1.0/2.2);
 }
 
 static inline float _babl_trc_srgb_to_linear (const Babl *trc_, float value)
@@ -609,30 +510,6 @@ static inline void _babl_trc_from_linear_buf_generic (const Babl *trc_,
       out[out_gap * i + c] = trc->fun_from_linear (trc_, in[in_gap * i + c]);
 }
 
-static inline void _babl_trc_gamma_1_8_from_linear_buf (const Babl *trc_,
-                                                        const float *in, float *out,
-                                                        int in_gap, int out_gap,
-                                                        int components,
-                                                        int count)
-{
-  int i, c;
-  for (i = 0; i < count; i ++)
-    for (c = 0; c < components; c ++)
-      out[i * out_gap + c] = _babl_trc_gamma_1_8_from_linear (trc_, in[i * in_gap + c]);
-}
-
-static inline void _babl_trc_gamma_2_2_from_linear_buf (const Babl *trc_,
-                                                        const float *in, float *out,
-                                                        int in_gap, int out_gap,
-                                                        int components,
-                                                        int count)
-{
-  int i, c;
-  for (i = 0; i < count; i ++)
-    for (c = 0; c < components; c ++)
-      out[i * out_gap + c] = _babl_trc_gamma_2_2_from_linear (trc_, in[i * in_gap + c]);
-}
-
 static inline void _babl_trc_linear_buf (const Babl *trc_,
                                          const float *in, float *out,
                                          int in_gap, int out_gap,
@@ -643,30 +520,6 @@ static inline void _babl_trc_linear_buf (const Babl *trc_,
   for (i = 0; i < count; i ++)
     for (c = 0; c < components; c ++)
       out[i * out_gap + c] = in[i * in_gap + c];
-}
-
-static inline void _babl_trc_gamma_1_8_to_linear_buf (const Babl *trc_,
-                                                      const float *in, float *out,
-                                                      int in_gap, int out_gap,
-                                                      int components,
-                                                      int count)
-{
-  int i, c;
-  for (i = 0; i < count; i ++)
-    for (c = 0; c < components; c ++)
-      out[i * out_gap + c] = _babl_trc_gamma_1_8_to_linear (trc_, in[i * in_gap + c]);
-}
-
-static inline void _babl_trc_gamma_2_2_to_linear_buf (const Babl *trc_,
-                                                        const float *in, float *out,
-                                                        int in_gap, int out_gap,
-                                                        int components,
-                                                        int count)
-{
-  int i, c;
-  for (i = 0; i < count; i ++)
-    for (c = 0; c < components; c ++)
-      out[i * out_gap + c] = _babl_trc_gamma_2_2_to_linear (trc_, in[i * in_gap + c]);
 }
 
 
@@ -695,9 +548,8 @@ babl_trc_new (const char *name,
   trc.instance.class_type = BABL_TRC;
   trc.instance.id         = 0;
   trc.type = type;
-  trc.gamma = gamma;
-  if (gamma > 0.0001)
-    trc.rgamma = 1.0 / gamma;
+  trc.gamma  = gamma > 0.0    ? gamma       : 0.0;
+  trc.rgamma = gamma > 0.0001 ? 1.0 / gamma : 0.0;
 
   if (n_lut )
   {
@@ -780,6 +632,22 @@ babl_trc_new (const char *name,
       trc_db[i].fun_from_linear = _babl_trc_gamma_from_linear;
       trc_db[i].fun_to_linear_buf = _babl_trc_gamma_to_linear_buf;
       trc_db[i].fun_from_linear_buf = _babl_trc_gamma_from_linear_buf;
+
+      trc_db[i].poly_gamma_to_linear_x0 = POLY_GAMMA_X0;
+      trc_db[i].poly_gamma_to_linear_x1 = POLY_GAMMA_X1;
+      babl_polynomial_approximate_gamma (&trc_db[i].poly_gamma_to_linear,
+                                         trc_db[i].gamma,
+                                         trc_db[i].poly_gamma_to_linear_x0,
+                                         trc_db[i].poly_gamma_to_linear_x1,
+                                         POLY_GAMMA_DEGREE, POLY_GAMMA_SCALE);
+
+      trc_db[i].poly_gamma_from_linear_x0 = POLY_GAMMA_X0;
+      trc_db[i].poly_gamma_from_linear_x1 = POLY_GAMMA_X1;
+      babl_polynomial_approximate_gamma (&trc_db[i].poly_gamma_from_linear,
+                                         trc_db[i].rgamma,
+                                         trc_db[i].poly_gamma_from_linear_x0,
+                                         trc_db[i].poly_gamma_from_linear_x1,
+                                         POLY_GAMMA_DEGREE, POLY_GAMMA_SCALE);
       break;
     case BABL_TRC_FORMULA_SRGB:
       trc_db[i].lut = babl_calloc (sizeof (float), 5);
@@ -790,18 +658,22 @@ babl_trc_new (const char *name,
       }
       trc_db[i].fun_to_linear = _babl_trc_formula_srgb_to_linear;
       trc_db[i].fun_from_linear = _babl_trc_formula_srgb_from_linear;
-      break;
-    case BABL_TRC_GAMMA_2_2:
-      trc_db[i].fun_to_linear = _babl_trc_gamma_2_2_to_linear;
-      trc_db[i].fun_from_linear = _babl_trc_gamma_2_2_from_linear;
-      trc_db[i].fun_from_linear_buf = _babl_trc_gamma_2_2_from_linear_buf;
-      trc_db[i].fun_to_linear_buf = _babl_trc_gamma_2_2_to_linear_buf;
-      break;
-    case BABL_TRC_GAMMA_1_8:
-      trc_db[i].fun_to_linear = _babl_trc_gamma_1_8_to_linear;
-      trc_db[i].fun_from_linear = _babl_trc_gamma_1_8_from_linear;
-      trc_db[i].fun_from_linear_buf = _babl_trc_gamma_1_8_from_linear_buf;
-      trc_db[i].fun_to_linear_buf = _babl_trc_gamma_1_8_to_linear_buf;
+
+      trc_db[i].poly_gamma_to_linear_x0 = lut[4];
+      trc_db[i].poly_gamma_to_linear_x1 = POLY_GAMMA_X1;
+      babl_polynomial_approximate_gamma (&trc_db[i].poly_gamma_to_linear,
+                                         trc_db[i].gamma,
+                                         trc_db[i].poly_gamma_to_linear_x0,
+                                         trc_db[i].poly_gamma_to_linear_x1,
+                                         POLY_GAMMA_DEGREE, POLY_GAMMA_SCALE);
+
+      trc_db[i].poly_gamma_from_linear_x0 = lut[3] * lut[4];
+      trc_db[i].poly_gamma_from_linear_x1 = POLY_GAMMA_X1;
+      babl_polynomial_approximate_gamma (&trc_db[i].poly_gamma_from_linear,
+                                         trc_db[i].rgamma,
+                                         trc_db[i].poly_gamma_from_linear_x0,
+                                         trc_db[i].poly_gamma_from_linear_x1,
+                                         POLY_GAMMA_DEGREE, POLY_GAMMA_SCALE);
       break;
     case BABL_TRC_SRGB:
       trc_db[i].fun_to_linear = _babl_trc_srgb_to_linear;
@@ -860,10 +732,6 @@ babl_trc_gamma (double gamma)
   int i;
   if (fabs (gamma - 1.0) < 0.01)
      return babl_trc_new ("linear", BABL_TRC_LINEAR, 1.0, 0, NULL);
-  if (fabs (gamma - 1.8) < 0.01)
-     return babl_trc_new ("1.8", BABL_TRC_GAMMA_1_8, 1.8, 0, NULL);
-  if (fabs (gamma - 2.2) < 0.01)
-     return babl_trc_new ("2.2", BABL_TRC_GAMMA_2_2, 2.2, 0, NULL);
 
   sprintf (name, "%.6f", gamma);
   for (i = 0; name[i]; i++)

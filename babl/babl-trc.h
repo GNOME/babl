@@ -22,13 +22,12 @@
 #include <math.h>
 #include <string.h>
 #include "base/util.h"
+#include "babl-polynomial.h"
 
 BABL_CLASS_DECLARE (trc);
 
 typedef enum {BABL_TRC_LINEAR,
               BABL_TRC_FORMULA_GAMMA,
-              BABL_TRC_GAMMA_1_8,
-              BABL_TRC_GAMMA_2_2,
               BABL_TRC_SRGB,
               BABL_TRC_FORMULA_SRGB,
               BABL_TRC_LUT}
@@ -58,6 +57,12 @@ typedef struct
                                       int out_gap,
                                       int components,
                                       int count);
+  BablPolynomial   poly_gamma_to_linear;
+  float            poly_gamma_to_linear_x0;
+  float            poly_gamma_to_linear_x1;
+  BablPolynomial   poly_gamma_from_linear;
+  float            poly_gamma_from_linear_x0;
+  float            poly_gamma_from_linear_x1;
   float           *lut;
   float           *inv_lut;
   char             name[128];

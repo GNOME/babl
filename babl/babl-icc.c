@@ -417,8 +417,6 @@ switch (trc->type)
     icc_write (u32, state->o + 8, 0);
     break;
   case BABL_TRC_FORMULA_GAMMA:
-  case BABL_TRC_GAMMA_1_8:
-  case BABL_TRC_GAMMA_2_2:
     icc_allocate_tag (state, name, 14);
     icc_write (sign, state->o, "curv");
     icc_write (u32, state->o + 4, 0);
