@@ -1,13 +1,16 @@
-// utility program for validating lolremez approximation constants for TRCs
+// utility program for validating lolremez approximation constants, and
+// BablPolynomial based approximations, for TRCs
 // the currently used apprimxations for 1.8 and 2.2 gamma pow functions are
 // validated to be loss-less when coded for 8bit.
 
+#include "config.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <math.h>
+#include "babl-internal.h"
 
-#if 1
+#if 0
 
 #define GAMMA 2.2
 
@@ -127,6 +130,43 @@ static inline float to_linear (float x)
     return u * x + -8.7825075945914206e-3;
   }
   return powf (x, 1.8);
+}
+#endif
+
+#if 1
+
+#define GAMMA  2.2
+#define X0     (  0.5f / 255.0f)
+#define X1     (254.5f / 255.0f)
+#define DEGREE 6
+#define SCALE  2
+
+static inline float from_linear (float x)
+{
+  if (x >= X0 && x <= X1)
+  {
+    BablPolynomial poly;
+
+    babl_polynomial_approximate_gamma (&poly,
+                                       1.0 / GAMMA, X0, X1, DEGREE, SCALE);
+
+    return babl_polynomial_eval (&poly, x);
+  }
+  return powf (x, 1.0f/GAMMA);
+}
+
+static inline float to_linear (float x)
+{
+  if (x >= X0 && x <= X1)
+  {
+    BablPolynomial poly;
+
+    babl_polynomial_approximate_gamma (&poly,
+                                       GAMMA, X0, X1, DEGREE, SCALE);
+
+    return babl_polynomial_eval (&poly, x);
+  }
+  return powf (x, GAMMA);
 }
 #endif
 
