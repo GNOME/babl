@@ -29,6 +29,7 @@ c_sources =				\
 	babl-model.c			\
 	babl-mutex.c			\
 	babl-palette.c			\
+	babl-polynomial.c		\
 	babl-ref-pixels.c		\
 	babl-sampling.c			\
 	babl-sanity.c			\
@@ -61,6 +62,7 @@ h_sources  =				\
 	babl-model.h			\
 	babl-matrix.h			\
 	babl-mutex.h			\
+	babl-polynomial.h		\
 	babl-ref-pixels.h		\
 	babl-sampling.h			\
 	babl-space.h			\

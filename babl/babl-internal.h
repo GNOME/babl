@@ -51,6 +51,7 @@
 #include "babl-memory.h"
 #include "babl-mutex.h"
 #include "babl-cpuaccel.h"
+#include "babl-polynomial.h"
 
 /* fallback to floor function when rint is not around */
 #ifndef HAVE_RINT
