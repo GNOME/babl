@@ -598,21 +598,24 @@ babl_trc_new (const char *name,
 
     for (j = 0; j < n_lut; j++)
     {
-      float k;
-      float best_guess = 1.0;
-      float best_diff = 1.0;
-      for (k = 0.0; k <= 1.0; k+=0.0001) /* XXX: a binary search would be faster */
+      int k;
+      double min = 0.0;
+      double max = 1.0;
+      for (k = 0; k < 16; k++)
       {
-         float guess = babl_trc_lut_to_linear (BABL(&trc_db[i]), k);
-         float diff = fabs (guess - (j / (n_lut-1.0)));
-         if (diff < best_diff)
-         {
-            best_diff = diff;
-            best_guess = k;
-         }
-      }
+        double guess = (min + max) / 2;
+        float reversed_index = babl_trc_lut_to_linear (BABL(&trc_db[i]), guess) * (n_lut-1.0);
 
-      trc_db[i].inv_lut[j] = best_guess;
+        if (reversed_index < j)
+        {
+          min = guess;
+        }
+        else if (reversed_index > j)
+        {
+          max = guess;
+        }
+      }
+      trc_db[i].inv_lut[j] = (min + max) / 2;
     }
   }
 
