@@ -195,45 +195,6 @@ void babl_store_db (void)
   free (tmpp);
 }
 
-static int
-babl_file_get_contents (const char  *path,
-                        char       **contents,
-                        long        *length,
-                        void        *error)
-{
-  FILE *file;
-  long  size;
-  char *buffer;
-
-  file = fopen (path,"rb");
-
-  if (!file)
-    return -1;
-
-  fseek (file, 0, SEEK_END);
-  size = ftell (file);
-  if (length) *length = size;
-  rewind (file);
-  buffer = calloc(size + 8, 1);
-
-  if (!buffer)
-    {
-      fclose(file);
-      return -1;
-    }
-
-  size -= fread (buffer, 1, size, file);
-  if (size)
-    {
-      fclose (file);
-      free (buffer);
-      return -1;
-    }
-  fclose (file);
-  *contents = buffer;
-  return 0;
-}
-
 int
 _babl_fish_path_destroy (void *data);
 
@@ -259,7 +220,7 @@ void babl_init_db (void)
   if (getenv ("BABL_DEBUG_CONVERSIONS"))
     return;
 
-  babl_file_get_contents (path, &contents, &length, NULL);
+  _babl_file_get_contents (path, &contents, &length, NULL);
   if (!contents)
     return;
 

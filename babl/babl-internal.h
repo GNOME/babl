@@ -424,5 +424,9 @@ const Babl * babl_trc_gamma (double gamma);
  */
 const Babl * babl_trc       (const char *name);
 
+int _babl_file_get_contents (const char  *path,
+                             char       **contents,
+                             long        *length,
+                             void        *error);
 
 #endif
