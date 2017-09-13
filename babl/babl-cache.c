@@ -257,7 +257,7 @@ void babl_init_db (void)
           }
           break;
         case '\t':
-          if (strchr (token, '='))
+          if (to_format && strchr (token, '='))
           {
             char seps2[] = " ";
             char *tokp2;
@@ -307,7 +307,7 @@ void babl_init_db (void)
               token2 = strtok_r (NULL, seps2, &tokp2);
             }
           }
-          else
+          else if (to_format)
           {
             Babl *conv = (void*)babl_db_find(babl_conversion_db(), &token[1]);
             if (!conv)
@@ -322,14 +322,10 @@ void babl_init_db (void)
           if (!from_format)
           {
             from_format = (void*)babl_db_find(babl_format_db(), token);
-            if (!from_format)
-              return;
           }
           else
           {
             to_format = (void*)babl_db_find(babl_format_db(), token);
-            if (!to_format)
-              return;
           }
           break;
       }
