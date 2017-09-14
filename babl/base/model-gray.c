@@ -499,7 +499,11 @@ gray_gamma_2_2_premultiplied2rgba (Babl *conversion,
       double alpha = ((double *) src)[1];
       double luminance;
 
-      luma      = luma / alpha;
+      if (alpha > BABL_ALPHA_THRESHOLD)
+        luma      = luma / alpha;
+      else
+        luma      = 0.0;
+
       luminance = babl_trc_to_linear (trc, luma);
 
       ((double *) dst)[0] = luminance;
