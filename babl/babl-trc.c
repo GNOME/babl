@@ -93,10 +93,11 @@ static inline float _babl_trc_gamma_to_linear (const Babl *trc_, float value)
     {
       return babl_polynomial_eval (&trc->poly_gamma_to_linear, value);
     }
-  else
+  else if (value > 0.0f)
     {
       return powf (value, trc->gamma);
     }
+  return 0.0f;
 }
 
 static inline float _babl_trc_gamma_from_linear (const Babl *trc_, float value)
@@ -107,10 +108,11 @@ static inline float _babl_trc_gamma_from_linear (const Babl *trc_, float value)
     {
       return babl_polynomial_eval (&trc->poly_gamma_from_linear, value);
     }
-  else
+  else if (value > 0.0f)
     {
       return powf (value, trc->rgamma);
     }
+  return 0.0f;
 }
 
 static inline void _babl_trc_gamma_to_linear_buf (const Babl *trc_, const float *in, float *out, int in_gap, int out_gap, int components, int count)
