@@ -51,6 +51,129 @@ static void babl_chromatic_adaptation_matrix (const double *whitepoint,
   babl_matrix_mul_matrix (chad_matrix, bradford, chad_matrix);
 }
 
+#define LAB_EPSILON       (216.0f / 24389.0f)
+#define LAB_KAPPA         (24389.0f / 27.0f)
+
+#if 1
+#define D50_WHITE_REF_X   0.964202880f
+#define D50_WHITE_REF_Y   1.000000000f
+#define D50_WHITE_REF_Z   0.824905400f
+#else
+#define D50_WHITE_REF_X   0.964200000f
+#define D50_WHITE_REF_Y   1.000000000f
+#define D50_WHITE_REF_Z   0.824900000f
+#endif
+
+static inline void
+XYZ_to_LAB (double X,
+            double Y,
+            double Z,
+            double *to_L,
+            double *to_a,
+            double *to_b)
+{
+  double f_x, f_y, f_z;
+
+  double x_r = X / D50_WHITE_REF_X;
+  double y_r = Y / D50_WHITE_REF_Y;
+  double z_r = Z / D50_WHITE_REF_Z;
+  
+  if (x_r > LAB_EPSILON) f_x = pow(x_r, 1.0 / 3.0);
+  else ( f_x = ((LAB_KAPPA * x_r) + 16) / 116.0 );
+  
+  if (y_r > LAB_EPSILON) f_y = pow(y_r, 1.0 / 3.0);
+  else ( f_y = ((LAB_KAPPA * y_r) + 16) / 116.0 );
+  
+  if (z_r > LAB_EPSILON) f_z = pow(z_r, 1.0 / 3.0);
+  else ( f_z = ((LAB_KAPPA * z_r) + 16) / 116.0 );
+  
+  *to_L = (116.0 * f_y) - 16.0;
+  *to_a = 500.0 * (f_x - f_y);
+  *to_b = 200.0 * (f_y - f_z);
+}
+
+/* round all values to s15f16 precision and brute-force
+ * jitter +/- 1 all entries for best uniform gray axis - this
+ * also optimizes the accuracy of the matrix for floating point
+ * computations.
+ *
+ * the inverse matrix should be equalized against the original
+ * matrix looking for the bit-exact inverse of this integer-solution.
+ *
+ */
+static void babl_matrix_equalize (double *in_mat)
+{
+  double mat[9];
+  int j[9];
+  int best_j[9];
+  double in[12] = {1.0,  1.0,  1.0,   // white
+                   0.0,  0.0,  0.0,   // black
+                   0.5,  0.5,  0.5,   // gray
+                   0.33, 0.33, 0.33}; // grey
+  double out[12] = {};
+  double lab[12] = {};
+  double best_error = 1000000.0;
+  int i;
+
+  for (i = 0; i < 9; i++)
+    best_j[i] = 0;
+
+  for (j[0] = -1; j[0] <= 1; j[0]++)
+  for (j[1] = -1; j[1] <= 1; j[1]++)
+  for (j[2] = -1; j[2] <= 1; j[2]++)
+  for (j[3] = -1; j[3] <= 1; j[3]++)
+  for (j[4] = -1; j[4] <= 1; j[4]++)
+  for (j[5] = -1; j[5] <= 1; j[5]++)
+  for (j[6] = -1; j[6] <= 1; j[6]++)
+  for (j[7] = -1; j[7] <= 1; j[7]++)
+  for (j[8] = -1; j[8] <= 1; j[8]++)
+  {
+    double error = 0;
+
+    for (i = 0; i < 9; i++)
+    {
+      int32_t val = in_mat[i] * 65536.0 + 0.5f;
+      mat[i] = val / 65536.0 + j[i] / 65536.0;
+    }
+    for (i = 0; i < 4; i++)
+    {
+      babl_matrix_mul_vector (mat, &in[i*3], &out[i*3]);
+    }
+    for (i = 0; i < 4; i++)
+    {
+      XYZ_to_LAB (out[i*3+0], out[i*3+1], out[i*3+2],
+                 &lab[i*3+0], &lab[i*3+1], &lab[i*3+2]);
+    }
+#define square(a) ((a)*(a))
+    error += square (lab[0*3+0]-100.0f); // L white = 100.0
+    error += square (lab[1*3+0]-0.0f);   // L black = 0.0
+
+    for (i = 0; i < 4; i++)
+    {
+      error += square (lab[i*3+1]);      // a = 0.0
+      error += square (lab[i*3+2]);      // b = 0.0
+    }
+#undef square
+    if (error <= best_error)
+    {
+      best_error = error;
+      memcpy (&best_j[0], &j[0], sizeof (best_j));
+    }
+  }
+  for (i = 0; i < 9; i++)
+  {
+    int32_t val = in_mat[i] * 65536.0 + 0.5f;
+    in_mat[i] = val / 65536.0 + best_j[i] / 65536.0;
+  }
+}
+
+static void babl_matrix_equalize_inverse (double *in_mat, double *reference)
+{
+  /* NYI: but desirable, possible insuring that we are integer accurate in our
+          floating point computations..
+   */
+}
+
 static void babl_space_compute_matrices (BablSpace *space)
 {
 #define _ space->
@@ -80,6 +203,8 @@ static void babl_space_compute_matrices (BablSpace *space)
 
   babl_matrix_mul_matrix (chad, mat, mat);
 
+  babl_matrix_equalize (mat);
+
   memcpy (space->RGBtoXYZ, mat, sizeof (mat));
 #if 0
   {
@@ -94,8 +219,9 @@ static void babl_space_compute_matrices (BablSpace *space)
   }
 #endif
 
-  babl_matrix_invert (mat, mat);
+  babl_matrix_invert (mat, inv_mat);
 
+  babl_matrix_equalize_inverse (inv_mat, mat);
 #if 0
   {
     int i;
@@ -109,7 +235,7 @@ static void babl_space_compute_matrices (BablSpace *space)
   }
 #endif
 
-  memcpy (space->XYZtoRGB, mat, sizeof (mat));
+  memcpy (space->XYZtoRGB, inv_mat, sizeof (mat));
 
   babl_matrix_to_float (space->RGBtoXYZ, space->RGBtoXYZf);
   babl_matrix_to_float (space->XYZtoRGB, space->XYZtoRGBf);
