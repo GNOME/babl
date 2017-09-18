@@ -424,7 +424,7 @@ switch (trc->type)
     icc_write (u8f8, state->o + 12, trc->gamma);
     break;
   case BABL_TRC_LUT:
-    icc_allocate_tag (state, name, 13 + trc->lut_size * 2);
+    icc_allocate_tag (state, name, 12 + trc->lut_size * 2);
     icc_write (sign, state->o, "curv");
     icc_write (u32, state->o + 4, 0);
     icc_write (u32, state->o + 8, trc->lut_size);
@@ -440,7 +440,7 @@ switch (trc->type)
 //  default:
     {
       int lut_size = 512;
-      icc_allocate_tag (state, name, 13 + lut_size * 2);
+      icc_allocate_tag (state, name, 12 + lut_size * 2);
       icc_write (sign, state->o, "curv");
       icc_write (u32, state->o + 4, 0);
       icc_write (u32, state->o + 8, lut_size);
@@ -548,7 +548,7 @@ const char *babl_space_to_icc (const Babl *babl, int *ret_length)
       char str[128];
       int i;
       sprintf (str, "babl");
-      icc_allocate_tag(state, "desc", 90 + strlen (str) + 1);
+      icc_allocate_tag(state, "desc", 90 + strlen (str) + 0);
       icc_write (sign, state->o,"desc");
       icc_write (u32, state->o + 4, 0);
       icc_write (u32, state->o + 8, strlen(str) + 1);
@@ -567,8 +567,8 @@ const char *babl_space_to_icc (const Babl *babl, int *ret_length)
         icc_write (u8, state->o + 8 + i, str[i]);
     }
 
-    icc_write (u32, 0, state->no + 3);
-    length = state->no + 3;
+    icc_write (u32, 0, state->no + 0);
+    length = state->no + 0;
   }
 
   if (ret_length)
