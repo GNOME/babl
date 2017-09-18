@@ -151,7 +151,7 @@ static s15f16_t d_to_s15f16 (double value)
 {
   s15f16_t ret;
   ret.integer = floor (value);
-  ret.fraction = fmod(value, 1.0) * 65535.999;
+  ret.fraction = fmod(value, 1.0) * 65536.0;
   return ret;
 }
 
@@ -159,7 +159,7 @@ static u8f8_t d_to_u8f8 (double value)
 {
   u8f8_t ret;
   ret.integer = floor (value);
-  ret.fraction = fmod(value, 1.0) * 255.999;
+  ret.fraction = fmod(value, 1.0) * 256.0;
   return ret;
 }
 
