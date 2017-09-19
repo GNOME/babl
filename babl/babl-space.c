@@ -167,13 +167,6 @@ static void babl_matrix_equalize (double *in_mat)
   }
 }
 
-static void babl_matrix_equalize_inverse (double *in_mat, double *reference)
-{
-  /* NYI: but desirable, possible insuring that we are integer accurate in our
-          floating point computations..
-   */
-}
-
 static void babl_space_compute_matrices (BablSpace *space)
 {
 #define _ space->
@@ -206,34 +199,8 @@ static void babl_space_compute_matrices (BablSpace *space)
   babl_matrix_equalize (mat);
 
   memcpy (space->RGBtoXYZ, mat, sizeof (mat));
-#if 0
-  {
-    int i;
-    fprintf (stderr, "\n%s RGBtoXYZ:\n", space->name);
-    for (i = 0; i < 9; i++)
-    {
-      fprintf (stderr, "%f ", mat[i]);
-      if (i%3 == 2)
-        fprintf (stderr, "\n");
-    }
-  }
-#endif
 
   babl_matrix_invert (mat, inv_mat);
-
-  babl_matrix_equalize_inverse (inv_mat, mat);
-#if 0
-  {
-    int i;
-    fprintf (stderr, "\n%s XYZtoRGB:\n", space->name);
-    for (i = 0; i < 9; i++)
-    {
-      fprintf (stderr, "%f ", mat[i]);
-      if (i%3 == 2)
-        fprintf (stderr, "\n");
-    }
-  }
-#endif
 
   memcpy (space->XYZtoRGB, inv_mat, sizeof (mat));
 
