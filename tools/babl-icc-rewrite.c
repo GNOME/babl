@@ -25,42 +25,85 @@ file_get_contents (const char  *path,
                    char       **contents,
                    long        *length,
                    void        *error);
+
 void file_set_contents (const char *path, const char *data, long length);
 
 int
 main (int    argc,
       char **argv)
 {
+  BablICCFlags flags = 0;
   const Babl *babl;
   char *icc_data = NULL;
   long  icc_len;
   int genlen;
+  char *description = NULL;
+  char *copyright = NULL;
   const char *error;
   const char *la = NULL;
   const char *co = NULL;
+
+  const char *input = NULL;
+  const char *output = NULL;
+  int i;
+
   babl_init ();
 
-  if (!argv[1] || !argv[2])
+
+  for (i = 1; argv[i]; i++)
   {
-    fprintf (stderr, "usage: %s <input.icc> <output.icc>\n", argv[0]);
+    if (!strcmp (argv[i], "-d") ||
+        !strcmp (argv[i], "--description"))
+    {
+      description = argv[++i];
+    }
+    else if (!strcmp (argv[i], "-c") ||
+             !strcmp (argv[i], "--copyright"))
+    {
+      copyright = argv[++i];
+    }
+    else if (!strcmp (argv[i], "--compact-trc"))
+    {
+      flags |= BABL_ICC_COMPACT_TRC_LUT;
+    }
+    else if (argv[i][0] == '-')
+    {
+      fprintf (stderr, "unknown option %s\n", argv[i]);
+      return -1;
+    }
+    else
+    {
+      if (!input)       input  = argv[i];
+      else if (!output) output = argv[i];
+    }
+  }
+
+  if (!input || !output)
+  {
+    fprintf (stderr, "usage: %s [options] <input.icc> <output.icc>\n", argv[0]);
+    fprintf (stderr, " where recognized options are:  \n");
+    fprintf (stderr, "    -d <description>\n");
+    fprintf (stderr, "    -c <copyright>\n");
+    fprintf (stderr, "    --compact-trc\n");
     return -1;
   }
 
-  if (file_get_contents (argv[1], &icc_data, &icc_len, NULL))
+  if (file_get_contents (input, &icc_data, &icc_len, NULL))
     return -1;
 
+  if (!description)
   {
-    char *description = babl_icc_get_key (icc_data, icc_len, "description", la, co);
+    description = babl_icc_get_key (icc_data, icc_len, "description", la, co);
     if (description)
       fprintf (stderr, "description: %s\n", description);
   }
 
+  if (!copyright)
   {
-    char *str = babl_icc_get_key (icc_data, icc_len, "copyright", la, co);
-    if (str)
+    copyright = babl_icc_get_key (icc_data, icc_len, "copyright", la, co);
+    if (copyright)
     {
-      fprintf (stderr, "copyright: %s\n", str);
-      free (str);
+      fprintf (stderr, "copyright: %s\n", copyright);
     }
   }
   {
@@ -87,11 +130,14 @@ main (int    argc,
     return -1;
   }
 
-  icc_data = (char *)babl_space_to_icc (babl, &genlen);
+  icc_data = (char *)babl_space_to_icc (babl, description,
+                                        copyright, flags,
+                                        &genlen);
   if (icc_data)
   {
-    file_set_contents (argv[2], icc_data, genlen);
+    file_set_contents (output, icc_data, genlen);
   }
+  fprintf (stderr, "[%s]\n", output);
 
   babl_exit ();
   return 0;

@@ -405,8 +405,18 @@ static void icc_duplicate_tag(ICC *state, const char *tag)
     icc_write (u32,  128 + 4 + 4 * state->headpos++, state->psize);
 }
 
-void write_trc (ICC *state, const char *name, const BablTRC *trc);
-void write_trc (ICC *state, const char *name, const BablTRC *trc)
+/* brute force optimized 26 entry sRGB LUT */
+static const uint16_t lut_srgb_26[]={0,202,455,864,1423,2154,3060,4156,5454,6960,8689,10637,12821,15247,17920,20855,24042,27501,31233,35247,39549,44132,49018,54208,59695,65535};
+
+
+void write_trc (ICC *state,
+                const char *name,
+                const BablTRC *trc,
+                BablICCFlags flags);
+void write_trc (ICC *state,
+                const char *name,
+                const BablTRC *trc,
+                BablICCFlags flags)
 {
 switch (trc->type)
 {
@@ -436,10 +446,26 @@ switch (trc->type)
     break;
   // this is the case catching things not directly representable in v2
   case BABL_TRC_SRGB:
+    if (flags == BABL_ICC_COMPACT_TRC_LUT)
+    {
+      int lut_size = 26;
+      icc_allocate_tag (state, name, 12 + lut_size * 2);
+      icc_write (sign, state->o, "curv");
+      icc_write (u32, state->o + 4, 0);
+      icc_write (u32, state->o + 8, lut_size);
+      {
+        int j;
+        for (j = 0; j < lut_size; j ++)
+        icc_write (u16, state->o + 12 + j * 2, lut_srgb_26[j]);
+      }
+      break;
+    }
   case BABL_TRC_FORMULA_SRGB:
-//  default:
     {
       int lut_size = 512;
+      if (flags == BABL_ICC_COMPACT_TRC_LUT)
+        lut_size = 128;
+
       icc_allocate_tag (state, name, 12 + lut_size * 2);
       icc_write (sign, state->o, "curv");
       icc_write (u32, state->o + 4, 0);
@@ -456,7 +482,11 @@ switch (trc->type)
 
 static void symmetry_test (ICC *state);
 
-const char *babl_space_to_icc (const Babl *babl, int *ret_length)
+const char *babl_space_to_icc (const Babl  *babl,
+                               const char  *description,
+                               const char  *copyright,
+                               BablICCFlags flags,
+                               int         *ret_length)
 {
   const BablSpace *space = &babl->space;
   static char icc[65536];
@@ -529,8 +559,7 @@ const char *babl_space_to_icc (const Babl *babl, int *ret_length)
     icc_write (s15f16, state->o + 12, space->RGBtoXYZ[5]);
     icc_write (s15f16, state->o + 16, space->RGBtoXYZ[8]);
 
-
-    write_trc (state, "rTRC", &space->trc[0]->trc);
+    write_trc (state, "rTRC", &space->trc[0]->trc, flags);
 
     if (space->trc[0] == space->trc[1] &&
         space->trc[0] == space->trc[2])
@@ -540,32 +569,32 @@ const char *babl_space_to_icc (const Babl *babl, int *ret_length)
     }
     else
     {
-      write_trc (state, "gTRC", &space->trc[1]->trc);
-      write_trc (state, "bTRC", &space->trc[2]->trc);
+      write_trc (state, "gTRC", &space->trc[1]->trc, flags);
+      write_trc (state, "bTRC", &space->trc[2]->trc, flags);
     }
 
     {
-      char str[128];
+      char str[128]="CC0/public domain";
       int i;
-      sprintf (str, "babl");
-      icc_allocate_tag(state, "desc", 90 + strlen (str) + 0);
-      icc_write (sign, state->o,"desc");
-      icc_write (u32, state->o + 4, 0);
-      icc_write (u32, state->o + 8, strlen(str) + 1);
-      for (i = 0; str[i]; i++)
-        icc_write (u8, state->o + 12 + i, str[i]);
-    }
-
-    {
-      char str[128];
-      int i;
-      sprintf (str, "CC0/public domain");
-      icc_allocate_tag(state, "cprt", 8 + strlen (str) + 1);
+      if (!copyright) copyright = str;
+      icc_allocate_tag(state, "cprt", 8 + strlen (copyright) + 1);
       icc_write (sign, state->o, "text");
       icc_write (u32, state->o + 4, 0);
-      for (i = 0; str[i]; i++)
-        icc_write (u8, state->o + 8 + i, str[i]);
+      for (i = 0; copyright[i]; i++)
+        icc_write (u8, state->o + 8 + i, copyright[i]);
     }
+    {
+      char str[128]="babl";
+      int i;
+      if (!description) description = str;
+      icc_allocate_tag(state, "desc", 90 + strlen (description) + 0);
+      icc_write (sign, state->o,"desc");
+      icc_write (u32, state->o + 4, 0);
+      icc_write (u32, state->o + 8, strlen(description) + 1);
+      for (i = 0; description[i]; i++)
+        icc_write (u8, state->o + 12 + i, description[i]);
+    }
+
 
     icc_write (u32, 0, state->no + 0);
     length = state->no + 0;

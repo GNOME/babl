@@ -175,7 +175,7 @@ static void babl_space_compute_matrices (BablSpace *space)
   double green_XYZ[3]      = { _ xg / _ yg, 1.0, ( 1.0 - _ xg - _ yg) / _ yg};
   double blue_XYZ[3]       = { _ xb / _ yb, 1.0, ( 1.0 - _ xb - _ yb) / _ yb};
   double whitepoint_XYZ[3] = { _ xw / _ yw, 1.0, ( 1.0 - _ xw - _ yw) / _ yw};
-  double D50_XYZ[3]        = {0.9642,       1.0, 0.8249};
+  double D50_XYZ[3]        = {0.96420288, 1.0, 0.82490540};
 #undef _
 
   double mat[9] = {red_XYZ[0], green_XYZ[0], blue_XYZ[0],

@@ -145,17 +145,6 @@ char *babl_icc_get_key (const char *icc_data,
                         const char *language,
                         const char *counter);
 
-
-/* babl_space_to_icc:
- *
- * Creates an ICCv2 RGB matrix profile for a babl space. The profiles strive to
- * be as small and compact as possible, TRCs are stored as 1024 entry LUT(s).
- *
- * you should make a copy of the profile before making another call to this
- * function.
- */
-const char *babl_space_to_icc (const Babl *space, int *icc_length);
-
 /* babl_space_get_rgbtoxyz:
 
    Returns the internal, double-precision 3x3 matrix used to convert linear
