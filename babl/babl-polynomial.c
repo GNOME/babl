@@ -516,6 +516,7 @@ babl_polynomial_approximate_gamma (BablPolynomial *poly,
 
   babl_assert (poly != NULL);
   babl_assert (gamma >= 0.0);
+  babl_assert (x0 >= 0.0);
   babl_assert (x0 < x1);
   babl_assert (degree >= BABL_POLYNOMIAL_MIN_DEGREE &&
                degree <= BABL_POLYNOMIAL_MAX_DEGREE);
