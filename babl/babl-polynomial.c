@@ -190,7 +190,11 @@ babl_polynomial_shrink (BablPolynomial *poly)
         break;
     }
 
-  if (i > 0)
+  if (i == poly->degree + 1)
+    {
+      babl_polynomial_reset (poly, poly->scale);
+    }
+  else if (i > 0)
     {
       memmove (poly->coeff, &poly->coeff[i],
                (poly->degree - i + 1) * sizeof (double));
