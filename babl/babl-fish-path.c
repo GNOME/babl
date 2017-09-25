@@ -165,7 +165,8 @@ bad_idea (const Babl *from, const Babl *to, const Babl *format)
   {
     return 1;
   }
-  if (from->format.type[0]->bits > format->format.type[0]->bits)
+  if (from->format.type[0]->bits > format->format.type[0]->bits &&
+      to->format.type[0]->bits > format->format.type[0]->bits)
   {
     /* XXX: perhaps we especially avoid going to half-float, when
      * going between u16 formats as well? */
