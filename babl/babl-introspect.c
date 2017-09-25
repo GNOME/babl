@@ -203,7 +203,6 @@ each_introspect (Babl *babl,
 
       case BABL_SAMPLING:
         sampling_introspect (babl);
-        item_conversions_introspect (babl);
         break;
 
       case BABL_CONVERSION:
