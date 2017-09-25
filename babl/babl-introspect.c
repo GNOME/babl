@@ -67,6 +67,12 @@ babl_introspect (Babl *babl)
   babl_log ("conversions:");
   babl_conversion_class_for_each (each_introspect, NULL);
   babl_log ("");
+  babl_log ("trcs:");
+  babl_trc_class_for_each (each_introspect, NULL);
+  babl_log ("");
+  babl_log ("spaces:");
+  babl_space_class_for_each (each_introspect, NULL);
+  babl_log ("");
   babl_log ("extensions:");
   babl_extension_class_for_each (each_introspect, NULL);
   babl_log ("");
@@ -127,6 +133,17 @@ sampling_introspect (Babl *babl)
             babl->sampling.vertical);
 }
 
+static void
+space_introspect (Babl *babl)
+{
+  // XXX: print TRCs and matrix, possibly if we have an icc and intent
+}
+
+static void
+trc_introspect (Babl *babl)
+{
+  // XXX: print type, and parameters
+}
 
 static void
 format_introspect (Babl *babl)
@@ -204,6 +221,14 @@ each_introspect (Babl *babl,
       case BABL_SAMPLING:
         sampling_introspect (babl);
         break;
+
+      case BABL_SPACE:
+	space_introspect (babl);
+	break;
+
+      case BABL_TRC:
+	trc_introspect (babl);
+	break;
 
       case BABL_CONVERSION:
       case BABL_CONVERSION_PLANE:
