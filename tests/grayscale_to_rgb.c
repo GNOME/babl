@@ -61,7 +61,7 @@ test (void)
     {
       if (fabs (rgb_buf[i] - rgb_buf_ref[i]) > 0.0000001)
         {
-          babl_log ("index %i is problematic : %f instead of %f",
+          babl_log ("index %i is problematic : %.12f instead of %.12f",
                     i, rgb_buf[i], rgb_buf_ref[i]);
           OK = 0;
         }
