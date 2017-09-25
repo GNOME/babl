@@ -44,9 +44,4 @@ LDADD = $(top_builddir)/babl/libbabl-@BABL_API_VERSION@.la \
 EXTRA_DIST=common.inc
 
 noinst_PROGRAMS =		\
-	introspect		\
-	babl_fish_path_fitness	\
-	babl-html-dump		\
-	conversions		\
-	formats			\
 	$(C_TESTS)
