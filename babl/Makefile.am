@@ -91,18 +91,22 @@ AM_CPPFLAGS =				\
 
 lib_LTLIBRARIES= libbabl-@BABL_API_VERSION@.la
 
+libbabl_@BABL_API_VERSION@_la_SOURCES= $(h_sources) $(c_sources)
 libbabl_@BABL_API_VERSION@_la_CFLAGS= $(SSE2_EXTRA_CFLAGS)
 
-libbabl_@BABL_API_VERSION@_la_SOURCES= $(h_sources) $(c_sources)
 libbabl_@BABL_API_VERSION@_la_LIBADD=	\
 	base/libbase.la			\
 	@LTLIBOBJS@
 
+libbabl_la_LDFLAGS=			\
+	$(MATH_LIB) $(THREAD_LIB) $(LOG_LIB)
+
 libbabl_@BABL_API_VERSION@_la_LDFLAGS=			\
-	${no_undefined} $(MATH_LIB) $(THREAD_LIB) $(LOG_LIB) \
+	$(MATH_LIB) $(THREAD_LIB) $(LOG_LIB) 		\
+	-export-symbols $(top_srcdir)/export-symbols 	\
 	-version-info $(BABL_LIBRARY_VERSION)
 
-EXTRA_DIST = babl-ref-pixels.inc
+EXTRA_DIST = babl-ref-pixels.inc 
 
 
 # If git is available, always check if git-version.h should be

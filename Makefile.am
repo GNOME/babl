@@ -23,7 +23,8 @@ EXTRA_DIST = \
 	NEWS			\
 	TODO			\
 	autogen.sh		\
-	babl.pc.in
+	babl.pc.in		\
+	export-symbols
 
 DISTCLEANFILES = \
 	$(built_dist_files)	\
