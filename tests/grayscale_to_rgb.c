@@ -59,7 +59,7 @@ test (void)
 
   for (i = 0; i < PIXELS * 3; i++)
     {
-      if (rgb_buf[i] != rgb_buf_ref[i])
+      if (fabs (rgb_buf[i] - rgb_buf_ref[i]) > 0.0000001)
         {
           babl_log ("index %i is problematic : %f instead of %f",
                     i, rgb_buf[i], rgb_buf_ref[i]);
