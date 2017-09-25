@@ -66,7 +66,8 @@ ycbcr_la_SOURCES = ycbcr.c
 float_la_SOURCES = float.c
 fast_float_la_SOURCES = fast-float.c
 
-LIBS = $(MATH_LIB) $(THREAD_LIB) -lbabl-0.1
+LIBS =  $(top_builddir)/babl/libbabl-@BABL_API_VERSION@.la \
+	$(MATH_LIB) $(THREAD_LIB)
 
 sse2_float_la_CFLAGS = $(SSE2_EXTRA_CFLAGS)
 sse2_int8_la_CFLAGS = $(SSE2_EXTRA_CFLAGS)
