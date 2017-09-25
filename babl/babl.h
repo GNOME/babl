@@ -448,17 +448,6 @@ void   babl_set_user_data     (const Babl *babl, void *data);
 void * babl_get_user_data     (const Babl *babl);
 
 
-
-/*
- * Backwards compatibility stuff
- *
- * NOTE: will most likely be removed in the first stable release!
- */
-#ifndef BABL_DISABLE_DEPRECATED
-#define babl_destroy babl_exit
-#endif
-
-
 #ifdef __cplusplus
 }
 #endif
