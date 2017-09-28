@@ -35,8 +35,12 @@ TESTS_ENVIRONMENT = LD_LIBRARY_PATH=$(top_builddir)/babl:$LD_LIBRARY_PATH GI_TYP
 
 AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/babl
 if OS_UNIX
-AM_LDFLAGS  = -lpthread
+AM_LDFLAGS  = -lpthread -no-install
+else
+
+AM_LDFLAGS  = -no-install
 endif
+
 
 LDADD = $(top_builddir)/babl/libbabl-@BABL_API_VERSION@.la \
 	$(MATH_LIB) $(THREAD_LIB)
