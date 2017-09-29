@@ -47,7 +47,7 @@ conv_y8_yF (const Babl *conversion,const uint8_t *src, float *dst, long samples)
     {
       __m128i in_val;
       __v4sf out_val;
-      in_val = _mm_insert_epi32 (in_val, *s_vec++, 0);
+      in_val = _mm_insert_epi32 ((__m128i)_mm_setzero_ps(), *s_vec++, 0);
       in_val = _mm_cvtepu8_epi32 (in_val);
       out_val = _mm_cvtepi32_ps (in_val) * factor_vec;
       _mm_storeu_ps ((float *)d_vec++, out_val);
