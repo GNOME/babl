@@ -1,7 +1,7 @@
 ## Source directory
 
 if PLATFORM_WIN32
-no_undefined = -no-undefined
+win32_no_undefined = -no-undefined
 endif
 
 SUBDIRS = base
@@ -102,6 +102,7 @@ libbabl_la_LDFLAGS=			\
 	$(MATH_LIB) $(THREAD_LIB) $(LOG_LIB)
 
 libbabl_@BABL_API_VERSION@_la_LDFLAGS=			\
+	${win32_no_undefined} 				\
 	$(MATH_LIB) $(THREAD_LIB) $(LOG_LIB) 		\
 	-export-symbols $(top_srcdir)/export-symbols 	\
 	-version-info $(BABL_LIBRARY_VERSION)
