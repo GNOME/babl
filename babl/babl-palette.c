@@ -413,7 +413,7 @@ pala_u8_to_rgba_u8 (Babl          *conversion,
 
       palpx = pal->data_u8 + idx * 4;
       memcpy (dst, palpx, sizeof(char)*4);
-      dst[3] = (dst[3] * src[1]) >> 8;
+      dst[3] = (dst[3] * src[1] + 128) / 255;
 
       src += sizeof (char) * 2;
       dst += sizeof (char) * 4;
