@@ -341,11 +341,11 @@ rgba_u8_to_pal (Babl          *conversion,
 }
 
 static void
-rgba_u8_to_pal_a (Babl *conversion,
-                  char *src,
-                  char *dst,
-                  long  n,
-                  void *src_model_data)
+rgba_u8_to_pal_a (Babl          *conversion,
+                  unsigned char *src,
+                  unsigned char *dst,
+                  long           n,
+                  void          *src_model_data)
 {
   BablPalette **palptr = src_model_data;
   BablPalette *pal;
@@ -363,11 +363,11 @@ rgba_u8_to_pal_a (Babl *conversion,
 }
 
 static long
-pal_u8_to_rgba_u8 (Babl *conversion,
-                   char *src,
-                   char *dst,
-                   long  n,
-                   void *src_model_data)
+pal_u8_to_rgba_u8 (Babl          *conversion,
+                   unsigned char *src,
+                   unsigned char *dst,
+                   long           n,
+                   void          *src_model_data)
 {
   BablPalette **palptr = src_model_data;
   BablPalette *pal;
@@ -376,13 +376,13 @@ pal_u8_to_rgba_u8 (Babl *conversion,
   assert(pal);
   while (n--)
     {
-      int idx = (((unsigned char *) src)[0]);
+      int idx = src[0];
       unsigned char *palpx;
 
       if (idx < 0) idx = 0;
       if (idx >= pal->count) idx = pal->count-1;
 
-      palpx = ((unsigned char*)pal->data_u8) + idx * 4;
+      palpx = pal->data_u8 + idx * 4;
       memcpy (dst, palpx, sizeof(char)*4);
 
       src += sizeof (char) * 1;
@@ -392,11 +392,11 @@ pal_u8_to_rgba_u8 (Babl *conversion,
 }
 
 static long
-pala_u8_to_rgba_u8 (Babl *conversion,
-                    char *src,
-                    char *dst,
-                    long  n,
-                    void *src_model_data)
+pala_u8_to_rgba_u8 (Babl          *conversion,
+                    unsigned char *src,
+                    unsigned char *dst,
+                    long           n,
+                    void          *src_model_data)
 {
   BablPalette **palptr = src_model_data;
   BablPalette *pal;
@@ -405,13 +405,13 @@ pala_u8_to_rgba_u8 (Babl *conversion,
   assert(pal);
   while (n--)
     {
-      int idx = (((unsigned char *) src)[0]);
+      int idx = src[0];
       unsigned char *palpx;
 
       if (idx < 0) idx = 0;
       if (idx >= pal->count) idx = pal->count-1;
 
-      palpx = ((unsigned char*)pal->data_u8) + idx * 4;
+      palpx = pal->data_u8 + idx * 4;
       memcpy (dst, palpx, sizeof(char)*4);
       dst[3] = (dst[3] * src[1]) >> 8;
 
