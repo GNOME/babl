@@ -850,7 +850,7 @@ babl_icc_make_space (const char   *icc_data,
       if (icc_tag (state, "A2B0", NULL, NULL) &&
           icc_tag (state, "B2A0", NULL, NULL))
       {
-        *error = "profile contains perceptual luts and perceptual was explicitly asked for, babl does not yet support CLUTs";
+        if(0)*error = "profile contains perceptual luts and perceptual was explicitly asked for, babl does not yet support CLUTs";
       }
       else
       {
