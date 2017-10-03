@@ -86,7 +86,8 @@ const Babl * babl_model     (const char *name);
  *
  * Returns the babl object representing the specific RGB matrix color
  * working space referred to by name. Babl knows of:
- *    sRGB, Rec2020, Adobe, Apple and ProPhoto
+ *    sRGB, Rec2020, Adobish, Apple and ProPhoto
+ *
  */
 const Babl * babl_space (const char *name);
 
@@ -436,3 +437,13 @@ void * babl_get_user_data     (const Babl *babl);
 #endif
 
 #endif
+
+/* Trademarks:
+ *
+ * International Color Consortium is a registered trademarks of the.
+ * International Color Consortium.
+ * Apple is a trademark or registered trademark of Apple Inc in many countries.
+ * Adobish is meant to concisely convey resemblence/compatibility with Adobe
+ * RGB- without actualy being it, Adobe is a trademark or registered trademark
+ * of Adobe Systems Incorporated in many countires.
+ */

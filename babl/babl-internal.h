@@ -445,7 +445,7 @@ const Babl * babl_trc       (const char *name);
 int _babl_file_get_contents (const char  *path,
                              char       **contents,
                              long        *length,
-			     void        *error);
+                             void        *error);
 
 typedef enum {
   BABL_ICC_DEFAULTS = 0,

@@ -390,7 +390,11 @@ babl_space_class_init (void)
                babl_trc("sRGB"), NULL, NULL);
 
   babl_space_from_chromaticities (
-      "Adobe",
+      "Adobish",  /* a space that can be used as a place-holder for a sRGB like
+space with displaced green coordinates from a big graphics software vendor that
+would rather not it's name be directly used when referring to this color space,
+this color space isn't exactly like theirs but close enough with babls own
+computations of uniform gray axis */
       0.3127,  0.3290, /* D65 */
       0.6400,  0.3300,
       0.2100,  0.7100,
@@ -972,3 +976,13 @@ const Babl *babl_space_match_trc_matrix (const Babl *trc_red,
   }
   return NULL;
 }
+
+/* Trademarks:
+ *
+ * International Color Consortium is a registered trademarks of the.
+ * International Color Consortium.
+ * Apple is a trademark or registered trademark of Apple Inc in many countries.
+ * Adobish is meant to concisely convey resemblence/compatibility with Adobe
+ * RGB- without actualy being it, Adobe is a trademark or registered trademark
+ * of Adobe Systems Incorporated in many countires.
+ */

@@ -1116,3 +1116,9 @@ static int ConvertUTF16toUTF8 (const UTF16** sourceStart, const UTF16* sourceEnd
     *targetStart = target;
     return result;
 }
+
+/* Trademarks:
+ *
+ * International Color Consortium is a registered trademarks of the.
+ * International Color Consortium.
+ */
