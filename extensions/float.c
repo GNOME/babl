@@ -53,8 +53,9 @@ conv_rgbaF_linear_rgbAF_gamma (const Babl *conversion,unsigned char *src,
 }
 
 static INLINE void
-conv_rgbAF_linear_rgbAF_gamma (const Babl *conversion,unsigned char *src, 
-                               unsigned char *dst, 
+conv_rgbAF_linear_rgbAF_gamma (const Babl    *conversion,
+                               unsigned char *src,
+                               unsigned char *dst,
                                long           samples)
 {
    const Babl  *space = babl_conversion_get_destination_space (conversion);

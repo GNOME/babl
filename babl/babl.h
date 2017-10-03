@@ -146,24 +146,6 @@ char *babl_icc_get_key (const char *icc_data,
                         const char *language,
                         const char *counter);
 
-/* babl_space_get_rgbtoxyz:
-
-   Returns the internal, double-precision 3x3 matrix used to convert linear
-   RGB data to CIE XYZ.
- */
-const double * babl_space_get_rgbtoxyz (const Babl *space);
-
-/* babl_space_to_xyz:
- *
- * converts a double triplet from linear RGB to CIE XYZ.
- */
-void babl_space_to_xyz   (const Babl *space, const double *rgb, double *xyz);
-
-/* babl_space_from_xyz:
- *
- * converts double triplet from CIE XYZ to linear RGB
- */
-void babl_space_from_xyz (const Babl *space, const double *xyz, double *rgb);
 
 /**
  * babl_format:

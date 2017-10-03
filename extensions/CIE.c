@@ -22,7 +22,7 @@
 #include <math.h>
 #include <string.h>
 
-#include "babl.h"
+#include "babl-internal.h"
 #include "extensions/util.h"
 
 #define DEGREES_PER_RADIAN (180 / 3.14159265358979323846)

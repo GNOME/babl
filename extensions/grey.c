@@ -19,18 +19,10 @@
 #include "config.h"
 #include <stdio.h>
 
-#include "babl.h"
+#include "babl-internal.h"
 
 #include "base/util.h"
 #include "extensions/util.h"
-
-/* There was some debate on #gimp about whether these constants
- * are accurate, for now I've elected to just follow whatever
- * babl/base does.
- *   - Daniel
- */
-
-/* Float versions of the double constants in rgb-constants.h */
 
 static void
 conv_rgbaF_linear_y8_linear (const Babl *conversion,unsigned char *src,
@@ -39,9 +31,9 @@ conv_rgbaF_linear_y8_linear (const Babl *conversion,unsigned char *src,
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
   const double *rgbtoxyz = babl_space_get_rgbtoxyz (space);
-  const float RGB_LUMINANCE_RED_FLOAT = rgbtoxyz[3];
+  const float RGB_LUMINANCE_RED_FLOAT   = rgbtoxyz[3];
   const float RGB_LUMINANCE_GREEN_FLOAT = rgbtoxyz[4];
-  const float RGB_LUMINANCE_BLUE_FLOAT = rgbtoxyz[5];
+  const float RGB_LUMINANCE_BLUE_FLOAT  = rgbtoxyz[5];
 
   float *s = (float *) src;
   long   n = samples;
