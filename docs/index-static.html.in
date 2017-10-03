@@ -274,17 +274,16 @@ lab_buffer  = malloc (pixel_count * 3 * sizeof (float));
   </p>
 
   <p>Additional spaces can be loaded from monitor-class matrix+TRC ICC v2 and
-  v4 profiles. Using babl_space_from_icc (see babl.h for details). The space of
-  a babl format can be queried with babl_format_get_space, such a space can
-  also be turned into a compact icc profile for embedding in images with
-  <tt>babl_space_to_icc.</tt></p>
+  v4 profiles. Using babl_icc_make_space (see babl.h for details). The space of
+  a babl format can also be queried with babl_format_get_space.
+  </p>
 
   <p>The conversions babl does with ICC profiles are according to what is known
   as the relative-colorimetric intent, monitor profiles containing both the
   matrices used by babl and 3d CLUTs (color look up tables) most often also do
   relative-colorimetric transfer for the "perceptual" intent CLUTs, but with
-  more flexible and possibly higher accuracy conversions. If babl adds support
-  for loading and using CLUTs it will be  thus the perceptual
+  a more flexible and possibly higher accuracy conversions. If babl adds support
+  for loading and using CLUTs it will be thus the perceptual
   intent will by babl be considered a different albeit more accurate
   relative-colorimetric RGB space.</p>
 
