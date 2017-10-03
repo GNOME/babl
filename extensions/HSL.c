@@ -145,7 +145,8 @@ rgb_to_hsl_step (double* src,
         case 0: hue = (green - blue)  / diff + (green < blue ? 6.0 : 0.0); break;
         case 1: hue = (blue  - red)   / diff + 2.0; break;
         case 2: hue = (red   - green) / diff + 4.0; break;
-        default: break;
+        default: hue = 0.0;
+          break;
         }
       hue /= 6.0;
     }
