@@ -98,7 +98,7 @@ typedef enum {
 } BablIccIntent;
 
 /**
- * babl_space_from_icc:
+ * babl_icc_make_space:
  *
  * @icc_data: pointer to icc profile in memory
  * @icc_length: length of icc profile in bytes
@@ -120,10 +120,11 @@ typedef enum {
  * containing a message describing why the provided data does not yield a babl
  * space.
  */
-const Babl *babl_space_from_icc (const char       *icc_data,
+const Babl *babl_icc_make_space (const char       *icc_data,
                                  int               icc_length,
                                  BablIccIntent     intent,
                                  const char      **error);
+
 
 /* babl_icc_get_key:
  *

@@ -194,6 +194,7 @@ static double read_u8f8 (ICC *state, int offset)
   return u8f8_to_d (read_u8f8_ (state, offset));
 }
 
+#if 0
 static inline void print_u8f8 (u8f8_t fix)
 {
   int i;
@@ -237,6 +238,7 @@ static inline void print_s15f16 (s15f16_t fix)
   }
   }
 }
+#endif
 
 static void write_u32 (ICC *state, int offset, uint32_t value)
 {
@@ -698,7 +700,7 @@ static char *decode_string (ICC *state, const char *tag, const char *lang, const
 }
 
 const Babl *
-babl_space_from_icc (const char   *icc_data,
+babl_icc_make_space (const char   *icc_data,
                      int           icc_length,
                      BablIccIntent intent,
                      const char  **error)

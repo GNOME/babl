@@ -122,7 +122,7 @@ main (int    argc,
       free (str);
     }
   }
-  babl = babl_space_from_icc (icc_data, icc_len, 0, &error);
+  babl = babl_icc_make_space (icc_data, icc_len, 0, &error);
   free (icc_data);
   if (error || !babl)
   {

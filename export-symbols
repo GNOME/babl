@@ -24,6 +24,7 @@ babl_get_name
 babl_get_name
 babl_get_user_data
 babl_get_version
+babl_icc_make_space
 babl_icc_get_key
 babl_init
 babl_introspect
@@ -38,7 +39,6 @@ babl_process
 babl_sampling
 babl_set_user_data
 babl_space
-babl_space_from_icc
 babl_space_from_xyz
 babl_space_get_rgbtoxyz
 babl_space_to_xyz
