@@ -98,10 +98,14 @@ typedef struct
   babl_polynomial_eval_1_##i (const BablPolynomial *poly,                      \
                               double                x)                         \
   {                                                                            \
+    /* quiet clang warnings */                                                 \
+    const BablBigPolynomial *const big_poly = (const BablBigPolynomial *) poly;\
+                                                                               \
     const double x2 = x * x;                                                   \
     (void) x2;                                                                 \
-    return BABL_POLYNOMIAL_EVAL_##i   (poly, x2) +                             \
-           BABL_POLYNOMIAL_EVAL_##i_1 (poly, x2) * x;                          \
+                                                                               \
+    return BABL_POLYNOMIAL_EVAL_##i   (big_poly, x2) +                         \
+           BABL_POLYNOMIAL_EVAL_##i_1 (big_poly, x2) * x;                      \
   }
 #include "babl-polynomial.c"
 
@@ -110,8 +114,11 @@ typedef struct
   babl_polynomial_eval_2_##i (const BablPolynomial *poly,                      \
                               double                x)                         \
   {                                                                            \
-    return BABL_POLYNOMIAL_EVAL_##i   (poly, x) +                              \
-           BABL_POLYNOMIAL_EVAL_##i_1 (poly, x) * sqrt (x);                    \
+    /* quiet clang warnings */                                                 \
+    const BablBigPolynomial *const big_poly = (const BablBigPolynomial *) poly;\
+                                                                               \
+    return BABL_POLYNOMIAL_EVAL_##i   (big_poly, x) +                          \
+           BABL_POLYNOMIAL_EVAL_##i_1 (big_poly, x) * sqrt (x);                \
   }
 #include "babl-polynomial.c"
 
