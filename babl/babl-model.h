@@ -30,8 +30,8 @@ typedef struct
   BablType        **type; /*< must be doubles,
                               used here for convenience in code */
   void             *data;    /* user-data, used for palette */
-  void             *model;   /* back pointer to model with sRGB space */
   const Babl       *space;
+  void             *model;   /* back pointer to model with sRGB space */
 } BablModel;
 
 #endif
