@@ -72,6 +72,7 @@ model_new (const char     *name,
   babl->model.components = components;
   babl->model.space      = space;
   babl->model.data       = NULL;
+  babl->model.model      = NULL;
   strcpy (babl->instance.name, name);
   memcpy (babl->model.component, component, sizeof (BablComponent *) * components);
 
@@ -373,17 +374,22 @@ babl_remodel_with_space (const Babl *model, const Babl *space)
 {
   Babl *ret;
   int i;
+  assert (BABL_IS_BABL (model));
 
   if (model->model.space == space)
     return (void*)model;
 
+  assert (BABL_IS_BABL (model));
+
   /* get back to the sRGB model if we are in a COW clone of it  */
-  if (model->model.data)
-    model = (void*)model->model.data;
+  if (model->model.model)
+    model = (void*)model->model.model;
+
+  assert (BABL_IS_BABL (model));
 
   for (i = 0; i < babl_n_remodels; i++)
   {
-    if (babl_remodels[i]->model.data == model &&
+    if (babl_remodels[i]->model.model == model &&
         babl_remodels[i]->model.space == space)
           return babl_remodels[i];
   }
@@ -391,7 +397,7 @@ babl_remodel_with_space (const Babl *model, const Babl *space)
   ret = babl_calloc (sizeof (BablModel), 1);
   memcpy (ret, model, sizeof (BablModel));
   ret->model.space = space;
-  ret->model.data = (void*)model; /* use the data as a backpointer to original model */
+  ret->model.model = (void*)model; /* use the data as a backpointer to original model */
   return babl_remodels[babl_n_remodels++] = ret;
   return (Babl*)ret;
 }

@@ -330,7 +330,9 @@ alias_conversion (Babl *babl,
   BablSpace *space = user_data;
 
   if ((conv->source->class_type == BABL_FORMAT) &&
-      (conv->destination->class_type == BABL_FORMAT))
+      (conv->destination->class_type == BABL_FORMAT) &&
+      (!babl_format_is_palette (conv->source)) &&
+      (!babl_format_is_palette (conv->destination)))
   {
     if ((conv->source->format.space == (void*)babl_space ("sRGB")) &&
         (conv->destination->format.space == babl_space ("sRGB")))

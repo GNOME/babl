@@ -29,9 +29,8 @@ typedef struct
   BablComponent   **component;
   BablType        **type; /*< must be doubles,
                               used here for convenience in code */
-  void             *data; /*  used for palette - and maybe back pointer
-                              to actual model?
-                           */
+  void             *data;    /* user-data, used for palette */
+  void             *model;   /* back pointer to model with sRGB space */
   const Babl       *space;
 } BablModel;
 

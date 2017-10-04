@@ -126,8 +126,8 @@ babl_conversion_find (const void *source,
 
   if (BABL (source)->class_type == BABL_MODEL)
   {
-     const Babl *srgb_source = BABL (source)->model.data ? BABL (source)->model.data:source;
-     const Babl *srgb_destination = BABL (destination)->model.data ? BABL (destination)->model.data:destination;
+     const Babl *srgb_source = BABL (source)->model.model ? BABL (source)->model.model:source;
+     const Babl *srgb_destination = BABL (destination)->model.model ? BABL (destination)->model.model:destination;
      Babl *reference = babl_conversion_find (srgb_source, srgb_destination);
 
   /* when conversions are sought between models, with non-sRGB chromaticities,

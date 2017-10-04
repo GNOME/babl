@@ -29,7 +29,7 @@
 static int model_is_rgba (const Babl *model)
 {
   const Babl *RGBA = babl_model_from_id (BABL_RGBA);
-  if (model == RGBA || model->model.data == RGBA)
+  if (model == RGBA || model->model.model == RGBA)
     return 1;
   return 0;
 }
