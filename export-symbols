@@ -66,3 +66,4 @@ babl_type_is_symmetric
 babl_model_is_symmetric
 babl_fish_db
 babl_polynomial_approximate_gamma
+babl_backtrack
