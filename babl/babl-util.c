@@ -116,10 +116,18 @@ _babl_file_get_contents (const char  *path,
   if (!file)
     return -1;
 
-  fseek (file, 0, SEEK_END);
-  size = ftell (file);
+  if (fseek (file, 0, SEEK_END) == -1 || (size = ftell (file)) == -1)
+    {
+      fclose (file);
+      return -1;
+    }
   if (length) *length = size;
   rewind (file);
+  if ((size_t) size > SIZE_MAX - 8)
+    {
+      fclose (file);
+      return -1;
+    }
   buffer = calloc(size + 8, 1);
 
   if (!buffer)
