@@ -37,6 +37,7 @@ mk_ancestry_iter (const char *path)
 {
   char copy[4096];
   strncpy (copy, path, 4096);
+  copy[sizeof (copy) - 1] = '\0';
   if (strrchr (copy, '/'))
     {
       *strrchr (copy, '/') = '\0';
@@ -63,6 +64,7 @@ mk_ancestry (const char *path)
 {
   char copy[4096];
   strncpy (copy, path, 4096);
+  copy[sizeof (copy) - 1] = '\0';
 #ifdef _WIN32
   for (char *c = copy; *c; c++)
     if (*c == '\\')
@@ -77,6 +79,7 @@ static const char *fish_cache_path (void)
   static char path[4096];
 
   strncpy (path, FALLBACK_CACHE_PATH, 4096);
+  path[sizeof (path) - 1] = '\0';
 #ifndef _WIN32
   if (getenv ("XDG_CACHE_HOME"))
     sprintf (path, "%s/babl/babl-fishes", getenv("XDG_CACHE_HOME"));
