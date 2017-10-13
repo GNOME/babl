@@ -170,10 +170,15 @@ void babl_store_db (void)
   char *tmpp = calloc(8000,1);
   FILE *dbfile;
 
+  if (!tmpp)
+    return;
   snprintf (tmpp, 8000, "%s~", fish_cache_path ());
   dbfile  = fopen (tmpp, "w");
   if (!dbfile)
+  {
+    free (tmpp);
     return;
+  }
   fprintf (dbfile, "%s\n", cache_header ());
 
   /* sort the list of fishes by usage, making next run more efficient -
@@ -273,6 +278,7 @@ void babl_init_db (void)
             {
               fprintf (stderr, "%s:%i: loading of cache failed\n",
                               __FUNCTION__, __LINE__);
+              free (contents);
               return;
             }
 
@@ -315,6 +321,7 @@ void babl_init_db (void)
             Babl *conv = (void*)babl_db_find(babl_conversion_db(), &token[1]);
             if (!conv)
             {
+              free (contents);
               return;
             }
             else
