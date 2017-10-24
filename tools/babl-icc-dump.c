@@ -300,9 +300,11 @@ static int load_icc_from_memory (const char *icc, long length, char **error)
     *error = "not a monitor-class profile";
     return -1;
   }
-  if (strcmp (color_space, "RGB "))
+  fprintf (stdout, "color-space: '%s'\n", color_space);
+  if (!(strcmp (color_space, "RGB ") ||
+        strcmp (color_space, "GRAY")))
   {
-    *error = "not defining an RGB space";
+    *error = "not defining an RGB or GRAY space";
     return -1;
   }
 #if 0

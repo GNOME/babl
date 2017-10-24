@@ -738,8 +738,9 @@ babl_icc_make_space (const char   *icc_data,
   else
   {
   color_space = icc_read (sign, 16);
-  if (strcmp (color_space.str, "RGB "))
-    *error = "not defining an RGB space";
+  if (!(strcmp (color_space.str, "RGB ") ||
+        strcmp (color_space.str, "GRAY")))
+    *error = "not defining an RGB or GRAY space";
   }
   }
 
@@ -771,6 +772,7 @@ babl_icc_make_space (const char   *icc_data,
       break;
   }
 
+  if (!strcmp (color_space.str, "RGB "))
   {
      int offset, element_size;
      if (!*error && icc_tag (state, "rTRC", &offset, &element_size))
@@ -785,116 +787,162 @@ babl_icc_make_space (const char   *icc_data,
      {
        trc_blue = babl_trc_from_icc (state, offset, error);
      }
-  }
 
-  if (!*error && (!trc_red || !trc_green || !trc_blue))
-  {
-     *error = "missing TRCs";
-  }
-
-  if (*error)
-  {
-    babl_free (state);
-    return NULL;
-  }
-
-  if (icc_tag (state, "rXYZ", NULL, NULL) &&
-      icc_tag (state, "gXYZ", NULL, NULL) &&
-      icc_tag (state, "bXYZ", NULL, NULL) &&
-      icc_tag (state, "wtpt", NULL, NULL))
-  {
-     int offset, element_size;
-     double rx, gx, bx;
-     double ry, gy, by;
-     double rz, gz, bz;
-
-     double wX, wY, wZ;
-
-     icc_tag (state, "rXYZ", &offset, &element_size);
-     rx = icc_read (s15f16, offset + 8 + 4 * 0);
-     ry = icc_read (s15f16, offset + 8 + 4 * 1);
-     rz = icc_read (s15f16, offset + 8 + 4 * 2);
-     icc_tag (state, "gXYZ", &offset, &element_size);
-     gx = icc_read (s15f16, offset + 8 + 4 * 0);
-     gy = icc_read (s15f16, offset + 8 + 4 * 1);
-     gz = icc_read (s15f16, offset + 8 + 4 * 2);
-     icc_tag (state, "bXYZ", &offset, &element_size);
-     bx = icc_read (s15f16, offset + 8 + 4 * 0);
-     by = icc_read (s15f16, offset + 8 + 4 * 1);
-     bz = icc_read (s15f16, offset + 8 + 4 * 2);
-     icc_tag (state, "wtpt", &offset, &element_size);
-     wX = icc_read (s15f16, offset + 8);
-     wY = icc_read (s15f16, offset + 8 + 4);
-     wZ = icc_read (s15f16, offset + 8 + 4 * 2);
-
-     ret = (void*)babl_space_match_trc_matrix (trc_red, trc_green, trc_blue,
-                                        rx, ry, rz, gx, gy, gz, bx, by, bz);
-     if (ret)
+     if (!*error && (!trc_red || !trc_green || !trc_blue))
      {
-        babl_free (state);
-        return ret;
+       *error = "missing TRCs";
      }
 
+     if (*error)
      {
+       babl_free (state);
+       return NULL;
+     }
+
+     if (icc_tag (state, "rXYZ", NULL, NULL) &&
+         icc_tag (state, "gXYZ", NULL, NULL) &&
+         icc_tag (state, "bXYZ", NULL, NULL) &&
+         icc_tag (state, "wtpt", NULL, NULL))
+     {
+       int offset, element_size;
+       double rx, gx, bx;
+       double ry, gy, by;
+       double rz, gz, bz;
+       double wX, wY, wZ;
+
+       icc_tag (state, "rXYZ", &offset, &element_size);
+       rx = icc_read (s15f16, offset + 8 + 4 * 0);
+       ry = icc_read (s15f16, offset + 8 + 4 * 1);
+       rz = icc_read (s15f16, offset + 8 + 4 * 2);
+       icc_tag (state, "gXYZ", &offset, &element_size);
+       gx = icc_read (s15f16, offset + 8 + 4 * 0);
+       gy = icc_read (s15f16, offset + 8 + 4 * 1);
+       gz = icc_read (s15f16, offset + 8 + 4 * 2);
+       icc_tag (state, "bXYZ", &offset, &element_size);
+       bx = icc_read (s15f16, offset + 8 + 4 * 0);
+       by = icc_read (s15f16, offset + 8 + 4 * 1);
+       bz = icc_read (s15f16, offset + 8 + 4 * 2);
+       icc_tag (state, "wtpt", &offset, &element_size);
+       wX = icc_read (s15f16, offset + 8);
+       wY = icc_read (s15f16, offset + 8 + 4);
+       wZ = icc_read (s15f16, offset + 8 + 4 * 2);
+
+       ret = (void*)babl_space_match_trc_matrix (trc_red, trc_green, trc_blue,
+                                          rx, ry, rz, gx, gy, gz, bx, by, bz);
+       if (ret)
+       {
+          babl_free (state);
+          return ret;
+       }
+
        ret  = (void*)babl_space_from_rgbxyz_matrix (NULL,
-                wX, wY, wZ,
-                rx, gx, bx,
-                ry, gy, by,
-                rz, gz, bz,
-                trc_red, trc_green, trc_blue);
+               wX, wY, wZ,
+               rx, gx, bx,
+               ry, gy, by,
+               rz, gz, bz,
+               trc_red, trc_green, trc_blue);
 
        babl_free (state);
        return ret;
-     }
+    }
+    else if (icc_tag (state, "chrm", NULL, NULL) &&
+             icc_tag (state, "wtpt", NULL, NULL))
+    {
+       int offset, element_size;
+       double red_x, red_y, green_x, green_y, blue_x, blue_y;
+       int channels, phosporant;
+
+       icc_tag (state, "chrm", &offset, &element_size);
+       channels   = icc_read (u16, offset + 8);
+       phosporant = icc_read (u16, offset + 10);
+
+       if (phosporant != 0)
+       {
+         *error = "unhandled phosporants, please report bug against babl with profile";
+         return NULL;
+       }
+       if (channels != 3)
+       {
+         *error = "unexpected non 3 count of channels";
+         return NULL;
+       }
+
+       red_x   = icc_read (s15f16, offset + 12);
+       red_y   = icc_read (s15f16, offset + 12 + 4);
+       green_x = icc_read (s15f16, offset + 20);
+       green_y = icc_read (s15f16, offset + 20 + 4);
+       blue_x  = icc_read (s15f16, offset + 28);
+       blue_y  = icc_read (s15f16, offset + 28 + 4);
+
+       icc_tag (state, "wtpt", &offset, &element_size);
+       {
+         double wX = icc_read (s15f16, offset + 8);
+         double wY = icc_read (s15f16, offset + 8 + 4);
+         double wZ = icc_read (s15f16, offset + 8 + 4 * 2);
+         babl_free (state);
+
+         ret = (void*) babl_space_from_chromaticities (NULL,
+                       wX / (wX + wY + wZ),
+                       wY / (wX + wY + wZ),
+                       red_x, red_y,
+                       green_x, green_y,
+                       blue_x, blue_y,
+                       trc_red, trc_green, trc_blue);
+         return ret;
+       }
+    }
+
+    *error = "didnt find RGB primaries";
   }
-  else if (icc_tag (state, "chrm", NULL, NULL) &&
-           icc_tag (state, "wtpt", NULL, NULL))
+  else // GRAY
   {
      int offset, element_size;
-     double red_x, red_y, green_x, green_y, blue_x, blue_y;
-     int channels, phosporant;
-
-     icc_tag (state, "chrm", &offset, &element_size);
-     channels   = icc_read (u16, offset + 8);
-     phosporant = icc_read (u16, offset + 10);
-
-     if (phosporant != 0)
+     if (!*error && icc_tag (state, "kTRC", &offset, &element_size))
      {
-       *error = "unhandled phosporants, please report bug against babl with profile";
-       return NULL;
+       trc_red = babl_trc_from_icc (state, offset, error);
      }
-     if (channels != 3)
+     trc_green = trc_blue = trc_red;
+     if (!*error && (!trc_red || !trc_green || !trc_blue))
      {
-       *error = "unexpected non 3 count of channels";
-       return NULL;
+       *error = "missing TRC";
      }
 
-     red_x   = icc_read (s15f16, offset + 12);
-     red_y   = icc_read (s15f16, offset + 12 + 4);
-     green_x = icc_read (s15f16, offset + 20);
-     green_y = icc_read (s15f16, offset + 20 + 4);
-     blue_x  = icc_read (s15f16, offset + 28);
-     blue_y  = icc_read (s15f16, offset + 28 + 4);
-
-     icc_tag (state, "wtpt", &offset, &element_size);
+     if (*error)
      {
-       double wX = icc_read (s15f16, offset + 8);
-       double wY = icc_read (s15f16, offset + 8 + 4);
-       double wZ = icc_read (s15f16, offset + 8 + 4 * 2);
        babl_free (state);
-
-       ret = (void*) babl_space_from_chromaticities (NULL,
-                     wX / (wX + wY + wZ),
-                     wY / (wX + wY + wZ),
-                     red_x, red_y,
-                     green_x, green_y,
-                     blue_x, blue_y,
-                     trc_red, trc_green, trc_blue);
-       return ret;
+       return NULL;
      }
-  }
+     if (icc_tag (state, "wtpt", NULL, NULL))
+     {
+       int offset, element_size;
+       double wX, wY, wZ;
 
-  *error = "didnt find RGB primaries";
+       double rx = 0.436035156250000000;
+       double ry = 0.222488403320312500;
+       double rz = 0.013916015625000000;
+       double gx = 0.385116577148437500;
+       double gy = 0.716903686523437500;
+       double gz = 0.097061157226562500;
+       double bx = 0.143051147460937500;
+       double by = 0.060607910156250000;
+       double bz = 0.713928222656250000;
+
+       icc_tag (state, "wtpt", &offset, &element_size);
+       wX = icc_read (s15f16, offset + 8);
+       wY = icc_read (s15f16, offset + 8 + 4);
+       wZ = icc_read (s15f16, offset + 8 + 4 * 2);
+
+       ret  = (void*)babl_space_from_rgbxyz_matrix (NULL,
+              wX, wY, wZ,
+              rx, gx, bx,
+              ry, gy, by,
+              rz, gz, bz,
+              trc_red, trc_green, trc_blue);
+       babl_free (state);
+       return ret;
+    }
+    *error = "not finding sufficient info in gray profile";
+  }
   babl_free (state);
   return NULL;
 }
