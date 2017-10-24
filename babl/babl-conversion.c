@@ -154,7 +154,7 @@ create_name (Babl *source, Babl *destination, int type)
 {
   if (babl_extender ())
     {
-      snprintf (buf, 512 - 1, "%s %i: %s%s to %s",
+      snprintf (buf, sizeof (buf), "%s %i: %s%s to %s",
                 BABL (babl_extender ())->instance.name,
                 collisions,
                 type == BABL_CONVERSION_LINEAR ? "" :
@@ -162,18 +162,16 @@ create_name (Babl *source, Babl *destination, int type)
                 type == BABL_CONVERSION_PLANAR ? "planar " : "Eeeek! ",
                 source->instance.name,
                 destination->instance.name);
-      buf[511] = '\0';
     }
   else
     {
-      snprintf (buf, 512 - 1, "%s %s to %s %i",
+      snprintf (buf, sizeof (buf), "%s %s to %s %i",
                 type == BABL_CONVERSION_LINEAR ? "" :
                 type == BABL_CONVERSION_PLANE ? "plane " :
                 type == BABL_CONVERSION_PLANAR ? "planar " : "Eeeek! ",
                 source->instance.name,
                 destination->instance.name,
                 collisions);
-      buf[511] = '\0';
     }
   return buf;
 }

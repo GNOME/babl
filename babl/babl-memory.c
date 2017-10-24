@@ -71,7 +71,7 @@ mem_stats (void)
 {
   static char buf[128];
 
-  sprintf (buf, "mallocs:%i callocs:%i strdups:%i dups:%i allocs:%i frees:%i reallocs:%i\t|",
+  snprintf (buf, sizeof (buf), "mallocs:%i callocs:%i strdups:%i dups:%i allocs:%i frees:%i reallocs:%i\t|",
            mallocs, callocs, strdups, dups, mallocs + callocs + strdups + dups, frees, reallocs);
   return buf;
 }

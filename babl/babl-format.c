@@ -135,8 +135,8 @@ format_new_from_format_with_space (const Babl *format, const Babl *space)
 {
   Babl *ret;
   char new_name[256];
-  sprintf (new_name, "%s-%s", babl_get_name ((void*)format),
-                              babl_get_name ((void*)space));
+  snprintf (new_name, sizeof (new_name), "%s-%s", babl_get_name ((void*)format),
+                                                  babl_get_name ((void*)space));
   ret = babl_db_find (babl_format_db(), new_name);
   if (ret)
     return ret;
@@ -161,6 +161,7 @@ create_name (const BablModel *model,
 {
   char            buf[512] = "";
   char           *p = &buf[0];
+  ssize_t         left;
   int             i;
   int             same_types = 1;
   const BablType**t          = type;
@@ -168,9 +169,11 @@ create_name (const BablModel *model,
   BablComponent **c1         = component;
   BablComponent **c2         = model->component;
 
-
-  sprintf (p, "%s ", model->instance.name);
+  left = 512;
+  snprintf (p, left, "%s ", model->instance.name);
   p += strlen (model->instance.name) + 1;
+  left -= strlen (model->instance.name) + 1;
+  babl_assert (left >= 0);
 
   i = components;
   while (i--)
@@ -202,7 +205,7 @@ create_name (const BablModel *model,
 
   if (same_types)
     {
-      sprintf (p, "%s", first_type->instance.name);
+      snprintf (p, left, "%s", first_type->instance.name);
       return babl_strdup (buf);
     }
 
@@ -210,11 +213,14 @@ create_name (const BablModel *model,
 
   while (i--)
     {
-      sprintf (p, "(%s as %s) ",
+      snprintf (p, left, "(%s as %s) ",
                (*component)->instance.name,
                (*type)->instance.name);
       p += strlen ((*component)->instance.name) +
            strlen ((*type)->instance.name) + strlen ("( as ) ");
+      left -= strlen ((*component)->instance.name) +
+              strlen ((*type)->instance.name) + strlen ("( as ) ");
+      babl_assert (left >= 0);
       component++;
       type++;
     }
@@ -226,7 +232,7 @@ ncomponents_create_name (const Babl *type,
                          int         components)
 {
   char buf[512];
-  sprintf (buf, "%s[%i] ", type->instance.name, components);
+  snprintf (buf, sizeof (buf), "%s[%i] ", type->instance.name, components);
   return babl_strdup (buf);
 }
 

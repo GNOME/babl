@@ -285,9 +285,9 @@ babl_space_from_rgbxyz_matrix (const char *name,
   space_db[i]=space;
   space_db[i].instance.name = space_db[i].name;
   if (name)
-    sprintf (space_db[i].name, "%s", name);
+    snprintf (space_db[i].name, sizeof (space_db[i].name), "%s", name);
   else
-    sprintf (space_db[i].name, "space-%.4f,%.4f_%.4f,%.4f_%.4f_%.4f,%.4f_%.4f,%.4f_%s,%s,%s",
+    snprintf (space_db[i].name, sizeof (space_db[i].name), "space-%.4f,%.4f_%.4f,%.4f_%.4f_%.4f,%.4f_%.4f,%.4f_%s,%s,%s",
                        rx, gx, bx,
                        ry, gy, by,
                        rz, gz, bz,
@@ -348,10 +348,11 @@ babl_space_from_chromaticities (const char *name,
   space_db[i]=space;
   space_db[i].instance.name = space_db[i].name;
   if (name)
-    sprintf (space_db[i].name, "%s", name);
+    snprintf (space_db[i].name, sizeof (space_db[i].name), "%s", name);
   else
           /* XXX: this can get longer than 256bytes ! */
-    sprintf (space_db[i].name, "space-%.4f,%.4f_%.4f,%.4f_%.4f,%.4f_%.4f,%.4f_%s,%s,%s",
+    snprintf (space_db[i].name, sizeof (space_db[i].name),
+             "space-%.4f,%.4f_%.4f,%.4f_%.4f,%.4f_%.4f,%.4f_%s,%s,%s",
              wx,wy,rx,ry,bx,by,gx,gy,babl_get_name (space.trc[0]),
              babl_get_name(space.trc[1]), babl_get_name(space.trc[2]));
 

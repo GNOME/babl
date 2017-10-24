@@ -973,7 +973,7 @@ char *babl_icc_get_key (const char *icc_data,
   {
     char tag[5];
     int val = icc_read (u32, 64);
-    sprintf (tag, "%i", val);
+    snprintf (tag, sizeof (tag), "%i", val);
     return strdup (tag);
   } else if (!strcmp (key, "tags"))
   {

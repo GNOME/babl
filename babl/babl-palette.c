@@ -483,7 +483,7 @@ const Babl *babl_new_palette (const char  *name,
   if (!name)
     {
       static int cnt = 0;
-      sprintf (cname, "_babl-int-%i", cnt++);
+      snprintf (cname, sizeof (cname), "_babl-int-%i", cnt++);
       name = cname;
     }
   else

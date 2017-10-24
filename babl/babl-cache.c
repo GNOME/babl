@@ -82,16 +82,16 @@ static const char *fish_cache_path (void)
   path[sizeof (path) - 1] = '\0';
 #ifndef _WIN32
   if (getenv ("XDG_CACHE_HOME"))
-    sprintf (path, "%s/babl/babl-fishes", getenv("XDG_CACHE_HOME"));
+    snprintf (path, sizeof (path), "%s/babl/babl-fishes", getenv("XDG_CACHE_HOME"));
   else if (getenv ("HOME"))
-    sprintf (path, "%s/.cache/babl/babl-fishes", getenv("HOME"));
+    snprintf (path, sizeof (path), "%s/.cache/babl/babl-fishes", getenv("HOME"));
 #else
 {
   char win32path[4096];
   if (SHGetFolderPathA (NULL, CSIDL_LOCAL_APPDATA, NULL, SHGFP_TYPE_CURRENT, win32path) == S_OK)
-    sprintf (path, "%s\\%s\\babl-fishes.txt", win32path, BABL_LIBRARY);
+    snprintf (path, sizeof (path), "%s\\%s\\babl-fishes.txt", win32path, BABL_LIBRARY);
   else if (getenv ("TEMP"))
-    sprintf (path, "%s\\babl-fishes.txt", getenv("TEMP"));
+    snprintf (path, sizeof (path), "%s\\babl-fishes.txt", getenv("TEMP"));
 }
 #endif
 
@@ -153,13 +153,13 @@ static const char *cache_header (void)
 {
   static char buf[2048];
   if (strchr (BABL_GIT_VERSION, ' ')) // we must be building from tarball
-    sprintf (buf, "#%i.%i.%i BABL_PATH_LENGTH=%d BABL_TOLERANCE=%f",
+    snprintf (buf, sizeof (buf),
+             "#%i.%i.%i BABL_PATH_LENGTH=%d BABL_TOLERANCE=%f",
              BABL_MAJOR_VERSION, BABL_MINOR_VERSION, BABL_MICRO_VERSION,
              _babl_max_path_len (), _babl_legal_error ());
   else
-    sprintf (buf, "#%s BABL_PATH_LENGTH=%d BABL_TOLERANCE=%f",
-             BABL_GIT_VERSION,
-             _babl_max_path_len (), _babl_legal_error ());
+    snprintf (buf, sizeof (buf), "#%s BABL_PATH_LENGTH=%d BABL_TOLERANCE=%f",
+             BABL_GIT_VERSION, _babl_max_path_len (), _babl_legal_error ());
   return buf;
 }
 
@@ -170,7 +170,7 @@ void babl_store_db (void)
   char *tmpp = calloc(8000,1);
   FILE *dbfile;
 
-  sprintf (tmpp, "%s~", fish_cache_path ());
+  snprintf (tmpp, 8000, "%s~", fish_cache_path ());
   dbfile  = fopen (tmpp, "w");
   if (!dbfile)
     return;

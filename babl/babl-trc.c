@@ -292,11 +292,11 @@ babl_trc_new (const char *name,
   trc_db[i]=trc;
   trc_db[i].instance.name = trc_db[i].name;
   if (name)
-    sprintf (trc_db[i].name, "%s", name);
+    snprintf (trc_db[i].name, sizeof (trc_db[i].name), "%s", name);
   else if (n_lut)
-    sprintf (trc_db[i].name, "lut-trc");
+    snprintf (trc_db[i].name, sizeof (trc_db[i].name), "lut-trc");
   else
-    sprintf (trc_db[i].name, "trc-%i-%f", type, gamma);
+    snprintf (trc_db[i].name, sizeof (trc_db[i].name), "trc-%i-%f", type, gamma);
 
   if (n_lut)
   {
@@ -430,7 +430,7 @@ babl_trc_formula_srgb (double g, double a, double b, double c, double d)
       fabs (c - (-3417))  < 0.01)
     return babl_trc ("sRGB");
 
-  sprintf (name, "%.6f %.6f %.4f %.4f %.4f", g, a, b, c, d);
+  snprintf (name, sizeof (name), "%.6f %.6f %.4f %.4f %.4f", g, a, b, c, d);
   for (i = 0; name[i]; i++)
     if (name[i] == ',') name[i] = '.';
   while (name[strlen(name)-1]=='0')
@@ -446,7 +446,7 @@ babl_trc_gamma (double gamma)
   if (fabs (gamma - 1.0) < 0.01)
      return babl_trc_new ("linear", BABL_TRC_LINEAR, 1.0, 0, NULL);
 
-  sprintf (name, "%.6f", gamma);
+  snprintf (name, sizeof (name), "%.6f", gamma);
   for (i = 0; name[i]; i++)
     if (name[i] == ',') name[i] = '.';
   while (name[strlen(name)-1]=='0')
