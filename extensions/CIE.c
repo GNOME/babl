@@ -647,6 +647,40 @@ rgbf_to_Labf (const Babl *conversion,float *src,
 }
 
 static void
+rgbaf_to_Labf (const Babl *conversion,float *src,
+               float *dst,
+               long   samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      float r = src[0];
+      float g = src[1];
+      float b = src[2];
+
+      float xr = 0.43603516f / D50_WHITE_REF_X * r + 0.38511658f / D50_WHITE_REF_X * g + 0.14305115f / D50_WHITE_REF_X * b;
+      float yr = 0.22248840f / D50_WHITE_REF_Y * r + 0.71690369f / D50_WHITE_REF_Y * g + 0.06060791f / D50_WHITE_REF_Y * b;
+      float zr = 0.01391602f / D50_WHITE_REF_Z * r + 0.09706116f / D50_WHITE_REF_Z * g + 0.71392822f / D50_WHITE_REF_Z * b;
+
+      float fx = xr > LAB_EPSILON ? _cbrtf (xr) : (LAB_KAPPA * xr + 16.0f) / 116.0f;
+      float fy = yr > LAB_EPSILON ? _cbrtf (yr) : (LAB_KAPPA * yr + 16.0f) / 116.0f;
+      float fz = zr > LAB_EPSILON ? _cbrtf (zr) : (LAB_KAPPA * zr + 16.0f) / 116.0f;
+
+      float L = 116.0f * fy - 16.0f;
+      float A = 500.0f * (fx - fy);
+      float B = 200.0f * (fy - fz);
+
+      dst[0] = L;
+      dst[1] = A;
+      dst[2] = B;
+
+      src += 4;
+      dst += 3;
+    }
+}
+
+static void
 rgbaf_to_Labaf (const Babl *conversion,float *src,
                 float *dst,
                 long   samples)
@@ -901,6 +935,12 @@ conversions (void)
     babl_format ("CIE Lab float"),
     babl_format ("RGB float"),
     "linear", Labf_to_rgbf,
+    NULL
+  );
+  babl_conversion_new (
+    babl_format ("RGBA float"),
+    babl_format ("CIE Lab float"),
+    "linear", rgbaf_to_Labf,
     NULL
   );
   babl_conversion_new (
