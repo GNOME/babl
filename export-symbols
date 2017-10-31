@@ -8,6 +8,7 @@ babl_exit
 babl_fast_fish
 babl_fish
 babl_format
+babl_format_exists
 babl_format_get_bytes_per_pixel
 babl_format_get_model
 babl_format_get_n_components
