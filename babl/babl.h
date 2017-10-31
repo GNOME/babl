@@ -157,6 +157,15 @@ char *babl_icc_get_key (const char *icc_data,
 const Babl * babl_format            (const char *name);
 
 /**
+ * babl_format_exists:
+ *
+ * Returns 1 if the provided format name is known by babl or 0 if it is
+ * not. Can also be used to verify that specific extension formats are
+ * available (though this can also be inferred from the version of babl).
+ */
+int babl_format_exists              (const char *name);
+
+/**
  * babl_format_with_space:
  *
  * Returns the babl object representing the color format given by

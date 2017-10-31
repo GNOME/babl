@@ -748,4 +748,13 @@ babl_format_with_space (const char *name, const Babl *space)
   return ret;
 }
 
+int
+babl_format_exists (const char *name)
+{
+  if (babl_db_exist_by_name (db, name))
+    return 1;
+  return 0;
+}
+
+
 
