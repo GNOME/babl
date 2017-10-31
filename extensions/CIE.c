@@ -625,9 +625,9 @@ rgbf_to_Labf (const Babl *conversion,float *src,
       float g = src[1];
       float b = src[2];
 
-      float xr = 0.43603516f / D50_WHITE_REF_X * r + 0.38511658f / D50_WHITE_REF_X * g + 0.14305115f / D50_WHITE_REF_X * b;
-      float yr = 0.22248840f / D50_WHITE_REF_Y * r + 0.71690369f / D50_WHITE_REF_Y * g + 0.06060791f / D50_WHITE_REF_Y * b;
-      float zr = 0.01391602f / D50_WHITE_REF_Z * r + 0.09706116f / D50_WHITE_REF_Z * g + 0.71392822f / D50_WHITE_REF_Z * b;
+      float xr = 0.43605042f / D50_WHITE_REF_X * r + 0.38511658f / D50_WHITE_REF_X * g + 0.14303589f / D50_WHITE_REF_X * b;
+      float yr = 0.22250366f / D50_WHITE_REF_Y * r + 0.71690369f / D50_WHITE_REF_Y * g + 0.06059265f / D50_WHITE_REF_Y * b;
+      float zr = 0.01393127f / D50_WHITE_REF_Z * r + 0.09707642f / D50_WHITE_REF_Z * g + 0.71389771f / D50_WHITE_REF_Z * b;
 
       float fx = xr > LAB_EPSILON ? _cbrtf (xr) : (LAB_KAPPA * xr + 16.0f) / 116.0f;
       float fy = yr > LAB_EPSILON ? _cbrtf (yr) : (LAB_KAPPA * yr + 16.0f) / 116.0f;
@@ -659,9 +659,9 @@ rgbaf_to_Labf (const Babl *conversion,float *src,
       float g = src[1];
       float b = src[2];
 
-      float xr = 0.43603516f / D50_WHITE_REF_X * r + 0.38511658f / D50_WHITE_REF_X * g + 0.14305115f / D50_WHITE_REF_X * b;
-      float yr = 0.22248840f / D50_WHITE_REF_Y * r + 0.71690369f / D50_WHITE_REF_Y * g + 0.06060791f / D50_WHITE_REF_Y * b;
-      float zr = 0.01391602f / D50_WHITE_REF_Z * r + 0.09706116f / D50_WHITE_REF_Z * g + 0.71392822f / D50_WHITE_REF_Z * b;
+      float xr = 0.43605042f / D50_WHITE_REF_X * r + 0.38511658f / D50_WHITE_REF_X * g + 0.14303589f / D50_WHITE_REF_X * b;
+      float yr = 0.22250366f / D50_WHITE_REF_Y * r + 0.71690369f / D50_WHITE_REF_Y * g + 0.06059265f / D50_WHITE_REF_Y * b;
+      float zr = 0.01393127f / D50_WHITE_REF_Z * r + 0.09707642f / D50_WHITE_REF_Z * g + 0.71389771f / D50_WHITE_REF_Z * b;
 
       float fx = xr > LAB_EPSILON ? _cbrtf (xr) : (LAB_KAPPA * xr + 16.0f) / 116.0f;
       float fy = yr > LAB_EPSILON ? _cbrtf (yr) : (LAB_KAPPA * yr + 16.0f) / 116.0f;
@@ -694,9 +694,9 @@ rgbaf_to_Labaf (const Babl *conversion,float *src,
       float b = src[2];
       float a = src[3];
 
-      float xr = 0.43603516f / D50_WHITE_REF_X * r + 0.38511658f / D50_WHITE_REF_X * g + 0.14305115f / D50_WHITE_REF_X * b;
-      float yr = 0.22248840f / D50_WHITE_REF_Y * r + 0.71690369f / D50_WHITE_REF_Y * g + 0.06060791f / D50_WHITE_REF_Y * b;
-      float zr = 0.01391602f / D50_WHITE_REF_Z * r + 0.09706116f / D50_WHITE_REF_Z * g + 0.71392822f / D50_WHITE_REF_Z * b;
+      float xr = 0.43605042f / D50_WHITE_REF_X * r + 0.38511658f / D50_WHITE_REF_X * g + 0.14303589f / D50_WHITE_REF_X * b;
+      float yr = 0.22250366f / D50_WHITE_REF_Y * r + 0.71690369f / D50_WHITE_REF_Y * g + 0.06059265f / D50_WHITE_REF_Y * b;
+      float zr = 0.01393127f / D50_WHITE_REF_Z * r + 0.09707642f / D50_WHITE_REF_Z * g + 0.71389771f / D50_WHITE_REF_Z * b;
 
       float fx = xr > LAB_EPSILON ? _cbrtf (xr) : (LAB_KAPPA * xr + 16.0f) / 116.0f;
       float fy = yr > LAB_EPSILON ? _cbrtf (yr) : (LAB_KAPPA * yr + 16.0f) / 116.0f;
