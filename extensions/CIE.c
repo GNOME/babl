@@ -168,13 +168,13 @@ XYZ_to_LAB (double X,
   double y_r = Y / D50_WHITE_REF_Y;
   double z_r = Z / D50_WHITE_REF_Z;
 
-  if (x_r > LAB_EPSILON) f_x = pow(x_r, 1.0 / 3.0);
+  if (x_r > LAB_EPSILON) f_x = cbrt(x_r);
   else ( f_x = ((LAB_KAPPA * x_r) + 16) / 116.0 );
 
-  if (y_r > LAB_EPSILON) f_y = pow(y_r, 1.0 / 3.0);
+  if (y_r > LAB_EPSILON) f_y = cbrt(y_r);
   else ( f_y = ((LAB_KAPPA * y_r) + 16) / 116.0 );
 
-  if (z_r > LAB_EPSILON) f_z = pow(z_r, 1.0 / 3.0);
+  if (z_r > LAB_EPSILON) f_z = cbrt(z_r);
   else ( f_z = ((LAB_KAPPA * z_r) + 16) / 116.0 );
 
   *to_L = (116.0 * f_y) - 16.0;
