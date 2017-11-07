@@ -237,6 +237,22 @@ conv_rgbAF_linear_rgbaF_linear_spin (const Babl *conversion,const float *src, fl
 #define FLT_ONE 0x3f800000 // ((union {float f; int i;}){1.0f}).i
 #define FLT_MANTISSA (1<<23)
 
+static inline float
+sse_max_component (__v4sf x) {
+  __v4sf s;
+  __v4sf m;
+
+  /* m = [max (x[3], x[1]), max (x[2], x[0])] */
+  s = (__v4sf) _mm_shuffle_epi32 ((__m128i) x, _MM_SHUFFLE(0, 0, 3, 2));
+  m = _mm_max_ps (x, s);
+
+  /* m = [max (m[1], m[0])] = [max (max (x[3], x[1]), max (x[2], x[0]))] */
+  s = (__v4sf) _mm_shuffle_epi32 ((__m128i) m, _MM_SHUFFLE(0, 0, 0, 1));
+  m = _mm_max_ps (m, s);
+
+  return m[0];
+}
+
 static inline __v4sf
 sse_init_newton (__v4sf x, double exponent, double c0, double c1, double c2)
 {
@@ -249,6 +265,13 @@ static inline __v4sf
 sse_pow_1_24 (__v4sf x)
 {
   __v4sf y, z;
+  if (sse_max_component (x) > 1024.0f) {
+    /* for large values, fall back to a slower but more accurate version */
+    return _mm_set_ps (expf (logf (x[3]) * (1.0f / 2.4f)),
+                       expf (logf (x[2]) * (1.0f / 2.4f)),
+                       expf (logf (x[1]) * (1.0f / 2.4f)),
+                       expf (logf (x[0]) * (1.0f / 2.4f)));
+  }
   y = sse_init_newton (x, -1./12, 0.9976800269, 0.9885126933, 0.5908575383);
   x = _mm_sqrt_ps (x);
   /* newton's method for x^(-1/6) */
@@ -262,6 +285,13 @@ static inline __v4sf
 sse_pow_24 (__v4sf x)
 {
   __v4sf y, z;
+  if (sse_max_component (x) > 16.0f) {
+    /* for large values, fall back to a slower but more accurate version */
+    return _mm_set_ps (expf (logf (x[3]) * 2.4f),
+                       expf (logf (x[2]) * 2.4f),
+                       expf (logf (x[1]) * 2.4f),
+                       expf (logf (x[0]) * 2.4f));
+  }
   y = sse_init_newton (x, -1./5, 0.9953189663, 0.9594345146, 0.6742970332);
   /* newton's method for x^(-1/5) */
   z = splat4f (1.f/5.f) * x;

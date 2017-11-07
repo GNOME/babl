@@ -48,8 +48,13 @@ init_newton (double x, double exponent, double c0, double c1, double c2)
 double
 babl_pow_24 (double x)
 {
-  double y = init_newton (x, -1./5, 0.9953189663, 0.9594345146, 0.6742970332);
+  double y;
   int i;
+  if (x > 16.0) {
+    /* for large values, fall back to a slower but more accurate version */
+    return exp (log (x) * 2.4);
+  }
+  y = init_newton (x, -1./5, 0.9953189663, 0.9594345146, 0.6742970332);
   for (i = 0; i < 3; i++)
     y = (1.+1./5)*y - ((1./5)*x*(y*y))*((y*y)*(y*y));
   x *= y;
@@ -61,9 +66,14 @@ babl_pow_24 (double x)
 double
 babl_pow_1_24 (double x)
 {
-  double y = init_newton (x, -1./12, 0.9976800269, 0.9885126933, 0.5908575383);
+  double y;
   int i;
   double z;
+  if (x > 1024.0) {
+    /* for large values, fall back to a slower but more accurate version */
+    return exp (log (x) * (1.0 / 2.4));
+  }
+  y = init_newton (x, -1./12, 0.9976800269, 0.9885126933, 0.5908575383);
   x = sqrt (x);
   /* newton's method for x^(-1/6) */
   z = (1./6.) * x;
@@ -102,8 +112,13 @@ init_newtonf (float x, float exponent, float c0, float c1, float c2)
 float
 babl_pow_24f (float x)
 {
-  float y = init_newtonf (x, -1.f/5, 0.9953189663f, 0.9594345146f, 0.6742970332f);
+  float y;
   int i;
+  if (x > 16.0f) {
+    /* for large values, fall back to a slower but more accurate version */
+    return expf (logf (x) * 2.4f);
+  }
+  y = init_newtonf (x, -1.f/5, 0.9953189663f, 0.9594345146f, 0.6742970332f);
   for (i = 0; i < 3; i++)
     y = (1.f+1.f/5)*y - ((1./5)*x*(y*y))*((y*y)*(y*y));
   x *= y;
@@ -115,9 +130,14 @@ babl_pow_24f (float x)
 float
 babl_pow_1_24f (float x)
 {
-  float y = init_newtonf (x, -1.f/12, 0.9976800269f, 0.9885126933f, 0.5908575383f);
+  float y;
   int i;
   float z;
+  if (x > 1024.0f) {
+    /* for large values, fall back to a slower but more accurate version */
+    return expf (logf (x) * (1.0f / 2.4f));
+  }
+  y = init_newtonf (x, -1.f/12, 0.9976800269f, 0.9885126933f, 0.5908575383f);
   x = sqrtf (x);
   /* newton's method for x^(-1/6) */
   z = (1.f/6.f) * x;
