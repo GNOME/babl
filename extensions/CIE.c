@@ -767,9 +767,9 @@ Labf_to_rgbf (const Babl *conversion,float *src,
       float xr = cubef (fx) > LAB_EPSILON ? cubef (fx) : (fx * 116.0f - 16.0f) / LAB_KAPPA;
       float zr = cubef (fz) > LAB_EPSILON ? cubef (fz) : (fz * 116.0f - 16.0f) / LAB_KAPPA;
 
-      float r =  3.134274799724f * D50_WHITE_REF_X * xr -1.617275708956f * D50_WHITE_REF_Y * yr -0.490724283042f * D50_WHITE_REF_Z * zr;
-      float g = -0.978795575994f * D50_WHITE_REF_X * xr +1.916161689117f * D50_WHITE_REF_Y * yr +0.033453331711f * D50_WHITE_REF_Z * zr;
-      float b =  0.071976988401f * D50_WHITE_REF_X * xr -0.228984974402f * D50_WHITE_REF_Y * yr +1.405718224383f * D50_WHITE_REF_Z * zr;
+      float r =  3.134218931198f * D50_WHITE_REF_X * xr -1.617237925529f * D50_WHITE_REF_Y * yr -0.490704864264f * D50_WHITE_REF_Z * zr;
+      float g = -0.978840410709f * D50_WHITE_REF_X * xr +1.916181206703f * D50_WHITE_REF_Y * yr +0.033482126892f * D50_WHITE_REF_Z * zr;
+      float b =  0.071941196918f * D50_WHITE_REF_X * xr -0.229004547000f * D50_WHITE_REF_Y * yr +1.405783772469f * D50_WHITE_REF_Z * zr;
 
       dst[0] = r;
       dst[1] = g;
@@ -802,9 +802,9 @@ Labaf_to_rgbaf (const Babl *conversion,float *src,
       float xr = cubef (fx) > LAB_EPSILON ? cubef (fx) : (fx * 116.0f - 16.0f) / LAB_KAPPA;
       float zr = cubef (fz) > LAB_EPSILON ? cubef (fz) : (fz * 116.0f - 16.0f) / LAB_KAPPA;
 
-      float r =  3.134274799724f * D50_WHITE_REF_X * xr -1.617275708956f * D50_WHITE_REF_Y * yr -0.490724283042f * D50_WHITE_REF_Z * zr;
-      float g = -0.978795575994f * D50_WHITE_REF_X * xr +1.916161689117f * D50_WHITE_REF_Y * yr +0.033453331711f * D50_WHITE_REF_Z * zr;
-      float b =  0.071976988401f * D50_WHITE_REF_X * xr -0.228984974402f * D50_WHITE_REF_Y * yr +1.405718224383f * D50_WHITE_REF_Z * zr;
+      float r =  3.134218931198f * D50_WHITE_REF_X * xr -1.617237925529f * D50_WHITE_REF_Y * yr -0.490704864264f * D50_WHITE_REF_Z * zr;
+      float g = -0.978840410709f * D50_WHITE_REF_X * xr +1.916181206703f * D50_WHITE_REF_Y * yr +0.033482126892f * D50_WHITE_REF_Z * zr;
+      float b =  0.071941196918f * D50_WHITE_REF_X * xr -0.229004547000f * D50_WHITE_REF_Y * yr +1.405783772469f * D50_WHITE_REF_Z * zr;
 
       dst[0] = r;
       dst[1] = g;
