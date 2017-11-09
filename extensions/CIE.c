@@ -2,6 +2,7 @@
  * Copyright (C) 2005, 2014 Øyvind Kolås.
  * Copyright (C) 2009, Martin Nordholts
  * Copyright (C) 2014, Elle Stone
+ * Copyright (C) 2017, Red Hat, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -592,6 +593,44 @@ cubef (float f)
 }
 
 static void
+Yf_to_Lf (const Babl *conversion,float *src,
+          float *dst,
+          long   samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      float yr = src[0];
+      float L  = yr > LAB_EPSILON ? 116.0f * _cbrtf (yr) - 16 : LAB_KAPPA * yr;
+
+      dst[0] = L;
+
+      src++;
+      dst++;
+    }
+}
+
+static void
+Yaf_to_Lf (const Babl *conversion,float *src,
+           float *dst,
+           long   samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      float yr = src[0];
+      float L  = yr > LAB_EPSILON ? 116.0f * _cbrtf (yr) - 16 : LAB_KAPPA * yr;
+
+      dst[0] = L;
+
+      src += 2;
+      dst += 1;
+    }
+}
+
+static void
 Yaf_to_Laf (const Babl *conversion,float *src,
             float *dst,
             long   samples)
@@ -653,6 +692,36 @@ rgbf_to_Labf (const Babl *conversion,float *src,
 
       src += 3;
       dst += 3;
+    }
+}
+
+static void
+rgbaf_to_Lf (const Babl *conversion,float *src,
+             float *dst,
+             long   samples)
+{
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Y;
+  float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Y;
+  float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Y;
+  long n = samples;
+
+  while (n--)
+    {
+      float r = src[0];
+      float g = src[1];
+      float b = src[2];
+
+      float yr = m_1_0 * r + m_1_1 * g + m_1_2 * b;
+
+      float fy = yr > LAB_EPSILON ? _cbrtf (yr) : (LAB_KAPPA * yr + 16.0f) / 116.0f;
+
+      float L = 116.0f * fy - 16.0f;
+
+      dst[0] = L;
+
+      src += 4;
+      dst += 1;
     }
 }
 
@@ -743,6 +812,38 @@ rgbaf_to_Labaf (const Babl *conversion,float *src,
 
       src += 4;
       dst += 4;
+    }
+}
+
+static void
+Labf_to_Lf (const Babl *conversion,float *src,
+            float *dst,
+            long   samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      dst[0] = src[0];
+
+      src += 3;
+      dst += 1;
+    }
+}
+
+static void
+Labaf_to_Lf (const Babl *conversion,float *src,
+             float *dst,
+             long   samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      dst[0] = src[0];
+
+      src += 4;
+      dst += 1;
     }
 }
 
@@ -1006,9 +1107,39 @@ conversions (void)
     NULL
   );
   babl_conversion_new (
+    babl_format ("Y float"),
+    babl_format ("CIE L float"),
+    "linear", Yf_to_Lf,
+    NULL
+  );
+  babl_conversion_new (
+    babl_format ("YA float"),
+    babl_format ("CIE L float"),
+    "linear", Yaf_to_Lf,
+    NULL
+  );
+  babl_conversion_new (
     babl_format ("YA float"),
     babl_format ("CIE L alpha float"),
     "linear", Yaf_to_Laf,
+    NULL
+  );
+  babl_conversion_new (
+    babl_format ("RGBA float"),
+    babl_format ("CIE L float"),
+    "linear", rgbaf_to_Lf,
+    NULL
+  );
+  babl_conversion_new (
+    babl_format ("CIE Lab float"),
+    babl_format ("CIE L float"),
+    "linear", Labf_to_Lf,
+    NULL
+  );
+  babl_conversion_new (
+    babl_format ("CIE Lab alpha float"),
+    babl_format ("CIE L float"),
+    "linear", Labaf_to_Lf,
     NULL
   );
   babl_conversion_new (
@@ -1107,6 +1238,13 @@ formats (void)
     babl_component ("CIE a"),
     babl_component ("CIE b"),
     babl_component ("A"),
+    NULL);
+
+  babl_format_new (
+    "name", "CIE L float",
+    babl_model ("CIE Lab"),
+    babl_type ("float"),
+    babl_component ("CIE L"),
     NULL);
 
   babl_format_new (
