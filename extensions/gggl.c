@@ -373,7 +373,10 @@ conv_gAF_gaF (const Babl *conversion,unsigned char *src, unsigned char *dst, lon
     {
       float alpha = (*(float *) (src + 4));
 
-      *(float *) dst = ((*(float *) src) / alpha);
+      if (alpha == 0.0f)
+        *(float *) dst = 0.0f;
+      else
+        *(float *) dst = ((*(float *) src) / alpha);
       dst           += 4;
       src           += 4;
       *(float *) dst = alpha;
