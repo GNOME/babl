@@ -560,10 +560,16 @@ conv_rgbA16_rgbaF (const Babl *conversion,unsigned char *src, unsigned char *dst
     {
       float alpha = (((unsigned short *) src)[3]) / 65535.0;
       int   c;
+      float recip_alpha;
+
+      if (alpha == 0.0f)
+        recip_alpha = 10000.0;
+      else
+        recip_alpha = 1.0/alpha;
 
       for (c = 0; c < 3; c++)
         {
-          (*(float *) dst) = (*(unsigned short *) src / 65535.0) / alpha;
+          (*(float *) dst) = (*(unsigned short *) src / 65535.0) * recip_alpha;
           dst             += 4;
           src             += 2;
         }
