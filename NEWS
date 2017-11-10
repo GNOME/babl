@@ -1,9 +1,14 @@
                                                                  <dl><dt><!--
 The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
-
-
                                                                           -->
+
+2017-11-10 babl-0.1.36                                              </dt><dd>
+Optimized customized primary aware code paths for CIE Lab<->RGB conversions,
+improved accuracy of gamma approximations. New API babl_format_exists() for
+checking validity of babl format name, crash proofing of cache handling and use
+of environment variables.
+                                                                    </dd><dt>
 2017-10-06 babl-0.1.34                                              </dt><dd>
 Brown paper bag release, Fix indexed / custom primaries conflict, and re-export
 a symbol used by old GEGL/GIMPs.
