@@ -151,7 +151,7 @@ babl_pow_24f (float x)
   }
   y = init_newtonf (x, -1.f/5, 0.9953189663f, 0.9594345146f, 0.6742970332f);
   for (i = 0; i < 3; i++)
-    y = (1.f+1.f/5)*y - ((1./5)*x*(y*y))*((y*y)*(y*y));
+    y = (1.f+1.f/5)*y - ((1.f/5)*x*(y*y))*((y*y)*(y*y));
   x *= y;
   return x*x*x;
 }
