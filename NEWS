@@ -3,6 +3,9 @@ The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
                                                                           -->
 
+2017-11-15 babl-0.1.38                                              </dt><dd>
+Added format "CIE L float", a couple of protections against division by 0.0
+                                                                    </dd><dt>
 2017-11-10 babl-0.1.36                                              </dt><dd>
 Optimized customized primary aware code paths for CIE Lab<->RGB conversions,
 improved accuracy of gamma approximations. New API babl_format_exists() for
