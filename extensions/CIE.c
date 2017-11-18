@@ -713,10 +713,7 @@ rgbaf_to_Lf (const Babl *conversion,float *src,
       float b = src[2];
 
       float yr = m_1_0 * r + m_1_1 * g + m_1_2 * b;
-
-      float fy = yr > LAB_EPSILON ? _cbrtf (yr) : (LAB_KAPPA * yr + 16.0f) / 116.0f;
-
-      float L = 116.0f * fy - 16.0f;
+      float L = yr > LAB_EPSILON ? 116.0f * _cbrtf (yr) - 16 : LAB_KAPPA * yr;
 
       dst[0] = L;
 
