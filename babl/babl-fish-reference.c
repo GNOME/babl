@@ -153,7 +153,7 @@ babl_fish_reference (const Babl *source,
 static void
 convert_to_double (BablFormat      *source_fmt,
                    const char      *source_buf,
-                   char            *source_double_buf,
+                   char            *double_buf,
                    int              n)
 {
   int        i;
@@ -171,36 +171,55 @@ convert_to_double (BablFormat      *source_fmt,
     (dst_img->type[0]->bits / 8) * source_fmt->model->components;
   dst_img->stride[0] = 0;
 
-
-  src_img->data[0]   = (char *)source_buf;
   src_img->type[0]   = (BablType *) babl_type_from_id (BABL_DOUBLE);
   src_img->pitch[0]  = source_fmt->bytes_per_pixel;
   src_img->stride[0] = 0;
 
   {
-  /* i is source position */
-  for (i = 0; i < source_fmt->components; i++)
+  /* i is dest position */
+  for (i = 0; i < source_fmt->model->components; i++)
     {
       int j;
+      int found = 0;
 
-      src_img->type[0] = source_fmt->type[i];
+      dst_img->data[0] =
+        double_buf + (dst_img->type[0]->bits / 8) * i;
+
+      src_img->data[0] = (char *)source_buf;
+
       /* j is source position */
-      for (j = 0; j < source_fmt->model->components; j++)
+      for (j = 0; j < source_fmt->components; j++)
         {
-          if (source_fmt->component[i] ==
-              source_fmt->model->component[j])
-            {
-              dst_img->data[0] =
-                source_double_buf + (dst_img->type[0]->bits / 8) * j;
+          src_img->type[0] = source_fmt->type[j];
 
+          if (source_fmt->component[j] ==
+              source_fmt->model->component[i])
+            {
               babl_process (assert_conversion_find (src_img->type[0],
                                                     dst_img->type[0]),
                             src_img, dst_img, n);
+              found = 1;
               break;
             }
+
+          src_img->data[0] += src_img->type[0]->bits / 8;
         }
 
-      src_img->data[0] += src_img->type[0]->bits / 8;
+      if (!found)
+        {
+          char *dst_ptr = dst_img->data[0];
+          double value;
+
+          value = source_fmt->model->component[i]->instance.id == BABL_ALPHA ? 1.0 : 0.0;
+
+          for (j = 0; j < n; j++)
+            {
+              double *dst_component = (double *) dst_ptr;
+
+              *dst_component = value;
+              dst_ptr += dst_img->pitch[0];
+            }
+        }
     }
   }
   babl_free (src_img);
