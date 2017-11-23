@@ -82,4 +82,6 @@ babl = library('babl',
   include_directories: [ rootInclude, bablBaseInclude],
   c_args:   [ '-DLIBDIR="' + get_option('libdir') + '"', ],
   cpp_args: [ '-DLIBDIR="' + get_option('libdir') + '"', ],
+  link_with: [ babl_base, ],
+  dependencies: [ math, thread, dl, ],
 )

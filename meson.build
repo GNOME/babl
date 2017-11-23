@@ -116,8 +116,8 @@ platform_android = host_os.contains('android')
 
 path_sep = ( os_win32 ? ';'  : ':' )
 dirs_sep = ( os_win32 ? '\\' : '/' )
-conf.set('BABL_PATH_SEPARATOR', path_sep)
-conf.set('BABL_DIR_SEPARATOR',  dirs_sep)
+conf.set('BABL_PATH_SEPARATOR', '\'' + path_sep + '\'')
+conf.set_quoted('BABL_DIR_SEPARATOR',  dirs_sep)
 
 ################################################################################
 # Extra warnings
@@ -217,6 +217,8 @@ if platform_android
 else
   log = []
 endif
+
+dl = cc.find_library('dl')
 
 
 pkgconfig.generate(filebase: 'babl',
