@@ -49,16 +49,17 @@ lt_current_minus_age = lt_current - lt_age
 
 api_version = '@0@.@1@'.format(major_version, minor_version)
 lib_version = '@0@:@1@:@2@'.format(lt_current, lt_revision, lt_age)
-lib_name    = meson.project_name() + '-' + meson.project_version()
+so_version  = '@0@.@1@.@2@'.format(lt_current_minus_age, lt_current, interface_age)
+lib_name    = meson.project_name() + '-' + api_version
 
 stability_version_number = (major_version != 0 ? minor_version : micro_version)
 stable = (stability_version_number % 2 == 0)
 
 conf.set10('BABL_UNSTABLE', not stable)
 
-conf.set_quoted('BABL_MAJOR_VERSION',    '@0@'.format(major_version))
-conf.set_quoted('BABL_MINOR_VERSION',    '@0@'.format(minor_version))
-conf.set_quoted('BABL_MICRO_VERSION',    '@0@'.format(micro_version))
+conf.set       ('BABL_MAJOR_VERSION',    '@0@'.format(major_version))
+conf.set       ('BABL_MINOR_VERSION',    '@0@'.format(minor_version))
+conf.set       ('BABL_MICRO_VERSION',    '@0@'.format(micro_version))
 conf.set_quoted('BABL_INTERFACE_AGE',    '@0@'.format(interface_age))
 conf.set_quoted('BABL_BINARY_AGE',       '@0@'.format(binary_age))
 conf.set_quoted('BABL_VERSION',          '@0@'.format(version))
@@ -68,9 +69,6 @@ conf.set_quoted('BABL_RELEASE',          '@0@'.format(api_version))
 conf.set_quoted('BABL_LIBRARY_VERSION',  '@0@'.format(lib_version))
 conf.set_quoted('BABL_CURRENT_MINUS_AGE','@0@'.format(lt_current_minus_age))
 conf.set_quoted('BABL_LIBRARY',          '@0@'.format(lib_name))
-
-conf.set_quoted('WEBSITE_HOST',     'pippin.gimp.org')
-conf.set_quoted('WEBSITE_LOCATION', 'public_html/babl')
 
 ################################################################################
 # Host system detection
@@ -252,7 +250,7 @@ subdir('extensions')
 subdir('tests')
 subdir('tools')
 if get_option('with-docs')
-  # subdir('docs')
+  subdir('docs')
 endif
 
 

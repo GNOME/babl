@@ -33,7 +33,8 @@ foreach extension_name : extension_names
     link_with: [ babl, ],
     dependencies: [ math, thread, ],
     name_prefix: '',
-    install: false,
+    install: true,
+    install_dir: join_paths(get_option('libdir'), lib_name),
   )
 endforeach
 

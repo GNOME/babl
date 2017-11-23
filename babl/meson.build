@@ -71,6 +71,7 @@ babl_headers = [
   'babl-macros.h',
   'babl-types.h',
   'babl.h',
+  babl_version_h,
 ]
 
 install_headers(babl_headers,
@@ -84,4 +85,6 @@ babl = library('babl',
   cpp_args: [ '-DLIBDIR="' + get_option('libdir') + '"', ],
   link_with: [ babl_base, ],
   dependencies: [ math, thread, dl, ],
+  install: true,
+  version: so_version,
 )
