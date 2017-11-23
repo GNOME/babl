@@ -248,9 +248,9 @@ configure_file(
 rootInclude = include_directories('.')
 
 subdir('babl')
-# subdir('extensions')
+subdir('extensions')
 subdir('tests')
-# subdir('tools')
+subdir('tools')
 if get_option('with-docs')
   # subdir('docs')
 endif
