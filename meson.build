@@ -11,7 +11,7 @@
 # if backwards compatibility has been broken,
 #    set BABL_BINARY_AGE _and_ BABL_INTERFACE_AGE to 0.
 
-project('babl', ['c', 'cpp'], version : '0.1.39',
+project('babl', 'c', version : '0.1.39',
   meson_version : '>=0.40.0',
   default_options : [
     'sysconfdir=/etc',
@@ -27,7 +27,6 @@ i18n      = import('i18n')
 gnome     = import('gnome')
 
 cc        = meson.get_compiler('c')
-cxx       = meson.get_compiler('cpp')
 prefix    = get_option('prefix')
 buildtype = get_option('buildtype')
 
@@ -107,7 +106,7 @@ os_win32 = host_os.startswith('mingw')
 
 platform_osx = host_os.startswith('darwin')
 if platform_osx
-  if cc.get_id() != 'clang' or cxx.get_id() != 'clang'
+  if cc.get_id() != 'clang'
     error('You should use CLang++ on OSx.')
   endif
 endif
@@ -147,37 +146,37 @@ have_tls = (have_tls_run.compiled() and have_tls_run.returncode() == 0)
 has_ssem = cc.has_argument('-mfpmath=sse')
 if has_ssem
   add_project_arguments('-mfpmath=sse',
-    language: ['c', 'cxx'])
+    language: 'c')
 endif
 
 has_mmx  = cc.has_argument('-mmmx') and get_option('enable-mmx')
 if has_mmx
   add_project_arguments(   '-mmmx',
-    language: ['c', 'cxx'])
+    language: 'c')
 endif
 
 has_sse  = cc.has_argument('-msse') and get_option('enable-sse')
 if has_sse
   add_project_arguments(   '-msse',
-    language: ['c', 'cxx'])
+    language: 'c')
 endif
 
 has_sse2 = cc.has_argument('-msse2') and get_option('enable-sse2')
 if has_sse2
   add_project_arguments(   '-msse2',
-    language: ['c', 'cxx'])
+    language: 'c')
 endif
 
 has_sse41= cc.has_argument('-msse4.1') and get_option('enable-sse4_1')
 if has_sse41
   add_project_arguments(   '-msse4.1',
-    language: ['c', 'cxx'])
+    language: 'c')
 endif
 
 had_f16c= cc.has_argument('-mf16c') and get_option('enable-f16c')
 if had_f16c
   add_project_arguments(   '-mf16c',
-    language: ['c', 'cxx'])
+    language: 'c')
 endif
 
 have_dlfcn_h = cc.has_header('dlfcn.h')
@@ -250,7 +249,7 @@ rootInclude = include_directories('.')
 
 subdir('babl')
 # subdir('extensions')
-# subdir('tests')
+subdir('tests')
 # subdir('tools')
 if get_option('with-docs')
   # subdir('docs')
