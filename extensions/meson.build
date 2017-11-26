@@ -37,9 +37,3 @@ foreach extension_name : extension_names
     install_dir: join_paths(get_option('libdir'), lib_name),
   )
 endforeach
-
-# sse2_float_la_CFLAGS = $(SSE2_EXTRA_CFLAGS)
-# sse2_int8_la_CFLAGS = $(SSE2_EXTRA_CFLAGS)
-# sse2_int16_la_CFLAGS = $(SSE2_EXTRA_CFLAGS)
-# sse4_int8_la_CFLAGS = $(SSE4_1_EXTRA_CFLAGS)
-# sse_half_la_CFLAGS = $(SSE4_1_EXTRA_CFLAGS) $(F16C_EXTRA_CFLAGS)

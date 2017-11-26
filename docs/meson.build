@@ -14,6 +14,9 @@ index_static_html = configure_file(
   configuration: conf,
 )
 
+babl_path_src = join_paths(meson.source_root() + 'extensions')
+babl_path_bin = join_paths(meson.build_root()  + 'extensions')
+
 index_html = custom_target('index.html',
   input : [
     index_static_html,
@@ -23,40 +26,36 @@ index_html = custom_target('index.html',
   ],
   output: [ 'index.html', ],
   command: [
-
+    # cp $< $@
+    # (which mktemp > /dev/null 2>&1 && TMPFILE=`mktemp` || TMPFILE="/tmp/babl_build_tempfile" ;\
+    # export BABL_PATH="$(top_builddir)/extensions:$(top_builddir)/extensions/.libs"; $(babl_html_dump) > $$TMPFILE;\
+    # $(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ BablBase $$TMPFILE;\
+    # rm -f $$TMPFILE )
+    # echo -n "."
+    #
+    # $(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ AUTHORS $(top_srcdir)/AUTHORS
+    # $(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ TODO $(top_srcdir)/TODO
+    # $(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ NEWS $(top_srcdir)/NEWS
+    # echo " [OK]"
   ],
 )
 
-# push_web_root = custom_target('push_web_root',
-#   input : [
-#     index_html,
-#     index_static_html,
-#     'babl.css',
-#   ],
-#   output: [ 'push_web_root' ],
-#   command: [
-#     'scp',
-#     '@INPUT@',
-#     scptarget,
-#   ],
-# )
-# push_web_graphics = custom_target('push_web_graphics',
-#   input : [
-#     graphic_files_install,
-#   ],
-#   output: [ 'push_web_graphics' ],
-#   command: [
-#     'scp',
-#     '@INPUT@',
-#     scptarget + 'graphics/',
-#   ],
-# )
-#
-# web = custom_target('web',
-#   input: [
-#     push_web_root,
-#     push_web_graphics
-#   ],
-#   output: [],
-#   command: [],
-# )
+babl_css = files('babl.css')
+
+custom_target('push_web.sh',
+  input : [
+    index_html,
+    index_static_html,
+    babl_css,
+    graphic_files_install,
+  ],
+  output: [
+    'push_web.sh',
+  ],
+  command: [
+    'echo', '#!/bin/bash',
+    '\n' + 'scp', index_html, index_static_html, babl_css, scptarget,
+    '\n' + 'scp', graphic_files_install, scptarget + 'graphics/'
+  ],
+  capture: true,
+)

@@ -1,6 +1,14 @@
-# Meson build file
-
-# http://bugzilla.gnome.org/enter_bug.cgi?product=GIMP
+project('babl', 'c',
+  license: 'GPL3+',
+  version: '0.1.39',
+  meson_version: '>=0.40.0',
+  default_options: [
+    'sysconfdir=/etc',
+    'localstatedir=/var',
+    'sharedstatedir=/var/lib'
+  ],
+  # http://bugzilla.gnome.org/enter_bug.cgi?product=GEGL
+)
 
 # Making releases on the stable branch:
 #   BABL_MICRO_VERSION += 1;
@@ -11,14 +19,6 @@
 # if backwards compatibility has been broken,
 #    set BABL_BINARY_AGE _and_ BABL_INTERFACE_AGE to 0.
 
-project('babl', 'c', version : '0.1.39',
-  meson_version : '>=0.40.0',
-  default_options : [
-    'sysconfdir=/etc',
-    'localstatedir=/var',
-    'sharedstatedir=/var/lib'
-  ],
-)
 
 conf = configuration_data()
 
@@ -38,18 +38,15 @@ array_version = version.split('.')
 major_version = array_version[0].to_int()
 minor_version = array_version[1].to_int()
 micro_version = array_version[2].to_int()
-
 interface_age = 1
+
 binary_age = 100 * minor_version + micro_version
 
-lt_current = 100 * minor_version + micro_version - interface_age
-lt_revision = interface_age
-lt_age = binary_age - interface_age
-lt_current_minus_age = lt_current - lt_age
+lt_current = binary_age - interface_age
 
 api_version = '@0@.@1@'.format(major_version, minor_version)
-lib_version = '@0@:@1@:@2@'.format(lt_current, lt_revision, lt_age)
-so_version  = '@0@.@1@.@2@'.format(lt_current_minus_age, lt_current, interface_age)
+lib_version = '@0@:@1@:@2@'.format(lt_current, interface_age, lt_current)
+so_version  = '@0@.@1@.@2@'.format(0, lt_current, interface_age)
 lib_name    = meson.project_name() + '-' + api_version
 
 stability_version_number = (major_version != 0 ? minor_version : micro_version)
@@ -67,7 +64,7 @@ conf.set_quoted('BABL_REAL_VERSION',     '@0@'.format(version))
 conf.set_quoted('BABL_API_VERSION',      '@0@'.format(api_version))
 conf.set_quoted('BABL_RELEASE',          '@0@'.format(api_version))
 conf.set_quoted('BABL_LIBRARY_VERSION',  '@0@'.format(lib_version))
-conf.set_quoted('BABL_CURRENT_MINUS_AGE','@0@'.format(lt_current_minus_age))
+conf.set_quoted('BABL_CURRENT_MINUS_AGE','@0@'.format(0))
 conf.set_quoted('BABL_LIBRARY',          '@0@'.format(lib_name))
 
 ################################################################################
@@ -139,7 +136,7 @@ endforeach
 # Check for compiler CPU extensions
 
 have_tls_run = cc.run('int main() { static __thread char buf[1024]; return 0; }')
-have_tls = (have_tls_run.compiled() and have_tls_run.returncode() == 0)
+conf.set('HAVE_TLS', (have_tls_run.compiled() and have_tls_run.returncode() == 0))
 
 has_ssem = cc.has_argument('-mfpmath=sse')
 if has_ssem
@@ -183,8 +180,8 @@ if not (have_dlfcn_h or have_dl_h)
   error('Header dlfcn.h or dl.h not provided. Please provide one of them.')
 endif
 
-conf.set10('HAVE_DLFCN_H', have_dlfcn_h)
-conf.set10('HAVE_DL_H', have_dl_h)
+conf.set('HAVE_DLFCN_H', have_dlfcn_h)
+conf.set('HAVE_DL_H', have_dl_h)
 
 
 shared_lib_ext = (platform_win32 ? '.dll' : '.so')
@@ -195,7 +192,6 @@ conf.set_quoted('SHREXT', shared_lib_ext)
 
 rsvg_convert = find_program('rsvg-convert', required: false)
 w3m          = find_program('w3m', required: false)
-
 
 
 ################################################################################
