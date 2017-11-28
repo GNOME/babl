@@ -240,6 +240,9 @@ configure_file(
 # Subdirs
 
 rootInclude = include_directories('.')
+version_script = join_paths(
+  meson.source_root(), meson.current_source_dir(), 'babl.map'
+)
 
 subdir('babl')
 subdir('extensions')
