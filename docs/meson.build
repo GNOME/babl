@@ -18,8 +18,9 @@ index_static_html = configure_file(
 index_html_tmp = custom_target('index.html.tmp',
   input : [ babl_html_dump, ],
   output: [ 'index.html.tmp', ],
-  command: [ 'bash', '-c',
-    'BABL_PATH="'+ join_paths(meson.build_root(), 'extensions') +'" '+ babl_html_dump.full_path()
+  command: [
+    'env', 'BABL_PATH='+ join_paths(meson.build_root(), 'extensions'),
+    babl_html_dump
   ],
   capture: true,
 )
