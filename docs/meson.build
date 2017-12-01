@@ -15,8 +15,19 @@ index_static_html = configure_file(
   configuration: conf,
 )
 
+index_html_tmp = custom_target('index.html.tmp',
+  input : [ babl_html_dump, ],
+  output: [ 'index.html.tmp', ],
+  command: [ 'bash', '-c',
+    'BABL_PATH="' + join_paths(meson.build_root(), 'extensions') +'"'
+    + ' ' + babl_html_dump.full_path()
+  ],
+  capture: true,
+)
+
 index_html = custom_target('index.html',
   input : [
+    index_html_tmp,
     index_static_html,
     join_paths(meson.source_root(), 'AUTHORS'),
     join_paths(meson.source_root(), 'TODO'),
@@ -24,16 +35,13 @@ index_html = custom_target('index.html',
   ],
   output: [ 'index.html', ],
   command: [ 'bash', '-c',
-    'BABL_PATH="' + join_paths(meson.build_root(), 'extensions') +'"'
-    +' '+ babl_html_dump.full_path() +' > ' + '@OUTPUT@.tmp'
-    +' && '+ 'cp '+ join_paths(meson.build_root(), meson.current_source_dir(), 'index-static.html') +' @OUTPUT@'
-    +' && '+ xml_insert.path() +' @OUTPUT@ BablBase @OUTPUT@.tmp'
+    'cp '+ join_paths(meson.build_root(), meson.current_source_dir(), 'index-static.html') +' @OUTPUT@'
+    +' && '+ xml_insert.path() +' @OUTPUT@ BablBase '+ index_html_tmp.full_path()
     +' && '+ xml_insert.path() +' @OUTPUT@ AUTHORS  '+ join_paths(meson.source_root(), 'AUTHORS')
     +' && '+ xml_insert.path() +' @OUTPUT@ TODO     '+ join_paths(meson.source_root(), 'TODO')
     +' && '+ xml_insert.path() +' @OUTPUT@ NEWS     '+ join_paths(meson.source_root(), 'NEWS')
   ],
 )
-
 
 
 run_target('push_web',
