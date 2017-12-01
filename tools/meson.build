@@ -20,4 +20,8 @@ foreach tool_name : tool_names
     dependencies: [ math, thread, ],
     install: false,
   )
+
+  if tool_name == 'babl-html-dump'
+    babl_html_dump = tool
+  endif
 endforeach
