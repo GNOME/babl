@@ -19,8 +19,7 @@ index_html_tmp = custom_target('index.html.tmp',
   input : [ babl_html_dump, ],
   output: [ 'index.html.tmp', ],
   command: [ 'bash', '-c',
-    'BABL_PATH="' + join_paths(meson.build_root(), 'extensions') +'"'
-    + ' ' + babl_html_dump.full_path()
+    'BABL_PATH="'+ join_paths(meson.build_root(), 'extensions') +'" '+ babl_html_dump.full_path()
   ],
   capture: true,
 )
@@ -35,7 +34,7 @@ index_html = custom_target('index.html',
   ],
   output: [ 'index.html', ],
   command: [ 'bash', '-c',
-    'cp '+ join_paths(meson.build_root(), meson.current_source_dir(), 'index-static.html') +' @OUTPUT@'
+    'cp '+ '@0@'.format(index_static_html) +' @OUTPUT@'
     +' && '+ xml_insert.path() +' @OUTPUT@ BablBase '+ index_html_tmp.full_path()
     +' && '+ xml_insert.path() +' @OUTPUT@ AUTHORS  '+ join_paths(meson.source_root(), 'AUTHORS')
     +' && '+ xml_insert.path() +' @OUTPUT@ TODO     '+ join_paths(meson.source_root(), 'TODO')
