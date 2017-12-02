@@ -18,8 +18,8 @@ index_static_html = configure_file(
 index_html_tmp = custom_target('index.html.tmp',
   input : [ babl_html_dump, ],
   output: [ 'index.html.tmp', ],
-  command: [
-    'env', 'BABL_PATH='+ join_paths(meson.build_root(), 'extensions'),
+  command: [ find_program('env'),
+    'BABL_PATH='+ join_paths(meson.build_root(), 'extensions'),
     babl_html_dump
   ],
   capture: true,
@@ -27,19 +27,19 @@ index_html_tmp = custom_target('index.html.tmp',
 
 index_html = custom_target('index.html',
   input : [
-    index_html_tmp,
     index_static_html,
+    index_html_tmp,
     join_paths(meson.source_root(), 'AUTHORS'),
     join_paths(meson.source_root(), 'TODO'),
     join_paths(meson.source_root(), 'NEWS'),
   ],
   output: [ 'index.html', ],
-  command: [ 'bash', '-c',
-    'cp '+ '@0@'.format(index_static_html) +' @OUTPUT@'
-    +' && '+ xml_insert.path() +' @OUTPUT@ BablBase '+ index_html_tmp.full_path()
-    +' && '+ xml_insert.path() +' @OUTPUT@ AUTHORS  '+ join_paths(meson.source_root(), 'AUTHORS')
-    +' && '+ xml_insert.path() +' @OUTPUT@ TODO     '+ join_paths(meson.source_root(), 'TODO')
-    +' && '+ xml_insert.path() +' @OUTPUT@ NEWS     '+ join_paths(meson.source_root(), 'NEWS')
+  command: [ find_program('env'),
+    'cp', '@INPUT0@', '@OUTPUT@',
+    '&&', xml_insert, '@OUTPUT@', 'BablBase', '@INPUT1@',
+    '&&', xml_insert, '@OUTPUT@', 'AUTHORS',  '@INPUT2@',
+    '&&', xml_insert, '@OUTPUT@', 'TODO',     '@INPUT3@',
+    '&&', xml_insert, '@OUTPUT@', 'NEWS',     '@INPUT4@',
   ],
 )
 
