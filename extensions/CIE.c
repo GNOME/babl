@@ -80,9 +80,9 @@ components (void)
   babl_component_new ("CIE b", "chroma", NULL);
   babl_component_new ("CIE C(ab)", "chroma", NULL);
   babl_component_new ("CIE H(ab)", "chroma", NULL);
-  /* babl_component_new ("CIE X", NULL);
+  babl_component_new ("CIE X", NULL);
   babl_component_new ("CIE Y", NULL);
-  babl_component_new ("CIE Z", NULL);*/
+  babl_component_new ("CIE Z", NULL);
 }
 
 static void
@@ -117,12 +117,21 @@ models (void)
     babl_component ("CIE H(ab)"),
     babl_component ("A"),
     NULL);
-  /*babl_model_new (
+
+  babl_model_new (
     "name", "CIE XYZ",
     babl_component ("CIE X"),
     babl_component ("CIE Y"),
     babl_component ("CIE Z"),
-    NULL);*/
+    NULL);
+
+  babl_model_new (
+    "name", "CIE XYZ alpha",
+    babl_component ("CIE X"),
+    babl_component ("CIE Y"),
+    babl_component ("CIE Z"),
+    babl_component ("A"),
+    NULL);
 }
 
 static void  rgbcie_init (void);
@@ -218,6 +227,80 @@ LAB_to_XYZ (double L,
 }
 
 static void
+rgba_to_xyz (const Babl *conversion,char *src,
+             char *dst,
+             long  n)
+{
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  while (n--)
+    {
+      double RGB[3]  = {((double *) src)[0],
+                        ((double *) src)[1],
+                        ((double *) src)[2] };
+      babl_space_to_xyz (space, RGB, (double*)dst);
+
+      src += sizeof (double) * 4;
+      dst += sizeof (double) * 3;
+    }
+}
+
+static void
+xyz_to_rgba (const Babl *conversion,char *src,
+             char *dst,
+             long  n)
+{
+  const Babl *space = babl_conversion_get_destination_space (conversion);
+  while (n--)
+    {
+      double XYZ[3] = {((double *) src)[0],
+                       ((double *) src)[1],
+                       ((double *) src)[2]};
+
+      babl_space_from_xyz (space, XYZ, (double*) dst);
+      ((double *) dst)[3] = 1.0;
+
+      src += sizeof (double) * 3;
+      dst += sizeof (double) * 4;
+    }
+}
+
+static void
+rgba_to_xyza (const Babl *conversion,char *src,
+              char *dst,
+              long  n)
+{
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  while (n--)
+    {
+      double RGB[3]  = {((double *) src)[0],
+                        ((double *) src)[1],
+                        ((double *) src)[2] };
+      babl_space_to_xyz (space, RGB, (double*)dst);
+      ((double *) dst)[3] = ((double *) src)[3];
+
+      src += sizeof (double) * 4;
+      dst += sizeof (double) * 4;
+    }
+}
+
+static void
+xyza_to_rgba (const Babl *conversion,char *src,
+              char *dst,
+              long  n)
+{
+  const Babl *space = babl_conversion_get_destination_space (conversion);
+  while (n--)
+    {
+      babl_space_from_xyz (space, (double*)src, (double*) dst);
+      ((double *) dst)[3] = ((double *) src)[3];
+
+      src += sizeof (double) * 4;
+      dst += sizeof (double) * 4;
+    }
+}
+
+
+static void
 rgba_to_lab (const Babl *conversion,char *src,
              char *dst,
              long  n)
@@ -245,6 +328,8 @@ rgba_to_lab (const Babl *conversion,char *src,
     }
 }
 
+
+
 static void
 lab_to_rgba (const Babl *conversion,char *src,
              char *dst,
@@ -258,7 +343,7 @@ lab_to_rgba (const Babl *conversion,char *src,
       double b = ((double *) src)[2];
 
       double X, Y, Z, R, G, B;
-      
+
       //convert Lab to XYZ
       LAB_to_XYZ (L, a, b, &X, &Y, &Z);
 
@@ -1187,18 +1272,30 @@ conversions (void)
     "linear", Lchabaf_to_Labaf,
     NULL
   );
-  /*babl_conversion_new (
+  babl_conversion_new (
     babl_model ("RGBA"),
     babl_model ("CIE XYZ"),
-    "linear", RGB_to_XYZ,
+    "linear", rgba_to_xyz,
     NULL
   );
   babl_conversion_new (
     babl_model ("CIE XYZ"),
     babl_model ("RGBA"),
-    "linear", XYZ_to_RGB,
+    "linear", xyz_to_rgba,
     NULL
-  );*/
+  );
+  babl_conversion_new (
+    babl_model ("RGBA"),
+    babl_model ("CIE XYZ alpha"),
+    "linear", rgba_to_xyza,
+    NULL
+  );
+  babl_conversion_new (
+    babl_model ("CIE XYZ alpha"),
+    babl_model ("RGBA"),
+    "linear", xyza_to_rgba,
+    NULL
+  );
 
   rgbcie_init ();
 }
@@ -1215,8 +1312,8 @@ formats (void)
     babl_component ("CIE a"),
     babl_component ("CIE b"),
     NULL);
-    
-  /*babl_format_new (
+
+  babl_format_new (
     "name", "CIE XYZ float",
     babl_model ("CIE XYZ"),
 
@@ -1224,7 +1321,18 @@ formats (void)
     babl_component ("CIE X"),
     babl_component ("CIE Y"),
     babl_component ("CIE Z"),
-    NULL);*/
+    NULL);
+
+  babl_format_new (
+    "name", "CIE XYZ alpha float",
+    babl_model ("CIE XYZ"),
+
+    babl_type ("float"),
+    babl_component ("CIE X"),
+    babl_component ("CIE Y"),
+    babl_component ("CIE Z"),
+    babl_component ("A"),
+    NULL);
 
   babl_format_new (
     "name", "CIE Lab alpha float",
