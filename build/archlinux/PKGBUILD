@@ -37,6 +37,6 @@ package() {
 }
 
 pkgver() {
-    cd "${srcdir}/${_gitname}"
+    cd "${_gitname}"
     git describe --always | sed -e 's/BABL_//g' -e 's/[_-]/./g'
 }
