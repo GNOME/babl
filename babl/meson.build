@@ -78,7 +78,7 @@ install_headers(babl_headers,
   subdir: join_paths(lib_name, 'babl')
 )
 
-babl = library('babl',
+babl = library(lib_name,
   babl_sources,
   include_directories: [ rootInclude, bablBaseInclude],
   c_args:   [ '-DLIBDIR="' + get_option('libdir') + '"', ],
