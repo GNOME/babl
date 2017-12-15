@@ -5,7 +5,7 @@
 
 pkgname=babl-meson-git
 _pkgname=babl
-pkgver=0.1.38.14.g9677c79
+pkgver=0.1.38.17.gf50bef7
 pkgrel=1
 pkgdesc="babl is a dynamic, any to any, pixel format translation library."
 arch=('i686' 'x86_64')
@@ -27,6 +27,8 @@ build() {
     meson "${srcdir}/${_gitname}"\
           "${srcdir}/build" \
         --prefix=/usr \
+        -Dbuildtype=release \
+        -Db_lto=true \
         -Dwith-docs=false
 
     ninja -C "${srcdir}/build"
@@ -40,3 +42,7 @@ pkgver() {
     cd "${_gitname}"
     git describe --always | sed -e 's/BABL_//g' -e 's/[_-]/./g'
 }
+
+check() {
+    meson test -C "${srcdir}/build"
+}    

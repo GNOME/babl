@@ -197,21 +197,10 @@ w3m          = find_program('w3m', required: false)
 ################################################################################
 # Dependencies
 
-if os_win32
-  math = []
-  thread = []
-else
-  math = cc.find_library('m')
-  thread  = cc.find_library('pthread')
-endif
-
-if platform_android
-  log = cc.find_library('log')
-else
-  log = []
-endif
-
-dl = cc.find_library('dl')
+math  = cc.find_library('m',       required: false)
+thread= cc.find_library('pthread', required: false)
+log   = cc.find_library('log',     required: false)
+dl    = cc.find_library('dl',      required: false)
 
 
 pkgconfig.generate(filebase: 'babl',
