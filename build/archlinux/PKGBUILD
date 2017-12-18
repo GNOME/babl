@@ -3,9 +3,9 @@
 # Contributor: Massimiliano Torromeo <massimiliano.torromeo@gmail.com>
 # Contributor: Salamandar <felix@piedallu.me>
 
-pkgname=babl-meson-git
+pkgname=babl-git
 _pkgname=babl
-pkgver=0.1.38.17.gf50bef7
+pkgver=0.1.38.23.g5aa4a51
 pkgrel=1
 pkgdesc="babl is a dynamic, any to any, pixel format translation library."
 arch=('i686' 'x86_64')
@@ -16,7 +16,7 @@ makedepends=('meson')
 provides=("babl=${pkgver}")
 conflicts=('babl')
 options=(!libtool)
-source=(git+https://github.com/salamandar/babl#branch=meson)
+source=(git://git.gnome.org/babl)
 md5sums=('SKIP')
 
 _gitname=babl
@@ -45,4 +45,4 @@ pkgver() {
 
 check() {
     meson test -C "${srcdir}/build"
-}    
+}
