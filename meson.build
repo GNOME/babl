@@ -1,5 +1,5 @@
 project('babl', 'c',
-  license: 'GPL3+',
+  license: 'LGPL3+',
   version: '0.1.39',
   meson_version: '>=0.40.0',
   default_options: [
