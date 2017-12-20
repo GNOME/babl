@@ -210,7 +210,7 @@ get_conversion_path (PathContext *pc,
       double path_cost  = 0.0;
       double ref_cost   = 0.0;
       double path_error = 1.0;
-#if 0
+#if 1
       int    i;
       for (i = 0; i < babl_list_size (pc->current_path); i++)
         {
@@ -219,7 +219,8 @@ get_conversion_path (PathContext *pc,
 
       if (path_error - 1.0 <= legal_error )
                 /* check this before the more accurate measurement of error -
-                   to bail earlier */
+                   to bail earlier, this also leads to a stricter
+                   discarding of bad fast paths  */
 #endif
         {
           FishPathInstrumentation fpi;
