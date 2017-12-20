@@ -543,7 +543,12 @@ conv_rgbaF_rgb16 (const Babl *conversion,unsigned char *src, unsigned char *dst,
 
       for (c = 0; c < 3; c++)
         {
-          *(unsigned short *) dst = lrint ((*(float *) src) * 65535.0);
+          if ((*(float *) src) >= 1.0)
+            *(unsigned short *) dst = 65535;
+          else if ((*(float *) src) <=0)
+            *(unsigned short *) dst = 0;
+          else
+            *(unsigned short *) dst = lrint ((*(float *) src) * 65535.0);
           dst                    += 2;
           src                    += 4;
         }
