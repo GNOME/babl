@@ -565,61 +565,28 @@ lchaba_to_rgba (const Babl *conversion,char *src,
 
 /******** begin floating point RGB/CIE color space conversions ********/
 
-/* origin: FreeBSD /usr/src/lib/msun/src/s_cbrtf.c */
-/*
- * Conversion to float by Ian Lance Taylor, Cygnus Support, ian@cygnus.com.
- * Debugged and optimized by Bruce D. Evans.
- */
-/*
- * ====================================================
- * Copyright (C) 1993 by Sun Microsystems, Inc. All rights reserved.
- *
- * Developed at SunPro, a Sun Microsystems, Inc. business.
- * Permission to use, copy, modify, and distribute this
- * software is freely granted, provided that this notice
- * is preserved.
- * ====================================================
+/* origin: http://www.hackersdelight.org/hdcodetxt/acbrt.c.txt
+ * permissions: http://www.hackersdelight.org/permissions.htm
  */
 /* _cbrtf(x)
  * Return cube root of x
  */
 
-#include <math.h>
 #include <stdint.h>
 
-static const unsigned
-B1 = 709958130, /* B1 = (127-127.0/3-0.03306235651)*2**23 */
-B2 = 642849266; /* B2 = (127-127.0/3-24/3-0.03306235651)*2**23 */
-
-static inline float _cbrtf(float x)
+static inline float
+_cbrtf (float x)
 {
-	float r,T;
-	union {float f; uint32_t i;} u = {x};
-	uint32_t hx = u.i & 0x7fffffff;
+  union { float f; uint32_t i; } u = { x };
 
-	if (hx >= 0x7f800000)  /* cbrt(NaN,INF) is itself */
-		return x + x;
+  u.i = u.i / 4 + u.i / 16;
+  u.i = u.i + u.i / 16;
+  u.i = u.i + u.i / 256;
+  u.i = 0x2a5137a0 + u.i;
+  u.f = 0.33333333f * (2.0f * u.f + x / (u.f * u.f));
+  u.f = 0.33333333f * (2.0f * u.f + x / (u.f * u.f));
 
-	/* rough cbrt to 5 bits */
-	if (hx < 0x00800000) {  /* zero or subnormal? */
-		if (hx == 0)
-			return x;  /* cbrt(+-0) is itself */
-		u.f = x*0x1p24f;
-		hx = u.i & 0x7fffffff;
-		hx = hx/3 + B2;
-	} else
-		hx = hx/3 + B1;
-	u.i &= 0x80000000;
-	u.i |= hx;
-
-	T = u.f;
-	r = T*T*T;
-	T = T*((float)x+x+r)/(x+r+r);
-
-	r = T*T*T;
-	T = T*((float)x+x+r)/(x+r+r);
-
-	return T;
+  return u.f;
 }
 
 static inline float
