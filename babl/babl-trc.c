@@ -424,10 +424,11 @@ babl_trc_formula_srgb (double g, double a, double b, double c, double d)
   int i;
   float params[5]={g, a, b, c, d};
 
-  if (fabs (g - 2.40)     < 0.01 &&
-      fabs (a - 26214)    < 0.01 &&
-      fabs (b - 0.947875) < 0.01 &&
-      fabs (c - (-3417))  < 0.01)
+  if (fabs (g - 2.400) < 0.01 &&
+      fabs (a - 0.947) < 0.01 &&
+      fabs (b - 0.052) < 0.01 &&
+      fabs (c - 0.077) < 0.01 &&
+      fabs (d - 0.040) < 0.01)
     return babl_trc ("sRGB");
 
   snprintf (name, sizeof (name), "%.6f %.6f %.4f %.4f %.4f", g, a, b, c, d);
