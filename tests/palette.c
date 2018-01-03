@@ -40,7 +40,7 @@ main (int    argc,
     assert (palA);
 
     CHECK_CONV("pal to rgba", unsigned char,
-        palA, babl_format("RGBA u8"),
+        palA, babl_format("R'G'B'A u8"),
         in, out);
   }
   if(0){

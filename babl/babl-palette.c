@@ -136,7 +136,7 @@ static BablPalette *make_pal (const Babl *format, const void *data, int count)
 
   babl_process (babl_fish (format, babl_format ("RGBA double")),
                 data, pal->data_double, count);
-  babl_process (babl_fish (format, babl_format ("RGBA u8")),
+  babl_process (babl_fish (format, babl_format ("R'G'B'A u8")),
                 data, pal->data_u8, count);
 
   babl_palette_reset_hash (pal);
@@ -161,10 +161,10 @@ static BablPalette *default_palette (void)
   memset (&pal, 0, sizeof (pal));
   inited = 1;
   pal.count = 16;
-  pal.format = babl_format ("RGBA u8"); /* dynamically generated, so
-                                           the default palette can
-                                           not be fully static.
-                                         */
+  pal.format = babl_format ("R'G'B'A u8"); /* dynamically generated, so
+                                              the default palette can
+                                              not be fully static.
+                                            */
   pal.data = defpal_data;
   pal.data_double = defpal_double;
   pal.data_u8 = defpal_data;
@@ -576,7 +576,7 @@ const Babl *babl_new_palette (const char  *name,
 
   babl_conversion_new (
      f_pal_u8,
-     babl_format ("RGBA u8"),
+     babl_format ("R'G'B'A u8"),
      "linear", pal_u8_to_rgba_u8,
      "data", palptr,
      NULL);
@@ -584,19 +584,19 @@ const Babl *babl_new_palette (const char  *name,
 
   babl_conversion_new (
      f_pal_a_u8,
-     babl_format ("RGBA u8"),
+     babl_format ("R'G'B'A u8"),
      "linear", pala_u8_to_rgba_u8,
      "data", palptr,
      NULL);
 
   babl_conversion_new (
-     babl_format ("RGBA u8"),
+     babl_format ("R'G'B'A u8"),
      f_pal_a_u8,
      "linear", rgba_u8_to_pal_a,
      "data", palptr,
      NULL);
   babl_conversion_new (
-     babl_format ("RGBA u8"),
+     babl_format ("R'G'B'A u8"),
      f_pal_u8,
      "linear", rgba_u8_to_pal,
      "data", palptr,
