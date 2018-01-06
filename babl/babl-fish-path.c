@@ -608,7 +608,7 @@ babl_fish_path (const Babl *source,
 }
 
 static long
-babl_fish_path_process (Babl       *babl,
+babl_fish_path_process (const Babl *babl,
                         const void *source,
                         void       *destination,
                         long        n)
@@ -651,10 +651,10 @@ babl_fish_path_process (Babl       *babl,
 }
 
 static long
-babl_fish_process (Babl       *babl,
-                   const void *source,
-                   void       *destination,
-                   long        n)
+_babl_fish_process (const Babl *babl,
+                    const void *source,
+                    void       *destination,
+                    long        n)
 {
   long ret = 0;
 
@@ -697,6 +697,21 @@ babl_fish_process (Babl       *babl,
 }
 
 long
+babl_fish_process (const Babl *babl,
+                   const void *source,
+                   void       *destination,
+                   long        n);
+
+long
+babl_fish_process (const Babl *babl,
+                   const void *source,
+                   void       *destination,
+                   long        n)
+{
+  return _babl_fish_process (babl, source, destination, n);
+}
+
+long
 babl_process (const Babl *cbabl,
               const void *source,
               void       *destination,
@@ -717,7 +732,7 @@ babl_process (const Babl *cbabl,
     {
       babl->fish.processings++;
       babl->fish.pixels +=
-             babl_fish_process (babl, source, destination, n);
+             _babl_fish_process (babl, source, destination, n);
       return n;
     }
 

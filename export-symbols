@@ -36,7 +36,7 @@ babl_new_palette
 babl_palette_reset
 babl_palette_set_palette
 babl_process
-babl_process
+babl_fish_process
 babl_sampling
 babl_set_user_data
 babl_space
