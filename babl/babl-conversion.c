@@ -359,7 +359,7 @@ babl_conversion_planar_process (BablConversion *conversion,
                                       conversion->data);
 }
 
-long
+void
 babl_conversion_process (const Babl *babl,
                          const char *source,
                          char       *destination,
@@ -436,13 +436,11 @@ babl_conversion_process (const Babl *babl,
         babl_log ("args=(%s, %p, %p, %li) unhandled conversion type: %s",
                   conversion->instance.name, source, destination, n,
                   babl_class_name (conversion->instance.class_type));
-        return 0;
         break;
     }
 
   conversion->processings++;
   conversion->pixels += n;
-  return n;
 }
 
 long

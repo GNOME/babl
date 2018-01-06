@@ -74,7 +74,7 @@ get_path_instrumentation (FishPathInstrumentation *fpi,
                           double                  *path_error);
 
 
-static long
+static void
 process_conversion_path (BablList   *path,
                          const void *source_buffer,
                          int         source_bpp,
@@ -607,7 +607,7 @@ babl_fish_path (const Babl *source,
   return babl_fish_path2 (source, destination, 0.0);
 }
 
-static long
+static void
 babl_fish_path_process (const Babl *babl,
                         const void *source,
                         void       *destination,
@@ -642,41 +642,38 @@ babl_fish_path_process (const Babl *babl,
          babl_log ("-eeek{%i}\n", babl_dest->instance.class_type - BABL_MAGIC);
      }
 
-  return process_conversion_path (babl->fish_path.conversion_list,
-                                  source,
-                                  source_bpp,
-                                  destination,
-                                  dest_bpp,
-                                  n);
+  process_conversion_path (babl->fish_path.conversion_list,
+                           source,
+                           source_bpp,
+                           destination,
+                           dest_bpp,
+                           n);
 }
 
-static long
+static void
 _babl_fish_process (const Babl *babl,
                     const void *source,
                     void       *destination,
                     long        n)
 {
-  long ret = 0;
-
   switch (babl->class_type)
     {
       case BABL_FISH_REFERENCE:
         if (babl->fish.source == babl->fish.destination)
           { /* XXX: we're assuming linear buffers */
             memcpy (destination, source, n * babl->fish.source->format.bytes_per_pixel);
-            ret = n;
           }
         else
           {
-            ret = babl_fish_reference_process (babl, source, destination, n);
+            babl_fish_reference_process (babl, source, destination, n);
           }
         break;
 
       case BABL_FISH_SIMPLE:
         if (BABL (babl->fish_simple.conversion)->class_type == BABL_CONVERSION_LINEAR)
           {
-            ret = babl_conversion_process (BABL (babl->fish_simple.conversion),
-                                           source, destination, n);
+            babl_conversion_process (BABL (babl->fish_simple.conversion),
+                                     source, destination, n);
           }
         else
           {
@@ -685,30 +682,28 @@ _babl_fish_process (const Babl *babl,
         break;
 
       case BABL_FISH_PATH:
-        ret = babl_fish_path_process (babl, source, destination, n);
+        babl_fish_path_process (babl, source, destination, n);
         break;
 
       default:
         babl_log ("NYI");
-        ret = -1;
         break;
     }
-  return ret;
 }
 
-long
+void
 babl_fish_process (const Babl *babl,
                    const void *source,
                    void       *destination,
                    long        n);
 
-long
+void
 babl_fish_process (const Babl *babl,
                    const void *source,
                    void       *destination,
                    long        n)
 {
-  return _babl_fish_process (babl, source, destination, n);
+  _babl_fish_process (babl, source, destination, n);
 }
 
 long
@@ -718,10 +713,9 @@ babl_process (const Babl *cbabl,
               long        n)
 {
   Babl *babl = (Babl*)cbabl;
-  babl_assert (babl);
+  babl_assert (babl && BABL_IS_BABL (babl));
   babl_assert (source);
   babl_assert (destination);
-  babl_assert (BABL_IS_BABL (babl));
   if (n == 0)
     return 0;
   babl_assert (n > 0);
@@ -731,15 +725,18 @@ babl_process (const Babl *cbabl,
       babl->class_type <= BABL_FISH_PATH)
     {
       babl->fish.processings++;
-      babl->fish.pixels +=
-             _babl_fish_process (babl, source, destination, n);
+      babl->fish.pixels += n;
+      _babl_fish_process (babl, source, destination, n);
       return n;
     }
 
   /* matches all conversion classes */
   if (babl->class_type >= BABL_CONVERSION &&
       babl->class_type <= BABL_CONVERSION_PLANAR)
-    return babl_conversion_process (babl, source, destination, n);
+  {
+    babl_conversion_process (babl, source, destination, n);
+    return n;
+  }
 
   babl_fatal ("eek");
   return -1;
@@ -755,7 +752,7 @@ static void inline *align_16 (unsigned char *ret)
   return ret;
 }
 
-static long
+static void
 process_conversion_path (BablList   *path,
                          const void *source_buffer,
                          int         source_bpp,
@@ -823,8 +820,6 @@ process_conversion_path (BablList   *path,
                                    c);
         }
   }
-
-  return n;
 }
 
 static void

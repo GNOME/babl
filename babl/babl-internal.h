@@ -66,7 +66,7 @@ Babl *   babl_conversion_find           (const void     *source,
                                          const void     *destination);
 double   babl_conversion_error          (BablConversion *conversion);
 long     babl_conversion_cost           (BablConversion *conversion);
-long     babl_conversion_process        (const Babl     *conversion,
+void     babl_conversion_process        (const Babl     *conversion,
                                          const char     *source,
                                          char           *destination,
                                          long            n);
@@ -79,7 +79,7 @@ void     babl_set_extender              (Babl           *new_extender);
 Babl   * babl_extension_quiet_log       (void);
 void     babl_extension_deinit          (void);
 
-long     babl_fish_reference_process    (const Babl *babl,
+void     babl_fish_reference_process    (const Babl *babl,
                                          const char *source,
                                          char       *destination,
                                          long        n);

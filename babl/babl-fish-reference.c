@@ -388,7 +388,7 @@ process_to_n_component (const Babl  *babl,
   return 0;
 }
 
-static int
+static void
 process_same_model (const Babl  *babl,
                     const char *source,
                     char       *destination,
@@ -438,10 +438,9 @@ process_same_model (const Babl  *babl,
       );
     }
   babl_free (double_buf);
-  return 0;
 }
 
-long
+void
 babl_fish_reference_process (const Babl *babl,
                              const char *source,
                              char       *destination,
@@ -459,11 +458,15 @@ babl_fish_reference_process (const Babl *babl,
       (BABL (babl->fish.source)->format.space ==
        BABL (babl->fish.destination)->format.space)
       )
-    return process_same_model (babl, source, destination, n);
+  {
+    process_same_model (babl, source, destination, n);
+    return;
+  }
 
   if (babl_format_is_format_n (BABL (babl->fish.destination)))
   {
-    return process_to_n_component (babl, source, destination, n);
+    process_to_n_component (babl, source, destination, n);
+    return;
   }
 
   source_double_buf = babl_malloc (sizeof (double) * n *
@@ -561,5 +564,4 @@ babl_fish_reference_process (const Babl *babl,
   babl_free (destination_double_buf);
   babl_free (rgba_double_buf);
   babl_free (source_double_buf);
-  return n;
 }
