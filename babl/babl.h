@@ -226,6 +226,15 @@ long         babl_process   (const Babl *babl_fish,
                              long  n);
 
 
+long         babl_process_rows (const Babl *babl_fish,
+                                const void *source,
+                                int         source_stride,
+                                void       *dest,
+                                int         dest_stride,
+                                long        n,
+                                int         rows);
+
+
 /**
  * babl_get_name:
  *

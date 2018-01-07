@@ -74,7 +74,7 @@ get_path_instrumentation (FishPathInstrumentation *fpi,
                           double                  *path_error);
 
 
-static void
+static inline void
 process_conversion_path (BablList   *path,
                          const void *source_buffer,
                          int         source_bpp,
@@ -607,7 +607,7 @@ babl_fish_path (const Babl *source,
   return babl_fish_path2 (source, destination, 0.0);
 }
 
-static void
+static inline void
 babl_fish_path_process (const Babl *babl,
                         const void *source,
                         void       *destination,
@@ -713,12 +713,9 @@ babl_process (const Babl *cbabl,
               long        n)
 {
   Babl *babl = (Babl*)cbabl;
-  babl_assert (babl && BABL_IS_BABL (babl));
-  babl_assert (source);
-  babl_assert (destination);
-  if (n == 0)
+  babl_assert (babl && BABL_IS_BABL (babl) && source && destination);
+  if (n <= 0)
     return 0;
-  babl_assert (n > 0);
 
   /* first check if it is a fish since that is our fast path */
   if (babl->class_type >= BABL_FISH &&
@@ -742,6 +739,57 @@ babl_process (const Babl *cbabl,
   return -1;
 }
 
+long
+babl_process_rows (const Babl *fish,
+                   const void *source,
+                   int         source_stride,
+                   void       *dest,
+                   int         dest_stride,
+                   long        n,
+                   int         rows)
+{
+  Babl          *babl = (Babl*)fish;
+  const uint8_t *src  = source;
+  uint8_t       *dst  = dest;
+  int            row;
+
+  babl_assert (babl && BABL_IS_BABL (babl) && source && dest);
+
+  if (n <= 0)
+    return 0;
+
+  /* first check if it is a fish since that is our fast path */
+  if (babl->class_type >= BABL_FISH &&
+      babl->class_type <= BABL_FISH_PATH)
+    {
+      babl->fish.processings++;
+      babl->fish.pixels += n * rows;
+      for (row = 0; row < rows; row++)
+        {
+          _babl_fish_process (babl, src, dst, n);
+          src += source_stride;
+          dst += dest_stride;
+        }
+      return n * rows;
+    }
+
+  /* matches all conversion classes */
+  if (babl->class_type >= BABL_CONVERSION &&
+      babl->class_type <= BABL_CONVERSION_PLANAR)
+  {
+    for (row = 0; row < rows; row++)
+    {
+      babl_conversion_process (babl, (void*)src, (void*)dst, n);
+      src += source_stride;
+      dst += dest_stride;
+    }
+    return n * rows;
+  }
+
+  babl_fatal ("eek");
+  return -1;
+}
+
 #include <stdint.h>
 
 #define BABL_ALIGN 16
@@ -752,7 +800,7 @@ static void inline *align_16 (unsigned char *ret)
   return ret;
 }
 
-static void
+static inline void
 process_conversion_path (BablList   *path,
                          const void *source_buffer,
                          int         source_bpp,
