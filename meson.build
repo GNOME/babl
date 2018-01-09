@@ -177,7 +177,7 @@ endif
 have_dlfcn_h = cc.has_header('dlfcn.h')
 have_dl_h    = cc.has_header('dl.h')
 if not (have_dlfcn_h or have_dl_h)
-  error('Header dlfcn.h or dl.h not provided. Please provide one of them.')
+  # error('Header dlfcn.h or dl.h not provided. Please provide one of them.')
 endif
 
 conf.set('HAVE_DLFCN_H', have_dlfcn_h)
