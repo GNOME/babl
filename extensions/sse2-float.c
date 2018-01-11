@@ -432,7 +432,7 @@ conv_yaF_linear_yaF_gamma (const Babl *conversion,const float *src, float *dst, 
 
   while (samples--)
     {
-      *dst++ = babl_linear_to_gamma_2_2 (*src++);
+      *dst++ = babl_linear_to_gamma_2_2f (*src++);
       *dst++ = *src++;
     }
 }
@@ -503,7 +503,7 @@ conv_yF_linear_yF_gamma (const Babl *conversion,const float *src, float *dst, lo
 
   while (samples--)
     {
-      *dst++ = babl_linear_to_gamma_2_2 (*src++);
+      *dst++ = babl_linear_to_gamma_2_2f (*src++);
     }
 }
 
