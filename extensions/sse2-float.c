@@ -304,7 +304,10 @@ sse_pow_24 (__v4sf x)
 static inline __v4sf
 linear_to_gamma_2_2_sse2 (__v4sf x)
 {
-  __v4sf curve = sse_pow_1_24 (x) * splat4f (1.055f) - splat4f (0.055f);
+  __v4sf curve = sse_pow_1_24 (x) * splat4f (1.055f) -
+                 splat4f (0.055f                     -
+                          3.0f / (float) (1 << 24));
+                          /* ^ offset the result such that 1 maps to 1 */
   __v4sf line = x * splat4f (12.92f);
   __v4sf mask = _mm_cmpgt_ps (x, splat4f (0.003130804954f));
   return _mm_or_ps (_mm_and_ps (mask, curve), _mm_andnot_ps (mask, line));

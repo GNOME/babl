@@ -81,7 +81,12 @@ static inline float
 babl_linear_to_gamma_2_2f (float value)
 {
   if (value > 0.003130804954f)
-    return 1.055f * babl_pow_1_24f (value) - 0.055f;
+    {
+      return 1.055f * babl_pow_1_24f (value) -
+             (0.055f                         -
+              3.0f / (float) (1 << 24));
+              /* ^ offset the result such that 1 maps to 1 */
+    }
   return 12.92f * value;
 }
 
