@@ -95,9 +95,7 @@ endif
 host_os = host_machine.system()
 message('Host os: ' + host_os)
 
-platform_win32 = (host_os.startswith('mingw') or host_os.startswith('cygwin'))
-# Is this native win32
-os_win32 = host_os.startswith('mingw')
+platform_win32 = host_os.startswith('mingw') or host_os.startswith('cygwin') or host_os.startswith('windows')
 
 platform_osx = host_os.startswith('darwin')
 if platform_osx
@@ -108,8 +106,8 @@ endif
 
 platform_android = host_os.contains('android')
 
-path_sep = ( os_win32 ? ';'  : ':' )
-dirs_sep = ( os_win32 ? '\\' : '/' )
+path_sep = ( platform_win32 ? ';'  : ':' )
+dirs_sep = ( platform_win32 ? '\\' : '/' )
 conf.set('BABL_PATH_SEPARATOR', '\'' + path_sep + '\'')
 conf.set_quoted('BABL_DIR_SEPARATOR',  dirs_sep)
 
