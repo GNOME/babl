@@ -106,10 +106,13 @@ endif
 
 platform_android = host_os.contains('android')
 
-path_sep = ( platform_win32 ? ';'  : ':' )
-dirs_sep = ( platform_win32 ? '\\' : '/' )
-conf.set('BABL_PATH_SEPARATOR', '\'' + path_sep + '\'')
+path_sep = ( platform_win32 ? ';'     : ':' )
+dirs_sep = ( platform_win32 ? '\\\\'  : '/' )
+lib_ext  = ( platform_win32 ? '.dll'  : '.so' )
+
+conf.set       ('BABL_PATH_SEPARATOR', '\'' + path_sep + '\'')
 conf.set_quoted('BABL_DIR_SEPARATOR',  dirs_sep)
+conf.set_quoted('SHREXT',              lib_ext)
 
 ################################################################################
 # Extra warnings
@@ -134,7 +137,7 @@ endforeach
 # Check for compiler CPU extensions
 
 have_tls_run = cc.run('int main() { static __thread char buf[1024]; return 0; }')
-conf.set('HAVE_TLS', (have_tls_run.compiled() and have_tls_run.returncode() == 0))
+conf.set('HAVE_TLS', ( have_tls_run.compiled() and have_tls_run.returncode() == 0 ))
 
 has_ssem = cc.has_argument('-mfpmath=sse')
 if has_ssem
@@ -179,11 +182,7 @@ if not (have_dlfcn_h or have_dl_h or platform_win32)
 endif
 
 conf.set('HAVE_DLFCN_H', have_dlfcn_h)
-conf.set('HAVE_DL_H', have_dl_h)
-
-
-shared_lib_ext = (platform_win32 ? '.dll' : '.so')
-conf.set_quoted('SHREXT', shared_lib_ext)
+conf.set('HAVE_DL_H',    have_dl_h)
 
 ################################################################################
 # Utilities
