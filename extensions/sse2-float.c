@@ -432,7 +432,8 @@ conv_yaF_linear_yaF_gamma (const Babl *conversion,const float *src, float *dst, 
 
   while (samples--)
     {
-      *dst++ = babl_linear_to_gamma_2_2f (*src++);
+      float y = *src++;
+      *dst++ = linear_to_gamma_2_2_sse2 (splat4f (y))[0];
       *dst++ = *src++;
     }
 }
@@ -466,7 +467,8 @@ conv_yaF_gamma_yaF_linear (const Babl *conversion,const float *src, float *dst, 
 
   while (samples--)
     {
-      *dst++ = babl_gamma_2_2_to_linear (*src++);
+      float y = *src++;
+      *dst++ = gamma_2_2_to_linear_sse2 (splat4f (y))[0];
       *dst++ = *src++;
     }
 }
@@ -503,7 +505,8 @@ conv_yF_linear_yF_gamma (const Babl *conversion,const float *src, float *dst, lo
 
   while (samples--)
     {
-      *dst++ = babl_linear_to_gamma_2_2f (*src++);
+      float y = *src++;
+      *dst++ = linear_to_gamma_2_2_sse2 (splat4f (y))[0];
     }
 }
 
@@ -539,7 +542,8 @@ conv_yF_gamma_yF_linear (const Babl *conversion,const float *src, float *dst, lo
 
   while (samples--)
     {
-      *dst++ = babl_gamma_2_2_to_linear (*src++);
+      float y = *src++;
+      *dst++ = gamma_2_2_to_linear_sse2 (splat4f (y))[0];
     }
 }
 
