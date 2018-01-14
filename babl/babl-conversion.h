@@ -42,6 +42,9 @@ _BablConversion {
   BablInstance           instance;
   const Babl            *source;
   const Babl            *destination;
+  void (*dispatch) (const Babl *babl, const char *src, char *dst, long n,
+                    void           *user_data);
+
   long                   cost;
   double                 error;
   union

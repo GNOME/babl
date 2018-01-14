@@ -34,6 +34,114 @@ static int model_is_rgba (const Babl *model)
   return 0;
 }
 
+
+static void
+babl_conversion_plane_process (BablConversion *conversion,
+                               const void     *source,
+                               void           *destination,
+                               int             src_pitch,
+                               int             dst_pitch,
+                               long            n,
+                               void           *user_data)
+{
+  conversion->function.plane ((void*)conversion, source, destination,
+                              src_pitch, dst_pitch,
+                              n,
+                              user_data);
+}
+
+static void
+babl_conversion_planar_process (const Babl *babl,
+                                const char     *src,
+                                char           *dst,
+                                long            n,
+                                void           *user_data)
+{
+  BablConversion *conversion = (void*)babl;
+  const BablImage *source = (void*)src;
+  BablImage       *destination = (void*)dst;
+#ifdef USE_ALLOCA
+  const char **src_data = alloca (sizeof (void *) * source->components);
+  char **dst_data = alloca (sizeof (void *) * destination->components);
+#else
+  const char  *src_data[BABL_MAX_COMPONENTS];
+  char  *dst_data[BABL_MAX_COMPONENTS];
+#endif
+
+  memcpy (src_data, source->data, sizeof (void *) * source->components);
+  memcpy (dst_data, destination->data, sizeof (void *) * destination->components);
+  conversion->function.planar ((void*)conversion,
+                                      source->components,
+                                      src_data,
+                                      source->pitch,
+                                      destination->components,
+                                      dst_data,
+                                      destination->pitch,
+                                      n,
+                                      user_data);
+}
+
+static void dispatch_plane (const Babl *babl,
+                            const char *source,
+                            char *destination,
+                            long n,
+                            void *user_data)
+{
+  const BablConversion *conversion = &babl->conversion;
+  const void *src_data  = NULL;
+  void *dst_data  = NULL;
+  int   src_pitch = 0;
+  int   dst_pitch = 0;
+
+  if (BABL_IS_BABL (source))
+    {
+      BablImage *img;
+
+      img       = (BablImage *) source;
+      src_data  = img->data[0];
+      src_pitch = img->pitch[0];
+    }
+  if (BABL_IS_BABL (destination))
+    {
+      BablImage *img = (BablImage *) destination;
+
+      dst_data  = img->data[0];
+      dst_pitch = img->pitch[0];
+    }
+
+  if (!src_data)
+    src_data = source;
+  if (!src_pitch)
+    src_pitch = BABL (conversion->source)->type.bits / 8;
+  if (!dst_data)
+    dst_data = destination;
+  if (!dst_pitch)
+    dst_pitch = BABL (conversion->destination)->type.bits / 8;
+
+  babl_conversion_plane_process ((void*)conversion,
+                                 src_data, dst_data,
+                                 src_pitch, dst_pitch,
+                                 n, user_data);
+}
+
+static inline void
+babl_conversion_rig_dispatch (const Babl *babl)
+{
+  BablConversion *conversion = (BablConversion *) babl;
+  switch (BABL (conversion)->class_type)
+  {
+    case BABL_CONVERSION_PLANE:
+      conversion->dispatch = dispatch_plane;
+      break;
+    case BABL_CONVERSION_PLANAR:
+      conversion->dispatch = babl_conversion_planar_process;
+      break;
+    case BABL_CONVERSION_LINEAR:
+      conversion->dispatch = conversion->function.linear;
+      break;
+  }
+}
+
 Babl *
 _conversion_new (const char    *name,
                  int            id,
@@ -144,6 +252,7 @@ _conversion_new (const char    *name,
       babl->conversion.error = 0.0;
     }
 
+  babl_conversion_rig_dispatch (babl);
   return babl;
 }
 
@@ -431,5 +540,7 @@ const Babl *babl_conversion_get_destination_space (const Babl *conversion)
 {
   return conversion->conversion.destination->format.space;
 }
+
+
 
 BABL_CLASS_IMPLEMENT (conversion)

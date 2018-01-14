@@ -482,56 +482,6 @@ void babl_space_to_xyz   (const Babl *space, const double *rgb, double *xyz);
  */
 void babl_space_from_xyz (const Babl *space, const double *xyz, double *rgb);
 
-static inline void
-babl_conversion_linear_process (BablConversion *conversion,
-                                const void     *source,
-                                void           *destination,
-                                long            n)
-{
-  conversion->function.linear ((void*)conversion, source, destination, n, conversion->data);
-}
-
-static inline void
-babl_conversion_plane_process (BablConversion *conversion,
-                               const void     *source,
-                               void           *destination,
-                               int             src_pitch,
-                               int             dst_pitch,
-                               long            n)
-{
-  conversion->function.plane ((void*)conversion, source, destination,
-                              src_pitch, dst_pitch,
-                              n,
-                              conversion->data);
-}
-
-static inline void
-babl_conversion_planar_process (BablConversion *conversion,
-                                BablImage      *source,
-                                BablImage      *destination,
-                                long            n)
-{
-#ifdef USE_ALLOCA
-  const char **src_data = alloca (sizeof (void *) * source->components);
-  char **dst_data = alloca (sizeof (void *) * destination->components);
-#else
-  const char  *src_data[BABL_MAX_COMPONENTS];
-  char  *dst_data[BABL_MAX_COMPONENTS];
-#endif
-
-  memcpy (src_data, source->data, sizeof (void *) * source->components);
-  memcpy (dst_data, destination->data, sizeof (void *) * destination->components);
-  conversion->function.planar ((void*)conversion,
-                                      source->components,
-                                      src_data,
-                                      source->pitch,
-                                      destination->components,
-                                      dst_data,
-                                      destination->pitch,
-                                      n,
-                                      conversion->data);
-}
-
 
 static inline void
 babl_conversion_process (const Babl *babl,
@@ -540,81 +490,9 @@ babl_conversion_process (const Babl *babl,
                          long        n)
 {
   BablConversion *conversion = (BablConversion *) babl;
-
-  // babl_assert (BABL_IS_BABL (conversion));
-
-  switch (BABL (conversion)->class_type)
-    {
-      case BABL_CONVERSION_PLANE:
-      {
-        const void *src_data  = NULL;
-        void *dst_data  = NULL;
-        int   src_pitch = 0;
-        int   dst_pitch = 0;
-
-        if (BABL_IS_BABL (source))
-          {
-            BablImage *img;
-
-            img       = (BablImage *) source;
-            src_data  = img->data[0];
-            src_pitch = img->pitch[0];
-          }
-        if (BABL_IS_BABL (destination))
-          {
-            BablImage *img = (BablImage *) destination;
-
-            dst_data  = img->data[0];
-            dst_pitch = img->pitch[0];
-          }
-
-        if (!src_data)
-          src_data = source;
-        if (!src_pitch)
-          src_pitch = BABL (conversion->source)->type.bits / 8;
-        if (!dst_data)
-          dst_data = destination;
-        if (!dst_pitch)
-          dst_pitch = BABL (conversion->destination)->type.bits / 8;
-
-        babl_conversion_plane_process (conversion,
-                                       src_data, dst_data,
-                                       src_pitch, dst_pitch,
-                                       n);
-      }
-        break;
-
-      case BABL_CONVERSION_PLANAR:
-        babl_assert (BABL_IS_BABL (source));
-        babl_assert (BABL_IS_BABL (destination));
-
-        babl_conversion_planar_process (conversion,
-                                        (BablImage *) source,
-                                        (BablImage *) destination,
-                                        n);
-        break;
-
-      case BABL_CONVERSION_LINEAR:
-        /* the assertions relied on a babl_malloc structure
-         *
-         * babl_assert (!BABL_IS_BABL (source));
-           babl_assert (!BABL_IS_BABL (destination));*/
-
-        babl_conversion_linear_process (conversion,
-                                        source,
-                                        destination,
-                                        n);
-        break;
-
-      default:
-        babl_log ("args=(%s, %p, %p, %li) unhandled conversion type: %s",
-                  conversion->instance.name, source, destination, n,
-                  babl_class_name (conversion->instance.class_type));
-        break;
-    }
-
   conversion->processings++;
   conversion->pixels += n;
+  conversion->dispatch (babl, source, destination, n, conversion->data);
 }
 
 #endif
