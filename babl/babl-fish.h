@@ -32,7 +32,7 @@ typedef struct
   const Babl     *source;
   const Babl     *destination;
   void           (*dispatch) (const Babl *babl, const char *src, char *dst, long n, void *data);
-  void            *data;  /* user data */
+  void          **data;      /* user data - only used for conversion redirect  */
   double          error;    /* the amount of noise introduced by the fish */
 
   /* instrumentation */

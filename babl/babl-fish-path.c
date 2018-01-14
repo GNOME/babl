@@ -675,10 +675,12 @@ _babl_fish_rig_dispatch (Babl *babl)
         if (babl->fish.source == babl->fish.destination)
           {
             babl->fish.dispatch = babl_fish_memcpy_process;
+            babl->fish.data     = (void*)&(babl->fish.data);
           }
         else
           {
             babl->fish.dispatch = babl_fish_reference_process;
+            babl->fish.data     = (void*)&(babl->fish.data);
           }
         break;
 
@@ -688,7 +690,7 @@ _babl_fish_rig_dispatch (Babl *babl)
             /* lift out conversion from single step conversion and make it be the dispatch function
              * itself
              */
-            babl->fish.data = babl->fish_simple.conversion->data;
+            babl->fish.data = &babl->fish_simple.conversion->data;
             babl->fish.dispatch = babl->fish_simple.conversion->dispatch;
           }
         else
@@ -705,11 +707,12 @@ _babl_fish_rig_dispatch (Babl *babl)
           /* do same short-circuit optimization as for simple fishes */
 
           babl->fish.dispatch = conversion->dispatch;
-          babl->fish.data     = conversion->data;
+          babl->fish.data     = &conversion->data;
         }
         else
         {
           babl->fish.dispatch = babl_fish_path_process;
+          babl->fish.data     = (void*)&(babl->fish.data);
         }
         break;
 
@@ -735,7 +738,7 @@ _babl_process (const Babl *cbabl,
   Babl *babl = (void*)cbabl;
   babl->fish.processings++;
   babl->fish.pixels += n;
-  babl->fish.dispatch (babl, source, destination, n, babl->fish.data);
+  babl->fish.dispatch (babl, source, destination, n, *babl->fish.data);
   return n;
 }
 
@@ -771,7 +774,7 @@ babl_process_rows (const Babl *fish,
   babl->fish.pixels += n * rows;
   for (row = 0; row < rows; row++)
     {
-      babl->fish.dispatch (babl, (void*)src, (void*)dst, n, babl->fish.data);
+      babl->fish.dispatch (babl, (void*)src, (void*)dst, n, *babl->fish.data);
 
       src += source_stride;
       dst += dest_stride;
