@@ -115,6 +115,7 @@ babl_fish_reference (const Babl *source,
 #ifndef HAVE_TLS
       free (name);
 #endif
+      _babl_fish_rig_dispatch (babl);
       return babl;
     }
 
@@ -124,7 +125,7 @@ babl_fish_reference (const Babl *source,
   babl_assert (source->class_type == BABL_FORMAT);
   babl_assert (destination->class_type == BABL_FORMAT);
 
-  babl = babl_malloc (sizeof (BablFishReference) +
+  babl = babl_calloc (1, sizeof (BablFishReference) +
                       strlen (name) + 1);
   babl->class_type    = BABL_FISH_REFERENCE;
   babl->instance.id   = babl_fish_get_id (source, destination);
@@ -138,6 +139,7 @@ babl_fish_reference (const Babl *source,
   babl->fish.error       = 0.0;  /* assuming the provided reference conversions for types
                                     and models are as exact as possible
                                   */
+  _babl_fish_rig_dispatch (babl);
 
   /* Since there is not an already registered instance by the required
    * name, inserting newly created class into database.
@@ -443,7 +445,8 @@ void
 babl_fish_reference_process (const Babl *babl,
                              const char *source,
                              char       *destination,
-                             long        n)
+                             long        n,
+                             void       *data)
 {
   void *source_double_buf;
   void *rgba_double_buf;

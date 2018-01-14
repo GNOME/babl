@@ -257,6 +257,7 @@ babl_fish (const void *source,
         if (ffish.fish_path)
           {
             /* we have found suitable fish path in the database */
+            _babl_fish_rig_dispatch (ffish.fish_path);
             return ffish.fish_path;
           }
 

@@ -42,7 +42,7 @@ babl_fish_simple (BablConversion *conversion)
       return babl;
     }
 
-  babl = babl_malloc (sizeof (BablFishSimple) +
+  babl = babl_calloc (1, sizeof (BablFishSimple) +
                       strlen (name) + 1);
   babl->class_type    = BABL_FISH_SIMPLE;
   babl->instance.id   = babl_fish_get_id (conversion->source, conversion->destination);
@@ -58,6 +58,7 @@ babl_fish_simple (BablConversion *conversion)
                                    reference, and babl fish reference only requests clean
                                    conversions */
 
+  _babl_fish_rig_dispatch (babl);
   /* Since there is not an already registered instance by the required
    * name, inserting newly created class into database.
    */

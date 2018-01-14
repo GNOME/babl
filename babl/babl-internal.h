@@ -78,7 +78,8 @@ void     babl_extension_deinit          (void);
 void     babl_fish_reference_process    (const Babl *babl,
                                          const char *source,
                                          char       *destination,
-                                         long        n);
+                                         long        n,
+                                         void       *data); // data is ignored
 
 Babl   * babl_fish_reference            (const Babl     *source,
                                          const Babl     *destination);
@@ -494,5 +495,7 @@ babl_conversion_process (const Babl *babl,
   conversion->pixels += n;
   conversion->dispatch (babl, source, destination, n, conversion->data);
 }
+
+void _babl_fish_rig_dispatch (Babl *babl);
 
 #endif

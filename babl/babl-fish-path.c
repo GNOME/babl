@@ -596,12 +596,8 @@ babl_fish_path2 (const Babl *source,
       return NULL;
     }
 
-  if (babl_list_size (babl->fish_path.conversion_list) == 1)
-    {
-      babl->class_type = BABL_FISH_SIMPLE;
-      babl->fish_simple.conversion = (void*)babl_list_get_first (babl->fish_path.conversion_list);
-    }
-
+  babl_fish_prepare_bpp (babl);
+  _babl_fish_rig_dispatch (babl);
   /* Since there is not an already registered instance by the required
    * name, inserting newly created class into database.
    */
@@ -610,7 +606,6 @@ babl_fish_path2 (const Babl *source,
     babl_db_insert (babl_fish_db (), babl);
   }
   babl_mutex_unlock (babl_format_mutex);
-  babl_fish_prepare_bpp (babl);
   return babl;
 }
 
@@ -648,9 +643,10 @@ babl_fish_path (const Babl *source,
 
 static inline void
 babl_fish_path_process (const Babl *babl,
-                        const void *source,
-                        void       *destination,
-                        long        n)
+                        const char *source,
+                        char       *destination,
+                        long        n,
+                        void       *data)
 {
   process_conversion_path (babl->fish_path.conversion_list,
                            source,
@@ -660,34 +656,40 @@ babl_fish_path_process (const Babl *babl,
                            n);
 }
 
-static long
-_babl_process (Babl *babl,
-               const void *source,
-               void       *destination,
-               long        n)
+static inline void
+babl_fish_memcpy_process (const Babl *babl,
+                          const char *source,
+                          char       *destination,
+                          long        n,
+                          void       *data)
+{
+  memcpy (destination, source, n * babl->fish.source->format.bytes_per_pixel);
+}
+
+void
+_babl_fish_rig_dispatch (Babl *babl)
 {
   switch (babl->class_type)
     {
       case BABL_FISH_REFERENCE:
-        babl->fish.processings++;
-        babl->fish.pixels += n;
         if (babl->fish.source == babl->fish.destination)
-          { /* XXX: we're assuming linear buffers */
-            memcpy (destination, source, n * babl->fish.source->format.bytes_per_pixel);
+          {
+            babl->fish.dispatch = babl_fish_memcpy_process;
           }
         else
           {
-            babl_fish_reference_process (babl, source, destination, n);
+            babl->fish.dispatch = babl_fish_reference_process;
           }
         break;
 
       case BABL_FISH_SIMPLE:
-        babl->fish.processings++;
-        babl->fish.pixels += n;
         if (BABL (babl->fish_simple.conversion)->class_type == BABL_CONVERSION_LINEAR)
           {
-            babl_conversion_process (BABL (babl->fish_simple.conversion),
-                                     source, destination, n);
+            /* lift out conversion from single step conversion and make it be the dispatch function
+             * itself
+             */
+            babl->fish.data = babl->fish_simple.conversion->data;
+            babl->fish.dispatch = babl->fish_simple.conversion->dispatch;
           }
         else
           {
@@ -696,9 +698,19 @@ _babl_process (Babl *babl,
         break;
 
       case BABL_FISH_PATH:
-        babl->fish.processings++;
-        babl->fish.pixels += n;
-        babl_fish_path_process (babl, source, destination, n);
+        if (babl_list_size(babl->fish_path.conversion_list) == 1)
+        {
+          BablConversion *conversion = (void*)babl_list_get_first(babl->fish_path.conversion_list);
+
+          /* do same short-circuit optimization as for simple fishes */
+
+          babl->fish.dispatch = conversion->dispatch;
+          babl->fish.data     = conversion->data;
+        }
+        else
+        {
+          babl->fish.dispatch = babl_fish_path_process;
+        }
         break;
 
       case BABL_CONVERSION:
@@ -706,14 +718,24 @@ _babl_process (Babl *babl,
       case BABL_CONVERSION_PLANE:
       case BABL_CONVERSION_PLANAR:
         babl_assert (0);
-        babl_conversion_process (babl, source, destination, n);
         break;
 
       default:
         babl_log ("NYI");
-        return -1;
         break;
     }
+}
+
+static long
+_babl_process (const Babl *cbabl,
+               const void *source,
+               void       *destination,
+               long        n)
+{
+  Babl *babl = (void*)cbabl;
+  babl->fish.processings++;
+  babl->fish.pixels += n;
+  babl->fish.dispatch (babl, source, destination, n, babl->fish.data);
   return n;
 }
 
@@ -745,33 +767,16 @@ babl_process_rows (const Babl *fish,
   if (n <= 0)
     return 0;
 
-  /* first check if it is a fish since that is our fast path */
-  if (babl->class_type >= BABL_FISH &&
-      babl->class_type <= BABL_FISH_PATH)
+  babl->fish.processings++;
+  babl->fish.pixels += n * rows;
+  for (row = 0; row < rows; row++)
     {
-      babl->fish.processings++;
-      babl->fish.pixels += n * rows;
-      for (row = 0; row < rows; row++)
-        {
-          _babl_process ((void*)babl, src, dst, n);
-          src += source_stride;
-          dst += dest_stride;
-        }
-      return n * rows;
-    }
+      babl->fish.dispatch (babl, (void*)src, (void*)dst, n, babl->fish.data);
 
-  /* matches all conversion classes */
-  if (babl->class_type >= BABL_CONVERSION &&
-      babl->class_type <= BABL_CONVERSION_PLANAR)
-  {
-    for (row = 0; row < rows; row++)
-    {
-      babl_conversion_process (babl, (void*)src, (void*)dst, n);
       src += source_stride;
       dst += dest_stride;
     }
-    return n * rows;
-  }
+  return n * rows;
 
   babl_fatal ("eek");
   return -1;
@@ -894,8 +899,8 @@ init_path_instrumentation (FishPathInstrumentation *fpi,
                                              fpi->fmt_rgba_double->format.bytes_per_pixel);
 
   /* create sourcebuffer from testbuffer in the correct format */
-  babl_process (fpi->fish_rgba_to_source,
-                test_pixels, fpi->source, fpi->num_test_pixels);
+  _babl_process (fpi->fish_rgba_to_source,
+                 test_pixels, fpi->source, fpi->num_test_pixels);
 
   /* calculate the reference buffer of how it should be */
   ticks_start = babl_ticks ();
@@ -905,8 +910,8 @@ init_path_instrumentation (FishPathInstrumentation *fpi,
   fpi->reference_cost = ticks_end - ticks_start;
 
   /* transform the reference destination buffer to RGBA */
-  babl_process (fpi->fish_destination_to_rgba,
-                fpi->ref_destination, fpi->ref_destination_rgba_double, fpi->num_test_pixels);
+  _babl_process (fpi->fish_destination_to_rgba,
+                 fpi->ref_destination, fpi->ref_destination_rgba_double, fpi->num_test_pixels);
 }
 
 static void
@@ -983,8 +988,8 @@ get_path_instrumentation (FishPathInstrumentation *fpi,
   /* transform the reference and the actual destination buffers to RGBA
    * for comparison with each other
    */
-  babl_process (fpi->fish_destination_to_rgba,
-                fpi->destination, fpi->destination_rgba_double, fpi->num_test_pixels);
+  _babl_process (fpi->fish_destination_to_rgba,
+                 fpi->destination, fpi->destination_rgba_double, fpi->num_test_pixels);
 
   *path_error = babl_rel_avg_error (fpi->destination_rgba_double,
                                     fpi->ref_destination_rgba_double,
