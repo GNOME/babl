@@ -32,6 +32,7 @@ typedef struct
   const Babl     *source;
   const Babl     *destination;
   void           (*dispatch) (const Babl *babl, const char *src, char *dst, long n);
+  void            *data;  /* user data */
   double          error;    /* the amount of noise introduced by the fish */
 
   /* instrumentation */

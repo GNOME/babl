@@ -705,6 +705,7 @@ _babl_process (Babl *babl,
       case BABL_CONVERSION_LINEAR:
       case BABL_CONVERSION_PLANE:
       case BABL_CONVERSION_PLANAR:
+        babl_assert (0);
         babl_conversion_process (babl, source, destination, n);
         break;
 

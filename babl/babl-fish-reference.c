@@ -195,9 +195,8 @@ convert_to_double (BablFormat      *source_fmt,
           if (source_fmt->component[j] ==
               source_fmt->model->component[i])
             {
-              babl_process (assert_conversion_find (src_img->type[0],
-                                                    dst_img->type[0]),
-                            src_img, dst_img, n);
+              babl_conversion_process (assert_conversion_find (src_img->type[0], dst_img->type[0]),
+                                       (void*)src_img, (void*)dst_img, n);
               found = 1;
               break;
             }
@@ -266,9 +265,9 @@ convert_from_double (BablFormat *destination_fmt,
               src_img->data[0] =
                 destination_double_buf + (src_img->type[0]->bits / 8) * j;
 
-              babl_process (assert_conversion_find (src_img->type[0],
-                                                    dst_img->type[0]),
-                            src_img, dst_img, n);
+              babl_conversion_process (assert_conversion_find (src_img->type[0],
+                                       dst_img->type[0]),
+                                       (void*)src_img, (void*)dst_img, n);
               break;
             }
         }
@@ -305,9 +304,9 @@ ncomponent_convert_to_double (BablFormat       *source_fmt,
 
   dst_img->data[0] = source_double_buf;
 
-  babl_process (
+  babl_conversion_process (
     assert_conversion_find (src_img->type[0], dst_img->type[0]),
-    src_img, dst_img,
+    (void*)src_img, (void*)dst_img,
     n * source_fmt->components);
   babl_free (src_img);
   babl_free (dst_img);
@@ -339,9 +338,9 @@ ncomponent_convert_from_double (BablFormat *destination_fmt,
   dst_img->type[0] = destination_fmt->type[0];
   src_img->data[0] = destination_double_buf;
 
-  babl_process (
+  babl_conversion_process (
     assert_conversion_find (src_img->type[0], dst_img->type[0]),
-    src_img, dst_img,
+    (void*)src_img, (void*)dst_img,
     n * destination_fmt->components);
 
   dst_img->data[0] += dst_img->type[0]->bits / 8;
@@ -499,14 +498,14 @@ babl_fish_reference_process (const Babl *babl,
       );
     if (conv->class_type == BABL_CONVERSION_PLANAR)
       {
-        babl_process (
+        babl_conversion_process (
           conv,
-          source_image, rgba_image,
+          (void*)source_image, (void*)rgba_image,
           n);
       }
     else if (conv->class_type == BABL_CONVERSION_LINEAR)
       {
-        babl_process (
+        babl_conversion_process (
           conv,
           source_double_buf, rgba_double_buf,
           n);
@@ -535,14 +534,14 @@ babl_fish_reference_process (const Babl *babl,
       BABL (babl->fish.destination)->format.model);
     if (conv->class_type == BABL_CONVERSION_PLANAR)
       {
-        babl_process (
+        babl_conversion_process (
           conv,
-          rgba_image, destination_image,
+          (void*)rgba_image, (void*)destination_image,
           n);
       }
     else if (conv->class_type == BABL_CONVERSION_LINEAR)
       {
-        babl_process (
+        babl_conversion_process (
           conv,
           rgba_double_buf, destination_double_buf,
           n);

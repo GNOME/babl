@@ -44,6 +44,7 @@ _BablConversion {
   const Babl            *destination;
   void (*dispatch) (const Babl *babl, const char *src, char *dst, long n,
                     void           *user_data);
+  void                  *data;  /* user data */
 
   long                   cost;
   double                 error;
@@ -53,7 +54,6 @@ _BablConversion {
       BablFuncPlane      plane;
       BablFuncPlanar     planar;
     } function;
-  void                  *data;  /* user data */
   int                    processings;
   long                   pixels;
 };
