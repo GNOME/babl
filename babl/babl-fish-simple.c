@@ -32,7 +32,6 @@ babl_fish_simple (BablConversion *conversion)
   char *name;
 
   babl_assert (BABL_IS_BABL (conversion));
-
   name = create_name (conversion);
   babl = babl_db_exist_by_name (babl_fish_db (), name);
   if (babl)

@@ -596,6 +596,12 @@ babl_fish_path2 (const Babl *source,
       return NULL;
     }
 
+  if (babl_list_size (babl->fish_path.conversion_list) == 1)
+    {
+      babl->class_type = BABL_FISH_SIMPLE;
+      babl->fish_simple.conversion = (void*)babl_list_get_first (babl->fish_path.conversion_list);
+    }
+
   /* Since there is not an already registered instance by the required
    * name, inserting newly created class into database.
    */
@@ -654,15 +660,17 @@ babl_fish_path_process (const Babl *babl,
                            n);
 }
 
-static void
-_babl_fish_process (const Babl *babl,
-                    const void *source,
-                    void       *destination,
-                    long        n)
+static long
+_babl_process (Babl *babl,
+               const void *source,
+               void       *destination,
+               long        n)
 {
   switch (babl->class_type)
     {
       case BABL_FISH_REFERENCE:
+        babl->fish.processings++;
+        babl->fish.pixels += n;
         if (babl->fish.source == babl->fish.destination)
           { /* XXX: we're assuming linear buffers */
             memcpy (destination, source, n * babl->fish.source->format.bytes_per_pixel);
@@ -674,6 +682,8 @@ _babl_fish_process (const Babl *babl,
         break;
 
       case BABL_FISH_SIMPLE:
+        babl->fish.processings++;
+        babl->fish.pixels += n;
         if (BABL (babl->fish_simple.conversion)->class_type == BABL_CONVERSION_LINEAR)
           {
             babl_conversion_process (BABL (babl->fish_simple.conversion),
@@ -686,61 +696,33 @@ _babl_fish_process (const Babl *babl,
         break;
 
       case BABL_FISH_PATH:
+        babl->fish.processings++;
+        babl->fish.pixels += n;
         babl_fish_path_process (babl, source, destination, n);
+        break;
+
+      case BABL_CONVERSION:
+      case BABL_CONVERSION_LINEAR:
+      case BABL_CONVERSION_PLANE:
+      case BABL_CONVERSION_PLANAR:
+        babl_conversion_process (babl, source, destination, n);
         break;
 
       default:
         babl_log ("NYI");
+        return -1;
         break;
     }
-}
-
-void
-babl_fish_process (const Babl *babl,
-                   const void *source,
-                   void       *destination,
-                   long        n);
-
-void
-babl_fish_process (const Babl *babl,
-                   const void *source,
-                   void       *destination,
-                   long        n)
-{
-  _babl_fish_process (babl, source, destination, n);
+  return n;
 }
 
 long
-babl_process (const Babl *cbabl,
+babl_process (const Babl *babl,
               const void *source,
               void       *destination,
               long        n)
 {
-  Babl *babl = (Babl*)cbabl;
-  babl_assert (babl && BABL_IS_BABL (babl) && source && destination);
-  if (n <= 0)
-    return 0;
-
-  /* first check if it is a fish since that is our fast path */
-  if (babl->class_type >= BABL_FISH &&
-      babl->class_type <= BABL_FISH_PATH)
-    {
-      babl->fish.processings++;
-      babl->fish.pixels += n;
-      _babl_fish_process (babl, source, destination, n);
-      return n;
-    }
-
-  /* matches all conversion classes */
-  if (babl->class_type >= BABL_CONVERSION &&
-      babl->class_type <= BABL_CONVERSION_PLANAR)
-  {
-    babl_conversion_process (babl, source, destination, n);
-    return n;
-  }
-
-  babl_fatal ("eek");
-  return -1;
+  return _babl_process ((void*)babl, source, destination, n);
 }
 
 long
@@ -770,7 +752,7 @@ babl_process_rows (const Babl *fish,
       babl->fish.pixels += n * rows;
       for (row = 0; row < rows; row++)
         {
-          _babl_fish_process (babl, src, dst, n);
+          _babl_process ((void*)babl, src, dst, n);
           src += source_stride;
           dst += dest_stride;
         }
