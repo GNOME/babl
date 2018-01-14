@@ -31,7 +31,7 @@ typedef struct
   BablInstance    instance;
   const Babl     *source;
   const Babl     *destination;
-
+  void           (*dispatch) (const Babl *babl, const char *src, char *dst, long n);
   double          error;    /* the amount of noise introduced by the fish */
 
   /* instrumentation */
@@ -64,9 +64,11 @@ typedef struct
  */
 typedef struct
 {
-  BablFish         fish;
-  double           cost;   /* number of  ticks *10 + chain_length */
-  BablList         *conversion_list;
+  BablFish   fish;
+  double     cost;   /* number of  ticks *10 + chain_length */
+  int        source_bpp;
+  int        dest_bpp;
+  BablList  *conversion_list;
 } BablFishPath;
 
 /* BablFishReference

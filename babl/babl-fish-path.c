@@ -424,6 +424,37 @@ alias_conversion (Babl *babl,
   return 0;
 }
 
+static void
+babl_fish_prepare_bpp (Babl *babl)
+{
+   const Babl *babl_source = babl->fish.source;
+   const Babl *babl_dest = babl->fish.destination;
+
+   switch (babl_source->instance.class_type)
+     {
+       case BABL_FORMAT:
+         babl->fish_path.source_bpp = babl_source->format.bytes_per_pixel;
+         break;
+       case BABL_TYPE:
+         babl->fish_path.source_bpp = babl_source->type.bits / 8;
+         break;
+       default:
+         babl_log ("=eeek{%i}\n", babl_source->instance.class_type - BABL_MAGIC);
+     }
+
+   switch (babl_dest->instance.class_type)
+     {
+       case BABL_FORMAT:
+         babl->fish_path.dest_bpp = babl_dest->format.bytes_per_pixel;
+         break;
+       case BABL_TYPE:
+         babl->fish_path.dest_bpp = babl_dest->type.bits / 8;
+         break;
+       default:
+         babl_log ("-eeek{%i}\n", babl_dest->instance.class_type - BABL_MAGIC);
+     }
+}
+
 
 static Babl *
 babl_fish_path2 (const Babl *source,
@@ -573,6 +604,7 @@ babl_fish_path2 (const Babl *source,
     babl_db_insert (babl_fish_db (), babl);
   }
   babl_mutex_unlock (babl_format_mutex);
+  babl_fish_prepare_bpp (babl);
   return babl;
 }
 
@@ -607,46 +639,18 @@ babl_fish_path (const Babl *source,
   return babl_fish_path2 (source, destination, 0.0);
 }
 
+
 static inline void
 babl_fish_path_process (const Babl *babl,
                         const void *source,
                         void       *destination,
                         long        n)
 {
-   const Babl *babl_source = babl->fish.source;
-   const Babl *babl_dest = babl->fish.destination;
-   int source_bpp = 0;
-   int dest_bpp = 0;
-
-   switch (babl_source->instance.class_type)
-     {
-       case BABL_FORMAT:
-         source_bpp = babl_source->format.bytes_per_pixel;
-         break;
-       case BABL_TYPE:
-         source_bpp = babl_source->type.bits / 8;
-         break;
-       default:
-         babl_log ("=eeek{%i}\n", babl_source->instance.class_type - BABL_MAGIC);
-     }
-
-   switch (babl_dest->instance.class_type)
-     {
-       case BABL_FORMAT:
-         dest_bpp = babl_dest->format.bytes_per_pixel;
-         break;
-       case BABL_TYPE:
-         dest_bpp = babl_dest->type.bits / 8;
-         break;
-       default:
-         babl_log ("-eeek{%i}\n", babl_dest->instance.class_type - BABL_MAGIC);
-     }
-
   process_conversion_path (babl->fish_path.conversion_list,
                            source,
-                           source_bpp,
+                           babl->fish_path.source_bpp,
                            destination,
-                           dest_bpp,
+                           babl->fish_path.dest_bpp,
                            n);
 }
 
