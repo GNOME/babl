@@ -668,19 +668,18 @@ babl_fish_memcpy_process (const Babl *babl,
 void
 _babl_fish_rig_dispatch (Babl *babl)
 {
+  babl->fish.data     = (void*)&(babl->fish.data);
+
+  if (babl->fish.source == babl->fish.destination)
+    {
+      babl->fish.dispatch = babl_fish_memcpy_process;
+      return;
+    }
+
   switch (babl->class_type)
     {
       case BABL_FISH_REFERENCE:
-        if (babl->fish.source == babl->fish.destination)
-          {
-            babl->fish.dispatch = babl_fish_memcpy_process;
-            babl->fish.data     = (void*)&(babl->fish.data);
-          }
-        else
-          {
-            babl->fish.dispatch = babl_fish_reference_process;
-            babl->fish.data     = (void*)&(babl->fish.data);
-          }
+        babl->fish.dispatch = babl_fish_reference_process;
         break;
 
       case BABL_FISH_SIMPLE:
@@ -706,12 +705,10 @@ _babl_fish_rig_dispatch (Babl *babl)
           /* do same short-circuit optimization as for simple fishes */
 
           babl->fish.dispatch = conversion->dispatch;
-          babl->fish.data     = &conversion->data;
         }
         else
         {
           babl->fish.dispatch = babl_fish_path_process;
-          babl->fish.data     = (void*)&(babl->fish.data);
         }
         break;
 
