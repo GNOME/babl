@@ -166,8 +166,7 @@ format_introspect (Babl *babl)
 static void
 conversion_introspect (Babl *babl)
 {
-  babl_log ("\t\tprocessings:%i pixels:%li",
-            babl->conversion.processings, babl->conversion.pixels);
+  babl_log ("\t\tpixels:%li", babl->conversion.pixels);
   if (BABL (babl->conversion.source)->class_type == BABL_FORMAT)
     {
       babl_log ("\t\terror: %f", babl_conversion_error (&babl->conversion));
@@ -177,8 +176,7 @@ conversion_introspect (Babl *babl)
 static void
 fish_introspect (Babl *babl)
 {
-  babl_log ("\t\tprocessings:%i pixels:%li",
-            babl->fish.processings, babl->fish.pixels);
+  babl_log ("\t\tpixels:%li", babl->fish.pixels);
 }
 
 static void

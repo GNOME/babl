@@ -643,8 +643,6 @@ babl_format_loss (const Babl *babl)
 
   loss = babl_rel_avg_error (clipped, test, test_pixels * 4);
 
-  fish_to->fish.processings   -= 2;
-  fish_from->fish.processings -= 2;
   fish_to->fish.pixels        -= test_pixels * 2;
   fish_from->fish.pixels      -= test_pixels * 2;
 

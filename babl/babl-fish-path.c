@@ -536,7 +536,6 @@ babl_fish_path2 (const Babl *source,
   strcpy (babl->instance.name, name);
   babl->fish.source               = source;
   babl->fish.destination          = destination;
-  babl->fish.processings          = 0;
   babl->fish.pixels               = 0;
   babl->fish.error                = BABL_MAX_COST_VALUE;
   babl->fish_path.cost            = BABL_MAX_COST_VALUE;
@@ -736,7 +735,6 @@ _babl_process (const Babl *cbabl,
                long        n)
 {
   Babl *babl = (void*)cbabl;
-  babl->fish.processings++;
   babl->fish.pixels += n;
   babl->fish.dispatch (babl, source, destination, n, *babl->fish.data);
   return n;
@@ -770,7 +768,6 @@ babl_process_rows (const Babl *fish,
   if (n <= 0)
     return 0;
 
-  babl->fish.processings++;
   babl->fish.pixels += n * rows;
   for (row = 0; row < rows; row++)
     {

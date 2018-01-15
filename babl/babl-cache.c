@@ -119,9 +119,6 @@ babl_fish_serialize (Babl *fish, char *dest, int n)
   snprintf (d, n, "\tpixels=%li", fish->fish.pixels);
   n -= strlen (d);d += strlen (d);
 
-  snprintf (d, n, " processings=%i", fish->fish.processings);
-  n -= strlen (d);d += strlen (d);
-
   snprintf (d, n, " cost=%d", (int)fish->fish_path.cost);
   n -= strlen (d);d += strlen (d);
 
@@ -145,8 +142,7 @@ static int compare_fish_pixels (const void *a, const void *b)
 {
   const Babl **fa = (void*)a;
   const Babl **fb = (void*)b;
-  return ((*fb)->fish.pixels - (*fa)->fish.pixels) +
-         ((*fb)->fish.processings - (*fa)->fish.processings);
+  return ((*fb)->fish.pixels - (*fa)->fish.pixels);
 }
 
 static const char *cache_header (void)
@@ -240,7 +236,7 @@ void babl_init_db (void)
         case '-': /* finalize */
           if (babl)
           {
-            if (((babl->fish.pixels + babl->fish.processings) % 100) == (tim % 100))
+            if ((babl->fish.pixels) == (tim % 100))
             {
               /* 1% chance of individual cached conversions being dropped -
                * making sure mis-measured conversions do not
@@ -308,10 +304,6 @@ void babl_init_db (void)
               else if (!strncmp (token2, "pixels=", 7))
               {
                 babl->fish.pixels = strtol (token2 + 7, NULL, 10);
-              }
-              else if (!strncmp (token2, "processings=", 12))
-              {
-                babl->fish.processings = strtol (token2 + 12, NULL, 10);
               }
               token2 = strtok_r (NULL, seps2, &tokp2);
             }

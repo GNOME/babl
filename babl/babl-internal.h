@@ -491,7 +491,6 @@ babl_conversion_process (const Babl *babl,
                          long        n)
 {
   BablConversion *conversion = (BablConversion *) babl;
-  conversion->processings++;
   conversion->pixels += n;
   conversion->dispatch (babl, source, destination, n, conversion->data);
 }

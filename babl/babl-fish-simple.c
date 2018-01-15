@@ -51,7 +51,6 @@ babl_fish_simple (BablConversion *conversion)
   babl->fish.source      = conversion->source;
   babl->fish.destination = conversion->destination;
 
-  babl->fish.processings       = 0;
   babl->fish.pixels            = 0;
   babl->fish_simple.conversion = conversion;
   babl->fish.error             = 0.0;/* babl fish simple should only be used by bablfish

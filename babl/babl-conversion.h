@@ -54,7 +54,6 @@ _BablConversion {
       BablFuncPlane      plane;
       BablFuncPlanar     planar;
     } function;
-  int                    processings;
   long                   pixels;
 };
 

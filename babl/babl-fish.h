@@ -33,19 +33,15 @@ typedef struct
   const Babl     *destination;
   void           (*dispatch) (const Babl *babl, const char *src, char *dst, long n, void *data);
   void          **data;      /* user data - only used for conversion redirect  */
-  double          error;    /* the amount of noise introduced by the fish */
-
-  /* instrumentation */
-  int             processings; /* number of times the fish has been used */
   long            pixels;      /* number of pixels translates */
-  long            usecs;       /* usecs spent within this fish */
+  double          error;    /* the amount of noise introduced by the fish */
+  /* instrumentation */
 } BablFish;
 
 /* BablFishSimple is the simplest type of fish, wrapping a single
  * conversion function, (note this might not be the optimal chosen
- * conversion even if it exists)
- *
- * TODO: exterminate
+ * conversion even if it exists), these fishes are used internally for
+ * instance in reference fishes.
  */
 typedef struct
 {

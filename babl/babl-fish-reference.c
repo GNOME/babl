@@ -134,7 +134,6 @@ babl_fish_reference (const Babl *source,
   babl->fish.source      = source;
   babl->fish.destination = destination;
 
-  babl->fish.processings = 0;
   babl->fish.pixels      = 0;
   babl->fish.error       = 0.0;  /* assuming the provided reference conversions for types
                                     and models are as exact as possible

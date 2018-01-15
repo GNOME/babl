@@ -315,8 +315,6 @@ babl_model_is_symmetric (const Babl *cbabl)
   babl_process (fish_to, clipped, destination, test_pixels);
   babl_process (fish_from, destination, transformed, test_pixels);
 
-  fish_to->fish.processings   -= 2;
-  fish_from->fish.processings -= 2;
   fish_to->fish.pixels        -= test_pixels * 2;
   fish_from->fish.pixels      -= test_pixels * 2;
 

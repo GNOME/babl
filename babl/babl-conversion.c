@@ -219,7 +219,6 @@ _conversion_new (const char    *name,
   babl->conversion.cost        = 69L;
 
   babl->conversion.pixels      = 0;
-  babl->conversion.processings = 0;
 
   babl->conversion.data = user_data;
 
@@ -510,10 +509,6 @@ babl_conversion_error (BablConversion *conversion)
   error = babl_rel_avg_error (destination_rgba_double,
                               ref_destination_rgba_double,
                               test_pixels * 4);
-
-  fish_rgba_to_source->fish.processings--;
-  fish_reference->fish.processings--;
-  fish_destination_to_rgba->fish.processings -= 2;
 
   fish_rgba_to_source->fish.pixels      -= test_pixels;
   fish_reference->fish.pixels           -= test_pixels;
