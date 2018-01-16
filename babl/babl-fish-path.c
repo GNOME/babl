@@ -704,6 +704,7 @@ _babl_fish_rig_dispatch (Babl *babl)
 
           /* do same short-circuit optimization as for simple fishes */
           babl->fish.dispatch = conversion->dispatch;
+          babl->fish.data     = &conversion->data;
         }
         else
         {
@@ -822,11 +823,8 @@ process_conversion_path (BablList   *path,
           long c = MIN (n - j, MAX_BUFFER_SIZE);
           int i;
 
-          /* this is where the loop unrolling should happen */
           void *aux1_buffer = temp_buffer;
-          void *aux2_buffer = NULL;
-          void *swap_buffer = NULL;
-          aux2_buffer = temp_buffer2;
+          void *aux2_buffer = temp_buffer2;
 
           /* The first conversion goes from source_buffer to aux1_buffer */
           babl_conversion_process (babl_list_get_first (path),
@@ -843,10 +841,12 @@ process_conversion_path (BablList   *path,
                                        aux1_buffer,
                                        aux2_buffer,
                                        c);
-              /* Swap the auxiliary buffers */
-              swap_buffer = aux1_buffer;
-              aux1_buffer = aux2_buffer;
-              aux2_buffer = swap_buffer;
+              {
+                /* Swap the auxiliary buffers */
+                void *swap_buffer = aux1_buffer;
+                aux1_buffer = aux2_buffer;
+                aux2_buffer = swap_buffer;
+              }
             }
 
           /* The last conversion goes from aux1_buffer to destination_buffer */
@@ -1007,7 +1007,7 @@ get_path_instrumentation (FishPathInstrumentation *fpi,
 
   *path_error = babl_rel_avg_error (fpi->destination_rgba_double,
                                     fpi->ref_destination_rgba_double,
-                                     fpi->num_test_pixels * 4);
+                                    fpi->num_test_pixels * 4);
 
   *ref_cost = fpi->reference_cost;
 }
