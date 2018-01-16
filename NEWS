@@ -3,6 +3,16 @@ The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
                                                                           -->
 
+
+2018-01-16 babl-0.1.40                                              </dt><dd>
+Added format "CIE XYZ alpha" color model and formats.
+New API babl_process_rows for reduced overhead in some scenarios; though bigger
+gains seen also for regular babl_process with reimplemented branch-free
+dispatch, and faster cbrt. Added meson build; being tested in parallel with
+auotmake, Improved reference conversions for formats skipping some of models
+components, Fixed gamma handling in indexed/palettized formats and improved
+gamma precision consistenct in sse2 conversions.<br/>
+                                                                    </dd><dt>
 2017-11-15 babl-0.1.38                                              </dt><dd>
 Added format "CIE L float", a couple of protections against division by 0.0
                                                                     </dd><dt>
