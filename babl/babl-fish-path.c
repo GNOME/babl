@@ -26,6 +26,8 @@
 #define BABL_HARD_MAX_PATH_LENGTH  8
 #define BABL_MAX_NAME_LEN          1024
 
+#define BABL_TEST_ITER             4
+
 #ifndef MIN
 #define MIN(a, b) (((a) > (b)) ? (b) : (a))
 #endif
@@ -926,7 +928,7 @@ init_path_instrumentation (FishPathInstrumentation *fpi,
                  fpi->source, fpi->ref_destination,
                  fpi->num_test_pixels);
   ticks_end = babl_ticks ();
-  fpi->reference_cost = ticks_end - ticks_start;
+  fpi->reference_cost = (ticks_end - ticks_start) * BABL_TEST_ITER;
 
   /* transform the reference destination buffer to RGBA */
   _babl_process (fpi->fish_destination_to_rgba,
@@ -1002,6 +1004,7 @@ get_path_instrumentation (FishPathInstrumentation *fpi,
 
   /* calculate this path's view of what the result should be */
   ticks_start = babl_ticks ();
+  for (int i = 0; i < BABL_TEST_ITER; i ++)
   process_conversion_path (path, fpi->source, source_bpp, fpi->destination,
                            dest_bpp, fpi->num_test_pixels);
   ticks_end = babl_ticks ();
