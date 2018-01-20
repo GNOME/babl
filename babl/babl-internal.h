@@ -498,5 +498,6 @@ babl_conversion_process (const Babl *babl,
 }
 
 void _babl_fish_rig_dispatch (Babl *babl);
+void _babl_fish_prepare_bpp (Babl *babl);
 
 #endif

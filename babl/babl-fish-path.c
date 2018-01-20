@@ -433,8 +433,8 @@ alias_conversion (Babl *babl,
   return 0;
 }
 
-static void
-babl_fish_prepare_bpp (Babl *babl)
+void
+_babl_fish_prepare_bpp (Babl *babl)
 {
    const Babl *babl_source = babl->fish.source;
    const Babl *babl_dest = babl->fish.destination;
@@ -604,7 +604,7 @@ babl_fish_path2 (const Babl *source,
       return NULL;
     }
 
-  babl_fish_prepare_bpp (babl);
+  _babl_fish_prepare_bpp (babl);
   _babl_fish_rig_dispatch (babl);
   /* Since there is not an already registered instance by the required
    * name, inserting newly created class into database.

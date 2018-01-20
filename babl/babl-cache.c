@@ -289,6 +289,8 @@ void babl_init_db (void)
             babl->fish.source               = from_format;
             babl->fish.destination          = to_format;
             babl->fish_path.conversion_list = babl_list_init_with_size (10);
+            _babl_fish_prepare_bpp (babl);
+            _babl_fish_rig_dispatch (babl);
 
             token2 = strtok_r (&token[1], seps2, &tokp2);
             while( token2 != NULL )
