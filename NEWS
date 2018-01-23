@@ -4,6 +4,9 @@ the news section both in the README and the webpage.
                                                                           -->
 
 
+2018-01-23 babl-0.1.42                                              </dt><dd>
+Fully initialize fishes when loading from cache. <br/>
+                                                                    </dd><dt>
 2018-01-16 babl-0.1.40                                              </dt><dd>
 Added format "CIE XYZ alpha" color model and formats.
 New API babl_process_rows for reduced overhead in some scenarios; though bigger
