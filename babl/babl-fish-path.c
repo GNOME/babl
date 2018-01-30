@@ -697,7 +697,7 @@ _babl_fish_rig_dispatch (Babl *babl)
             /* lift out conversion from single step conversion and make it be the dispatch function
              * itself
              */
-            babl->fish.data = &babl->fish_simple.conversion->data;
+            babl->fish.data     = &(babl->fish_simple.conversion->data);
             babl->fish.dispatch = babl->fish_simple.conversion->dispatch;
           }
         else

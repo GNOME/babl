@@ -47,6 +47,10 @@ typedef struct
 {
   BablFish         fish;
   BablConversion  *conversion;
+  double     cost;   /* number of  ticks *10 + chain_length */
+  int        source_bpp;
+  int        dest_bpp;
+  void      *foo;
 } BablFishSimple;
 
 

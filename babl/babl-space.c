@@ -575,12 +575,12 @@ static void prep_conversion (const Babl *babl)
 
 
 static inline void
-universal_nonlinear_rgba_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
+universal_nonlinear_rgba_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples, void *data)
 {
   const Babl *source_space = babl_conversion_get_source_space (conversion);
   const Babl *destination_space = babl_conversion_get_destination_space (conversion);
 
-  float * matrixf = conversion->conversion.data;
+  float * matrixf = data;
   float *rgba_in = (void*)src_char;
   float *rgba_out = (void*)dst_char;
 
@@ -592,10 +592,10 @@ universal_nonlinear_rgba_converter (const Babl *conversion,unsigned char *src_ch
 }
 
 static inline void
-universal_nonlinear_rgb_linear_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
+universal_nonlinear_rgb_linear_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples, void *data)
 {
   const Babl *source_space = babl_conversion_get_source_space (conversion);
-  float * matrixf = conversion->conversion.data;
+  float * matrixf = data;
   float *rgba_in = (void*)src_char;
   float *rgba_out = (void*)dst_char;
 
@@ -605,11 +605,11 @@ universal_nonlinear_rgb_linear_converter (const Babl *conversion,unsigned char *
 }
 
 static inline void
-universal_nonlinear_rgba_u8_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
+universal_nonlinear_rgba_u8_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples, void *data)
 {
   const Babl *destination_space = conversion->conversion.destination->format.space;
 
-  float * matrixf = conversion->conversion.data;
+  float * matrixf = data;
   float * in_trc_lut = matrixf + 9;
   int i;
   uint8_t *rgba_in_u8 = (void*)src_char;
@@ -643,9 +643,9 @@ universal_nonlinear_rgba_u8_converter (const Babl *conversion,unsigned char *src
 
 
 static inline void
-universal_rgba_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
+universal_rgba_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples, void *data)
 {
-  float *matrixf = conversion->conversion.data;
+  float *matrixf = data;
   float *rgba_in = (void*)src_char;
   float *rgba_out = (void*)dst_char;
 
@@ -653,9 +653,9 @@ universal_rgba_converter (const Babl *conversion,unsigned char *src_char, unsign
 }
 
 static inline void
-universal_rgb_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
+universal_rgb_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples, void *data)
 {
-  float *matrixf = conversion->conversion.data;
+  float *matrixf = data;
   float *rgb_in = (void*)src_char;
   float *rgb_out = (void*)dst_char;
 
@@ -664,11 +664,11 @@ universal_rgb_converter (const Babl *conversion,unsigned char *src_char, unsigne
 
 
 static inline void
-universal_nonlinear_rgb_u8_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
+universal_nonlinear_rgb_u8_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples, void *data)
 {
   const Babl *destination_space = conversion->conversion.destination->format.space;
 
-  float * matrixf = conversion->conversion.data;
+  float * matrixf = data;
   float * in_trc_lut = matrixf + 9;
   int i;
   uint8_t *rgb_in_u8 = (void*)src_char;
@@ -731,11 +731,11 @@ static inline void babl_matrix_mul_vectorff_buf4_sse2 (const float *mat,
 
 
 static inline void
-universal_nonlinear_rgba_converter_sse2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
+universal_nonlinear_rgba_converter_sse2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples, void *data)
 {
   const Babl *source_space = babl_conversion_get_source_space (conversion);
   const Babl *destination_space = babl_conversion_get_destination_space (conversion);
-  float * matrixf = conversion->conversion.data;
+  float * matrixf = data;
   float *rgba_in = (void*)src_char;
   float *rgba_out = (void*)dst_char;
 
@@ -748,9 +748,9 @@ universal_nonlinear_rgba_converter_sse2 (const Babl *conversion,unsigned char *s
 
 
 static inline void
-universal_rgba_converter_sse2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
+universal_rgba_converter_sse2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples, void *data)
 {
-  float *matrixf = conversion->conversion.data;
+  float *matrixf = data;
   float *rgba_in = (void*)src_char;
   float *rgba_out = (void*)dst_char;
 
@@ -758,11 +758,11 @@ universal_rgba_converter_sse2 (const Babl *conversion,unsigned char *src_char, u
 }
 
 static inline void
-universal_nonlinear_rgba_u8_converter_sse2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
+universal_nonlinear_rgba_u8_converter_sse2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples, void *data)
 {
   const Babl *destination_space = conversion->conversion.destination->format.space;
 
-  float * matrixf = conversion->conversion.data;
+  float * matrixf = data;
   float * in_trc_lut = matrixf + 9;
   int i;
   uint8_t *rgba_in_u8 = (void*)src_char;
@@ -793,11 +793,11 @@ universal_nonlinear_rgba_u8_converter_sse2 (const Babl *conversion,unsigned char
 }
 
 static inline void
-universal_nonlinear_rgb_u8_converter_sse2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
+universal_nonlinear_rgb_u8_converter_sse2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples, void *data)
 {
   const Babl *destination_space = conversion->conversion.destination->format.space;
 
-  float * matrixf = conversion->conversion.data;
+  float * matrixf = data;
   float * in_trc_lut = matrixf + 9;
   int i;
   uint8_t *rgb_in_u8 = (void*)src_char;
@@ -828,10 +828,10 @@ universal_nonlinear_rgb_u8_converter_sse2 (const Babl *conversion,unsigned char 
 
 
 static inline void
-universal_nonlinear_rgb_linear_converter_sse2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
+universal_nonlinear_rgb_linear_converter_sse2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples, void *data)
 {
   const Babl *source_space = babl_conversion_get_source_space (conversion);
-  float * matrixf = conversion->conversion.data;
+  float * matrixf = data;
   float *rgba_in = (void*)src_char;
   float *rgba_out = (void*)dst_char;
 
