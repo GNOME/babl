@@ -737,6 +737,8 @@ babl_format_with_space (const char *name, const Babl *space)
     sprintf (new_name, "%s-%s", name, babl_get_name ((Babl*)space));
 
     ret = babl_db_exist_by_name (db, new_name);
+
+    babl_free (new_name);
     if (ret)
       return ret;
 
