@@ -76,4 +76,6 @@
         <dd>stability fixes</dd>
   <dt>Ell</dt>
         <dd>fast paths</dd>
+  <dt>Félix Piédallu</dt>
+        <dd>Initial meson build</dd>
 </dl>
