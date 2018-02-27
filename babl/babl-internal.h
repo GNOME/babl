@@ -23,10 +23,6 @@
 #error "config.h must be included prior to babl-internal.h"
 #endif
 
-#ifdef _BABL_H
-#error babl-internal.h included after babl.h
-#endif
-
 #define BABL_MAX_COMPONENTS       32
 #define BABL_CONVERSIONS          5
 
@@ -36,10 +32,7 @@
 #include <math.h>
 #include "assert.h"
 
-#undef  _BABL_INTERNAL_H
 #include "babl.h"
-#define _BABL_INTERNAL_H
-
 #include "babl-classes.h"
 #include "babl-introspect.h"
 #include "babl-class.h"
