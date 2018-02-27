@@ -110,6 +110,8 @@ convert_u16_double_scaled (BablConversion *conversion,
 
 MAKE_CONVERSIONS (u16, 0.0, 1.0, 0, UINT16_MAX)
 
+#undef MAKE_CONVERSIONS
+
 void
 babl_base_type_u16 (void)
 {

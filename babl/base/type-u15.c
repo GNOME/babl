@@ -111,6 +111,8 @@ convert_u15_double_scaled (BablConversion *conversion,
 
 MAKE_CONVERSIONS (u15, 0.0, 1.0, 0, (1<<15))
 
+#undef MAKE_CONVERSIONS
+
 void
 babl_base_type_u15 (void)
 {
