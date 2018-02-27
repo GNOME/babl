@@ -20,12 +20,13 @@
 #include <string.h>
 #include <stdarg.h>
 #include <math.h>
-#define NEEDS_BABL_DB
 #include "babl-internal.h"
 #include "babl-db.h"
 #include "babl-ref-pixels.h"
 
 static const Babl *construct_double_format (const Babl *model);
+
+static BablDb *db = NULL;
 
 static int
 babl_model_destroy (void *data)

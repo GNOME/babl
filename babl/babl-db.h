@@ -38,10 +38,6 @@ typedef struct _BablDb
   BablMutex     *mutex;
 } _BablDb;
 
-#ifdef NEEDS_BABL_DB
-static BablDb *db = NULL;
-#endif /* NEEDS_BABL_DB */
-
 BablDb *
 babl_db_init (void);
 

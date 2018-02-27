@@ -21,10 +21,11 @@
 #include <string.h>
 #include <stdarg.h>
 #include <math.h>
-#define NEEDS_BABL_DB
 #include "babl-internal.h"
 #include "babl-db.h"
 #include "babl-ref-pixels.h"
+
+static BablDb *db = NULL;
 
 static int model_is_rgba (const Babl *model)
 {

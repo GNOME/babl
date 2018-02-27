@@ -17,7 +17,6 @@
  */
 
 #include "config.h"
-#define NEEDS_BABL_DB
 #include "babl-internal.h"
 #include "babl-db.h"
 #include <stddef.h>
@@ -36,6 +35,7 @@ typedef struct _BablFindFish
   const Babl *destination;
 } _BablFishFish;
 
+static BablDb *db = NULL;
 
 static int
 match_conversion (Babl *conversion,
