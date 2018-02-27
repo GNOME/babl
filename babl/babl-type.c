@@ -32,7 +32,7 @@ babl_type_destroy (void *data)
   Babl *babl = data;
   if (babl->type.from_list)
     babl_free (babl->type.from_list);
-  return 0; 
+  return 0;
 }
 
 static Babl *

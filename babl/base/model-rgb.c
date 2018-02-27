@@ -697,4 +697,3 @@ formats (void)
   );
 #endif
 }
-

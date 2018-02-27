@@ -140,7 +140,7 @@ babl_db_exist (BablDb     *db,
   Babl *ret;
   if (id)
     ret = babl_hash_table_find (db->id_hash, babl_hash_by_int (db->id_hash, id), NULL, &id);
-  else 
+  else
     ret = babl_hash_table_find (db->name_hash, babl_hash_by_str (db->name_hash, name), NULL, (void *) name);
   return ret;
 }

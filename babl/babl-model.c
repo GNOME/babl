@@ -405,5 +405,3 @@ babl_model_with_space (const char *name, const Babl *space)
 {
   return babl_remodel_with_space (babl_model (name), space);
 }
-
-

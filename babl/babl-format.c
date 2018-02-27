@@ -143,7 +143,7 @@ format_new_from_format_with_space (const Babl *format, const Babl *space)
 
   ret = format_new (new_name,
                     0,
-                    format->format.planar, format->format.components, 
+                    format->format.planar, format->format.components,
                     (void*)babl_remodel_with_space (BABL(format->format.model), space),
                     space,
                     format->format.component, format->format.sampling, (void*)format->format.type);
@@ -755,6 +755,4 @@ babl_format_exists (const char *name)
     return 1;
   return 0;
 }
-
-
 
