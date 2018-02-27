@@ -28,22 +28,22 @@
 
 #include "util.h"
 
-static void components (void);
-static void models (void);
-static void conversions (void);
-static void formats (void);
+static void ycbcr_components (void);
+static void ycbcr_models (void);
+static void ycbcr_conversions (void);
+static void ycbcr_formats (void);
 
 void
 babl_base_model_ycbcr (void)
 {
-  components ();
-  models ();
-  conversions ();
-  formats ();
+  ycbcr_components ();
+  ycbcr_models ();
+  ycbcr_conversions ();
+  ycbcr_formats ();
 }
 
 static void
-components (void)
+ycbcr_components (void)
 {
   babl_component_new (
     "Cb",
@@ -59,7 +59,7 @@ components (void)
 }
 
 static void
-models (void)
+ycbcr_models (void)
 {
   babl_model_new (
     "id", BABL_YCBCR,
@@ -208,7 +208,7 @@ ycbcr_to_rgba (BablConversion *conversion,
 }
 
 static void
-conversions (void)
+ycbcr_conversions (void)
 {
   babl_conversion_new (
     babl_model_from_id (BABL_RGBA),
@@ -237,7 +237,7 @@ conversions (void)
 }
 
 static void
-formats (void)
+ycbcr_formats (void)
 {
   babl_format_new (
     "name", "Y'CbCr u8",

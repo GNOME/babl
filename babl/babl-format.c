@@ -154,7 +154,7 @@ format_new_from_format_with_space (const Babl *format, const Babl *space)
 
 
 static char *
-create_name (const BablModel *model,
+format_create_name (const BablModel *model,
              int              components,
              BablComponent  **component,
              const BablType **type)
@@ -456,7 +456,7 @@ babl_format_new (const void *first_arg,
   va_end (varg);
 
   if (!name)
-    name = create_name (model, components, component, type);
+    name = format_create_name (model, components, component, type);
 
   if (space != babl_space ("sRGB"))
   {
@@ -755,4 +755,3 @@ babl_format_exists (const char *name)
     return 1;
   return 0;
 }
-

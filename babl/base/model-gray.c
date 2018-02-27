@@ -25,21 +25,21 @@
 #include "math.h"
 #include "babl-base.h"
 
-static void components (void);
-static void models (void);
-static void conversions (void);
-static void formats (void);
+static void gray_components (void);
+static void gray_models (void);
+static void gray_conversions (void);
+static void gray_formats (void);
 
 void babl_base_model_gray (void)
 {
-  components ();
-  models ();
-  conversions ();
-  formats ();
+  gray_components ();
+  gray_models ();
+  gray_conversions ();
+  gray_formats ();
 }
 
 static void
-components (void)
+gray_components (void)
 {
   babl_component_new (
     "Y",
@@ -67,7 +67,7 @@ components (void)
 }
 
 static void
-models (void)
+gray_models (void)
 {
   babl_model_new (
     "id", BABL_GRAY,
@@ -386,14 +386,14 @@ rgba_to_gray_alpha_premultiplied (Babl   *conversion,
 }
 
 static void
-non_premultiplied_to_premultiplied (Babl  *conversion,
-                                    int    src_bands,
-                                    char **src,
-                                    int   *src_pitch,
-                                    int    dst_bands,
-                                    char **dst,
-                                    int   *dst_pitch,
-                                    long   n)
+gray_non_premultiplied_to_premultiplied (Babl  *conversion,
+                                         int    src_bands,
+                                         char **src,
+                                         int   *src_pitch,
+                                         int    dst_bands,
+                                         char **dst,
+                                         int   *dst_pitch,
+                                         long   n)
 {
   BABL_PLANAR_SANITY
 
@@ -414,14 +414,14 @@ non_premultiplied_to_premultiplied (Babl  *conversion,
 }
 
 static void
-premultiplied_to_non_premultiplied (Babl  *conversion,
-                                    int    src_bands,
-                                    char **src,
-                                    int   *src_pitch,
-                                    int    dst_bands,
-                                    char **dst,
-                                    int   *dst_pitch,
-                                    long   n)
+gray_premultiplied_to_non_premultiplied (Babl  *conversion,
+                                         int    src_bands,
+                                         char **src,
+                                         int   *src_pitch,
+                                         int    dst_bands,
+                                         char **dst,
+                                         int   *dst_pitch,
+                                         long   n)
 {
   BABL_PLANAR_SANITY
 
@@ -518,7 +518,7 @@ gray_gamma_2_2_premultiplied2rgba (Babl *conversion,
 
 
 static void
-conversions (void)
+gray_conversions (void)
 {
   babl_conversion_new (
     babl_model_from_id (BABL_GRAY_GAMMA_2_2),
@@ -594,14 +594,14 @@ conversions (void)
   babl_conversion_new (
     babl_model_from_id (BABL_GRAY_ALPHA),
     babl_model_from_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
-    "planar", non_premultiplied_to_premultiplied,
+    "planar", gray_non_premultiplied_to_premultiplied,
     NULL
   );
 
   babl_conversion_new (
     babl_model_from_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
     babl_model_from_id (BABL_GRAY_ALPHA),
-    "planar", premultiplied_to_non_premultiplied,
+    "planar", gray_premultiplied_to_non_premultiplied,
     NULL
   );
 
@@ -621,7 +621,7 @@ conversions (void)
 }
 
 static void
-formats (void)
+gray_formats (void)
 {
   babl_format_new (
     babl_model_from_id (BABL_GRAY_ALPHA),

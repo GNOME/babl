@@ -25,22 +25,22 @@
 #include "babl-ids.h"
 #include "babl-base.h"
 
-static void models (void);
-static void components (void);
-static void conversions (void);
-static void formats (void);
+static void rgb_models (void);
+static void rgb_components (void);
+static void rgb_conversions (void);
+static void rgb_formats (void);
 
 void
 babl_base_model_rgb (void)
 {
-  components ();
-  models ();
-  conversions ();
-  formats ();
+  rgb_components ();
+  rgb_models ();
+  rgb_conversions ();
+  rgb_formats ();
 }
 
 static void
-components (void)
+rgb_components (void)
 {
   babl_component_new (
     "Ra",
@@ -108,7 +108,7 @@ components (void)
 }
 
 static void
-models (void)
+rgb_models (void)
 {
   babl_model_new (
     "id", BABL_RGB,
@@ -243,14 +243,14 @@ g3_inv_gamma_2_2 (Babl  *conversion,
 }
 
 static void
-non_premultiplied_to_premultiplied (Babl  *conversion,
-                                    int    src_bands,
-                                    char **src,
-                                    int   *src_pitch,
-                                    int    dst_bands,
-                                    char **dst,
-                                    int   *dst_pitch,
-                                    long   samples)
+rgb_non_premultiplied_to_premultiplied (Babl  *conversion,
+                                        int    src_bands,
+                                        char **src,
+                                        int   *src_pitch,
+                                        int    dst_bands,
+                                        char **dst,
+                                        int   *dst_pitch,
+                                        long   samples)
 {
   long n = samples;
 
@@ -272,14 +272,14 @@ non_premultiplied_to_premultiplied (Babl  *conversion,
 }
 
 static void
-premultiplied_to_non_premultiplied (Babl  *conversion,
-                                    int    src_bands,
-                                    char **src,
-                                    int   *src_pitch,
-                                    int    dst_bands,
-                                    char **dst,
-                                    int   *dst_pitch,
-                                    long   samples)
+rgb_premultiplied_to_non_premultiplied (Babl  *conversion,
+                                        int    src_bands,
+                                        char **src,
+                                        int   *src_pitch,
+                                        int    dst_bands,
+                                        char **dst,
+                                        int   *dst_pitch,
+                                        long   samples)
 {
   long n = samples;
 
@@ -411,7 +411,7 @@ rgba_gamma_2_22rgba (Babl *conversion,
 }
 
 static void
-conversions (void)
+rgb_conversions (void)
 {
   babl_conversion_new (
     babl_model_from_id (BABL_RGBA),
@@ -438,14 +438,14 @@ conversions (void)
   babl_conversion_new (
     babl_model_from_id (BABL_RGBA),
     babl_model_from_id (BABL_RGBA_PREMULTIPLIED),
-    "planar", non_premultiplied_to_premultiplied,
+    "planar", rgb_non_premultiplied_to_premultiplied,
     NULL
   );
 
   babl_conversion_new (
     babl_model_from_id (BABL_RGBA_PREMULTIPLIED),
     babl_model_from_id (BABL_RGBA),
-    "planar", premultiplied_to_non_premultiplied,
+    "planar", rgb_premultiplied_to_non_premultiplied,
     NULL
   );
 
@@ -486,7 +486,7 @@ conversions (void)
 }
 
 static void
-formats (void)
+rgb_formats (void)
 {
   babl_format_new (
     "id", BABL_SRGB,

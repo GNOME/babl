@@ -46,30 +46,30 @@ create_name_internal (char *buf,
 
 #ifdef HAVE_TLS
 
-static __thread char buf[1024];
+static __thread char tls_buf[1024];
 
 static char *
-create_name (const Babl *source,
-             const Babl *destination,
-             int   is_reference)
+fish_reference_create_name (const Babl *source,
+                            const Babl *destination,
+                            int   is_reference)
 {
   int size = 0;
 
-  size = create_name_internal (buf, sizeof(buf), source, destination, is_reference);
+  size = create_name_internal (tls_buf, sizeof(tls_buf), source, destination, is_reference);
 
   if (size < 0)
     return NULL;
 
-  return buf;
+  return tls_buf;
 }
 
 
 #else
 
 static char *
-create_name (const Babl *source,
-             const Babl *destination,
-             int   is_reference)
+fish_reference_create_name (const Babl *source,
+                            const Babl *destination,
+                            int   is_reference)
 {
   int size = 0;
   char *buf = NULL;
@@ -102,7 +102,7 @@ babl_fish_reference (const Babl *source,
                      const Babl *destination)
 {
   Babl *babl = NULL;
-  char *name = create_name (source, destination, 1);
+  char *name = fish_reference_create_name (source, destination, 1);
 
   babl_assert (name);
 

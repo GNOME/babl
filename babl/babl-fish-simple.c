@@ -20,7 +20,7 @@
 #include "babl-internal.h"
 
 static char *
-create_name (BablConversion *conversion)
+fish_simple_create_name (BablConversion *conversion)
 {
   return conversion->instance.name;
 }
@@ -32,7 +32,7 @@ babl_fish_simple (BablConversion *conversion)
   char *name;
 
   babl_assert (BABL_IS_BABL (conversion));
-  name = create_name (conversion);
+  name = fish_simple_create_name (conversion);
   babl = babl_db_exist_by_name (babl_fish_db (), name);
   if (babl)
     {

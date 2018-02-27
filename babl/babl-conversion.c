@@ -255,14 +255,14 @@ _conversion_new (const char    *name,
   return babl;
 }
 
-static char buf[512] = "";
+static char conversion_buf[512] = "";
 static int collisions = 0;
 static char *
-create_name (Babl *source, Babl *destination, int type)
+conversion_create_name (Babl *source, Babl *destination, int type)
 {
   if (babl_extender ())
     {
-      snprintf (buf, sizeof (buf), "%s %i: %s%s to %s",
+      snprintf (conversion_buf, sizeof (conversion_buf), "%s %i: %s%s to %s",
                 BABL (babl_extender ())->instance.name,
                 collisions,
                 type == BABL_CONVERSION_LINEAR ? "" :
@@ -273,7 +273,7 @@ create_name (Babl *source, Babl *destination, int type)
     }
   else
     {
-      snprintf (buf, sizeof (buf), "%s %s to %s %i",
+      snprintf (conversion_buf, sizeof (conversion_buf), "%s %s to %s %i",
                 type == BABL_CONVERSION_LINEAR ? "" :
                 type == BABL_CONVERSION_PLANE ? "plane " :
                 type == BABL_CONVERSION_PLANAR ? "planar " : "Eeeek! ",
@@ -281,7 +281,7 @@ create_name (Babl *source, Babl *destination, int type)
                 destination->instance.name,
                 collisions);
     }
-  return buf;
+  return conversion_buf;
 }
 const char *
 babl_conversion_create_name (Babl *source, Babl *destination, int type);
@@ -293,7 +293,7 @@ babl_conversion_create_name (Babl *source, Babl *destination, int type)
   char *name;
   int id = 0;
   collisions = 0;
-  name = create_name (source, destination, type);
+  name = conversion_create_name (source, destination, type);
   babl = babl_db_exist (db, id, name);
   while (babl)
     {
@@ -301,7 +301,7 @@ babl_conversion_create_name (Babl *source, Babl *destination, int type)
          of them ending up with their own unique name
        */
       collisions++;
-      name = create_name (source, destination, type);
+      name = conversion_create_name (source, destination, type);
       babl = babl_db_exist (db, id, name);
     }
   return name;
