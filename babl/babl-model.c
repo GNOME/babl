@@ -229,7 +229,7 @@ babl_model_new (void *first_argument,
 }
 
 
-#define TOLERANCE      0.001
+#define TOLERANCE_MODEL      0.001
 
 static const Babl *reference_format (void)
 {
@@ -326,7 +326,7 @@ babl_model_is_symmetric (const Babl *cbabl)
       {
         int j;
         for (j = 0; j < 4; j++)
-          if (fabs (clipped[i *4 + j] - transformed[i * 4 + j]) > TOLERANCE)
+          if (fabs (clipped[i *4 + j] - transformed[i * 4 + j]) > TOLERANCE_MODEL)
             {
               if (!log)
                 log = 1;

@@ -159,7 +159,7 @@ babl_type_new (void *first_arg,
 }
 
 
-#define TOLERANCE    0.000000001
+#define TOLERANCE_TYPE    0.000000001
 
 static const Babl *double_vector_format (void)
 {
@@ -217,7 +217,7 @@ babl_type_is_symmetric (const Babl *babl)
     int i;
     for (i = 0; i < samples; i++)
       {
-        if (fabs (clipped[i] - transformed[i]) > TOLERANCE)
+        if (fabs (clipped[i] - transformed[i]) > TOLERANCE_TYPE)
           {
             if (cnt++ < 4)
               babl_log ("%s:  %f %f %f)",
