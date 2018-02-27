@@ -25,6 +25,7 @@
 #include "babl-db.h"
 #include "babl-ref-pixels.h"
 
+#define db db_conversion
 static BablDb *db = NULL;
 
 static int model_is_rgba (const Babl *model)
@@ -540,3 +541,4 @@ const Babl *babl_conversion_get_destination_space (const Babl *conversion)
 
 
 BABL_CLASS_IMPLEMENT (conversion)
+#undef db

@@ -35,6 +35,7 @@ typedef struct _BablFindFish
   const Babl *destination;
 } _BablFishFish;
 
+#define db db_fish
 static BablDb *db = NULL;
 
 static int
@@ -307,3 +308,4 @@ babl_fish (const void *source,
 }
 
 BABL_CLASS_MINIMAL_IMPLEMENT (fish);
+#undef db

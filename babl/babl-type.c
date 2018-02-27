@@ -25,6 +25,7 @@
 #include "babl-db.h"
 #include "babl-ref-pixels.h"
 
+#define db db_type
 static BablDb *db = NULL;
 
 static int
@@ -238,3 +239,4 @@ babl_type_is_symmetric (const Babl *babl)
 }
 
 BABL_CLASS_IMPLEMENT (type)
+#undef db

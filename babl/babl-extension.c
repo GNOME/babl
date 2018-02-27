@@ -35,6 +35,7 @@
 
 static Babl *babl_extension_current_extender = NULL;
 
+#define db db_extension
 static BablDb *db = NULL;
 
 Babl *
@@ -371,3 +372,4 @@ babl_extension_destroy (void *data)
 }
 
 BABL_CLASS_IMPLEMENT (extension)
+#undef db

@@ -26,6 +26,7 @@
 
 static const Babl *construct_double_format (const Babl *model);
 
+#define db db_model
 static BablDb *db = NULL;
 
 static int
@@ -406,3 +407,4 @@ babl_model_with_space (const char *name, const Babl *space)
 {
   return babl_remodel_with_space (babl_model (name), space);
 }
+#undef db

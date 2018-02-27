@@ -25,6 +25,7 @@
 #include "babl-db.h"
 #include "babl-ref-pixels.h"
 
+#define db db_format
 static BablDb *db = NULL;
 
 static int babl_format_destruct (void *babl)
@@ -755,3 +756,4 @@ babl_format_exists (const char *name)
     return 1;
   return 0;
 }
+#undef db

@@ -23,6 +23,7 @@
 
 #include <stdarg.h>
 
+#define db db_component
 static BablDb *db = NULL;
 
 static Babl *
@@ -144,3 +145,4 @@ babl_component_new (void *first_arg,
 }
 
 BABL_CLASS_IMPLEMENT (component)
+#undef db
