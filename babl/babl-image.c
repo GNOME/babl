@@ -64,7 +64,7 @@ image_new (BablFormat     *format,
 
   babl->class_type       = BABL_IMAGE;
   babl->instance.id      = 0;
-  babl->instance.name    = "slaritbartfast";
+  babl->instance.name    = "slartibartfast";
   babl->image.format     = format;
   babl->image.model      = model;
   babl->image.components = components;
