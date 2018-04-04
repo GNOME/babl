@@ -411,20 +411,15 @@ static void
 conv_rgbF_rgbaF (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
+  float *fsrc = (void*) src;
+  float *fdst = (void*) dst;
 
   while (n--)
     {
-      *(uint32_t *) dst = (*(uint32_t *) src);
-      src           += 4;
-      dst           += 4;
-      *(uint32_t *) dst = (*(uint32_t *) src);
-      src           += 4;
-      dst           += 4;
-      *(uint32_t *) dst = (*(uint32_t *) src);
-      src           += 4;
-      dst           += 4;
-      *(float *) dst = 1.0;
-      dst           += 4;
+      *fdst++ = *fsrc++;
+      *fdst++ = *fsrc++; 
+      *fdst++ = *fsrc++;
+      *fdst++ = 1.0f;
     }
 }
 
