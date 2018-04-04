@@ -485,6 +485,37 @@ conv_gF_rgbF (const Babl *conversion,unsigned char *src, unsigned char *dst, lon
 }
 
 static void
+conv_g8_rgb8 (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      dst[0]=*src;
+      dst[1]=*src;
+      dst[2]=*src;
+      dst += 3;
+      src += 1;
+    }
+}
+#define conv_g8_rgbA8  conv_g8_rgba8
+static void
+conv_g8_rgba8 (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      dst[0]=*src;
+      dst[1]=*src;
+      dst[2]=*src;
+      dst[3]=255;
+      dst += 4;
+      src += 1;
+    }
+}
+
+static void
 conv_gaF_rgbaF (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
@@ -1067,6 +1098,9 @@ init (void)
   o (ga8, gaF);
   o (gA8, gAF);
   o (g8, gF);
+  o (g8, rgb8);
+  o (g8, rgba8);
+  o (g8, rgbA8);
   o (gaF, ga16);
   o (gAF, gA16);
   o (gF, g16);
