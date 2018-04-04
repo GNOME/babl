@@ -455,8 +455,8 @@ conv_rgba8_rgb8 (const Babl *conversion,unsigned char *src, unsigned char *dst, 
   while (n--)
     {
       *(unsigned int *) dst = (*(unsigned int *) src);
-      src   += 3;
-      dst   += 4;
+      src   += 4;
+      dst   += 3;
     }
   dst[0] = src[0];
   dst[1] = src[1];
