@@ -447,6 +447,22 @@ conv_rgbAF_lrgba8 (const Babl *conversion,unsigned char *srcc,
     }
 }
 
+static void
+conv_rgba8_rgb8 (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
+{
+  long n = samples - 1;
+
+  while (n--)
+    {
+      *(unsigned int *) dst = (*(unsigned int *) src);
+      src   += 3;
+      dst   += 4;
+    }
+  dst[0] = src[0];
+  dst[1] = src[1];
+  dst[2] = src[2];
+}
+
 #define conv_rgb8_rgbAF    conv_rgb8_rgbaF
 #define conv_gamma_rgbaF_gamma_rgbAF   conv_rgbaF_rgbAF
 #define conv_gamma_rgbAF_gamma_rgbaF   conv_rgbAF_rgbaF
@@ -531,10 +547,8 @@ init (void)
 
   o (rgbaF, rgbAF);
   o (rgbAF, rgbaF);
-  
   o (gamma_rgbaF, gamma_rgbAF);
   o (gamma_rgbAF, gamma_rgbaF);
-  
   o (rgbAF, lrgba8);
   o (rgb8,  rgbaF);
   o (rgb8,  rgbAF);
@@ -542,6 +556,7 @@ init (void)
   o (rgbaF, rgb8);
   o (rgbAF, rgb8);
   o (bgrA8, rgba8);
+  o (rgba8, rgb8);
 
   return 0;
 }
