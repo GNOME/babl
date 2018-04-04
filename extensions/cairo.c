@@ -138,21 +138,19 @@ static void conv_cairo32_rgbAF_premul_le (const Babl *conversion,unsigned char *
 }
 
 static inline void
-conv_rgbA8_cairo32_le (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
+conv_rgba8_cairo32_le (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
+  uint32_t *dsti = (void*) dst;
   while (n--)
     {
-      unsigned char red    = *src++;
-      unsigned char green  = *src++;
-      unsigned char blue   = *src++;
-      unsigned char alpha  = *src++;
-
+      unsigned char alpha  = src[3];
 #define div_255(a) ((((a)+128)+(((a)+128)>>8))>>8)
-      *dst++ = div_255 (blue  * alpha);
-      *dst++ = div_255 (green * alpha);
-      *dst++ = div_255 (red   * alpha);
-      *dst++ = alpha;
+      *dsti++ = (alpha << 24) +
+                (div_255 (src[0] * alpha) << 16) +
+                (div_255 (src[1] * alpha) << 8) +
+                (div_255 (src[2] * alpha));
+      src+=4;
     }
 }
 
@@ -398,7 +396,7 @@ init (void)
                            conv_rgbA8_premul_cairo32_le, NULL);
 
       babl_conversion_new (babl_format ("R'G'B'A u8"), f32, "linear",
-                           conv_rgbA8_cairo32_le, NULL);
+                           conv_rgba8_cairo32_le, NULL);
 
 
       babl_conversion_new (babl_format ("R'G'B' u8"), f32, "linear",
