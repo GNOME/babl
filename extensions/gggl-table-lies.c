@@ -302,6 +302,38 @@ conv_ga16_gaF (const Babl *conversion,unsigned char *src, unsigned char *dst, lo
 #define conv_gA16_gAF        conv_ga16_gaF
 #define conv_g16_gF          conv_16_F
 
+static void
+conv_rgbafloat_linear_cairo32_le (const Babl *conversion,unsigned char *src_char,
+                                  unsigned char *dst,
+                                  long           samples)
+{
+  long   n    = samples;
+  float *src  = (float*)src_char;
+
+  while (n--)
+    {
+      float alpha = src[3] * 255;
+#define BABL_ALPHA_THRESHOLD 0.000000152590219
+
+      if (alpha < BABL_ALPHA_THRESHOLD)
+        {
+          *(int *)dst = 0;
+        }
+      else
+        {
+          if (alpha > 255) alpha = 255;
+#define div_255(a) ((((a)+128)+(((a)+128)>>8))>>8)
+          dst[0] = src[2] * alpha + 0.5f;
+          dst[1] = src[1] * alpha + 0.5f;
+          dst[2] = src[0] * alpha + 0.5f;
+          dst[3] = alpha + 0.5f;
+        }
+      src += 4;
+      dst += 4;
+    }
+}
+
+
 int init (void);
 
 int
@@ -427,6 +459,26 @@ init (void)
     babl_type ("u8"),
     babl_component ("Y"),
     NULL);
+
+  int   testint  = 23;
+  char *testchar = (char*) &testint;
+  int   littleendian = (testchar[0] == 23);
+
+  if (littleendian)
+    {
+      const Babl *f32 = babl_format_new (
+        "name", "cairo-ARGB32",
+        babl_model ("R'aG'aB'aA"),
+        babl_type ("u8"),
+        babl_component ("B'a"),
+        babl_component ("G'a"),
+        babl_component ("R'a"),
+        babl_component ("A"),
+        NULL
+      );
+      babl_conversion_new (babl_format ("RGBA float"), f32, "linear",
+                           conv_rgbafloat_linear_cairo32_le, NULL);
+  }
 
 #define o(src, dst) \
   babl_conversion_new (src, dst, "linear", conv_ ## src ## _ ## dst, NULL)

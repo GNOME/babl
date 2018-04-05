@@ -18,7 +18,7 @@ ext_LTLIBRARIES = \
 	16bit.la        \
 	cairo.la        \
 	CIE.la          \
-    float-half.la   \
+	float-half.la   \
 	gegl-fixups.la  \
 	gggl-lies.la    \
 	gggl-table.la   \
@@ -26,6 +26,7 @@ ext_LTLIBRARIES = \
 	gggl.la         \
 	gimp-8bit.la    \
 	grey.la         \
+	double.la       \
 	float.la        \
 	fast-float.la   \
 	naive-CMYK.la   \

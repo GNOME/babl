@@ -205,6 +205,17 @@ init (void)
 
   if (littleendian)
     {
+      const Babl *f32 = babl_format_new (
+        "name", "cairo-ARGB32",
+        babl_model ("R'aG'aB'aA"),
+        babl_type ("u8"),
+        babl_component ("B'a"),
+        babl_component ("G'a"),
+        babl_component ("R'a"),
+        babl_component ("A"),
+        NULL
+      );
+
       const Babl *f24 = babl_format_new (
         "name", "cairo-RGB24",
         babl_model ("R'G'B'"),

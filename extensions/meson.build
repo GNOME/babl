@@ -2,6 +2,7 @@ extension_names = [
   '16bit',
   'cairo',
   'CIE',
+  'double',
   'fast-float',
   'float-half',
   'float',

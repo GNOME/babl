@@ -164,6 +164,7 @@ conv_F_8 (const Babl *conversion,unsigned char *src, unsigned char *dst, long sa
     }
 }
 
+
 static void
 conv_F_16 (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
 {
