@@ -1,5 +1,6 @@
 extension_names = [
   '16bit',
+  '32bit',
   'cairo',
   'CIE',
   'double',
