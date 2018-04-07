@@ -26,6 +26,54 @@
 #include "extensions/util.h"
 
 static inline void
+conv_u32_u16 (const Babl    *conversion,
+              unsigned char *src,
+              unsigned char *dst,
+              long           samples)
+
+
+{
+  uint32_t *src32 = (uint32_t*) src;
+  uint16_t *dst16 = (uint16_t*) dst;
+  long n = samples;
+
+  while (n--)
+    {
+      *dst16++ = (*src32++)>>16;
+    }
+}
+
+static inline void
+conv_u16_u32 (const Babl    *conversion,
+              unsigned char *src,
+              unsigned char *dst,
+              long           samples)
+
+
+{
+  uint16_t *src16 = (uint16_t*) src;
+  uint32_t *dst32 = (uint32_t*) dst;
+  long n = samples;
+
+  while (n--)
+    {
+      *dst32++ = (*src16++) * 65536.99f;
+    }
+}
+
+
+static inline void
+conv_yau32_yau16 (const Babl    *conversion,
+                    unsigned char *src,
+                    unsigned char *dst,
+                    long           samples)
+
+
+{
+  conv_u32_u16 (conversion, src, dst, samples * 2);
+}
+
+static inline void
 conv_rgbu32_rgbu16 (const Babl    *conversion,
                     unsigned char *src,
                     unsigned char *dst,
@@ -33,14 +81,7 @@ conv_rgbu32_rgbu16 (const Babl    *conversion,
 
 
 {
-  uint32_t *src32 = (uint32_t*) src;
-  uint16_t *dst16 = (uint16_t*) dst;
-  long n = samples * 3;
-
-  while (n--)
-    {
-      *dst16++ = (*src32++)>>16;
-    }
+  conv_u32_u16 (conversion, src, dst, samples * 3);
 }
 
 static inline void
@@ -51,14 +92,18 @@ conv_rgbu16_rgbu32 (const Babl    *conversion,
 
 
 {
-  uint16_t *src16 = (uint16_t*) src;
-  uint32_t *dst32 = (uint32_t*) dst;
-  long n = samples * 3;
+  conv_u16_u32 (conversion, src, dst, samples * 3);
+}
 
-  while (n--)
-    {
-      *dst32++ = (*src16++) * 65536.99f;
-    }
+static inline void
+conv_yau16_yau32 (const Babl    *conversion,
+                    unsigned char *src,
+                    unsigned char *dst,
+                    long           samples)
+
+
+{
+  conv_u16_u32 (conversion, src, dst, samples * 2);
 }
 
 
@@ -70,14 +115,7 @@ conv_rgbau32_rgbau16 (const Babl    *conversion,
 
 
 {
-  uint32_t *src32 = (uint32_t*) src;
-  uint16_t *dst16 = (uint16_t*) dst;
-  long n = samples * 4;
-
-  while (n--)
-    {
-      *dst16++ = (*src32++)>>16;
-    }
+  conv_u32_u16 (conversion, src, dst, samples * 4);
 }
 
 static inline void
@@ -88,14 +126,7 @@ conv_rgbau16_rgbau32 (const Babl    *conversion,
 
 
 {
-  uint16_t *src16 = (uint16_t*) src;
-  uint32_t *dst32 = (uint32_t*) dst;
-  long n = samples * 4;
-
-  while (n--)
-    {
-      *dst32++ = (*src16++) * 65536.99f;
-    }
+  conv_u16_u32 (conversion, src, dst, samples * 4);
 }
 
 
@@ -136,6 +167,25 @@ conv_rgb32_rgba32 (const Babl *conversion,unsigned char *src,
     }
 }
 
+
+static inline void
+conv_yu32_yau32 (const Babl *conversion,unsigned char *src,
+                 unsigned char *dst,
+                 long           samples)
+{
+  uint32_t *src32 = (uint32_t*) src;
+  uint32_t *dst32 = (uint32_t*) dst;
+  long n = samples;
+
+  while (n--)
+    {
+      *dst32++ = (*src32++);
+      *dst32++ = 4294967295;
+    }
+}
+
+
+
 int init (void);
 
 int
@@ -171,7 +221,6 @@ init (void)
     "linear",
     conv_rgbu16_rgbu32,
     NULL);
-
   babl_conversion_new (
     babl_format ("RGBA u32"),
     babl_format ("RGBA u16"),
@@ -197,30 +246,130 @@ init (void)
     "linear",
     conv_rgbau16_rgbau32,
     NULL);
+  babl_conversion_new (
+    babl_format ("RGBA u32"),
+    babl_format ("RGB u32"),
+    "linear",
+    conv_rgba32_rgb32,
+    NULL);
+  babl_conversion_new (
+    babl_format ("RGB u32"),
+    babl_format ("RGBA u32"),
+    "linear",
+    conv_rgb32_rgba32,
+    NULL);
+  babl_conversion_new (
+    babl_format ("R'G'B'A u32"),
+    babl_format ("R'G'B' u32"),
+    "linear",
+    conv_rgba32_rgb32,
+    NULL);
+  babl_conversion_new (
+    babl_format ("R'G'B' u32"),
+    babl_format ("R'G'B'A u32"),
+    "linear",
+    conv_rgb32_rgba32,
+    NULL);
 
   babl_conversion_new (
-    babl_format ("RGBA u32"),
-    babl_format ("RGB u32"),
+    babl_format ("Y u32"),
+    babl_format ("Y u16"),
     "linear",
-    conv_rgba32_rgb32,
+    conv_u32_u16,
     NULL);
   babl_conversion_new (
-    babl_format ("RGB u32"),
-    babl_format ("RGBA u32"),
+    babl_format ("Y' u32"),
+    babl_format ("Y' u16"),
     "linear",
-    conv_rgb32_rgba32,
+    conv_u32_u16,
     NULL);
   babl_conversion_new (
-    babl_format ("R'G'B'A u32"),
-    babl_format ("R'G'B' u32"),
+    babl_format ("Y u16"),
+    babl_format ("Y u32"),
     "linear",
-    conv_rgba32_rgb32,
+    conv_u16_u32,
     NULL);
   babl_conversion_new (
-    babl_format ("R'G'B' u32"),
-    babl_format ("R'G'B'A u32"),
+    babl_format ("Y' u16"),
+    babl_format ("Y' u32"),
     "linear",
-    conv_rgb32_rgba32,
+    conv_u16_u32,
+    NULL);
+
+
+  babl_conversion_new (
+    babl_format ("YA u32"),
+    babl_format ("YA u16"),
+    "linear",
+    conv_yau32_yau16,
+    NULL);
+  babl_conversion_new (
+    babl_format ("YaA u32"),
+    babl_format ("YaA u16"),
+    "linear",
+    conv_yau32_yau16,
+    NULL);
+  babl_conversion_new (
+    babl_format ("Y'A u32"),
+    babl_format ("Y'A u16"),
+    "linear",
+    conv_yau32_yau16,
+    NULL);
+  babl_conversion_new (
+    babl_format ("Y'aA u32"),
+    babl_format ("Y'aA u16"),
+    "linear",
+    conv_yau32_yau16,
+    NULL);
+  babl_conversion_new (
+    babl_format ("YA u16"),
+    babl_format ("YA u32"),
+    "linear",
+    conv_yau16_yau32,
+    NULL);
+  babl_conversion_new (
+    babl_format ("YaA u16"),
+    babl_format ("YaA u32"),
+    "linear",
+    conv_yau16_yau32,
+    NULL);
+  babl_conversion_new (
+    babl_format ("Y'A u16"),
+    babl_format ("Y'A u32"),
+    "linear",
+    conv_yau16_yau32,
+    NULL);
+  babl_conversion_new (
+    babl_format ("Y'aA u16"),
+    babl_format ("Y'aA u32"),
+    "linear",
+    conv_yau16_yau32,
+    NULL);
+
+
+  babl_conversion_new (
+    babl_format ("Y u32"),
+    babl_format ("YA u32"),
+    "linear",
+    conv_yu32_yau32,
+    NULL);
+  babl_conversion_new (
+    babl_format ("Y u32"),
+    babl_format ("YaA u32"),
+    "linear",
+    conv_yu32_yau32,
+    NULL);
+  babl_conversion_new (
+    babl_format ("Y' u32"),
+    babl_format ("Y'A u32"),
+    "linear",
+    conv_yu32_yau32,
+    NULL);
+  babl_conversion_new (
+    babl_format ("Y' u32"),
+    babl_format ("Y'aA u32"),
+    "linear",
+    conv_yu32_yau32,
     NULL);
 
   return 0;
