@@ -195,6 +195,30 @@ conv_rgbD_gamma_rgbD_linear (const Babl *conversion,unsigned char *src,
      }
 }
 
+
+static INLINE void
+conv_rgbD_linear_rgbaD_linear (const Babl *conversion,unsigned char *src, 
+                               unsigned char *dst, 
+                               long           samples)
+{
+   const Babl  *space = babl_conversion_get_destination_space (conversion);
+   const Babl **trc   = (void*)space->space.trc;
+   double *fsrc = (double *) src;
+   double *fdst = (double *) dst;
+   int n = samples;
+
+   while (n--)
+     {
+       *fdst++ = babl_trc_to_linear (trc[0], *fsrc++);
+       *fdst++ = babl_trc_to_linear (trc[1], *fsrc++);
+       *fdst++ = babl_trc_to_linear (trc[2], *fsrc++);
+       *fdst++ = 1.0;
+     }
+}
+
+
+#define conv_rgbD_gamma_rgbaD_gamma conv_rgbD_linear_rgbaD_linear
+
 #define o(src, dst) \
   babl_conversion_new (src, dst, "linear", conv_ ## src ## _ ## dst, NULL)
 
@@ -258,6 +282,12 @@ init (void)
   o (rgbD_gamma,  rgbD_linear);
   o (rgbaD_linear, rgbD_linear);
   o (rgbaD_gamma,  rgbD_gamma);
+
+
+  o (rgbD_linear, rgbaD_linear);
+  o (rgbD_gamma, rgbaD_gamma);
+  o (rgbaD_linear, rgbD_linear);
+  o (rgbaD_gamma, rgbD_gamma);
 
   return 0;
 }
