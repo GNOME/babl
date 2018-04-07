@@ -254,7 +254,7 @@ conv_rgbaHalf_rgbaF (const Babl *conversion,const uint16_t *src, float *dst, lon
 
 #define conv_rgbAHalf_rgbAF  conv_rgbaHalf_rgbaF
 
-static inline void
+static void
 conv_yF_yHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
 {
   singles2halfp (dst, src, samples);
@@ -335,7 +335,7 @@ static void singles2halfp2(void *target, const void *source, long numel)
     }
 }
 
-static inline void
+static void
 conv2_yF_yHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
 {
   singles2halfp2 (dst, src, samples);

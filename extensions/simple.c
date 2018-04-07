@@ -176,17 +176,17 @@ float_to_u32_x1 (const Babl *conversion,unsigned char *src_char, unsigned char *
       src += 1;
     }
 }
-static inline void
+static void
 float_to_u32_x2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   float_to_u32_x1 (conversion, src_char, dst_char, samples * 2);
 }
-static inline void
+static void
 float_to_u32_x3 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   float_to_u32_x1 (conversion, src_char, dst_char, samples * 3);
 }
-static inline void
+static void
 float_to_u32_x4 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   float_to_u32_x1 (conversion, src_char, dst_char, samples * 4);
@@ -207,20 +207,20 @@ u32_to_float (const Babl *conversion,unsigned char *src_char, unsigned char *dst
     }
 }
 
-static inline void
+static void
 u32_to_float_x4 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   u32_to_float (conversion, src_char, dst_char, samples * 4);
 }
 
-static inline void
+static void
 u32_to_float_x3 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   u32_to_float (conversion, src_char, dst_char, samples * 3);
 }
 
 
-static inline void
+static void
 u32_to_float_x2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   u32_to_float (conversion, src_char, dst_char, samples * 2);
@@ -241,20 +241,20 @@ u16_to_float (const Babl *conversion,unsigned char *src_char, unsigned char *dst
     }
 }
 
-static inline void
+static void
 u16_to_float_x4 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   u16_to_float (conversion, src_char, dst_char, samples * 4);
 }
 
-static inline void
+static void
 u16_to_float_x3 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   u16_to_float (conversion, src_char, dst_char, samples * 3);
 }
 
 
-static inline void
+static void
 u16_to_float_x2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples)
 {
   u16_to_float (conversion, src_char, dst_char, samples * 2);

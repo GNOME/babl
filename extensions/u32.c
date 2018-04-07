@@ -62,7 +62,7 @@ conv_u16_u32 (const Babl    *conversion,
 }
 
 
-static inline void
+static void
 conv_yau32_yau16 (const Babl    *conversion,
                     unsigned char *src,
                     unsigned char *dst,
@@ -73,7 +73,7 @@ conv_yau32_yau16 (const Babl    *conversion,
   conv_u32_u16 (conversion, src, dst, samples * 2);
 }
 
-static inline void
+static void
 conv_rgbu32_rgbu16 (const Babl    *conversion,
                     unsigned char *src,
                     unsigned char *dst,
@@ -84,7 +84,7 @@ conv_rgbu32_rgbu16 (const Babl    *conversion,
   conv_u32_u16 (conversion, src, dst, samples * 3);
 }
 
-static inline void
+static void
 conv_rgbu16_rgbu32 (const Babl    *conversion,
                     unsigned char *src,
                     unsigned char *dst,
@@ -95,7 +95,7 @@ conv_rgbu16_rgbu32 (const Babl    *conversion,
   conv_u16_u32 (conversion, src, dst, samples * 3);
 }
 
-static inline void
+static void
 conv_yau16_yau32 (const Babl    *conversion,
                     unsigned char *src,
                     unsigned char *dst,
@@ -107,7 +107,7 @@ conv_yau16_yau32 (const Babl    *conversion,
 }
 
 
-static inline void
+static void
 conv_rgbau32_rgbau16 (const Babl    *conversion,
                       unsigned char *src,
                       unsigned char *dst,
@@ -118,7 +118,7 @@ conv_rgbau32_rgbau16 (const Babl    *conversion,
   conv_u32_u16 (conversion, src, dst, samples * 4);
 }
 
-static inline void
+static void
 conv_rgbau16_rgbau32 (const Babl    *conversion,
                       unsigned char *src,
                       unsigned char *dst,

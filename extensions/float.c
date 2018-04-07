@@ -26,11 +26,7 @@
 #include "extensions/util.h"
 #include "base/util.h"
 
-
-#define INLINE inline
-
-
-static INLINE void
+static void
 conv_rgbaF_linear_rgbAF_gamma (const Babl *conversion,unsigned char *src,
                                unsigned char *dst,
                                long           samples)
@@ -52,7 +48,7 @@ conv_rgbaF_linear_rgbAF_gamma (const Babl *conversion,unsigned char *src,
      }
 }
 
-static INLINE void
+static void
 conv_rgbAF_linear_rgbAF_gamma (const Babl    *conversion,
                                unsigned char *src,
                                unsigned char *dst,
@@ -94,7 +90,7 @@ conv_rgbAF_linear_rgbAF_gamma (const Babl    *conversion,
      }
 }
 
-static INLINE void
+static void
 conv_rgbaF_linear_rgbaF_gamma (const Babl *conversion,unsigned char *src, 
                                unsigned char *dst, 
                                long           samples)
@@ -115,7 +111,7 @@ conv_rgbaF_linear_rgbaF_gamma (const Babl *conversion,unsigned char *src,
      }
 }
 
-static INLINE void
+static void
 conv_rgbF_linear_rgbF_gamma (const Babl *conversion,unsigned char *src, 
                              unsigned char *dst, 
                              long           samples)
@@ -135,7 +131,7 @@ conv_rgbF_linear_rgbF_gamma (const Babl *conversion,unsigned char *src,
 }
 
 
-static INLINE void
+static void
 conv_rgbaF_gamma_rgbaF_linear (const Babl *conversion,unsigned char *src, 
                                unsigned char *dst, 
                                long           samples)
@@ -155,7 +151,7 @@ conv_rgbaF_gamma_rgbaF_linear (const Babl *conversion,unsigned char *src,
      }
 }
 
-static INLINE void
+static void
 conv_rgbF_gamma_rgbF_linear (const Babl *conversion,unsigned char *src, 
                              unsigned char *dst, 
                              long           samples)

@@ -49,8 +49,6 @@
 #include "extensions/util.h"
 
 
-#define INLINE    inline
-
 /* lookup tables used in conversion */
 
 static float         table_8_F[1 << 8];
@@ -133,7 +131,7 @@ table_init (void)
 }
 
 /* function to find the index in table for a float */
-static unsigned int
+static inline unsigned int
 gggl_float_to_index16 (float f)
 {
   union
@@ -145,7 +143,7 @@ gggl_float_to_index16 (float f)
   return (u.s >> 15) & ((1 << 17)-1);
 }
 
-static INLINE void
+static inline void
 conv_F_8 (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
@@ -162,7 +160,7 @@ conv_F_8 (const Babl *conversion,unsigned char *src, unsigned char *dst, long sa
 }
 
 
-static INLINE void
+static inline void
 conv_F_8g (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
@@ -179,7 +177,7 @@ conv_F_8g (const Babl *conversion,unsigned char *src, unsigned char *dst, long s
 }
 
 
-static INLINE void __attribute__((unused))
+static inline void __attribute__((unused))
 conv_8_F (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
@@ -195,7 +193,7 @@ conv_8_F (const Babl *conversion,unsigned char *src, unsigned char *dst, long sa
 }
 
 
-static INLINE void
+static void
 conv_rgbaF_rgb8 (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
@@ -222,7 +220,7 @@ conv_rgbaF_rgb8 (const Babl *conversion,unsigned char *src, unsigned char *dst, 
 }
 
 
-static INLINE void __attribute__((unused))
+static void __attribute__((unused))
 conv_rgbaF_rgba8 (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
@@ -253,13 +251,13 @@ conv_rgbaF_rgba8 (const Babl *conversion,unsigned char *src, unsigned char *dst,
 
 #define conv_rgbaF_rgbP8    conv_rgbaF_rgba8
 
-static INLINE void __attribute__((unused))
+static void __attribute__((unused))
 conv_rgbF_rgb8 (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
 {
   conv_F_8g (conversion, src, dst, samples * 3);
 }
 
-static INLINE void __attribute__((unused))
+static void __attribute__((unused))
 conv_gaF_ga8 (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
 {
   conv_F_8 (conversion, src, dst, samples * 2);
@@ -270,7 +268,7 @@ conv_gaF_ga8 (const Babl *conversion,unsigned char *src, unsigned char *dst, lon
 #define conv_gAF_gA8        conv_gaF_ga8
 
 
-static INLINE void
+static void
 conv_rgba8_rgbaF (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
@@ -295,7 +293,7 @@ conv_rgba8_rgbaF (const Babl *conversion,unsigned char *src, unsigned char *dst,
     }
 }
 
-static INLINE void
+static void
 conv_rgb8_rgbaF (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;

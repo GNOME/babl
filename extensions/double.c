@@ -27,10 +27,7 @@
 #include "base/util.h"
 
 
-#define INLINE inline
-
-
-static INLINE void
+static void
 conv_rgbaD_linear_rgbAD_gamma (const Babl *conversion,unsigned char *src,
                                unsigned char *dst,
                                long           samples)
@@ -52,7 +49,7 @@ conv_rgbaD_linear_rgbAD_gamma (const Babl *conversion,unsigned char *src,
      }
 }
 
-static INLINE void
+static void
 conv_rgbAD_linear_rgbAD_gamma (const Babl    *conversion,
                                unsigned char *src,
                                unsigned char *dst,
@@ -94,7 +91,7 @@ conv_rgbAD_linear_rgbAD_gamma (const Babl    *conversion,
      }
 }
 
-static INLINE void
+static void
 conv_rgbaD_linear_rgbaD_gamma (const Babl *conversion,unsigned char *src, 
                                unsigned char *dst, 
                                long           samples)
@@ -136,7 +133,7 @@ conv_rgbaD_linear_rgbD_linear (const Babl *conversion,unsigned char *src,
 }
 
 
-static INLINE void
+static void
 conv_rgbD_linear_rgbD_gamma (const Babl *conversion,unsigned char *src, 
                              unsigned char *dst, 
                              long           samples)
@@ -156,7 +153,7 @@ conv_rgbD_linear_rgbD_gamma (const Babl *conversion,unsigned char *src,
 }
 
 
-static INLINE void
+static void
 conv_rgbaD_gamma_rgbaD_linear (const Babl *conversion,unsigned char *src, 
                                unsigned char *dst, 
                                long           samples)
@@ -176,7 +173,7 @@ conv_rgbaD_gamma_rgbaD_linear (const Babl *conversion,unsigned char *src,
      }
 }
 
-static INLINE void
+static void
 conv_rgbD_gamma_rgbD_linear (const Babl *conversion,unsigned char *src, 
                              unsigned char *dst, 
                              long           samples)
@@ -196,7 +193,7 @@ conv_rgbD_gamma_rgbD_linear (const Babl *conversion,unsigned char *src,
 }
 
 
-static INLINE void
+static void
 conv_rgbD_linear_rgbaD_linear (const Babl *conversion,unsigned char *src, 
                                unsigned char *dst, 
                                long           samples)
