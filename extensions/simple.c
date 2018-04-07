@@ -168,7 +168,7 @@ float_to_u32_x1 (const Babl *conversion,unsigned char *src_char, unsigned char *
   long n = samples;
   while (n--)
     {
-      float r = src[0];
+      double r = src[0];
             
       dst[0] = (r >= 1.0f) ? 0xFFFFFFFF : ((r <= 0.0f) ? 0x0 : 0xFFFFFFFF * r + 0.5f);
       
@@ -201,7 +201,7 @@ u32_to_float (const Babl *conversion,unsigned char *src_char, unsigned char *dst
   long n = samples;
   while (n--)
     {
-      dst[0] = src[0] / 4294967295.0f;
+      dst[0] = src[0] / 4294967295.0;
       dst ++;
       src ++;
     }
