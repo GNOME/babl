@@ -15,11 +15,11 @@ AM_CPPFLAGS = \
 
 extdir = $(libdir)/babl-@BABL_API_VERSION@
 ext_LTLIBRARIES = \
-	16bit.la        \
-	32bit.la        \
+	u16.la        \
+	u32.la        \
 	cairo.la        \
 	CIE.la          \
-	float-half.la   \
+	half.la   \
 	gegl-fixups.la  \
 	gggl-lies.la    \
 	gggl-table.la   \
