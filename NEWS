@@ -4,9 +4,13 @@ the news section both in the README and the webpage.
                                                                           -->
 
 
+2018-04-10 babl-0.1.46                                              </dt><dd>
+added extensions with more coverage for u32, half and other utilit fast paths
+improving fast path coverage.
+                                                                    </dd><dt>
 2018-02-18 babl-0.1.44                                              </dt><dd>
 Fix bug in custom primaries/ICC fast paths, improve meson build<br/>
-
+                                                                    </dd><dt>
 2018-01-23 babl-0.1.42                                              </dt><dd>
 Fully initialize fishes when loading from cache. <br/>
                                                                     </dd><dt>
