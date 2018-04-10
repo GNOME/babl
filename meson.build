@@ -1,6 +1,6 @@
 project('babl', 'c',
   license: 'LGPL3+',
-  version: '0.1.46',
+  version: '0.1.47',
   meson_version: '>=0.40.0',
   default_options: [
     'sysconfdir=/etc',
