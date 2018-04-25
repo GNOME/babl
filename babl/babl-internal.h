@@ -127,7 +127,7 @@ real_babl_log_va(const char *file,
           __android_log_print (ANDROID_LOG_DEBUG, "BABL",
                                "When loading %s:\n\t", babl_extender()->instance.name);
 #else
-          fprintf (stdout, "When loading %s:\n\t", babl_extender()->instance.name);
+          fprintf (stderr, "When loading %s:\n\t", babl_extender()->instance.name);
 #endif
         }
 
@@ -135,7 +135,7 @@ real_babl_log_va(const char *file,
       __android_log_print (ANDROID_LOG_DEBUG, "BABL",
                            "%s:%i %s()", file, line, function);
 #else
-      fprintf (stdout, "%s:%i %s()\n\t", file, line, function);
+      fprintf (stderr, "%s:%i %s()\n\t", file, line, function);
 #endif
     }
 
@@ -143,8 +143,8 @@ real_babl_log_va(const char *file,
   __android_log_vprint (ANDROID_LOG_DEBUG, "BABL",
                         fmt, varg);
 #else
-  vfprintf (stdout, fmt, varg);
-  fprintf (stdout, "\n");
+  vfprintf (stderr, fmt, varg);
+  fprintf (stderr, "\n");
   fflush (NULL);
 #endif
   return;

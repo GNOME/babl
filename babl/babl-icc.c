@@ -342,7 +342,7 @@ static const Babl *babl_trc_from_icc (ICC  *state, int offset,
                 fprintf (stderr, "%f %f %f %f %f %f %f\n",
                               g, a, b, c, d, e, f);
             {
-              fprintf (stdout, "unhandled parametric sRGB formula TRC type %i\n", function_type);
+              fprintf (stderr, "unhandled parametric sRGB formula TRC type %i\n", function_type);
               *error = "unhandled sRGB formula like TRC";
               return babl_trc_gamma (2.2);
             }
@@ -350,7 +350,7 @@ static const Babl *babl_trc_from_icc (ICC  *state, int offset,
               break;
             default:
               *error = "unhandled parametric TRC";
-              fprintf (stdout, "unhandled parametric TRC type %i\n", function_type);
+              fprintf (stderr, "unhandled parametric TRC type %i\n", function_type);
               return babl_trc_gamma (2.2);
             break;
          }
