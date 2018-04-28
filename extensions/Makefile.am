@@ -71,6 +71,7 @@ fast_float_la_SOURCES = fast-float.c
 LIBS =  $(top_builddir)/babl/libbabl-@BABL_API_VERSION@.la \
 	$(MATH_LIB) $(THREAD_LIB)
 
+CIE_la_CFLAGS = $(SSE2_EXTRA_CFLAGS)
 sse2_float_la_CFLAGS = $(SSE2_EXTRA_CFLAGS)
 sse2_int8_la_CFLAGS = $(SSE2_EXTRA_CFLAGS)
 sse2_int16_la_CFLAGS = $(SSE2_EXTRA_CFLAGS)
