@@ -172,24 +172,17 @@ XYZ_to_LAB (double X,
             double *to_a,
             double *to_b)
 {
-  double f_x, f_y, f_z;
+  double xr = X / D50_WHITE_REF_X;
+  double yr = Y / D50_WHITE_REF_Y;
+  double zr = Z / D50_WHITE_REF_Z;
 
-  double x_r = X / D50_WHITE_REF_X;
-  double y_r = Y / D50_WHITE_REF_Y;
-  double z_r = Z / D50_WHITE_REF_Z;
+  double fx = xr > LAB_EPSILON ? cbrt (xr) : (LAB_KAPPA * xr + 16.0) / 116.0;
+  double fy = yr > LAB_EPSILON ? cbrt (yr) : (LAB_KAPPA * yr + 16.0) / 116.0;
+  double fz = zr > LAB_EPSILON ? cbrt (zr) : (LAB_KAPPA * zr + 16.0) / 116.0;
 
-  if (x_r > LAB_EPSILON) f_x = cbrt(x_r);
-  else ( f_x = ((LAB_KAPPA * x_r) + 16) / 116.0 );
-
-  if (y_r > LAB_EPSILON) f_y = cbrt(y_r);
-  else ( f_y = ((LAB_KAPPA * y_r) + 16) / 116.0 );
-
-  if (z_r > LAB_EPSILON) f_z = cbrt(z_r);
-  else ( f_z = ((LAB_KAPPA * z_r) + 16) / 116.0 );
-
-  *to_L = (116.0 * f_y) - 16.0;
-  *to_a = 500.0 * (f_x - f_y);
-  *to_b = 200.0 * (f_y - f_z);
+  *to_L = 116.0 * fy - 16.0;
+  *to_a = 500.0 * (fx - fy);
+  *to_b = 200.0 * (fy - fz);
 }
 
 static inline void
@@ -200,26 +193,18 @@ LAB_to_XYZ (double L,
             double *to_Y,
             double *to_Z)
 {
-  double fy, fx, fz, fx_cubed, fy_cubed, fz_cubed;
-  double xr, yr, zr;
+  double fy = (L + 16.0) / 116.0;
+  double fy_cubed = fy * fy * fy;
 
-  fy = (L + 16.0) / 116.0;
-  fy_cubed = fy*fy*fy;
+  double fx = fy + a / 500.0;
+  double fx_cubed = fx * fx * fx;
 
-  fz = fy - (b / 200.0);
-  fz_cubed = fz*fz*fz;
+  double fz = fy - b / 200.0;
+  double fz_cubed = fz * fz * fz;
 
-  fx = (a / 500.0) + fy;
-  fx_cubed = fx*fx*fx;
-
-  if (fx_cubed > LAB_EPSILON) xr = fx_cubed;
-  else xr = ((116.0 * fx) - 16) / LAB_KAPPA;
-
-  if ( L > (LAB_KAPPA * LAB_EPSILON) ) yr = fy_cubed;
-  else yr = (L / LAB_KAPPA);
-
-  if (fz_cubed > LAB_EPSILON) zr = fz_cubed;
-  else zr = ( (116.0 * fz) - 16 ) / LAB_KAPPA;
+  double yr = L > LAB_KAPPA * LAB_EPSILON ? fy_cubed : L / LAB_KAPPA;
+  double xr = fx_cubed > LAB_EPSILON ? fx_cubed : (fx * 116.0 - 16.0) / LAB_KAPPA;
+  double zr = fz_cubed > LAB_EPSILON ? fz_cubed : (fz * 116.0 - 16.0) / LAB_KAPPA;
 
   *to_X = xr * D50_WHITE_REF_X;
   *to_Y = yr * D50_WHITE_REF_Y;
