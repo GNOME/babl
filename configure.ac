@@ -324,6 +324,10 @@ AC_ARG_ENABLE(sse2,
   [  --enable-sse2            enable SSE2 support (default=auto)],,
   enable_sse2=$enable_sse)
 
+AC_ARG_ENABLE(sse3,
+  [  --enable-sse3            enable SSE3 support (default=auto)],,
+  enable_sse3=$enable_sse2)
+
 AC_ARG_ENABLE(sse4_1,
   [  --enable-sse4_1            enable SSE4_1 support (default=auto)],,
   enable_sse4_1=$enable_sse)
@@ -388,22 +392,40 @@ if test "x$enable_mmx" = xyes; then
           AC_MSG_WARN([The assembler does not support the SSE2 command set.])
         )
 
-        if test "x$enable_sse4_1" = xyes; then
-          BABL_DETECT_CFLAGS(sse4_1_flag, '-msse4.1')
-          SSE4_1_EXTRA_CFLAGS="$SSE_EXTRA_CFLAGS $sse4_1_flag"
+        if test "x$enable_sse3" = xyes; then
+          BABL_DETECT_CFLAGS(sse3_flag, '-msse3')
+          SSE3_EXTRA_CFLAGS="$SSE2_EXTRA_CFLAGS $sse3_flag"
 
-          AC_MSG_CHECKING(whether we can compile SSE4_1 code)
+          AC_MSG_CHECKING(whether we can compile SSE3 code)
 
-          CFLAGS="$CFLAGS $sse4_1_flag"
+          CFLAGS="$CFLAGS $sse3_flag"
 
-          AC_COMPILE_IFELSE([AC_LANG_PROGRAM(,[asm ("pmovzxbd %xmm0,%xmm1");])],
-            AC_DEFINE(USE_SSE4_1, 1, [Define to 1 if SSE4_1 assembly is available.])
+          AC_COMPILE_IFELSE([AC_LANG_PROGRAM(,[asm ("addsubpd %xmm0,%xmm1");])],
+            AC_DEFINE(USE_SSE3, 1, [Define to 1 if SSE3 assembly is available.])
             AC_MSG_RESULT(yes)
           ,
-            enable_sse4_1=no
+            enable_sse3=no
             AC_MSG_RESULT(no)
-            AC_MSG_WARN([The assembler does not support the SSE4_1 command set.])
+            AC_MSG_WARN([The assembler does not support the SSE3 command set.])
           )
+
+          if test "x$enable_sse4_1" = xyes; then
+            BABL_DETECT_CFLAGS(sse4_1_flag, '-msse4.1')
+            SSE4_1_EXTRA_CFLAGS="$SSE_EXTRA_CFLAGS $sse4_1_flag"
+
+            AC_MSG_CHECKING(whether we can compile SSE4_1 code)
+
+            CFLAGS="$CFLAGS $sse4_1_flag"
+
+            AC_COMPILE_IFELSE([AC_LANG_PROGRAM(,[asm ("pmovzxbd %xmm0,%xmm1");])],
+              AC_DEFINE(USE_SSE4_1, 1, [Define to 1 if SSE4_1 assembly is available.])
+              AC_MSG_RESULT(yes)
+            ,
+              enable_sse4_1=no
+              AC_MSG_RESULT(no)
+              AC_MSG_WARN([The assembler does not support the SSE4_1 command set.])
+            )
+          fi
         fi
       fi
 
@@ -439,6 +461,7 @@ if test "x$enable_mmx" = xyes; then
   AC_SUBST(MMX_EXTRA_CFLAGS)
   AC_SUBST(SSE_EXTRA_CFLAGS)
   AC_SUBST(SSE2_EXTRA_CFLAGS)
+  AC_SUBST(SSE3_EXTRA_CFLAGS)
   AC_SUBST(SSE4_1_EXTRA_CFLAGS)
   AC_SUBST(F16C_EXTRA_CFLAGS)
 fi

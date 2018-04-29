@@ -163,6 +163,12 @@ if has_sse2
     language: 'c')
 endif
 
+has_sse3 = cc.has_argument('-msse3') and get_option('enable-sse3')
+if has_sse3
+  add_project_arguments(   '-msse3',
+    language: 'c')
+endif
+
 has_sse41= cc.has_argument('-msse4.1') and get_option('enable-sse4_1')
 if has_sse41
   add_project_arguments(   '-msse4.1',
