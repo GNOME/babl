@@ -1480,7 +1480,7 @@ conversions (void)
         babl_format ("CIE L float"),
         "linear", rgbaf_to_Lf_sse2,
         NULL
-  );
+      );
     }
 
 #endif /* defined(USE_SSE2) */
