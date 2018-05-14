@@ -1124,6 +1124,69 @@ lab_r_to_f_sse2 (__m128 r)
 }
 
 static void
+rgbaf_to_Lf_sse2 (const Babl *conversion, const float *src, float *dst, long samples)
+{
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  const float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Y;
+  const float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Y;
+  const float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Y;
+  long i = 0;
+  long remainder;
+
+  if (((uintptr_t) src % 16) + ((uintptr_t) dst % 16) == 0)
+    {
+      const long    n = (samples / 4) * 4;
+      const __m128 m_1_0_v = _mm_set1_ps (m_1_0);
+      const __m128 m_1_1_v = _mm_set1_ps (m_1_1);
+      const __m128 m_1_2_v = _mm_set1_ps (m_1_2);
+
+      for ( ; i < n; i += 4)
+        {
+          __m128 rgba0 = _mm_load_ps (src);
+          __m128 rgba1 = _mm_load_ps (src + 4);
+          __m128 rgba2 = _mm_load_ps (src + 8);
+          __m128 rgba3 = _mm_load_ps (src + 12);
+
+          __m128 r = rgba0;
+          __m128 g = rgba1;
+          __m128 b = rgba2;
+          __m128 a = rgba3;
+          _MM_TRANSPOSE4_PS (r, g, b, a);
+
+          {
+            __m128 yr = _mm_add_ps (_mm_add_ps (_mm_mul_ps (m_1_0_v, r), _mm_mul_ps (m_1_1_v, g)),
+                                    _mm_mul_ps (m_1_2_v, b));
+
+            __m128 fy = lab_r_to_f_sse2 (yr);
+
+            __m128 L = _mm_sub_ps (_mm_mul_ps (_mm_set1_ps (116.0f), fy), _mm_set1_ps (16.0f));
+
+            _mm_store_ps (dst, L);
+          }
+
+          src += 16;
+          dst += 4;
+        }
+    }
+
+  remainder = samples - i;
+  while (remainder--)
+    {
+      float r = src[0];
+      float g = src[1];
+      float b = src[2];
+
+      float yr = m_1_0 * r + m_1_1 * g + m_1_2 * b;
+      float L = yr > LAB_EPSILON ? 116.0f * _cbrtf (yr) - 16 : LAB_KAPPA * yr;
+
+      dst[0] = L;
+
+      src += 4;
+      dst += 1;
+    }
+}
+
+static void
 rgbaf_to_Labaf_sse2 (const Babl *conversion, const float *src, float *dst, long samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
@@ -1411,6 +1474,13 @@ conversions (void)
         "linear", rgbaf_to_Labaf_sse2,
         NULL
       );
+
+      babl_conversion_new (
+        babl_format ("RGBA float"),
+        babl_format ("CIE L float"),
+        "linear", rgbaf_to_Lf_sse2,
+        NULL
+  );
     }
 
 #endif /* defined(USE_SSE2) */
