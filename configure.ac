@@ -161,6 +161,9 @@ CFLAGS="$CFLAGS $extra_warnings"
 BABL_DETECT_CFLAGS(extra_warnings, '-Wold-style-definition')
 CFLAGS="$CFLAGS $extra_warnings"
 
+BABL_DETECT_CFLAGS(extra_warnings, '-Ofast' )
+CFLAGS="$CFLAGS $extra_warnings"
+
 fi
 
 AC_PATH_PROG(RSVG, rsvg-convert, no)
