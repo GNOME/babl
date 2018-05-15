@@ -3,7 +3,10 @@ The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
                                                                           -->
 
-
+2018-05-15 babl-0.1.48                                              </dt><dd>
+fix u8 &lt;-&gt; double conversions for chroma, SSE2 version of RGBA float to
+CIE L / Lab. Build with -Ofast by default.
+                                                                    </dd><dt>
 2018-04-10 babl-0.1.46                                              </dt><dd>
 added extensions with more coverage for u32, half and other utilit fast paths
 improving fast path coverage.
