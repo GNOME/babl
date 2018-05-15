@@ -1203,6 +1203,124 @@ Yaf_to_Lf_sse2 (const Babl *conversion, const float *src, float *dst, long sampl
 }
 
 static void
+rgbf_to_Labf_sse2 (const Babl *conversion, const float *src, float *dst, long samples)
+{
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  const float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_X;
+  const float m_0_1 = space->space.RGBtoXYZf[1] / D50_WHITE_REF_X;
+  const float m_0_2 = space->space.RGBtoXYZf[2] / D50_WHITE_REF_X;
+  const float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Y;
+  const float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Y;
+  const float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Y;
+  const float m_2_0 = space->space.RGBtoXYZf[6] / D50_WHITE_REF_Z;
+  const float m_2_1 = space->space.RGBtoXYZf[7] / D50_WHITE_REF_Z;
+  const float m_2_2 = space->space.RGBtoXYZf[8] / D50_WHITE_REF_Z;
+  long i = 0;
+  long remainder;
+
+  if (((uintptr_t) src % 16) + ((uintptr_t) dst % 16) == 0)
+    {
+      const long    n = (samples / 4) * 4;
+      const __m128 m_0_0_v = _mm_set1_ps (m_0_0);
+      const __m128 m_0_1_v = _mm_set1_ps (m_0_1);
+      const __m128 m_0_2_v = _mm_set1_ps (m_0_2);
+      const __m128 m_1_0_v = _mm_set1_ps (m_1_0);
+      const __m128 m_1_1_v = _mm_set1_ps (m_1_1);
+      const __m128 m_1_2_v = _mm_set1_ps (m_1_2);
+      const __m128 m_2_0_v = _mm_set1_ps (m_2_0);
+      const __m128 m_2_1_v = _mm_set1_ps (m_2_1);
+      const __m128 m_2_2_v = _mm_set1_ps (m_2_2);
+      const __m128 one = _mm_set1_ps (1.0f);
+
+      for ( ; i < n; i += 4)
+        {
+          __m128 dst_v0;
+          __m128 dst_v1;
+          __m128 dst_v2;
+          __m128 dst_dummy = one;
+
+          __m128 src_v0 = _mm_load_ps (src);
+          __m128 src_v1 = _mm_load_ps (src + 4);
+          __m128 src_v2 = _mm_load_ps (src + 8);
+          __m128 src_dummy = one;
+
+          _MM_TRANSPOSE4_PS (src_v0, src_v1, src_v2, src_dummy);
+
+          src_v1 = _mm_shuffle_ps (src_v1, src_v1, _MM_SHUFFLE (3, 1, 0, 2));
+          src_v2 = _mm_shuffle_ps (src_v2, src_v2, _MM_SHUFFLE (3, 0, 2, 1));
+
+          _MM_TRANSPOSE4_PS (src_v0, src_v1, src_v2, src_dummy);
+
+          {
+            __m128 r = _mm_shuffle_ps (src_v0, src_v0, _MM_SHUFFLE (1, 2, 3, 0));
+            __m128 g = _mm_shuffle_ps (src_v1, src_v1, _MM_SHUFFLE (2, 3, 0, 1));
+            __m128 b = _mm_shuffle_ps (src_v2, src_v2, _MM_SHUFFLE (3, 0, 1, 2));
+
+            __m128 xr = _mm_add_ps (_mm_add_ps (_mm_mul_ps (m_0_0_v, r), _mm_mul_ps (m_0_1_v, g)),
+                                    _mm_mul_ps (m_0_2_v, b));
+            __m128 yr = _mm_add_ps (_mm_add_ps (_mm_mul_ps (m_1_0_v, r), _mm_mul_ps (m_1_1_v, g)),
+                                    _mm_mul_ps (m_1_2_v, b));
+            __m128 zr = _mm_add_ps (_mm_add_ps (_mm_mul_ps (m_2_0_v, r), _mm_mul_ps (m_2_1_v, g)),
+                                    _mm_mul_ps (m_2_2_v, b));
+
+            __m128 fx = lab_r_to_f_sse2 (xr);
+            __m128 fy = lab_r_to_f_sse2 (yr);
+            __m128 fz = lab_r_to_f_sse2 (zr);
+
+            __m128 L = _mm_sub_ps (_mm_mul_ps (_mm_set1_ps (116.0f), fy), _mm_set1_ps (16.0f));
+            __m128 A = _mm_mul_ps (_mm_set1_ps (500.0f), _mm_sub_ps (fx, fy));
+            __m128 B = _mm_mul_ps (_mm_set1_ps (200.0f), _mm_sub_ps (fy, fz));
+
+            dst_v0 = _mm_shuffle_ps (L, L, _MM_SHUFFLE (1, 2, 3, 0));
+            dst_v1 = _mm_shuffle_ps (A, A, _MM_SHUFFLE (2, 3, 0, 1));
+            dst_v2 = _mm_shuffle_ps (B, B, _MM_SHUFFLE (3, 0, 1, 2));
+          }
+
+          _MM_TRANSPOSE4_PS (dst_v0, dst_v1, dst_v2, dst_dummy);
+
+          dst_v1 = _mm_shuffle_ps (dst_v1, dst_v1, _MM_SHUFFLE (3, 0, 2, 1));
+          dst_v2 = _mm_shuffle_ps (dst_v2, dst_v2, _MM_SHUFFLE (3, 1, 0, 2));
+
+          _MM_TRANSPOSE4_PS (dst_v0, dst_v1, dst_v2, dst_dummy);
+
+          _mm_store_ps (dst, dst_v0);
+          _mm_store_ps (dst + 4, dst_v1);
+          _mm_store_ps (dst + 8, dst_v2);
+
+          src += 12;
+          dst += 12;
+        }
+    }
+
+  remainder = samples - i;
+  while (remainder--)
+    {
+      float r = src[0];
+      float g = src[1];
+      float b = src[2];
+
+      float xr = m_0_0 * r + m_0_1 * g + m_0_2 * b;
+      float yr = m_1_0 * r + m_1_1 * g + m_1_2 * b;
+      float zr = m_2_0 * r + m_2_1 * g + m_2_2 * b;
+
+      float fx = xr > LAB_EPSILON ? _cbrtf (xr) : (LAB_KAPPA * xr + 16.0f) / 116.0f;
+      float fy = yr > LAB_EPSILON ? _cbrtf (yr) : (LAB_KAPPA * yr + 16.0f) / 116.0f;
+      float fz = zr > LAB_EPSILON ? _cbrtf (zr) : (LAB_KAPPA * zr + 16.0f) / 116.0f;
+
+      float L = 116.0f * fy - 16.0f;
+      float A = 500.0f * (fx - fy);
+      float B = 200.0f * (fy - fz);
+
+      dst[0] = L;
+      dst[1] = A;
+      dst[2] = B;
+
+      src += 3;
+      dst += 3;
+    }
+}
+
+static void
 rgbaf_to_Lf_sse2 (const Babl *conversion, const float *src, float *dst, long samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
@@ -1547,6 +1665,12 @@ conversions (void)
 
   if (babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_SSE2)
     {
+      babl_conversion_new (
+        babl_format ("RGB float"),
+        babl_format ("CIE Lab float"),
+        "linear", rgbf_to_Labf_sse2,
+        NULL
+      );
       babl_conversion_new (
         babl_format ("RGBA float"),
         babl_format ("CIE Lab alpha float"),
