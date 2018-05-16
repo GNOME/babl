@@ -341,6 +341,90 @@ rgba_u8_to_pal (Babl          *conversion,
 }
 
 static void
+rgba_float_to_pal_a (Babl          *conversion,
+                     unsigned char *src_b,
+                     unsigned char *dst,
+                     long           n,
+                     void          *src_model_data)
+{
+  BablPalette **palptr = src_model_data;
+  BablPalette *pal;
+  assert (palptr);
+  pal = *palptr;
+  assert(pal);
+  while (n--)
+    {
+      float *src_f = (void*) src_b;
+      unsigned char src[4];
+      int c;
+      for (c = 0; c < 3; c++)
+      {
+        if (src_f[c] >= 1.0f)
+          src[c] = 255;
+        else if (src_f[c] <= 0.0f)
+          src[c] = 0;
+        else
+          src[c] = src_f[c] * 255 + 0.5f;
+      }
+      if (src_f[3] >= 1.0f)
+        src[3] = 255;
+      else if (src_f[3] <= 0.0f)
+        src[3] = 0;
+      else
+        src[3] = src_f[3] * 255 + 0.5f;
+
+
+      dst[0] = babl_palette_lookup (pal, src[0], src[1], src[2], src[3]);
+      dst[1] = src[3];
+
+      src_b += sizeof (float) * 4;
+      dst += sizeof (char) * 2;
+    }
+}
+
+
+static void
+rgba_float_to_pal (Babl          *conversion,
+                   unsigned char *src_b,
+                   unsigned char *dst,
+                   long           n,
+                   void          *src_model_data)
+{
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  BablPalette **palptr = src_model_data;
+  BablPalette *pal;
+  assert (palptr);
+  pal = *palptr;
+  assert(pal);
+  while (n--)
+    {
+      float *src_f = (void*) src_b;
+      unsigned char src[4];
+      int c;
+      for (c = 0; c < 3; c++)
+      {
+        if (src_f[c] >= 1.0f)
+          src[c] = 255;
+        else if (src_f[c] <= 0.0f)
+          src[c] = 0;
+        else
+          src[c] = src_f[c] * 255 + 0.5f;
+      }
+      if (src_f[3] >= 1.0f)
+        src[3] = 255;
+      else if (src_f[3] <= 0.0f)
+        src[3] = 0;
+      else
+        src[3] = src_f[3] * 255 + 0.5f;
+
+      dst[0] = babl_palette_lookup (pal, src[0], src[1], src[2], src[3]);
+
+      src_b += sizeof (float) * 4;
+      dst += sizeof (char) * 1;
+    }
+}
+
+static void
 rgba_u8_to_pal_a (Babl          *conversion,
                   unsigned char *src,
                   unsigned char *dst,
@@ -599,6 +683,19 @@ const Babl *babl_new_palette (const char  *name,
      babl_format ("R'G'B'A u8"),
      f_pal_u8,
      "linear", rgba_u8_to_pal,
+     "data", palptr,
+     NULL);
+
+  babl_conversion_new (
+     babl_format ("R'G'B'A float"),
+     f_pal_a_u8,
+     "linear", rgba_float_to_pal_a,
+     "data", palptr,
+     NULL);
+  babl_conversion_new (
+     babl_format ("R'G'B'A float"),
+     f_pal_u8,
+     "linear", rgba_float_to_pal,
      "data", palptr,
      NULL);
 
