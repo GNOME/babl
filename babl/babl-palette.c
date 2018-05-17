@@ -222,7 +222,7 @@ rgba_to_pal (Babl *conversion,
             }
         }
 
-      ((double *) dst)[0] = best_idx / 255.0;
+      ((double *) dst)[0] = best_idx / 255.5;
 
       src += sizeof (double) * 4;
       dst += sizeof (double) * 1;
@@ -278,7 +278,7 @@ rgba_to_pala (Babl *conversion,
             }
         }
 
-      ((double *) dst)[0] = best_idx / 255.0;
+      ((double *) dst)[0] = best_idx / 255.5;
       ((double *) dst)[1] = alpha;
 
       src += sizeof (double) * 4;
@@ -298,7 +298,7 @@ pal_to_rgba (Babl *conversion,
   assert(pal);
   while (n--)
     {
-      int idx = (((double *) src)[0]) * 255.0;
+      int idx = (((double *) src)[0]) * 255.5;
       double *palpx;
 
       if (idx < 0) idx = 0;
@@ -325,7 +325,7 @@ pala_to_rgba (Babl *conversion,
   assert(pal);
   while (n--)
     {
-      int idx      = (((double *) src)[0]) * 255.0;
+      int idx      = (((double *) src)[0]) * 255.5;
       double alpha = (((double *) src)[1]);
       double *palpx;
 
