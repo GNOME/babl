@@ -28,13 +28,11 @@
 
 #define HASH_TABLE_SIZE 1111
 
-//#define SHOW_PATH
-
 /* A default palette, containing standard ANSI / EGA colors
  *
  */
-static unsigned char defpal_data[4*16] = 
-{  
+static unsigned char defpal_data[4*16] =
+{
 0  ,0  ,0  ,255,
 127,0  ,0  ,255,
 0  ,127,0  ,255,
@@ -76,6 +74,8 @@ babl_palette_reset_hash (BablPalette *pal)
       pal->hash[i] = i + 1; /* always a miss */
     }
 }
+
+#define BABL_IDX_FACTOR 255.5
 
 static int
 babl_palette_lookup (BablPalette *pal, int r, int g, int b, int a)
@@ -180,108 +180,92 @@ static BablPalette *default_palette (void)
 
 static void
 rgba_to_pal (Babl *conversion,
-             char *src,
+             char *src_b,
              char *dst,
              long  n,
              void *dst_model_data)
 {
+  const Babl *space = babl_conversion_get_source_space (conversion);
   BablPalette **palptr = dst_model_data;
-  BablPalette *pal = *palptr;
-#ifdef SHOW_PATH
-  fprintf (stderr, "d");
-#endif
+  BablPalette *pal;
+  assert (palptr);
+  pal = *palptr;
+  assert(pal);
+
   while (n--)
     {
-      int idx;
-
-      int best_idx = 0;
-      double best_diff = 100000;
-      double srcf[4];
+      double *src_d = (void*) src_b;
+      unsigned char src[4];
       int c;
-      for (c = 0; c < 4; c++)
+      for (c = 0; c < 3; c++)
       {
-        srcf[c] = ((double *) src)[c];
-        if (srcf[c] < 0.0)
-         srcf[c] = 0.0;
-        if (srcf[c] > 1.0)
-         srcf[c] = 1.0;
+        if (src_d[c] >= 1.0f)
+          src[c] = 255;
+        else if (src_d[c] <= 0.0f)
+          src[c] = 0;
+        else
+          src[c] = babl_trc_from_linear (space->space.trc[0],
+                                         src_d[c]) * 255 + 0.5f;
       }
+      if (src_d[3] >= 1.0f)
+        src[3] = 255;
+      else if (src_d[3] <= 0.0f)
+        src[3] = 0;
+      else
+        src[3] = src_d[3] * 255 + 0.5f;
 
-      for (idx = 0; idx<pal->count; idx++)
-        {
-          double diff;
-          double *palpx = ((double *)pal->data_double) + idx * 4;
+      ((double *) dst)[0] =
+        babl_palette_lookup (pal, src[0], src[1], src[2], src[3]) /
+           BABL_IDX_FACTOR;
 
-          diff = (palpx[0] - srcf[0]) * (palpx[0] - srcf[0]) +
-                 (palpx[1] - srcf[1]) * (palpx[1] - srcf[1]) +
-                 (palpx[2] - srcf[2]) * (palpx[2] - srcf[2]);
-          if (diff <= best_diff)
-            {
-              best_diff = diff;
-              best_idx = idx;
-            }
-        }
-
-      ((double *) dst)[0] = best_idx / 255.5;
-
-      src += sizeof (double) * 4;
+      src_b += sizeof (double) * 4;
       dst += sizeof (double) * 1;
     }
+
 }
 
 static void
 rgba_to_pala (Babl *conversion,
-              char *src,
+              char *src_i,
               char *dst,
               long  n,
               void *dst_model_data)
 {
+  const Babl *space = babl_conversion_get_destination_space (conversion);
   BablPalette **palptr = dst_model_data;
-  BablPalette *pal = *palptr;
-
-#ifdef SHOW_PATH
-  fprintf (stderr, "D");
-#endif
+  BablPalette *pal;
+  assert (palptr);
+  pal = *palptr;
   assert(pal);
+
   while (n--)
     {
-      int idx;
-
-      int best_idx = 0;
-      double best_diff = 100000;
-      double srcf[4];
-      double alpha;
+      double *src_d = (void*) src_i;
+      unsigned char src[4];
       int c;
-      for (c = 0; c < 4; c++)
+      for (c = 0; c < 3; c++)
       {
-        srcf[c] = ((double *) src)[c];
-        if (srcf[c] < 0.0)
-         srcf[c] = 0.0;
-        if (srcf[c] > 1.0)
-         srcf[c] = 1.0;
+        if (src_d[c] >= 1.0f)
+          src[c] = 255;
+        else if (src_d[c] <= 0.0f)
+          src[c] = 0;
+        else
+          src[c] = babl_trc_from_linear (space->space.trc[0],
+                                         src_d[c]) * 255 + 0.5f;
       }
+      if (src_d[3] >= 1.0f)
+        src[3] = 255;
+      else if (src_d[3] <= 0.0f)
+        src[3] = 0;
+      else
+        src[3] = src_d[3] * 255 + 0.5f;
 
-      alpha = srcf[3];
 
-      for (idx = 0; idx<pal->count; idx++)
-        {
-          double diff;
-          double *palpx = ((double *)pal->data_double) + idx * 4;
+      ((double *) dst)[0] = babl_palette_lookup (pal, src[0], src[1], src[2],
+                                                 src[3]) / BABL_IDX_FACTOR;
+      ((double *) dst)[1] = src_d[3];
 
-          diff = (palpx[0] - srcf[0]) * (palpx[0] - srcf[0]) +
-                 (palpx[1] - srcf[1]) * (palpx[1] - srcf[1]) +
-                 (palpx[2] - srcf[2]) * (palpx[2] - srcf[2]);
-          if (diff <= best_diff)
-            {
-              best_diff = diff;
-              best_idx = idx;
-            }
-        }
-
-      ((double *) dst)[0] = best_idx / 255.5;
-      ((double *) dst)[1] = alpha;
-
-      src += sizeof (double) * 4;
+      src_i += sizeof (double) * 4;
       dst += sizeof (double) * 2;
     }
 }
@@ -298,7 +282,7 @@ pal_to_rgba (Babl *conversion,
   assert(pal);
   while (n--)
     {
-      int idx = (((double *) src)[0]) * 255.5;
+      int idx = (((double *) src)[0]) * BABL_IDX_FACTOR;
       double *palpx;
 
       if (idx < 0) idx = 0;
@@ -325,7 +309,7 @@ pala_to_rgba (Babl *conversion,
   assert(pal);
   while (n--)
     {
-      int idx      = (((double *) src)[0]) * 255.5;
+      int idx      = (((double *) src)[0]) * BABL_IDX_FACTOR;
       double alpha = (((double *) src)[1]);
       double *palpx;
 
@@ -354,9 +338,7 @@ rgba_u8_to_pal (Babl          *conversion,
   assert (palptr);
   pal = *palptr;
   assert(pal);
-#ifdef SHOW_PATH
-  fprintf (stderr, "8");
-#endif
+
   while (n--)
     {
       dst[0] = babl_palette_lookup (pal, src[0], src[1], src[2], src[3]);
@@ -380,9 +362,6 @@ rgba_float_to_pal_a (Babl          *conversion,
   pal = *palptr;
   assert(pal);
 
-#ifdef SHOW_PATH
-  fprintf (stderr, "f");
-#endif
   while (n--)
     {
       float *src_f = (void*) src_b;
@@ -428,9 +407,7 @@ rgba_float_to_pal (Babl          *conversion,
   assert (palptr);
   pal = *palptr;
   assert(pal);
-#ifdef SHOW_PATH
-  fprintf (stderr, "F");
-#endif
+
   while (n--)
     {
       float *src_f = (void*) src_b;
@@ -630,7 +607,6 @@ const Babl *babl_new_palette (const char  *name,
     "chroma",
     NULL);
   alpha = babl_component ("A");
-  
   model = babl_model_new ("name", name, component, alpha, NULL);
   palptr = malloc (sizeof (void*));
   *palptr = default_palette ();;
@@ -678,30 +654,24 @@ const Babl *babl_new_palette (const char  *name,
      "data", palptr,
      NULL
   );
-
   babl_conversion_new (
      f_pal_u8,
      f_pal_a_u8,
      "linear", conv_pal8_pala8,
      NULL
   );
-
   babl_conversion_new (
      f_pal_a_u8,
      f_pal_u8,
      "linear", conv_pala8_pal8,
      NULL
   );
-
-
   babl_conversion_new (
      f_pal_u8,
      babl_format ("R'G'B'A u8"),
      "linear", pal_u8_to_rgba_u8,
      "data", palptr,
      NULL);
-
-
   babl_conversion_new (
      f_pal_a_u8,
      babl_format ("R'G'B'A u8"),
