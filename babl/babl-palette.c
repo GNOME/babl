@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
 #include <limits.h>
 #include <assert.h>
 #include "config.h"
@@ -52,6 +53,14 @@ static unsigned char defpal_data[4*16] =
 };
 static double defpal_double[4*8*16];
 
+static unsigned short ceil_sqrt_u8[3 * 255 * 255 + 1];
+
+
+typedef struct BablPaletteRadius
+{
+  unsigned char  idx;
+  unsigned short diff;
+} BablPaletteRadius;
 
 typedef struct BablPalette
 {
@@ -62,8 +71,86 @@ typedef struct BablPalette
                                   */
   double                *data_double;
   unsigned char         *data_u8;
+  BablPaletteRadius     *radii;
   volatile unsigned int  hash[HASH_TABLE_SIZE];
 } BablPalette;
+
+static void
+init_ceil_sqrt_u8 (void)
+{
+  int i;
+
+  babl_mutex_lock (babl_format_mutex);
+
+  if (! ceil_sqrt_u8[1])
+    {
+      for (i = 0; i <= 3 * 255 * 255; i++)
+        ceil_sqrt_u8[i] = ceil (sqrt (i));
+    }
+
+  babl_mutex_unlock (babl_format_mutex);
+}
+
+static inline int
+diff2_u8 (const unsigned char *p1,
+          const unsigned char *p2)
+{
+  return ((int) p1[0] - (int) p2[0]) * ((int) p1[0] - (int) p2[0]) +
+         ((int) p1[1] - (int) p2[1]) * ((int) p1[1] - (int) p2[1]) +
+         ((int) p1[2] - (int) p2[2]) * ((int) p1[2] - (int) p2[2]);
+}
+
+static int
+babl_palette_radius_compare (const void *r1,
+                             const void *r2)
+{
+  const BablPaletteRadius *radius1 = r1;
+  const BablPaletteRadius *radius2 = r2;
+
+  return (int) radius1->diff - (int) radius2->diff;
+}
+
+static void
+babl_palette_init_radii (BablPalette *pal)
+{
+  int i, j;
+
+  init_ceil_sqrt_u8 ();
+
+  /* calculate the distance between each pair of colors in the palette, and, for
+   * each color, construct a list of all other colors and their distances from
+   * it, sorted by distance.  we use these lists in babl_palette_lookup() to
+   * speed up the search, as described in the function.
+   */
+
+  pal->radii = babl_malloc (sizeof (BablPaletteRadius) *
+                            (pal->count - 1)           *
+                            pal->count);
+
+  for (i = 0; i < pal->count; i++)
+    {
+      BablPaletteRadius   *radii1 = pal->radii + (pal->count - 1) * i;
+      const unsigned char *p1     = pal->data_u8 + 4 * i;
+
+      for (j = i + 1; j < pal->count; j++)
+        {
+          BablPaletteRadius   *radii2 = pal->radii + (pal->count - 1) * j;
+          const unsigned char *p2     = pal->data_u8 + 4 * j;
+          unsigned short       diff;
+
+          diff = floor (sqrt (diff2_u8 (p1, p2)));
+
+          radii1[j - 1].idx  = j;
+          radii1[j - 1].diff = diff;
+
+          radii2[i].idx      = i;
+          radii2[i].diff     = diff;
+        }
+
+      qsort (radii1, pal->count - 1, sizeof (BablPaletteRadius),
+             babl_palette_radius_compare);
+    }
+}
 
 static void
 babl_palette_reset_hash (BablPalette *pal)
@@ -78,9 +165,11 @@ babl_palette_reset_hash (BablPalette *pal)
 #define BABL_IDX_FACTOR 255.5
 
 static int
-babl_palette_lookup (BablPalette *pal, int r, int g, int b, int a)
+babl_palette_lookup (BablPalette         *pal,
+                     const unsigned char *p,
+                     int                  best_idx)
 {
-  unsigned int pixel      = (r << 16) | (g << 8) | b;
+  unsigned int pixel      = p[0] | (p[1] << 8) | (p[2] << 16);
   int          hash_index = pixel % HASH_TABLE_SIZE;
   unsigned int hash_value = pal->hash[hash_index];
   unsigned int hash_pixel = hash_value & 0x00ffffffu;
@@ -99,26 +188,60 @@ babl_palette_lookup (BablPalette *pal, int r, int g, int b, int a)
     }
   else
     {
-      int best_idx = 0;
-      int best_diff = INT_MAX;
+      const BablPaletteRadius *radii = pal->radii + (pal->count - 1) * best_idx;
+      const unsigned char     *q;
+      int                      best_diff2;
+      int                      best_diff;
+      int                      diff0;
+      int                      i;
 
-      for (idx = 0; idx < pal->count; idx++)
+      /* best_idx is the closest palette entry to the previous pixel (referred
+       * to as the source color).  based on the assumption that nearby pixels
+       * have similar color, we start the search for the current closest entry
+       * at best_idx, and iterate over the entry's color list, as calculated in
+       * babl_palette_init_radii(), in search for a better match.
+       */
+
+      q          = pal->data_u8 + 4 * best_idx;
+      best_diff2 = diff2_u8 (p, q);
+      best_diff  = ceil_sqrt_u8[best_diff2];
+      diff0      = best_diff;
+
+      for (i = 0; i < pal->count - 1; i++)
         {
-          unsigned char *palpx = pal->data_u8 + idx * 4;
-          int pr = palpx[0];
-          int pg = palpx[1];
-          int pb = palpx[2];
+          const BablPaletteRadius *radius = &radii[i];
+          int                      min_diff;
+          int                      diff2;
 
-          int diff = (r - pr) * (r - pr) +
-                     (g - pg) * (g - pg) +
-                     (b - pb) * (b - pb);
-          if (diff < best_diff)
+          /* radius->diff is the distance from the source color to the current
+           * color.  diff0 is the distance from the source color to the input
+           * color.  according to the triangle inequality, the distance from
+           * the current color to the input color is at least
+           * radius->diff - diff0.  if the shortest distance found so far is
+           * less than that, then the best match found so far is necessarily
+           * better than the current color, and we can stop the search, since
+           * the color list is sorted in ascending radius->diff order.
+           */
+
+          idx      = radius->idx;
+          min_diff = radius->diff - diff0;
+
+          if (best_diff < min_diff || (best_diff == min_diff && best_idx < idx))
+            break;
+
+          q     = pal->data_u8 + 4 * idx;
+          diff2 = diff2_u8 (p, q);
+
+          if (diff2 < best_diff2 || (diff2 == best_diff2 && idx < best_idx))
             {
-              best_diff = diff;
-              best_idx  = idx;
+              best_idx   = idx;
+              best_diff2 = diff2;
+              best_diff  = ceil_sqrt_u8[diff2];
             }
         }
+
       pal->hash[hash_index] = ((unsigned int) best_idx << 24) | pixel;
+
       return best_idx;
     }
 }
@@ -141,6 +264,8 @@ static BablPalette *make_pal (const Babl *format, const void *data, int count)
   babl_process (babl_fish (format, babl_format ("R'G'B'A u8")),
                 data, pal->data_u8, count);
 
+  babl_palette_init_radii (pal);
+
   babl_palette_reset_hash (pal);
 
   return pal;
@@ -151,6 +276,7 @@ static void babl_palette_free (BablPalette *pal)
   babl_free (pal->data);
   babl_free (pal->data_double);
   babl_free (pal->data_u8);
+  babl_free (pal->radii);
   babl_free (pal);
 }
 
@@ -188,6 +314,7 @@ rgba_to_pal (Babl *conversion,
   const Babl *space = babl_conversion_get_source_space (conversion);
   BablPalette **palptr = dst_model_data;
   BablPalette *pal;
+  int best_idx = 0;
   assert (palptr);
   pal = *palptr;
   assert(pal);
@@ -214,9 +341,9 @@ rgba_to_pal (Babl *conversion,
       else
         src[3] = src_d[3] * 255 + 0.5f;
 
-      ((double *) dst)[0] =
-        babl_palette_lookup (pal, src[0], src[1], src[2], src[3]) /
-           BABL_IDX_FACTOR;
+      best_idx = babl_palette_lookup (pal, src, best_idx);
+
+      ((double *) dst)[0] = best_idx / BABL_IDX_FACTOR;
 
       src_b += sizeof (double) * 4;
       dst += sizeof (double) * 1;
@@ -234,6 +361,7 @@ rgba_to_pala (Babl *conversion,
   const Babl *space = babl_conversion_get_destination_space (conversion);
   BablPalette **palptr = dst_model_data;
   BablPalette *pal;
+  int best_idx = 0;
   assert (palptr);
   pal = *palptr;
   assert(pal);
@@ -260,9 +388,9 @@ rgba_to_pala (Babl *conversion,
       else
         src[3] = src_d[3] * 255 + 0.5f;
 
+      best_idx = babl_palette_lookup (pal, src, best_idx);
 
-      ((double *) dst)[0] = babl_palette_lookup (pal, src[0], src[1], src[2],
-                                                 src[3]) / BABL_IDX_FACTOR;
+      ((double *) dst)[0] = best_idx / BABL_IDX_FACTOR;
       ((double *) dst)[1] = src_d[3];
 
       src_i += sizeof (double) * 4;
@@ -327,28 +455,6 @@ pala_to_rgba (Babl *conversion,
 }
 
 static void
-rgba_u8_to_pal (Babl          *conversion,
-                unsigned char *src,
-                unsigned char *dst,
-                long           n,
-                void          *src_model_data)
-{
-  BablPalette **palptr = src_model_data;
-  BablPalette *pal;
-  assert (palptr);
-  pal = *palptr;
-  assert(pal);
-
-  while (n--)
-    {
-      dst[0] = babl_palette_lookup (pal, src[0], src[1], src[2], src[3]);
-
-      src += sizeof (char) * 4;
-      dst += sizeof (char) * 1;
-    }
-}
-
-static void
 rgba_float_to_pal_a (Babl          *conversion,
                      unsigned char *src_b,
                      unsigned char *dst,
@@ -358,6 +464,7 @@ rgba_float_to_pal_a (Babl          *conversion,
   const Babl *space = babl_conversion_get_destination_space (conversion);
   BablPalette **palptr = src_model_data;
   BablPalette *pal;
+  int best_idx = 0;
   assert (palptr);
   pal = *palptr;
   assert(pal);
@@ -385,7 +492,7 @@ rgba_float_to_pal_a (Babl          *conversion,
         src[3] = src_f[3] * 255 + 0.5f;
 
 
-      dst[0] = babl_palette_lookup (pal, src[0], src[1], src[2], src[3]);
+      dst[0] = best_idx = babl_palette_lookup (pal, src, best_idx);
       dst[1] = src[3];
 
       src_b += sizeof (float) * 4;
@@ -404,6 +511,7 @@ rgba_float_to_pal (Babl          *conversion,
   const Babl *space = babl_conversion_get_destination_space (conversion);
   BablPalette **palptr = src_model_data;
   BablPalette *pal;
+  int best_idx = 0;
   assert (palptr);
   pal = *palptr;
   assert(pal);
@@ -430,9 +538,32 @@ rgba_float_to_pal (Babl          *conversion,
       else
         src[3] = src_f[3] * 255 + 0.5f;
 
-      dst[0] = babl_palette_lookup (pal, src[0], src[1], src[2], src[3]);
+      dst[0] = best_idx = babl_palette_lookup (pal, src, best_idx);
 
       src_b += sizeof (float) * 4;
+      dst += sizeof (char) * 1;
+    }
+}
+
+static void
+rgba_u8_to_pal (Babl          *conversion,
+                unsigned char *src,
+                unsigned char *dst,
+                long           n,
+                void          *src_model_data)
+{
+  BablPalette **palptr = src_model_data;
+  BablPalette *pal;
+  int best_idx = 0;
+  assert (palptr);
+  pal = *palptr;
+  assert(pal);
+
+  while (n--)
+    {
+      dst[0] = best_idx = babl_palette_lookup (pal, src, best_idx);
+
+      src += sizeof (char) * 4;
       dst += sizeof (char) * 1;
     }
 }
@@ -446,12 +577,13 @@ rgba_u8_to_pal_a (Babl          *conversion,
 {
   BablPalette **palptr = src_model_data;
   BablPalette *pal;
+  int best_idx = 0;
   assert (palptr);
   pal = *palptr;
   assert(pal);
   while (n--)
     {
-      dst[0] = babl_palette_lookup (pal, src[0], src[1], src[2], src[3]);
+      dst[0] = best_idx = babl_palette_lookup (pal, src, best_idx);
       dst[1] = src[3];
 
       src += sizeof (char) * 4;
