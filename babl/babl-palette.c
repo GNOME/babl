@@ -300,6 +300,7 @@ static BablPalette *default_palette (void)
   babl_process (babl_fish (pal.format, babl_format ("RGBA double")),
                 pal.data, pal.data_double, pal.count);
 
+  babl_palette_init_radii (&pal);
   babl_palette_reset_hash (&pal);
   return &pal;
 }
