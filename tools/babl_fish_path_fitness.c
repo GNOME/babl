@@ -91,7 +91,7 @@ static int source_no = 0;
 static int source_each (Babl *babl,
                         void *userdata)
 {
-  printf (SL);
+  printf ("%s", SL);
   babl_format_class_for_each (destination_each, babl);
 #ifdef UTF8
   printf ("──%2i %s%s", source_no++, babl->instance.name, NL);
