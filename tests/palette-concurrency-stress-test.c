@@ -77,13 +77,13 @@ main (int    argc,
 
       v = i * BABL_PALETTE_HASH_TABLE_SIZE;
 
-      p[0] = (v >> 16) & 0xff;
+      p[0] = (v >>  0) & 0xff;
       p[1] = (v >>  8) & 0xff;
-      p[2] = (v >>  0) & 0xff;
+      p[2] = (v >> 16) & 0xff;
       p[3] = 0xff;
     }
 
-  babl_palette_set_palette (pal, babl_format ("RGBA u8"), colors, N_THREADS);
+  babl_palette_set_palette (pal, babl_format ("R'G'B'A u8"), colors, N_THREADS);
 
   /* initialize the thread contexts such that each thread processes a buffer
    * containing a single, distinct color
@@ -92,7 +92,7 @@ main (int    argc,
     {
       ctx[i] = malloc (sizeof (ThreadContext));
 
-      ctx[i]->fish = babl_fish (babl_format ("RGBA u8"), pal_format);
+      ctx[i]->fish = babl_fish (babl_format ("R'G'B'A u8"), pal_format);
 
       for (j = 0; j < 4 * N_PIXELS; j++)
         {
