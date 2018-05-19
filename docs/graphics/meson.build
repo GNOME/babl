@@ -1,13 +1,28 @@
 
 graphic_files = [
-  'babl-16x16',
-  'babl-48x48',
-  'babl-a4poster',
+  'babl-16x16.svg',
+  'babl-48x48.svg',
+  'babl-a4poster.svg',
 ]
 
-graphic_files_install = [
-  files('index.html'),
-]
+graphic_files_install = []
+
+# Dummy config to copy index.html to build
+graphic_files_install += configure_file(
+  input:  'index.html',
+  output: '@PLAINNAME@',
+  configuration: configuration_data()
+)
+
+
+foreach file : graphic_files
+  # Dummy config to copy svg files to build
+  graphic_files_install += configure_file(
+    input:  file,
+    output: '@PLAINNAME@',
+    configuration: configuration_data()
+  )
+endforeach
 
 if rsvg_convert_bin.found()
   foreach file : graphic_files
@@ -17,9 +32,10 @@ if rsvg_convert_bin.found()
       : []
     )
 
-    graphic_files_install += custom_target(file,
-      input : [ file + '.svg' ],
-      output: [ file + '.png' ],
+    graphic_files_install += custom_target(
+      file,
+      input: file,
+      output: '@BASENAME@.png',
       command: [
         rsvg_convert_bin,
         sizeinfo,

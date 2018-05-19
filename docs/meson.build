@@ -5,8 +5,6 @@ location= 'public_html/babl'
 scptarget = host + ':' + location + '/'
 
 
-babl_css = files('babl.css')
-
 xml_insert = find_program(join_paths('tools', 'xml_insert.sh'))
 
 index_static_html = configure_file(
@@ -14,6 +12,10 @@ index_static_html = configure_file(
   output: 'index-static.html',
   configuration: conf,
 )
+
+babl_css = configure_file(input : 'babl.css',
+  output : 'babl.css',
+  configuration : configuration_data())
 
 index_html_tmp = custom_target('index.html.tmp',
   input : [ babl_html_dump, ],
@@ -43,6 +45,7 @@ index_html = custom_target('index.html',
     '&&', xml_insert, '@OUTPUT@', 'TODO',     '@INPUT3@',
     '&&', xml_insert, '@OUTPUT@', 'NEWS',     '@INPUT4@',
   ],
+  build_by_default: true,
 )
 
 
