@@ -136,50 +136,70 @@ endforeach
 ################################################################################
 # Check for compiler CPU extensions
 
+# mmx assembly
+if cc.has_argument('-mmmx') and get_option('enable-mmx')
+  if cc.compiles('asm ("movq 0, %mm0");')
+    message('mmx assembly available')
+    add_project_arguments('-mmmx', language: 'c')
+    conf.set('USE_MMX', 1, description:
+      'Define to 1 if MMX assembly is available.')
+
+    # sse assembly
+    if cc.has_argument('-msse') and get_option('enable-sse') 
+      if cc.compiles('asm ("movntps %xmm0, 0");')
+        add_project_arguments('-msse', language: 'c')
+        message('sse assembly available')
+        conf.set('USE_SSE', 1, description:
+          'Define to 1 if SSE assembly is available.')
+        sse_args = ['-mfpmath=sse']
+        if platform_win32
+          sse_args += '-mstackrealign'
+        endif
+
+        foreach sse_arg : sse_args
+          if cc.has_argument(sse_arg)
+            add_project_arguments(sse_arg, language: 'c')
+          endif
+        endforeach
+
+        # sse2 assembly
+        if cc.has_argument('-msse2') and get_option('enable-sse2')
+          if cc.compiles('asm ("punpckhwd %xmm0,%xmm1");')
+            message('sse2 assembly available')
+            sse2_cflags = '-msse2'
+            conf.set('USE_SSE2', 1, description:
+              'Define to 1 if sse2 assembly is available.')
+
+            # sse4.1 assembly
+            if cc.has_argument('-msse4.1') and get_option('enable-sse4_1')
+              if cc.compiles('asm ("pmovzxbd %xmm0,%xmm1");')
+                message('sse4.1 assembly available')
+                sse4_1_cflags = '-msse4.1'
+                conf.set('USE_SSE4_1', 1, description:
+                  'Define to 1 if sse4.1 assembly is available.')
+              endif
+            endif
+          endif
+        endif
+      endif
+      if cc.has_argument('-mf16c') and get_option('enable-f16c')
+        if cc.compiles(
+          'asm ("#include <immintrin.h>],' +
+          '[__m128 val = _mm_cvtph_ps ((__m128i)_mm_setzero_ps());' +
+          ' __m128i val2 = _mm_insert_epi64((__m128i)_mm_setzero_ps(),0,0);");'
+          )
+          message('Can compile half-floating point code (f16c)')
+          f16c_cflags = '-mf16c'
+          conf.set('USE_F16C', 1, description:
+            'Define to 1 if f16c intrinsics are available.')
+        endif
+      endif
+    endif
+  endif
+endif
+
 have_tls_run = cc.run('int main() { static __thread char buf[1024]; return 0; }')
 conf.set('HAVE_TLS', ( have_tls_run.compiled() and have_tls_run.returncode() == 0 ))
-
-has_ssem = cc.has_argument('-mfpmath=sse')
-if has_ssem
-  add_project_arguments('-mfpmath=sse',
-    language: 'c')
-endif
-
-has_mmx  = cc.has_argument('-mmmx') and get_option('enable-mmx')
-if has_mmx
-  add_project_arguments(   '-mmmx',
-    language: 'c')
-endif
-
-has_sse  = cc.has_argument('-msse') and get_option('enable-sse')
-if has_sse
-  add_project_arguments(   '-msse',
-    language: 'c')
-endif
-
-has_sse2 = cc.has_argument('-msse2') and get_option('enable-sse2')
-if has_sse2
-  add_project_arguments(   '-msse2',
-    language: 'c')
-endif
-
-has_sse3 = cc.has_argument('-msse3') and get_option('enable-sse3')
-if has_sse3
-  add_project_arguments(   '-msse3',
-    language: 'c')
-endif
-
-has_sse41= cc.has_argument('-msse4.1') and get_option('enable-sse4_1')
-if has_sse41
-  add_project_arguments(   '-msse4.1',
-    language: 'c')
-endif
-
-had_f16c= cc.has_argument('-mf16c') and get_option('enable-f16c')
-if had_f16c
-  add_project_arguments(   '-mf16c',
-    language: 'c')
-endif
 
 have_dlfcn_h = cc.has_header('dlfcn.h')
 have_dl_h    = cc.has_header('dl.h')
