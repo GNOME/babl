@@ -223,17 +223,43 @@ if cc.has_argument('-mmmx') and get_option('enable-mmx')
   endif
 endif
 
-have_tls_run = cc.run('int main() { static __thread char buf[1024]; return 0; }')
-conf.set('HAVE_TLS', ( have_tls_run.compiled() and have_tls_run.returncode() == 0 ))
+################################################################################
+# Check environment
 
-have_dlfcn_h = cc.has_header('dlfcn.h')
-have_dl_h    = cc.has_header('dl.h')
-if not (have_dlfcn_h or have_dl_h or platform_win32)
-  # error('Header dlfcn.h or dl.h not provided. Please provide one of them.')
+# Check headers
+check_headers = [
+  ['HAVE_DLFCN_H',      'dlfcn.h'],
+  ['HAVE_DL_H',         'dl.h'],
+]
+foreach header: check_headers
+  if cc.has_header(header[1])
+    conf.set(header[0], 1, description: 
+      'Define to 1 if the <@0@> header is available'.format(header[1]))
+  endif
+endforeach
+
+
+# Check functions
+# general
+check_functions = [
+  ['HAVE_GETTIMEOFDAY', 'gettimeofday'],
+  ['HAVE_SRANDOM',      'srandom'     ],
+]
+foreach func: check_functions
+  if cc.has_function(func[1])
+    conf.set(func[0], 1, description: 
+      'Define to 1 if the @0@() function is available'.format(func[1]))
+  endif
+endforeach
+
+
+# Check for uncommon features
+
+# babl_fish_reference(), create_name() would like this
+if cc.compiles('int main() { static __thread char buf[1024]; }')
+  conf.set('HAVE_TLS', 1, description:
+    'Define to 1 if compiler supports __thread')
 endif
-
-conf.set('HAVE_DLFCN_H', have_dlfcn_h)
-conf.set('HAVE_DL_H',    have_dl_h)
 
 
 ################################################################################
@@ -259,7 +285,16 @@ w3m_bin = find_program('w3m' + native_bin_ext, required: false,
   native: true)
 
 
+################################################################################
+# Configuration files
 
+# config.h
+configure_file(
+  output: 'config.h',
+  configuration: conf
+)
+
+# pkg-config file
 pkgconfig.generate(filebase: 'babl',
   name: 'babl',
   description: 'Dynamic, any to any, pixel format conversion library',
@@ -274,11 +309,6 @@ pkgconfig.generate(filebase: 'babl',
   subdirs: [
     lib_name,
   ],
-)
-
-configure_file(
-  output: 'config.h',
-  configuration: conf
 )
 
 
