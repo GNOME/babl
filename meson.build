@@ -3,6 +3,7 @@ project('babl', 'c',
   version: '0.1.49',
   meson_version: '>=0.40.0',
   default_options: [
+    'libdir=lib',
     'sysconfdir=/etc',
     'localstatedir=/var',
     'sharedstatedir=/var/lib'
@@ -68,7 +69,11 @@ conf.set_quoted('BABL_CURRENT_MINUS_AGE','@0@'.format(0))
 conf.set_quoted('BABL_LIBRARY',          '@0@'.format(lib_name))
 
 ################################################################################
-# Host system detection
+# Host system environment
+
+platform_android = false
+platform_osx = false
+platform_win32 = false
 
 host_cpu = host_machine.cpu()
 message('Architecture: ' + host_cpu)
@@ -91,16 +96,17 @@ else
   error('Unknown host architecture')
 endif
 
-
 host_os = host_machine.system()
 message('Host os: ' + host_os)
 
-platform_win32 = host_os.startswith('mingw') or host_os.startswith('cygwin') or host_os.startswith('windows')
+platform_win32 = (host_os.startswith('mingw') or
+                  host_os.startswith('cygwin') or
+                  host_os.startswith('windows'))
 
 platform_osx = host_os.startswith('darwin')
 if platform_osx
   if cc.get_id() != 'clang'
-    error('You should use CLang++ on OSx.')
+    error('You should use Clang/Clang++ on OSX.')
   endif
 endif
 
@@ -108,11 +114,30 @@ platform_android = host_os.contains('android')
 
 path_sep = ( platform_win32 ? ';'     : ':' )
 dirs_sep = ( platform_win32 ? '\\\\'  : '/' )
+bin_ext  = ( platform_win32 ? '.exe'  : '' )
 lib_ext  = ( platform_win32 ? '.dll'  : '.so' )
 
 conf.set       ('BABL_PATH_SEPARATOR', '\'' + path_sep + '\'')
 conf.set_quoted('BABL_DIR_SEPARATOR',  dirs_sep)
 conf.set_quoted('SHREXT',              lib_ext)
+
+# assume *nix if not android/osx/win32
+platform_unix = not (
+  platform_android or
+  platform_osx or
+  platform_win32
+)
+
+# Build system environment
+build_os = build_machine.system()
+message('Build os: ' + build_os)
+
+build_platform_win32 = (build_os.startswith('mingw') or
+                        build_os.startswith('cygwin') or
+                        build_os.startswith('windows'))
+
+native_bin_ext  = ( build_platform_win32 ? '.exe'  : '' )
+
 
 ################################################################################
 # Extra warnings
@@ -210,20 +235,29 @@ endif
 conf.set('HAVE_DLFCN_H', have_dlfcn_h)
 conf.set('HAVE_DL_H',    have_dl_h)
 
-################################################################################
-# Utilities
-
-rsvg_convert = find_program('rsvg-convert', required: false)
-w3m          = find_program('w3m', required: false)
-
 
 ################################################################################
 # Dependencies
 
-math  = cc.find_library('m',       required: false)
-thread= cc.find_library('pthread', required: false)
-log   = cc.find_library('log',     required: false)
-dl    = cc.find_library('dl',      required: false)
+math   = cc.find_library('m',   required: false)
+log    = cc.find_library('log', required: false)
+dl     = cc.find_library('dl',  required: false)
+
+thread = dependency('threads',  required: false)
+
+
+################################################################################
+# Build utilities
+
+env_bin = find_program('env' + native_bin_ext, required: true,
+  native: true)
+git_bin = find_program('git' + native_bin_ext, required: true,
+  native: true)
+rsvg_convert_bin = find_program('rsvg-convert' + native_bin_ext,
+  required: false, native: true)
+w3m_bin = find_program('w3m' + native_bin_ext, required: false,
+  native: true)
+
 
 
 pkgconfig.generate(filebase: 'babl',
@@ -263,12 +297,12 @@ if get_option('with-docs')
 endif
 
 
-if w3m.found()
+if w3m_bin.found()
   custom_target('README',
     input : [ join_paths('docs', 'index.html'), ] ,
     output: [ 'README' ] ,
     command: [
-      w3m,
+      w3m_bin,
       '-cols', '72',
       '-dump',
       '@INPUT@',

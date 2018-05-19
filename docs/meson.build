@@ -18,7 +18,8 @@ index_static_html = configure_file(
 index_html_tmp = custom_target('index.html.tmp',
   input : [ babl_html_dump, ],
   output: [ 'index.html.tmp', ],
-  command: [ find_program('env'),
+  command: [
+    env_bin,
     'BABL_PATH='+ join_paths(meson.build_root(), 'extensions'),
     babl_html_dump
   ],
@@ -34,7 +35,8 @@ index_html = custom_target('index.html',
     join_paths(meson.source_root(), 'NEWS'),
   ],
   output: [ 'index.html', ],
-  command: [ find_program('env'),
+  command: [
+    env_bin,
     'cp', '@INPUT0@', '@OUTPUT@',
     '&&', xml_insert, '@OUTPUT@', 'BablBase', '@INPUT1@',
     '&&', xml_insert, '@OUTPUT@', 'AUTHORS',  '@INPUT2@',

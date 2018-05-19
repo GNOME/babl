@@ -10,21 +10,21 @@ babl_version_h = configure_file(
 gitversion_h1 = vcs_tag(
   input : 'git-version.h.in',
   output: 'git-version.h.in.1',
-  command: [ 'git', 'describe', '--always', ],
+  command: [ git_bin.path(), 'describe', '--always', ],
   replace_string: '@BABL_GIT_VERSION@',
   fallback: '',
 )
 gitversion_h2 = vcs_tag(
   input : gitversion_h1,
   output: 'git-version.h.in.2',
-  command: [ 'git', 'rev-parse', '--short', 'HEAD', ],
+  command: [ git_bin.path(), 'rev-parse', '--short', 'HEAD', ],
   replace_string: '@BABL_GIT_VERSION_ABBREV@',
   fallback: '',
 )
 gitversion_h = vcs_tag(
   input : gitversion_h2,
   output: 'git-version.h',
-  command: [ 'git', 'log', '-n1', '--date=format:%Y', '--pretty=%cd', ],
+  command: [ git_bin.path(), 'log', '-n1', '--date=format:%Y', '--pretty=%cd', ],
   replace_string: '@BABL_GIT_LAST_COMMIT_YEAR@',
   fallback: '',
 )
