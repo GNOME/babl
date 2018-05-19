@@ -114,7 +114,6 @@ platform_android = host_os.contains('android')
 
 path_sep = ( platform_win32 ? ';'     : ':' )
 dirs_sep = ( platform_win32 ? '\\\\'  : '/' )
-bin_ext  = ( platform_win32 ? '.exe'  : '' )
 lib_ext  = ( platform_win32 ? '.dll'  : '.so' )
 
 conf.set       ('BABL_PATH_SEPARATOR', '\'' + path_sep + '\'')
@@ -135,8 +134,6 @@ message('Build os: ' + build_os)
 build_platform_win32 = (build_os.startswith('mingw') or
                         build_os.startswith('cygwin') or
                         build_os.startswith('windows'))
-
-native_bin_ext  = ( build_platform_win32 ? '.exe'  : '' )
 
 
 ################################################################################
@@ -228,9 +225,14 @@ endif
 
 # Check headers
 check_headers = [
-  ['HAVE_DLFCN_H',      'dlfcn.h'],
-  ['HAVE_DL_H',         'dl.h'],
 ]
+# Don't check for dynamic load on windows
+if not platform_win32
+  check_headers += [
+    ['HAVE_DLFCN_H', 'dlfcn.h'],
+    ['HAVE_DL_H', 'dl.h'],
+  ]
+endif
 foreach header: check_headers
   if cc.has_header(header[1])
     conf.set(header[0], 1, description: 
@@ -265,9 +267,13 @@ endif
 ################################################################################
 # Dependencies
 
-math   = cc.find_library('m',   required: false)
-log    = cc.find_library('log', required: false)
-dl     = cc.find_library('dl',  required: false)
+math = cc.find_library('m',   required: false)
+log  = cc.find_library('log', required: false)
+if platform_win32 
+  dl = []
+else
+  dl = cc.find_library('dl',  required: false)
+endif
 
 thread = dependency('threads',  required: false)
 
@@ -275,14 +281,12 @@ thread = dependency('threads',  required: false)
 ################################################################################
 # Build utilities
 
-env_bin = find_program('env' + native_bin_ext, required: true,
+env_bin = find_program('env', required: true, native: true)
+git_bin = find_program('git', required: false, native: true)
+rsvg_convert_bin = find_program('rsvg-convert', required: false,
   native: true)
-git_bin = find_program('git' + native_bin_ext, required: true,
-  native: true)
-rsvg_convert_bin = find_program('rsvg-convert' + native_bin_ext,
-  required: false, native: true)
-w3m_bin = find_program('w3m' + native_bin_ext, required: false,
-  native: true)
+test_bin = find_program('test', required: false, native: true)
+w3m_bin = find_program('w3m', required: false, native: true)
 
 
 ################################################################################
@@ -309,6 +313,11 @@ pkgconfig.generate(filebase: 'babl',
   subdirs: [
     lib_name,
   ],
+)
+
+configure_file(
+  output: 'config.h',
+  configuration: conf
 )
 
 
