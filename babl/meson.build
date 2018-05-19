@@ -1,33 +1,57 @@
 bablInclude = include_directories('.')
 subdir('base')
 
+# Linker arguments
+babl_link_args = [
+  '-Wl,--version-script,' + version_script,
+]
+if platform_win32
+  babl_link_args += '-Wl,--no-undefined'
+endif
+
+
 babl_version_h = configure_file(
-  input : 'babl-version.h.in',
+  input:  'babl-version.h.in',
   output: 'babl-version.h',
   configuration: conf,
 )
 
-gitversion_h1 = vcs_tag(
-  input : 'git-version.h.in',
-  output: 'git-version.h.in.1',
-  command: [ git_bin.path(), 'describe', '--always', ],
-  replace_string: '@BABL_GIT_VERSION@',
-  fallback: '',
-)
-gitversion_h2 = vcs_tag(
-  input : gitversion_h1,
-  output: 'git-version.h.in.2',
-  command: [ git_bin.path(), 'rev-parse', '--short', 'HEAD', ],
-  replace_string: '@BABL_GIT_VERSION_ABBREV@',
-  fallback: '',
-)
-gitversion_h = vcs_tag(
-  input : gitversion_h2,
-  output: 'git-version.h',
-  command: [ git_bin.path(), 'log', '-n1', '--date=format:%Y', '--pretty=%cd', ],
-  replace_string: '@BABL_GIT_LAST_COMMIT_YEAR@',
-  fallback: '',
-)
+
+# If git is available, always check if git-version.h should be
+# updated. If git is not available, don't do anything if git-version.h
+# already exists because then we are probably working with a tarball
+# in which case the git-version.h we ship is correct.
+
+if run_command(
+  ['test', '-d', join_paths(meson.source_root(), '.git')]
+  ).returncode() == 0 and git_bin.found()
+  # git repo and git is available
+  git_version = run_command([git_bin.path(), 'describe', '--always']
+    ).stdout().strip()
+  git_last_commit_year = run_command([git_bin.path(),
+    'log', '-n1', '--date=format:%Y', '--pretty=%cd']
+    ).stdout().strip()
+else
+  # Not a git repo so expect git-version.h to exist
+  if run_command(['test', '-f', 'git-version.h']).returncode() == 0
+    git_version_h = 'git-version.h'
+  else
+    git_version = 'Unknown, shouldn\'t happen'
+    git_last_commit_year = 0
+  endif
+endif
+if not is_variable('git_version_h')
+  git_conf = configuration_data()
+  git_conf.set('BABL_GIT_VERSION', git_version)
+  git_conf.set('BABL_GIT_LAST_COMMIT_YEAR', git_last_commit_year
+  )
+  git_version_h = configure_file(
+    input:  'git-version.h.in',
+    output: 'git-version.h',
+    configuration: git_conf,
+  )
+endif
+
 
 babl_sources = [
   'babl-cache.c',
@@ -63,7 +87,7 @@ babl_sources = [
   'babl-version.c',
   'babl.c',
   babl_version_h,
-  gitversion_h,
+  git_version_h,
 ]
 
 babl_headers = [
@@ -78,14 +102,16 @@ install_headers(babl_headers,
   subdir: join_paths(lib_name, 'babl')
 )
 
-babl = library(lib_name,
+
+babl = library(
+  lib_name,
   babl_sources,
   include_directories: [ rootInclude, bablBaseInclude],
   c_args:   [ '-DLIBDIR="' + join_paths(get_option('prefix'), get_option('libdir')) + '"', ],
   cpp_args: [ '-DLIBDIR="' + join_paths(get_option('prefix'), get_option('libdir')) + '"', ],
-  link_with: [ babl_base, ],
-  link_args: [ '-Wl,--version-script,' + version_script, ],
+  link_whole: [ babl_base, ],
+  link_args: [ babl_link_args, ],
   dependencies: [ math, thread, dl, ],
-  install: true,
   version: so_version,
+  install: true,
 )
