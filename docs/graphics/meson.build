@@ -43,6 +43,7 @@ if rsvg_convert_bin.found()
         '@INPUT@',
       ],
       install: false,
+      build_by_default: true,
     )
   endforeach
 endif
