@@ -29,6 +29,29 @@
 
 #define HASH_TABLE_SIZE 1111
 
+
+typedef struct BablPaletteRadius
+{
+  unsigned char  idx;
+  unsigned short diff;
+} BablPaletteRadius;
+
+typedef struct BablPalette
+{
+  int                    count;  /* number of palette entries */
+  const Babl            *format; /* the pixel format the palette is stored in */
+  unsigned char         *data;   /* one linear segment of all the pixels
+                                  * representing the palette, in order
+                                  */
+  double                *data_double;
+  unsigned char         *data_u8;
+  BablPaletteRadius     *radii;
+  volatile unsigned int  hash[HASH_TABLE_SIZE];
+} BablPalette;
+
+
+static unsigned short ceil_sqrt_u8[3 * 255 * 255 + 1];
+
 /* A default palette, containing standard ANSI / EGA colors
  *
  */
@@ -52,43 +75,19 @@ static unsigned char defpal_data[4*16] =
 255,255,255,255,
 };
 static double defpal_double[4*8*16];
+static BablPaletteRadius defpal_radii[sizeof (BablPaletteRadius) * 15 * 16];
 
-static unsigned short ceil_sqrt_u8[3 * 255 * 255 + 1];
-
-
-typedef struct BablPaletteRadius
-{
-  unsigned char  idx;
-  unsigned short diff;
-} BablPaletteRadius;
-
-typedef struct BablPalette
-{
-  int                    count;  /* number of palette entries */
-  const Babl            *format; /* the pixel format the palette is stored in */
-  unsigned char         *data;   /* one linear segment of all the pixels
-                                  * representing the palette, in order
-                                  */
-  double                *data_double;
-  unsigned char         *data_u8;
-  BablPaletteRadius     *radii;
-  volatile unsigned int  hash[HASH_TABLE_SIZE];
-} BablPalette;
 
 static void
 init_ceil_sqrt_u8 (void)
 {
   int i;
 
-  babl_mutex_lock (babl_format_mutex);
-
   if (! ceil_sqrt_u8[1])
     {
       for (i = 0; i <= 3 * 255 * 255; i++)
         ceil_sqrt_u8[i] = ceil (sqrt (i));
     }
-
-  babl_mutex_unlock (babl_format_mutex);
 }
 
 static inline int
@@ -115,17 +114,11 @@ babl_palette_init_radii (BablPalette *pal)
 {
   int i, j;
 
-  init_ceil_sqrt_u8 ();
-
   /* calculate the distance between each pair of colors in the palette, and, for
    * each color, construct a list of all other colors and their distances from
    * it, sorted by distance.  we use these lists in babl_palette_lookup() to
    * speed up the search, as described in the function.
    */
-
-  pal->radii = babl_malloc (sizeof (BablPaletteRadius) *
-                            (pal->count - 1)           *
-                            pal->count);
 
   for (i = 0; i < pal->count; i++)
     {
@@ -257,6 +250,10 @@ static BablPalette *make_pal (const Babl *format, const void *data, int count)
   pal->data = babl_malloc (bpp * count);
   pal->data_double = babl_malloc (4 * sizeof(double) * count);
   pal->data_u8 = babl_malloc (4 * sizeof(char) * count);
+  pal->radii = babl_malloc (sizeof (BablPaletteRadius) *
+                            (pal->count - 1)           *
+                            pal->count);
+
   memcpy (pal->data, data, bpp * count);
 
   babl_process (babl_fish (format, babl_format ("RGBA double")),
@@ -284,10 +281,19 @@ static BablPalette *default_palette (void)
 {
   static BablPalette pal;
   static int inited = 0;
+
+  babl_mutex_lock (babl_format_mutex);
+
   if (inited)
-    return &pal;
+    {
+      babl_mutex_unlock (babl_format_mutex);
+
+      return &pal;
+    }
+
+  init_ceil_sqrt_u8 ();
+
   memset (&pal, 0, sizeof (pal));
-  inited = 1;
   pal.count = 16;
   pal.format = babl_format ("R'G'B'A u8"); /* dynamically generated, so
                                               the default palette can
@@ -296,12 +302,19 @@ static BablPalette *default_palette (void)
   pal.data = defpal_data;
   pal.data_double = defpal_double;
   pal.data_u8 = defpal_data;
+  pal.radii = defpal_radii;
 
   babl_process (babl_fish (pal.format, babl_format ("RGBA double")),
                 pal.data, pal.data_double, pal.count);
 
   babl_palette_init_radii (&pal);
+
   babl_palette_reset_hash (&pal);
+
+  inited = 1;
+
+  babl_mutex_unlock (babl_format_mutex);
+
   return &pal;
 }
 
