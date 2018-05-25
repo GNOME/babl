@@ -75,7 +75,7 @@ static unsigned char defpal_data[4*16] =
 255,255,255,255,
 };
 static double defpal_double[4*8*16];
-static BablPaletteRadius defpal_radii[sizeof (BablPaletteRadius) * 15 * 16];
+static BablPaletteRadius defpal_radii[15 * 16];
 
 
 static void
