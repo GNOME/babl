@@ -21,7 +21,6 @@ C_TESTS =				\
 	types	\
 	format_with_space   \
 	palette \
-	extract \
 	nop \
 	n_components		\
 	n_components_cast \
