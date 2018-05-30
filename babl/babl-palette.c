@@ -244,6 +244,8 @@ static BablPalette *make_pal (const Babl *format, const void *data, int count)
   BablPalette *pal = NULL;
   int bpp = babl_format_get_bytes_per_pixel (format);
 
+  babl_assert (count > 0);
+
   pal = babl_malloc (sizeof (BablPalette));
   pal->count = count;
   pal->format = format;
@@ -870,7 +872,16 @@ babl_palette_set_palette (const Babl *babl,
 {
   BablPalette **palptr = babl_get_user_data (babl);
   babl_palette_reset (babl);
-  *palptr = make_pal (format, data, count);
+  if (count > 0)
+    {
+      *palptr = make_pal (format, data, count);
+    }
+  else
+    {
+      babl_log ("attempt to create a palette with %d colors. "
+                "using default palette instead.",
+                count);
+    }
 }
 
 void
