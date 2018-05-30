@@ -111,8 +111,6 @@ babl_malloc (size_t size)
   char *ret;
   int  offset;
 
-  babl_assert (size);
-
   functions_sanity ();
   ret = malloc_f (BABL_ALLOC + BABL_ALIGN + size);
   if (!ret)
