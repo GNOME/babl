@@ -167,7 +167,7 @@ static void babl_matrix_equalize (double *in_mat)
   }
 }
 
-static void babl_space_compute_matrices (BablSpace *space)
+static void babl_space_compute_matrices (BablSpace *space, int equalize_matrix)
 {
 #define _ space->
   /* transform spaces xy(Y) specified data to XYZ */
@@ -196,7 +196,8 @@ static void babl_space_compute_matrices (BablSpace *space)
 
   babl_matrix_mul_matrix (chad, mat, mat);
 
-  babl_matrix_equalize (mat);
+  if (equalize_matrix)
+    babl_matrix_equalize (mat);
 
   memcpy (space->RGBtoXYZ, mat, sizeof (mat));
 
@@ -298,7 +299,6 @@ babl_space_from_rgbxyz_matrix (const char *name,
   return (Babl*)&space_db[i];
 }
 
-
 const Babl *
 babl_space_from_chromaticities (const char *name,
                                 double wx, double wy,
@@ -307,7 +307,8 @@ babl_space_from_chromaticities (const char *name,
                                 double bx, double by,
                                 const Babl *trc_red,
                                 const Babl *trc_green,
-                                const Babl *trc_blue)
+                                const Babl *trc_blue,
+                                int equalize_matrix)
 {
   int i=0;
   static BablSpace space;
@@ -357,7 +358,7 @@ babl_space_from_chromaticities (const char *name,
              babl_get_name(space.trc[1]), babl_get_name(space.trc[2]));
 
   /* compute matrixes */
-  babl_space_compute_matrices (&space_db[i]);
+  babl_space_compute_matrices (&space_db[i], equalize_matrix);
 
   return (Babl*)&space_db[i];
 }
@@ -375,12 +376,23 @@ babl_space_class_for_each (BablEachFunction each_fun,
 void
 babl_space_class_init (void)
 {
+#if 0
   babl_space_from_chromaticities ("sRGB",
                0.3127,  0.3290, /* D65 */
                0.6400,  0.3300,
                0.3000,  0.6000,
                0.1500,  0.0600,
-               babl_trc("sRGB"), NULL, NULL);
+               babl_trc("sRGB"), NULL, NULL, 1);
+#else
+  babl_space_from_chromaticities ("sRGB",
+                0.3127,  0.3290, /* D65 */
+                0.639998686, 0.330010138,
+                0.300003784, 0.600003357,
+                0.150002046, 0.059997204,
+                babl_trc("sRGB"), NULL, NULL,
+                0);
+  /* hard-coded pre-quantized values - to match exactly what is used in standards see issue #18 */
+#endif
 
   babl_space_from_chromaticities ("Rec2020",
                0.3127,  0.3290, /* D65 */
@@ -388,7 +400,7 @@ babl_space_class_init (void)
                0.170,  0.797,
                0.131,  0.046,
                // XXX: is using sRGB TRC right?
-               babl_trc("sRGB"), NULL, NULL);
+               babl_trc("sRGB"), NULL, NULL, 1);
 
   babl_space_from_chromaticities (
       "Adobish",  /* a space that can be used as a place-holder for a sRGB like
@@ -400,7 +412,7 @@ computations of uniform gray axis */
       0.6400,  0.3300,
       0.2100,  0.7100,
       0.1500,  0.0600,
-      babl_trc("2.2"), NULL, NULL);
+      babl_trc("2.2"), NULL, NULL, 1);
 
   babl_space_from_chromaticities (
       "ProPhoto",
@@ -408,7 +420,7 @@ computations of uniform gray axis */
       0.7347,  0.2653,
       0.1596,  0.8404,
       0.0366,  0.0001,
-      babl_trc("1.8"), NULL, NULL);
+      babl_trc("1.8"), NULL, NULL, 1);
 
   babl_space_from_chromaticities (
       "Apple",
@@ -416,7 +428,7 @@ computations of uniform gray axis */
       0.6250,  0.3400,
       0.2800,  0.5950,
       0.1550,  0.0700,
-      babl_trc("1.8"), NULL, NULL);
+      babl_trc("1.8"), NULL, NULL, 1);
 
 #if 0
   babl_space_from_chromaticities (
@@ -425,7 +437,7 @@ computations of uniform gray axis */
      0.7350,  0.2650,
      0.1150,  0.8260,
      0.1570,  0.0180,
-     babl_trc("2.2"), NULL, NULL);
+     babl_trc("2.2"), NULL, NULL, 1);
 
   babl_space_from_chromaticities (
       "Best",
@@ -433,7 +445,7 @@ computations of uniform gray axis */
       0.7347,  0.2653,
       0.2150,  0.7750,
       0.1300,  0.0350,
-      babl_trc("2.2"), NULL, NULL);
+      babl_trc("2.2"), NULL, NULL, 1);
 
   babl_space_from_chromaticities (
       "Beta",
@@ -441,7 +453,7 @@ computations of uniform gray axis */
       0.6888,  0.3112,
       0.1986,  0.7551,
       0.1265,  0.0352,
-      babl_trc("2.2"), NULL, NULL);
+      babl_trc("2.2"), NULL, NULL, 1);
 
   babl_space_from_chromaticities (
       "Bruce",
@@ -457,7 +469,7 @@ computations of uniform gray axis */
       0.6400,  0.3300,
       0.2900,  0.6000,
       0.1500,  0.0600,
-      babl_trc("2.2"), NULL, NULL);
+      babl_trc("2.2"), NULL, NULL, 1);
 
   babl_space_from_chromaticities (
       "SMPTE-C",
@@ -465,7 +477,7 @@ computations of uniform gray axis */
       0.6300,  0.3300,
       0.3100,  0.5950,
       0.1550,  0.0700,
-      babl_trc("2.2"), NULL, NULL);
+      babl_trc("2.2"), NULL, NULL, 1);
 
   babl_space_from_chromaticities (
       "ColorMatch",
@@ -473,7 +485,7 @@ computations of uniform gray axis */
       0.6300,  0.3400,
       0.2950,  0.6050,
       0.1500,  0.0750,
-      babl_trc("1.8"), NULL, NULL);
+      babl_trc("1.8"), NULL, NULL, 1);
 
   babl_space_from_chromaticities (
      "Don RGB 4",
@@ -481,7 +493,7 @@ computations of uniform gray axis */
      0.6960,  0.3000,
      0.2150,  0.7650,
      0.1300,  0.0350,
-     babl_trc("1.8"), NULL, NULL);
+     babl_trc("1.8"), NULL, NULL, 1);
 #endif
 }
 

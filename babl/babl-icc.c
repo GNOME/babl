@@ -889,7 +889,7 @@ babl_icc_make_space (const char   *icc_data,
                      red_x, red_y,
                      green_x, green_y,
                      blue_x, blue_y,
-                     trc_red, trc_green, trc_blue);
+                     trc_red, trc_green, trc_blue, 1);
        return ret;
      }
   }

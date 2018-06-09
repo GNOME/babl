@@ -404,7 +404,8 @@ const Babl * babl_space_from_chromaticities (const char *name,
                                              double bx, double by,
                                              const Babl *trc_red,
                                              const Babl *trc_green,
-                                             const Babl *trc_blue);
+                                             const Babl *trc_blue,
+                                             int equalize_matrix);
 
 /**
  * babl_space_from_rgbxyz_matrix:
