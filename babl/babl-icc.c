@@ -165,12 +165,12 @@ static u8f8_t d_to_u8f8 (double value)
 
 static double s15f16_to_d (s15f16_t fix)
 {
-  return fix.integer + fix.fraction / 65535.0;
+  return fix.integer + fix.fraction / 65536.0;
 }
 
 static double u8f8_to_d (u8f8_t fix)
 {
-  return fix.integer + fix.fraction / 255.0;
+  return fix.integer + fix.fraction / 256.0;
 }
 
 static void write_s15f16 (ICC *state, int offset, double value)
