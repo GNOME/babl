@@ -245,11 +245,12 @@ endforeach
 # Check functions
 # general
 check_functions = [
-  ['HAVE_GETTIMEOFDAY', 'gettimeofday'],
-  ['HAVE_SRANDOM',      'srandom'     ],
+  ['HAVE_GETTIMEOFDAY', 'gettimeofday', '<sys/time.h>'],
+  ['HAVE_RINT',         'rint'        , '<math.h>'],  
+  ['HAVE_SRANDOM',      'srandom'     , '<stdlib.h>'],
 ]
 foreach func: check_functions
-  if cc.has_function(func[1])
+  if cc.has_function(func[1], prefix: '#include ' + func[2])
     conf.set(func[0], 1, description: 
       'Define to 1 if the @0@() function is available'.format(func[1]))
   endif
