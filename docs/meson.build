@@ -17,12 +17,16 @@ babl_css = configure_file(input : 'babl.css',
   output : 'babl.css',
   configuration : configuration_data())
 
+index_html_tmp_env = [
+  'BABL_PATH='+ join_paths(meson.build_root(), 'extensions'),
+]
+
 index_html_tmp = custom_target('index.html.tmp',
   input : [ babl_html_dump, ],
   output: [ 'index.html.tmp', ],
   command: [
     env_bin,
-    'BABL_PATH='+ join_paths(meson.build_root(), 'extensions'),
+    index_html_tmp_env,
     babl_html_dump
   ],
   capture: true,
