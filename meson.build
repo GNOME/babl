@@ -281,14 +281,17 @@ else
 endif
 
 math = cc.find_library('m',   required: false)
-log  = cc.find_library('log', required: false)
+thread = dependency('threads',  required: false)
+if platform_android
+  log  = cc.find_library('log', required: false)
+else
+  log = []
+endif
 if platform_win32 
   dl = []
 else
   dl = cc.find_library('dl',  required: false)
 endif
-
-thread = dependency('threads',  required: false)
 
 
 ################################################################################
