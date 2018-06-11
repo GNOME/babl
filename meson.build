@@ -137,7 +137,12 @@ build_platform_win32 = (build_os.startswith('mingw') or
 
 
 ################################################################################
-# Extra warnings
+# Compiler arguments
+
+common_c_flags = []
+if cc.get_id().startswith('clang') or cc.get_id().startswith('gcc')
+  common_c_flags += cc.get_supported_arguments(['-Ofast'])
+endif
 
 extra_warnings_list = [
   '-Wdeclaration-after-statement',
@@ -147,13 +152,9 @@ extra_warnings_list = [
   '-Wold-style-definition',
   '-Wpointer-arith',
 ]
-extra_warnings = []
-foreach warning : extra_warnings_list
-  if cc.has_argument(warning)
-    extra_warnings += warning
-  endif
-endforeach
+common_c_flags += cc.get_supported_arguments(extra_warnings_list)
 
+add_project_arguments(common_c_flags, language: 'c')
 
 ################################################################################
 # Check for compiler CPU extensions
