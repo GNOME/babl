@@ -53,7 +53,8 @@ lib_name    = meson.project_name() + '-' + api_version
 stability_version_number = (major_version != 0 ? minor_version : micro_version)
 stable = (stability_version_number % 2 == 0)
 
-conf.set10('BABL_UNSTABLE', not stable)
+conf.set10('BABL_UNSTABLE', not stable, Description:
+  'Define to 1 if this is an unstable version of BABL.')
 
 conf.set       ('BABL_MAJOR_VERSION',    '@0@'.format(major_version))
 conf.set       ('BABL_MINOR_VERSION',    '@0@'.format(minor_version))
@@ -80,18 +81,24 @@ message('Architecture: ' + host_cpu)
 
 if   host_cpu.startswith('i') and host_cpu.endswith('86')
   have_x86 = true
-  conf.set10('ARCH_X86',    true)
+  conf.set10('ARCH_X86', true, description:
+    'Define to 1 if you are compiling for ix86.')
 elif host_cpu == 'x86_64'
   have_x86 = true
-  conf.set10('ARCH_X86',    true)
-  conf.set10('ARCH_X86_64', true)
+  conf.set10('ARCH_X86', true, description:
+    'Define to 1 if you are compiling for ix86.')
+  conf.set10('ARCH_X86_64', true, description:
+    'Define to 1 if you are compiling for amd64.')
 elif host_cpu == 'ppc' or host_cpu == 'powerpc'
   have_ppc = true
-  conf.set10('ARCH_PPC',    true)
+  conf.set10('ARCH_PPC', true, description:
+    'Define to 1 if you are compiling for PowerPC.')
 elif host_cpu == 'ppc64' or host_cpu == 'powerpc64'
   have_ppc = true
-  conf.set10('ARCH_PPC',    true)
-  conf.set10('ARCH_PPC64',  true)
+  conf.set10('ARCH_PPC', true, description:
+    'Define to 1 if you are compiling for PowerPC.')
+  conf.set10('ARCH_PPC64', true, description:
+    'Define to 1 if you are compiling for PowerPC64.')
 else
   error('Unknown host architecture')
 endif
@@ -116,9 +123,12 @@ path_sep = ( platform_win32 ? ';'     : ':' )
 dirs_sep = ( platform_win32 ? '\\\\'  : '/' )
 lib_ext  = ( platform_win32 ? '.dll'  : '.so' )
 
-conf.set       ('BABL_PATH_SEPARATOR', '\'' + path_sep + '\'')
-conf.set_quoted('BABL_DIR_SEPARATOR',  dirs_sep)
-conf.set_quoted('SHREXT',              lib_ext)
+conf.set('BABL_PATH_SEPARATOR', '\'' + path_sep + '\'', description:
+  'separator between paths in BABL_PATH')
+conf.set_quoted('BABL_DIR_SEPARATOR',  dirs_sep, description:
+  'separator between directories in BABL_PATH')
+conf.set_quoted('SHREXT', lib_ext, description:
+  'File extension for shared libraries')
 
 # assume *nix if not android/osx/win32
 platform_unix = not (
