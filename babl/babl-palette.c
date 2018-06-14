@@ -872,6 +872,16 @@ babl_palette_set_palette (const Babl *babl,
 {
   BablPalette **palptr = babl_get_user_data (babl);
   babl_palette_reset (babl);
+
+  if (count > 256)
+    {
+      babl_log ("attempt to create a palette with %d colors. "
+                "truncating to 256 colors.",
+                count);
+
+      count = 256;
+    }
+
   if (count > 0)
     {
       *palptr = make_pal (format, data, count);
