@@ -28,130 +28,130 @@ void
 babl_formats_init (void)
 {
   babl_format_new (
-    babl_model_from_id (BABL_RGBA_GAMMA_2_2),
+    babl_model_from_id (BABL_RGBA_NONLINEAR),
     babl_type_from_id (BABL_DOUBLE),
-    babl_component_from_id (BABL_RED_GAMMA_2_2),
-    babl_component_from_id (BABL_GREEN_GAMMA_2_2),
-    babl_component_from_id (BABL_BLUE_GAMMA_2_2),
+    babl_component_from_id (BABL_RED_NONLINEAR),
+    babl_component_from_id (BABL_GREEN_NONLINEAR),
+    babl_component_from_id (BABL_BLUE_NONLINEAR),
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_RGBA_GAMMA_2_2),
+    babl_model_from_id (BABL_RGBA_NONLINEAR),
     babl_type_from_id (BABL_FLOAT),
-    babl_component_from_id (BABL_RED_GAMMA_2_2),
-    babl_component_from_id (BABL_GREEN_GAMMA_2_2),
-    babl_component_from_id (BABL_BLUE_GAMMA_2_2),
+    babl_component_from_id (BABL_RED_NONLINEAR),
+    babl_component_from_id (BABL_GREEN_NONLINEAR),
+    babl_component_from_id (BABL_BLUE_NONLINEAR),
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_RGBA_GAMMA_2_2),
+    babl_model_from_id (BABL_RGBA_NONLINEAR),
     babl_type_from_id (BABL_U16),
-    babl_component_from_id (BABL_RED_GAMMA_2_2),
-    babl_component_from_id (BABL_GREEN_GAMMA_2_2),
-    babl_component_from_id (BABL_BLUE_GAMMA_2_2),
+    babl_component_from_id (BABL_RED_NONLINEAR),
+    babl_component_from_id (BABL_GREEN_NONLINEAR),
+    babl_component_from_id (BABL_BLUE_NONLINEAR),
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_RGBA_GAMMA_2_2),
+    babl_model_from_id (BABL_RGBA_NONLINEAR),
     babl_type_from_id (BABL_U8),
-    babl_component_from_id (BABL_RED_GAMMA_2_2),
-    babl_component_from_id (BABL_GREEN_GAMMA_2_2),
-    babl_component_from_id (BABL_BLUE_GAMMA_2_2),
+    babl_component_from_id (BABL_RED_NONLINEAR),
+    babl_component_from_id (BABL_GREEN_NONLINEAR),
+    babl_component_from_id (BABL_BLUE_NONLINEAR),
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_RGBA_GAMMA_2_2_PREMULTIPLIED),
+    babl_model_from_id (BABL_RGBA_NONLINEAR_PREMULTIPLIED),
     babl_type_from_id (BABL_FLOAT),
-    babl_component_from_id (BABL_RED_GAMMA_2_2_MUL_ALPHA),
-    babl_component_from_id (BABL_GREEN_GAMMA_2_2_MUL_ALPHA),
-    babl_component_from_id (BABL_BLUE_GAMMA_2_2_MUL_ALPHA),
+    babl_component_from_id (BABL_RED_NONLINEAR_MUL_ALPHA),
+    babl_component_from_id (BABL_GREEN_NONLINEAR_MUL_ALPHA),
+    babl_component_from_id (BABL_BLUE_NONLINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_RGBA_GAMMA_2_2_PREMULTIPLIED),
+    babl_model_from_id (BABL_RGBA_NONLINEAR_PREMULTIPLIED),
     babl_type_from_id (BABL_U16),
-    babl_component_from_id (BABL_RED_GAMMA_2_2_MUL_ALPHA),
-    babl_component_from_id (BABL_GREEN_GAMMA_2_2_MUL_ALPHA),
-    babl_component_from_id (BABL_BLUE_GAMMA_2_2_MUL_ALPHA),
+    babl_component_from_id (BABL_RED_NONLINEAR_MUL_ALPHA),
+    babl_component_from_id (BABL_GREEN_NONLINEAR_MUL_ALPHA),
+    babl_component_from_id (BABL_BLUE_NONLINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_RGBA_GAMMA_2_2_PREMULTIPLIED),
+    babl_model_from_id (BABL_RGBA_NONLINEAR_PREMULTIPLIED),
     babl_type_from_id (BABL_U8),
-    babl_component_from_id (BABL_RED_GAMMA_2_2_MUL_ALPHA),
-    babl_component_from_id (BABL_GREEN_GAMMA_2_2_MUL_ALPHA),
-    babl_component_from_id (BABL_BLUE_GAMMA_2_2_MUL_ALPHA),
+    babl_component_from_id (BABL_RED_NONLINEAR_MUL_ALPHA),
+    babl_component_from_id (BABL_GREEN_NONLINEAR_MUL_ALPHA),
+    babl_component_from_id (BABL_BLUE_NONLINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_RGB_GAMMA_2_2),
+    babl_model_from_id (BABL_RGB_NONLINEAR),
     babl_type_from_id (BABL_FLOAT),
-    babl_component_from_id (BABL_RED_GAMMA_2_2),
-    babl_component_from_id (BABL_GREEN_GAMMA_2_2),
-    babl_component_from_id (BABL_BLUE_GAMMA_2_2),
+    babl_component_from_id (BABL_RED_NONLINEAR),
+    babl_component_from_id (BABL_GREEN_NONLINEAR),
+    babl_component_from_id (BABL_BLUE_NONLINEAR),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_RGB_GAMMA_2_2),
+    babl_model_from_id (BABL_RGB_NONLINEAR),
     babl_type_from_id (BABL_U16),
-    babl_component_from_id (BABL_RED_GAMMA_2_2),
-    babl_component_from_id (BABL_GREEN_GAMMA_2_2),
-    babl_component_from_id (BABL_BLUE_GAMMA_2_2),
+    babl_component_from_id (BABL_RED_NONLINEAR),
+    babl_component_from_id (BABL_GREEN_NONLINEAR),
+    babl_component_from_id (BABL_BLUE_NONLINEAR),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_RGB_GAMMA_2_2),
+    babl_model_from_id (BABL_RGB_NONLINEAR),
     babl_type_from_id (BABL_U8),
-    babl_component_from_id (BABL_RED_GAMMA_2_2),
-    babl_component_from_id (BABL_GREEN_GAMMA_2_2),
-    babl_component_from_id (BABL_BLUE_GAMMA_2_2),
+    babl_component_from_id (BABL_RED_NONLINEAR),
+    babl_component_from_id (BABL_GREEN_NONLINEAR),
+    babl_component_from_id (BABL_BLUE_NONLINEAR),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_GRAY_GAMMA_2_2_ALPHA),
+    babl_model_from_id (BABL_GRAY_NONLINEAR_ALPHA),
     babl_type_from_id (BABL_FLOAT),
     babl_component_from_id (BABL_LUMA),
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_GRAY_GAMMA_2_2_ALPHA_PREMULTIPLIED),
+    babl_model_from_id (BABL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED),
     babl_type_from_id (BABL_FLOAT),
     babl_component_from_id (BABL_LUMA_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_GRAY_GAMMA_2_2),
+    babl_model_from_id (BABL_GRAY_NONLINEAR),
     babl_type_from_id (BABL_FLOAT),
     babl_component_from_id (BABL_LUMA),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_GRAY_GAMMA_2_2_ALPHA),
+    babl_model_from_id (BABL_GRAY_NONLINEAR_ALPHA),
     babl_type_from_id (BABL_U16),
     babl_component_from_id (BABL_LUMA),
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_GRAY_GAMMA_2_2_ALPHA_PREMULTIPLIED),
+    babl_model_from_id (BABL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED),
     babl_type_from_id (BABL_U16),
     babl_component_from_id (BABL_LUMA_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_GRAY_GAMMA_2_2),
+    babl_model_from_id (BABL_GRAY_NONLINEAR),
     babl_type_from_id (BABL_U16),
     babl_component_from_id (BABL_LUMA),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_GRAY_GAMMA_2_2_ALPHA),
+    babl_model_from_id (BABL_GRAY_NONLINEAR_ALPHA),
     babl_type_from_id (BABL_U8),
     babl_component_from_id (BABL_LUMA),
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_GRAY_GAMMA_2_2_ALPHA_PREMULTIPLIED),
+    babl_model_from_id (BABL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED),
     babl_type_from_id (BABL_U8),
     babl_component_from_id (BABL_LUMA_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_GRAY_GAMMA_2_2),
+    babl_model_from_id (BABL_GRAY_NONLINEAR),
     babl_type_from_id (BABL_U8),
     babl_component_from_id (BABL_LUMA),
     NULL);
