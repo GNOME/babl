@@ -20,7 +20,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "babl.h"
+#include "babl-internal.h"
 #include "babl-classes.h"
 #include "babl-ids.h"
 #include "babl-base.h"
@@ -86,6 +86,27 @@ components (void)
     NULL);
 
   babl_component_new (
+    "R~",
+    "id", BABL_RED_PERCEPTUAL,
+    "luma",
+    "chroma",
+    NULL);
+
+  babl_component_new (
+    "G~",
+    "id", BABL_GREEN_PERCEPTUAL,
+    "luma",
+    "chroma",
+    NULL);
+
+  babl_component_new (
+    "B~",
+    "id", BABL_BLUE_PERCEPTUAL,
+    "luma",
+    "chroma",
+    NULL);
+
+  babl_component_new (
     "R'a",
     "id", BABL_RED_NONLINEAR_MUL_ALPHA,
     "luma",
@@ -102,6 +123,27 @@ components (void)
   babl_component_new (
     "B'a",
     "id", BABL_BLUE_NONLINEAR_MUL_ALPHA,
+    "luma",
+    "chroma",
+    NULL);
+
+  babl_component_new (
+    "R~a",
+    "id", BABL_RED_PERCEPTUAL_MUL_ALPHA,
+    "luma",
+    "chroma",
+    NULL);
+
+  babl_component_new (
+    "G~a",
+    "id", BABL_GREEN_PERCEPTUAL_MUL_ALPHA,
+    "luma",
+    "chroma",
+    NULL);
+
+  babl_component_new (
+    "B~a",
+    "id", BABL_BLUE_PERCEPTUAL_MUL_ALPHA,
     "luma",
     "chroma",
     NULL);
@@ -133,6 +175,13 @@ models (void)
     NULL);
 
   babl_model_new (
+    "id", BABL_RGB_PERCEPTUAL,
+    babl_component_from_id (BABL_RED_PERCEPTUAL),
+    babl_component_from_id (BABL_GREEN_PERCEPTUAL),
+    babl_component_from_id (BABL_BLUE_PERCEPTUAL),
+    NULL);
+
+  babl_model_new (
     "id", BABL_RGBA_NONLINEAR,
     babl_component_from_id (BABL_RED_NONLINEAR),
     babl_component_from_id (BABL_GREEN_NONLINEAR),
@@ -141,10 +190,26 @@ models (void)
     NULL);
 
   babl_model_new (
+    "id", BABL_RGBA_PERCEPTUAL,
+    babl_component_from_id (BABL_RED_PERCEPTUAL),
+    babl_component_from_id (BABL_GREEN_PERCEPTUAL),
+    babl_component_from_id (BABL_BLUE_PERCEPTUAL),
+    babl_component_from_id (BABL_ALPHA),
+    NULL);
+
+  babl_model_new (
     "id", BABL_RGBA_NONLINEAR_PREMULTIPLIED,
     babl_component_from_id (BABL_RED_NONLINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_GREEN_NONLINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_BLUE_NONLINEAR_MUL_ALPHA),
+    babl_component_from_id (BABL_ALPHA),
+    NULL);
+
+  babl_model_new (
+    "id", BABL_RGBA_PERCEPTUAL_PREMULTIPLIED,
+    babl_component_from_id (BABL_RED_PERCEPTUAL_MUL_ALPHA),
+    babl_component_from_id (BABL_GREEN_PERCEPTUAL_MUL_ALPHA),
+    babl_component_from_id (BABL_BLUE_PERCEPTUAL_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
     NULL);
 }
@@ -181,14 +246,14 @@ copy_strip_1 (Babl  *conversion,
 }
 
 static void
-g3_from_linear (Babl  *conversion,
-                int    src_bands,
-                char **src,
-                int   *src_pitch,
-                int    dst_bands,
-                char **dst,
-                int   *dst_pitch,
-                long   samples)
+g3_nonlinear_from_linear (Babl  *conversion,
+                          int    src_bands,
+                          char **src,
+                          int   *src_pitch,
+                          int    dst_bands,
+                          char **dst,
+                          int   *dst_pitch,
+                          long   samples)
 {
   const Babl *space = babl_conversion_get_destination_space (conversion);
   const Babl **trc  = (void*)space->space.trc;
@@ -208,16 +273,15 @@ g3_from_linear (Babl  *conversion,
     }
 }
 
-
 static void
-g3_to_linear (Babl  *conversion,
-                  int    src_bands,
-                  char **src,
-                  int   *src_pitch,
-                  int    dst_bands,
-                  char **dst,
-                  int   *dst_pitch,
-                  long   samples)
+g3_nonlinear_to_linear (Babl  *conversion,
+                        int    src_bands,
+                        char **src,
+                        int   *src_pitch,
+                        int    dst_bands,
+                        char **dst,
+                        int   *dst_pitch,
+                        long   samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
   const Babl **trc  = (void*)space->space.trc;
@@ -410,9 +474,171 @@ rgba_nonlinear2rgba (Babl *conversion,
     }
 }
 
+
+static const Babl *perceptual_trc = NULL;
+
+static void
+g3_perceptual_from_linear (Babl  *conversion,
+                          int    src_bands,
+                          char **src,
+                          int   *src_pitch,
+                          int    dst_bands,
+                          char **dst,
+                          int   *dst_pitch,
+                          long   samples)
+{
+  const Babl *trc  = perceptual_trc;
+
+  long n = samples;
+
+  BABL_PLANAR_SANITY
+  while (n--)
+    {
+      int band;
+      for (band = 0; band < 3; band++)
+        *(double *) dst[band] = babl_trc_from_linear (trc, (*(double *) src[band]));
+      for (; band < dst_bands; band++)
+        *(double *) dst[band] = *(double *) src[band];
+
+      BABL_PLANAR_STEP
+    }
+}
+
+static void
+g3_perceptual_to_linear (Babl  *conversion,
+                        int    src_bands,
+                        char **src,
+                        int   *src_pitch,
+                        int    dst_bands,
+                        char **dst,
+                        int   *dst_pitch,
+                        long   samples)
+{
+  const Babl *trc  = perceptual_trc;
+  long n = samples;
+
+  BABL_PLANAR_SANITY
+  while (n--)
+    {
+      int band;
+      for (band = 0; band < 3; band++)
+        {
+          *(double *) dst[band] = babl_trc_to_linear (trc, (*(double *) src[band]));
+        }
+      for (; band < dst_bands; band++)
+        {
+          if (band < src_bands)
+            *(double *) dst[band] = *(double *) src[band];
+          else
+            *(double *) dst[band] = 1.0;
+        }
+      BABL_PLANAR_STEP
+    }
+}
+
+static void
+rgba2rgba_perceptual_premultiplied (Babl *conversion,
+                                   char *src,
+                                   char *dst,
+                                   long  samples)
+{
+  const Babl *trc  = perceptual_trc;
+  long n = samples;
+
+  while (n--)
+    {
+      double alpha = ((double *) src)[3];
+      ((double *) dst)[0] = babl_trc_from_linear (trc, ((double *) src)[0]) * alpha;
+      ((double *) dst)[1] = babl_trc_from_linear (trc, ((double *) src)[1]) * alpha;
+      ((double *) dst)[2] = babl_trc_from_linear (trc, ((double *) src)[2]) * alpha;
+      ((double *) dst)[3] = alpha;
+      src                += 4 * sizeof (double);
+      dst                += 4 * sizeof (double);
+    }
+}
+
+
+static void
+rgba_perceptual_premultiplied2rgba (Babl *conversion,
+                                   char           *src,
+                                   char           *dst,
+                                   long            samples)
+{
+  const Babl *trc  = perceptual_trc;
+  long n = samples;
+
+  while (n--)
+    {
+      double alpha = ((double *) src)[3];
+      if (alpha > BABL_ALPHA_THRESHOLD)
+        {
+          ((double *) dst)[0] = babl_trc_to_linear (trc, ((double *) src)[0] / alpha);
+          ((double *) dst)[1] = babl_trc_to_linear (trc, ((double *) src)[1] / alpha);
+          ((double *) dst)[2] = babl_trc_to_linear (trc, ((double *) src)[2] / alpha);
+        }
+      else
+        {
+          ((double *) dst)[0] = 0.0;
+          ((double *) dst)[1] = 0.0;
+          ((double *) dst)[2] = 0.0;
+        }
+      ((double *) dst)[3] = alpha;
+
+      src += 4 * sizeof (double);
+      dst += 4 * sizeof (double);
+    }
+}
+
+
+static void
+rgba2rgba_perceptual (Babl *conversion,
+                     char *src,
+                     char *dst,
+                     long  samples)
+{
+  const Babl *trc   = perceptual_trc;
+  long n = samples;
+
+  while (n--)
+    {
+      double alpha = ((double *) src)[3];
+      ((double *) dst)[0] = babl_trc_from_linear (trc, ((double *) src)[0]);
+      ((double *) dst)[1] = babl_trc_from_linear (trc, ((double *) src)[1]);
+      ((double *) dst)[2] = babl_trc_from_linear (trc, ((double *) src)[2]);
+      ((double *) dst)[3] = alpha;
+      src                += 4 * sizeof (double);
+      dst                += 4 * sizeof (double);
+    }
+}
+
+static void
+rgba_perceptual2rgba (Babl *conversion,
+                     char *src,
+                     char *dst,
+                     long  samples)
+{
+  const Babl *trc   = perceptual_trc;
+  long n = samples;
+
+  while (n--)
+    {
+      double alpha = ((double *) src)[3];
+      ((double *) dst)[0] = babl_trc_to_linear (trc, ((double *) src)[0]);
+      ((double *) dst)[1] = babl_trc_to_linear (trc, ((double *) src)[1]);
+      ((double *) dst)[2] = babl_trc_to_linear (trc, ((double *) src)[2]);
+      ((double *) dst)[3] = alpha;
+
+      src += 4 * sizeof (double);
+      dst += 4 * sizeof (double);
+    }
+}
+
 static void
 conversions (void)
 {
+  if (!perceptual_trc)
+    perceptual_trc = babl_trc ("sRGB");
+
   babl_conversion_new (
     babl_model_from_id (BABL_RGBA),
     babl_model_from_id (BABL_RGBA),
@@ -452,13 +678,13 @@ conversions (void)
   babl_conversion_new (
     babl_model_from_id (BABL_RGBA),
     babl_model_from_id (BABL_RGB_NONLINEAR),
-    "planar", g3_from_linear,
+    "planar", g3_nonlinear_from_linear,
     NULL
   );
   babl_conversion_new (
     babl_model_from_id (BABL_RGB_NONLINEAR),
     babl_model_from_id (BABL_RGBA),
-    "planar", g3_to_linear,
+    "planar", g3_nonlinear_to_linear,
     NULL
   );
 
@@ -483,6 +709,42 @@ conversions (void)
     babl_model_from_id (BABL_RGBA),
     "linear", rgba_nonlinear_premultiplied2rgba,
     NULL);
+//////////
+
+  babl_conversion_new (
+    babl_model_from_id (BABL_RGBA),
+    babl_model_from_id (BABL_RGB_PERCEPTUAL),
+    "planar", g3_perceptual_from_linear,
+    NULL
+  );
+  babl_conversion_new (
+    babl_model_from_id (BABL_RGB_PERCEPTUAL),
+    babl_model_from_id (BABL_RGBA),
+    "planar", g3_perceptual_to_linear,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_model_from_id (BABL_RGBA),
+    babl_model_from_id (BABL_RGBA_PERCEPTUAL),
+    "linear", rgba2rgba_perceptual,
+    NULL);
+  babl_conversion_new (
+    babl_model_from_id (BABL_RGBA_PERCEPTUAL),
+    babl_model_from_id (BABL_RGBA),
+    "linear", rgba_perceptual2rgba,
+    NULL);
+
+  babl_conversion_new (
+    babl_model_from_id (BABL_RGBA),
+    babl_model_from_id (BABL_RGBA_PERCEPTUAL_PREMULTIPLIED),
+    "linear", rgba2rgba_perceptual_premultiplied,
+    NULL);
+  babl_conversion_new (
+    babl_model_from_id (BABL_RGBA_PERCEPTUAL_PREMULTIPLIED),
+    babl_model_from_id (BABL_RGBA),
+    "linear", rgba_perceptual_premultiplied2rgba,
+    NULL);
 }
 
 static void
@@ -490,6 +752,14 @@ formats (void)
 {
   babl_format_new (
     "id", BABL_SRGB,
+    babl_model_from_id (BABL_RGB_PERCEPTUAL),
+    babl_type_from_id (BABL_U8),
+    babl_component_from_id (BABL_RED_PERCEPTUAL),
+    babl_component_from_id (BABL_GREEN_PERCEPTUAL),
+    babl_component_from_id (BABL_BLUE_PERCEPTUAL),
+    NULL);
+
+  babl_format_new (
     babl_model_from_id (BABL_RGB_NONLINEAR),
     babl_type_from_id (BABL_U8),
     babl_component_from_id (BABL_RED_NONLINEAR),
@@ -498,12 +768,20 @@ formats (void)
     NULL);
 
   babl_format_new (
-    "id", BABL_SRGBA,
     babl_model_from_id (BABL_RGBA_NONLINEAR),
     babl_type_from_id (BABL_U8),
     babl_component_from_id (BABL_RED_NONLINEAR),
     babl_component_from_id (BABL_GREEN_NONLINEAR),
     babl_component_from_id (BABL_BLUE_NONLINEAR),
+    babl_component_from_id (BABL_ALPHA),
+    NULL);
+
+  babl_format_new (
+    babl_model_from_id (BABL_RGBA_PERCEPTUAL),
+    babl_type_from_id (BABL_U8),
+    babl_component_from_id (BABL_RED_PERCEPTUAL),
+    babl_component_from_id (BABL_GREEN_PERCEPTUAL),
+    babl_component_from_id (BABL_BLUE_PERCEPTUAL),
     babl_component_from_id (BABL_ALPHA),
     NULL);
 
@@ -577,6 +855,32 @@ formats (void)
     babl_component_from_id (BABL_RED_NONLINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_GREEN_NONLINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_BLUE_NONLINEAR_MUL_ALPHA),
+    babl_component_from_id (BABL_ALPHA),
+    NULL);
+
+  babl_format_new (
+    babl_model_from_id (BABL_RGB_PERCEPTUAL),
+    babl_type_from_id (BABL_HALF),
+    babl_component_from_id (BABL_RED_PERCEPTUAL),
+    babl_component_from_id (BABL_GREEN_PERCEPTUAL),
+    babl_component_from_id (BABL_BLUE_PERCEPTUAL),
+    NULL);
+
+  babl_format_new (
+    babl_model_from_id (BABL_RGBA_PERCEPTUAL),
+    babl_type_from_id (BABL_HALF),
+    babl_component_from_id (BABL_RED_PERCEPTUAL),
+    babl_component_from_id (BABL_GREEN_PERCEPTUAL),
+    babl_component_from_id (BABL_BLUE_PERCEPTUAL),
+    babl_component_from_id (BABL_ALPHA),
+    NULL);
+
+  babl_format_new (
+    babl_model_from_id (BABL_RGBA_PERCEPTUAL_PREMULTIPLIED),
+    babl_type_from_id (BABL_HALF),
+    babl_component_from_id (BABL_RED_PERCEPTUAL_MUL_ALPHA),
+    babl_component_from_id (BABL_GREEN_PERCEPTUAL_MUL_ALPHA),
+    babl_component_from_id (BABL_BLUE_PERCEPTUAL_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
     NULL);
 
@@ -683,6 +987,33 @@ formats (void)
     babl_component_from_id (BABL_RED_NONLINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_GREEN_NONLINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_BLUE_NONLINEAR_MUL_ALPHA),
+    babl_component_from_id (BABL_ALPHA),
+    NULL);
+
+
+  babl_format_new (
+    babl_model_from_id (BABL_RGB_PERCEPTUAL),
+    babl_type_from_id (BABL_U32),
+    babl_component_from_id (BABL_RED_PERCEPTUAL),
+    babl_component_from_id (BABL_GREEN_PERCEPTUAL),
+    babl_component_from_id (BABL_BLUE_PERCEPTUAL),
+    NULL);
+
+  babl_format_new (
+    babl_model_from_id (BABL_RGBA_PERCEPTUAL),
+    babl_type_from_id (BABL_U32),
+    babl_component_from_id (BABL_RED_PERCEPTUAL),
+    babl_component_from_id (BABL_GREEN_PERCEPTUAL),
+    babl_component_from_id (BABL_BLUE_PERCEPTUAL),
+    babl_component_from_id (BABL_ALPHA),
+    NULL);
+
+  babl_format_new (
+    babl_model_from_id (BABL_RGBA_PERCEPTUAL_PREMULTIPLIED),
+    babl_type_from_id (BABL_U32),
+    babl_component_from_id (BABL_RED_PERCEPTUAL_MUL_ALPHA),
+    babl_component_from_id (BABL_GREEN_PERCEPTUAL_MUL_ALPHA),
+    babl_component_from_id (BABL_BLUE_PERCEPTUAL_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
     NULL);
 
