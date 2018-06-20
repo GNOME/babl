@@ -19,8 +19,7 @@
 #include "config.h"
 #include <stdlib.h>
 
-#include "babl-classes.h"
-#include "babl.h"
+#include "babl-internal.h"
 #include "babl-ids.h"
 #include "math.h"
 #include "babl-base.h"
@@ -64,6 +63,12 @@ components (void)
     "id", BABL_GRAY_NONLINEAR_MUL_ALPHA,
     "luma",
     NULL);
+
+  babl_component_new (
+    "Y~",
+    "id", BABL_GRAY_PERCEPTUAL,
+    "luma",
+    NULL);
 }
 
 static void
@@ -87,9 +92,8 @@ models (void)
     babl_component_from_id (BABL_ALPHA),
     NULL);
 
-
   babl_model_new (
-    "id", BABL_GRAY_NONLINEAR,
+    "id", BABL_MODEL_GRAY_NONLINEAR,
     babl_component_from_id (BABL_GRAY_NONLINEAR),
     NULL);
 
@@ -100,12 +104,23 @@ models (void)
     NULL);
 
   babl_model_new (
-    "id", BABL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED,
+    "id", BABL_MODEL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED,
     babl_component_from_id (BABL_GRAY_NONLINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
     NULL);
-}
 
+  babl_model_new (
+    "id", BABL_MODEL_GRAY_PERCEPTUAL,
+    babl_component_from_id (BABL_GRAY_PERCEPTUAL),
+    NULL);
+
+  babl_model_new (
+    "id", BABL_MODEL_GRAY_PERCEPTUAL_ALPHA,
+    babl_component_from_id (BABL_GRAY_PERCEPTUAL),
+    babl_component_from_id (BABL_ALPHA),
+    NULL);
+
+}
 
 static void
 rgba_to_graya (Babl *conversion,
@@ -170,6 +185,8 @@ rgba_to_gray (Babl *conversion,
       dst += sizeof (double) * 1;
     }
 }
+
+static const Babl *perceptual_trc = NULL;
 
 static void
 rgb_to_gray_nonlinear (Babl  *conversion,
@@ -253,6 +270,88 @@ gray_nonlinear_to_rgb (Babl *conversion,
       BABL_PLANAR_STEP
     }
 }
+
+static void
+rgb_to_gray_perceptual (Babl  *conversion,
+                        int    src_bands,
+                        char **src,
+                        int   *src_pitch,
+                        int    dst_bands,
+                        char **dst,
+                        int   *dst_pitch,
+                        long   n)
+{
+  const Babl *space = babl_conversion_get_destination_space (conversion);
+  const Babl *trc = perceptual_trc;
+  double RGB_LUMINANCE_RED   = space->space.RGBtoXYZ[3];
+  double RGB_LUMINANCE_GREEN = space->space.RGBtoXYZ[4];
+  double RGB_LUMINANCE_BLUE  = space->space.RGBtoXYZ[5];
+
+  BABL_PLANAR_SANITY
+  while (n--)
+    {
+      double red, green, blue;
+      double luminance, alpha;
+
+      red   = *(double *) src[0];
+      green = *(double *) src[1];
+      blue  = *(double *) src[2];
+      if (src_bands > 3)
+        alpha = *(double *) src[3];
+      else
+        alpha = 1.0;
+
+      luminance = red   * RGB_LUMINANCE_RED +
+                  green * RGB_LUMINANCE_GREEN +
+                  blue  * RGB_LUMINANCE_BLUE;
+      *(double *) dst[0] = babl_trc_from_linear (trc, luminance);
+
+      if (dst_bands == 2)
+        *(double *) dst[1] = alpha;
+
+      BABL_PLANAR_STEP
+    }
+}
+
+static void
+gray_perceptual_to_rgb (Babl *conversion,
+                        int    src_bands,
+                        char **src,
+                        int   *src_pitch,
+                        int    dst_bands,
+                        char **dst,
+                        int   *dst_pitch,
+                        long   n)
+{
+  const Babl *trc = perceptual_trc;
+
+  BABL_PLANAR_SANITY
+  while (n--)
+    {
+      double luminance;
+      double red, green, blue;
+      double alpha;
+
+      luminance = babl_trc_to_linear (trc, *(double *) src[0]);
+      red       = luminance;
+      green     = luminance;
+      blue      = luminance;
+      if (src_bands > 1)
+        alpha = *(double *) src[1];
+      else
+        alpha = 1.0;
+
+      *(double *) dst[0] = red;
+      *(double *) dst[1] = green;
+      *(double *) dst[2] = blue;
+
+      if (dst_bands > 3)
+        *(double *) dst[3] = alpha;
+
+      BABL_PLANAR_STEP
+    }
+}
+
 
 static void
 graya_to_rgba (Babl *conversion,
@@ -516,10 +615,10 @@ gray_nonlinear_premultiplied2rgba (Babl *conversion,
     }
 }
 
-
 static void
 conversions (void)
 {
+  perceptual_trc = babl_trc ("sRGB");
   babl_conversion_new (
     babl_model_from_id (BABL_MODEL_GRAY_NONLINEAR),
     babl_model_from_id (BABL_RGBA),
@@ -550,7 +649,7 @@ conversions (void)
 
 
   babl_conversion_new (
-    babl_model_from_id (BABL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED),
+    babl_model_from_id (BABL_MODEL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED),
     babl_model_from_id (BABL_RGBA),
     "linear", gray_nonlinear_premultiplied2rgba,
     NULL
@@ -558,10 +657,41 @@ conversions (void)
 
   babl_conversion_new (
     babl_model_from_id (BABL_RGBA),
-    babl_model_from_id (BABL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED),
+    babl_model_from_id (BABL_MODEL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED),
     "linear", rgba2gray_nonlinear_premultiplied,
     NULL
   );
+
+
+
+  babl_conversion_new (
+    babl_model_from_id (BABL_MODEL_GRAY_PERCEPTUAL),
+    babl_model_from_id (BABL_RGBA),
+    "planar", gray_perceptual_to_rgb,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_model_from_id (BABL_RGBA),
+    babl_model_from_id (BABL_MODEL_GRAY_PERCEPTUAL),
+    "planar", rgb_to_gray_perceptual,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_model_from_id (BABL_MODEL_GRAY_PERCEPTUAL_ALPHA),
+    babl_model_from_id (BABL_RGBA),
+    "planar", gray_perceptual_to_rgb,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_model_from_id (BABL_RGBA),
+    babl_model_from_id (BABL_MODEL_GRAY_PERCEPTUAL_ALPHA),
+    "planar", rgb_to_gray_perceptual,
+    NULL
+  );
+
 
   babl_conversion_new (
     babl_model_from_id (BABL_GRAY),
@@ -647,7 +777,7 @@ formats (void)
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED),
+    babl_model_from_id (BABL_MODEL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED),
     babl_type_from_id (BABL_HALF),
     babl_component_from_id (BABL_GRAY_NONLINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
@@ -683,7 +813,7 @@ formats (void)
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED),
+    babl_model_from_id (BABL_MODEL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED),
     babl_type ("u15"),
     babl_component_from_id (BABL_GRAY_NONLINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
@@ -718,7 +848,7 @@ formats (void)
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED),
+    babl_model_from_id (BABL_MODEL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED),
     babl_type_from_id (BABL_U32),
     babl_component_from_id (BABL_GRAY_NONLINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),

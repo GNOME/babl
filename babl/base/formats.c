@@ -111,7 +111,7 @@ babl_formats_init (void)
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED),
+    babl_model_from_id (BABL_MODEL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED),
     babl_type_from_id (BABL_FLOAT),
     babl_component_from_id (BABL_GRAY_NONLINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
@@ -128,7 +128,7 @@ babl_formats_init (void)
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED),
+    babl_model_from_id (BABL_MODEL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED),
     babl_type_from_id (BABL_U16),
     babl_component_from_id (BABL_GRAY_NONLINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
@@ -145,7 +145,7 @@ babl_formats_init (void)
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED),
+    babl_model_from_id (BABL_MODEL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED),
     babl_type_from_id (BABL_U8),
     babl_component_from_id (BABL_GRAY_NONLINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
