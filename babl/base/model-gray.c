@@ -201,7 +201,7 @@ rgb_to_gray_nonlinear (Babl  *conversion,
       else
         alpha = 1.0;
 
-      luminance = red   * RGB_LUMINANCE_RED +    // XXX: should be taken from BablSpace
+      luminance = red   * RGB_LUMINANCE_RED +
                   green * RGB_LUMINANCE_GREEN +
                   blue  * RGB_LUMINANCE_BLUE;
       *(double *) dst[0] = babl_trc_from_linear (trc, luminance);
