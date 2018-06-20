@@ -43,25 +43,25 @@ components (void)
 {
   babl_component_new (
     "Y",
-    "id", BABL_LUMINANCE,
+    "id", BABL_GRAY_LINEAR,
     "luma",
     NULL);
 
   babl_component_new (
     "Ya",
-    "id", BABL_LUMINANCE_MUL_ALPHA,
+    "id", BABL_GRAY_LINEAR_MUL_ALPHA,
     "luma",
     NULL);
 
   babl_component_new (
     "Y'",
-    "id", BABL_LUMA,
+    "id", BABL_GRAY_NONLINEAR,
     "luma",
     NULL);
 
   babl_component_new (
     "Y'a",
-    "id", BABL_LUMA_MUL_ALPHA,
+    "id", BABL_GRAY_NONLINEAR_MUL_ALPHA,
     "luma",
     NULL);
 }
@@ -71,37 +71,37 @@ models (void)
 {
   babl_model_new (
     "id", BABL_GRAY,
-    babl_component_from_id (BABL_LUMINANCE),
+    babl_component_from_id (BABL_GRAY_LINEAR),
     NULL);
 
 
   babl_model_new (
     "id", BABL_GRAY_ALPHA,
-    babl_component_from_id (BABL_LUMINANCE),
+    babl_component_from_id (BABL_GRAY_LINEAR),
     babl_component_from_id (BABL_ALPHA),
     NULL);
 
   babl_model_new (
     "id", BABL_GRAY_ALPHA_PREMULTIPLIED,
-    babl_component_from_id (BABL_LUMINANCE_MUL_ALPHA),
+    babl_component_from_id (BABL_GRAY_LINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
     NULL);
 
 
   babl_model_new (
     "id", BABL_GRAY_NONLINEAR,
-    babl_component_from_id (BABL_LUMA),
+    babl_component_from_id (BABL_GRAY_NONLINEAR),
     NULL);
 
   babl_model_new (
-    "id", BABL_GRAY_NONLINEAR_ALPHA,
-    babl_component_from_id (BABL_LUMA),
+    "id", BABL_MODEL_GRAY_NONLINEAR_ALPHA,
+    babl_component_from_id (BABL_GRAY_NONLINEAR),
     babl_component_from_id (BABL_ALPHA),
     NULL);
 
   babl_model_new (
     "id", BABL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED,
-    babl_component_from_id (BABL_LUMA_MUL_ALPHA),
+    babl_component_from_id (BABL_GRAY_NONLINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
     NULL);
 }
@@ -521,7 +521,7 @@ static void
 conversions (void)
 {
   babl_conversion_new (
-    babl_model_from_id (BABL_GRAY_NONLINEAR),
+    babl_model_from_id (BABL_MODEL_GRAY_NONLINEAR),
     babl_model_from_id (BABL_RGBA),
     "planar", gray_nonlinear_to_rgb,
     NULL
@@ -529,13 +529,13 @@ conversions (void)
 
   babl_conversion_new (
     babl_model_from_id (BABL_RGBA),
-    babl_model_from_id (BABL_GRAY_NONLINEAR),
+    babl_model_from_id (BABL_MODEL_GRAY_NONLINEAR),
     "planar", rgb_to_gray_nonlinear,
     NULL
   );
 
   babl_conversion_new (
-    babl_model_from_id (BABL_GRAY_NONLINEAR_ALPHA),
+    babl_model_from_id (BABL_MODEL_GRAY_NONLINEAR_ALPHA),
     babl_model_from_id (BABL_RGBA),
     "planar", gray_nonlinear_to_rgb,
     NULL
@@ -543,7 +543,7 @@ conversions (void)
 
   babl_conversion_new (
     babl_model_from_id (BABL_RGBA),
-    babl_model_from_id (BABL_GRAY_NONLINEAR_ALPHA),
+    babl_model_from_id (BABL_MODEL_GRAY_NONLINEAR_ALPHA),
     "planar", rgb_to_gray_nonlinear,
     NULL
   );
@@ -626,106 +626,106 @@ formats (void)
   babl_format_new (
     babl_model_from_id (BABL_GRAY_ALPHA),
     babl_type_from_id (BABL_HALF),
-    babl_component_from_id (BABL_LUMINANCE),
+    babl_component_from_id (BABL_GRAY_LINEAR),
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
     babl_model_from_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
     babl_type_from_id (BABL_HALF),
-    babl_component_from_id (BABL_LUMINANCE_MUL_ALPHA),
+    babl_component_from_id (BABL_GRAY_LINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
     babl_model_from_id (BABL_GRAY),
     babl_type_from_id (BABL_HALF),
-    babl_component_from_id (BABL_LUMINANCE),
+    babl_component_from_id (BABL_GRAY_LINEAR),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_GRAY_NONLINEAR_ALPHA),
+    babl_model_from_id (BABL_MODEL_GRAY_NONLINEAR_ALPHA),
     babl_type_from_id (BABL_HALF),
-    babl_component_from_id (BABL_LUMA),
+    babl_component_from_id (BABL_GRAY_NONLINEAR),
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
     babl_model_from_id (BABL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED),
     babl_type_from_id (BABL_HALF),
-    babl_component_from_id (BABL_LUMA_MUL_ALPHA),
+    babl_component_from_id (BABL_GRAY_NONLINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_GRAY_NONLINEAR),
+    babl_model_from_id (BABL_MODEL_GRAY_NONLINEAR),
     babl_type_from_id (BABL_HALF),
-    babl_component_from_id (BABL_LUMA),
+    babl_component_from_id (BABL_GRAY_NONLINEAR),
     NULL);
   /***********/
 
   babl_format_new (
     babl_model_from_id (BABL_GRAY_ALPHA),
     babl_type ("u15"),
-    babl_component_from_id (BABL_LUMINANCE),
+    babl_component_from_id (BABL_GRAY_LINEAR),
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
     babl_model_from_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
     babl_type ("u15"),
-    babl_component_from_id (BABL_LUMINANCE_MUL_ALPHA),
+    babl_component_from_id (BABL_GRAY_LINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
     babl_model_from_id (BABL_GRAY),
     babl_type ("u15"),
-    babl_component_from_id (BABL_LUMINANCE),
+    babl_component_from_id (BABL_GRAY_LINEAR),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_GRAY_NONLINEAR_ALPHA),
+    babl_model_from_id (BABL_MODEL_GRAY_NONLINEAR_ALPHA),
     babl_type ("u15"),
-    babl_component_from_id (BABL_LUMA),
+    babl_component_from_id (BABL_GRAY_NONLINEAR),
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
     babl_model_from_id (BABL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED),
     babl_type ("u15"),
-    babl_component_from_id (BABL_LUMA_MUL_ALPHA),
+    babl_component_from_id (BABL_GRAY_NONLINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_GRAY_NONLINEAR),
+    babl_model_from_id (BABL_MODEL_GRAY_NONLINEAR),
     babl_type ("u15"),
-    babl_component_from_id (BABL_LUMA),
+    babl_component_from_id (BABL_GRAY_NONLINEAR),
     NULL);
 
   babl_format_new (
     babl_model_from_id (BABL_GRAY_ALPHA),
     babl_type_from_id (BABL_U32),
-    babl_component_from_id (BABL_LUMINANCE),
+    babl_component_from_id (BABL_GRAY_LINEAR),
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
     babl_model_from_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
     babl_type_from_id (BABL_U32),
-    babl_component_from_id (BABL_LUMINANCE_MUL_ALPHA),
+    babl_component_from_id (BABL_GRAY_LINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
     babl_model_from_id (BABL_GRAY),
     babl_type_from_id (BABL_U32),
-    babl_component_from_id (BABL_LUMINANCE),
+    babl_component_from_id (BABL_GRAY_LINEAR),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_GRAY_NONLINEAR_ALPHA),
+    babl_model_from_id (BABL_MODEL_GRAY_NONLINEAR_ALPHA),
     babl_type_from_id (BABL_U32),
-    babl_component_from_id (BABL_LUMA),
+    babl_component_from_id (BABL_GRAY_NONLINEAR),
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
     babl_model_from_id (BABL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED),
     babl_type_from_id (BABL_U32),
-    babl_component_from_id (BABL_LUMA_MUL_ALPHA),
+    babl_component_from_id (BABL_GRAY_NONLINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
     NULL);
   babl_format_new (
-    babl_model_from_id (BABL_GRAY_NONLINEAR),
+    babl_model_from_id (BABL_MODEL_GRAY_NONLINEAR),
     babl_type_from_id (BABL_U32),
-    babl_component_from_id (BABL_LUMA),
+    babl_component_from_id (BABL_GRAY_NONLINEAR),
     NULL);
 }

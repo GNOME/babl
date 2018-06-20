@@ -163,9 +163,9 @@ convert_to_double (BablFormat      *source_fmt,
   BablImage *dst_img;
 
   src_img = (BablImage *) babl_image_new (
-    babl_component_from_id (BABL_LUMINANCE), NULL, 1, 0, NULL);
+    babl_component_from_id (BABL_GRAY_LINEAR), NULL, 1, 0, NULL);
   dst_img = (BablImage *) babl_image_new (
-    babl_component_from_id (BABL_LUMINANCE), NULL, 1, 0, NULL);
+    babl_component_from_id (BABL_GRAY_LINEAR), NULL, 1, 0, NULL);
 
   dst_img->type[0]  = (BablType *) babl_type_from_id (BABL_DOUBLE);
   dst_img->pitch[0] =
@@ -239,9 +239,9 @@ convert_from_double (BablFormat *destination_fmt,
   BablImage *dst_img;
 
   src_img = (BablImage *) babl_image_new (
-    babl_component_from_id (BABL_LUMINANCE), NULL, 1, 0, NULL);
+    babl_component_from_id (BABL_GRAY_LINEAR), NULL, 1, 0, NULL);
   dst_img = (BablImage *) babl_image_new (
-    babl_component_from_id (BABL_LUMINANCE), NULL, 1, 0, NULL);
+    babl_component_from_id (BABL_GRAY_LINEAR), NULL, 1, 0, NULL);
 
   src_img->type[0]   = (BablType *) babl_type_from_id (BABL_DOUBLE);
   src_img->pitch[0]  = (src_img->type[0]->bits / 8) * destination_fmt->model->components;
@@ -290,9 +290,9 @@ ncomponent_convert_to_double (BablFormat       *source_fmt,
   BablImage *dst_img;
 
   src_img = (BablImage *) babl_image_new (
-    babl_component_from_id (BABL_LUMINANCE), NULL, 1, 0, NULL);
+    babl_component_from_id (BABL_GRAY_LINEAR), NULL, 1, 0, NULL);
   dst_img = (BablImage *) babl_image_new (
-    babl_component_from_id (BABL_LUMINANCE), NULL, 1, 0, NULL);
+    babl_component_from_id (BABL_GRAY_LINEAR), NULL, 1, 0, NULL);
 
   dst_img->type[0]  = (BablType *) babl_type_from_id (BABL_DOUBLE);
   dst_img->pitch[0] = (dst_img->type[0]->bits / 8);
@@ -323,9 +323,9 @@ ncomponent_convert_from_double (BablFormat *destination_fmt,
   BablImage *dst_img;
 
   src_img = (BablImage *) babl_image_new (
-    babl_component_from_id (BABL_LUMINANCE), NULL, 1, 0, NULL);
+    babl_component_from_id (BABL_GRAY_LINEAR), NULL, 1, 0, NULL);
   dst_img = (BablImage *) babl_image_new (
-    babl_component_from_id (BABL_LUMINANCE), NULL, 1, 0, NULL);
+    babl_component_from_id (BABL_GRAY_LINEAR), NULL, 1, 0, NULL);
 
   src_img->type[0]   = (BablType *) babl_type_from_id (BABL_DOUBLE);
   src_img->pitch[0]  = (src_img->type[0]->bits / 8);
