@@ -17,7 +17,8 @@ C_TESTS =				\
 	float-to-8bit \
 	hsl    \
 	hsva   \
-	types			\
+	types	\
+	format_with_space   \
 	palette \
 	extract \
 	nop \
