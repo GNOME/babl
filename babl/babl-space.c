@@ -502,7 +502,7 @@ computations of uniform gray axis */
       0.713, 0.293,
       0.165, 0.830,
       0.128, 0.044,
-      babl_trc("1.0"), NULL, NULL, 1);
+      babl_trc("linear"), NULL, NULL, 1);
 
   babl_space_from_chromaticities (
      "ACES2065-1",
@@ -510,7 +510,7 @@ computations of uniform gray axis */
       0.7347, 0.2653,
       0.0000, 1.0000,
       0.0001, -0.0770,
-      babl_trc("1.0"), NULL, NULL, 1);
+      babl_trc("linear"), NULL, NULL, 1);
 
 }
 
