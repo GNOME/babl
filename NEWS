@@ -3,6 +3,12 @@ The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
                                                                           -->
 
+2018-06-02 babl-0.1.52                                              </dt><dd>
+Concurrency fixes and fixes to handling of 0/1 entry palettes, do not
+pre-equalize XYZ conversion matrices for sRGB, internal clean-ups, pre-define
+ACES2065-1 and ACEScg BablSpaces, add R~G~B~ set of spaces, which for all
+BablSpaces mean use sRGB TRC.
+                                                                    </dd><dt>
 2018-05-20 babl-0.1.50                                              </dt><dd>
 Improvements to speed and precision of indexed code, improvements to meson
 build.
