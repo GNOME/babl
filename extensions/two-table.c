@@ -203,6 +203,8 @@ init (void)
   char *testchar = (char*) &testint;
   int   littleendian = (testchar[0] == 23);
 
+  return 0; // temporarily disable, it is interfering with space invasion
+
   if (littleendian)
     {
       const Babl *f24 = babl_format_new (
