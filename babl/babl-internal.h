@@ -386,26 +386,6 @@ const Babl *babl_space_match_trc_matrix (const Babl *trc_red,
                                          float gx, float gy, float gz,
                                          float bx, float by, float bz);
 
-/**
- * babl_space_from_chromaticities:
- *
- * Creates a new babl-space/ RGB matrix color space definition with the
- * specified CIE xy(Y) values for white point: wx, wy and primary
- * chromaticities: rx,ry,gx,gy,bx,by and TRCs to be used. After registering a
- * new babl-space it can be used with babl_space() passing its name;
- *
- * Internally this does the math to derive the RGBXYZ matrix as used in an ICC
- * profile.
- */
-const Babl * babl_space_from_chromaticities (const char *name,
-                                             double wx, double wy,
-                                             double rx, double ry,
-                                             double gx, double gy,
-                                             double bx, double by,
-                                             const Babl *trc_red,
-                                             const Babl *trc_green,
-                                             const Babl *trc_blue,
-                                             int equalize_matrix);
 
 /**
  * babl_space_from_rgbxyz_matrix:
@@ -424,21 +404,6 @@ babl_space_from_rgbxyz_matrix (const char *name,
                                const Babl *trc_green,
                                const Babl *trc_blue);
 
-/**
- * babl_trc_gamma:
- *
- * Creates a Babl TRC for a specific gamma value, it will be given
- * a name that is a short string representation of the value.
- */
-const Babl * babl_trc_gamma (double gamma);
-
-/**
- * babl_trc:
- *
- * Look up a TRC by name, "sRGB" "1.0" "linear" and "2.2" are recognized
- * strings in a stock babl configuration.
- */
-const Babl * babl_trc       (const char *name);
 
 int _babl_file_get_contents (const char  *path,
                              char       **contents,

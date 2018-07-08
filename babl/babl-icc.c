@@ -883,7 +883,7 @@ babl_icc_make_space (const char   *icc_data,
        double wZ = icc_read (s15f16, offset + 8 + 4 * 2);
        babl_free (state);
 
-       ret = (void*) babl_space_from_chromaticities (NULL,
+       ret = (void*) babl_chromaticities_make_space (NULL,
                      wX / (wX + wY + wZ),
                      wY / (wX + wY + wZ),
                      red_x, red_y,
