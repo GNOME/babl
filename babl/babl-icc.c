@@ -484,14 +484,14 @@ switch (trc->type)
 
 static void symmetry_test (ICC *state);
 
-const char *babl_space_to_icc (const Babl  *babl,
-                               const char  *description,
-                               const char  *copyright,
-                               BablICCFlags flags,
-                               int         *ret_length)
+char *babl_space_to_icc (const Babl  *babl,
+                         const char  *description,
+                         const char  *copyright,
+                         BablICCFlags flags,
+                         int         *ret_length)
 {
   const BablSpace *space = &babl->space;
-  static char icc[65536];
+  char icc[65536];
   int length=65535;
   ICC *state = icc_state_new (icc, length, 10);
 
@@ -606,7 +606,11 @@ const char *babl_space_to_icc (const Babl  *babl,
     *ret_length = length;
 
   babl_free (state);
-  return icc;
+  {
+    char *ret = malloc (length);
+    memcpy (ret, icc, length);
+    return ret;
+  }
 }
 
 

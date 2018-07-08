@@ -488,6 +488,25 @@ const Babl * babl_trc_gamma (double gamma);
  */
 const Babl * babl_trc       (const char *name);
 
+typedef enum {
+  BABL_ICC_DEFAULTS = 0,
+  BABL_ICC_COMPACT_TRC_LUT = 1,
+} BablICCFlags;
+
+/* babl_space_to_icc:
+ *
+ * Creates an ICCv2 RGB matrix profile for a babl space. The profiles strive to
+ * be as small and compact as possible, TRCs are stored as 1024 entry LUT(s).
+ *
+ * the result is allocated with malloc and you should free it when done.
+ */
+
+char *babl_space_to_icc (const Babl  *space,
+                         const char  *description,
+                         const char  *copyright,
+                         BablICCFlags flags,
+                         int         *icc_length);
+
 #ifdef __cplusplus
 }
 #endif
