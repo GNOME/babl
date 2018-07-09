@@ -392,7 +392,10 @@ static const Babl *babl_trc_from_icc (ICC  *state, int offset,
 
 static void icc_allocate_tag (ICC *state, const char *tag, int size)
 {
-    state->no+=((4-state->o)%4);state->o = state->no;state->psize = size;
+    while (state->no % 4 != 0)
+      state->no++;
+
+    state->o = state->no;state->psize = size;
     icc_write (sign, 128 + 4 + 4 * state->headpos++, tag);
     icc_write (u32,  128 + 4 + 4 * state->headpos++, state->o);
     icc_write (u32,  128 + 4 + 4 * state->headpos++, size);
