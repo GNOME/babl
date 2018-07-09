@@ -507,6 +507,22 @@ char *babl_space_to_icc (const Babl  *space,
                          BablICCFlags flags,
                          int         *icc_length);
 
+/* babl_space_get:
+ *
+ * query thechromaticities of white point and primaries as well as trcs
+ * used for r g a nd b, all arguments mights be NULL.
+ */
+
+void babl_space_get (const Babl *space,
+                     double *xw, double *yw,
+                     double *xr, double *yr,
+                     double *xg, double *yg,
+                     double *xb, double *yb,
+                     const Babl **red_trc,
+                     const Babl **green_trc,
+                     const Babl **blue_trc);
+
+
 #ifdef __cplusplus
 }
 #endif

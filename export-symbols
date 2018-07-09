@@ -43,6 +43,7 @@ babl_space
 babl_space_from_xyz
 babl_space_to_icc
 babl_chromaticities_make_space
+babl_space_get
 babl_space_get_rgbtoxyz
 babl_space_to_xyz
 babl_ticks

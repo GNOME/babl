@@ -1021,6 +1021,34 @@ const Babl *babl_space_match_trc_matrix (const Babl *trc_red,
   return NULL;
 }
 
+
+void babl_space_get (const Babl *babl,
+                     double *xw, double *yw,
+                     double *xr, double *yr,
+                     double *xg, double *yg,
+                     double *xb, double *yb,
+                     const Babl **red_trc,
+                     const Babl **green_trc,
+                     const Babl **blue_trc)
+{
+  const BablSpace *space = &babl->space;
+  /* XXX: note: for spaces set by matrix should be possible to derive
+                the chromaticities of r,g,b and thus even then keep this
+                is canonical data
+   */
+  if(xw)*xw = space->xw;
+  if(yw)*yw = space->yw;
+  if(xr)*xr = space->xr;
+  if(yr)*yr = space->yr;
+  if(xg)*xg = space->xg;
+  if(yg)*yg = space->yg;
+  if(xb)*xb = space->xb;
+  if(yb)*yb = space->yb;
+  if(red_trc)*red_trc = space->trc[0];
+  if(green_trc)*green_trc = space->trc[1];
+  if(blue_trc)*blue_trc = space->trc[2];
+}
+
 /* Trademarks:
  *
  * International Color Consortium is a registered trademarks of the.
