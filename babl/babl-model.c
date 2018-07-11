@@ -374,6 +374,20 @@ babl_remodel_with_space (const Babl *model, const Babl *space)
   int i;
   assert (BABL_IS_BABL (model));
 
+  if (!space) space = babl_space ("sRGB");
+  if (space->class_type == BABL_FORMAT)
+  {
+    space = space->format.space;
+  }
+  else if (space->class_type == BABL_MODEL)
+  {
+    space = space->model.space;
+  }
+  else if (space->class_type != BABL_SPACE)
+  {
+    return NULL;
+  }
+
   if (model->model.space == space)
     return (void*)model;
 
