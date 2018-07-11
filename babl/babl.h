@@ -177,6 +177,9 @@ int babl_format_exists              (const char *name);
  */
 const Babl * babl_format_with_space (const char *name, const Babl *space);
 
+const Babl *
+babl_model_with_space (const char *name, const Babl *space);
+
 /*
  * babl_format_get_space:
  *
