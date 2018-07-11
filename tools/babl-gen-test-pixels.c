@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General
  * Public License along with this library; if not, see
- * <http://www.gnu.org/licenses/>.
+ * <https://www.gnu.org/licenses/>.
  */
 
 #include <stdlib.h>
@@ -182,7 +182,7 @@ int main (int argc, char **argv)
     " *\n"
     " * You should have received a copy of the GNU Lesser General\n"
     " * Public License along with this library; if not, see\n"
-    " * <http://www.gnu.org/licenses/>.\n"
+    " * <https://www.gnu.org/licenses/>.\n"
     " */\n"
     "\n");
 

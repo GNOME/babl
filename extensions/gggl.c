@@ -13,7 +13,7 @@
  *    GNU General Public License for more details.
  *
  *    You should have received a copy of the GNU General Public License
- *    along with GGGL; if not, see <http://www.gnu.org/licenses/>.
+ *    along with GGGL; if not, see <https://www.gnu.org/licenses/>.
  *
  *    Rights are granted to use this shared object in libraries covered by
  *    LGPL. (exception added, during import into babl CVS.)
