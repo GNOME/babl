@@ -76,8 +76,22 @@ init (void)
     NULL);
 
   babl_conversion_new (
+    babl_format ("R~G~B~ u16"),
+    babl_format ("R~G~B~A u16"),
+    "linear",
+    conv_rgbu16_rgbau16,
+    NULL);
+
+  babl_conversion_new (
     babl_format ("Y' u16"),
     babl_format ("Y'A u16"),
+    "linear",
+    conv_yu16_yau16,
+    NULL);
+
+  babl_conversion_new (
+    babl_format ("Y~ u16"),
+    babl_format ("Y~A u16"),
     "linear",
     conv_yu16_yau16,
     NULL);
