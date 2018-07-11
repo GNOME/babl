@@ -616,6 +616,20 @@ char *babl_space_to_icc (const Babl  *babl,
   }
 }
 
+const char *babl_space_get_icc (const Babl *babl, int *length)
+{
+  if (!babl->space.icc_profile)
+  {
+    /* overriding constness of babl */
+    Babl *babl_noconst = (void*) babl;
+    babl_noconst->space.icc_profile = babl_space_to_icc (babl,
+                              "babl profile", NULL, 0,
+                              &babl_noconst->space.icc_length);
+  }
+  *length = babl->space.icc_length;
+  return babl->space.icc_profile;
+}
+
 
 typedef uint32_t UTF32;
 typedef uint16_t UTF16;
@@ -851,6 +865,9 @@ babl_icc_make_space (const char   *icc_data,
                 trc_red, trc_green, trc_blue);
 
        babl_free (state);
+       ret->space.icc_length = icc_length;
+       ret->space.icc_profile = malloc (icc_length);
+       memcpy (ret->space.icc_profile, icc_data, icc_length);
        return ret;
      }
   }
@@ -897,6 +914,11 @@ babl_icc_make_space (const char   *icc_data,
                      green_x, green_y,
                      blue_x, blue_y,
                      trc_red, trc_green, trc_blue, 1);
+
+       ret->space.icc_length = icc_length;
+       ret->space.icc_profile = malloc (icc_length);
+       memcpy (ret->space.icc_profile, icc_data, icc_length);
+
        return ret;
      }
   }

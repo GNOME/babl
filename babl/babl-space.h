@@ -61,6 +61,8 @@ typedef struct
    * making it possible to round-trip data. Unless it is sRGB, when
    * standard should win.
    */
+  char *icc_profile;
+  int   icc_length;
 
 } BablSpace;
 

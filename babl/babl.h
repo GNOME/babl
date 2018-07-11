@@ -525,6 +525,7 @@ void babl_space_get (const Babl *space,
                      const Babl **green_trc,
                      const Babl **blue_trc);
 
+const char *babl_space_get_icc (const Babl *babl, int *length);
 
 #ifdef __cplusplus
 }
