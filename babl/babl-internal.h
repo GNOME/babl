@@ -446,4 +446,19 @@ babl_conversion_process (const Babl *babl,
 void _babl_fish_rig_dispatch (Babl *babl);
 void _babl_fish_prepare_bpp (Babl *babl);
 
+
+/* babl_space_to_icc:
+ *
+ * Creates an ICCv2 RGB matrix profile for a babl space. The profiles strive to
+ * be as small and compact as possible, TRCs are stored as 1024 entry LUT(s).
+ *
+ * the result is allocated with malloc and you should free it when done.
+ */
+
+char *babl_space_to_icc (const Babl  *space,
+                         const char  *description,
+                         const char  *copyright,
+                         BablICCFlags flags,
+                         int         *icc_length);
+
 #endif

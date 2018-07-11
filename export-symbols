@@ -42,7 +42,6 @@ babl_sampling
 babl_set_user_data
 babl_space
 babl_space_from_xyz
-babl_space_to_icc
 babl_space_get_icc
 babl_chromaticities_make_space
 babl_space_get
