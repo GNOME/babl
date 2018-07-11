@@ -230,9 +230,12 @@ babl_space_from_rgbxyz_matrix (const char *name,
                                const Babl *trc_blue)
 {
   int i=0;
-  static BablSpace space;
+  BablSpace space;
   space.instance.class_type = BABL_SPACE;
   space.instance.id         = 0;
+  /* it would be better to reconstruct chromaticities - since they
+   * can be asked for with API
+   */
   space.xr = rx;
   space.yr = gx;
   space.xg = bx;
@@ -242,6 +245,7 @@ babl_space_from_rgbxyz_matrix (const char *name,
   space.xw = rz;
   space.yw = gz;
   space.pad = bz;
+
 
   space.whitepoint[0] = wx;
   space.whitepoint[1] = wy;
@@ -267,7 +271,9 @@ babl_space_from_rgbxyz_matrix (const char *name,
     return NULL;
   }
   /* transplant matrixes */
-  //babl_space_compute_matrices (&space_db[i]);
+
+  /* XXX: there is a potential race condition if making the same space in
+          multiple threads */
   space.RGBtoXYZ[0] = rx;
   space.RGBtoXYZ[1] = gx;
   space.RGBtoXYZ[2] = bx;
@@ -294,7 +300,6 @@ babl_space_from_rgbxyz_matrix (const char *name,
                        rz, gz, bz,
              babl_get_name (space.trc[0]),
              babl_get_name(space.trc[1]), babl_get_name(space.trc[2]));
-
 
   return (Babl*)&space_db[i];
 }
