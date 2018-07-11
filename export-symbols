@@ -31,6 +31,7 @@ babl_init
 babl_introspect
 babl_malloc
 babl_model
+babl_model_is
 babl_model_with_space
 babl_model_new
 babl_new_palette

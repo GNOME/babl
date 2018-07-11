@@ -180,3 +180,11 @@ babl_exit (void)
 #endif
     }
 }
+
+#undef babl_model_is
+
+int babl_model_is (const Babl *babl, const char *model)
+{
+  return ((babl)==babl_model_with_space(model, babl));
+}
+

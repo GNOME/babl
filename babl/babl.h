@@ -501,6 +501,9 @@ const Babl * babl_trc (const char *name);
  * query thechromaticities of white point and primaries as well as trcs
  * used for r g a nd b, all arguments mights be NULL.
  */
+int babl_model_is (const Babl *babl, const char *model);
+
+#define babl_model_is(babl,model)  ((babl)==babl_model_with_space(model,babl))
 
 void babl_space_get (const Babl *space,
                      double *xw, double *yw,
