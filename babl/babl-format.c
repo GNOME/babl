@@ -148,7 +148,7 @@ format_new_from_format_with_space (const Babl *format, const Babl *space)
                     space,
                     format->format.component, format->format.sampling, (void*)format->format.type);
 
-
+  babl_db_insert (db, (void*)ret);
   return ret;
 }
 
@@ -713,8 +713,6 @@ BABL_CLASS_IMPLEMENT (format)
 const Babl *
 babl_format_with_space (const char *name, const Babl *space)
 {
-  const Babl *ret = NULL;
-
   if (!space) space = babl_space ("sRGB");
   if (space->class_type == BABL_FORMAT)
   {
@@ -731,21 +729,7 @@ babl_format_with_space (const char *name, const Babl *space)
   if (space == babl_space("sRGB"))
     return babl_format (name);
 
-  {
-    char *new_name = babl_malloc (strlen (name) +
-                                  strlen (babl_get_name ((Babl*)space)) + 2);
-    sprintf (new_name, "%s-%s", name, babl_get_name ((Babl*)space));
-
-    ret = babl_db_exist_by_name (db, new_name);
-
-    babl_free (new_name);
-    if (ret)
-      return ret;
-
-    ret = format_new_from_format_with_space (babl_format (name), space);
-    babl_db_insert (db, (void*)ret);
-  }
-  return ret;
+  return format_new_from_format_with_space (babl_format (name), space);
 }
 
 int
