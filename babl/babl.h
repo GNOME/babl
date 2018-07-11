@@ -195,8 +195,8 @@ const Babl * babl_format_get_space  (const Babl *format);
  *  destination_format, source and destination can be either strings
  *  with the names of the formats or Babl-format objects.
  */
-const Babl * babl_fish      (const void *source_format,
-                             const void *destination_format);
+const Babl * babl_fish (const void *source_format,
+                        const void *destination_format);
 
 
 /**
@@ -434,7 +434,6 @@ void  babl_palette_set_palette (const Babl        *babl,
 void  babl_palette_reset       (const Babl        *babl);
 
 
-
 /**
  * babl_set_user_data: (skip)
  *
@@ -452,6 +451,10 @@ void   babl_set_user_data     (const Babl *babl, void *data);
  */
 void * babl_get_user_data     (const Babl *babl);
 
+typedef enum {
+  BABL_SPACE_FLAG_NONE     = 0,
+  BABL_SPACE_FLAG_EQUALIZE = 1
+} BablSpaceFlags;
 
 /**
  * babl_space_from_chromaticities:
@@ -472,7 +475,7 @@ const Babl * babl_chromaticities_make_space  (const char *name,
                                               const Babl *trc_red,
                                               const Babl *trc_green,
                                               const Babl *trc_blue,
-                                              int equalize_matrix);
+                                              BablSpaceFlags flags);
 
 
 /**
@@ -489,7 +492,7 @@ const Babl * babl_trc_gamma (double gamma);
  * Look up a TRC by name, "sRGB" "1.0" "linear" and "2.2" are recognized
  * strings in a stock babl configuration.
  */
-const Babl * babl_trc       (const char *name);
+const Babl * babl_trc (const char *name);
 
 typedef enum {
   BABL_ICC_DEFAULTS = 0,

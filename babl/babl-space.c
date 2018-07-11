@@ -167,7 +167,7 @@ static void babl_matrix_equalize (double *in_mat)
   }
 }
 
-static void babl_space_compute_matrices (BablSpace *space, int equalize_matrix)
+static void babl_space_compute_matrices (BablSpace *space, BablSpaceFlags equalize_matrix)
 {
 #define _ space->
   /* transform spaces xy(Y) specified data to XYZ */
@@ -313,7 +313,7 @@ babl_chromaticities_make_space (const char *name,
                                 const Babl *trc_red,
                                 const Babl *trc_green,
                                 const Babl *trc_blue,
-                                int equalize_matrix)
+                                BablSpaceFlags flags)
 {
   int i=0;
   static BablSpace space;
@@ -363,7 +363,7 @@ babl_chromaticities_make_space (const char *name,
              babl_get_name(space.trc[1]), babl_get_name(space.trc[2]));
 
   /* compute matrixes */
-  babl_space_compute_matrices (&space_db[i], equalize_matrix);
+  babl_space_compute_matrices (&space_db[i], flags);
 
   return (Babl*)&space_db[i];
 }
