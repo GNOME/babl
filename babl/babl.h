@@ -494,13 +494,9 @@ const Babl * babl_trc_gamma (double gamma);
  */
 const Babl * babl_trc (const char *name);
 
-typedef enum {
-  BABL_ICC_DEFAULTS = 0,
-  BABL_ICC_COMPACT_TRC_LUT = 1,
-} BablICCFlags;
 
-
-/* babl_space_get:
+/**
+ * babl_space_get:
  *
  * query thechromaticities of white point and primaries as well as trcs
  * used for r g a nd b, all arguments mights be NULL.
@@ -515,6 +511,19 @@ void babl_space_get (const Babl *space,
                      const Babl **green_trc,
                      const Babl **blue_trc);
 
+/**
+ * babl_space_get_icc:
+ *
+ * Return pointer to ICC profile for space note that this is
+ * the ICC profile for R'G'B', though in formats only supporting linear
+ * like EXR GEGL chooses to load this lienar data as RGB and use the sRGB
+ * TRC.
+ *
+ * @babl: a BablSpace
+ * @length: point to an integer where length of profile in bytes is stored.
+ *
+ * Returns pointer to ICC profile data.
+ */
 const char *babl_space_get_icc (const Babl *babl, int *length);
 
 #ifdef __cplusplus

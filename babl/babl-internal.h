@@ -455,6 +455,11 @@ void _babl_fish_prepare_bpp (Babl *babl);
  * the result is allocated with malloc and you should free it when done.
  */
 
+typedef enum {
+  BABL_ICC_DEFAULTS = 0,
+  BABL_ICC_COMPACT_TRC_LUT = 1,
+} BablICCFlags;
+
 char *babl_space_to_icc (const Babl  *space,
                          const char  *description,
                          const char  *copyright,
