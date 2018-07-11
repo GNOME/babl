@@ -204,6 +204,18 @@ init (void)
     conv_rgbu32_rgbu16,
     NULL);
   babl_conversion_new (
+    babl_format ("R~G~B~A u32"),
+    babl_format ("R~G~B~A u16"),
+    "linear",
+    conv_rgbau32_rgbau16,
+    NULL);
+  babl_conversion_new (
+    babl_format ("R~G~B~ u32"),
+    babl_format ("R~G~B~ u16"),
+    "linear",
+    conv_rgbu32_rgbu16,
+    NULL);
+  babl_conversion_new (
     babl_format ("RGB u32"),
     babl_format ("RGB u16"),
     "linear",
@@ -216,6 +228,12 @@ init (void)
     conv_rgbu16_rgbu32,
     NULL);
   babl_conversion_new (
+    babl_format ("R~G~B~ u16"),
+    babl_format ("R~G~B~ u32"),
+    "linear",
+    conv_rgbu16_rgbu32,
+    NULL);
+  babl_conversion_new (
     babl_format ("RGB u16"),
     babl_format ("RGB u32"),
     "linear",
@@ -270,7 +288,18 @@ init (void)
     "linear",
     conv_rgb32_rgba32,
     NULL);
-
+  babl_conversion_new (
+    babl_format ("R~G~B~A u32"),
+    babl_format ("R~G~B~ u32"),
+    "linear",
+    conv_rgba32_rgb32,
+    NULL);
+  babl_conversion_new (
+    babl_format ("R~G~B~ u32"),
+    babl_format ("R~G~B~A u32"),
+    "linear",
+    conv_rgb32_rgba32,
+    NULL);
   babl_conversion_new (
     babl_format ("Y u32"),
     babl_format ("Y u16"),
@@ -280,6 +309,12 @@ init (void)
   babl_conversion_new (
     babl_format ("Y' u32"),
     babl_format ("Y' u16"),
+    "linear",
+    conv_u32_u16,
+    NULL);
+  babl_conversion_new (
+    babl_format ("Y~ u32"),
+    babl_format ("Y~ u16"),
     "linear",
     conv_u32_u16,
     NULL);
@@ -295,7 +330,12 @@ init (void)
     "linear",
     conv_u16_u32,
     NULL);
-
+  babl_conversion_new (
+    babl_format ("Y~ u16"),
+    babl_format ("Y~ u32"),
+    "linear",
+    conv_u16_u32,
+    NULL);
 
   babl_conversion_new (
     babl_format ("YA u32"),
@@ -312,6 +352,13 @@ init (void)
   babl_conversion_new (
     babl_format ("Y'A u32"),
     babl_format ("Y'A u16"),
+    "linear",
+    conv_yau32_yau16,
+    NULL);
+
+  babl_conversion_new (
+    babl_format ("Y~A u32"),
+    babl_format ("Y~A u16"),
     "linear",
     conv_yau32_yau16,
     NULL);
@@ -339,14 +386,19 @@ init (void)
     "linear",
     conv_yau16_yau32,
     NULL);
+
+  babl_conversion_new (
+    babl_format ("Y~A u16"),
+    babl_format ("Y~A u32"),
+    "linear",
+    conv_yau16_yau32,
+    NULL);
   babl_conversion_new (
     babl_format ("Y'aA u16"),
     babl_format ("Y'aA u32"),
     "linear",
     conv_yau16_yau32,
     NULL);
-
-
   babl_conversion_new (
     babl_format ("Y u32"),
     babl_format ("YA u32"),
@@ -362,6 +414,12 @@ init (void)
   babl_conversion_new (
     babl_format ("Y' u32"),
     babl_format ("Y'A u32"),
+    "linear",
+    conv_yu32_yau32,
+    NULL);
+  babl_conversion_new (
+    babl_format ("Y~ u32"),
+    babl_format ("Y~A u32"),
     "linear",
     conv_yu32_yau32,
     NULL);
