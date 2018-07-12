@@ -233,19 +233,47 @@ babl_space_from_rgbxyz_matrix (const char *name,
   BablSpace space;
   space.instance.class_type = BABL_SPACE;
   space.instance.id         = 0;
-  /* it would be better to reconstruct chromaticities - since they
-   * can be asked for with API
-   */
-  space.xr = rx;
-  space.yr = gx;
-  space.xg = bx;
-  space.yg = ry;
-  space.xb = gy;
-  space.yb = by;
-  space.xw = rz;
-  space.yw = gz;
-  space.pad = bz;
 
+  /* transplant matrixes */
+
+  space.RGBtoXYZ[0] = rx;
+  space.RGBtoXYZ[1] = gx;
+  space.RGBtoXYZ[2] = bx;
+  space.RGBtoXYZ[3] = ry;
+  space.RGBtoXYZ[4] = gy;
+  space.RGBtoXYZ[5] = by;
+  space.RGBtoXYZ[6] = rz;
+  space.RGBtoXYZ[7] = gz;
+  space.RGBtoXYZ[8] = bz;
+
+  babl_matrix_invert (space.RGBtoXYZ, space.XYZtoRGB);
+
+  babl_matrix_to_float (space.RGBtoXYZ, space.RGBtoXYZf);
+  babl_matrix_to_float (space.XYZtoRGB, space.XYZtoRGBf);
+
+  {
+    double red[3]={1.,.0,.0};
+    double xyz[3]={1.,.0,.0};
+    _babl_space_to_xyz ((Babl*)&space, &red[0], &xyz[0]);
+    space.xr = xyz[0] / (xyz[0] + xyz[1] + xyz[2]);
+    space.yr = xyz[1] / (xyz[0] + xyz[1] + xyz[2]);
+  }
+  {
+    double green[3]={0.,1.0,.0};
+    double xyz[3]={0.,1.0,.0};
+    _babl_space_to_xyz ((Babl*)&space, &green[0], &xyz[0]);
+    space.xg = xyz[0] / (xyz[0] + xyz[1] + xyz[2]);
+    space.yg = xyz[1] / (xyz[0] + xyz[1] + xyz[2]);
+  }
+  {
+    double blue[3]={0.,.0,1.0};
+    double xyz[3]={0.,1.0,.0};
+    _babl_space_to_xyz ((Babl*)&space, &blue[0], &xyz[0]);
+    space.xb = xyz[0] / (xyz[0] + xyz[1] + xyz[2]);
+    space.yb = xyz[1] / (xyz[0] + xyz[1] + xyz[2]);
+  }
+  space.xw = wx / (wx+wy+wz);
+  space.yw = wy / (wx+wy+wz);
 
   space.whitepoint[0] = wx;
   space.whitepoint[1] = wy;
@@ -270,35 +298,16 @@ babl_space_from_rgbxyz_matrix (const char *name,
     babl_log ("too many BablSpaces");
     return NULL;
   }
-  /* transplant matrixes */
-
-  /* XXX: there is a potential race condition if making the same space in
-          multiple threads */
-  space.RGBtoXYZ[0] = rx;
-  space.RGBtoXYZ[1] = gx;
-  space.RGBtoXYZ[2] = bx;
-  space.RGBtoXYZ[3] = ry;
-  space.RGBtoXYZ[4] = gy;
-  space.RGBtoXYZ[5] = by;
-  space.RGBtoXYZ[6] = rz;
-  space.RGBtoXYZ[7] = gz;
-  space.RGBtoXYZ[8] = bz;
-
-  babl_matrix_invert (space.RGBtoXYZ, space.XYZtoRGB);
-
-  babl_matrix_to_float (space.RGBtoXYZ, space.RGBtoXYZf);
-  babl_matrix_to_float (space.XYZtoRGB, space.XYZtoRGBf);
 
   space_db[i]=space;
   space_db[i].instance.name = space_db[i].name;
   if (name)
     snprintf (space_db[i].name, sizeof (space_db[i].name), "%s", name);
   else
-    snprintf (space_db[i].name, sizeof (space_db[i].name), "space-%.4f,%.4f_%.4f,%.4f_%.4f_%.4f,%.4f_%.4f,%.4f_%s,%s,%s",
-                       rx, gx, bx,
-                       ry, gy, by,
-                       rz, gz, bz,
-             babl_get_name (space.trc[0]),
+          /* XXX: this can get longer than 256bytes ! */
+    snprintf (space_db[i].name, sizeof (space_db[i].name),
+             "space-%.4f,%.4f_%.4f,%.4f_%.4f,%.4f_%.4f,%.4f_%s,%s,%s",
+             wx,wy,rx,ry,bx,by,gx,gy,babl_get_name (space.trc[0]),
              babl_get_name(space.trc[1]), babl_get_name(space.trc[2]));
 
   return (Babl*)&space_db[i];

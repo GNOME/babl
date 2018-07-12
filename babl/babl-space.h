@@ -41,8 +41,6 @@ typedef struct
   double           xb;  // blue primary chromaticity
   double           yb;
 
-  double           pad; // for when the numbers represent a matrix
-
   const Babl      *trc[3];
   char             name[512]; // XXX: allocate this dynamically instead -
                               //      or use iccv4 style hashes for name.
