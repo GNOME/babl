@@ -721,7 +721,7 @@ static char *decode_string (ICC *state, const char *tag, const char *lang, const
 }
 
 const Babl *
-babl_icc_make_space (const char   *icc_data,
+babl_space_from_icc (const char   *icc_data,
                      int           icc_length,
                      BablIccIntent intent,
                      const char  **error)
@@ -907,7 +907,7 @@ babl_icc_make_space (const char   *icc_data,
        double wZ = icc_read (s15f16, offset + 8 + 4 * 2);
        babl_free (state);
 
-       ret = (void*) babl_chromaticities_make_space (NULL,
+       ret = (void*) babl_space_from_chromaticities (NULL,
                      wX / (wX + wY + wZ),
                      wY / (wX + wY + wZ),
                      red_x, red_y,
@@ -926,6 +926,16 @@ babl_icc_make_space (const char   *icc_data,
   *error = "didnt find RGB primaries";
   babl_free (state);
   return NULL;
+}
+
+/* NOTE: GIMP-2.10.0-4 releases depends on this symbol */
+const Babl *
+babl_icc_make_space (const char   *icc_data,
+                     int           icc_length,
+                     BablIccIntent intent,
+                     const char  **error)
+{
+  return babl_space_from_icc (icc_data, icc_length, intent, error);
 }
 
 static void symmetry_test (ICC *state)

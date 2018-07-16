@@ -385,22 +385,6 @@ const Babl *babl_space_match_trc_matrix (const Babl *trc_red,
                                          float bx, float by, float bz);
 
 
-/**
- * babl_space_from_rgbxyz_matrix:
- *
- * Creates a new RGB matrix color space definition using a precomputed D50
- * adapted 3x3 matrix and associated CIE XYZ whitepoint, as possibly read from
- * an ICC profile.
- */
-const Babl *
-babl_space_from_rgbxyz_matrix (const char *name,
-                               double wx, double wy, double wz,
-                               double rx, double gx, double bx,
-                               double ry, double gy, double by,
-                               double rz, double gz, double bz,
-                               const Babl *trc_red,
-                               const Babl *trc_green,
-                               const Babl *trc_blue);
 
 
 int _babl_file_get_contents (const char  *path,

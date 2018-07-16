@@ -99,7 +99,7 @@ typedef enum {
 } BablIccIntent;
 
 /**
- * babl_icc_make_space:
+ * babl_space_from_icc:
  *
  * @icc_data: pointer to icc profile in memory
  * @icc_length: length of icc profile in bytes
@@ -121,6 +121,12 @@ typedef enum {
  * containing a message describing why the provided data does not yield a babl
  * space.
  */
+const Babl *babl_space_from_icc (const char       *icc_data,
+                                 int               icc_length,
+                                 BablIccIntent     intent,
+                                 const char      **error);
+
+// XXX : deprecated
 const Babl *babl_icc_make_space (const char       *icc_data,
                                  int               icc_length,
                                  BablIccIntent     intent,
@@ -456,8 +462,19 @@ typedef enum {
   BABL_SPACE_FLAG_EQUALIZE = 1
 } BablSpaceFlags;
 
+// XXX: deprecated
+const Babl * babl_space_from_chromaticities  (const char *name,
+                                              double wx, double wy,
+                                              double rx, double ry,
+                                              double gx, double gy,
+                                              double bx, double by,
+                                              const Babl *trc_red,
+                                              const Babl *trc_green,
+                                              const Babl *trc_blue,
+                                              BablSpaceFlags flags);
+
 /**
- * babl_space_from_chromaticities:
+ * babl_space_from_chromaticities
  *
  * Creates a new babl-space/ RGB matrix color space definition with the
  * specified CIE xy(Y) values for white point: wx, wy and primary
@@ -467,15 +484,15 @@ typedef enum {
  * Internally this does the math to derive the RGBXYZ matrix as used in an ICC
  * profile.
  */
-const Babl * babl_chromaticities_make_space  (const char *name,
-                                              double wx, double wy,
-                                              double rx, double ry,
-                                              double gx, double gy,
-                                              double bx, double by,
-                                              const Babl *trc_red,
-                                              const Babl *trc_green,
-                                              const Babl *trc_blue,
-                                              BablSpaceFlags flags);
+const Babl * babl_space_from_chromaticities (const char *name,
+                                             double wx, double wy,
+                                             double rx, double ry,
+                                             double gx, double gy,
+                                             double bx, double by,
+                                             const Babl *trc_red,
+                                             const Babl *trc_green,
+                                             const Babl *trc_blue,
+                                             BablSpaceFlags flags);
 
 
 /**
@@ -528,6 +545,24 @@ void babl_space_get (const Babl *space,
  * Returns pointer to ICC profile data.
  */
 const char *babl_space_get_icc (const Babl *babl, int *length);
+
+/**
+ * babl_space_from_rgbxyz_matrix:
+ *
+ * Creates a new RGB matrix color space definition using a precomputed D50
+ * adapted 3x3 matrix and associated CIE XYZ whitepoint, as possibly read from
+ * an ICC profile.
+ */
+const Babl *
+babl_space_from_rgbxyz_matrix (const char *name,
+                               double wx, double wy, double wz,
+                               double rx, double gx, double bx,
+                               double ry, double gy, double by,
+                               double rz, double gz, double bz,
+                               const Babl *trc_red,
+                               const Babl *trc_green,
+                               const Babl *trc_blue);
+
 
 #ifdef __cplusplus
 }
