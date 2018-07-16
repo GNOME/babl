@@ -713,6 +713,36 @@ BABL_CLASS_IMPLEMENT (format)
 const Babl *
 babl_format_with_space (const char *name, const Babl *space)
 {
+  char tmpname[256]="";
+  const Babl *example_format = (void*) name;
+  if (!name) return NULL;
+
+  if (BABL_IS_BABL (example_format))
+  {
+    if (babl_format_get_space (example_format) == babl_space ("sRGB"))
+    {
+      name = babl_get_name (example_format); // the safest choice when getting sRGB based formats to cast
+    }
+    else
+    {
+      name = &tmpname[0];
+      if (example_format->format.components == babl_format_get_model (example_format)->model.components &&
+          (strstr (name, "CIE") || strstr (name, "cairo")))
+      {
+        // use the model name directly, for now CIE and cairo should catch most such issues
+        strcat (&tmpname[0], babl_get_name (babl_format_get_model (example_format)));
+      }
+      else
+      {
+        int i;
+        for (i = 0; i < example_format->format.components;i ++)
+          strcat (&tmpname[0], babl_get_name ((void*)example_format->format.component[i]));
+      }
+      strcat (&tmpname[0], " ");
+      strcat (&tmpname[0], babl_get_name ((void*)example_format->format.type[0]));
+    }
+  }
+
   if (!space) space = babl_space ("sRGB");
   if (space->class_type == BABL_FORMAT)
   {
