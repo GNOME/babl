@@ -1124,6 +1124,85 @@ lab_r_to_f_sse2 (__m128 r)
 }
 
 static void
+Yf_to_Lf_sse2 (const Babl *conversion, const float *src, float *dst, long samples)
+{
+  long i = 0;
+  long remainder;
+
+  if (((uintptr_t) src % 16) + ((uintptr_t) dst % 16) == 0)
+    {
+      const long n = (samples / 4) * 4;
+
+      for ( ; i < n; i += 4)
+        {
+          __m128 Y = _mm_load_ps (src);
+
+          __m128 fy = lab_r_to_f_sse2 (Y);
+
+          __m128 L = _mm_sub_ps (_mm_mul_ps (_mm_set1_ps (116.0f), fy), _mm_set1_ps (16.0f));
+
+          _mm_store_ps (dst, L);
+
+          src += 4;
+          dst += 4;
+        }
+    }
+
+  remainder = samples - i;
+  while (remainder--)
+    {
+      float yr = src[0];
+      float L  = yr > LAB_EPSILON ? 116.0f * _cbrtf (yr) - 16 : LAB_KAPPA * yr;
+
+      dst[0] = L;
+
+      src++;
+      dst++;
+    }
+}
+
+static void
+Yaf_to_Lf_sse2 (const Babl *conversion, const float *src, float *dst, long samples)
+{
+  long i = 0;
+  long remainder;
+
+  if (((uintptr_t) src % 16) + ((uintptr_t) dst % 16) == 0)
+    {
+      const long n = (samples / 4) * 4;
+
+      for ( ; i < n; i += 4)
+        {
+          __m128 YaYa0 = _mm_load_ps (src);
+          __m128 YaYa1 = _mm_load_ps (src + 4);
+
+          __m128 Y = _mm_shuffle_ps (YaYa0, YaYa1, _MM_SHUFFLE (2, 0, 2, 0));
+
+          __m128 fy = lab_r_to_f_sse2 (Y);
+
+          __m128 L = _mm_sub_ps (_mm_mul_ps (_mm_set1_ps (116.0f), fy), _mm_set1_ps (16.0f));
+
+          _mm_store_ps (dst, L);
+
+          src += 8;
+          dst += 4;
+        }
+    }
+
+  remainder = samples - i;
+  while (remainder--)
+    {
+      float yr = src[0];
+      float L  = yr > LAB_EPSILON ? 116.0f * _cbrtf (yr) - 16 : LAB_KAPPA * yr;
+
+      dst[0] = L;
+
+      src += 2;
+      dst += 1;
+    }
+}
+
+static void
 rgbaf_to_Lf_sse2 (const Babl *conversion, const float *src, float *dst, long samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
@@ -1474,7 +1553,18 @@ conversions (void)
         "linear", rgbaf_to_Labaf_sse2,
         NULL
       );
-
+      babl_conversion_new (
+        babl_format ("Y float"),
+        babl_format ("CIE L float"),
+        "linear", Yf_to_Lf_sse2,
+        NULL
+      );
+      babl_conversion_new (
+        babl_format ("YA float"),
+        babl_format ("CIE L float"),
+        "linear", Yaf_to_Lf_sse2,
+        NULL
+      );
       babl_conversion_new (
         babl_format ("RGBA float"),
         babl_format ("CIE L float"),
