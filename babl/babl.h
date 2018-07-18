@@ -506,11 +506,18 @@ const Babl * babl_trc_gamma (double gamma);
 /**
  * babl_trc:
  *
- * Look up a TRC by name, "sRGB" "1.0" "linear" and "2.2" are recognized
+ * Look up a TRC by name, "sRGB" and "linear" are recognized
  * strings in a stock babl configuration.
  */
 const Babl * babl_trc (const char *name);
 
+
+/**
+ * babl_space_with_trc:
+ *
+ * Creates a variant of an existing space with different trc.
+ */
+const Babl *babl_space_with_trc (const Babl *space, const Babl *trc);
 
 /**
  * babl_space_get:

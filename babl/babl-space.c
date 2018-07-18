@@ -1034,6 +1034,26 @@ const Babl *babl_space_match_trc_matrix (const Babl *trc_red,
   return NULL;
 }
 
+const Babl *babl_space_with_trc (const Babl *babl, const Babl *trc)
+{
+  double xw, yw, xr, yr, xg, yg, xb, yb;
+  const Babl *red_trc = NULL;
+  const Babl *green_trc = NULL;
+  const Babl *blue_trc = NULL;
+
+  babl_space_get (babl,
+                  &xw, &yw,
+                  &xr, &yr,
+                  &xg, &yg,
+                  &xb, &yb,
+                  &red_trc, &green_trc, &blue_trc);
+  if (red_trc == trc && green_trc == trc && blue_trc == trc)
+    return babl;
+  return babl_space_from_chromaticities (NULL,
+                                         xw, yw, xr, yr, xg, yg, xb, yb, trc, trc, trc,
+                                         BABL_SPACE_FLAG_EQUALIZE);
+
+}
 
 void babl_space_get (const Babl *babl,
                      double *xw, double *yw,

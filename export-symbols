@@ -49,6 +49,7 @@ babl_space_get_icc
 babl_space_to_xyz
 babl_space_from_xyz
 babl_space_to_icc
+babl_space_with_trc
 babl_icc_make_space
 babl_icc_get_key
 babl_ticks
