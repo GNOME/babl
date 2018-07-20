@@ -43,6 +43,7 @@ typedef struct
                                for conversion paths */
   int              format_n; /* whether the format is a format_n type or not */
   int              palette;
+  const char      *encoding;
 } BablFormat;
 
 #endif

@@ -143,11 +143,12 @@ format_new_from_format_with_space (const Babl *format, const Babl *space)
 
   ret = format_new (new_name,
                     0,
-                    format->format.planar, format->format.components, 
+                    format->format.planar, format->format.components,
                     (void*)babl_remodel_with_space (BABL(format->format.model), space),
                     space,
                     format->format.component, format->format.sampling, (void*)format->format.type);
 
+  ret->format.encoding = babl_get_name(format);
   babl_db_insert (db, (void*)ret);
   return ret;
 }
@@ -713,38 +714,23 @@ BABL_CLASS_IMPLEMENT (format)
 const char *
 babl_format_get_encoding (const Babl *babl)
 {
-  static char ret[256];
-  const char *name = babl_get_name (babl);
-  strcpy (&ret[0], name);
-  if (babl_format_get_space (babl) != babl_space ("sRGB"))
-    {
-
-      if (strstr (ret, "-space"))
-        *strstr (ret, "-space") = '\0';
-
-      name = &ret[0];
-    }
-  return name;
+  if (!babl) return NULL;
+  if (babl->format.encoding) return babl->format.encoding;
+  return babl_get_name (babl);
 }
 
 const Babl *
-babl_format_with_space (const char *name, const Babl *space)
+babl_format_with_space (const char *encoding, const Babl *space)
 {
-  char tmpname[256]="";
-  const Babl *example_format = (void*) name;
-  if (!name) return NULL;
+  const Babl *example_format = (void*) encoding;
+  if (!encoding) return NULL;
 
   if (BABL_IS_BABL (example_format))
   {
-    name = babl_get_name (example_format);
+    encoding = babl_get_name (example_format);
     if (babl_format_get_space (example_format) != babl_space ("sRGB"))
     {
-      strcpy (&tmpname[0], name);
-
-      if (strstr (tmpname, "-space"))
-        *strstr (tmpname, "-space") = '\0';
-
-      name = &tmpname[0];
+      encoding = babl_format_get_encoding (example_format);
     }
   }
 
@@ -764,9 +750,9 @@ babl_format_with_space (const char *name, const Babl *space)
     return NULL;
   }
   if (space == babl_space("sRGB"))
-    return babl_format (name);
+    return babl_format (encoding);
 
-  return format_new_from_format_with_space (babl_format (name), space);
+  return format_new_from_format_with_space (babl_format (encoding), space);
 }
 
 int

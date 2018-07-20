@@ -181,7 +181,7 @@ int babl_format_exists              (const char *name);
  * the unsuffixed version is used. If a format is passed in as space
  * the space of the format is used.
  */
-const Babl * babl_format_with_space (const char *name, const Babl *space);
+const Babl * babl_format_with_space (const char *encoding, const Babl *space);
 
 const Babl *
 babl_model_with_space (const char *name, const Babl *space);
