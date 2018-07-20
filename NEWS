@@ -3,6 +3,11 @@ The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
                                                                           -->
 
+2018-07-2? babl-0.1.54                                              </dt><dd>
+Export babl_space_get_icc, babl_space_get, babl_model_with_space,
+babl_space_with_trc, babl_format_get_encoding, babl_model_is, SSE2 versions of
+YA float and Y float to CIE L float.
+                                                                    </dd><dt>
 2018-06-02 babl-0.1.52                                              </dt><dd>
 Concurrency fixes and fixes to handling of 0/1 entry palettes, do not
 pre-equalize XYZ conversion matrices for sRGB, internal clean-ups, pre-define
