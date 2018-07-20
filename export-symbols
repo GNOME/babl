@@ -14,6 +14,7 @@ babl_format_get_model
 babl_format_get_n_components
 babl_format_get_space
 babl_format_get_type
+babl_format_get_encoding
 babl_format_has_alpha
 babl_format_is_format_n
 babl_format_is_palette

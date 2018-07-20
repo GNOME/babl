@@ -570,6 +570,12 @@ babl_space_from_rgbxyz_matrix (const char *name,
                                const Babl *trc_green,
                                const Babl *trc_blue);
 
+/**
+ * babl_format_get_encoding:
+ *
+ * Returns the components and data type, without space suffix.
+ */
+const char * babl_format_get_encoding (const Babl *babl);
 
 #ifdef __cplusplus
 }

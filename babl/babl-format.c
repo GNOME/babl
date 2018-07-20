@@ -710,6 +710,23 @@ const Babl * babl_format_get_space      (const Babl *format)
 
 BABL_CLASS_IMPLEMENT (format)
 
+const char *
+babl_format_get_encoding (const Babl *babl)
+{
+  static char ret[256];
+  const char *name = babl_get_name (babl);
+  strcpy (&ret[0], name);
+  if (babl_format_get_space (babl) != babl_space ("sRGB"))
+    {
+
+      if (strstr (ret, "-space"))
+        *strstr (ret, "-space") = '\0';
+
+      name = &ret[0];
+    }
+  return name;
+}
+
 const Babl *
 babl_format_with_space (const char *name, const Babl *space)
 {
