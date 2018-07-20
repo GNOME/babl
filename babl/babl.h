@@ -80,6 +80,15 @@ const Babl * babl_component (const char *name);
  */
 const Babl * babl_model     (const char *name);
 
+/**
+ * babl_model_with_space:
+ *
+ * The models for formats also have a space in babl, try to avoid code
+ * needing to use this.
+ */
+const Babl *
+babl_model_with_space (const char *name, const Babl *space);
+
 
 /**
  * babl_space:
@@ -158,18 +167,11 @@ char *babl_icc_get_key (const char *icc_data,
  * babl_format:
  *
  * Returns the babl object representing the color format given by
- * @name such as for example "RGB u8", "CMYK float" or "CIE Lab u16".
+ * @name such as for example "RGB u8", "CMYK float" or "CIE Lab u16",
+ * creates a format using the sRGB space, to also specify the color space
+ * and TRCs for a format, see babl_format_with_space.
  */
-const Babl * babl_format            (const char *name);
-
-/**
- * babl_format_exists:
- *
- * Returns 1 if the provided format name is known by babl or 0 if it is
- * not. Can also be used to verify that specific extension formats are
- * available (though this can also be inferred from the version of babl).
- */
-int babl_format_exists              (const char *name);
+const Babl * babl_format            (const char *encoding);
 
 /**
  * babl_format_with_space:
@@ -183,8 +185,14 @@ int babl_format_exists              (const char *name);
  */
 const Babl * babl_format_with_space (const char *encoding, const Babl *space);
 
-const Babl *
-babl_model_with_space (const char *name, const Babl *space);
+/**
+ * babl_format_exists:
+ *
+ * Returns 1 if the provided format name is known by babl or 0 if it is
+ * not. Can also be used to verify that specific extension formats are
+ * available (though this can also be inferred from the version of babl).
+ */
+int babl_format_exists              (const char *name);
 
 /*
  * babl_format_get_space:
@@ -208,7 +216,7 @@ const Babl * babl_fish (const void *source_format,
 /**
  * babl_fast_fish:
  *
- * Creae a faster than normal fish with specified performance (and thus
+ * Create a faster than normal fish with specified performance (and thus
  * corresponding precision tradeoff), values tolerance can hold: NULL and
  * "default", means do same as babl_fish(), other values understood in
  * increasing order of speed gain are:
@@ -462,17 +470,6 @@ typedef enum {
   BABL_SPACE_FLAG_EQUALIZE = 1
 } BablSpaceFlags;
 
-// XXX: deprecated
-const Babl * babl_space_from_chromaticities  (const char *name,
-                                              double wx, double wy,
-                                              double rx, double ry,
-                                              double gx, double gy,
-                                              double bx, double by,
-                                              const Babl *trc_red,
-                                              const Babl *trc_green,
-                                              const Babl *trc_blue,
-                                              BablSpaceFlags flags);
-
 /**
  * babl_space_from_chromaticities
  *
@@ -511,7 +508,6 @@ const Babl * babl_trc_gamma (double gamma);
  */
 const Babl * babl_trc (const char *name);
 
-
 /**
  * babl_space_with_trc:
  *
@@ -522,13 +518,9 @@ const Babl *babl_space_with_trc (const Babl *space, const Babl *trc);
 /**
  * babl_space_get:
  *
- * query thechromaticities of white point and primaries as well as trcs
+ * query the chromaticities of white point and primaries as well as trcs
  * used for r g a nd b, all arguments mights be NULL.
  */
-int babl_model_is (const Babl *babl, const char *model);
-
-#define babl_model_is(babl,model)  ((babl)==babl_model_with_space(model,babl))
-
 void babl_space_get (const Babl *space,
                      double *xw, double *yw,
                      double *xr, double *yr,
@@ -537,6 +529,18 @@ void babl_space_get (const Babl *space,
                      const Babl **red_trc,
                      const Babl **green_trc,
                      const Babl **blue_trc);
+
+
+/**
+ * babl_model_is:
+ *
+ * return 0 if the name of the model in babl does not correspond to the provided
+ * model name.
+ */
+int babl_model_is (const Babl *babl, const char *model_name);
+
+#define babl_model_is(babl,model)  ((babl)==babl_model_with_space(model,babl))
+
 
 /**
  * babl_space_get_icc:
