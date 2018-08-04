@@ -108,8 +108,11 @@ static char *
 babl_fish_serialize (Babl *fish, char *dest, int n)
 {
   char *d = dest;
-  if (fish->class_type != BABL_FISH_PATH)
+  if (fish->class_type != BABL_FISH &&
+      fish->class_type != BABL_FISH_PATH)
+  {
     return NULL;
+  }
 
   snprintf (d, n, "%s\n%s\n",
   babl_get_name (fish->fish.source),
@@ -119,20 +122,32 @@ babl_fish_serialize (Babl *fish, char *dest, int n)
   snprintf (d, n, "\tpixels=%li", fish->fish.pixels);
   n -= strlen (d);d += strlen (d);
 
-  snprintf (d, n, " cost=%d", (int)fish->fish_path.cost);
-  n -= strlen (d);d += strlen (d);
+  if (fish->class_type == BABL_FISH_PATH)
+  {
+    snprintf (d, n, " cost=%d", (int)fish->fish_path.cost);
+    n -= strlen (d);d += strlen (d);
+  }
 
   snprintf (d, n, " error=%f", fish->fish.error);
   n -= strlen (d);d += strlen (d);
 
+  if (fish->class_type == BABL_FISH)
+  {
+    snprintf (d, n, " [reference]");
+    n -= strlen (d);d += strlen (d);
+  }
+
   snprintf (d, n, "\n");
   n -= strlen (d);d += strlen (d);
 
-  for (int i = 0; i < fish->fish_path.conversion_list->count; i++)
+  if (fish->class_type == BABL_FISH_PATH)
   {
-    snprintf (d, n, "\t%s\n",
-      babl_get_name(fish->fish_path.conversion_list->items[i]  ));
-    n -= strlen (d);d += strlen (d);
+    for (int i = 0; i < fish->fish_path.conversion_list->count; i++)
+    {
+      snprintf (d, n, "\t%s\n",
+        babl_get_name(fish->fish_path.conversion_list->items[i]  ));
+      n -= strlen (d);d += strlen (d);
+    }
   }
 
   return dest;
@@ -278,19 +293,45 @@ void babl_init_db (void)
               return;
             }
 
-            babl = babl_calloc (1, sizeof (BablFishPath) +
-                                strlen (name) + 1);
-            babl_set_destructor (babl, _babl_fish_path_destroy);
+            if (strstr (token, "[reference]"))
+            {
+              /* there isn't a suitable path for requested formats,
+               * let's create a dummy BABL_FISH instance and insert
+               * it into the fish database to indicate that such path
+               * does not exist.
+               */
+              const char *name = "X"; /* name does not matter */
+              babl = babl_calloc (1, sizeof (BablFish) + strlen (name) + 1);
 
-            babl->class_type     = BABL_FISH_PATH;
-            babl->instance.id    = babl_fish_get_id (from_format, to_format);
-            babl->instance.name  = ((char *) babl) + sizeof (BablFishPath);
-            strcpy (babl->instance.name, name);
-            babl->fish.source               = from_format;
-            babl->fish.destination          = to_format;
-            babl->fish_path.conversion_list = babl_list_init_with_size (10);
-            _babl_fish_prepare_bpp (babl);
-            _babl_fish_rig_dispatch (babl);
+              babl->class_type       = BABL_FISH;
+              babl->instance.id      = babl_fish_get_id (from_format,
+                                                         to_format);
+              babl->instance.name    = ((char *) babl) + sizeof (BablFish);
+              strcpy (babl->instance.name, name);
+              babl->fish.source      = from_format;
+              babl->fish.destination = to_format;
+              babl->fish.data        = (void*) 1; /* signals babl_fish() to
+                                                   * show a "missing fash path"
+                                                   * warning upon the first
+                                                   * lookup
+                                                   */
+            }
+            else
+            {
+              babl = babl_calloc (1, sizeof (BablFishPath) +
+                                  strlen (name) + 1);
+              babl_set_destructor (babl, _babl_fish_path_destroy);
+
+              babl->class_type     = BABL_FISH_PATH;
+              babl->instance.id    = babl_fish_get_id (from_format, to_format);
+              babl->instance.name  = ((char *) babl) + sizeof (BablFishPath);
+              strcpy (babl->instance.name, name);
+              babl->fish.source               = from_format;
+              babl->fish.destination          = to_format;
+              babl->fish_path.conversion_list = babl_list_init_with_size (10);
+              _babl_fish_prepare_bpp (babl);
+              _babl_fish_rig_dispatch (babl);
+            }
 
             token2 = strtok_r (&token[1], seps2, &tokp2);
             while( token2 != NULL )
@@ -301,7 +342,8 @@ void babl_init_db (void)
               }
               else if (!strncmp (token2, "cost=", 5))
               {
-                babl->fish_path.cost = babl_parse_double (token2 + 5);
+                if (babl->class_type == BABL_FISH_PATH)
+                  babl->fish_path.cost = babl_parse_double (token2 + 5);
               }
               else if (!strncmp (token2, "pixels=", 7))
               {
@@ -310,7 +352,7 @@ void babl_init_db (void)
               token2 = strtok_r (NULL, seps2, &tokp2);
             }
           }
-          else if (to_format && babl)
+          else if (to_format && babl && babl->class_type == BABL_FISH_PATH)
           {
             Babl *conv = (void*)babl_db_find(babl_conversion_db(), &token[1]);
             if (!conv)

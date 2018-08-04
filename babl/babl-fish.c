@@ -290,6 +290,16 @@ babl_fish (const void *source,
               }
 #endif
           }
+        else if (ffish.fish_fish->fish.data)
+          {
+            /* the dummy fish was created by the cache, and we need to manually
+             * show a "missing fast path" warning for it on the first lookup.
+             */
+            _babl_fish_missing_fast_path_warning (ffish.fish_fish->fish.source,
+                                                  ffish.fish_fish->fish.destination);
+
+            ffish.fish_fish->fish.data = NULL;
+          }
       }
 
     if (ffish.fish_ref)

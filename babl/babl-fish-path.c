@@ -464,6 +464,34 @@ _babl_fish_prepare_bpp (Babl *babl)
      }
 }
 
+void
+_babl_fish_missing_fast_path_warning (const Babl *source,
+                                      const Babl *destination)
+{
+#ifndef BABL_UNSTABLE
+  if (debug_conversions)
+#endif
+  {
+    static int warnings = 0;
+
+    if (_babl_legal_error() <= 0.0000000001)
+      return;
+
+    if (warnings++ == 0)
+      fprintf (stderr,
+"Missing fast-path babl conversion detected, Implementing missing babl fast paths\n"
+"accelerates GEGL, GIMP and other software using babl, warnings are printed on\n"
+"first occurance of formats used where a conversion has to be synthesized\n"
+"programmatically by babl based on format description\n"
+"\n");
+
+    fprintf (stderr, "*WARNING* missing babl fast path(s): \"%s\" to \"%s\"\n",
+       babl_get_name (source),
+       babl_get_name (destination));
+
+  }
+}
+
 
 static Babl *
 babl_fish_path2 (const Babl *source,
@@ -599,28 +627,8 @@ babl_fish_path2 (const Babl *source,
       babl_free (babl);
       babl_mutex_unlock (babl_format_mutex);
 
-#ifndef BABL_UNSTABLE
-      if (debug_conversions)
-#endif
-      {
-        static int warnings = 0;
+      _babl_fish_missing_fast_path_warning (source, destination);
 
-        if (_babl_legal_error() <= 0.0000000001)
-            return NULL;
-
-        if (warnings++ == 0)
-          fprintf (stderr,
-"Missing fast-path babl conversion detected, Implementing missing babl fast paths\n"
-"accelerates GEGL, GIMP and other software using babl, warnings are printed on\n"
-"first occurance of formats used where a conversion has to be synthesized\n"
-"programmatically by babl based on format description\n"
-"\n");
-
-        fprintf (stderr, "*WARNING* missing babl fast path(s): \"%s\" to \"%s\"\n",
-           babl_get_name (source),
-           babl_get_name (destination));
-
-      }
       return NULL;
     }
 

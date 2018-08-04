@@ -427,6 +427,8 @@ babl_conversion_process (const Babl *babl,
   conversion->dispatch (babl, source, destination, n, conversion->data);
 }
 
+void _babl_fish_missing_fast_path_warning (const Babl *source,
+                                           const Babl *destination);
 void _babl_fish_rig_dispatch (Babl *babl);
 void _babl_fish_prepare_bpp (Babl *babl);
 
