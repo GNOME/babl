@@ -310,13 +310,13 @@ void babl_init_db (void)
               token2 = strtok_r (NULL, seps2, &tokp2);
             }
           }
-          else if (to_format)
+          else if (to_format && babl)
           {
             Babl *conv = (void*)babl_db_find(babl_conversion_db(), &token[1]);
             if (!conv)
             {
-              free (contents);
-              return;
+              babl_free (babl);
+              babl = NULL;
             }
             else
               babl_list_insert_last (babl->fish_path.conversion_list, conv);
