@@ -3,7 +3,13 @@ The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
                                                                           -->
 
+2018-08-14 babl-0.1.56                                              </dt><dd>
+Improvements to the caching of profiled conversion chains between invocations
+by ignoring unknown bits in cache file and remember which conversions yielded
+reference fishes.
+
 2018-07-23 babl-0.1.54                                              </dt><dd>
+                                                                    </dd><dt>
 Export babl_space_get_icc, babl_space_get, babl_model_with_space,
 babl_space_with_trc, babl_format_get_encoding, babl_model_is, SSE2 versions of
 YA float and Y float to CIE L float.
