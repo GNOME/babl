@@ -735,7 +735,7 @@ babl_space_from_icc (const char   *icc_data,
   const char *int_err;
   Babl *ret = NULL;
 
-  sign_t profile_class, color_space;
+  sign_t profile_class, color_space, pcs;
 
 
   if (!error) error = &int_err;
@@ -758,16 +758,24 @@ babl_space_from_icc (const char   *icc_data,
     *error = "not a monitor-class profile";
   else
   {
-  color_space = icc_read (sign, 16);
-  if (strcmp (color_space.str, "RGB "))
-    *error = "not defining an RGB space";
+    color_space = icc_read (sign, 16);
+    if (strcmp (color_space.str, "RGB "))
+      *error = "not defining an RGB space";
   }
+  }
+
+  if (!*error)
+  {
+    pcs = icc_read (sign, 20);
+    if (strcmp (pcs.str, "XYZ "))
+      *error = "PCS is not XYZ";
   }
 
   switch (intent)
   {
     case BABL_ICC_INTENT_RELATIVE_COLORIMETRIC:
       /* that is what we do well */
+
       break;
     case BABL_ICC_INTENT_PERCEPTUAL:
       /* if there is an A2B0 and B2A0 tags, we do not do what that
@@ -847,6 +855,19 @@ babl_space_from_icc (const char   *icc_data,
      wX = icc_read (s15f16, offset + 8);
      wY = icc_read (s15f16, offset + 8 + 4);
      wZ = icc_read (s15f16, offset + 8 + 4 * 2);
+
+      /* detect inconsistent Argyll cLUT + matrix profiles */
+      if (icc_tag (state, "A2B0", NULL, NULL) ||
+          icc_tag (state, "B2A0", NULL, NULL))
+      {
+        if (rz > rx)
+        {
+           *error = "Inconsistent ICC profile detected, profile contains both cLUTs and a matrix with swapped primaries, this likely means it is an intentionally inconsistent Argyll profile is in use; this profile is only capable of high accuracy rendering and does not permit acceleration for interactive previews.";
+           fprintf (stderr, "babl ICC warning: %s\n", *error);
+           babl_free (state);
+           return NULL;
+        }
+      }
 
      ret = (void*)babl_space_match_trc_matrix (trc_red, trc_green, trc_blue,
                                         rx, ry, rz, gx, gy, gz, bx, by, bz);
