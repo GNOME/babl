@@ -104,7 +104,9 @@ typedef enum {
   BABL_ICC_INTENT_PERCEPTUAL             = 0,
   BABL_ICC_INTENT_RELATIVE_COLORIMETRIC  = 1,
   BABL_ICC_INTENT_SATURATION             = 2,
-  BABL_ICC_INTENT_ABSOLUTE_COLORIMETRIC  = 3
+  BABL_ICC_INTENT_ABSOLUTE_COLORIMETRIC  = 3,
+  BABL_ICC_INTENT_PERFORMANCE            = 32
+  // black-point compensation toggle will be added if/when support exist in babl
 } BablIccIntent;
 
 /**
@@ -134,6 +136,7 @@ const Babl *babl_space_from_icc (const char       *icc_data,
                                  int               icc_length,
                                  BablIccIntent     intent,
                                  const char      **error);
+
 
 // XXX : deprecated
 const Babl *babl_icc_make_space (const char       *icc_data,

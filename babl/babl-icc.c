@@ -734,9 +734,9 @@ babl_space_from_icc (const char   *icc_data,
   const Babl *trc_blue  = NULL;
   const char *int_err;
   Babl *ret = NULL;
+  int speed_over_accuracy = intent & BABL_ICC_INTENT_PERFORMANCE;
 
   sign_t profile_class, color_space, pcs;
-
 
   if (!error) error = &int_err;
   *error = NULL;
@@ -745,23 +745,17 @@ babl_space_from_icc (const char   *icc_data,
   {
     *error = "icc profile length inconsistency";
   }
-#if 0
-  else if (icc_ver_major > 2)
-  {
-    *error = "only ICC v2 profiles supported";
-  }
-#endif
   else
   {
-  profile_class = icc_read (sign, 12);
-  if (strcmp (profile_class.str, "mntr"))
-    *error = "not a monitor-class profile";
-  else
-  {
-    color_space = icc_read (sign, 16);
-    if (strcmp (color_space.str, "RGB "))
-      *error = "not defining an RGB space";
-  }
+    profile_class = icc_read (sign, 12);
+    if (strcmp (profile_class.str, "mntr"))
+      *error = "not a monitor-class profile";
+     else
+    {
+      color_space = icc_read (sign, 16);
+      if (strcmp (color_space.str, "RGB "))
+        *error = "not defining an RGB space";
+    }
   }
 
   if (!*error)
@@ -771,10 +765,20 @@ babl_space_from_icc (const char   *icc_data,
       *error = "PCS is not XYZ";
   }
 
-  switch (intent)
+  if (!*error)
+  switch (intent & 7) /* enum of intent is in lowest bits */
   {
     case BABL_ICC_INTENT_RELATIVE_COLORIMETRIC:
       /* that is what we do well */
+
+      if (!speed_over_accuracy)
+      {
+        if (icc_tag (state, "A2B0", NULL, NULL) &&
+            icc_tag (state, "B2A0", NULL, NULL))
+        {
+          *error = "use lcms, accuracy desired and cluts are present";
+        }
+      }
 
       break;
     case BABL_ICC_INTENT_PERCEPTUAL:
