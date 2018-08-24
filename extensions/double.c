@@ -42,10 +42,13 @@ conv_rgbaD_linear_rgbAD_gamma (const Babl *conversion,unsigned char *src,
    while (n--)
      {
        double alpha = fsrc[3];
+       if (alpha < BABL_ALPHA_FLOOR)
+         alpha = BABL_ALPHA_FLOOR;
        *fdst++ = babl_trc_from_linear (trc[0], *fsrc++) * alpha;
        *fdst++ = babl_trc_from_linear (trc[1], *fsrc++) * alpha;
        *fdst++ = babl_trc_from_linear (trc[2], *fsrc++) * alpha;
-       *fdst++ = *fsrc++;
+       *fdst++ = alpha;
+       fsrc++;
      }
 }
 
@@ -65,20 +68,13 @@ conv_rgbAD_linear_rgbAD_gamma (const Babl    *conversion,
    while (n--)
      {
        double alpha = fsrc[3];
-       if (alpha < BABL_ALPHA_THRESHOLD)
+       if (alpha == 0.0)
          {
            *fdst++ = 0.0;
            *fdst++ = 0.0;
            *fdst++ = 0.0;
            *fdst++ = 0.0;
            fsrc+=4;
-         }
-       else if (alpha >= 1.0)
-         {
-           *fdst++ = babl_trc_from_linear (trc[0], *fsrc++) * alpha;
-           *fdst++ = babl_trc_from_linear (trc[1], *fsrc++) * alpha;
-           *fdst++ = babl_trc_from_linear (trc[2], *fsrc++) * alpha;
-           *fdst++ = *fsrc++;
          }
        else
          {

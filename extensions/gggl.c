@@ -175,25 +175,35 @@ conv_16_8 (const Babl *conversion,unsigned char *src, unsigned char *dst, long s
 {
   long n = samples;
 
-  while (n--)
+  while (n>4)
     {
 #define div_257(a) ((((a)+128)-(((a)+128)>>8))>>8)
+      ((unsigned char *) dst)[0] = div_257 (((unsigned short *) src)[0]);
+      ((unsigned char *) dst)[1] = div_257 (((unsigned short *) src)[1]);
+      ((unsigned char *) dst)[2] = div_257 (((unsigned short *) src)[2]);
+      ((unsigned char *) dst)[3] = div_257 (((unsigned short *) src)[3]);
+      dst += 4;
+      src += 8;
+      n-=4;
+    }
+
+  while (n--)
+    {
       (*(unsigned char *) dst) = div_257 (*(unsigned short *) src);
-      dst                     += 1;
-      src                     += 2;
+      dst += 1;
+      src += 2;
     }
 }
 
-static void
+static inline void
 conv_8_16 (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
-
   while (n--)
     {
-      (*(unsigned short *) dst) = ((*(unsigned char *) src) << 8) | *src;
-      dst                      += 2;
-      src                      += 1;
+      (*(unsigned short *) dst) = *src << 8 | *src;
+      dst += 2;
+      src += 1;
     }
 }
 
@@ -757,10 +767,13 @@ conv_rgbA8_rgba8 (const Babl *conversion,unsigned char *src, unsigned char *dst,
         }
       else
         {
-          unsigned int aa = ((255 << 16) + (src[3] >> 1)) / src[3];
-          *dst++ = (src[0] * aa + 0x8000) >> 16;
-          *dst++ = (src[1] * aa + 0x8000) >> 16;
-          *dst++ = (src[2] * aa + 0x8000) >> 16;
+          float alpha = src[3]/255.0;
+          float ralpha = 1.0/alpha;
+          //unsigned aa = ((255 << 16)) / src[3];
+          unsigned aa = ((1 << 10)) * ralpha;
+          *dst++ = (src[0] * aa + .5) / 1024.0 + 0.5;
+          *dst++ = (src[1] * aa +.5) / 1024.0 + 0.5;
+          *dst++ = (src[2] * aa +.5) / 1024.0 + 0.5;
           *dst++ = src[3];
         }
       src += 4;

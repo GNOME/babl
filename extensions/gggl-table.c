@@ -36,17 +36,12 @@
  *
  * http://www.cinenet.net/~spitzak/conversion/sketches_0265.pdf
  *
- * initially ignoring any diffusion, to keep the implementation
- * smaller, and interchangeable with the non optimized version.
- *
  * due to ability to be able to relicence gggl under a different
  * licence than GPL, I avoided the temptation to look at the
  * source files in the same location, in case I was going to
  * need this piece of code for projects where GPL compatibility
  * was a must.
  *
- * TODO: error diffusion,
- *       gamma correction  (not really,. gamma correction belongs in seperate ops,.
  */
 
 /* lookup tables used in conversion */
@@ -65,7 +60,7 @@ table_init (void)
 {
   if (table_inited)
     return;
-  
+
   table_8_F_int = (void*)(table_8_F);
 
   table_inited = 1;
@@ -108,8 +103,8 @@ table_init (void)
           }
         else
           {
-            c = lrint (u.f * 255.0);
-            s = lrint (u.f * 65535.0);
+            c = u.f * 255 + 0.5f;
+            s = u.f * 65535 + 0.5f;
           }
 
         /*fprintf (stderr, "%2.3f=%03i %05i ", f, c, (*hi));
@@ -120,7 +115,7 @@ table_init (void)
         table_F_16[u.s[1]] = s;
       }
   }
-  /* fix tables to ensure 1:1 conversions back and forth */
+  /* patch tables to ensure 1:1 conversions back and forth */
   if (0)
     {                           /*FIXME: probably not the right way to do it,.. must sit down and scribble on paper */
       int i;

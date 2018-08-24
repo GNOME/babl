@@ -151,14 +151,26 @@ conv_D_F (const Babl *conversion,unsigned char *src, unsigned char *dst, long sa
       src           += 8;
     }
 }
+
 static void
 conv_16_8 (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
 {
   long n = samples;
 
-  while (n--)
+  while (n>4)
     {
 #define div_257(a) ((((a)+128)-(((a)+128)>>8))>>8)
+      ((unsigned char *) dst)[0] = div_257 (((unsigned short *) src)[0]);
+      ((unsigned char *) dst)[1] = div_257 (((unsigned short *) src)[1]);
+      ((unsigned char *) dst)[2] = div_257 (((unsigned short *) src)[2]);
+      ((unsigned char *) dst)[3] = div_257 (((unsigned short *) src)[3]);
+      dst                     += 4;
+      src                     += 8;
+      n-=4;
+    }
+
+  while (n--)
+    {
       (*(unsigned char *) dst) = div_257 (*(unsigned short *) src);
       dst                     += 1;
       src                     += 2;

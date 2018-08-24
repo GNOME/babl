@@ -329,7 +329,7 @@ conv_rgbAF_rgb8 (const Babl *conversion,unsigned char *srcc,
   while (n--)
     {
       float alpha = src[3];
-      if (alpha < BABL_ALPHA_THRESHOLD)
+      if (alpha == 0.0f)
         {
           dst[0] = 0;
           dst[1] = 0;
@@ -337,7 +337,7 @@ conv_rgbAF_rgb8 (const Babl *conversion,unsigned char *srcc,
         }
       else
         {
-          float alpha_recip = 1.0 / alpha;
+          float alpha_recip = 1.0f / alpha;
           dst[0] = table_F_8g[gggl_float_to_index16 (src[0] * alpha_recip)];
           dst[1] = table_F_8g[gggl_float_to_index16 (src[1] * alpha_recip)];
           dst[2] = table_F_8g[gggl_float_to_index16 (src[2] * alpha_recip)];
@@ -380,6 +380,8 @@ conv_rgbaF_rgbAF (const Babl *conversion,unsigned char *srcc,
   while (n--)
     {
       float alpha = src[3];
+      if (alpha < BABL_ALPHA_FLOOR)
+        alpha = BABL_ALPHA_FLOOR;
       dst[0] = src[0] * alpha;
       dst[1] = src[1] * alpha;
       dst[2] = src[2] * alpha;
@@ -402,14 +404,18 @@ conv_rgbAF_rgbaF (const Babl *conversion,unsigned char *srcc,
     {
       float alpha = src[3];
       float recip;
-      if (alpha < BABL_ALPHA_THRESHOLD)
-        recip = 0.0;
+      if (alpha == 0.0f)
+        recip = 0.0f;
       else
-        recip = 1.0/alpha;
+        recip = 1.0f/alpha;
+
       dst[0] = src[0] * recip;
       dst[1] = src[1] * recip;
       dst[2] = src[2] * recip;
-      dst[3] = alpha;
+      if (alpha == BABL_ALPHA_FLOOR)
+        dst[3] = 0.0f;
+      else
+        dst[3] = alpha;
       src   += 4;
       dst   += 4;
     }
@@ -428,13 +434,15 @@ conv_rgbAF_lrgba8 (const Babl *conversion,unsigned char *srcc,
   while (n--)
     {
       float alpha = src[3];
-      float recip = (1.0/alpha);
-      if (alpha < BABL_ALPHA_THRESHOLD)
+      if (alpha == 0.0f)
         {
           dst[0] = dst[1] = dst[2] = dst[3] = 0;
         }
       else
         {
+          float recip = (1.0/alpha);
+          if (alpha == BABL_ALPHA_FLOOR)
+            alpha = 0.0f;
           dst[0] = table_F_8[gggl_float_to_index16 (src[0] * recip)];
           dst[1] = table_F_8[gggl_float_to_index16 (src[1] * recip)];
           dst[2] = table_F_8[gggl_float_to_index16 (src[2] * recip)];

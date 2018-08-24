@@ -23,14 +23,16 @@
  *  Copyright 2003, 2004, 2005 Øyvind Kolås <pippin@gimp.org>
  */
 
-#define _POSIX_C_SOURCE 200112L
+//#define _POSIX_C_SOURCE 200112L
 
 #include "config.h"
 #include <math.h>
 #include <string.h>
 
 #include "babl.h"
+#include "base/util.h"
 #include "extensions/util.h"
+
 
 /*
  * Implemented according to information read from:
@@ -108,8 +110,8 @@ table_init (void)
           }
         else
           {
-            c = lrint (u.f * 255.0);
-            s = lrint (u.f * 65535.0);
+            c = u.f * 255 + 0.5f;
+            s = u.f * 65535 + 0.5f;
           }
 
         /*fprintf (stderr, "%2.3f=%03i %05i ", f, c, (*hi));
@@ -313,9 +315,8 @@ conv_rgbafloat_linear_cairo32_le (const Babl *conversion,unsigned char *src_char
   while (n--)
     {
       float alpha = src[3] * 255;
-#define BABL_ALPHA_THRESHOLD 0.000000152590219
 
-      if (alpha < BABL_ALPHA_THRESHOLD)
+      if (alpha < BABL_ALPHA_FLOOR)
         {
           *(int *)dst = 0;
         }

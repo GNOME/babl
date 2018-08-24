@@ -43,10 +43,13 @@ conv_rgbaF_linear_rgbAF_nonlinear (const Babl *conversion,unsigned char *src,
    while (n--)
      {
        float alpha = fsrc[3];
+       if (alpha < BABL_ALPHA_FLOOR)
+         alpha = BABL_ALPHA_FLOOR;
        *fdst++ = babl_trc_from_linear (trc[0], *fsrc++) * alpha;
        *fdst++ = babl_trc_from_linear (trc[1], *fsrc++) * alpha;
        *fdst++ = babl_trc_from_linear (trc[2], *fsrc++) * alpha;
-       *fdst++ = *fsrc++;
+       *fdst++ = alpha;
+       fsrc++;
      }
 }
 
@@ -62,10 +65,13 @@ conv_rgbaF_linear_rgbAF_perceptual (const Babl *conversion,unsigned char *src,
    while (n--)
      {
        float alpha = fsrc[3];
+       if (alpha < BABL_ALPHA_FLOOR)
+         alpha = BABL_ALPHA_FLOOR;
        *fdst++ = babl_trc_from_linear (trc_srgb, *fsrc++) * alpha;
        *fdst++ = babl_trc_from_linear (trc_srgb, *fsrc++) * alpha;
        *fdst++ = babl_trc_from_linear (trc_srgb, *fsrc++) * alpha;
-       *fdst++ = *fsrc++;
+       *fdst++ = alpha;
+       fsrc++;
      }
 }
 
@@ -86,20 +92,13 @@ conv_rgbAF_linear_rgbAF_nonlinear (const Babl    *conversion,
    while (n--)
      {
        float alpha = fsrc[3];
-       if (alpha < BABL_ALPHA_THRESHOLD)
+       if (alpha == 0)
          {
            *fdst++ = 0.0;
            *fdst++ = 0.0;
            *fdst++ = 0.0;
            *fdst++ = 0.0;
            fsrc+=4;
-         }
-       else if (alpha >= 1.0)
-         {
-           *fdst++ = babl_trc_from_linear (trc[0], *fsrc++) * alpha;
-           *fdst++ = babl_trc_from_linear (trc[1], *fsrc++) * alpha;
-           *fdst++ = babl_trc_from_linear (trc[2], *fsrc++) * alpha;
-           *fdst++ = *fsrc++;
          }
        else
          {
@@ -126,24 +125,17 @@ conv_rgbAF_linear_rgbAF_perceptual (const Babl    *conversion,
    while (n--)
      {
        float alpha = fsrc[3];
-       if (alpha < BABL_ALPHA_THRESHOLD)
+       if (alpha == 0.0f)
          {
-           *fdst++ = 0.0;
-           *fdst++ = 0.0;
-           *fdst++ = 0.0;
-           *fdst++ = 0.0;
+           *fdst++ = 0.0f;
+           *fdst++ = 0.0f;
+           *fdst++ = 0.0f;
+           *fdst++ = 0.0f;
            fsrc+=4;
-         }
-       else if (alpha >= 1.0)
-         {
-           *fdst++ = babl_trc_from_linear (trc_srgb, *fsrc++) * alpha;
-           *fdst++ = babl_trc_from_linear (trc_srgb, *fsrc++) * alpha;
-           *fdst++ = babl_trc_from_linear (trc_srgb, *fsrc++) * alpha;
-           *fdst++ = *fsrc++;
          }
        else
          {
-           float alpha_recip = 1.0 / alpha;
+           float alpha_recip = 1.0f / alpha;
            *fdst++ = babl_trc_from_linear (trc_srgb, *fsrc++ * alpha_recip) * alpha;
            *fdst++ = babl_trc_from_linear (trc_srgb, *fsrc++ * alpha_recip) * alpha;
            *fdst++ = babl_trc_from_linear (trc_srgb, *fsrc++ * alpha_recip) * alpha;
