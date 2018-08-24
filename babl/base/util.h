@@ -24,11 +24,14 @@
 #include "pow-24.h"
 
 /* Alpha threshold used in the reference implementation for
- * un-pre-multiplication of color data:
+ * un-pre-multiplication of color data, deprecated in favor of the following
  *
  * 0.01 / (2^16 - 1)
  */
 #define BABL_ALPHA_THRESHOLD 0.000000152590219
+
+ /* values below this are stored premultiplied with this value  */
+#define BABL_ALPHA_FLOOR (1/65536.0)
 
 #define BABL_PLANAR_SANITY  \
   {                         \

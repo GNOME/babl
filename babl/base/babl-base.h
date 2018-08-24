@@ -19,6 +19,7 @@
 #ifndef _BABL_BASE_H
 #define _BABL_BASE_H
 
+
 void babl_base_init (void);
 void babl_base_destroy (void);
 void babl_formats_init (void);
