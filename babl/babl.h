@@ -584,6 +584,12 @@ babl_space_from_rgbxyz_matrix (const char *name,
  */
 const char * babl_format_get_encoding (const Babl *babl);
 
+/* values below this are stored premultiplied with this value,
+ * it can also be used as a generic alpha zero epsilon in GEGL
+ *
+ */
+#define BABL_ALPHA_FLOOR (1/65536.0)
+
 #ifdef __cplusplus
 }
 #endif

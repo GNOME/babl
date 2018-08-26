@@ -30,8 +30,6 @@
  */
 #define BABL_ALPHA_THRESHOLD 0.000000152590219
 
- /* values below this are stored premultiplied with this value  */
-#define BABL_ALPHA_FLOOR (1/65536.0)
 
 #define BABL_PLANAR_SANITY  \
   {                         \
