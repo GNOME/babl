@@ -89,7 +89,7 @@ conv_rgbafloat_linear_rgbu8_gamma (const Babl *conversion,unsigned char *src_cha
 
   while (n--)
     {
-      if (src[3] < BABL_ALPHA_FLOOR)
+      if (src[3] <= BABL_ALPHA_FLOOR)
         {
           dst[0] = 0;
           dst[1] = 0;

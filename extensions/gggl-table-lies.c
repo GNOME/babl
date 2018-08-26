@@ -316,7 +316,7 @@ conv_rgbafloat_linear_cairo32_le (const Babl *conversion,unsigned char *src_char
     {
       float alpha = src[3] * 255;
 
-      if (alpha < BABL_ALPHA_FLOOR)
+      if (alpha <= BABL_ALPHA_FLOOR)
         {
           *(int *)dst = 0;
         }

@@ -310,7 +310,12 @@ conv_rgbaF_linear_rgbAF_gamma (const Babl *conversion,unsigned char *src,
        else
        {
          if (alpha < BABL_ALPHA_FLOOR)
-           alpha = BABL_ALPHA_FLOOR;
+         {
+           if (alpha >= 0.0f)
+             alpha = BABL_ALPHA_FLOOR;
+           else if (alpha >= -BABL_ALPHA_FLOOR)
+             alpha = -BABL_ALPHA_FLOOR;
+         }
          *fdst++ = linear_to_gamma_2_2_lut (red)   * alpha;
          *fdst++ = linear_to_gamma_2_2_lut (green) * alpha;
          *fdst++ = linear_to_gamma_2_2_lut (blue)  * alpha;
@@ -451,8 +456,6 @@ conv_rgbaF_linear_rgbA8_gamma_cairo (const Babl *conversion,unsigned char *src,
       float green = *fsrc++;
       float blue  = *fsrc++;
       float alpha = *fsrc++;
-      if (alpha < BABL_ALPHA_FLOOR)
-        alpha = BABL_ALPHA_FLOOR;
       if (alpha >= 1.0)
       {
         int val = linear_to_gamma_2_2_lut (blue) * 0xff + 0.5f;
@@ -493,9 +496,7 @@ conv_rgbAF_linear_rgbAF_gamma (const Babl *conversion,unsigned char *src,
       float blue  = *fsrc++;
       float alpha = *fsrc++;
 
-      if (alpha < BABL_ALPHA_FLOOR)
-       alpha = BABL_ALPHA_FLOOR;
-      if (alpha >= 1.0)
+      if (alpha == 1.0)
         {
           *fdst++ = linear_to_gamma_2_2_lut (red);
           *fdst++ = linear_to_gamma_2_2_lut (green);
