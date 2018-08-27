@@ -110,6 +110,91 @@ convert_u16_double_scaled (BablConversion *conversion,
 
 MAKE_CONVERSIONS (u16, 0.0, 1.0, 0, UINT16_MAX)
 
+static inline void
+convert_float_u16_scaled (BablConversion *conversion,
+                          float    min_val,
+                          float    max_val,
+                          uint16_t min,
+                          uint16_t max,
+                          char    *src,
+                          char    *dst,
+                          int      src_pitch,
+                          int      dst_pitch,
+                          long     n)
+{
+  while (n--)
+    {
+      float   dval = *(float *) src;
+      uint16_t u16val;
+
+      if (dval < min_val)
+        u16val = min;
+      else if (dval > max_val)
+        u16val = max;
+      else
+        u16val = rint ((dval - min_val) / (max_val - min_val) * (max - min) + min);
+
+      *(uint16_t *) dst = u16val;
+      dst              += dst_pitch;
+      src              += src_pitch;
+    }
+}
+
+static inline void
+convert_u16_float_scaled (BablConversion *conversion,
+                          float   min_val,
+                          float   max_val,
+                          uint16_t min,
+                          uint16_t max,
+                          char    *src,
+                          char    *dst,
+                          int      src_pitch,
+                          int      dst_pitch,
+                          long     n)
+{
+  while (n--)
+    {
+      int    u16val = *(uint16_t *) src;
+      float dval;
+
+      if (u16val < min)
+        dval = min_val;
+      else if (u16val > max)
+        dval = max_val;
+      else
+        dval = (u16val - min) / (float) (max - min) * (max_val - min_val) + min_val;
+
+      (*(float *) dst) = dval;
+      dst             += dst_pitch;
+      src             += src_pitch;
+    }
+}
+
+#define MAKE_CONVERSIONS_float(name, min_val, max_val, min, max)      \
+  static void \
+  convert_ ## name ## _float (BablConversion *c, void *src, \
+                               void *dst, \
+                               int src_pitch, \
+                               int dst_pitch, \
+                               long n)                               \
+  { \
+    convert_u16_float_scaled (c, min_val, max_val, min, max, \
+                               src, dst, src_pitch, dst_pitch, n); \
+  }                                                               \
+  static void \
+  convert_float_ ## name (BablConversion *c, void *src, \
+                           void *dst, \
+                           int src_pitch, \
+                           int dst_pitch, \
+                           long n)                                 \
+  { \
+    convert_float_u16_scaled (c, min_val, max_val, min, max, \
+                               src, dst, src_pitch, dst_pitch, n); \
+  }
+
+MAKE_CONVERSIONS_float (u16, 0.0, 1.0, 0, UINT16_MAX)
+
+
 void
 babl_base_type_u16 (void)
 {
@@ -130,6 +215,20 @@ babl_base_type_u16 (void)
     babl_type_from_id (BABL_DOUBLE),
     babl_type_from_id (BABL_U16),
     "plane", convert_double_u16,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_type_from_id (BABL_U16),
+    babl_type_from_id (BABL_FLOAT),
+    "plane", convert_u16_float,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_type_from_id (BABL_FLOAT),
+    babl_type_from_id (BABL_U16),
+    "plane", convert_float_u16,
     NULL
   );
 }

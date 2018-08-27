@@ -1779,6 +1779,96 @@ MAKE_CONVERSIONS (u8_ab, -128.0, 127.0, 0x00, 0xff)
 
 #undef MAKE_CONVERSIONS
 
+static inline void
+convert_float_u8_scaled (const Babl *conversion,
+                          float          min_val,
+                          float          max_val,
+                          unsigned char min,
+                          unsigned char max,
+                          char         *src,
+                          char         *dst,
+                          int           src_pitch,
+                          int           dst_pitch,
+                          long          n)
+{
+  while (n--)
+    {
+      float        dval = *(float *) src;
+      unsigned char u8val;
+
+      if (dval < min_val)
+        u8val = min;
+      else if (dval > max_val)
+        u8val = max;
+      else
+        u8val = rint ((dval - min_val) / (max_val - min_val) * (max - min) + min);
+
+      *(unsigned char *) dst = u8val;
+      src                   += src_pitch;
+      dst                   += dst_pitch;
+    }
+}
+
+static inline void
+convert_u8_float_scaled (const Babl *conversion,
+                          float        min_val,
+                          float        max_val,
+                          unsigned char min,
+                          unsigned char max,
+                          char         *src,
+                          char         *dst,
+                          int           src_pitch,
+                          int           dst_pitch,
+                          long          n)
+{
+  while (n--)
+    {
+      int    u8val = *(unsigned char *) src;
+      float dval;
+
+      if (u8val < min)
+        dval = min_val;
+      else if (u8val > max)
+        dval = max_val;
+      else
+        dval = (u8val - min) / (float) (max - min) * (max_val - min_val) + min_val;
+
+      (*(float *) dst) = dval;
+
+      dst += dst_pitch;
+      src += src_pitch;
+    }
+}
+
+#define MAKE_CONVERSIONS(name, min_val, max_val, min, max) \
+  static void \
+  convert_ ## name ## _float (const Babl *c, char *src, \
+                               char *dst, \
+                               int src_pitch, \
+                               int dst_pitch, \
+                               long n)        \
+  { \
+    convert_u8_float_scaled (c, min_val, max_val, min, max, \
+                              src, dst, src_pitch, dst_pitch, n); \
+  }                                                               \
+  static void \
+  convert_float_ ## name (const Babl *c, char *src, \
+                           char *dst, \
+                           int src_pitch, \
+                           int dst_pitch, \
+                           long n)        \
+  { \
+    convert_float_u8_scaled (c, min_val, max_val, min, max, \
+                              src, dst, src_pitch, dst_pitch, n); \
+  }
+
+/* source ICC.1:2004-10 */
+
+MAKE_CONVERSIONS (u8_l, 0.0, 100.0, 0x00, 0xff)
+MAKE_CONVERSIONS (u8_ab, -128.0, 127.0, 0x00, 0xff)
+
+#undef MAKE_CONVERSIONS
+
 static void
 types_u8 (void)
 {
@@ -1825,6 +1915,32 @@ types_u8 (void)
     babl_type ("double"),
     babl_type ("CIE u8 ab"),
     "plane", convert_double_u8_ab,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_type ("CIE u8 L"),
+    babl_type ("float"),
+    "plane", convert_u8_l_float,
+    NULL
+  );
+  babl_conversion_new (
+    babl_type ("float"),
+    babl_type ("CIE u8 L"),
+    "plane", convert_float_u8_l,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_type ("CIE u8 ab"),
+    babl_type ("float"),
+    "plane", convert_u8_ab_float,
+    NULL
+  );
+  babl_conversion_new (
+    babl_type ("float"),
+    babl_type ("CIE u8 ab"),
+    "plane", convert_float_u8_ab,
     NULL
   );
 }
@@ -1916,6 +2032,94 @@ MAKE_CONVERSIONS (u16_ab, -128.0, 127.0, 0x00, 0xffff)
 
 #undef MAKE_CONVERSIONS
 
+
+static inline void
+convert_float_u16_scaled (const Babl *conversion,
+                           float         min_val,
+                           float         max_val,
+                           unsigned short min,
+                           unsigned short max,
+                           char          *src,
+                           char          *dst,
+                           int            src_pitch,
+                           int            dst_pitch,
+                           long           n)
+{
+  while (n--)
+    {
+      float         dval = *(float *) src;
+      unsigned short u16val;
+
+      if (dval < min_val)
+        u16val = min;
+      else if (dval > max_val)
+        u16val = max;
+      else
+        u16val = rint ((dval - min_val) / (max_val - min_val) * (max - min) + min);
+
+      *(unsigned short *) dst = u16val;
+      dst                    += dst_pitch;
+      src                    += src_pitch;
+    }
+}
+
+static inline void
+convert_u16_float_scaled (const Babl *conversion,
+                           float         min_val,
+                           float         max_val,
+                           unsigned short min,
+                           unsigned short max,
+                           char          *src,
+                           char          *dst,
+                           int            src_pitch,
+                           int            dst_pitch,
+                           long           n)
+{
+  while (n--)
+    {
+      int    u16val = *(unsigned short *) src;
+      float dval;
+
+      if (u16val < min)
+        dval = min_val;
+      else if (u16val > max)
+        dval = max_val;
+      else
+        dval = (u16val - min) / (float) (max - min) * (max_val - min_val) + min_val;
+
+      (*(float *) dst) = dval;
+      dst              += dst_pitch;
+      src              += src_pitch;
+    }
+}
+
+#define MAKE_CONVERSIONS(name, min_val, max_val, min, max)      \
+  static void \
+  convert_ ## name ## _float (const Babl *c, char *src, \
+                               char *dst, \
+                               int src_pitch, \
+                               int dst_pitch, \
+                               long n)        \
+  { \
+    convert_u16_float_scaled (c, min_val, max_val, min, max, \
+                               src, dst, src_pitch, dst_pitch, n); \
+  }                                                               \
+  static void \
+  convert_float_ ## name (const Babl *c, char *src, \
+                           char *dst, \
+                           int src_pitch, \
+                           int dst_pitch, \
+                           long n)        \
+  { \
+    convert_float_u16_scaled (c, min_val, max_val, min, max, \
+                               src, dst, src_pitch, dst_pitch, n); \
+  }
+
+MAKE_CONVERSIONS (u16_l, 0.0, 100.0, 0x00, 0xffff)
+MAKE_CONVERSIONS (u16_ab, -128.0, 127.0, 0x00, 0xffff)
+
+#undef MAKE_CONVERSIONS
+
 static void
 types_u16 (void)
 {
@@ -1963,6 +2167,32 @@ types_u16 (void)
     babl_type ("double"),
     babl_type ("CIE u16 ab"),
     "plane", convert_double_u16_ab,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_type ("CIE u16 L"),
+    babl_type ("float"),
+    "plane", convert_u16_l_float,
+    NULL
+  );
+  babl_conversion_new (
+    babl_type ("float"),
+    babl_type ("CIE u16 L"),
+    "plane", convert_float_u16_l,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_type ("CIE u16 ab"),
+    babl_type ("float"),
+    "plane", convert_u16_ab_float,
+    NULL
+  );
+  babl_conversion_new (
+    babl_type ("float"),
+    babl_type ("CIE u16 ab"),
+    "plane", convert_float_u16_ab,
     NULL
   );
 }

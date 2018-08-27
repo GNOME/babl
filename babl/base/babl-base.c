@@ -50,9 +50,9 @@ babl_base_destroy (void)
 static void
 types (void)
 {
+  babl_base_type_float ();
   babl_base_type_u15 ();
   babl_base_type_half ();
-  babl_base_type_float ();
   babl_base_type_u8 ();
   babl_base_type_u16 ();
   babl_base_type_u32 ();

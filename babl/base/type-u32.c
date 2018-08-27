@@ -109,6 +109,92 @@ convert_u32_double_scaled (BablConversion *c,
 
 MAKE_CONVERSIONS (u32, 0.0, 1.0, 0, UINT32_MAX)
 
+
+static inline void
+convert_float_u32_scaled (BablConversion *c,
+                          float   min_val,
+                          float   max_val,
+                          uint32_t min,
+                          uint32_t max,
+                          char    *src,
+                          char    *dst,
+                          int      src_pitch,
+                          int      dst_pitch,
+                          long     n)
+{
+  while (n--)
+    {
+      float   dval = *(float *) src;
+      uint32_t u32val;
+
+      if (dval < min_val)
+        u32val = min;
+      else if (dval > max_val)
+        u32val = max;
+      else
+        u32val = rint ((dval - min_val) / (max_val - min_val) * (max - min) + min);
+
+      *(uint32_t *) dst = u32val;
+      dst              += dst_pitch;
+      src              += src_pitch;
+    }
+}
+
+static inline void
+convert_u32_float_scaled (BablConversion *c,
+                          float   min_val,
+                          float   max_val,
+                          uint32_t min,
+                          uint32_t max,
+                          char    *src,
+                          char    *dst,
+                          int      src_pitch,
+                          int      dst_pitch,
+                          long     n)
+{
+  while (n--)
+    {
+      int    u32val = *(uint32_t *) src;
+      float dval;
+
+      if (u32val < min)
+        dval = min_val;
+      else if (u32val > max)
+        dval = max_val;
+      else
+        dval = (u32val - min) / (float) (max - min) * (max_val - min_val) + min_val;
+
+      (*(float *) dst) = dval;
+      dst             += dst_pitch;
+      src             += src_pitch;
+    }
+}
+
+#define MAKE_CONVERSIONS_float(name, min_val, max_val, min, max)      \
+  static void \
+  convert_ ## name ## _float (BablConversion *c, void *src, \
+                              void *dst, \
+                              int src_pitch, \
+                              int dst_pitch, \
+                              long n)                               \
+  { \
+    convert_u32_float_scaled (c, min_val, max_val, min, max, \
+                               src, dst, src_pitch, dst_pitch, n); \
+  }                                                               \
+  static void \
+  convert_float_ ## name (BablConversion *c, void *src, \
+                          void *dst, \
+                          int src_pitch, \
+                          int dst_pitch, \
+                          long n)                                 \
+  { \
+    convert_float_u32_scaled (c, min_val, max_val, min, max, \
+                              src, dst, src_pitch, dst_pitch, n); \
+  }
+
+MAKE_CONVERSIONS_float(u32, 0.0, 1.0, 0, UINT32_MAX)
+
+
 void
 babl_base_type_u32 (void)
 {
@@ -129,6 +215,20 @@ babl_base_type_u32 (void)
     babl_type_from_id (BABL_DOUBLE),
     babl_type_from_id (BABL_U32),
     "plane", convert_double_u32,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_type_from_id (BABL_U32),
+    babl_type_from_id (BABL_FLOAT),
+    "plane", convert_u32_float,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_type_from_id (BABL_FLOAT),
+    babl_type_from_id (BABL_U32),
+    "plane", convert_float_u32,
     NULL
   );
 }
