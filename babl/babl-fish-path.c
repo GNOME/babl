@@ -627,7 +627,7 @@ babl_fish_path2 (const Babl *source,
       babl_free (babl);
       babl_mutex_unlock (babl_format_mutex);
 
-      //_babl_fish_missing_fast_path_warning (source, destination);
+      _babl_fish_missing_fast_path_warning (source, destination);
 
       return NULL;
     }

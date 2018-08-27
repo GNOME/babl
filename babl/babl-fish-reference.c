@@ -279,135 +279,6 @@ convert_from_double (BablFormat *destination_fmt,
   babl_free (dst_img);
 }
 
-static void
-convert_to_float (BablFormat *source_fmt,
-                  const char *source_buf,
-                  char       *float_buf,
-                  int         n)
-{
-  int        i;
-
-  BablImage *src_img;
-  BablImage *dst_img;
-
-  src_img = (BablImage *) babl_image_new (
-    babl_component_from_id (BABL_GRAY_LINEAR), NULL, 1, 0, NULL);
-  dst_img = (BablImage *) babl_image_new (
-    babl_component_from_id (BABL_GRAY_LINEAR), NULL, 1, 0, NULL);
-
-  dst_img->type[0]  = (BablType *) babl_type_from_id (BABL_FLOAT);
-  dst_img->pitch[0] =
-    (dst_img->type[0]->bits / 8) * source_fmt->model->components;
-  dst_img->stride[0] = 0;
-
-  src_img->type[0]   = (BablType *) babl_type_from_id (BABL_FLOAT);
-  src_img->pitch[0]  = source_fmt->bytes_per_pixel;
-  src_img->stride[0] = 0;
-
-  {
-  /* i is dest position */
-  for (i = 0; i < source_fmt->model->components; i++)
-    {
-      int j;
-      int found = 0;
-
-      dst_img->data[0] =
-        float_buf + (dst_img->type[0]->bits / 8) * i;
-
-      src_img->data[0] = (char *)source_buf;
-
-      /* j is source position */
-      for (j = 0; j < source_fmt->components; j++)
-        {
-          src_img->type[0] = source_fmt->type[j];
-
-          if (source_fmt->component[j] ==
-              source_fmt->model->component[i])
-            {
-              babl_conversion_process (assert_conversion_find (src_img->type[0], dst_img->type[0]),
-                                       (void*)src_img, (void*)dst_img, n);
-              found = 1;
-              break;
-            }
-
-          src_img->data[0] += src_img->type[0]->bits / 8;
-        }
-
-      if (!found)
-        {
-          char *dst_ptr = dst_img->data[0];
-          float value;
-
-          value = source_fmt->model->component[i]->instance.id == BABL_ALPHA ? 1.0 : 0.0;
-
-          for (j = 0; j < n; j++)
-            {
-              float *dst_component = (float *) dst_ptr;
-
-              *dst_component = value;
-              dst_ptr += dst_img->pitch[0];
-            }
-        }
-    }
-  }
-  babl_free (src_img);
-  babl_free (dst_img);
-}
-
-
-static void
-convert_from_float (BablFormat *destination_fmt,
-                     char      *destination_float_buf,
-                     char      *destination_buf,
-                     int        n)
-{
-  int        i;
-
-  BablImage *src_img;
-  BablImage *dst_img;
-
-  src_img = (BablImage *) babl_image_new (
-    babl_component_from_id (BABL_GRAY_LINEAR), NULL, 1, 0, NULL);
-  dst_img = (BablImage *) babl_image_new (
-    babl_component_from_id (BABL_GRAY_LINEAR), NULL, 1, 0, NULL);
-
-  src_img->type[0]   = (BablType *) babl_type_from_id (BABL_FLOAT);
-  src_img->pitch[0]  = (src_img->type[0]->bits / 8) * destination_fmt->model->components;
-  src_img->stride[0] = 0;
-
-  dst_img->data[0]  = destination_buf;
-  dst_img->type[0]  = (BablType *) babl_type_from_id (BABL_FLOAT);
-  dst_img->pitch[0] = destination_fmt->bytes_per_pixel;
-  dst_img->stride[0] = 0;
-
-  for (i = 0; i < destination_fmt->components; i++)
-    {
-      int j;
-
-      dst_img->type[0] = destination_fmt->type[i];
-
-      for (j = 0; j < destination_fmt->model->components; j++)
-        {
-          if (destination_fmt->component[i] ==
-              destination_fmt->model->component[j])
-            {
-              src_img->data[0] =
-                destination_float_buf + (src_img->type[0]->bits / 8) * j;
-
-              babl_conversion_process (assert_conversion_find (src_img->type[0],
-                                       dst_img->type[0]),
-                                       (void*)src_img, (void*)dst_img, n);
-              break;
-            }
-        }
-
-      dst_img->data[0] += dst_img->type[0]->bits / 8;
-    }
-  babl_free (src_img);
-  babl_free (dst_img);
-}
-
-
 
 static void
 ncomponent_convert_to_double (BablFormat       *source_fmt,
@@ -479,77 +350,6 @@ ncomponent_convert_from_double (BablFormat *destination_fmt,
 }
 
 
-static void
-ncomponent_convert_to_float (BablFormat       *source_fmt,
-                             char             *source_buf,
-                             char             *source_float_buf,
-                             int               n)
-{
-  BablImage *src_img;
-  BablImage *dst_img;
-
-  src_img = (BablImage *) babl_image_new (
-    babl_component_from_id (BABL_GRAY_LINEAR), NULL, 1, 0, NULL);
-  dst_img = (BablImage *) babl_image_new (
-    babl_component_from_id (BABL_GRAY_LINEAR), NULL, 1, 0, NULL);
-
-  dst_img->type[0]  = (BablType *) babl_type_from_id (BABL_FLOAT);
-  dst_img->pitch[0] = (dst_img->type[0]->bits / 8);
-  dst_img->stride[0] = 0;
-
-  src_img->data[0] = source_buf;
-  src_img->type[0] = source_fmt->type[0];
-  src_img->pitch[0] = source_fmt->type[0]->bits / 8;
-  src_img->stride[0] = 0;
-
-  dst_img->data[0] = source_float_buf;
-
-  babl_conversion_process (
-    assert_conversion_find (src_img->type[0], dst_img->type[0]),
-    (void*)src_img, (void*)dst_img,
-    n * source_fmt->components);
-  babl_free (src_img);
-  babl_free (dst_img);
-}
-
-static void
-ncomponent_convert_from_float (BablFormat *destination_fmt,
-                               char       *destination_float_buf,
-                               char       *destination_buf,
-                               int         n)
-{
-  BablImage *src_img;
-  BablImage *dst_img;
-
-  src_img = (BablImage *) babl_image_new (
-    babl_component_from_id (BABL_GRAY_LINEAR), NULL, 1, 0, NULL);
-  dst_img = (BablImage *) babl_image_new (
-    babl_component_from_id (BABL_GRAY_LINEAR), NULL, 1, 0, NULL);
-
-  src_img->type[0]   = (BablType *) babl_type_from_id (BABL_FLOAT);
-  src_img->pitch[0]  = (src_img->type[0]->bits / 8);
-  src_img->stride[0] = 0;
-
-  dst_img->data[0]  = destination_buf;
-  dst_img->type[0]  = (BablType *) babl_type_from_id (BABL_FLOAT);
-  dst_img->pitch[0] = destination_fmt->type[0]->bits/8;
-  dst_img->stride[0] = 0;
-
-  dst_img->type[0] = destination_fmt->type[0];
-  src_img->data[0] = destination_float_buf;
-
-  babl_conversion_process (
-    assert_conversion_find (src_img->type[0], dst_img->type[0]),
-    (void*)src_img, (void*)dst_img,
-    n * destination_fmt->components);
-
-  dst_img->data[0] += dst_img->type[0]->bits / 8;
-  babl_free (src_img);
-  babl_free (dst_img);
-}
-
-
-
 static int
 process_to_n_component (const Babl  *babl,
                         const char *source,
@@ -588,33 +388,12 @@ process_to_n_component (const Babl  *babl,
   return 0;
 }
 
-static int compatible_components (const BablFormat *a,
-                                  const BablFormat *b)
-{
-  int i;
-  if (a->components != b->components)
-    return 0;
-  for (i = 0; i < a->components; i++)
-   if (a->component[i] != b->component[i])
-     return 0;
-  return 1;
-}
-
 static void
 process_same_model (const Babl  *babl,
                     const char *source,
                     char       *destination,
                     long        n)
 {
-  if (BABL (babl->fish.source)== BABL (babl->fish.destination))
-  {
-    if (source == destination)
-    {
-      memcpy (destination, source, n * babl->fish.source->format.bytes_per_pixel);
-    }
-    return;
-  }
-
   void *double_buf;
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
@@ -623,68 +402,27 @@ process_same_model (const Babl  *babl,
                                  BABL (babl->fish.source)->format.components));
 #undef MAX
 
-  if (compatible_components ((void*)babl->fish.source,
-                             (void*)babl->fish.destination))
+  if ((BABL (babl->fish.source)->format.components ==
+       BABL (babl->fish.destination)->format.components)
+      && (BABL (babl->fish.source)->format.model->components !=
+          BABL (babl->fish.source)->format.components))
     {
-      if (BABL (babl->fish.source)->format.type[0]->bits < 32 ||
-          BABL (babl->fish.destination)->format.type[0]->bits < 32)
-      {
-        ncomponent_convert_to_float (
-          (BablFormat *) BABL (babl->fish.source),
-          (char *) source,
-          double_buf,
-          n
-        );
-
-          ncomponent_convert_from_float (
-            (BablFormat *) BABL (babl->fish.destination),
-            (void*) double_buf,
-            (char *) destination,
-            n
-          );
-
-      }
-      else
-      {
-        ncomponent_convert_to_double (
-          (BablFormat *) BABL (babl->fish.source),
-          (char *) source,
-          double_buf,
-          n
-        );
-
-        ncomponent_convert_from_double (
-          (BablFormat *) BABL (babl->fish.destination),
-          double_buf,
-          (char *) destination,
-          n
-        );
-      }
-    }
-  else
-    {
-      if (BABL (babl->fish.source)->format.type[0]->bits < 32 ||
-          BABL (babl->fish.destination)->format.type[0]->bits < 32)
-      {
-
-      convert_to_float (
+      ncomponent_convert_to_double (
         (BablFormat *) BABL (babl->fish.source),
         (char *) source,
         double_buf,
         n
       );
 
-      convert_from_float (
+      ncomponent_convert_from_double (
         (BablFormat *) BABL (babl->fish.destination),
         double_buf,
         (char *) destination,
         n
       );
-
-      }
-      else
-      {
-
+    }
+  else
+    {
       convert_to_double (
         (BablFormat *) BABL (babl->fish.source),
         (char *) source,
@@ -698,8 +436,6 @@ process_same_model (const Babl  *babl,
         (char *) destination,
         n
       );
-
-      }
     }
   babl_free (double_buf);
 }
