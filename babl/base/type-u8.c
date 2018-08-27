@@ -115,8 +115,8 @@ MAKE_CONVERSIONS (u8_chroma, -0.5, 0.5, 16, 240)
 
 static inline void
 convert_float_u8_scaled (BablConversion *c,
-                         float        min_val,
-                         float        max_val,
+                         double        min_val,
+                         double        max_val,
                          unsigned char min,
                          unsigned char max,
                          char         *src,
@@ -145,8 +145,8 @@ convert_float_u8_scaled (BablConversion *c,
 
 static inline void
 convert_u8_float_scaled (BablConversion *c,
-                          float        min_val,
-                          float        max_val,
+                          double        min_val,
+                          double        max_val,
                           unsigned char min,
                           unsigned char max,
                           char         *src,

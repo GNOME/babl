@@ -112,8 +112,8 @@ MAKE_CONVERSIONS (u16, 0.0, 1.0, 0, UINT16_MAX)
 
 static inline void
 convert_float_u16_scaled (BablConversion *conversion,
-                          float    min_val,
-                          float    max_val,
+                          double    min_val,
+                          double    max_val,
                           uint16_t min,
                           uint16_t max,
                           char    *src,
@@ -142,8 +142,8 @@ convert_float_u16_scaled (BablConversion *conversion,
 
 static inline void
 convert_u16_float_scaled (BablConversion *conversion,
-                          float   min_val,
-                          float   max_val,
+                          double   min_val,
+                          double   max_val,
                           uint16_t min,
                           uint16_t max,
                           char    *src,
