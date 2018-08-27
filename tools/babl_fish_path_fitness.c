@@ -22,7 +22,7 @@ static int   qux = 0;
 
 #ifdef UTF8
 
-static char *utf8_bar[] = { " %s", "·%s", "▁%s", "▂%s", "▃%s", "▄%s", "▅%s", "▆%s", "▇%s", "█%s" };
+static char *utf8_bar[] = { " %s%s", "·%s%s", "▁%s%s", "▂%s%s", "▃%s%s", "▄%s%s", "▅%s%s", "▆%s%s", "▇%s%s", "█%s%s" };
 #define      DIRECT " "
 #define      SELF   " "
 #define      EMPTY  " "
@@ -56,7 +56,7 @@ static char *utf8_bar[]={"·", "█", "▇", "▆", "▅", "▄", "▃", "▂", 
 static char *utf8_bar[]={" ","1","2","3","4","5","6","7","8"};
 */
 
-#define NUM_TEST_PIXELS  (1024*256)
+#define NUM_TEST_PIXELS  (1024*16)
 static float test_pixels_float[NUM_TEST_PIXELS*4];
 static char  test_pixels_in[NUM_TEST_PIXELS * 6 * 8];
 static char  test_pixels_out[NUM_TEST_PIXELS * 6 * 8];
