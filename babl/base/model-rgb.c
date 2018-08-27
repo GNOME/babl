@@ -327,10 +327,16 @@ non_premultiplied_to_premultiplied (Babl  *conversion,
 
       if (alpha < BABL_ALPHA_FLOOR)
       {
+        int non_zero_components = 0;
         if (alpha >= 0.0)
           alpha = BABL_ALPHA_FLOOR;
         else if (alpha >= -BABL_ALPHA_FLOOR)
           alpha = -BABL_ALPHA_FLOOR;
+        for (band = 0 ; band< src_bands-1; band++)
+          if (*(double *) src[band] != 0.0)
+            non_zero_components++;
+        if (non_zero_components == 0)
+          alpha = 0.0;
       }
 
       for (band = 0; band < src_bands - 1; band++)
@@ -400,6 +406,10 @@ rgba2rgba_nonlinear_premultiplied (Babl *conversion,
            alpha = BABL_ALPHA_FLOOR;
          else if (alpha >= -BABL_ALPHA_FLOOR)
            alpha = -BABL_ALPHA_FLOOR;
+        if (((double *) src)[0] == 0.0 &&
+            ((double *) src)[1] == 0.0 &&
+            ((double *) src)[2] == 0.0)
+           alpha = 0.0;
       }
 
       ((double *) dst)[0] = babl_trc_from_linear (trc[0], ((double *) src)[0]) * alpha;
@@ -575,6 +585,10 @@ rgba2rgba_perceptual_premultiplied (Babl *conversion,
           alpha = BABL_ALPHA_FLOOR;
         else if (alpha >= -BABL_ALPHA_FLOOR)
            alpha = -BABL_ALPHA_FLOOR;
+        if (((double *) src)[0] == 0.0 &&
+            ((double *) src)[1] == 0.0 &&
+            ((double *) src)[2] == 0.0)
+           alpha = 0.0;
       }
 
       ((double *) dst)[0] = babl_trc_from_linear (trc, ((double *) src)[0]) * alpha;

@@ -477,6 +477,8 @@ rgba_to_gray_alpha_premultiplied (Babl   *conversion,
           alpha = BABL_ALPHA_FLOOR;
          else if (alpha >= -BABL_ALPHA_FLOOR)
            alpha = -BABL_ALPHA_FLOOR;
+        if (red == 0.0 && green == 0.0 && blue == 0.0)
+           alpha = 0.0;
       }
 
       luminance = red * RGB_LUMINANCE_RED +
@@ -509,10 +511,20 @@ non_premultiplied_to_premultiplied (Babl  *conversion,
       double alpha = *(double *) src[src_bands-1];
       if (alpha < BABL_ALPHA_FLOOR)
       {
+        int non_zero_components = 0;
         if (alpha >= 0.0f)
           alpha = BABL_ALPHA_FLOOR;
         else if (alpha >= -BABL_ALPHA_FLOOR)
           alpha = -BABL_ALPHA_FLOOR;
+
+        for (band = 0; band < src_bands - 1; band++)
+        {
+          if (*(double *) src[band] != 0.0)
+            non_zero_components++;
+        }
+        if (non_zero_components)
+          alpha = 0.0;
+
       }
 
       for (band = 0; band < src_bands - 1; band++)
@@ -584,6 +596,8 @@ rgba2gray_nonlinear_premultiplied (Babl *conversion,
           alpha = BABL_ALPHA_FLOOR;
         else if (alpha >= -BABL_ALPHA_FLOOR)
           alpha = -BABL_ALPHA_FLOOR;
+        if (red == 0.0 && green == 0.0 && blue == 0.0)
+          alpha = 0.0;
       }
 
       luminance = red * RGB_LUMINANCE_RED +

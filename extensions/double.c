@@ -48,6 +48,10 @@ conv_rgbaD_linear_rgbAD_gamma (const Babl *conversion,unsigned char *src,
            alpha = BABL_ALPHA_FLOOR;
          else if (alpha >= -BABL_ALPHA_FLOOR)
            alpha = -BABL_ALPHA_FLOOR;
+         if (fsrc[0] == 0.0f &&
+             fsrc[1] == 0.0f &&
+             fsrc[2] == 0.0f)
+           alpha = 0.0f;
        }
        *fdst++ = babl_trc_from_linear (trc[0], *fsrc++) * alpha;
        *fdst++ = babl_trc_from_linear (trc[1], *fsrc++) * alpha;

@@ -60,6 +60,11 @@ conv_rgbaF_linear_rgbAF_linear (const Babl *conversion,const float *src, float *
               ((float *)s)[3] = BABL_ALPHA_FLOOR;
             else
               ((float *)s)[3] = -BABL_ALPHA_FLOOR;
+
+            if (((float *)s)[0] == 0.0f &&
+                ((float *)s)[1] == 0.0f &&
+                ((float *)s)[2] == 0.0f)
+              ((float *)s)[3] = 0.0f;
           }
           if (alpha1 < BABL_ALPHA_FLOOR)
           {
@@ -67,6 +72,10 @@ conv_rgbaF_linear_rgbAF_linear (const Babl *conversion,const float *src, float *
               ((float *)s)[7] = BABL_ALPHA_FLOOR;
             else
               ((float *)s)[7] = -BABL_ALPHA_FLOOR;
+            if (((float *)s)[4] == 0.0f &&
+                ((float *)s)[5] == 0.0f &&
+                ((float *)s)[6] == 0.0f)
+              ((float *)s)[7] = 0.0f;
           }
          {
           __v4sf rbaa0, rbaa1;
@@ -109,6 +118,10 @@ conv_rgbaF_linear_rgbAF_linear (const Babl *conversion,const float *src, float *
         a = BABL_ALPHA_FLOOR;
       else if (a >= -BABL_ALPHA_FLOOR)
         a = -BABL_ALPHA_FLOOR;
+      if (src[0] == 0.0f &&
+          src[1] == 0.0f &&
+          src[2] == 0.0f)
+        a = 0.0f;
     }
     dst[0] = src[0] * a;
     dst[1] = src[1] * a;
