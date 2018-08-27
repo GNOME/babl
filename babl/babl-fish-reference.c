@@ -401,6 +401,76 @@ static int compatible_components (const BablFormat *a,
 }
 
 static void
+ncomponent_convert_to_float (BablFormat       *source_fmt,
+                             char             *source_buf,
+                             char             *source_float_buf,
+                             int               n)
+{
+  BablImage *src_img;
+  BablImage *dst_img;
+
+  src_img = (BablImage *) babl_image_new (
+    babl_component_from_id (BABL_GRAY_LINEAR), NULL, 1, 0, NULL);
+  dst_img = (BablImage *) babl_image_new (
+    babl_component_from_id (BABL_GRAY_LINEAR), NULL, 1, 0, NULL);
+
+  dst_img->type[0]  = (BablType *) babl_type_from_id (BABL_FLOAT);
+  dst_img->pitch[0] = (dst_img->type[0]->bits / 8);
+  dst_img->stride[0] = 0;
+
+  src_img->data[0] = source_buf;
+  src_img->type[0] = source_fmt->type[0];
+  src_img->pitch[0] = source_fmt->type[0]->bits / 8;
+  src_img->stride[0] = 0;
+
+  dst_img->data[0] = source_float_buf;
+
+  babl_conversion_process (
+    assert_conversion_find (src_img->type[0], dst_img->type[0]),
+    (void*)src_img, (void*)dst_img,
+    n * source_fmt->components);
+  babl_free (src_img);
+  babl_free (dst_img);
+}
+
+static void
+ncomponent_convert_from_float (BablFormat *destination_fmt,
+                               char       *destination_float_buf,
+                               char       *destination_buf,
+                               int         n)
+{
+  BablImage *src_img;
+  BablImage *dst_img;
+
+  src_img = (BablImage *) babl_image_new (
+    babl_component_from_id (BABL_GRAY_LINEAR), NULL, 1, 0, NULL);
+  dst_img = (BablImage *) babl_image_new (
+    babl_component_from_id (BABL_GRAY_LINEAR), NULL, 1, 0, NULL);
+
+  src_img->type[0]   = (BablType *) babl_type_from_id (BABL_FLOAT);
+  src_img->pitch[0]  = (src_img->type[0]->bits / 8);
+  src_img->stride[0] = 0;
+
+  dst_img->data[0]  = destination_buf;
+  dst_img->type[0]  = (BablType *) babl_type_from_id (BABL_FLOAT);
+  dst_img->pitch[0] = destination_fmt->type[0]->bits/8;
+  dst_img->stride[0] = 0;
+
+  dst_img->type[0] = destination_fmt->type[0];
+  src_img->data[0] = destination_float_buf;
+
+  babl_conversion_process (
+    assert_conversion_find (src_img->type[0], dst_img->type[0]),
+    (void*)src_img, (void*)dst_img,
+    n * destination_fmt->components);
+
+  dst_img->data[0] += dst_img->type[0]->bits / 8;
+  babl_free (src_img);
+  babl_free (dst_img);
+}
+
+
+static void
 process_same_model (const Babl  *babl,
                     const char *source,
                     char       *destination,
@@ -426,19 +496,37 @@ process_same_model (const Babl  *babl,
   if (compatible_components ((void*)babl->fish.source,
                              (void*)babl->fish.destination))
     {
-      ncomponent_convert_to_double (
-        (BablFormat *) BABL (babl->fish.source),
-        (char *) source,
-        double_buf,
-        n
-      );
+      const void *type_float = babl_type_from_id (BABL_FLOAT);
 
-      ncomponent_convert_from_double (
-        (BablFormat *) BABL (babl->fish.destination),
-        double_buf,
-        (char *) destination,
-        n
-      );
+      if ((babl->fish.source->format.type[0]->bits < 32 ||
+           babl->fish.source->format.type[0] == type_float) &&
+          (babl->fish.destination->format.type[0]->bits < 32 ||
+           babl->fish.destination->format.type[0] == type_float))
+      {
+        ncomponent_convert_to_float (
+          (BablFormat *) BABL (babl->fish.source),
+          (char *) source,
+          double_buf,
+          n);
+        ncomponent_convert_from_float (
+          (BablFormat *) BABL (babl->fish.destination),
+          double_buf,
+          (char *) destination,
+          n);
+      }
+      else
+      {
+        ncomponent_convert_to_double (
+          (BablFormat *) BABL (babl->fish.source),
+          (char *) source,
+          double_buf,
+          n);
+        ncomponent_convert_from_double (
+          (BablFormat *) BABL (babl->fish.destination),
+          double_buf,
+          (char *) destination,
+          n);
+      }
     }
   else
     {
