@@ -388,6 +388,18 @@ process_to_n_component (const Babl  *babl,
   return 0;
 }
 
+static int compatible_components (const BablFormat *a,
+                                  const BablFormat *b)
+{
+  int i;
+  if (a->components != b->components)
+    return 0;
+  for (i = 0; i < a->components; i++)
+   if (a->component[i] != b->component[i])
+     return 0;
+  return 1;
+}
+
 static void
 process_same_model (const Babl  *babl,
                     const char *source,
@@ -396,16 +408,23 @@ process_same_model (const Babl  *babl,
 {
   void *double_buf;
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
+  if (BABL (babl->fish.source) == BABL (babl->fish.destination))
+  {
+    if (source == destination)
+    {
+      memcpy (destination, source, n * babl->fish.source->format.bytes_per_pixel);
+    }
+    return;
+  }
+
 
   double_buf = babl_malloc (sizeof (double) * n *
                             MAX (BABL (babl->fish.source)->format.model->components,
                                  BABL (babl->fish.source)->format.components));
 #undef MAX
 
-  if ((BABL (babl->fish.source)->format.components ==
-       BABL (babl->fish.destination)->format.components)
-      && (BABL (babl->fish.source)->format.model->components !=
-          BABL (babl->fish.source)->format.components))
+  if (compatible_components ((void*)babl->fish.source,
+                             (void*)babl->fish.destination))
     {
       ncomponent_convert_to_double (
         (BablFormat *) BABL (babl->fish.source),
