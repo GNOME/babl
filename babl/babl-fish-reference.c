@@ -469,6 +469,135 @@ ncomponent_convert_from_float (BablFormat *destination_fmt,
   babl_free (dst_img);
 }
 
+static void
+convert_to_float (BablFormat *source_fmt,
+                  const char *source_buf,
+                  char       *float_buf,
+                  int         n)
+{
+  int        i;
+
+  BablImage *src_img;
+  BablImage *dst_img;
+
+  src_img = (BablImage *) babl_image_new (
+    babl_component_from_id (BABL_GRAY_LINEAR), NULL, 1, 0, NULL);
+  dst_img = (BablImage *) babl_image_new (
+    babl_component_from_id (BABL_GRAY_LINEAR), NULL, 1, 0, NULL);
+
+  dst_img->type[0]  = (BablType *) babl_type_from_id (BABL_FLOAT);
+  dst_img->pitch[0] =
+    (dst_img->type[0]->bits / 8) * source_fmt->model->components;
+  dst_img->stride[0] = 0;
+
+  src_img->type[0]   = (BablType *) babl_type_from_id (BABL_FLOAT);
+  src_img->pitch[0]  = source_fmt->bytes_per_pixel;
+  src_img->stride[0] = 0;
+
+  {
+  /* i is dest position */
+  for (i = 0; i < source_fmt->model->components; i++)
+    {
+      int j;
+      int found = 0;
+
+      dst_img->data[0] =
+        float_buf + (dst_img->type[0]->bits / 8) * i;
+
+      src_img->data[0] = (char *)source_buf;
+
+      /* j is source position */
+      for (j = 0; j < source_fmt->components; j++)
+        {
+          src_img->type[0] = source_fmt->type[j];
+
+          if (source_fmt->component[j] ==
+              source_fmt->model->component[i])
+            {
+              babl_conversion_process (assert_conversion_find (src_img->type[0], dst_img->type[0]),
+                                       (void*)src_img, (void*)dst_img, n);
+              found = 1;
+              break;
+            }
+
+          src_img->data[0] += src_img->type[0]->bits / 8;
+        }
+
+      if (!found)
+        {
+          char *dst_ptr = dst_img->data[0];
+          float value;
+
+          value = source_fmt->model->component[i]->instance.id == BABL_ALPHA ? 1.0 : 0.0;
+
+          for (j = 0; j < n; j++)
+            {
+              float *dst_component = (float *) dst_ptr;
+
+              *dst_component = value;
+              dst_ptr += dst_img->pitch[0];
+            }
+        }
+    }
+  }
+  babl_free (src_img);
+  babl_free (dst_img);
+}
+
+
+static void
+convert_from_float (BablFormat *destination_fmt,
+                     char      *destination_float_buf,
+                     char      *destination_buf,
+                     int        n)
+{
+  int        i;
+
+  BablImage *src_img;
+  BablImage *dst_img;
+
+  src_img = (BablImage *) babl_image_new (
+    babl_component_from_id (BABL_GRAY_LINEAR), NULL, 1, 0, NULL);
+  dst_img = (BablImage *) babl_image_new (
+    babl_component_from_id (BABL_GRAY_LINEAR), NULL, 1, 0, NULL);
+
+  src_img->type[0]   = (BablType *) babl_type_from_id (BABL_FLOAT);
+  src_img->pitch[0]  = (src_img->type[0]->bits / 8) * destination_fmt->model->components;
+  src_img->stride[0] = 0;
+
+  dst_img->data[0]  = destination_buf;
+  dst_img->type[0]  = (BablType *) babl_type_from_id (BABL_FLOAT);
+  dst_img->pitch[0] = destination_fmt->bytes_per_pixel;
+  dst_img->stride[0] = 0;
+
+  for (i = 0; i < destination_fmt->components; i++)
+    {
+      int j;
+
+      dst_img->type[0] = destination_fmt->type[i];
+
+      for (j = 0; j < destination_fmt->model->components; j++)
+        {
+          if (destination_fmt->component[i] ==
+              destination_fmt->model->component[j])
+            {
+              src_img->data[0] =
+                destination_float_buf + (src_img->type[0]->bits / 8) * j;
+
+              babl_conversion_process (assert_conversion_find (src_img->type[0],
+                                       dst_img->type[0]),
+                                       (void*)src_img, (void*)dst_img, n);
+              break;
+            }
+        }
+
+      dst_img->data[0] += dst_img->type[0]->bits / 8;
+    }
+  babl_free (src_img);
+  babl_free (dst_img);
+}
+
+
 
 static void
 process_same_model (const Babl  *babl,
@@ -477,6 +606,7 @@ process_same_model (const Babl  *babl,
                     long        n)
 {
   void *double_buf;
+  const void *type_float = babl_type_from_id (BABL_FLOAT);
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
   if (BABL (babl->fish.source) == BABL (babl->fish.destination))
   {
@@ -496,7 +626,6 @@ process_same_model (const Babl  *babl,
   if (compatible_components ((void*)babl->fish.source,
                              (void*)babl->fish.destination))
     {
-      const void *type_float = babl_type_from_id (BABL_FLOAT);
 
       if ((babl->fish.source->format.type[0]->bits < 32 ||
            babl->fish.source->format.type[0] == type_float) &&
@@ -530,19 +659,38 @@ process_same_model (const Babl  *babl,
     }
   else
     {
-      convert_to_double (
-        (BablFormat *) BABL (babl->fish.source),
-        (char *) source,
-        double_buf,
-        n
-      );
 
-      convert_from_double (
-        (BablFormat *) BABL (babl->fish.destination),
-        double_buf,
-        (char *) destination,
-        n
-      );
+      if ((babl->fish.source->format.type[0]->bits < 32 ||
+           babl->fish.source->format.type[0] == type_float) &&
+          (babl->fish.destination->format.type[0]->bits < 32 ||
+           babl->fish.destination->format.type[0] == type_float))
+      {
+        convert_to_float (
+          (BablFormat *) BABL (babl->fish.source),
+          (char *) source,
+          double_buf,
+          n);
+
+        convert_from_float (
+          (BablFormat *) BABL (babl->fish.destination),
+          double_buf,
+          (char *) destination,
+          n);
+      }
+      else
+      {
+        convert_to_double (
+          (BablFormat *) BABL (babl->fish.source),
+          (char *) source,
+          double_buf,
+          n);
+
+        convert_from_double (
+          (BablFormat *) BABL (babl->fish.destination),
+          double_buf,
+          (char *) destination,
+          n);
+      }
     }
   babl_free (double_buf);
 }
