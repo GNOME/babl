@@ -31,6 +31,33 @@ static inline void babl_matrix_mul_matrix (const double *matA_,
   }
 }
 
+
+static inline void babl_matrix_mul_matrixf (const float *matA_,
+                                            const float *matB_,
+                                            float *out)
+{
+  int i, j;
+  float matA[9];
+  float matB[9];
+  float t1, t2, t3;
+  memcpy (matA, matA_, sizeof (matA));
+  memcpy (matB, matB_, sizeof (matB));
+
+  for (i = 0; i < 3; i++)
+  {
+    t1 = m(matA, i, 0);
+    t2 = m(matA, i, 1);
+    t3 = m(matA, i, 2);
+
+    for (j = 0; j < 3; j ++)
+    {
+      m(out,i,j) = t1 * m(matB, 0, j);
+      m(out,i,j) += t2 * m(matB, 1, j);
+      m(out,i,j) += t3 * m(matB, 2, j);
+    }
+  }
+}
+
 static inline void babl_matrix_to_float (const double *in, float *out)
 {
   int i;
