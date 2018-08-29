@@ -758,7 +758,7 @@ babl_fish_reference_process (const Babl *babl,
     else
     {
       source_float_buf_alloc = babl_malloc (sizeof (float) * n *
-                                  BABL (babl->fish.source)->format.model->components);
+                                  (BABL (babl->fish.source)->format.model->components));
 
       source_float_buf = source_float_buf_alloc;
       source_image = babl_image_from_linear (
@@ -773,7 +773,7 @@ babl_fish_reference_process (const Babl *babl,
       );
     }
 
-    if (babl_model_is ((void*)babl->fish.source->format.model, "RGBA"))
+    if (babl_model_is ((void*)babl->fish.source->format.model, "RGBA") && 0)
     {
       rgba_float_buf = source_float_buf;
       rgba_image = babl_image_from_linear (

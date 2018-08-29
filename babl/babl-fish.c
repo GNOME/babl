@@ -119,6 +119,7 @@ babl_conversion_find (const void *source,
                       const void *destination)
 {
   void *data = (void*)destination;
+
   babl_list_each (BABL (source)->type.from_list, match_conversion, &data);
   if (data != (void*)destination) /* didn't change */
     return data;
