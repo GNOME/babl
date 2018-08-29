@@ -37,6 +37,8 @@ babl_base_model_rgb (void)
   models ();
   conversions ();
   formats ();
+
+
 }
 
 static void
@@ -274,6 +276,35 @@ g3_nonlinear_from_linear (Babl  *conversion,
 }
 
 static void
+g3_nonlinear_from_linear_float (Babl  *conversion,
+                                int    src_bands,
+                                char **src,
+                                int   *src_pitch,
+                                int    dst_bands,
+                                char **dst,
+                                int   *dst_pitch,
+                                long   samples)
+{
+  const Babl *space = babl_conversion_get_destination_space (conversion);
+  const Babl **trc  = (void*)space->space.trc;
+
+  long n = samples;
+
+  BABL_PLANAR_SANITY
+  while (n--)
+    {
+      int band;
+      for (band = 0; band < 3; band++)
+        *(float *) dst[band] = babl_trc_from_linear (trc[band], (*(float *) src[band]));
+      for (; band < dst_bands; band++)
+        *(float *) dst[band] = *(float *) src[band];
+
+      BABL_PLANAR_STEP
+    }
+}
+
+
+static void
 g3_nonlinear_to_linear (Babl  *conversion,
                         int    src_bands,
                         char **src,
@@ -301,6 +332,40 @@ g3_nonlinear_to_linear (Babl  *conversion,
             *(double *) dst[band] = *(double *) src[band];
           else
             *(double *) dst[band] = 1.0;
+        }
+      BABL_PLANAR_STEP
+    }
+}
+
+
+static void
+g3_nonlinear_to_linear_float (Babl  *conversion,
+                              int    src_bands,
+                              char **src,
+                              int   *src_pitch,
+                              int    dst_bands,
+                              char **dst,
+                              int   *dst_pitch,
+                              long   samples)
+{
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  const Babl **trc  = (void*)space->space.trc;
+  long n = samples;
+
+  BABL_PLANAR_SANITY
+  while (n--)
+    {
+      int band;
+      for (band = 0; band < 3; band++)
+        {
+          *(float *) dst[band] = babl_trc_to_linear (trc[band], (*(float *) src[band]));
+        }
+      for (; band < dst_bands; band++)
+        {
+          if (band < src_bands)
+            *(float *) dst[band] = *(float *) src[band];
+          else
+            *(float *) dst[band] = 1.0f;
         }
       BABL_PLANAR_STEP
     }
@@ -423,6 +488,42 @@ rgba2rgba_nonlinear_premultiplied (Babl *conversion,
 
 
 static void
+rgba2rgba_nonlinear_premultiplied_float (Babl *conversion,
+                                         char *src,
+                                         char *dst,
+                                         long  samples)
+{
+  const Babl *space = babl_conversion_get_destination_space (conversion);
+  const Babl **trc  = (void*)space->space.trc;
+  long n = samples;
+
+  while (n--)
+    {
+      float alpha = ((float *) src)[3];
+      if (alpha <= BABL_ALPHA_FLOOR)
+      {
+        if (alpha >= 0.0f)
+           alpha = BABL_ALPHA_FLOOR;
+         else if (alpha >= -BABL_ALPHA_FLOOR)
+           alpha = -BABL_ALPHA_FLOOR;
+        if (((float *) src)[0] == 0.0 &&
+            ((float *) src)[1] == 0.0 &&
+            ((float *) src)[2] == 0.0)
+           alpha = 0.0;
+      }
+
+      ((float *) dst)[0] = babl_trc_from_linear (trc[0], ((float *) src)[0]) * alpha;
+      ((float *) dst)[1] = babl_trc_from_linear (trc[1], ((float *) src)[1]) * alpha;
+      ((float *) dst)[2] = babl_trc_from_linear (trc[2], ((float *) src)[2]) * alpha;
+      ((float *) dst)[3] = alpha;
+      src  += 4 * sizeof (float);
+      dst  += 4 * sizeof (float);
+    }
+}
+
+
+
+static void
 rgba_nonlinear_premultiplied2rgba (Babl *conversion,
                                    char           *src,
                                    char           *dst,
@@ -456,6 +557,43 @@ rgba_nonlinear_premultiplied2rgba (Babl *conversion,
       dst += 4 * sizeof (double);
     }
 }
+
+
+static void
+rgba_nonlinear_premultiplied2rgba_float (Babl *conversion,
+                                         char           *src,
+                                         char           *dst,
+                                         long            samples)
+{
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  const Babl **trc  = (void*)space->space.trc;
+  long n = samples;
+
+  while (n--)
+    {
+      float alpha, reciprocal;
+      alpha = ((float *) src)[3];
+      if (alpha == 0.0)
+      {
+        reciprocal= 0.0f;
+      }
+      else
+      {
+        reciprocal= 1.0 / alpha;
+        if (alpha == BABL_ALPHA_FLOOR || alpha == -BABL_ALPHA_FLOOR)
+          alpha = 0;
+      }
+
+      ((float *) dst)[0] = babl_trc_to_linear (trc[0], ((float *) src)[0] * reciprocal);
+      ((float *) dst)[1] = babl_trc_to_linear (trc[1], ((float *) src)[1] * reciprocal);
+      ((float *) dst)[2] = babl_trc_to_linear (trc[2], ((float *) src)[2] * reciprocal);
+      ((float *) dst)[3] = alpha;
+
+      src += 4 * sizeof (float);
+      dst += 4 * sizeof (float);
+    }
+}
+
 
 
 static void
@@ -733,6 +871,7 @@ conversions (void)
     NULL
   );
 
+
   babl_conversion_new (
     babl_model_from_id (BABL_RGBA),
     babl_model_from_id (BABL_RGBA_NONLINEAR),
@@ -965,6 +1104,14 @@ formats (void)
     NULL);
 
   babl_format_new (
+    babl_model_from_id (BABL_RGB_NONLINEAR),
+    babl_type ("float"),
+    babl_component_from_id (BABL_RED_NONLINEAR),
+    babl_component_from_id (BABL_GREEN_NONLINEAR),
+    babl_component_from_id (BABL_BLUE_NONLINEAR),
+    NULL);
+
+  babl_format_new (
     babl_model_from_id (BABL_RGBA_NONLINEAR),
     babl_type ("u15"),
     babl_component_from_id (BABL_RED_NONLINEAR),
@@ -1035,6 +1182,14 @@ formats (void)
     babl_component_from_id (BABL_ALPHA),
     NULL);
 
+  babl_format_new (
+    babl_model_from_id (BABL_RGBA_NONLINEAR_PREMULTIPLIED),
+    babl_type_from_id (BABL_FLOAT),
+    babl_component_from_id (BABL_RED_NONLINEAR_MUL_ALPHA),
+    babl_component_from_id (BABL_GREEN_NONLINEAR_MUL_ALPHA),
+    babl_component_from_id (BABL_BLUE_NONLINEAR_MUL_ALPHA),
+    babl_component_from_id (BABL_ALPHA),
+    NULL);
 
   babl_format_new (
     babl_model_from_id (BABL_RGB_PERCEPTUAL),
@@ -1072,5 +1227,34 @@ formats (void)
 
   );
 #endif
+
+  babl_conversion_new (
+    babl_format ("R'G'B' float"),
+    babl_format ("RGBA float"),
+    "planar", g3_nonlinear_to_linear_float,
+    NULL
+  );
+
+
+  babl_conversion_new (
+    babl_format ("RGBA float"),
+    babl_format ("R'G'B' float"),
+    "planar", g3_nonlinear_from_linear_float,
+    NULL
+  );
+
+
+  babl_conversion_new (
+    babl_format ("RGBA float"),
+    babl_format ("R'aG'aB'aA float"),
+    "linear", rgba2rgba_nonlinear_premultiplied_float,
+    NULL);
+  babl_conversion_new (
+    babl_format ("R'aG'aB'aA float"),
+    babl_format ("RGBA float"),
+    "linear", rgba_nonlinear_premultiplied2rgba_float,
+    NULL);
+
+
 }
 
