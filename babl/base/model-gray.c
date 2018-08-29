@@ -1549,7 +1549,7 @@ static void init_single_precision (void)
 
 
   babl_conversion_new (
-    babl_format ("YA float"),
+    babl_format ("Y float"),
     babl_format ("RGBA float"),
     "linear", gray_to_rgba_float,
     NULL
