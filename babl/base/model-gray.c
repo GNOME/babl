@@ -990,7 +990,7 @@ rgb_to_gray_nonlinear_float (Babl  *conversion,
       if (src_bands > 3)
         alpha = *(float *) src[3];
       else
-        alpha = 1.0;
+        alpha = 1.0f;
 
       luminance = red   * RGB_LUMINANCE_RED +
                   green * RGB_LUMINANCE_GREEN +
@@ -1032,7 +1032,7 @@ gray_nonlinear_to_rgb_float (Babl *conversion,
       if (src_bands > 1)
         alpha = *(float *) src[1];
       else
-        alpha = 1.0;
+        alpha = 1.0f;
 
       *(float *) dst[0] = red;
       *(float *) dst[1] = green;
@@ -1073,7 +1073,7 @@ rgb_to_gray_perceptual_float (Babl  *conversion,
       if (src_bands > 3)
         alpha = *(float *) src[3];
       else
-        alpha = 1.0;
+        alpha = 1.0f;
 
       luminance = red   * RGB_LUMINANCE_RED +
                   green * RGB_LUMINANCE_GREEN +
@@ -1113,7 +1113,7 @@ gray_perceptual_to_rgb_float (Babl *conversion,
       if (src_bands > 1)
         alpha = *(float *) src[1];
       else
-        alpha = 1.0;
+        alpha = 1.0f;
 
       *(float *) dst[0] = red;
       *(float *) dst[1] = green;
@@ -1202,12 +1202,12 @@ gray_alpha_premultiplied_to_rgba_float (Babl   *conversion,
       float alpha;
       alpha = *(float *) src[1];
       if (alpha == 0)
-        luminance = 0;
+        luminance = 0.0f;
       else
       {
         luminance = luminance / alpha;
         if (alpha == BABL_ALPHA_FLOOR || alpha == -BABL_ALPHA_FLOOR)
-          alpha = 0.0;
+          alpha = 0.0f;
       }
 
       *(float *) dst[0] = luminance;
@@ -1251,8 +1251,8 @@ rgba_to_gray_alpha_premultiplied_float (Babl   *conversion,
           alpha = BABL_ALPHA_FLOOR;
          else if (alpha >= -BABL_ALPHA_FLOOR)
            alpha = -BABL_ALPHA_FLOOR;
-        if (red == 0.0 && green == 0.0 && blue == 0.0)
-           alpha = 0.0;
+        if (red == 0.0f && green == 0.0f && blue == 0.0f)
+           alpha = 0.0f;
       }
 
       luminance = red * RGB_LUMINANCE_RED +
@@ -1293,11 +1293,11 @@ non_premultiplied_to_premultiplied_float (Babl  *conversion,
 
         for (band = 0; band < src_bands - 1; band++)
         {
-          if (*(float *) src[band] != 0.0)
+          if (*(float *) src[band] != 0.0f)
             non_zero_components++;
         }
         if (non_zero_components)
-          alpha = 0.0;
+          alpha = 0.0f;
 
       }
 
@@ -1331,13 +1331,13 @@ premultiplied_to_non_premultiplied_float (Babl  *conversion,
 
       for (band = 0; band < src_bands - 1; band++)
         {
-          if (alpha == 0.0)
-            *(float *) dst[band] = 0;
+          if (alpha == 0.0f)
+            *(float *) dst[band] = 0.0f;
           else
             *(float *) dst[band] = *(float *) src[band] / alpha;
         }
       if (alpha == BABL_ALPHA_FLOOR || alpha == -BABL_ALPHA_FLOOR)
-        alpha = 0.0;
+        alpha = 0.0f;
       *(float *) dst[dst_bands - 1] = alpha;
 
       BABL_PLANAR_STEP
@@ -1370,8 +1370,8 @@ rgba2gray_nonlinear_premultiplied_float (Babl *conversion,
           alpha = BABL_ALPHA_FLOOR;
         else if (alpha >= -BABL_ALPHA_FLOOR)
           alpha = -BABL_ALPHA_FLOOR;
-        if (red == 0.0 && green == 0.0 && blue == 0.0)
-          alpha = 0.0;
+        if (red == 0.0f && green == 0.0f && blue == 0.0f)
+          alpha = 0.0f;
       }
 
       luminance = red * RGB_LUMINANCE_RED +
@@ -1402,15 +1402,15 @@ gray_nonlinear_premultiplied2rgba_float (Babl *conversion,
       float luminance;
       float alpha;
       alpha = ((float *) src)[1];
-      if (alpha == 0.0)
-        luma = 0.0;
+      if (alpha == 0.0f)
+        luma = 0.0f;
       else
         luma = luma / alpha;
 
       luminance = babl_trc_to_linear (trc, luma);
 
       if (alpha == BABL_ALPHA_FLOOR || alpha == -BABL_ALPHA_FLOOR)
-        alpha = 0.0;
+        alpha = 0.0f;
 
       ((float *) dst)[0] = luminance;
       ((float *) dst)[1] = luminance;
