@@ -879,6 +879,52 @@ Labf_to_rgbf (const Babl *conversion,float *src,
     }
 }
 
+
+static void
+Labf_to_rgbaf (const Babl *conversion,float *src,
+               float *dst,
+               long   samples)
+{
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  float m_0_0 = space->space.XYZtoRGBf[0] * D50_WHITE_REF_X;
+  float m_0_1 = space->space.XYZtoRGBf[1] * D50_WHITE_REF_Y;
+  float m_0_2 = space->space.XYZtoRGBf[2] * D50_WHITE_REF_Z;
+  float m_1_0 = space->space.XYZtoRGBf[3] * D50_WHITE_REF_X;
+  float m_1_1 = space->space.XYZtoRGBf[4] * D50_WHITE_REF_Y;
+  float m_1_2 = space->space.XYZtoRGBf[5] * D50_WHITE_REF_Z;
+  float m_2_0 = space->space.XYZtoRGBf[6] * D50_WHITE_REF_X;
+  float m_2_1 = space->space.XYZtoRGBf[7] * D50_WHITE_REF_Y;
+  float m_2_2 = space->space.XYZtoRGBf[8] * D50_WHITE_REF_Z;
+  long n = samples;
+
+  while (n--)
+    {
+      float L = src[0];
+      float A = src[1];
+      float B = src[2];
+
+      float fy = (L + 16.0f) / 116.0f;
+      float fx = fy + A / 500.0f;
+      float fz = fy - B / 200.0f;
+
+      float yr = L > LAB_KAPPA * LAB_EPSILON ? cubef (fy) : L / LAB_KAPPA;
+      float xr = cubef (fx) > LAB_EPSILON ? cubef (fx) : (fx * 116.0f - 16.0f) / LAB_KAPPA;
+      float zr = cubef (fz) > LAB_EPSILON ? cubef (fz) : (fz * 116.0f - 16.0f) / LAB_KAPPA;
+
+      float r = m_0_0 * xr + m_0_1 * yr + m_0_2 * zr;
+      float g = m_1_0 * xr + m_1_1 * yr + m_1_2 * zr;
+      float b = m_2_0 * xr + m_2_1 * yr + m_2_2 * zr;
+
+      dst[0] = r;
+      dst[1] = g;
+      dst[2] = b;
+      dst[3] = 1.0f;
+
+      src += 3;
+      dst += 4;
+    }
+}
+
 static void
 Labaf_to_rgbaf (const Babl *conversion,float *src,
                 float *dst,
@@ -1414,6 +1460,12 @@ conversions (void)
     babl_format ("CIE Lab float"),
     babl_format ("RGB float"),
     "linear", Labf_to_rgbf,
+    NULL
+  );
+  babl_conversion_new (
+    babl_format ("CIE Lab float"),
+    babl_format ("RGBA float"),
+    "linear", Labf_to_rgbaf,
     NULL
   );
   babl_conversion_new (
