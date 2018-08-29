@@ -493,10 +493,19 @@ babl_conversion_error (BablConversion *conversion)
   babl_process (fish_rgba_to_source,
                 test, source, test_pixels);
 
-  ticks_start = babl_ticks ();
-  babl_process (babl_fish_simple (conversion),
-                source, destination, test_pixels);
-  ticks_end = babl_ticks ();
+  if (BABL(conversion)->class_type == BABL_CONVERSION_LINEAR)
+  {
+    ticks_start = babl_ticks ();
+    babl_process (babl_fish_simple (conversion),
+                  source, destination, test_pixels);
+    ticks_end = babl_ticks ();
+  }
+  else
+  {
+    /* we could still measure it, but for the paths we only really consider
+     * the linear ones anyways */
+    ticks_end = 1000;
+  }
 
   babl_process (fish_reference,
                 source, ref_destination, test_pixels);
