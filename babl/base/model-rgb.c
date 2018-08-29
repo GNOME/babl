@@ -29,6 +29,7 @@ static void models (void);
 static void components (void);
 static void conversions (void);
 static void formats (void);
+static void init_single_precision (void);
 
 void
 babl_base_model_rgb (void)
@@ -37,8 +38,7 @@ babl_base_model_rgb (void)
   models ();
   conversions ();
   formats ();
-
-
+  init_single_precision ();
 }
 
 static void
@@ -275,34 +275,6 @@ g3_nonlinear_from_linear (Babl  *conversion,
     }
 }
 
-static void
-g3_nonlinear_from_linear_float (Babl  *conversion,
-                                int    src_bands,
-                                char **src,
-                                int   *src_pitch,
-                                int    dst_bands,
-                                char **dst,
-                                int   *dst_pitch,
-                                long   samples)
-{
-  const Babl *space = babl_conversion_get_destination_space (conversion);
-  const Babl **trc  = (void*)space->space.trc;
-
-  long n = samples;
-
-  BABL_PLANAR_SANITY
-  while (n--)
-    {
-      int band;
-      for (band = 0; band < 3; band++)
-        *(float *) dst[band] = babl_trc_from_linear (trc[band], (*(float *) src[band]));
-      for (; band < dst_bands; band++)
-        *(float *) dst[band] = *(float *) src[band];
-
-      BABL_PLANAR_STEP
-    }
-}
-
 
 static void
 g3_nonlinear_to_linear (Babl  *conversion,
@@ -338,38 +310,6 @@ g3_nonlinear_to_linear (Babl  *conversion,
 }
 
 
-static void
-g3_nonlinear_to_linear_float (Babl  *conversion,
-                              int    src_bands,
-                              char **src,
-                              int   *src_pitch,
-                              int    dst_bands,
-                              char **dst,
-                              int   *dst_pitch,
-                              long   samples)
-{
-  const Babl *space = babl_conversion_get_source_space (conversion);
-  const Babl **trc  = (void*)space->space.trc;
-  long n = samples;
-
-  BABL_PLANAR_SANITY
-  while (n--)
-    {
-      int band;
-      for (band = 0; band < 3; band++)
-        {
-          *(float *) dst[band] = babl_trc_to_linear (trc[band], (*(float *) src[band]));
-        }
-      for (; band < dst_bands; band++)
-        {
-          if (band < src_bands)
-            *(float *) dst[band] = *(float *) src[band];
-          else
-            *(float *) dst[band] = 1.0f;
-        }
-      BABL_PLANAR_STEP
-    }
-}
 
 
 static void
@@ -414,85 +354,6 @@ non_premultiplied_to_premultiplied (Babl  *conversion,
     }
 }
 
-
-static void
-non_premultiplied_to_premultiplied_float (Babl  *conversion,
-                                          int    src_bands,
-                                          char **src,
-                                          int   *src_pitch,
-                                          int    dst_bands,
-                                          char **dst,
-                                          int   *dst_pitch,
-                                          long   samples)
-{
-  long n = samples;
-
-  BABL_PLANAR_SANITY
-  while (n--)
-    {
-      float alpha = *(float *) src[src_bands - 1];
-      int    band;
-
-      if (alpha < BABL_ALPHA_FLOOR)
-      {
-        int non_zero_components = 0;
-        if (alpha >= 0.0f)
-          alpha = BABL_ALPHA_FLOOR;
-        else if (alpha >= -BABL_ALPHA_FLOOR)
-          alpha = -BABL_ALPHA_FLOOR;
-        for (band = 0 ; band< src_bands-1; band++)
-          if (*(float *) src[band] != 0.0f)
-            non_zero_components++;
-        if (non_zero_components == 0)
-          alpha = 0.0f;
-      }
-
-      for (band = 0; band < src_bands - 1; band++)
-        {
-          *(float *) dst[band] = *(float *) src[band] * alpha;
-        }
-      *(float *) dst[dst_bands - 1] = alpha;
-
-      BABL_PLANAR_STEP
-    }
-}
-
-static void
-premultiplied_to_non_premultiplied_float (Babl  *conversion,
-                                          int    src_bands,
-                                          char **src,
-                                          int   *src_pitch,
-                                          int    dst_bands,
-                                          char **dst,
-                                          int   *dst_pitch,
-                                          long   samples)
-{
-  long n = samples;
-
-  BABL_PLANAR_SANITY
-  while (n--)
-    {
-      float alpha;
-      float recip_alpha;
-      int    band;
-
-      alpha = *(float *) src[src_bands - 1];
-      if (alpha == 0.0f)
-         recip_alpha = 0.0f;
-      else
-      {
-        recip_alpha  = 1.0f / alpha;
-        if (alpha == BABL_ALPHA_FLOOR)
-          alpha = 0.0f; // making 0 round-trip to zero, causing discontinuity
-      }
-
-      for (band = 0; band < src_bands - 1; band++)
-        *(float *) dst[band] = *(float *) src[band] * recip_alpha;
-      *(float *) dst[dst_bands - 1] = alpha;
-
-      BABL_PLANAR_STEP
-    }
-}
 
 
 
@@ -569,40 +430,6 @@ rgba2rgba_nonlinear_premultiplied (Babl *conversion,
 }
 
 
-static void
-rgba2rgba_nonlinear_premultiplied_float (Babl *conversion,
-                                         char *src,
-                                         char *dst,
-                                         long  samples)
-{
-  const Babl *space = babl_conversion_get_destination_space (conversion);
-  const Babl **trc  = (void*)space->space.trc;
-  long n = samples;
-
-  while (n--)
-    {
-      float alpha = ((float *) src)[3];
-      if (alpha <= BABL_ALPHA_FLOOR)
-      {
-        if (alpha >= 0.0f)
-           alpha = BABL_ALPHA_FLOOR;
-         else if (alpha >= -BABL_ALPHA_FLOOR)
-           alpha = -BABL_ALPHA_FLOOR;
-        if (((float *) src)[0] == 0.0 &&
-            ((float *) src)[1] == 0.0 &&
-            ((float *) src)[2] == 0.0)
-           alpha = 0.0;
-      }
-
-      ((float *) dst)[0] = babl_trc_from_linear (trc[0], ((float *) src)[0]) * alpha;
-      ((float *) dst)[1] = babl_trc_from_linear (trc[1], ((float *) src)[1]) * alpha;
-      ((float *) dst)[2] = babl_trc_from_linear (trc[2], ((float *) src)[2]) * alpha;
-      ((float *) dst)[3] = alpha;
-      src  += 4 * sizeof (float);
-      dst  += 4 * sizeof (float);
-    }
-}
-
 
 
 static void
@@ -640,41 +467,6 @@ rgba_nonlinear_premultiplied2rgba (Babl *conversion,
     }
 }
 
-
-static void
-rgba_nonlinear_premultiplied2rgba_float (Babl *conversion,
-                                         char           *src,
-                                         char           *dst,
-                                         long            samples)
-{
-  const Babl *space = babl_conversion_get_source_space (conversion);
-  const Babl **trc  = (void*)space->space.trc;
-  long n = samples;
-
-  while (n--)
-    {
-      float alpha, reciprocal;
-      alpha = ((float *) src)[3];
-      if (alpha == 0.0)
-      {
-        reciprocal= 0.0f;
-      }
-      else
-      {
-        reciprocal= 1.0 / alpha;
-        if (alpha == BABL_ALPHA_FLOOR || alpha == -BABL_ALPHA_FLOOR)
-          alpha = 0;
-      }
-
-      ((float *) dst)[0] = babl_trc_to_linear (trc[0], ((float *) src)[0] * reciprocal);
-      ((float *) dst)[1] = babl_trc_to_linear (trc[1], ((float *) src)[1] * reciprocal);
-      ((float *) dst)[2] = babl_trc_to_linear (trc[2], ((float *) src)[2] * reciprocal);
-      ((float *) dst)[3] = alpha;
-
-      src += 4 * sizeof (float);
-      dst += 4 * sizeof (float);
-    }
-}
 
 
 
@@ -895,25 +687,6 @@ rgba_perceptual2rgba (Babl *conversion,
 
       src += 4 * sizeof (double);
       dst += 4 * sizeof (double);
-    }
-}
-
-static void
-rgba2rgba_float (Babl *conversion,
-                 char *src,
-                 char *dst,
-                 long  samples)
-{
-  long n = samples;
-
-  while (n--)
-    {
-      ((float *) dst)[0] = ((float *) src)[0];
-      ((float *) dst)[1] = ((float *) src)[1];
-      ((float *) dst)[2] = ((float *) src)[2];
-      ((float *) dst)[3] = ((float *) src)[3];
-      src                += 4 * sizeof (float);
-      dst                += 4 * sizeof (float);
     }
 }
 
@@ -1317,14 +1090,6 @@ formats (void)
     babl_component_from_id (BABL_ALPHA),
     NULL);
 
-  babl_format_new (
-    babl_model_from_id (BABL_RGBA_PREMULTIPLIED),
-    babl_type_from_id (BABL_FLOAT),
-    babl_component_from_id (BABL_RED_MUL_ALPHA),
-    babl_component_from_id (BABL_GREEN_MUL_ALPHA),
-    babl_component_from_id (BABL_BLUE_MUL_ALPHA),
-    babl_component_from_id (BABL_ALPHA),
-    NULL);
 
 #ifdef XXXX
   babl_format_new (
@@ -1336,6 +1101,388 @@ formats (void)
 
   );
 #endif
+
+
+}
+
+
+static void
+g3_nonlinear_from_linear_float (Babl  *conversion,
+                                int    src_bands,
+                                char **src,
+                                int   *src_pitch,
+                                int    dst_bands,
+                                char **dst,
+                                int   *dst_pitch,
+                                long   samples)
+{
+  const Babl *space = babl_conversion_get_destination_space (conversion);
+  const Babl **trc  = (void*)space->space.trc;
+
+  long n = samples;
+
+  BABL_PLANAR_SANITY
+  while (n--)
+    {
+      int band;
+      for (band = 0; band < 3; band++)
+        *(float *) dst[band] = babl_trc_from_linear (trc[band], (*(float *) src[band]));
+      for (; band < dst_bands; band++)
+        *(float *) dst[band] = *(float *) src[band];
+
+      BABL_PLANAR_STEP
+    }
+}
+
+
+static void
+g3_nonlinear_to_linear_float (Babl  *conversion,
+                              int    src_bands,
+                              char **src,
+                              int   *src_pitch,
+                              int    dst_bands,
+                              char **dst,
+                              int   *dst_pitch,
+                              long   samples)
+{
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  const Babl **trc  = (void*)space->space.trc;
+  long n = samples;
+
+  BABL_PLANAR_SANITY
+  while (n--)
+    {
+      int band;
+      for (band = 0; band < 3; band++)
+        {
+          *(float *) dst[band] = babl_trc_to_linear (trc[band], (*(float *) src[band]));
+        }
+      for (; band < dst_bands; band++)
+        {
+          if (band < src_bands)
+            *(float *) dst[band] = *(float *) src[band];
+          else
+            *(float *) dst[band] = 1.0f;
+        }
+      BABL_PLANAR_STEP
+    }
+}
+
+
+static void
+non_premultiplied_to_premultiplied_float (Babl  *conversion,
+                                          int    src_bands,
+                                          char **src,
+                                          int   *src_pitch,
+                                          int    dst_bands,
+                                          char **dst,
+                                          int   *dst_pitch,
+                                          long   samples)
+{
+  long n = samples;
+
+  BABL_PLANAR_SANITY
+  while (n--)
+    {
+      float alpha = *(float *) src[src_bands - 1];
+      int    band;
+
+      if (alpha < BABL_ALPHA_FLOOR)
+      {
+        int non_zero_components = 0;
+        if (alpha >= 0.0f)
+          alpha = BABL_ALPHA_FLOOR;
+        else if (alpha >= -BABL_ALPHA_FLOOR)
+          alpha = -BABL_ALPHA_FLOOR;
+        for (band = 0 ; band< src_bands-1; band++)
+          if (*(float *) src[band] != 0.0f)
+            non_zero_components++;
+        if (non_zero_components == 0)
+          alpha = 0.0f;
+      }
+
+      for (band = 0; band < src_bands - 1; band++)
+        {
+          *(float *) dst[band] = *(float *) src[band] * alpha;
+        }
+      *(float *) dst[dst_bands - 1] = alpha;
+
+      BABL_PLANAR_STEP
+    }
+}
+
+
+static void
+premultiplied_to_non_premultiplied_float (Babl  *conversion,
+                                          int    src_bands,
+                                          char **src,
+                                          int   *src_pitch,
+                                          int    dst_bands,
+                                          char **dst,
+                                          int   *dst_pitch,
+                                          long   samples)
+{
+  long n = samples;
+
+  BABL_PLANAR_SANITY
+  while (n--)
+    {
+      float alpha;
+      float recip_alpha;
+      int    band;
+
+      alpha = *(float *) src[src_bands - 1];
+      if (alpha == 0.0f)
+         recip_alpha = 0.0f;
+      else
+      {
+        recip_alpha  = 1.0f / alpha;
+        if (alpha == BABL_ALPHA_FLOOR)
+          alpha = 0.0f; // making 0 round-trip to zero, causing discontinuity
+      }
+
+      for (band = 0; band < src_bands - 1; band++)
+        *(float *) dst[band] = *(float *) src[band] * recip_alpha;
+      *(float *) dst[dst_bands - 1] = alpha;
+
+      BABL_PLANAR_STEP
+    }
+}
+
+
+static void
+rgba2rgba_nonlinear_premultiplied_float (Babl *conversion,
+                                         char *src,
+                                         char *dst,
+                                         long  samples)
+{
+  const Babl *space = babl_conversion_get_destination_space (conversion);
+  const Babl **trc  = (void*)space->space.trc;
+  long n = samples;
+
+  while (n--)
+    {
+      float alpha = ((float *) src)[3];
+      if (alpha <= BABL_ALPHA_FLOOR)
+      {
+        if (alpha >= 0.0f)
+           alpha = BABL_ALPHA_FLOOR;
+         else if (alpha >= -BABL_ALPHA_FLOOR)
+           alpha = -BABL_ALPHA_FLOOR;
+        if (((float *) src)[0] == 0.0 &&
+            ((float *) src)[1] == 0.0 &&
+            ((float *) src)[2] == 0.0)
+           alpha = 0.0;
+      }
+
+      ((float *) dst)[0] = babl_trc_from_linear (trc[0], ((float *) src)[0]) * alpha;
+      ((float *) dst)[1] = babl_trc_from_linear (trc[1], ((float *) src)[1]) * alpha;
+      ((float *) dst)[2] = babl_trc_from_linear (trc[2], ((float *) src)[2]) * alpha;
+      ((float *) dst)[3] = alpha;
+      src  += 4 * sizeof (float);
+      dst  += 4 * sizeof (float);
+    }
+}
+
+
+static void
+rgba_nonlinear_premultiplied2rgba_float (Babl *conversion,
+                                         char           *src,
+                                         char           *dst,
+                                         long            samples)
+{
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  const Babl **trc  = (void*)space->space.trc;
+  long n = samples;
+
+  while (n--)
+    {
+      float alpha, reciprocal;
+      alpha = ((float *) src)[3];
+      if (alpha == 0.0)
+      {
+        reciprocal= 0.0f;
+      }
+      else
+      {
+        reciprocal= 1.0 / alpha;
+        if (alpha == BABL_ALPHA_FLOOR || alpha == -BABL_ALPHA_FLOOR)
+          alpha = 0;
+      }
+
+      ((float *) dst)[0] = babl_trc_to_linear (trc[0], ((float *) src)[0] * reciprocal);
+      ((float *) dst)[1] = babl_trc_to_linear (trc[1], ((float *) src)[1] * reciprocal);
+      ((float *) dst)[2] = babl_trc_to_linear (trc[2], ((float *) src)[2] * reciprocal);
+      ((float *) dst)[3] = alpha;
+
+      src += 4 * sizeof (float);
+      dst += 4 * sizeof (float);
+    }
+}
+
+
+static void
+rgba2rgba_float (Babl *conversion,
+                 char *src,
+                 char *dst,
+                 long  samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      ((float *) dst)[0] = ((float *) src)[0];
+      ((float *) dst)[1] = ((float *) src)[1];
+      ((float *) dst)[2] = ((float *) src)[2];
+      ((float *) dst)[3] = ((float *) src)[3];
+      src                += 4 * sizeof (float);
+      dst                += 4 * sizeof (float);
+    }
+}
+
+
+static void
+rgba2rgba_perceptual_float (Babl *conversion,
+                            char *src,
+                            char *dst,
+                            long  samples)
+{
+  const Babl *trc   = perceptual_trc;
+  long n = samples;
+
+  while (n--)
+    {
+      float alpha = ((float *) src)[3];
+      ((float *) dst)[0] = babl_trc_from_linear (trc, ((float *) src)[0]);
+      ((float *) dst)[1] = babl_trc_from_linear (trc, ((float *) src)[1]);
+      ((float *) dst)[2] = babl_trc_from_linear (trc, ((float *) src)[2]);
+      ((float *) dst)[3] = alpha;
+      src                += 4 * sizeof (float);
+      dst                += 4 * sizeof (float);
+    }
+}
+
+static void
+rgba_perceptual2rgba_float (Babl *conversion,
+                            char *src,
+                            char *dst,
+                            long  samples)
+{
+  const Babl *trc   = perceptual_trc;
+  long n = samples;
+
+  while (n--)
+    {
+      float alpha = ((float *) src)[3];
+      ((float *) dst)[0] = babl_trc_to_linear (trc, ((float *) src)[0]);
+      ((float *) dst)[1] = babl_trc_to_linear (trc, ((float *) src)[1]);
+      ((float *) dst)[2] = babl_trc_to_linear (trc, ((float *) src)[2]);
+      ((float *) dst)[3] = alpha;
+
+      src += 4 * sizeof (float);
+      dst += 4 * sizeof (float);
+    }
+}
+
+
+static void
+g3_perceptual_from_linear_float (Babl  *conversion,
+                                 int    src_bands,
+                                 char **src,
+                                 int   *src_pitch,
+                                 int    dst_bands,
+                                 char **dst,
+                                 int   *dst_pitch,
+                                 long   samples)
+{
+  const Babl *trc  = perceptual_trc;
+
+  long n = samples;
+
+  BABL_PLANAR_SANITY
+  while (n--)
+    {
+      int band;
+      for (band = 0; band < 3; band++)
+        *(float *) dst[band] = babl_trc_from_linear (trc, (*(float *) src[band]));
+      for (; band < dst_bands; band++)
+        *(float *) dst[band] = *(float *) src[band];
+
+      BABL_PLANAR_STEP
+    }
+}
+
+static void
+g3_perceptual_to_linear_float (Babl  *conversion,
+                               int    src_bands,
+                               char **src,
+                               int   *src_pitch,
+                               int    dst_bands,
+                               char **dst,
+                               int   *dst_pitch,
+                               long   samples)
+{
+  const Babl *trc  = perceptual_trc;
+  long n = samples;
+
+  BABL_PLANAR_SANITY
+  while (n--)
+    {
+      int band;
+      for (band = 0; band < 3; band++)
+        {
+          *(float *) dst[band] = babl_trc_to_linear (trc, (*(float *) src[band]));
+        }
+      for (; band < dst_bands; band++)
+        {
+          if (band < src_bands)
+            *(float *) dst[band] = *(float *) src[band];
+          else
+            *(float *) dst[band] = 1.0;
+        }
+      BABL_PLANAR_STEP
+    }
+}
+
+
+static void init_single_precision (void)
+{
+
+  babl_format_new (
+    babl_model_from_id (BABL_RGBA_PREMULTIPLIED),
+    babl_type_from_id (BABL_FLOAT),
+    babl_component_from_id (BABL_RED_MUL_ALPHA),
+    babl_component_from_id (BABL_GREEN_MUL_ALPHA),
+    babl_component_from_id (BABL_BLUE_MUL_ALPHA),
+    babl_component_from_id (BABL_ALPHA),
+    NULL);
+
+  babl_format_new (
+    babl_model_from_id (BABL_RGBA_NONLINEAR),
+    babl_type_from_id (BABL_FLOAT),
+    babl_component_from_id (BABL_RED_NONLINEAR),
+    babl_component_from_id (BABL_GREEN_NONLINEAR),
+    babl_component_from_id (BABL_BLUE_NONLINEAR),
+    babl_component_from_id (BABL_ALPHA),
+    NULL);
+
+  babl_format_new (
+    babl_model_from_id (BABL_RGBA_PERCEPTUAL),
+    babl_type_from_id (BABL_FLOAT),
+    babl_component_from_id (BABL_RED_PERCEPTUAL),
+    babl_component_from_id (BABL_GREEN_PERCEPTUAL),
+    babl_component_from_id (BABL_BLUE_PERCEPTUAL),
+    babl_component_from_id (BABL_ALPHA),
+    NULL);
+
+  babl_format_new (
+    babl_model_from_id (BABL_RGB_PERCEPTUAL),
+    babl_type_from_id (BABL_FLOAT),
+    babl_component_from_id (BABL_RED_PERCEPTUAL),
+    babl_component_from_id (BABL_GREEN_PERCEPTUAL),
+    babl_component_from_id (BABL_BLUE_PERCEPTUAL),
+    NULL);
+
 
   babl_conversion_new (
     babl_format ("RGBA float"),
@@ -1350,12 +1497,57 @@ formats (void)
     "planar", g3_nonlinear_to_linear_float,
     NULL
   );
+
   babl_conversion_new (
     babl_format ("RGBA float"),
     babl_format ("R'G'B' float"),
     "planar", g3_nonlinear_from_linear_float,
     NULL
   );
+  babl_conversion_new (
+    babl_format ("R'G'B'A float"),
+    babl_format ("RGBA float"),
+    "planar", g3_nonlinear_to_linear_float,
+    NULL
+  );
+
+
+  babl_conversion_new (
+    babl_format ("R~G~B~ float"),
+    babl_format ("RGBA float"),
+    "planar", g3_perceptual_to_linear_float,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_format ("RGBA float"),
+    babl_format ("R~G~B~ float"),
+    "planar", g3_perceptual_from_linear_float,
+    NULL
+  );
+
+
+
+  babl_conversion_new (
+    babl_format ("RGBA float"),
+    babl_format ("R~G~B~A float"),
+    "linear", rgba2rgba_perceptual_float,
+    NULL
+  );
+  babl_conversion_new (
+    babl_format ("R~G~B~A float"),
+    babl_format ("RGBA float"),
+    "linear", rgba_perceptual2rgba_float,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_format ("RGBA float"),
+    babl_format ("R'G'B'A float"),
+    "planar", g3_nonlinear_from_linear_float,
+    NULL
+  );
+
 
   babl_conversion_new (
     babl_format ("RGBA float"),
@@ -1384,4 +1576,3 @@ formats (void)
 
 
 }
-
