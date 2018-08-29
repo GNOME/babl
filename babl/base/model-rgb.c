@@ -414,6 +414,88 @@ non_premultiplied_to_premultiplied (Babl  *conversion,
     }
 }
 
+
+static void
+non_premultiplied_to_premultiplied_float (Babl  *conversion,
+                                          int    src_bands,
+                                          char **src,
+                                          int   *src_pitch,
+                                          int    dst_bands,
+                                          char **dst,
+                                          int   *dst_pitch,
+                                          long   samples)
+{
+  long n = samples;
+
+  BABL_PLANAR_SANITY
+  while (n--)
+    {
+      float alpha = *(float *) src[src_bands - 1];
+      int    band;
+
+      if (alpha < BABL_ALPHA_FLOOR)
+      {
+        int non_zero_components = 0;
+        if (alpha >= 0.0f)
+          alpha = BABL_ALPHA_FLOOR;
+        else if (alpha >= -BABL_ALPHA_FLOOR)
+          alpha = -BABL_ALPHA_FLOOR;
+        for (band = 0 ; band< src_bands-1; band++)
+          if (*(float *) src[band] != 0.0f)
+            non_zero_components++;
+        if (non_zero_components == 0)
+          alpha = 0.0f;
+      }
+
+      for (band = 0; band < src_bands - 1; band++)
+        {
+          *(float *) dst[band] = *(float *) src[band] * alpha;
+        }
+      *(float *) dst[dst_bands - 1] = alpha;
+
+      BABL_PLANAR_STEP
+    }
+}
+
+static void
+premultiplied_to_non_premultiplied_float (Babl  *conversion,
+                                          int    src_bands,
+                                          char **src,
+                                          int   *src_pitch,
+                                          int    dst_bands,
+                                          char **dst,
+                                          int   *dst_pitch,
+                                          long   samples)
+{
+  long n = samples;
+
+  BABL_PLANAR_SANITY
+  while (n--)
+    {
+      float alpha;
+      float recip_alpha;
+      int    band;
+
+      alpha = *(float *) src[src_bands - 1];
+      if (alpha == 0.0f)
+         recip_alpha = 0.0f;
+      else
+      {
+        recip_alpha  = 1.0f / alpha;
+        if (alpha == BABL_ALPHA_FLOOR)
+          alpha = 0.0f; // making 0 round-trip to zero, causing discontinuity
+      }
+
+      for (band = 0; band < src_bands - 1; band++)
+        *(float *) dst[band] = *(float *) src[band] * recip_alpha;
+      *(float *) dst[dst_bands - 1] = alpha;
+
+      BABL_PLANAR_STEP
+    }
+}
+
+
+
 static void
 premultiplied_to_non_premultiplied (Babl  *conversion,
                                     int    src_bands,
@@ -850,7 +932,6 @@ conversions (void)
     "planar", non_premultiplied_to_premultiplied,
     NULL
   );
-
   babl_conversion_new (
     babl_model_from_id (BABL_RGBA_PREMULTIPLIED),
     babl_model_from_id (BABL_RGBA),
@@ -1217,6 +1298,15 @@ formats (void)
     babl_component_from_id (BABL_ALPHA),
     NULL);
 
+  babl_format_new (
+    babl_model_from_id (BABL_RGBA_PREMULTIPLIED),
+    babl_type_from_id (BABL_FLOAT),
+    babl_component_from_id (BABL_RED_MUL_ALPHA),
+    babl_component_from_id (BABL_GREEN_MUL_ALPHA),
+    babl_component_from_id (BABL_BLUE_MUL_ALPHA),
+    babl_component_from_id (BABL_ALPHA),
+    NULL);
+
 #ifdef XXXX
   babl_format_new (
     "id", BABL_RGB565,
@@ -1234,15 +1324,12 @@ formats (void)
     "planar", g3_nonlinear_to_linear_float,
     NULL
   );
-
-
   babl_conversion_new (
     babl_format ("RGBA float"),
     babl_format ("R'G'B' float"),
     "planar", g3_nonlinear_from_linear_float,
     NULL
   );
-
 
   babl_conversion_new (
     babl_format ("RGBA float"),
@@ -1254,6 +1341,20 @@ formats (void)
     babl_format ("RGBA float"),
     "linear", rgba_nonlinear_premultiplied2rgba_float,
     NULL);
+
+
+  babl_conversion_new (
+    babl_format ("RGBA float"),
+    babl_format ("RaGaBaA float"),
+    "planar", non_premultiplied_to_premultiplied_float,
+    NULL
+  );
+  babl_conversion_new (
+    babl_format ("RaGaBaA float"),
+    babl_format ("RGBA float"),
+    "planar", premultiplied_to_non_premultiplied_float,
+    NULL
+  );
 
 
 }
