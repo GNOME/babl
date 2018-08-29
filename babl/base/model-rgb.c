@@ -899,6 +899,25 @@ rgba_perceptual2rgba (Babl *conversion,
 }
 
 static void
+rgba2rgba_float (Babl *conversion,
+                 char *src,
+                 char *dst,
+                 long  samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      ((float *) dst)[0] = ((float *) src)[0];
+      ((float *) dst)[1] = ((float *) src)[1];
+      ((float *) dst)[2] = ((float *) src)[2];
+      ((float *) dst)[3] = ((float *) src)[3];
+      src                += 4 * sizeof (float);
+      dst                += 4 * sizeof (float);
+    }
+}
+
+static void
 conversions (void)
 {
   if (!perceptual_trc)
@@ -1317,6 +1336,13 @@ formats (void)
 
   );
 #endif
+
+  babl_conversion_new (
+    babl_format ("RGBA float"),
+    babl_format ("RGBA float"),
+    "linear", rgba2rgba_float,
+    NULL
+  );
 
   babl_conversion_new (
     babl_format ("R'G'B' float"),
