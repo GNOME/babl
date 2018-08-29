@@ -28,6 +28,7 @@ static void components (void);
 static void models (void);
 static void conversions (void);
 static void formats (void);
+static void init_single_precision (void);
 
 void babl_base_model_gray (void)
 {
@@ -35,6 +36,7 @@ void babl_base_model_gray (void)
   models ();
   conversions ();
   formats ();
+  init_single_precision ();
 }
 
 static void
@@ -892,4 +894,713 @@ formats (void)
     babl_type_from_id (BABL_U32),
     babl_component_from_id (BABL_GRAY_NONLINEAR),
     NULL);
+}
+
+/********** float versions ***********/
+
+static void
+rgba_to_graya_float (Babl *conversion,
+                     char *src,
+                     char *dst,
+                     long  n)
+{
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  float RGB_LUMINANCE_RED   = space->space.RGBtoXYZf[3];
+  float RGB_LUMINANCE_GREEN = space->space.RGBtoXYZf[4];
+  float RGB_LUMINANCE_BLUE  = space->space.RGBtoXYZf[5];
+
+  while (n--)
+    {
+      float red, green, blue;
+      float luminance, alpha;
+
+      red   = ((float *) src)[0];
+      green = ((float *) src)[1];
+      blue  = ((float *) src)[2];
+      alpha = ((float *) src)[3];
+
+      luminance = red * RGB_LUMINANCE_RED +
+                  green * RGB_LUMINANCE_GREEN +
+                  blue * RGB_LUMINANCE_BLUE;
+
+      ((float *) dst)[0] = luminance;
+      ((float *) dst)[1] = alpha;
+
+      src += sizeof (float) * 4;
+      dst += sizeof (float) * 2;
+    }
+}
+
+static void
+rgba_to_gray_float (Babl *conversion,
+                    char *src,
+                    char *dst,
+                    long  n)
+{
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  float RGB_LUMINANCE_RED   = space->space.RGBtoXYZf[3];
+  float RGB_LUMINANCE_GREEN = space->space.RGBtoXYZf[4];
+  float RGB_LUMINANCE_BLUE  = space->space.RGBtoXYZf[5];
+
+  while (n--)
+    {
+      float red, green, blue;
+      float luminance;
+
+      red   = ((float *) src)[0];
+      green = ((float *) src)[1];
+      blue  = ((float *) src)[2];
+
+      luminance = red * RGB_LUMINANCE_RED +
+                  green * RGB_LUMINANCE_GREEN +
+                  blue * RGB_LUMINANCE_BLUE;
+
+      ((float *) dst)[0] = luminance;
+
+      src += sizeof (float) * 4;
+      dst += sizeof (float) * 1;
+    }
+}
+
+static void
+rgb_to_gray_nonlinear_float (Babl  *conversion,
+                             int    src_bands,
+                             char **src,
+                             int   *src_pitch,
+                             int    dst_bands,
+                             char **dst,
+                             int   *dst_pitch,
+                             long   n)
+{
+  const Babl *space = babl_conversion_get_destination_space (conversion);
+  const Babl *trc = space->space.trc[0];
+  float RGB_LUMINANCE_RED   = space->space.RGBtoXYZf[3];
+  float RGB_LUMINANCE_GREEN = space->space.RGBtoXYZf[4];
+  float RGB_LUMINANCE_BLUE  = space->space.RGBtoXYZf[5];
+
+  BABL_PLANAR_SANITY
+  while (n--)
+    {
+      float red, green, blue;
+      float luminance, alpha;
+
+      red   = *(float *) src[0];
+      green = *(float *) src[1];
+      blue  = *(float *) src[2];
+      if (src_bands > 3)
+        alpha = *(float *) src[3];
+      else
+        alpha = 1.0;
+
+      luminance = red   * RGB_LUMINANCE_RED +
+                  green * RGB_LUMINANCE_GREEN +
+                  blue  * RGB_LUMINANCE_BLUE;
+      *(float *) dst[0] = babl_trc_from_linear (trc, luminance);
+
+      if (dst_bands == 2)
+        *(float *) dst[1] = alpha;
+
+      BABL_PLANAR_STEP
+    }
+}
+
+
+static void
+gray_nonlinear_to_rgb_float (Babl *conversion,
+                             int    src_bands,
+                             char **src,
+                             int   *src_pitch,
+                             int    dst_bands,
+                             char **dst,
+                             int   *dst_pitch,
+                             long   n)
+{
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  const Babl *trc = space->space.trc[0];
+
+  BABL_PLANAR_SANITY
+  while (n--)
+    {
+      float luminance;
+      float red, green, blue;
+      float alpha;
+
+      luminance = babl_trc_to_linear (trc, *(float *) src[0]);
+      red       = luminance;
+      green     = luminance;
+      blue      = luminance;
+      if (src_bands > 1)
+        alpha = *(float *) src[1];
+      else
+        alpha = 1.0;
+
+      *(float *) dst[0] = red;
+      *(float *) dst[1] = green;
+      *(float *) dst[2] = blue;
+
+      if (dst_bands > 3)
+        *(float *) dst[3] = alpha;
+
+      BABL_PLANAR_STEP
+    }
+}
+
+static void
+rgb_to_gray_perceptual_float (Babl  *conversion,
+                              int    src_bands,
+                              char **src,
+                              int   *src_pitch,
+                              int    dst_bands,
+                              char **dst,
+                              int   *dst_pitch,
+                              long   n)
+{
+  const Babl *space = babl_conversion_get_destination_space (conversion);
+  const Babl *trc = perceptual_trc;
+  float RGB_LUMINANCE_RED   = space->space.RGBtoXYZf[3];
+  float RGB_LUMINANCE_GREEN = space->space.RGBtoXYZf[4];
+  float RGB_LUMINANCE_BLUE  = space->space.RGBtoXYZf[5];
+
+  BABL_PLANAR_SANITY
+  while (n--)
+    {
+      float red, green, blue;
+      float luminance, alpha;
+
+      red   = *(float *) src[0];
+      green = *(float *) src[1];
+      blue  = *(float *) src[2];
+      if (src_bands > 3)
+        alpha = *(float *) src[3];
+      else
+        alpha = 1.0;
+
+      luminance = red   * RGB_LUMINANCE_RED +
+                  green * RGB_LUMINANCE_GREEN +
+                  blue  * RGB_LUMINANCE_BLUE;
+      *(float *) dst[0] = babl_trc_from_linear (trc, luminance);
+
+      if (dst_bands == 2)
+        *(float *) dst[1] = alpha;
+
+      BABL_PLANAR_STEP
+    }
+}
+
+static void
+gray_perceptual_to_rgb_float (Babl *conversion,
+                              int    src_bands,
+                              char **src,
+                              int   *src_pitch,
+                              int    dst_bands,
+                              char **dst,
+                              int   *dst_pitch,
+                              long   n)
+{
+  const Babl *trc = perceptual_trc;
+
+  BABL_PLANAR_SANITY
+  while (n--)
+    {
+      float luminance;
+      float red, green, blue;
+      float alpha;
+
+      luminance = babl_trc_to_linear (trc, *(float *) src[0]);
+      red       = luminance;
+      green     = luminance;
+      blue      = luminance;
+      if (src_bands > 1)
+        alpha = *(float *) src[1];
+      else
+        alpha = 1.0;
+
+      *(float *) dst[0] = red;
+      *(float *) dst[1] = green;
+      *(float *) dst[2] = blue;
+
+      if (dst_bands > 3)
+        *(float *) dst[3] = alpha;
+
+      BABL_PLANAR_STEP
+    }
+}
+
+
+static void
+graya_to_rgba_float (Babl *conversion,
+                     char *src,
+                     char *dst,
+                     long  n)
+{
+  while (n--)
+    {
+      float luminance;
+      float red, green, blue;
+      float alpha;
+
+      luminance = ((float *) src)[0];
+      alpha     = ((float *) src)[1];
+      red       = luminance;
+      green     = luminance;
+      blue      = luminance;
+
+      ((float *) dst)[0] = red;
+      ((float *) dst)[1] = green;
+      ((float *) dst)[2] = blue;
+      ((float *) dst)[3] = alpha;
+
+      src += sizeof (float) * 2;
+      dst += sizeof (float) * 4;
+    }
+}
+
+
+static void
+gray_to_rgba_float (Babl *conversion,
+                    char *src,
+                    char *dst,
+                    long  n)
+{
+  while (n--)
+    {
+      float luminance;
+      float red, green, blue;
+
+      luminance = ((float *) src)[0];
+      red       = luminance;
+      green     = luminance;
+      blue      = luminance;
+
+      ((float *) dst)[0] = red;
+      ((float *) dst)[1] = green;
+      ((float *) dst)[2] = blue;
+      ((float *) dst)[3] = 1.0;
+
+      src += sizeof (float) * 1;
+      dst += sizeof (float) * 4;
+    }
+}
+
+static void
+gray_alpha_premultiplied_to_rgba_float (Babl   *conversion,
+                                        int    src_bands,
+                                        char **src,
+                                        int   *src_pitch,
+                                        int    dst_bands,
+                                        char **dst,
+                                        int   *dst_pitch,
+                                        long   n)
+{
+  BABL_PLANAR_SANITY
+  assert (src_bands == 2);
+  assert (dst_bands == 4);
+
+  while (n--)
+    {
+      float luminance = *(float *) src[0];
+      float alpha;
+      alpha = *(float *) src[1];
+      if (alpha == 0)
+        luminance = 0;
+      else
+      {
+        luminance = luminance / alpha;
+        if (alpha == BABL_ALPHA_FLOOR || alpha == -BABL_ALPHA_FLOOR)
+          alpha = 0.0;
+      }
+
+      *(float *) dst[0] = luminance;
+      *(float *) dst[1] = luminance;
+      *(float *) dst[2] = luminance;
+      *(float *) dst[3] = alpha;
+      BABL_PLANAR_STEP
+    }
+}
+
+
+static void
+rgba_to_gray_alpha_premultiplied_float (Babl   *conversion,
+                                        int    src_bands,
+                                        char **src,
+                                        int   *src_pitch,
+                                        int    dst_bands,
+                                        char **dst,
+                                        int   *dst_pitch,
+                                        long   n)
+{
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  float RGB_LUMINANCE_RED   = space->space.RGBtoXYZf[3];
+  float RGB_LUMINANCE_GREEN = space->space.RGBtoXYZf[4];
+  float RGB_LUMINANCE_BLUE  = space->space.RGBtoXYZf[5];
+
+  BABL_PLANAR_SANITY;
+  assert (src_bands == 4);
+  assert (dst_bands == 2);
+
+  while (n--)
+    {
+      float red   = *(float *) src[0];
+      float green = *(float *) src[1];
+      float blue  = *(float *) src[2];
+      float luminance;
+      float alpha = *(float *) src[3];
+      if (alpha <= BABL_ALPHA_FLOOR)
+      {
+        if (alpha >= 0.0f)
+          alpha = BABL_ALPHA_FLOOR;
+         else if (alpha >= -BABL_ALPHA_FLOOR)
+           alpha = -BABL_ALPHA_FLOOR;
+        if (red == 0.0 && green == 0.0 && blue == 0.0)
+           alpha = 0.0;
+      }
+
+      luminance = red * RGB_LUMINANCE_RED +
+                  green * RGB_LUMINANCE_GREEN +
+                  blue * RGB_LUMINANCE_BLUE;
+
+      luminance *= alpha;
+
+      *(float *) dst[0] = luminance;
+      *(float *) dst[1] = alpha;
+      BABL_PLANAR_STEP
+    }
+}
+
+static void
+non_premultiplied_to_premultiplied_float (Babl  *conversion,
+                                          int    src_bands,
+                                          char **src,
+                                          int   *src_pitch,
+                                          int    dst_bands,
+                                          char **dst,
+                                          int   *dst_pitch,
+                                          long   n)
+{
+  BABL_PLANAR_SANITY
+
+  while (n--)
+    {
+      int    band;
+      float alpha = *(float *) src[src_bands-1];
+      if (alpha < BABL_ALPHA_FLOOR)
+      {
+        int non_zero_components = 0;
+        if (alpha >= 0.0f)
+          alpha = BABL_ALPHA_FLOOR;
+        else if (alpha >= -BABL_ALPHA_FLOOR)
+          alpha = -BABL_ALPHA_FLOOR;
+
+        for (band = 0; band < src_bands - 1; band++)
+        {
+          if (*(float *) src[band] != 0.0)
+            non_zero_components++;
+        }
+        if (non_zero_components)
+          alpha = 0.0;
+
+      }
+
+      for (band = 0; band < src_bands - 1; band++)
+        {
+          *(float *) dst[band] = *(float *) src[band] * alpha;
+        }
+      *(float *) dst[dst_bands - 1] = alpha;
+
+      BABL_PLANAR_STEP
+    }
+}
+
+static void
+premultiplied_to_non_premultiplied_float (Babl  *conversion,
+                                          int    src_bands,
+                                          char **src,
+                                          int   *src_pitch,
+                                          int    dst_bands,
+                                          char **dst,
+                                          int   *dst_pitch,
+                                          long   n)
+{
+  BABL_PLANAR_SANITY
+
+  while (n--)
+    {
+      int    band;
+      float alpha;
+      alpha = *(float *) src[src_bands-1];
+
+      for (band = 0; band < src_bands - 1; band++)
+        {
+          if (alpha == 0.0)
+            *(float *) dst[band] = 0;
+          else
+            *(float *) dst[band] = *(float *) src[band] / alpha;
+        }
+      if (alpha == BABL_ALPHA_FLOOR || alpha == -BABL_ALPHA_FLOOR)
+        alpha = 0.0;
+      *(float *) dst[dst_bands - 1] = alpha;
+
+      BABL_PLANAR_STEP
+    }
+}
+
+static void
+rgba2gray_nonlinear_premultiplied_float (Babl *conversion,
+                                         char *src,
+                                         char *dst,
+                                         long  n)
+{
+  const Babl *space = babl_conversion_get_destination_space (conversion);
+  const Babl *trc = space->space.trc[0];
+  float RGB_LUMINANCE_RED   = space->space.RGBtoXYZf[3];
+  float RGB_LUMINANCE_GREEN = space->space.RGBtoXYZf[4];
+  float RGB_LUMINANCE_BLUE  = space->space.RGBtoXYZf[5];
+
+  while (n--)
+    {
+      float red   = ((float *) src)[0];
+      float green = ((float *) src)[1];
+      float blue  = ((float *) src)[2];
+      float luminance;
+      float luma;
+      float alpha = ((float *) src)[3];
+      if (alpha < BABL_ALPHA_FLOOR)
+      {
+        if (alpha >= 0.0f)
+          alpha = BABL_ALPHA_FLOOR;
+        else if (alpha >= -BABL_ALPHA_FLOOR)
+          alpha = -BABL_ALPHA_FLOOR;
+        if (red == 0.0 && green == 0.0 && blue == 0.0)
+          alpha = 0.0;
+      }
+
+      luminance = red * RGB_LUMINANCE_RED +
+                  green * RGB_LUMINANCE_GREEN +
+                  blue * RGB_LUMINANCE_BLUE;
+      luma = babl_trc_from_linear (trc, luminance);
+
+      ((float *) dst)[0] = luma * alpha;
+      ((float *) dst)[1] = alpha;
+
+      src += 4 * sizeof (float);
+      dst += 2 * sizeof (float);
+    }
+}
+
+static void
+gray_nonlinear_premultiplied2rgba_float (Babl *conversion,
+                                         char *src,
+                                         char *dst,
+                                         long  n)
+{
+  const Babl *space = babl_conversion_get_destination_space (conversion);
+  const Babl *trc = space->space.trc[0];
+
+  while (n--)
+    {
+      float luma  = ((float *) src)[0];
+      float luminance;
+      float alpha;
+      alpha = ((float *) src)[1];
+      if (alpha == 0.0)
+        luma = 0.0;
+      else
+        luma = luma / alpha;
+
+      luminance = babl_trc_to_linear (trc, luma);
+
+      if (alpha == BABL_ALPHA_FLOOR || alpha == -BABL_ALPHA_FLOOR)
+        alpha = 0.0;
+
+      ((float *) dst)[0] = luminance;
+      ((float *) dst)[1] = luminance;
+      ((float *) dst)[2] = luminance;
+      ((float *) dst)[3] = alpha;
+
+      src += 2 * sizeof (float);
+      dst += 4 * sizeof (float);
+    }
+}
+
+static void init_single_precision (void)
+{
+  babl_format_new (
+    babl_model ("Y"),
+    babl_type_from_id (BABL_FLOAT),
+    babl_component ("Y"),
+    NULL);
+  babl_format_new (
+    babl_model ("Y'"),
+    babl_type_from_id (BABL_FLOAT),
+    babl_component ("Y'"),
+    NULL);
+  babl_format_new (
+    babl_model ("Y~"),
+    babl_type_from_id (BABL_FLOAT),
+    babl_component ("Y~"),
+    NULL);
+
+
+  babl_format_new (
+    babl_model ("YA"),
+    babl_type_from_id (BABL_FLOAT),
+    babl_component ("Y"),
+    babl_component ("A"),
+    NULL);
+  babl_format_new (
+    babl_model ("Y'A"),
+    babl_type_from_id (BABL_FLOAT),
+    babl_component ("Y'"),
+    babl_component ("A"),
+    NULL);
+  babl_format_new (
+    babl_model ("Y~A"),
+    babl_type_from_id (BABL_FLOAT),
+    babl_component ("Y~"),
+    babl_component ("A"),
+    NULL);
+
+
+  babl_format_new (
+    babl_model ("YaA"),
+    babl_type_from_id (BABL_FLOAT),
+    babl_component ("Ya"),
+    babl_component ("A"),
+    NULL);
+  babl_format_new (
+    babl_model ("Y'aA"),
+    babl_type_from_id (BABL_FLOAT),
+    babl_component ("Y'a"),
+    babl_component ("A"),
+    NULL);
+
+  babl_conversion_new (
+    babl_format ("Y' float"),
+    babl_format ("RGBA float"),
+    "planar", gray_nonlinear_to_rgb_float,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_format ("RGBA float"),
+    babl_format ("Y' float"),
+    "planar", rgb_to_gray_nonlinear_float,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_format ("Y'A float"),
+    babl_format ("RGBA float"),
+    "planar", gray_nonlinear_to_rgb_float,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_format ("RGBA float"),
+    babl_format ("Y'A float"),
+    "planar", rgb_to_gray_nonlinear_float,
+    NULL
+  );
+
+
+  babl_conversion_new (
+    babl_format ("Y'aA float"),
+    babl_format ("RGBA float"),
+    "linear", gray_nonlinear_premultiplied2rgba_float,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_format ("RGBA float"),
+    babl_format ("Y'aA float"),
+    "linear", rgba2gray_nonlinear_premultiplied_float,
+    NULL
+  );
+
+
+
+  babl_conversion_new (
+    babl_format ("Y~ float"),
+    babl_format ("RGBA float"),
+    "planar", gray_perceptual_to_rgb_float,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_format ("RGBA float"),
+    babl_format ("Y~ float"),
+    "planar", rgb_to_gray_perceptual_float,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_format ("Y~A float"),
+    babl_format ("RGBA float"),
+    "planar", gray_perceptual_to_rgb_float,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_format ("RGBA float"),
+    babl_format ("Y~A float"),
+    "planar", rgb_to_gray_perceptual_float,
+    NULL
+  );
+
+
+  babl_conversion_new (
+    babl_format ("YA float"),
+    babl_format ("RGBA float"),
+    "linear", gray_to_rgba_float,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_format ("YA float"),
+    babl_format ("RGBA float"),
+    "linear", graya_to_rgba_float,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_format ("RGBA float"),
+    babl_format ("YA float"),
+    "linear", rgba_to_graya_float,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_format ("RGBA float"),
+    babl_format ("Y float"),
+    "linear", rgba_to_gray_float,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_format ("YA float"),
+    babl_format ("YaA float"),
+    "planar", non_premultiplied_to_premultiplied_float,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_format ("YaA float"),
+    babl_format ("YA float"),
+    "planar", premultiplied_to_non_premultiplied_float,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_format ("YaA float"),
+    babl_format ("RGBA float"),
+    "planar", gray_alpha_premultiplied_to_rgba_float,
+    NULL
+  );
+
+  babl_conversion_new (
+    babl_format ("RGBA float"),
+    babl_format ("YaA float"),
+    "planar", rgba_to_gray_alpha_premultiplied_float,
+    NULL
+  );
 }
