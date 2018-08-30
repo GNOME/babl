@@ -744,6 +744,38 @@ babl_fish_reference_process (const Babl *babl,
     void *rgba_float_buf;
     void *destination_float_buf_alloc = NULL;
     void *destination_float_buf;
+    const Babl *destination_float_format;
+    Babl *conv_to_rgba;
+    Babl *conv_from_rgba;
+    char dst_name[256];
+
+    {
+    char src_name[256];
+    sprintf (src_name, "%s float", babl_get_name((void*)babl->fish.source->format.model));
+    conv_to_rgba =
+        babl_conversion_find (
+        babl_format_with_space (src_name,
+                   BABL (BABL ((babl->fish.source))->format.space)),
+        babl_format_with_space ("RGBA float",
+                   BABL (BABL ((babl->fish.source))->format.space)));
+    }
+    {
+      sprintf (dst_name, "%s float", babl_get_name((void*)babl->fish.destination->format.model));
+      conv_from_rgba  =
+        babl_conversion_find (
+        babl_format_with_space ("RGBA float",
+                   BABL (BABL ((babl->fish.destination))->format.space)),
+        babl_format_with_space (dst_name,
+                   BABL (BABL ((babl->fish.destination))->format.space)));
+      destination_float_format =
+        babl_format_with_space (dst_name,
+                   BABL (BABL ((babl->fish.destination))->format.space));
+    }
+
+    if (!conv_to_rgba || !conv_from_rgba)
+      goto double_entry;
+
+
 
     if (babl->fish.source->format.type[0] == type_float &&
         BABL(babl->fish.source)->format.components ==
@@ -782,17 +814,6 @@ babl_fish_reference_process (const Babl *babl,
     }
     else
     {
-      char src_name[256];
-      Babl *conv;
-
-      sprintf (src_name, "%s float", babl_get_name((void*)babl->fish.source->format.model));
-      conv =
-        assert_conversion_find (
-        babl_format_with_space (src_name,
-                   BABL (BABL ((babl->fish.source))->format.space)),
-        babl_format_with_space ("RGBA float",
-                   BABL (BABL ((babl->fish.source))->format.space)));
-
       rgba_float_buf_alloc  = babl_malloc (sizeof (float) * n * 4);
       rgba_float_buf        = rgba_float_buf_alloc;
 
@@ -802,22 +823,20 @@ babl_fish_reference_process (const Babl *babl,
                    BABL (BABL ((babl->fish.source))->format.space)));
 
 
-    if (conv->class_type == BABL_CONVERSION_PLANAR)
+    if (conv_to_rgba->class_type == BABL_CONVERSION_PLANAR)
       {
         babl_conversion_process (
-          conv,
+          conv_to_rgba,
           (void*)source_image, (void*)rgba_image,
           n);
       }
-    else if (conv->class_type == BABL_CONVERSION_LINEAR)
+    else if (conv_to_rgba->class_type == BABL_CONVERSION_LINEAR)
       {
         babl_conversion_process (
-          conv,
+          conv_to_rgba,
           source_float_buf, rgba_float_buf,
           n);
       }
-
-
     }
 
     if (((babl->fish.source)->format.space !=
@@ -834,13 +853,6 @@ babl_fish_reference_process (const Babl *babl,
     }
 
     {
-      char dst_name[256];
-      Babl *conv;
-      const Babl *destination_float_format;
-      sprintf (dst_name, "%s float", babl_get_name((void*)babl->fish.destination->format.model));
-      destination_float_format =
-        babl_format_with_space (dst_name,
-                   BABL (BABL ((babl->fish.destination))->format.space));
 
       if(
         babl_format_with_space ("RGBA float",
@@ -855,26 +867,20 @@ babl_fish_reference_process (const Babl *babl,
          destination_float_buf_alloc = babl_malloc (sizeof (float) * n *
                                          BABL (babl->fish.destination)->format.model->components);
          destination_float_buf = destination_float_buf_alloc;
-      conv =
-        assert_conversion_find (
-        babl_format_with_space ("RGBA float",
-                   BABL (BABL ((babl->fish.destination))->format.space)),
-        babl_format_with_space (dst_name,
-                   BABL (BABL ((babl->fish.destination))->format.space)));
 
-      if (conv->class_type == BABL_CONVERSION_PLANAR)
+      if (conv_from_rgba->class_type == BABL_CONVERSION_PLANAR)
         {
           destination_image = babl_image_from_linear (
             destination_float_buf, destination_float_format);
         babl_conversion_process (
-          conv,
+          conv_from_rgba,
           (void*)rgba_image, (void*)destination_image,
           n);
       }
-    else if (conv->class_type == BABL_CONVERSION_LINEAR)
+    else if (conv_from_rgba->class_type == BABL_CONVERSION_LINEAR)
       {
         babl_conversion_process (
-          conv,
+          conv_from_rgba,
           rgba_float_buf, destination_float_buf,
           n);
       }
@@ -904,6 +910,7 @@ babl_fish_reference_process (const Babl *babl,
     void *rgba_double_buf;
     void *destination_double_buf_alloc = NULL;
     void *destination_double_buf;
+    double_entry:
 
     if (babl->fish.source->format.type[0] == type_double &&
         BABL(babl->fish.source)->format.components ==
