@@ -315,8 +315,6 @@ conv_rgbaF_linear_rgbAF_gamma (const Babl *conversion,unsigned char *src,
              alpha = BABL_ALPHA_FLOOR;
            else if (alpha >= -BABL_ALPHA_FLOOR)
              alpha = -BABL_ALPHA_FLOOR;
-           if (red == 0.0f && green == 0.0f && blue == 0.0f)
-             alpha = 0.0f;
          }
          *fdst++ = linear_to_gamma_2_2_lut (red)   * alpha;
          *fdst++ = linear_to_gamma_2_2_lut (green) * alpha;

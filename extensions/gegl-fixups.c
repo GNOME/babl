@@ -386,10 +386,6 @@ conv_rgbaF_rgbAF (const Babl *conversion,unsigned char *srcc,
           alpha = BABL_ALPHA_FLOOR;
         else if (alpha >= -BABL_ALPHA_FLOOR)
           alpha = -BABL_ALPHA_FLOOR;
-        if (src[0] == 0.0f &&
-            src[1] == 0.0f &&
-            src[2] == 0.0f)
-          alpha = 0.0f;
       }
       dst[0] = src[0] * alpha;
       dst[1] = src[1] * alpha;

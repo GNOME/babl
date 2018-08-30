@@ -49,10 +49,6 @@ conv_rgbaF_linear_rgbAF_nonlinear (const Babl *conversion,unsigned char *src,
            alpha = BABL_ALPHA_FLOOR;
          else if (alpha >= -BABL_ALPHA_FLOOR)
            alpha = -BABL_ALPHA_FLOOR;
-         if (fsrc[0] == 0.0f &&
-             fsrc[1] == 0.0f &&
-             fsrc[2] == 0.0f)
-          alpha = 0.0f;
        }
        *fdst++ = babl_trc_from_linear (trc[0], *fsrc++) * alpha;
        *fdst++ = babl_trc_from_linear (trc[1], *fsrc++) * alpha;
@@ -80,10 +76,6 @@ conv_rgbaF_linear_rgbAF_perceptual (const Babl *conversion,unsigned char *src,
            alpha = BABL_ALPHA_FLOOR;
          else if (alpha >= -BABL_ALPHA_FLOOR)
            alpha = -BABL_ALPHA_FLOOR;
-         if (fsrc[0] == 0.0f &&
-             fsrc[1] == 0.0f &&
-             fsrc[2] == 0.0f)
-          alpha = 0.0f;
        }
        *fdst++ = babl_trc_from_linear (trc_srgb, *fsrc++) * alpha;
        *fdst++ = babl_trc_from_linear (trc_srgb, *fsrc++) * alpha;
