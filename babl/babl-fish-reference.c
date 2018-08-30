@@ -714,7 +714,7 @@ babl_fish_reference_process (const Babl *babl,
 
   static int allow_float_reference = -1;
   if (allow_float_reference == -1)
-    allow_float_reference = getenv ("BABL_REFERENCE_FLOAT") ? 1 : 0;
+    allow_float_reference = getenv ("BABL_REFERENCE_NOFLOAT") ? 0 : 1;
 
   if ((BABL (babl->fish.source)->format.model ==
        BABL (babl->fish.destination)->format.model) &&
