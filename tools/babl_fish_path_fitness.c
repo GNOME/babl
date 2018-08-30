@@ -25,7 +25,7 @@ static int   qux = 0;
 static char *utf8_bar[] = { " %s%s", "·%s%s", "▁%s%s", "▂%s%s", "▃%s%s", "▄%s%s", "▅%s%s", "▆%s%s", "▇%s%s", "█%s%s" };
 #define      DIRECT " "
 #define      SELF   " "
-#define      EMPTY  " "
+#define      EMPTY  " %s%s"
 #define      SL     ""
 #define      NL     "\n"
 
@@ -155,9 +155,7 @@ static int destination_each (Babl *babl,
 #ifdef UTF8
 #else
      {
-        long bytes_in = 0;
-        long bytes_out = 0;
-        float bytes_per_second;
+        float pixels_per_second;
         long ticks_start, ticks_end;
 
         ticks_start = babl_ticks ();
@@ -165,15 +163,14 @@ static int destination_each (Babl *babl,
                             &test_pixels_out[0],
                             NUM_TEST_PIXELS);
         ticks_end = babl_ticks ();
-        bytes_in = NUM_TEST_PIXELS * babl_format_get_bytes_per_pixel (source);
-        bytes_out = NUM_TEST_PIXELS * babl_format_get_bytes_per_pixel (destination);
 
-        bytes_per_second = (bytes_in + bytes_out) / ((ticks_end - ticks_start)/1000.0);
+        pixels_per_second = (NUM_TEST_PIXELS) / ((ticks_end - ticks_start)/1000.0);
 
         {
-          float colval = bytes_per_second/1024/1024.0/7.0;
-          if (colval > 1) colval = 1;
-          
+          float colval = pixels_per_second/1000/1000.0/0.7;
+          if (colval > 1)
+            colval = 1;
+
           if (colval < 0.2)
           {
             sprintf (style, "color:rgb(%i, 0, 0);", (int)(colval * 5 * 255));
@@ -182,19 +179,17 @@ static int destination_each (Babl *babl,
           {
             sprintf (style, "color:rgb(255, %i, 0);", (int)((colval-0.2) * 5 * 255));
           }
-          else 
+          else
           {
             sprintf (style, "color:rgb(255, 255, %i);", (int)((colval-0.4) * 1.666 * 255));
           }
-
-          
 
         }
         {
           int steps = 0;
           if (temp)
             steps = babl_list_size (temp->fish_path.conversion_list);
-          sprintf (title, "%s to %s %i steps %.3fgb/s ", babl_get_name (source), babl_get_name (destination), steps, bytes_per_second/1024.0/1024.0);
+          sprintf (title, "%s to %s %i steps %.3f mpix/s ", babl_get_name (source), babl_get_name (destination), steps, pixels_per_second/1000.0);
         }
      }
 #endif
