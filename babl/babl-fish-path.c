@@ -599,11 +599,13 @@ babl_fish_path2 (const Babl *source,
     {
       get_conversion_path (&pc, (Babl *) source, 0, max_path_length () + 1, tolerance);
 
+#if 0
       if (babl->fish_path.conversion_list->count)
       {
         fprintf (stderr, "babl is using a rather long chain, room exists for optimization here\n");
         babl_list_each (babl->fish_path.conversion_list, show_item, NULL);
       }
+#endif
     }
 
     /* third attempt,. at path length + 2 */
@@ -611,11 +613,13 @@ babl_fish_path2 (const Babl *source,
         max_path_length () + 2 <= BABL_HARD_MAX_PATH_LENGTH)
     {
       get_conversion_path (&pc, (Babl *) source, 0, max_path_length () + 2, tolerance);
+#if 0
       if (babl->fish_path.conversion_list->count)
       {
         fprintf (stderr, "babl is using very long chain, should be optimized\n");
         babl_list_each (babl->fish_path.conversion_list, show_item, NULL);
       }
+#endif
     }
 
     babl_in_fish_path--;
