@@ -1237,8 +1237,6 @@ rgba_to_gray_alpha_premultiplied_float (Babl   *conversion,
           alpha = BABL_ALPHA_FLOOR;
          else if (alpha >= -BABL_ALPHA_FLOOR)
            alpha = -BABL_ALPHA_FLOOR;
-        if (red == 0.0f && green == 0.0f && blue == 0.0f)
-           alpha = 0.0f;
       }
 
       luminance = red * RGB_LUMINANCE_RED +
@@ -1356,8 +1354,6 @@ rgba2gray_nonlinear_premultiplied_float (Babl *conversion,
           alpha = BABL_ALPHA_FLOOR;
         else if (alpha >= -BABL_ALPHA_FLOOR)
           alpha = -BABL_ALPHA_FLOOR;
-        if (red == 0.0f && green == 0.0f && blue == 0.0f)
-          alpha = 0.0f;
       }
 
       luminance = red * RGB_LUMINANCE_RED +
