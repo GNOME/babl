@@ -242,6 +242,7 @@ babl_fatal (const char *format, ...)
 extern int   babl_hmpf_on_name_lookups;
 extern int   babl_in_fish_path;
 extern BablMutex *babl_format_mutex;
+extern BablMutex *babl_reference_mutex;
 
 #define BABL_DEBUG_MEM 0
 #if BABL_DEBUG_MEM

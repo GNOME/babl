@@ -82,6 +82,7 @@ BablMutex *babl_format_mutex;
 #if BABL_DEBUG_MEM
 BablMutex *babl_debug_mutex;
 #endif
+BablMutex *babl_reference_mutex;
 
 void
 babl_internal_init (void)
@@ -89,6 +90,7 @@ babl_internal_init (void)
   babl_set_malloc (malloc);
   babl_set_free (free);
   babl_format_mutex = babl_mutex_new ();
+  babl_reference_mutex = babl_mutex_new ();
 #if BABL_DEBUG_MEM
   babl_debug_mutex = babl_mutex_new ();
 #endif
@@ -98,6 +100,7 @@ void
 babl_internal_destroy (void)
 {
   babl_mutex_destroy (babl_format_mutex);
+  babl_mutex_destroy (babl_reference_mutex);
 #if BABL_DEBUG_MEM
   babl_mutex_destroy (babl_debug_mutex);
 #endif

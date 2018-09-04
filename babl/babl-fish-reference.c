@@ -900,6 +900,7 @@ babl_fish_reference_process_float (const Babl *babl,
       return;
     }
 
+    babl_mutex_lock (babl_reference_mutex);
     if (babl->fish.source->format.type[0] == type_float &&
         BABL(babl->fish.source)->format.components ==
         BABL(babl->fish.source)->format.model->components && 0)
@@ -961,6 +962,7 @@ babl_fish_reference_process_float (const Babl *babl,
           n);
       }
     }
+    babl_mutex_unlock (babl_reference_mutex);
 
     if (((babl->fish.source)->format.space !=
         ((babl->fish.destination)->format.space)))
