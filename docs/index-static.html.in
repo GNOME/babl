@@ -265,7 +265,7 @@ lab_buffer  = malloc (pixel_count * 3 * sizeof (float));
   non-linear variants of the data.
   </p>
 
-  <p>There is also a babl API call for creating a format for a specific space.
+  <p>babl has API for creating a format for a specific space:
   <tt>babl_format_with_space("R'G'B' u16", babl_space ("Rec2020"))</tt> creates
   a 16 bit integer format for the Rec2020 color space. Babl knows internally
   about "sRGB", "Rec2020", "Adobe", "Apple" and "ProPhoto" spaces, as they are
@@ -279,12 +279,10 @@ lab_buffer  = malloc (pixel_count * 3 * sizeof (float));
 
   <p>The conversions babl does with ICC profiles are according to what is known
   as the relative-colorimetric intent, monitor profiles containing both the
-  matrices used by babl and 3d CLUTs (color look up tables) most often also do
+  matrices used by babl and 3d CLUTs (color look up tables) sometimes also do
   relative-colorimetric transfer for the "perceptual" intent CLUTs, but with
-  a more flexible and possibly higher accuracy conversions. If babl adds support
-  for loading and using CLUTs it will be thus the perceptual
-  intent will by babl be considered a different albeit more accurate
-  relative-colorimetric RGB space.</p>
+  a more flexible and possibly higher accuracy conversions.</p>
+
 
   <a name='Vocabulary'></a>
   <h3 style='margin-bottom:0em;'>Vocabulary</h3>
@@ -357,6 +355,24 @@ lab_buffer  = malloc (pixel_count * 3 * sizeof (float));
     </div>
         -->
 
+  <a name='premultiplied-alpha'></a>
+  <h2>Pre-multiplied alpha</h2>
+
+  <p>babl stores color information in transparent pre-multiplied or associated
+alpha pixels in floating point formats. With floating point pixel formats
+standard way of handling alpha maintains color information very near fully
+transparent pixels - by introducing a limit: BABL_ALPHA_FLOOR which is
+1/65536.0, and treating all alphas beteen zero and this value as this value we
+maintain color information while the discrepancy in behavior gets concealed by
+quantization in 16bit and 8bit formats.
+   </p>
+<p>For images that already are in a premultiplied format on import, this change
+has no impact on its use for pre-multiplied arithmetic, meaning that
+superluminous colors are still supported, it also opens up to GEGL more widely
+expect premultiplied data in more operations which will become a speedup when
+more filters want to integrate in the layer processing pipeline.</p>
+
+<p>There is a <a href='https://www.patreon.com/posts/premultiplied-in-21014115'>post on patreon</a> with further details about details of the implementation.</p>
 
   <a name='TODO'></a>
 <!--TODO-->          
