@@ -57,16 +57,16 @@ conv_rgbaF_linear_rgbAF_linear (const Babl *conversion,const float *src, float *
           if (alpha0 < BABL_ALPHA_FLOOR)
           {
             if (alpha0 >= 0.0f)
-              ((float *)s)[3] = BABL_ALPHA_FLOOR;
+              alpha0 = BABL_ALPHA_FLOOR;
             else
-              ((float *)s)[3] = -BABL_ALPHA_FLOOR;
+              alpha0 = -BABL_ALPHA_FLOOR;
           }
           if (alpha1 < BABL_ALPHA_FLOOR)
           {
             if (alpha1 >= 0.0f)
-              ((float *)s)[7] = BABL_ALPHA_FLOOR;
+              alpha1 = BABL_ALPHA_FLOOR;
             else
-              ((float *)s)[7] = -BABL_ALPHA_FLOOR;
+              alpha1 = -BABL_ALPHA_FLOOR;
           }
          {
           __v4sf rbaa0, rbaa1;
@@ -76,8 +76,8 @@ conv_rgbaF_linear_rgbAF_linear (const Babl *conversion,const float *src, float *
 
 
           /* Expand alpha */
-          __v4sf aaaa0 = (__v4sf)_mm_shuffle_epi32((__m128i)rgba0, _MM_SHUFFLE(3, 3, 3, 3));
-          __v4sf aaaa1 = (__v4sf)_mm_shuffle_epi32((__m128i)rgba1, _MM_SHUFFLE(3, 3, 3, 3));
+          __v4sf aaaa0 = (__v4sf)_mm_set1_ps(alpha0);
+          __v4sf aaaa1 = (__v4sf)_mm_set1_ps(alpha1);
           
           /* Premultiply */
           rgba0 = rgba0 * aaaa0;
