@@ -262,15 +262,16 @@ XYZ_to_xyY (double X,
             double *to_y,
             double *to_Y)
 {
-   if ( X < NEAR_ZERO && Y < NEAR_ZERO && Z < NEAR_ZERO ) 
+   double sum = X + Y + Z;
+   if (sum < NEAR_ZERO)
 	{ *to_Y = 0.0;
 	  *to_x = D50_WHITE_REF_x;
 	  *to_y = D50_WHITE_REF_y;
 	}
 	else 
 	{
-	*to_x = X / (X + Y + Z);
-	*to_y = Y / (X + Y + Z);
+	*to_x = X / sum;
+	*to_y = Y / sum;
 	*to_Y = Y;
     }
 }
@@ -417,7 +418,7 @@ rgba_to_xyYa (const Babl *conversion,char *src,
 }
 
 static void
-rgbaf_to_xyYaf (const Babl *conversion, 
+rgbaf_to_xyYaf (const Babl *conversion,
                 float *src,
                 float *dst,
                 long   samples)
@@ -436,27 +437,26 @@ rgbaf_to_xyYaf (const Babl *conversion,
 
   while (n--)
     {
-  float x, y, X, Y, Z, r, g, b, a;
+      float x, y, X, Y, Z, r, g, b, a;
       r = src[0];
       g = src[1];
       b = src[2];
       a = src[3];
 
-      if ( r < NEAR_ZERO && g < NEAR_ZERO && b < NEAR_ZERO ) 
-	    {
+      if ( r < NEAR_ZERO && g < NEAR_ZERO && b < NEAR_ZERO )
+        {
           Y = 0.0f;
-	      x = D50_WHITE_REF_x;
-	      y = D50_WHITE_REF_y;
-	    }
-
-      else 
+          x = D50_WHITE_REF_x;
+          y = D50_WHITE_REF_y;
+        }
+      else
         {
           X = m_0_0 * r + m_0_1 * g + m_0_2 * b;
           Y = m_1_0 * r + m_1_1 * g + m_1_2 * b;
           Z = m_2_0 * r + m_2_1 * g + m_2_2 * b;
 
-	      x = X / (X + Y + Z);
-	      y = Y / (X + Y + Z);
+          x = X / (X + Y + Z);
+          y = Y / (X + Y + Z);
         }
 
       dst[0] = x;
@@ -493,21 +493,20 @@ rgbf_to_xyYf (const Babl *conversion,float *src,
       g = src[1];
       b = src[2];
 
-      if ( r < NEAR_ZERO && g < NEAR_ZERO && b < NEAR_ZERO ) 
-	    {
+      if ( r < NEAR_ZERO && g < NEAR_ZERO && b < NEAR_ZERO )
+        {
           Y = 0.0f;
-	      x = D50_WHITE_REF_x;
-	      y = D50_WHITE_REF_y;
-	    }
-
-      else 
+          x = D50_WHITE_REF_x;
+          y = D50_WHITE_REF_y;
+        }
+      else
         {
           X = m_0_0 * r + m_0_1 * g + m_0_2 * b;
           Y = m_1_0 * r + m_1_1 * g + m_1_2 * b;
           Z = m_2_0 * r + m_2_1 * g + m_2_2 * b;
 
-	      x = X / (X + Y + Z);
-	      y = Y / (X + Y + Z);
+          x = X / (X + Y + Z);
+          y = Y / (X + Y + Z);
         }
 
       dst[0] = x;
@@ -521,10 +520,10 @@ rgbf_to_xyYf (const Babl *conversion,float *src,
 
 
 static void
-rgbaf_to_xyYf (const Babl *conversion, 
-               float *src,
-               float *dst,
-               long   samples)
+rgbaf_to_xyYf (const Babl *conversion,
+               float      *src,
+               float      *dst,
+               long        samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
   float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_X;
@@ -545,21 +544,20 @@ rgbaf_to_xyYf (const Babl *conversion,
       g = src[1];
       b = src[2];
 
-      if ( r < NEAR_ZERO && g < NEAR_ZERO && b < NEAR_ZERO ) 
-	    {
+      if ( r < NEAR_ZERO && g < NEAR_ZERO && b < NEAR_ZERO )
+        {
           Y = 0.0f;
-	      x = D50_WHITE_REF_x;
-	      y = D50_WHITE_REF_y;
-	    }
-
-      else 
+          x = D50_WHITE_REF_x;
+          y = D50_WHITE_REF_y;
+        }
+      else
         {
           X = m_0_0 * r + m_0_1 * g + m_0_2 * b;
           Y = m_1_0 * r + m_1_1 * g + m_1_2 * b;
           Z = m_2_0 * r + m_2_1 * g + m_2_2 * b;
 
-	      x = X / (X + Y + Z);
-	      y = Y / (X + Y + Z);
+          x = X / (X + Y + Z);
+          y = Y / (X + Y + Z);
         }
 
       dst[0] = x;
@@ -667,19 +665,18 @@ xyYf_to_rgbf (const Babl *conversion,float *src,
       float y = src[1];
       float Y = src[2];
 
-
-      if ( Y < NEAR_ZERO ) 
-	     {
-	       X = 0.0f;
-	       Y = 0.0f;
-	       Z = 0.0f;
-	     }
-      else 
-	     {
-	       X = (x * Y) / y;
-	       Y = Y;
-	       Z = ((1 - x - y) * Y) / y;
-         }
+      if ( Y < NEAR_ZERO )
+        {
+          X = 0.0f;
+          Y = 0.0f;
+          Z = 0.0f;
+        }
+      else
+        {
+          X = (x * Y) / y;
+          Y = Y;
+          Z = ((1 - x - y) * Y) / y;
+        }
 
       r = m_0_0 * X + m_0_1 * Y + m_0_2 * Z;
       g = m_1_0 * X + m_1_1 * Y + m_1_2 * Z;
@@ -697,10 +694,10 @@ xyYf_to_rgbf (const Babl *conversion,float *src,
 
 
 static void
-xyYf_to_rgbaf (const Babl *conversion, 
-               float *src,
-               float *dst,
-               long   samples)
+xyYf_to_rgbaf (const Babl *conversion,
+               float      *src,
+               float      *dst,
+               long        samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
   float m_0_0 = space->space.XYZtoRGBf[0] * D50_WHITE_REF_X;
@@ -722,18 +719,18 @@ xyYf_to_rgbaf (const Babl *conversion,
       float Y = src[2];
 
 
-      if ( Y < NEAR_ZERO ) 
-	     {
-	       X = 0.0f;
-	       Y = 0.0f;
-	       Z = 0.0f;
-	     }
-      else 
-	     {
-	       X = (x * Y) / y;
-	       Y = Y;
-	       Z = ((1 - x - y) * Y) / y;
-         }
+      if ( Y < NEAR_ZERO )
+        {
+          X = 0.0f;
+          Y = 0.0f;
+          Z = 0.0f;
+        }
+      else
+        {
+          X = (x * Y) / y;
+          Y = Y;
+          Z = ((1 - x - y) * Y) / y;
+        }
 
       r = m_0_0 * X + m_0_1 * Y + m_0_2 * Z;
       g = m_1_0 * X + m_1_1 * Y + m_1_2 * Z;
@@ -750,10 +747,10 @@ xyYf_to_rgbaf (const Babl *conversion,
 }
 
 static void
-xyYaf_to_rgbaf (const Babl *conversion, 
-                float *src,
-                float *dst,
-                long   samples)
+xyYaf_to_rgbaf (const Babl *conversion,
+                float      *src,
+                float      *dst,
+                long        samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
   float m_0_0 = space->space.XYZtoRGBf[0] * D50_WHITE_REF_X;
@@ -775,19 +772,18 @@ xyYaf_to_rgbaf (const Babl *conversion,
       float Y = src[2];
       float a = src[3];
 
-
-      if ( Y < NEAR_ZERO ) 
-	     {
-	       X = 0.0f;
-	       Y = 0.0f;
-	       Z = 0.0f;
-	     }
-      else 
-	     {
-	       X = (x * Y) / y;
-	       Y = Y;
-	       Z = ((1 - x - y) * Y) / y;
-         }
+      if ( Y < NEAR_ZERO )
+        {
+          X = 0.0f;
+          Y = 0.0f;
+          Z = 0.0f;
+        }
+      else
+        {
+          X = (x * Y) / y;
+          Y = Y;
+          Z = ((1 - x - y) * Y) / y;
+        }
 
       r = m_0_0 * X + m_0_1 * Y + m_0_2 * Z;
       g = m_1_0 * X + m_1_1 * Y + m_1_2 * Z;
