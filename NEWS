@@ -3,11 +3,12 @@ The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
                                                                           -->
 
-2018-09-19 babl-0.1.58                                              </dt><dd>
+2018-10-05 babl-0.1.58                                              </dt><dd>
 Preserve color of transparent pixels in conversion to premultiplied alpha,
 Added single precision code-paths for faster fallback/reference conversions.
-New BABL_ICC_INTENT_PERFORMANCE bitflag for or-ing into intent, permitting
-use of matrix+trc when relative colorimetric CLUT is present.
+New BABL_ICC_INTENT_PERFORMANCE bitflag for combining with intent as bitflags,
+use of matrix+trc when relative colorimetric CLUT is present. New color model
+and formats, CIE xyY.
 
                                                                     </dd><dt>
 2018-08-14 babl-0.1.56                                              </dt><dd>
