@@ -567,7 +567,7 @@ rgbaf_to_xyYf (const Babl *conversion,
       dst[2] = Y;
 
       src += 4;
-      dst += 4;
+      dst += 3;
     }
 }
 
@@ -744,7 +744,7 @@ xyYf_to_rgbaf (const Babl *conversion,
       dst[2] =    b;
       dst[3] = 1.0f;
 
-      src += 4;
+      src += 3;
       dst += 4;
     }
 }
