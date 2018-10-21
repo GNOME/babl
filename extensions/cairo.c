@@ -187,12 +187,34 @@ conv_rgba8_cairo32_le (const Babl *conversion,unsigned char *src, unsigned char 
   uint32_t *dsti = (void*) dst;
   while (n--)
     {
-      unsigned char alpha  = src[3];
-#define div_255(a) ((((a)+128)+(((a)+128)>>8))>>8)
-      *dsti++ = (alpha << 24) +
-                (div_255 (src[0] * alpha) << 16) +
-                (div_255 (src[1] * alpha) << 8) +
-                (div_255 (src[2] * alpha));
+      unsigned char alpha = src[3];
+#if SIZE_MAX >= UINT64_MAX /* 64-bit */
+      uint64_t rbag = ((uint64_t) src[0] << 48) |
+                      ((uint64_t) src[2] << 32) |
+                      ((uint64_t) 255    << 16) |
+                      ((uint64_t) src[1] <<  0);
+      rbag *= alpha;
+      rbag += 0x0080008000800080;
+      rbag += (rbag >> 8) & 0x00ff00ff00ff00ff;
+      rbag &= 0xff00ff00ff00ff00;
+      *dsti++ = (uint32_t) (rbag >>  0) |
+                (uint32_t) (rbag >> 40);
+#else /* 32-bit */
+      uint32_t rb = ((uint32_t) src[0] << 16) |
+                    ((uint32_t) src[2] <<  0);
+      uint64_t ag = ((uint32_t) 255    << 16) |
+                    ((uint32_t) src[1] <<  0);
+      rb *= alpha;
+      ag *= alpha;
+      rb += 0x00800080;
+      ag += 0x00800080;
+      rb += (rb >> 8) & 0x00ff00ff;
+      ag += (ag >> 8) & 0x00ff00ff;
+      rb &= 0xff00ff00;
+      ag &= 0xff00ff00;
+      *dsti++ = (uint32_t) (ag >> 0) |
+                (uint32_t) (rb >> 8);
+#endif
       src+=4;
     }
 }
@@ -223,6 +245,8 @@ conv_yA8_cairo32_le (const Babl *conversion,unsigned char *src, unsigned char *d
   long n = samples;
   while (n--)
     {
+#define div_255(a) ((((a)+128)+(((a)+128)>>8))>>8)
+
       unsigned char gray   = *src++;
       unsigned char alpha  = *src++;
       unsigned char val = div_255 (gray * alpha);
