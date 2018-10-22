@@ -448,7 +448,10 @@ pala_to_rgba (Babl *conversion,
               void *src_model_data)
 {
   BablPalette **palptr = src_model_data;
-  BablPalette *pal = *palptr;
+  BablPalette *pal;
+
+  assert(palptr);
+  pal  = *palptr;
 
   assert(pal);
   while (n--)
