@@ -542,7 +542,7 @@ void babl_space_get (const Babl *space,
  */
 int babl_model_is (const Babl *babl, const char *model_name);
 
-#define babl_model_is(babl,model)  ((babl)==babl_model_with_space(model,babl))
+#define babl_model_is(babl,model)  (babl&&(babl)==babl_model_with_space(model,babl))
 
 
 /**
