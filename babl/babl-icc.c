@@ -626,7 +626,7 @@ const char *babl_space_get_icc (const Babl *babl, int *length)
                               "babl profile", NULL, 0,
                               &babl_noconst->space.icc_length);
   }
-  *length = babl->space.icc_length;
+  if (length) *length = babl->space.icc_length;
   return babl->space.icc_profile;
 }
 
