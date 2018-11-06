@@ -228,20 +228,13 @@ _conversion_new (const char    *name,
       const Babl *src_format = NULL;
       const Babl *dst_format = NULL;
 
-      if (model_is_rgba (BABL (babl->conversion.source)) ||
-          model_is_rgba (BABL (babl->conversion.destination)))
-        {
-          src_format = babl_format_with_model_as_type (
-            BABL (babl->conversion.source),
-            babl_type_from_id (BABL_DOUBLE));
-          dst_format = babl_format_with_model_as_type (
-            BABL (babl->conversion.destination),
-            babl_type_from_id (BABL_DOUBLE));
-        }
-      else
-        {
-          babl_fatal ("neither source nor destination model is RGBA (requirement might be temporary)");
-        }
+      src_format = babl_format_with_model_as_type (
+        BABL (babl->conversion.source),
+        babl_type_from_id (BABL_DOUBLE));
+      dst_format = babl_format_with_model_as_type (
+        BABL (babl->conversion.destination),
+        babl_type_from_id (BABL_DOUBLE));
+
       babl_conversion_new (
         src_format,
         dst_format,
