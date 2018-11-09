@@ -1,6 +1,6 @@
 project('babl', 'c',
   license: 'LGPL3+',
-  version: '0.1.60',
+  version: '0.1.61',
   meson_version: '>=0.40.0',
   default_options: [
     'libdir=lib',
