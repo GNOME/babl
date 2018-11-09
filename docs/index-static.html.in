@@ -372,7 +372,7 @@ superluminous colors are still supported, it also opens up to GEGL more widely
 expect premultiplied data in more operations which will become a speedup when
 more filters want to integrate in the layer processing pipeline.</p>
 
-<p>There is a <a href='https://www.patreon.com/posts/premultiplied-in-21014115'>post on patreon</a> with further details about details of the implementation.</p>
+<p>There is a <a href='https://www.patreon.com/posts/premultiplied-in-21014115'>post on patreon</a> with further details about the implementation.</p>
 
   <a name='TODO'></a>
 <!--TODO-->          
