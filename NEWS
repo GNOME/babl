@@ -3,6 +3,9 @@ The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
                                                                           -->
 
+2018-10-05 babl-0.1.60                                              </dt><dd>
+Improved thread safety, acceleration for R'G'B'A u8 -> cairo-ARGB32 conversion.
+                                                                    </dd><dt>
 2018-10-05 babl-0.1.58                                              </dt><dd>
 Preserve color of transparent pixels in conversion to premultiplied alpha,
 Added single precision code-paths for faster fallback/reference conversions.
