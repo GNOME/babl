@@ -92,18 +92,17 @@ AM_CPPFLAGS =				\
 lib_LTLIBRARIES= libbabl-@BABL_API_VERSION@.la
 
 libbabl_@BABL_API_VERSION@_la_SOURCES= $(h_sources) $(c_sources)
-libbabl_@BABL_API_VERSION@_la_CFLAGS= $(SSE2_EXTRA_CFLAGS)
+libbabl_@BABL_API_VERSION@_la_CFLAGS= $(SSE2_EXTRA_CFLAGS) $(LCMS_CFLAGS)
 
 libbabl_@BABL_API_VERSION@_la_LIBADD=	\
 	base/libbase.la			\
 	@LTLIBOBJS@
 
-libbabl_la_LDFLAGS=			\
-	$(MATH_LIB) $(THREAD_LIB) $(LOG_LIB)
 
 libbabl_@BABL_API_VERSION@_la_LDFLAGS=			\
 	${win32_no_undefined} 				\
 	$(MATH_LIB) $(THREAD_LIB) $(LOG_LIB) 		\
+	$(LCMS_LIBS) \
 	-export-symbols $(top_srcdir)/export-symbols 	\
 	-version-info $(BABL_LIBRARY_VERSION)
 

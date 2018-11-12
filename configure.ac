@@ -215,6 +215,24 @@ case "$target_or_host" in
     ;;
 esac
 
+################
+# Check for lcms
+################
+
+AC_ARG_WITH(lcms, [  --without-lcms          build without lcms support])
+
+have_lcms="no (lcms support disabled)"
+if test "x$with_lcms" != xno; then
+  have_lcms=yes
+  PKG_CHECK_MODULES(LCMS, lcms2 >= lcms_required_version,
+    AC_DEFINE(HAVE_LCMS, 1, [Define to 1 if lcms is available])
+    LCMS='lcms$(EXEEXT)',
+    have_lcms="no (lcms not found or unusable)")
+fi
+
+AC_SUBST(LCMS)
+AM_CONDITIONAL(HAVE_LCMS, test "x$have_lcms" = xyes)
+
 
 ############################
 # Check how to find plug-ins
