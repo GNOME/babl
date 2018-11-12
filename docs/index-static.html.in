@@ -259,29 +259,43 @@ lab_buffer  = malloc (pixel_count * 3 * sizeof (float));
   <a name='ColorManagement'></a>
   <h2>Color Management</h2>
 
-  <p>By default the babl API is assuming data to be (unbounded) sRGB data, data
-  being sRGB defines the conversion to and from gray-scale as well as the gamma
+  <p>All pixel formats in babl have a specified color space, if NULL is passed
+as a space constants for (unbounded) linear sRGB data is assumed, data being
+sRGB defines the conversion to and from gray-scale as well as the gamma
   - or Transfer Response Curve, TRC, used for converting between linear and
-  non-linear variants of the data.
-  </p>
+    non-linear variants of the data.</p>
 
   <p>babl has API for creating a format for a specific space:
-  <tt>babl_format_with_space("R'G'B' u16", babl_space ("Rec2020"))</tt> creates
-  a 16 bit integer format for the Rec2020 color space. Babl knows internally
-  about "sRGB", "Rec2020", "Adobe", "Apple" and "ProPhoto" spaces, as they are
-  defined with constants on their wikipedia pages.
-  </p>
+<tt>babl_format_with_space("R'G'B' u16", babl_space ("Rec2020"))</tt> creates a
+16 bit integer format for the Rec2020 color space. Babl knows internally about
+"sRGB", "Rec2020", "Adobe", "Apple", "ProPhoto", "ACEScg" and "ACES2065-1"
+spaces, as they are defined with constants on their wikipedia pages or similar upstream references.</p>
 
   <p>Additional spaces can be loaded from monitor-class matrix+TRC ICC v2 and
   v4 profiles. Using babl_icc_make_space (see babl.h for details). The space of
   a babl format can also be queried with babl_format_get_space.
   </p>
 
-  <p>The conversions babl does with ICC profiles are according to what is known
-  as the relative-colorimetric intent, monitor profiles containing both the
-  matrices used by babl and 3d CLUTs (color look up tables) sometimes also do
-  relative-colorimetric transfer for the "perceptual" intent CLUTs, but with
-  a more flexible and possibly higher accuracy conversions.</p>
+  <a name='cmyk'></a>
+  <h2>CMYK</h2>
+
+  <p>CMYK handling is done using babl-spaces created with ICC profiles
+containing CMYK profiles. BablSpaces for these ICC profiles handle color conversions using lcms2 - or if compiled without lcms2 support a naive profile independent fallback.</p>
+  <p>When a babl space derived from a CMYK ICC profile is used to instantiate
+RGB formats, the resulting formats are using the default/NULL space for
+primaries and TRCs.</p>
+
+  <p>The CMYK formats that use lcms2 for color interchange with the rest of
+babl are the following, which are available for all data types, u8, u16, half
+and float:</p>
+  <dl>
+     <dt>CMYK</dt><dd>Cyan Magenta Yellow Key, with 0 being white and 1.0 full ink coverage.</dd>
+     <dt>CMYKA</dt><dd>as previous, with non-associated alpha channel</dd>
+     <dt>CaMaYaKaA</dt><dd>as previous but premultiplied/associated alpha</dd>
+     <dt>cmyk</dt><dd>inverted CMYK, where 0.0 is full ink coverage and 1.0 is none</dd>
+     <dt>cmykA</dt><dd>as previous, with non-associated alpha channel</dd>
+     <dt>camayakaA</dt><dd>as previous but premultiplied/associated alpha</dd>
+  </dl>
 
 
   <a name='Vocabulary'></a>
@@ -354,6 +368,7 @@ lab_buffer  = malloc (pixel_count * 3 * sizeof (float));
       the version this website was built. </p>
     </div>
         -->
+
 
   <a name='premultiplied-alpha'></a>
   <h2>Pre-multiplied alpha</h2>
