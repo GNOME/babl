@@ -126,7 +126,7 @@ babl_conversion_find (const void *source,
     babl_list_each (BABL (source)->type.from_list, match_conversion, &data);
   if (data != (void*)destination) /* didn't change */
   {
-    return data;
+    return data; /* found conversion */
   }
   data = NULL;
 
@@ -160,19 +160,19 @@ babl_conversion_find (const void *source,
                             reference->conversion.function.linear,
                             NULL,
                             NULL,
-                            reference->conversion.data);
+                            reference->conversion.data, 1);
         case BABL_CONVERSION_PLANE:
           return _conversion_new ("", 0, source, destination,
                             NULL,
                             reference->conversion.function.plane,
                             NULL,
-                            reference->conversion.data);
+                            reference->conversion.data, 1);
         case BABL_CONVERSION_PLANAR:
           return _conversion_new ("", 0, source, destination,
                             NULL,
                             NULL,
                             reference->conversion.function.planar,
-                            reference->conversion.data);
+                            reference->conversion.data, 1);
      }
   }
   return NULL;
@@ -278,33 +278,39 @@ babl_fish (const void *source,
 
         if (!ffish.fish_fish)
           {
+            const Babl *src_space = (void*)source_format->format.space;
+            const Babl *dst_space = (void*)destination_format->format.space;
             /* we haven't tried to search for suitable path yet */
-            Babl *fish_path = babl_fish_path (source_format, destination_format);
 
-            if (fish_path)
+            if (src_space->space.cmyk.is_cmyk == 0 &&
+                dst_space->space.cmyk.is_cmyk == 0)
               {
-                return fish_path;
-              }
+                Babl *fish_path = babl_fish_path (source_format, destination_format);
+                if (fish_path)
+                  {
+                    return fish_path;
+                  }
 #if 1
-            else
-              {
-                /* there isn't a suitable path for requested formats,
-                 * let's create a dummy BABL_FISH instance and insert
-                 * it into the fish database to indicate that such path
-                 * does not exist.
-                 */
-                char *name = "X"; /* name does not matter */
-                Babl *fish = babl_calloc (1, sizeof (BablFish) + strlen (name) + 1);
+                else
+                  {
+                    /* there isn't a suitable path for requested formats,
+                     * let's create a dummy BABL_FISH instance and insert
+                     * it into the fish database to indicate that such path
+                     * does not exist.
+                     */
+                    char *name = "X"; /* name does not matter */
+                    Babl *fish = babl_calloc (1, sizeof (BablFish) + strlen (name) + 1);
 
-                fish->class_type                = BABL_FISH;
-                fish->instance.id               = babl_fish_get_id (source_format, destination_format);
-                fish->instance.name             = ((char *) fish) + sizeof (BablFish);
-                strcpy (fish->instance.name, name);
-                fish->fish.source               = source_format;
-                fish->fish.destination          = destination_format;
-                babl_db_insert (babl_fish_db (), fish);
-              }
+                    fish->class_type                = BABL_FISH;
+                    fish->instance.id               = babl_fish_get_id (source_format, destination_format);
+                    fish->instance.name             = ((char *) fish) + sizeof (BablFish);
+                    strcpy (fish->instance.name, name);
+                    fish->fish.source               = source_format;
+                    fish->fish.destination          = destination_format;
+                    babl_db_insert (babl_fish_db (), fish);
+                  }
 #endif
+                }
           }
         else if (ffish.fish_fish->fish.data)
           {

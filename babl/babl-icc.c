@@ -16,7 +16,7 @@
  * <https://www.gnu.org/licenses/>.
  */
 
-#include "config.h"
+#include "../config.h"
 #include "babl-internal.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -720,6 +720,10 @@ static char *decode_string (ICC *state, const char *tag, const char *lang, const
   return NULL;
 }
 
+#ifdef HAVE_LCMS
+static cmsHPROFILE sRGBProfile = 0;
+#endif
+
 const Babl *
 babl_space_from_icc (const char   *icc_data,
                      int           icc_length,
@@ -748,14 +752,55 @@ babl_space_from_icc (const char   *icc_data,
   else
   {
     profile_class = icc_read (sign, 12);
-    if (strcmp (profile_class.str, "mntr"))
-      *error = "not a monitor-class profile";
-     else
+    color_space = icc_read (sign, 16);
+
+    if (!strcmp (color_space.str, "CMYK"))
     {
-      color_space = icc_read (sign, 16);
-      if (strcmp (color_space.str, "RGB "))
-        *error = "not defining an RGB space";
+       ret = _babl_space_for_lcms (icc_data, icc_length);
+       if (ret->space.cmyk.is_cmyk)
+         return ret;
+       ret->space.cmyk.is_cmyk = 1;
+       ret->space.icc_length = icc_length;
+       ret->space.icc_profile = malloc (icc_length);
+       memcpy (ret->space.icc_profile, icc_data, icc_length);
+
+#ifdef HAVE_LCMS
+       if (sRGBProfile == 0)
+       {
+         const Babl *rgb = babl_space("babl-rgb"); /* should use a forced linear profile */
+         sRGBProfile = cmsOpenProfileFromMem(rgb->space.icc_profile, rgb->space.icc_length);
+       }
+
+       ret->space.cmyk.lcms_profile = cmsOpenProfileFromMem(ret->space.icc_profile, ret->space.icc_length);
+
+/* these are not defined by lcms2.h we hope that following the existing pattern of pixel-format definitions work */
+#ifndef TYPE_CMYKA_DBL
+#define TYPE_CMYKA_DBL      (FLOAT_SH(1)|COLORSPACE_SH(PT_CMYK)|EXTRA_SH(1)|CHANNELS_SH(4)|BYTES_SH(0))
+#endif
+#ifndef TYPE_RGBA_DBL
+#define TYPE_RGBA_DBL      (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(0))
+#endif
+
+       ret->space.cmyk.lcms_to_rgba = cmsCreateTransform(ret->space.cmyk.lcms_profile, TYPE_CMYKA_DBL,
+                                                    sRGBProfile, TYPE_RGBA_DBL,
+                                                    INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_BLACKPOINTCOMPENSATION);
+// INTENT_PERCEPTUAL,0);//intent & 7, 0);
+       ret->space.cmyk.lcms_from_rgba = cmsCreateTransform(sRGBProfile, TYPE_RGBA_DBL,
+                                                      ret->space.cmyk.lcms_profile, TYPE_CMYKA_DBL,
+                                                    INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_BLACKPOINTCOMPENSATION);
+                                                    //  INTENT_PERCEPTUAL,0);//intent & 7, 0);
+       cmsCloseProfile (ret->space.cmyk.lcms_profile); // XXX keep it open in case of CMYK to CMYK transforms needed?
+#endif
+       return ret;
     }
+
+    if (strcmp (color_space.str, "RGB "))
+      *error = "not defining an RGB space";
+    else
+     {
+       if (strcmp (profile_class.str, "mntr"))
+         *error = "not a monitor-class profile";
+     }
   }
 
   if (!*error)
@@ -827,6 +872,7 @@ babl_space_from_icc (const char   *icc_data,
 
   if (*error)
   {
+
     babl_free (state);
     return NULL;
   }

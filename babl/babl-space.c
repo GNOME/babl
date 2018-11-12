@@ -219,6 +219,50 @@ babl_space (const char *name)
   return NULL;
 }
 
+Babl *
+_babl_space_for_lcms (const char *icc_data, int icc_length)
+{
+  int i=0;
+  BablSpace space;
+
+
+  for (i = 0; space_db[i].instance.class_type; i++)
+  {
+    if (space_db[i].icc_length ==
+        icc_length &&
+        (memcmp (space_db[i].icc_profile, icc_data, icc_length) == 0))
+    {
+        return (void*)&space_db[i];
+    }
+  }
+
+  memset (&space, 0, sizeof(space));
+  space.instance.class_type = BABL_SPACE;
+  space.instance.id         = 0;
+
+  if (i >= MAX_SPACES-1)
+  {
+    babl_log ("too many BablSpaces");
+    return NULL;
+  }
+
+  /* initialize it with copy of srgb content */
+  if(1){
+    const BablSpace *srgb = &babl_space("sRGB")->space;
+    memcpy (&space.xw,
+            &srgb->xw,
+((char*)&srgb->icc_profile -
+(char*)&srgb->xw));
+  }
+
+  space_db[i]=space;
+  space_db[i].instance.name = space_db[i].name;
+  snprintf (space_db[i].name, sizeof (space_db[i].name), "space-lcms-%i", i);
+
+
+  return (Babl*)&space_db[i];
+}
+
 const Babl *
 babl_space_from_rgbxyz_matrix (const char *name,
                                double wx, double wy, double wz,
@@ -310,6 +354,7 @@ babl_space_from_rgbxyz_matrix (const char *name,
              wx,wy,rx,ry,bx,by,gx,gy,babl_get_name (space.trc[0]),
              babl_get_name(space.trc[1]), babl_get_name(space.trc[2]));
 
+  babl_space_get_icc ((Babl*)&space_db[i], NULL);
   return (Babl*)&space_db[i];
 }
 
@@ -373,6 +418,7 @@ const Babl * babl_space_from_chromaticities (const char *name,
   /* compute matrixes */
   babl_space_compute_matrices (&space_db[i], flags);
 
+  babl_space_get_icc ((Babl*)&space_db[i], NULL);
   return (Babl*)&space_db[i];
 }
 
@@ -406,6 +452,14 @@ babl_space_class_init (void)
                 0);
   /* hard-coded pre-quantized values - to match exactly what is used in standards see issue #18 */
 #endif
+  babl_space_from_chromaticities ("babl-rgb",
+                0.3127,  0.3290, /* D65 */
+                0.639998686, 0.330010138,
+                0.300003784, 0.600003357,
+                0.150002046, 0.059997204,
+                babl_trc("linear"), NULL, NULL,
+                0);
+  /* hard-coded pre-quantized values - to match exactly what is used in standards see issue #18 */
 
   babl_space_from_chromaticities ("Rec2020",
                0.3127,  0.3290, /* D65 */
@@ -1015,7 +1069,8 @@ const Babl *babl_space_match_trc_matrix (const Babl *trc_red,
   for (i = 0; space_db[i].instance.class_type; i++)
   {
     BablSpace *space = &space_db[i];
-    if (trc_red == space->trc[0] &&
+    if (space->cmyk.is_cmyk == 0 &&
+        trc_red == space->trc[0] &&
         trc_green == space->trc[1] &&
         trc_blue == space->trc[2] &&
         fabs(rx - space->RGBtoXYZ[0]) < delta &&
@@ -1082,6 +1137,11 @@ void babl_space_get (const Babl *babl,
   if(blue_trc)*blue_trc = space->trc[2];
 }
 
+int babl_space_is_cmyk (const Babl *space)
+{
+  return space?space->space.cmyk.is_cmyk:0;
+}
+
 /* Trademarks:
  *
  * International Color Consortium is a registered trademarks of the.
@@ -1091,3 +1151,4 @@ void babl_space_get (const Babl *babl,
  * RGB- without actualy being it, Adobe is a trademark or registered trademark
  * of Adobe Systems Incorporated in many countires.
  */
+

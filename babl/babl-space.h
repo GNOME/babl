@@ -19,12 +19,27 @@
 #ifndef _BABL_SPACE_H
 #define _BABL_SPACE_H
 
+#include "../config.h"
 #include <math.h>
 #include <string.h>
 #include "base/util.h"
 #include "babl-matrix.h"
 
+#ifdef HAVE_LCMS
+#include <lcms2.h>
+#endif
+
 BABL_CLASS_DECLARE (space);
+
+typedef struct
+{
+  int           is_cmyk;
+#ifdef HAVE_LCMS
+  cmsHPROFILE   lcms_profile;
+  cmsHTRANSFORM lcms_to_rgba;
+  cmsHTRANSFORM lcms_from_rgba;
+#endif
+} BablCMYK;
 
 typedef struct
 {
@@ -62,6 +77,7 @@ typedef struct
   char *icc_profile;
   int   icc_length;
 
+  BablCMYK cmyk;
 } BablSpace;
 
 

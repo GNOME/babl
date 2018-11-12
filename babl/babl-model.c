@@ -56,7 +56,8 @@ model_new (const char     *name,
            const Babl     *space,
            int             id,
            int             components,
-           BablComponent **component)
+           BablComponent **component,
+           int             is_cmyk)
 {
   Babl *babl;
 
@@ -73,6 +74,7 @@ model_new (const char     *name,
   babl->model.space      = space;
   babl->model.data       = NULL;
   babl->model.model      = NULL;
+  babl->model.is_cmyk    = is_cmyk;
   strcpy (babl->instance.name, name);
   memcpy (babl->model.component, component, sizeof (BablComponent *) * components);
 
@@ -114,6 +116,7 @@ babl_model_new (void *first_argument,
   char          *name          = NULL;
   const Babl    *space         = babl_space ("sRGB");
   BablComponent *component [BABL_MAX_COMPONENTS];
+  int            is_cmyk       = 0;
 
   va_start (varg, first_argument);
 
@@ -128,6 +131,11 @@ babl_model_new (void *first_argument,
       else if (!strcmp (arg, "name"))
         {
           assigned_name = va_arg (varg, char *);
+        }
+
+      else if (!strcmp (arg, "cmyk"))
+        {
+          is_cmyk = 1;
         }
 
       /* if we didn't point to a known string, we assume argument to be babl */
@@ -211,7 +219,7 @@ babl_model_new (void *first_argument,
 
   if (! babl)
     {
-      babl = model_new (name, space, id, components, component);
+      babl = model_new (name, space, id, components, component, is_cmyk);
       babl_db_insert (db, babl);
       construct_double_format (babl);
     }

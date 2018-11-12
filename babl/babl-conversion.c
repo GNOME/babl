@@ -152,7 +152,8 @@ _conversion_new (const char    *name,
                  BablFuncLinear linear,
                  BablFuncPlane  plane,
                  BablFuncPlanar planar,
-                 void          *user_data)
+                 void          *user_data,
+                 int            allow_collision)
 {
   Babl *babl = NULL;
 
@@ -237,16 +238,17 @@ _conversion_new (const char    *name,
         BABL (babl->conversion.destination),
         babl_type_from_id (BABL_DOUBLE));
 
-      if(0){
+      if(allow_collision){
         const Babl *fish = babl_conversion_find (src_format, dst_format);
         if (fish)
-          return fish;
+          return (void*)fish;
       }
       babl_conversion_new (
         src_format,
         dst_format,
         "linear", linear,
         "data", user_data,
+        allow_collision?"allow-collision":NULL,
         NULL);
       babl->conversion.error = 0.0;
     }
@@ -283,13 +285,10 @@ create_name (Babl *source, Babl *destination, int type)
     }
   return buf;
 }
-const char *
-babl_conversion_create_name (Babl *source, Babl *destination, int type);
-
-int _babl_loaded = 0;
 
 const char *
-babl_conversion_create_name (Babl *source, Babl *destination, int type)
+babl_conversion_create_name (Babl *source, Babl *destination, int type,
+                             int allow_collision)
 {
   Babl *babl;
   char *name;
@@ -297,7 +296,7 @@ babl_conversion_create_name (Babl *source, Babl *destination, int type)
   collisions = 0;
   name = create_name (source, destination, type);
 
-  if (!_babl_loaded)
+  if (allow_collision == 0)
   {
   babl = babl_db_exist (db, id, name);
   while (babl)
@@ -331,8 +330,8 @@ babl_conversion_new (const void *first_arg,
 
   Babl          *source;
   Babl          *destination;
-
   char          *name;
+  int            allow_collision = 0;
 
   va_start (varg, first_arg);
   source      = (Babl *) arg;
@@ -355,6 +354,10 @@ babl_conversion_new (const void *first_arg,
           user_data = va_arg (varg, void*);
         }
 
+      else if (!strcmp (arg, "allow-collision"))
+        {
+          allow_collision = 1;
+        }
       else if (!strcmp (arg, "linear"))
         {
           if (got_func++)
@@ -408,10 +411,10 @@ babl_conversion_new (const void *first_arg,
       type = BABL_CONVERSION_PLANAR;
     }
 
-  name = (void*) babl_conversion_create_name (source, destination, type);
+  name = (void*) babl_conversion_create_name (source, destination, type, allow_collision);
 
   babl = _conversion_new (name, id, source, destination, linear, plane, planar,
-                         user_data);
+                          user_data, allow_collision);
 
   /* Since there is not an already registered instance by the required
    * id/name, inserting newly created class into database.

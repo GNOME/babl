@@ -32,6 +32,7 @@ typedef struct
   void             *data;    /* user-data, used for palette */
   const Babl       *space;
   void             *model;   /* back pointer to model with sRGB space */
+  int               is_cmyk; /* is an cmyk based model */
 } BablModel;
 
 #endif

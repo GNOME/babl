@@ -69,6 +69,7 @@ models (void)
   babl_hmpf_on_name_lookups--;
   babl_base_model_rgb ();
   babl_base_model_gray ();
+  babl_base_model_cmyk ();
   babl_hmpf_on_name_lookups++;
   babl_base_model_ycbcr ();
 }

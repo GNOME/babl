@@ -347,7 +347,8 @@ _conversion_new (const char    *name,
                  BablFuncLinear linear,
                  BablFuncPlane  plane,
                  BablFuncPlanar planar,
-                 void          *user_data);
+                 void          *user_data,
+                 int            allow_collision);
 
 double _babl_legal_error (void);
 void babl_init_db (void);
@@ -373,7 +374,9 @@ Babl * format_new_from_format_with_space (const Babl *format, const Babl *space)
 int babl_list_destroy (void *data);
 
 const char *
-babl_conversion_create_name (Babl *source, Babl *destination, int is_reference);
+babl_conversion_create_name (Babl *source, Babl *destination, int type,
+                             int allow_collision);
+
 void _babl_space_add_universal_rgb (const Babl *space);
 const Babl *
 babl_trc_formula_srgb (double gamma, double a, double b, double c, double d);
@@ -453,5 +456,7 @@ char *babl_space_to_icc (const Babl  *space,
                          const char  *copyright,
                          BablICCFlags flags,
                          int         *icc_length);
+Babl *
+_babl_space_for_lcms (const char *icc_data, int icc_length); // XXX pass profile for dedup?
 
 #endif

@@ -69,7 +69,7 @@ model_sanity (Babl *babl,
               void *user_data)
 {
   /* ensure that every type has reference conversions to
-   * and from rgba */
+   * and from RGBA / cmykA */
   int      ok, i;
   BablList *list;
 
@@ -79,17 +79,22 @@ model_sanity (Babl *babl,
     {
       for (i = 0; i < babl_list_size (list); i++)
         {
-          if (babl_conversion_destination ((Babl *) list->items[i]) == babl_model_from_id (BABL_RGBA))
+          if (babl_conversion_destination ((Babl *) list->items[i]) == babl_model_from_id (BABL_RGBA) ||
+             babl_conversion_destination ((Babl *) list->items[i]) == babl_model ("cmykA"))
             {
               ok = 1;
               break;
             }
         }
     }
+
+  if (ok == 0 && babl == babl_model ("cmykA"))
+    ok = 1;
+
   if (!ok)
     {
       OK = 0;
-      babl_log ("lack of sanity! model '%s' has no conversion to 'rgba'",
+      babl_log ("lack of sanity! model '%s' has no conversion to 'RGBA' or 'cmykA'",
                 babl->instance.name);
     }
 
