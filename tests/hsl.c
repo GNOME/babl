@@ -17,8 +17,7 @@
 
 #include <stdio.h>
 
-#include "config.h"
-#include "babl.h"
+#include <babl/babl.h>
 
 #include "common.inc"
 

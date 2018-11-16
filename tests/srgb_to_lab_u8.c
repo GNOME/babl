@@ -16,9 +16,9 @@
  * <https://www.gnu.org/licenses/>.
  */
 
-#include "config.h"
 #include <math.h>
-#include "babl-internal.h"
+#include <babl/babl.h>
+#include <stdio.h>
 
 #define PIXELS       6
 #define TOLERANCE    0
@@ -53,9 +53,9 @@ test (void)
 
   for (i = 0; i < PIXELS * 3; i++)
     {
-      if (abs (destination_buf[i] - reference_buf[i]) > TOLERANCE)
+      if (fabs (destination_buf[i] - reference_buf[i]) > TOLERANCE)
         {
-          babl_log ("%2i (%2i%%3=%i, %2i/3=%i) is %i should be %i",
+          fprintf (stderr, "%2i (%2i%%3=%i, %2i/3=%i) is %i should be %i",
                     i, i, i % 3, i, i / 3, destination_buf[i], reference_buf[i]);
           OK = 0;
         }
