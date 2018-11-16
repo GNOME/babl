@@ -104,11 +104,13 @@ match_conversion (Babl *conversion,
 {
   void **data = inout;
 
+
   if ((Babl *) conversion->conversion.destination == (Babl *) *data)
     {
       *data = (void *) conversion;
       return 1;
     }
+
   return 0;
 }
 
@@ -123,14 +125,26 @@ babl_conversion_find (const void *source,
   if (BABL (source)->type.from_list)
     babl_list_each (BABL (source)->type.from_list, match_conversion, &data);
   if (data != (void*)destination) /* didn't change */
+  {
     return data;
+  }
   data = NULL;
 
   if (BABL (source)->class_type == BABL_MODEL)
   {
      const Babl *srgb_source = BABL (source)->model.model ? BABL (source)->model.model:source;
      const Babl *srgb_destination = BABL (destination)->model.model ? BABL (destination)->model.model:destination;
-     Babl *reference = babl_conversion_find (srgb_source, srgb_destination);
+
+
+     Babl *reference;
+
+     if (srgb_source == source && srgb_destination == destination)
+     {
+        fprintf (stderr, "expected finding model conversion %s to %s", babl_get_name (source), babl_get_name (destination));
+        return NULL;
+     }
+
+     reference = babl_conversion_find (srgb_source, srgb_destination);
 
   /* when conversions are sought between models, with non-sRGB chromaticities,
      we create the needed conversions from existing ones on the fly, and
