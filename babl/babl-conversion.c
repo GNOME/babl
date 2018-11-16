@@ -235,6 +235,11 @@ _conversion_new (const char    *name,
         BABL (babl->conversion.destination),
         babl_type_from_id (BABL_DOUBLE));
 
+      {
+        const Babl *fish = babl_conversion_find (src_format, dst_format);
+        if (fish)
+          return fish;
+      }
       babl_conversion_new (
         src_format,
         dst_format,
