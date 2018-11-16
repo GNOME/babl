@@ -125,6 +125,8 @@ babl_dir_list (void)
   return ret;
 }
 
+extern int _babl_loaded;
+
 void
 babl_init (void)
 {
@@ -133,6 +135,7 @@ babl_init (void)
   if (ref_count++ == 0)
     {
       char * dir_list;
+      _babl_loaded = 0;
 
       babl_internal_init ();
       babl_sampling_class_init ();
@@ -155,6 +158,7 @@ babl_init (void)
       babl_free (dir_list);
 
       babl_init_db ();
+      _babl_loaded = 1;
     }
 }
 

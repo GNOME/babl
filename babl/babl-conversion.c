@@ -235,7 +235,7 @@ _conversion_new (const char    *name,
         BABL (babl->conversion.destination),
         babl_type_from_id (BABL_DOUBLE));
 
-      {
+      if(0){
         const Babl *fish = babl_conversion_find (src_format, dst_format);
         if (fish)
           return fish;
@@ -284,6 +284,8 @@ create_name (Babl *source, Babl *destination, int type)
 const char *
 babl_conversion_create_name (Babl *source, Babl *destination, int type);
 
+int _babl_loaded = 0;
+
 const char *
 babl_conversion_create_name (Babl *source, Babl *destination, int type)
 {
@@ -292,6 +294,9 @@ babl_conversion_create_name (Babl *source, Babl *destination, int type)
   int id = 0;
   collisions = 0;
   name = create_name (source, destination, type);
+
+  if (!_babl_loaded)
+  {
   babl = babl_db_exist (db, id, name);
   while (babl)
     {
@@ -302,6 +307,7 @@ babl_conversion_create_name (Babl *source, Babl *destination, int type)
       name = create_name (source, destination, type);
       babl = babl_db_exist (db, id, name);
     }
+  }
   return name;
 }
 
