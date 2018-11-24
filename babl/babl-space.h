@@ -19,7 +19,7 @@
 #ifndef _BABL_SPACE_H
 #define _BABL_SPACE_H
 
-#include "../config.h"
+#include "config.h"
 #include <math.h>
 #include <string.h>
 #include "base/util.h"
