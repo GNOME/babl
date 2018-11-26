@@ -26,10 +26,11 @@
  */
 
 #include "config.h"
+
 #include <math.h>
 #include <string.h>
 
-#include "babl.h"
+#include "babl-internal.h"
 #include "babl-base.h"
 #include "base/util.h"
 
@@ -622,6 +623,9 @@ babl_base_model_cmyk (void)
     babl_component ("ka"),
     babl_component ("A"),
     "cmyk",
+    "inverted",
+    "alpha",
+    "premultiplied",
     NULL
   );
 
@@ -633,6 +637,8 @@ babl_base_model_cmyk (void)
     babl_component ("key"),
     babl_component ("A"),
     "cmyk",
+    "inverted",
+    "alpha",
     NULL
   );
   babl_model_new (
@@ -642,6 +648,7 @@ babl_base_model_cmyk (void)
     babl_component ("yellow"),
     babl_component ("key"),
     "cmyk",
+    "inverted",
     NULL
   );
 
@@ -653,6 +660,8 @@ babl_base_model_cmyk (void)
     babl_component ("Ka"),
     babl_component ("A"),
     "cmyk",
+    "alpha",
+    "premultiplied",
     NULL
   );
 
@@ -664,6 +673,7 @@ babl_base_model_cmyk (void)
     babl_component ("Key"),
     babl_component ("A"),
     "cmyk",
+    "alpha",
     NULL
   );
   babl_model_new (

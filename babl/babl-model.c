@@ -57,7 +57,7 @@ model_new (const char     *name,
            int             id,
            int             components,
            BablComponent **component,
-           int             is_cmyk)
+           BablModelFlag   flags)
 {
   Babl *babl;
 
@@ -74,7 +74,7 @@ model_new (const char     *name,
   babl->model.space      = space;
   babl->model.data       = NULL;
   babl->model.model      = NULL;
-  babl->model.is_cmyk    = is_cmyk;
+  babl->model.flags      = flags;
   strcpy (babl->instance.name, name);
   memcpy (babl->model.component, component, sizeof (BablComponent *) * components);
 
@@ -116,7 +116,7 @@ babl_model_new (void *first_argument,
   char          *name          = NULL;
   const Babl    *space         = babl_space ("sRGB");
   BablComponent *component [BABL_MAX_COMPONENTS];
-  int            is_cmyk       = 0;
+  BablModelFlag  flags         = 0;
 
   va_start (varg, first_argument);
 
@@ -132,10 +132,41 @@ babl_model_new (void *first_argument,
         {
           assigned_name = va_arg (varg, char *);
         }
-
+      else if (!strcmp (arg, "gray"))
+        {
+          flags |= BABL_MODEL_FLAG_GRAY;
+        }
+      else if (!strcmp (arg, "CIE"))
+        {
+          flags |= BABL_MODEL_FLAG_CIE;
+        }
+      else if (!strcmp (arg, "rgb"))
+        {
+          flags |= BABL_MODEL_FLAG_RGB;
+        }
       else if (!strcmp (arg, "cmyk"))
         {
-          is_cmyk = 1;
+          flags |= BABL_MODEL_FLAG_CMYK;
+        }
+      else if (!strcmp (arg, "inverted"))
+        {
+          flags |= BABL_MODEL_FLAG_INVERTED;
+        }
+      else if (!strcmp (arg, "premultiplied"))
+        {
+          flags |= BABL_MODEL_FLAG_PREMULTIPLIED;
+        }
+      else if (!strcmp (arg, "alpha"))
+        {
+          flags |= BABL_MODEL_FLAG_ALPHA;
+        }
+      else if (!strcmp (arg, "nonlinear"))
+        {
+          flags |= BABL_MODEL_FLAG_NONLINEAR;
+        }
+      else if (!strcmp (arg, "perceptual"))
+        {
+          flags |= BABL_MODEL_FLAG_PERCEPTUAL;
         }
 
       /* if we didn't point to a known string, we assume argument to be babl */
@@ -219,7 +250,7 @@ babl_model_new (void *first_argument,
 
   if (! babl)
     {
-      babl = model_new (name, space, id, components, component, is_cmyk);
+      babl = model_new (name, space, id, components, component, flags);
       babl_db_insert (db, babl);
       construct_double_format (babl);
     }
@@ -428,4 +459,9 @@ babl_model_with_space (const char *name, const Babl *space)
   return babl_remodel_with_space (babl_model (name), space);
 }
 
+BablModelFlag babl_model_get_flags (const Babl *model)
+{
+  if (!model) return 0;
+  return model->model.flags;
+}
 

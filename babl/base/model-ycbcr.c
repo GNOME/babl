@@ -74,6 +74,7 @@ models (void)
     babl_component_from_id (BABL_CB),
     babl_component_from_id (BABL_CR),
     babl_component_from_id (BABL_ALPHA),
+    "alpha",
     NULL);
 }
 

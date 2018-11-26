@@ -159,6 +159,7 @@ models (void)
     babl_component_from_id (BABL_RED),
     babl_component_from_id (BABL_GREEN),
     babl_component_from_id (BABL_BLUE),
+    "rgb",
     NULL);
 
   babl_model_new (
@@ -167,6 +168,9 @@ models (void)
     babl_component_from_id (BABL_GREEN_MUL_ALPHA),
     babl_component_from_id (BABL_BLUE_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
+    "rgb",
+    "premultiplied",
+    "alpha",
     NULL);
 
   babl_model_new (
@@ -174,6 +178,8 @@ models (void)
     babl_component_from_id (BABL_RED_NONLINEAR),
     babl_component_from_id (BABL_GREEN_NONLINEAR),
     babl_component_from_id (BABL_BLUE_NONLINEAR),
+    "rgb",
+    "nonlinear",
     NULL);
 
   babl_model_new (
@@ -181,6 +187,8 @@ models (void)
     babl_component_from_id (BABL_RED_PERCEPTUAL),
     babl_component_from_id (BABL_GREEN_PERCEPTUAL),
     babl_component_from_id (BABL_BLUE_PERCEPTUAL),
+    "rgb",
+    "perceptual",
     NULL);
 
   babl_model_new (
@@ -189,6 +197,9 @@ models (void)
     babl_component_from_id (BABL_GREEN_NONLINEAR),
     babl_component_from_id (BABL_BLUE_NONLINEAR),
     babl_component_from_id (BABL_ALPHA),
+    "rgb",
+    "nonlinear",
+    "alpha",
     NULL);
 
   babl_model_new (
@@ -197,6 +208,9 @@ models (void)
     babl_component_from_id (BABL_GREEN_PERCEPTUAL),
     babl_component_from_id (BABL_BLUE_PERCEPTUAL),
     babl_component_from_id (BABL_ALPHA),
+    "rgb",
+    "perceptual",
+    "alpha",
     NULL);
 
   babl_model_new (
@@ -205,6 +219,10 @@ models (void)
     babl_component_from_id (BABL_GREEN_NONLINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_BLUE_NONLINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
+    "rgb",
+    "nonlinear",
+    "premultiplied",
+    "alpha",
     NULL);
 
   babl_model_new (
@@ -213,6 +231,10 @@ models (void)
     babl_component_from_id (BABL_GREEN_PERCEPTUAL_MUL_ALPHA),
     babl_component_from_id (BABL_BLUE_PERCEPTUAL_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
+    "rgb",
+    "perceptual",
+    "premultiplied",
+    "alpha",
     NULL);
 }
 

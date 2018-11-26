@@ -283,6 +283,26 @@ int          babl_format_get_bytes_per_pixel   (const Babl *format);
  */
 const Babl * babl_format_get_model             (const Babl *format);
 
+
+
+typedef enum _BablModelFlag BablModelFlag;
+
+enum _BablModelFlag
+{
+  BABL_MODEL_FLAG_OTHER         = 0,
+  BABL_MODEL_FLAG_ALPHA         = 1<<1,
+  BABL_MODEL_FLAG_PREMULTIPLIED = 1<<2,
+  BABL_MODEL_FLAG_CIE           = 1<<3,
+  BABL_MODEL_FLAG_GRAY          = 1<<4,
+  BABL_MODEL_FLAG_RGB           = 1<<5,
+  BABL_MODEL_FLAG_CMYK          = 1<<6,
+  BABL_MODEL_FLAG_INVERTED      = 1<<7,
+  BABL_MODEL_FLAG_NONLINEAR     = 1<<8,
+  BABL_MODEL_FLAG_PERCEPTUAL    = 1<<9,
+};
+
+BablModelFlag babl_model_get_flags (const Babl *model);
+
 /**
  * babl_format_get_n_components:
  *
@@ -583,7 +603,6 @@ babl_space_from_rgbxyz_matrix (const char *name,
  * Returns the components and data type, without space suffix.
  */
 const char * babl_format_get_encoding (const Babl *babl);
-
 
 int babl_space_is_cmyk (const Babl *space);
 

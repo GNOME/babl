@@ -79,6 +79,7 @@ models (void)
   babl_model_new (
     "id", BABL_GRAY,
     babl_component_from_id (BABL_GRAY_LINEAR),
+    "gray",
     NULL);
 
 
@@ -86,40 +87,59 @@ models (void)
     "id", BABL_GRAY_ALPHA,
     babl_component_from_id (BABL_GRAY_LINEAR),
     babl_component_from_id (BABL_ALPHA),
+    "gray",
+    "alpha",
     NULL);
 
   babl_model_new (
     "id", BABL_GRAY_ALPHA_PREMULTIPLIED,
     babl_component_from_id (BABL_GRAY_LINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
+    "gray",
+    "premultiplied",
+    "alpha",
     NULL);
 
   babl_model_new (
     "id", BABL_MODEL_GRAY_NONLINEAR,
     babl_component_from_id (BABL_GRAY_NONLINEAR),
+    "gray",
+    "nonlinear",
     NULL);
 
   babl_model_new (
     "id", BABL_MODEL_GRAY_NONLINEAR_ALPHA,
     babl_component_from_id (BABL_GRAY_NONLINEAR),
     babl_component_from_id (BABL_ALPHA),
+    "gray",
+    "nonlinear",
+    "alpha",
     NULL);
 
   babl_model_new (
     "id", BABL_MODEL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED,
     babl_component_from_id (BABL_GRAY_NONLINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
+    "gray",
+    "nonlinear",
+    "premultiplied",
+    "alpha",
     NULL);
 
   babl_model_new (
     "id", BABL_MODEL_GRAY_PERCEPTUAL,
     babl_component_from_id (BABL_GRAY_PERCEPTUAL),
+    "gray",
+    "perceptual",
     NULL);
 
   babl_model_new (
     "id", BABL_MODEL_GRAY_PERCEPTUAL_ALPHA,
     babl_component_from_id (BABL_GRAY_PERCEPTUAL),
     babl_component_from_id (BABL_ALPHA),
+    "gray",
+    "perceptual",
+    "alpha",
     NULL);
 
 }

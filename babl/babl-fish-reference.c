@@ -699,7 +699,7 @@ enum _Kind { KIND_RGB, KIND_CMYK};
 
 static int format_has_cmyk_model (const Babl *format)
 {
-  return format->format.model->is_cmyk;
+  return format->format.model->flags & BABL_MODEL_FLAG_CMYK;
 }
 
 static void
