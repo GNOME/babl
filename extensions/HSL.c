@@ -62,6 +62,7 @@ init (void)
                   babl_component ("saturation"),
                   babl_component ("lightness"),
                   babl_component ("alpha"),
+                  "alpha",
                   NULL);
   babl_model_new ("name", "HSL",
                   babl_component ("hue"),
