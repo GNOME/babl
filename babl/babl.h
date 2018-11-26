@@ -285,7 +285,6 @@ const Babl * babl_format_get_model             (const Babl *format);
 
 
 
-typedef enum _BablModelFlag BablModelFlag;
 
 enum _BablModelFlag
 {
@@ -302,6 +301,8 @@ enum _BablModelFlag
   BABL_MODEL_FLAG_NONLINEAR     = 1<<9,
   BABL_MODEL_FLAG_PERCEPTUAL    = 1<<10,
 };
+
+typedef enum _BablModelFlag BablModelFlag;
 
 /* linear, nonlinear and perceptual could occupy two bits with a decidated 0,
  * but we do not have a lack of bits in this bit pattern so leave it be.
