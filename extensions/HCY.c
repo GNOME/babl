@@ -94,6 +94,7 @@ models (void)
     babl_component ("HCY chroma"),
     babl_component ("HCY luma"),
     babl_component ("alpha"),
+    "alpha",
     NULL
   );
 
