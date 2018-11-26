@@ -104,6 +104,7 @@ models (void)
     babl_component ("CIE L"),
     babl_component ("CIE a"),
     babl_component ("CIE b"),
+    "CIE",
     NULL);
 
   babl_model_new (
@@ -112,6 +113,8 @@ models (void)
     babl_component ("CIE a"),
     babl_component ("CIE b"),
     babl_component ("A"),
+    "CIE",
+    "alpha",
     NULL);
 
   babl_model_new (
@@ -119,6 +122,7 @@ models (void)
     babl_component ("CIE L"),
     babl_component ("CIE C(ab)"),
     babl_component ("CIE H(ab)"),
+    "CIE",
     NULL);
 
   babl_model_new (
@@ -127,6 +131,8 @@ models (void)
     babl_component ("CIE C(ab)"),
     babl_component ("CIE H(ab)"),
     babl_component ("A"),
+    "CIE",
+    "alpha",
     NULL);
 
   babl_model_new (
@@ -134,6 +140,7 @@ models (void)
     babl_component ("CIE X"),
     babl_component ("CIE Y"),
     babl_component ("CIE Z"),
+    "CIE",
     NULL);
 
   babl_model_new (
@@ -142,6 +149,8 @@ models (void)
     babl_component ("CIE Y"),
     babl_component ("CIE Z"),
     babl_component ("A"),
+    "CIE",
+    "alpha",
     NULL);
 
   babl_model_new (
@@ -149,6 +158,7 @@ models (void)
     babl_component ("CIE x"),
     babl_component ("CIE y"),
     babl_component ("CIE Y"),
+    "CIE",
     NULL);
 
   babl_model_new (
@@ -157,6 +167,8 @@ models (void)
     babl_component ("CIE y"),
     babl_component ("CIE Y"),
     babl_component ("A"),
+    "CIE",
+    "alpha",
     NULL);
 }
 
