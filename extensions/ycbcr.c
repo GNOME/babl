@@ -67,6 +67,7 @@ models (void)
     babl_component ("Cb"),
     babl_component ("Cr"),
     babl_component ("alpha"),
+    "alpha",
     NULL);
 }
 
