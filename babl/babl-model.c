@@ -160,6 +160,10 @@ babl_model_new (void *first_argument,
         {
           flags |= BABL_MODEL_FLAG_ALPHA;
         }
+      else if (!strcmp (arg, "linear"))
+        {
+          flags |= BABL_MODEL_FLAG_LINEAR;
+        }
       else if (!strcmp (arg, "nonlinear"))
         {
           flags |= BABL_MODEL_FLAG_NONLINEAR;

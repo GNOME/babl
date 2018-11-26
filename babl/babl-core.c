@@ -133,6 +133,9 @@ babl_core_init (void)
     babl_component_from_id (BABL_GREEN),
     babl_component_from_id (BABL_BLUE),
     babl_component_from_id (BABL_ALPHA),
+    "rgb",
+    "linear",
+    "alpha",
     NULL);
 
   /*
