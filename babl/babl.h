@@ -297,9 +297,15 @@ enum _BablModelFlag
   BABL_MODEL_FLAG_RGB           = 1<<5,
   BABL_MODEL_FLAG_CMYK          = 1<<6,
   BABL_MODEL_FLAG_INVERTED      = 1<<7,
-  BABL_MODEL_FLAG_NONLINEAR     = 1<<8,
-  BABL_MODEL_FLAG_PERCEPTUAL    = 1<<9,
+
+  BABL_MODEL_FLAG_LINEAR        = 1<<8,
+  BABL_MODEL_FLAG_NONLINEAR     = 1<<9,
+  BABL_MODEL_FLAG_PERCEPTUAL    = 1<<10,
 };
+
+/* linear, nonlinear and perceptual could occupy two bits with a decidated 0,
+ * but we do not have a lack of bits in this bit pattern so leave it be.
+ */
 
 BablModelFlag babl_model_get_flags (const Babl *model);
 
