@@ -91,6 +91,7 @@ models (void)
     babl_component ("saturation"),
     babl_component ("value"),
     babl_component ("alpha"),
+    "alpha",
     NULL
   );
 
