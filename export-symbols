@@ -33,6 +33,7 @@ babl_model
 babl_model_is
 babl_model_with_space
 babl_model_new
+babl_model_get_flags
 babl_new_palette
 babl_palette_reset
 babl_palette_set_palette
