@@ -17,8 +17,8 @@ int main (int argc, char **argv)
 
   if (!final)
   {
-  putenv ("BABL_DEBUG_CONVERSIONS" "=" "1");
-  putenv ("BABL_TOLERANCE"         "=" "100000.0");
+    putenv ("BABL_DEBUG_CONVERSIONS" "=" "1");
+    putenv ("BABL_TOLERANCE"         "=" "0.2");
   }
 
   babl_init ();
