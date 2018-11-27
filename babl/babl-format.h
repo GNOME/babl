@@ -28,13 +28,13 @@ typedef struct
   int              components;
   BablComponent  **component;
   BablType       **type;
-  void            *model_data;
+  BablModel       *model;
   const Babl      *space;
+  void            *model_data;
   void            *image_template; /* image template for use with
                                       linear (non-planer) images */
 
   BablSampling   **sampling;
-  BablModel       *model;
   int              bytes_per_pixel;
   int              planar;
   double           loss; /*< average relative error when converting

@@ -48,10 +48,10 @@ typedef struct
 {
   BablInstance    instance;
   BablFormat     *format;    /*< (if known) */
-  BablModel      *model;     /*< (always known) */
   int             components;
   BablComponent **component;
   BablType      **type;
+  BablModel      *model;     /*< (always known) */
   BablSampling  **sampling;
   char          **data;
   int            *pitch;
