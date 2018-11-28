@@ -80,6 +80,7 @@ models (void)
     "id", BABL_GRAY,
     babl_component_from_id (BABL_GRAY_LINEAR),
     "gray",
+    "linear",
     NULL);
 
 
@@ -88,6 +89,7 @@ models (void)
     babl_component_from_id (BABL_GRAY_LINEAR),
     babl_component_from_id (BABL_ALPHA),
     "gray",
+    "linear",
     "alpha",
     NULL);
 
@@ -96,6 +98,7 @@ models (void)
     babl_component_from_id (BABL_GRAY_LINEAR_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
     "gray",
+    "linear",
     "premultiplied",
     "alpha",
     NULL);
