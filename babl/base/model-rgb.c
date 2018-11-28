@@ -160,6 +160,7 @@ models (void)
     babl_component_from_id (BABL_GREEN),
     babl_component_from_id (BABL_BLUE),
     "rgb",
+    "linear",
     NULL);
 
   babl_model_new (
@@ -169,6 +170,7 @@ models (void)
     babl_component_from_id (BABL_BLUE_MUL_ALPHA),
     babl_component_from_id (BABL_ALPHA),
     "rgb",
+    "linear",
     "premultiplied",
     "alpha",
     NULL);
