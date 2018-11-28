@@ -17,7 +17,7 @@ c_sources =			\
 	model-cmyk.c		\
 	model-ycbcr.c
 
-AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/babl
+AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/babl $(LCMS_CFLAGS)
 
 noinst_LTLIBRARIES= libbase.la
 libbase_la_SOURCES= $(h_sources) $(c_sources) 

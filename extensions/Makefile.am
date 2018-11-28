@@ -11,7 +11,8 @@ AM_CPPFLAGS = \
 	-I$(top_builddir)		\
 	-I$(top_srcdir)			\
 	-I$(top_srcdir)/babl		\
-	-I$(top_srcdir)/extensions
+	-I$(top_srcdir)/extensions	\
+	$(LCMS_CFLAGS)
 
 extdir = $(libdir)/babl-@BABL_API_VERSION@
 ext_LTLIBRARIES = \

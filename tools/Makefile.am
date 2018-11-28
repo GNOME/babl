@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/babl
+AM_CPPFLAGS = -I$(top_srcdir) -I$(top_srcdir)/babl $(LCMS_CFLAGS)
 AM_LDFLAGS = -no-install
 
 LDADD = $(top_builddir)/babl/libbabl-@BABL_API_VERSION@.la \
