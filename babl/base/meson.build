@@ -3,6 +3,7 @@ bablBaseInclude = include_directories('.')
 babl_base_sources = [
   'babl-base.c',
   'formats.c',
+  'model-cmyk.c',
   'model-gray.c',
   'model-rgb.c',
   'model-ycbcr.c',
