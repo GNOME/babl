@@ -247,7 +247,7 @@ _babl_space_for_lcms (const char *icc_data, int icc_length)
   }
 
   /* initialize it with copy of srgb content */
-  if(1){
+  {
     const BablSpace *srgb = &babl_space("sRGB")->space;
     memcpy (&space.xw,
             &srgb->xw,
