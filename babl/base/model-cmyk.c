@@ -924,6 +924,28 @@ babl_base_model_cmyk (void)
     babl_component ("A"),
     NULL
   );
+
+  babl_format_new (
+    "name", "cmyk half",
+    babl_model ("cmyk"),
+    babl_type ("half"),
+    babl_component ("cyan"),
+    babl_component ("magenta"),
+    babl_component ("yellow"),
+    babl_component ("key"),
+    NULL
+  );
+  babl_format_new (
+    "name", "cmykA half",
+    babl_model ("cmykA"),
+    babl_type ("half"),
+    babl_component ("cyan"),
+    babl_component ("magenta"),
+    babl_component ("yellow"),
+    babl_component ("key"),
+    babl_component ("A"),
+    NULL
+  );
   babl_format_new (
     "name", "camayakaA u16",
     babl_model ("camayakaA"),
@@ -974,6 +996,27 @@ babl_base_model_cmyk (void)
     "name", "CMYK float",
     babl_model ("CMYK"),
     babl_type ("float"),
+    babl_component ("Cyan"),
+    babl_component ("Magenta"),
+    babl_component ("Yellow"),
+    babl_component ("Key"),
+    NULL
+  );
+  babl_format_new (
+    "name", "CMYKA half",
+    babl_model ("CMYKA"),
+    babl_type ("half"),
+    babl_component ("Cyan"),
+    babl_component ("Magenta"),
+    babl_component ("Yellow"),
+    babl_component ("Key"),
+    babl_component ("A"),
+    NULL
+  );
+  babl_format_new (
+    "name", "CMYK half",
+    babl_model ("CMYK"),
+    babl_type ("half"),
     babl_component ("Cyan"),
     babl_component ("Magenta"),
     babl_component ("Yellow"),
