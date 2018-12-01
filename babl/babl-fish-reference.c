@@ -715,6 +715,9 @@ babl_fish_reference_process_double (const Babl *babl,
   Babl *rgba_image              = NULL;
   Babl *cmyka_image             = NULL;
   Babl *destination_image       = NULL;
+
+
+
   void *source_double_buf_alloc = NULL;
   void *source_double_buf;
   void *rgba_double_buf_alloc   = NULL;
@@ -724,6 +727,9 @@ babl_fish_reference_process_double (const Babl *babl,
   void *destination_double_buf_alloc = NULL;
   void *destination_double_buf;
   const void *type_double  = babl_type_from_id (BABL_DOUBLE);
+
+  const Babl *source_space = BABL (BABL ((babl->fish.source))->format.space);
+  const Babl *destination_space = BABL (BABL ((babl->fish.destination))->format.space);
 
   /* This is not the full/only condition XXX */
 
@@ -766,14 +772,13 @@ babl_fish_reference_process_double (const Babl *babl,
        Babl *conv = assert_conversion_find (
            BABL (babl->fish.source)->format.model,
        babl_remodel_with_space (babl_model_from_id (BABL_RGBA),
-                         BABL (BABL ((babl->fish.source))->format.space)));
+                         source_space));
 
        rgba_double_buf       =
        rgba_double_buf_alloc = babl_malloc (sizeof (double) * n * 4);
 
        rgba_image = babl_image_from_linear (
-          rgba_double_buf, babl_remodel_with_space (babl_model_from_id (BABL_RGBA),
-          BABL (BABL ((babl->fish.source))->format.space)) );
+          rgba_double_buf, babl_remodel_with_space (babl_model_from_id (BABL_RGBA), source_space));
 
        if (conv->class_type == BABL_CONVERSION_PLANAR)
        {
@@ -799,14 +804,14 @@ babl_fish_reference_process_double (const Babl *babl,
         Babl *conv = assert_conversion_find (
                    BABL (babl->fish.source)->format.model,
                    babl_remodel_with_space (babl_model ("cmykA"),
-                         BABL (BABL ((babl->fish.source))->format.space)));
+                         source_space));
 
-        cmyka_double_buf        =
-        cmyka_double_buf_alloc  = babl_malloc (sizeof (double) * n * 5);
+        cmyka_double_buf       =
+        cmyka_double_buf_alloc = babl_malloc (sizeof (double) * n * 5);
 
         cmyka_image = babl_image_from_linear (
           cmyka_double_buf, babl_remodel_with_space (babl_model ("cmykA"),
-          BABL (BABL ((babl->fish.source))->format.space)) );
+          source_space));
 
         if (conv->class_type == BABL_CONVERSION_PLANAR)
         {
@@ -825,14 +830,13 @@ babl_fish_reference_process_double (const Babl *babl,
   if (source_kind      == KIND_RGB &&
       destination_kind == KIND_RGB)
   {
-    if (((babl->fish.source)->format.space !=
-        ((babl->fish.destination)->format.space)))
+    if (source_space != destination_space)
     {
       double matrix[9];
       double *rgba = rgba_double_buf;
       babl_matrix_mul_matrix (
-        (babl->fish.destination)->format.space->space.XYZtoRGB,
-        (babl->fish.source)->format.space->space.RGBtoXYZ,
+        destination_space->space.XYZtoRGB,
+        source_space->space.RGBtoXYZ,
         matrix);
 
       babl_matrix_mul_vector_buf4 (matrix, rgba, rgba, n);
@@ -845,10 +849,10 @@ babl_fish_reference_process_double (const Babl *babl,
     cmyka_double_buf_alloc  = babl_malloc (sizeof (double) * n * 5);
     cmyka_image = babl_image_from_linear (
         cmyka_double_buf, babl_remodel_with_space (babl_model ("cmykA"),
-        BABL (BABL ((babl->fish.destination))->format.space)) );
+        destination_space));
 
 #if HAVE_LCMS
-    if (babl->fish.destination->format.space->space.cmyk.lcms_profile)
+    if (destination_space->space.cmyk.lcms_profile)
     {
       /* lcms expect floats with normalized range 0.0-100.0 for CMYK data,
          we also do our inversion from profile here.
@@ -857,7 +861,7 @@ babl_fish_reference_process_double (const Babl *babl,
       double *cmyka=cmyka_double_buf;
       int i;
       /* use lcms for doing conversion from RGBA */
-      cmsDoTransform (babl->fish.destination->format.space->space.cmyk.lcms_from_rgba,
+      cmsDoTransform (destination_space->space.cmyk.lcms_from_rgba,
          rgba_double_buf, cmyka_double_buf, n);
 
       for (i = 0; i < n; i++)
@@ -911,10 +915,10 @@ babl_fish_reference_process_double (const Babl *babl,
     rgba_double_buf        = rgba_double_buf_alloc;
     rgba_image = babl_image_from_linear (
         rgba_double_buf, babl_remodel_with_space (babl_model_from_id (BABL_RGBA),
-        BABL (BABL ((babl->fish.source))->format.space)) );
+        destination_space));
 
 #if HAVE_LCMS
-    if (babl->fish.source->format.space->space.cmyk.lcms_profile)
+    if (source_space->space.cmyk.lcms_profile)
     {
     {
       /* lcms expect floats with normalized range 0.0-100.0 for CMYK data,
@@ -931,7 +935,7 @@ babl_fish_reference_process_double (const Babl *babl,
       }
     }
     /* use lcms for doing conversion to RGBA */
-    cmsDoTransform (babl->fish.source->format.space->space.cmyk.lcms_to_rgba,
+    cmsDoTransform (source_space->space.cmyk.lcms_to_rgba,
        cmyka_double_buf, rgba_double_buf, n);
 
     {
@@ -977,12 +981,24 @@ babl_fish_reference_process_double (const Babl *babl,
  else if (source_kind      == KIND_CMYK &&
           destination_kind == KIND_CMYK)
  {
-#if HAVE_LCMS
+    if (source_space != destination_space)
+    {
+#if HAVE_LCMSx
+
+#define MAX_CMYK_CMYK  64
+     static int cmyk_cmyk_count = 0;
+     static const Babl *cmyk_cmyk_source[MAX_CMYK_CMYK];
+     static const Babl *cmyk_cmyk_destination[MAX_CMYK_CMYK];
+     static cmsHTRANSFORM cmyk_cmyk_transform[MAX_CMYK_CMYK];
+
+//     int cmyk_cmyk_no = 0;
+
    /* XXX XXX XXX NYI, keep a global list of lcms2 based conversions,
       make k-preserve k-plane preserve intents a global setting, defaulting
       to k-preserve
     */
 #endif
+     }
  }
 
 
@@ -991,8 +1007,7 @@ babl_fish_reference_process_double (const Babl *babl,
     case KIND_CMYK:
       {
         const Babl *destination_cmyka_format =
-          babl_remodel_with_space (babl_model ("cmykA"),
-               BABL (BABL ((babl->fish.destination))->format.space));
+          babl_remodel_with_space (babl_model ("cmykA"), destination_space);
         if(BABL (babl->fish.destination)->format.model == (void*)destination_cmyka_format)
         {
            destination_double_buf = cmyka_double_buf;
@@ -1028,7 +1043,7 @@ babl_fish_reference_process_double (const Babl *babl,
       {
         const Babl *destination_rgba_format =
           babl_remodel_with_space (babl_model_from_id (BABL_RGBA),
-               BABL (BABL ((babl->fish.destination))->format.space));
+               destination_space);
 
         if(BABL (babl->fish.destination)->format.model == (void*)destination_rgba_format)
         {
