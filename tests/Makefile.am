@@ -5,6 +5,7 @@ CONCURRENCY_STRESS_TESTS =		\
 endif
 
 C_TESTS =				\
+	cairo_cmyk_hack \
 	grayscale_to_rgb	\
 	chromaticities          \
 	rgb_to_bgr       	\
