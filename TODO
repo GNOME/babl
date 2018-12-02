@@ -1,6 +1,5 @@
 <h2>TODO</h2>
 
 <ul>
-  <li>Support for conversions between formats that have higher dimensionality than RGBA.</li>
   <li>Support for datatypes that are not a multiple of 8bit.</li>
 </ul>
