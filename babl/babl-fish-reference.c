@@ -981,9 +981,11 @@ babl_fish_reference_process_double (const Babl *babl,
  else if (source_kind      == KIND_CMYK &&
           destination_kind == KIND_CMYK)
  {
-    if (source_space != destination_space)
+    if (source_space != destination_space &&
+        source_space->space.cmyk.lcms_profile &&
+        destination_space->space.cmyk.lcms_profile)
     {
-#if HAVE_LCMSx
+#if HAVE_LCMS
 
 #define MAX_CMYK_CMYK  64
      static int cmyk_cmyk_count = 0;
@@ -991,12 +993,54 @@ babl_fish_reference_process_double (const Babl *babl,
      static const Babl *cmyk_cmyk_destination[MAX_CMYK_CMYK];
      static cmsHTRANSFORM cmyk_cmyk_transform[MAX_CMYK_CMYK];
 
-//     int cmyk_cmyk_no = 0;
+     int cmyk_cmyk_no;
+     for (cmyk_cmyk_no = 0; cmyk_cmyk_no < cmyk_cmyk_count; cmyk_cmyk_no++)
+     {
+       if (cmyk_cmyk_source[cmyk_cmyk_no] == source_space &&
+           cmyk_cmyk_destination[cmyk_cmyk_no] == destination_space)
+         break;
+     }
 
-   /* XXX XXX XXX NYI, keep a global list of lcms2 based conversions,
-      make k-preserve k-plane preserve intents a global setting, defaulting
-      to k-preserve
-    */
+/* these are not defined by lcms2.h we hope that following the existing pattern of pixel-format definitions work */
+#ifndef TYPE_CMYKA_DBL
+#define TYPE_CMYKA_DBL      (FLOAT_SH(1)|COLORSPACE_SH(PT_CMYK)|EXTRA_SH(1)|CHANNELS_SH(4)|BYTES_SH(0))
+#endif
+
+     if (cmyk_cmyk_no >= cmyk_cmyk_count)
+     {
+       cmsHPROFILE src_profile = cmsOpenProfileFromMem(source_space->space.icc_profile, source_space->space.icc_length);
+       cmsHPROFILE dst_profile = cmsOpenProfileFromMem(destination_space->space.icc_profile, source_space->space.icc_length);
+
+       cmyk_cmyk_source[cmyk_cmyk_no] = source_space;
+       cmyk_cmyk_destination[cmyk_cmyk_no] = destination_space;
+       cmyk_cmyk_transform[cmyk_cmyk_no] = cmsCreateTransform(src_profile, TYPE_CMYKA_DBL,
+  dst_profile, TYPE_CMYKA_DBL,
+  INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_BLACKPOINTCOMPENSATION);
+       cmsCloseProfile (src_profile);
+       cmsCloseProfile (dst_profile);
+
+       cmyk_cmyk_count ++;
+     }
+      double *cmyka = cmyka_double_buf;
+      for (int i = 0; i < n; i++)
+      {
+        cmyka[i * 5 + 0] = (1.0-cmyka[i * 5 + 0])*100.0;
+        cmyka[i * 5 + 1] = (1.0-cmyka[i * 5 + 1])*100.0;
+        cmyka[i * 5 + 2] = (1.0-cmyka[i * 5 + 2])*100.0;
+        cmyka[i * 5 + 3] = (1.0-cmyka[i * 5 + 3])*100.0;
+      }
+
+     cmsDoTransform (cmyk_cmyk_transform[cmyk_cmyk_no],
+                     cmyka_double_buf, cmyka_double_buf, n);
+
+      for (int i = 0; i < n; i++)
+      {
+        cmyka[i * 5 + 0] = 1.0-(cmyka[i * 5 + 0])/100.0;
+        cmyka[i * 5 + 1] = 1.0-(cmyka[i * 5 + 1])/100.0;
+        cmyka[i * 5 + 2] = 1.0-(cmyka[i * 5 + 2])/100.0;
+        cmyka[i * 5 + 3] = 1.0-(cmyka[i * 5 + 3])/100.0;
+      }
+
 #endif
      }
  }
