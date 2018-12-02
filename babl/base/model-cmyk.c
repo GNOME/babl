@@ -958,6 +958,18 @@ babl_base_model_cmyk (void)
     NULL
   );
   babl_format_new (
+    "name", "camayakaA u8",
+    babl_model ("camayakaA"),
+    babl_type ("u8"),
+    babl_component ("ca"),
+    babl_component ("ma"),
+    babl_component ("ya"),
+    babl_component ("ka"),
+    babl_component ("A"),
+    NULL
+  );
+
+  babl_format_new (
     "name", "camayakaA half",
     babl_model ("camayakaA"),
     babl_type ("half"),
@@ -1110,6 +1122,18 @@ babl_base_model_cmyk (void)
     babl_component ("A"),
     NULL
   );
+  babl_format_new (
+    "name", "CaMaYaKaA u8",
+    babl_model ("CaMaYaKaA"),
+    babl_type ("u8"),
+    babl_component ("Ca"),
+    babl_component ("Ma"),
+    babl_component ("Yea"),
+    babl_component ("Ka"),
+    babl_component ("A"),
+    NULL
+  );
+
   babl_format_new (
     "name", "CaMaYaKaA u16",
     babl_model ("CaMaYaKaA"),
