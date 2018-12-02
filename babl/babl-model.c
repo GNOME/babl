@@ -463,9 +463,16 @@ babl_model_with_space (const char *name, const Babl *space)
   return babl_remodel_with_space (babl_model (name), space);
 }
 
-BablModelFlag babl_model_get_flags (const Babl *model)
+BablModelFlag babl_model_get_flags (const Babl *babl)
 {
-  if (!model) return 0;
-  return model->model.flags;
+  if (!babl) return 0;
+  switch (babl->class_type)
+  {
+    case BABL_MODEL:
+      return babl->model.flags;
+    case BABL_FORMAT:
+      return babl->format.model->flags;
+  }
+  return 0;
 }
 
