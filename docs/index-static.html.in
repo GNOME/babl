@@ -119,12 +119,13 @@
       <li>Extendable with new formats, color models, components
       and datatypes.</li>
       <li>Can load color spaces from ICC v2 and v4 profiles containing RGB
-          matrix + TRC.</li>
+          matrix + TRC, or CMYK profiles.</li>
       <li>Reference 64bit floating point conversions for datatypes and color
-          models.</li>
-      <li>Self profiling and optimizing, optimizing accuracy and performance at
-          runtime when the best performing single or multi-step conversion
-          path is chosen.</li>
+          models, with 32bit floating point reference speed-ups in some places.
+      </li>
+      <li>Self profiling/validating and optimizing, optimizing accuracy and
+performance at runtime when the best performing single or multi-step conversion
+path is chosen.</li>
     </ul>
 
     <p><a href='http://www.gegl.org/'>GEGL</a> through <a
@@ -144,7 +145,6 @@
     It can be <a href='http://git.gnome.org/cgit/babl'>browsed online</a> and cloned with:
     </p>
     <pre>git clone git://git.gnome.org/babl</pre>
-
 
     <a name='NEWS'></a>
     <h2>NEWS</h2>
