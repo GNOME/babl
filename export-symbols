@@ -22,6 +22,7 @@ babl_format_n
 babl_format_new
 babl_format_with_space
 babl_free
+babl_get_model_flags
 babl_get_name
 babl_get_name
 babl_get_user_data
@@ -33,7 +34,6 @@ babl_model
 babl_model_is
 babl_model_with_space
 babl_model_new
-babl_model_get_flags
 babl_new_palette
 babl_palette_reset
 babl_palette_set_palette

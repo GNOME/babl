@@ -308,7 +308,7 @@ typedef enum _BablModelFlag BablModelFlag;
  * but we do not have a lack of bits in this bit pattern so leave it be.
  */
 
-BablModelFlag babl_model_get_flags (const Babl *model);
+BablModelFlag babl_get_model_flags (const Babl *model);
 
 /**
  * babl_format_get_n_components:
