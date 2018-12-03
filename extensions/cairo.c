@@ -529,5 +529,71 @@ init (void)
     NULL
     );
 
+
+  /* formats that distribute different subset of the additive mixing variants
+   * of CMYK producing two syntetic RGB formats we run in parallel to derive
+   * a 4 instead of 3 component result, the same method could be used to
+   * extend processing/drawing with cairo to spectral data.
+   */
+  if (littleendian)
+  {
+    babl_format_new ("name", "cairo-ACMK32",
+                     babl_model ("camayakaA"),
+                     babl_type ("u8"),
+                     babl_component ("ka"),
+                     babl_component ("ma"),
+                     babl_component ("ca"),
+                     babl_component ("A"),
+                     NULL);
+    babl_format_new ("name", "cairo-ACKY32",
+                     babl_model ("camayakaA"),
+                     babl_type ("u8"),
+                     babl_component ("ya"),
+                     babl_component ("ka"),
+                     babl_component ("ca"),
+                     babl_component ("A"),
+                     NULL);
+  }
+  else
+  {
+    babl_format_new ("name", "cairo-ACMK32",
+                     babl_model ("camayakaA"),
+                     babl_type ("u8"),
+                     babl_component ("A"),
+                     babl_component ("ca"),
+                     babl_component ("ma"),
+                     babl_component ("ka"),
+                     NULL);
+    babl_format_new ("name", "cairo-ACKY32",
+                     babl_model ("camayakaA"),
+                     babl_type ("u8"),
+                     babl_component ("A"),
+                     babl_component ("ca"),
+                     babl_component ("ka"),
+                     babl_component ("ya"),
+                     NULL);
+  }
+
+  /* companion subset formats for setting pango u16 RGB color values from cmykA
+   * */
+  babl_format_new ("name", "ckyA u16",
+                   babl_model ("cmykA"),
+                   babl_type ("u16"),
+                   babl_component ("cyan"),
+                   babl_component ("key"),
+                   babl_component ("yellow"),
+                   babl_component ("A"),
+                   NULL);
+  babl_format_new ("name", "cmkA u16",
+                   babl_model ("cmykA"),
+                   babl_type ("u16"),
+                   babl_component ("cyan"),
+                   babl_component ("magenta"),
+                   babl_component ("key"),
+                   babl_component ("A"),
+                   NULL);
+
+
+
   return 0;
 }

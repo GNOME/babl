@@ -37,58 +37,6 @@ int init (void);
 int
 init (void)
 {
-  babl_format_new ("name", "ckyA u16",
-                   babl_model ("cmykA"),
-                   babl_type ("u16"),
-                   babl_component ("cyan"),
-                   babl_component ("key"),
-                   babl_component ("yellow"),
-                   babl_component ("A"),
-                   NULL);
-  babl_format_new ("name", "cmkA u16",
-                   babl_model ("cmykA"),
-                   babl_type ("u16"),
-                   babl_component ("cyan"),
-                   babl_component ("magenta"),
-                   babl_component ("key"),
-                   babl_component ("A"),
-                   NULL);
-
-  babl_format_new ("name", "camakaA u8",
-                   babl_model ("camayakaA"),
-                   babl_type ("u8"),
-                   babl_component ("ka"),
-                   babl_component ("ma"),
-                   babl_component ("ca"),
-                   babl_component ("A"),
-                   NULL);
-  babl_format_new ("name", "cakayaA u8",
-                   babl_model ("camayakaA"),
-                   babl_type ("u8"),
-                   babl_component ("ya"),
-                   babl_component ("ka"),
-                   babl_component ("ca"),
-                   babl_component ("A"),
-                   NULL);
-  babl_format_new ("name", "camaPadkaA u8",
-                   babl_model ("camayakaA"),
-                   babl_type ("u8"),
-                   babl_component ("ca"),
-                   babl_component ("ma"),
-                   babl_component ("PAD"),
-                   babl_component ("ka"),
-                   babl_component ("A"),
-                   NULL);
-  babl_format_new ("name", "caPadyakaA u8",
-                   babl_model ("camayakaA"),
-                   babl_type ("u8"),
-                   babl_component ("ca"),
-                   babl_component ("PAD"),
-                   babl_component ("ya"),
-                   babl_component ("ka"),
-                   babl_component ("A"),
-                   NULL);
-
   return 0;
 }
 
