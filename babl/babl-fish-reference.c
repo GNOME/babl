@@ -236,7 +236,8 @@ convert_to_double (BablFormat      *source_fmt,
 
 
 static void
-convert_from_double (BablFormat *destination_fmt,
+convert_from_double (BablFormat *source_fmt,
+                     BablFormat *destination_fmt,
                      char       *destination_double_buf,
                      char       *destination_buf,
                      int         n)
@@ -262,9 +263,27 @@ convert_from_double (BablFormat *destination_fmt,
   for (i = 0; i < destination_fmt->components; i++)
     {
       int j;
+      int can_be_used = 1;
 
       dst_img->type[0] = destination_fmt->type[i];
 
+      if (source_fmt->model == destination_fmt->model)
+      {
+        can_be_used = 0;
+        for (j = 0; j < source_fmt->components; j++)
+        {
+          if (destination_fmt->component[i] == source_fmt->component[j])
+          {
+            can_be_used = 1;
+          }
+        }
+      }
+      else
+      {
+      }
+         //fprintf (stderr, "%s %s %i\n", babl_get_name (source_fmt), babl_get_name (destination_fmt), can_be_used);
+
+      if (can_be_used)
       for (j = 0; j < destination_fmt->model->components; j++)
         {
           if (destination_fmt->component[i] ==
@@ -442,7 +461,8 @@ ncomponent_convert_to_float (BablFormat       *source_fmt,
 }
 
 static void
-ncomponent_convert_from_float (BablFormat *destination_fmt,
+ncomponent_convert_from_float (BablFormat *source_fmt,
+                               BablFormat *destination_fmt,
                                char       *destination_float_buf,
                                char       *destination_buf,
                                int         n)
@@ -554,7 +574,8 @@ convert_to_float (BablFormat *source_fmt,
 
 
 static void
-convert_from_float (BablFormat *destination_fmt,
+convert_from_float (BablFormat *source_fmt,
+                    BablFormat *destination_fmt,
                      char      *destination_float_buf,
                      char      *destination_buf,
                      int        n)
@@ -581,9 +602,23 @@ convert_from_float (BablFormat *destination_fmt,
   for (i = 0; i < destination_fmt->components; i++)
     {
       int j;
+      int can_be_used = 1;
 
       dst_img->type[0] = destination_fmt->type[i];
 
+      if (source_fmt->model == destination_fmt->model)
+      {
+        can_be_used = 0;
+        for (j = 0; j < source_fmt->components; j++)
+        {
+          if (destination_fmt->component[i] == source_fmt->component[j])
+          {
+            can_be_used = 1;
+          }
+        }
+      }
+
+      if (can_be_used)
       for (j = 0; j < destination_fmt->model->components; j++)
         {
           if (destination_fmt->component[i] ==
@@ -616,8 +651,6 @@ process_same_model (const Babl  *babl,
   const void *type_float = babl_type_from_id (BABL_FLOAT);
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
-
-
   if ((babl->fish.source->format.type[0]->bits < 32 ||
        babl->fish.source->format.type[0] == type_float) &&
       (babl->fish.destination->format.type[0]->bits < 32 ||
@@ -635,6 +668,7 @@ process_same_model (const Babl  *babl,
           float_buf,
           n);
         ncomponent_convert_from_float (
+          (BablFormat *) BABL (babl->fish.source),
           (BablFormat *) BABL (babl->fish.destination),
           float_buf,
           (char *) destination,
@@ -649,6 +683,7 @@ process_same_model (const Babl  *babl,
           n);
 
         convert_from_float (
+          (BablFormat *) BABL (babl->fish.source),
           (BablFormat *) BABL (babl->fish.destination),
           float_buf,
           (char *) destination,
@@ -685,6 +720,7 @@ process_same_model (const Babl  *babl,
           n);
 
         convert_from_double (
+          (BablFormat *) BABL (babl->fish.source),
           (BablFormat *) BABL (babl->fish.destination),
           double_buf,
           (char *) destination,
@@ -994,6 +1030,7 @@ babl_fish_reference_process_double (const Babl *babl,
      static cmsHTRANSFORM cmyk_cmyk_transform[MAX_CMYK_CMYK];
 
      int cmyk_cmyk_no;
+      double *cmyka = cmyka_double_buf;
      for (cmyk_cmyk_no = 0; cmyk_cmyk_no < cmyk_cmyk_count; cmyk_cmyk_no++)
      {
        if (cmyk_cmyk_source[cmyk_cmyk_no] == source_space &&
@@ -1021,7 +1058,6 @@ babl_fish_reference_process_double (const Babl *babl,
 
        cmyk_cmyk_count ++;
      }
-      double *cmyka = cmyka_double_buf;
       for (int i = 0; i < n; i++)
       {
         cmyka[i * 5 + 0] = (1.0-cmyka[i * 5 + 0])*100.0;
@@ -1130,6 +1166,7 @@ babl_fish_reference_process_double (const Babl *babl,
 
  /* convert from double model backing target pixel format to final representation */
   convert_from_double (
+    (BablFormat *) BABL (babl->fish.source),
     (BablFormat *) BABL (babl->fish.destination),
     destination_double_buf,
     destination,
@@ -1316,6 +1353,7 @@ babl_fish_reference_process_float (const Babl *babl,
     }
 
     convert_from_float (
+      (BablFormat *) BABL (babl->fish.source),
       (BablFormat *) BABL (babl->fish.destination),
       destination_float_buf,
       destination,
