@@ -545,11 +545,11 @@ init (void)
                      babl_component ("ca"),
                      babl_component ("A"),
                      NULL);
-    babl_format_new ("name", "cairo-ACKY32",
+    babl_format_new ("name", "cairo-ACYK32",
                      babl_model ("camayakaA"),
                      babl_type ("u8"),
-                     babl_component ("ya"),
                      babl_component ("ka"),
+                     babl_component ("ya"),
                      babl_component ("ca"),
                      babl_component ("A"),
                      NULL);
@@ -564,24 +564,24 @@ init (void)
                      babl_component ("ma"),
                      babl_component ("ka"),
                      NULL);
-    babl_format_new ("name", "cairo-ACKY32",
+    babl_format_new ("name", "cairo-ACYK32",
                      babl_model ("camayakaA"),
                      babl_type ("u8"),
                      babl_component ("A"),
                      babl_component ("ca"),
-                     babl_component ("ka"),
                      babl_component ("ya"),
+                     babl_component ("ka"),
                      NULL);
   }
 
   /* companion subset formats for setting pango u16 RGB color values from cmykA
    * */
-  babl_format_new ("name", "ckyA u16",
+  babl_format_new ("name", "cykA u16",
                    babl_model ("cmykA"),
                    babl_type ("u16"),
                    babl_component ("cyan"),
-                   babl_component ("key"),
                    babl_component ("yellow"),
+                   babl_component ("key"),
                    babl_component ("A"),
                    NULL);
   babl_format_new ("name", "cmkA u16",
