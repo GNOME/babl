@@ -32,7 +32,7 @@ unsigned char source_buf [PIXELS * 5] =
   0.0, 0.0, 255, 222,33};
 
 unsigned char cmk_buf [PIXELS * 4];
-unsigned char cky_buf [PIXELS * 4];
+unsigned char cyk_buf [PIXELS * 4];
 unsigned char dest_buf [PIXELS * 5];
 
 static int
@@ -41,17 +41,18 @@ test (void)
   int i;
   int OK = 1;
 
-  babl_process (babl_fish ("camayakaA u8", "camakaA u8"),
+  babl_process (babl_fish ("camayakaA u8", "cairo-ACYK32"),
+                source_buf, cyk_buf,
+                PIXELS);
+  babl_process (babl_fish ("camayakaA u8", "cairo-ACMK32"),
                 source_buf, cmk_buf,
                 PIXELS);
-  babl_process (babl_fish ("camayakaA u8", "cakayaA u8"),
-                source_buf, cky_buf,
-                PIXELS);
-  babl_process (babl_fish ("cakayaA u8", "camayakaA u8"),
-                cky_buf, dest_buf,
-                PIXELS);
-  babl_process (babl_fish ("camakaA u8", "camayakaA u8"),
+
+  babl_process (babl_fish ("cairo-ACMK32", "camayakaA u8"),
                 cmk_buf, dest_buf,
+                PIXELS);
+  babl_process (babl_fish ("cairo-ACYK32", "camayakaA u8"),
+                cyk_buf, dest_buf,
                 PIXELS);
 
   for (i = 0; i < PIXELS * 5; i++)
