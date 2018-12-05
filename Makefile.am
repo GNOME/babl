@@ -3,8 +3,8 @@ ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 SUBDIRS = \
 	babl		\
 	extensions	\
-	tests		\
-	tools
+	tools		\
+	tests
 
 if ENABLE_DOCS
 SUBDIRS+= docs
