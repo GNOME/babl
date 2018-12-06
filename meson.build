@@ -274,6 +274,8 @@ if with_lcms
   if lcms.found()
     conf.set('HAVE_LCMS', 1, description: 'Define to 1 if liblcms2 is available')
   endif
+else
+  lcms = dependency('', required : false)
 endif
 
 math = cc.find_library('m',   required: false)
