@@ -727,6 +727,13 @@ babl_format_with_space (const char *encoding, const Babl *space)
 
   if (BABL_IS_BABL (example_format))
   {
+    if (babl_format_is_palette (example_format))
+    {
+      /* XXX we should allocate a new palette name, and 
+             duplicate the path data, converted for new space
+       */
+      return example_format;
+    }
     encoding = babl_get_name (example_format);
     if (babl_format_get_space (example_format) != babl_space ("sRGB"))
     {
