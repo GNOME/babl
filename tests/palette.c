@@ -43,45 +43,37 @@ main (int    argc,
         palA, babl_format("R'G'B'A u8"),
         in, out);
   }
-  if(0){
+  {
     unsigned char in[][2]   = {{    0,255},{      1,255},{      2,255},{15,200}};
-    unsigned char out[][4]  = {{0,0,0,255},{127,0,0,255},{0,127,0,255},{255,255,255,255}};
-    const Babl *palA;// = babl_new_palette (NULL, 0);
-    //Babl *palB = babl_new_palette (NULL, 0);
-    //
+    unsigned char out[][4]  = {{0,0,0,255},{127,0,0,255},{0,127,0,255},{255,255,255,200}};
+    const Babl *palA;
     babl_new_palette (NULL, NULL, &palA);
     assert (palA);
 
-    CHECK_CONV("pal to rgba", unsigned char,
-        palA, babl_format("RGBA u8"),
+    CHECK_CONV("palA to rgba", unsigned char,
+        palA, babl_format("R'G'B'A u8"),
         in, out);
-
-#if 0
-    CHECK_CONV("pal to rgba", unsigned char,
-        palB, babl_format("RGBA u8"),
-        in, out);
-
-    CHECK_CONV("pal to rgba", unsigned char,
-        palA, babl_format("RGBA u8"),
-        in, out);
-#endif
   }
-#if 0
+#if 1
   {
     unsigned char in[][4]  = {{0,0,0,255},{140,0,0,255},{0,127,0,255}};
     unsigned char out[][1] = {{        0},{          1},{          2}};
+    const Babl *palA;
+    babl_new_palette ("palC", &palA, NULL);
 
     CHECK_CONV("rgba to pal", unsigned char,
-         babl_format("RGBA u8"), babl_new_palette ("palC", 0),
+         babl_format("R'G'B'A u8"), palA,
          in, out);
   }
 
   {
     unsigned char in[][4]  = {{0,0,0,255},{140,0,0,255},{0,127,0,127}};
     unsigned char out[][2] = {{    0,255},{      1,255},{      2,127}};
+    const Babl *pal;
+    babl_new_palette ("palC", NULL, &pal);
 
     CHECK_CONV("rgba to pal+alpha", unsigned char,
-         babl_format("RGBA u8"), babl_new_palette ("palD", 1),
+         babl_format("R'G'B'A u8"), pal,
          in, out);
   }
 
@@ -96,7 +88,8 @@ main (int    argc,
     unsigned char in[][2]   = {{          0,255},{0,127},{       1,255},{         2,255}};
     unsigned char out[][4]  = {{128,128,128,255},{128,128,128,127},{59,59,59,107},{255,255,255,51}};
 
-    Babl *pal = babl_new_palette (NULL, 1);
+    const Babl *pal;
+    babl_new_palette (NULL, NULL, &pal);
 
     babl_palette_set_palette (pal, babl_format ("YA float"), palette, 3);
 
@@ -105,7 +98,6 @@ main (int    argc,
          in, out);
   }
 
-
   /* check with a custom floating point palette, _and_ alpha component  */
   {
     float palette[] = {
@@ -117,7 +109,8 @@ main (int    argc,
     unsigned char in[][2]   = {{          0,255},{0,127},{       1,255},{         2,255}};
     unsigned char out[][4]  = {{128,128,128,255},{128,128,128,127},{59,59,59,107},{255,255,255,51}};
 
-    Babl *pal = babl_new_palette (NULL, 1);
+    const Babl *pal;
+    babl_new_palette (NULL, NULL, &pal);
 
     babl_palette_set_palette (pal, babl_format ("YA float"), palette, 3);
 
@@ -137,7 +130,8 @@ main (int    argc,
     unsigned char in[][1]   = {{              0},{          1},{          2}};
     unsigned char out[][4]  = {{128,128,128,255},{59,59,59,107},{255,255,255,51}};
 
-    Babl *pal = babl_new_palette (NULL, 0);
+    const Babl *pal;
+    babl_new_palette (NULL, &pal, NULL);
 
     babl_palette_set_palette (pal, babl_format ("YA float"), palette, 3);
 
