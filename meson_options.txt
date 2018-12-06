@@ -5,3 +5,4 @@ option('enable-sse3',   type: 'boolean', value: true, description: 'enable SSE3 
 option('enable-sse4_1', type: 'boolean', value: true, description: 'enable SSE4.1 support')
 option('enable-f16c',   type: 'boolean', value: true, description: 'enable hardware half-float support')
 option('with-docs',     type: 'boolean', value: true, description: 'build website')
+option('with-lcms',     type: 'boolean', value: true, description: 'build with lcms')
