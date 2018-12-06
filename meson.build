@@ -267,6 +267,15 @@ endif
 ################################################################################
 # Dependencies
 
+# LCMS
+with_lcms = get_option('with-lcms')
+if with_lcms
+  lcms = cc.find_library('lcms2', required : true)
+  if lcms.found()
+    conf.set('HAVE_LCMS', 1, description: 'Define to 1 if liblcms2 is available')
+  endif
+endif
+
 math = cc.find_library('m',   required: false)
 log  = cc.find_library('log', required: false)
 if platform_win32 
@@ -314,12 +323,6 @@ pkgconfig.generate(filebase: 'babl',
     lib_name,
   ],
 )
-
-configure_file(
-  output: 'config.h',
-  configuration: conf
-)
-
 
 ################################################################################
 # Subdirs

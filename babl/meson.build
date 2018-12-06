@@ -130,7 +130,7 @@ babl = library(
   cpp_args: [ '-DLIBDIR="' + join_paths(get_option('prefix'), get_option('libdir')) + '"', ],
   link_whole: [ babl_base, ],
   link_args: [ babl_link_args, ],
-  dependencies: [ math, thread, dl, ],
+  dependencies: [ math, thread, dl, lcms, ],
   link_depends: [ version_script_target, ],
   version: so_version,
   install: true,
