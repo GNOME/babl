@@ -727,13 +727,6 @@ babl_format_with_space (const char *encoding, const Babl *space)
 
   if (BABL_IS_BABL (example_format))
   {
-    if (babl_format_is_palette (example_format))
-    {
-      /* XXX we should allocate a new palette name, and 
-             duplicate the path data, converted for new space
-       */
-      return example_format;
-    }
     encoding = babl_get_name (example_format);
     if (babl_format_get_space (example_format) != babl_space ("sRGB"))
     {
@@ -756,10 +749,20 @@ babl_format_with_space (const char *encoding, const Babl *space)
   {
     return NULL;
   }
-  if (space == babl_space("sRGB"))
-    return babl_format (encoding);
+  example_format = babl_format (encoding);
 
-  return format_new_from_format_with_space (babl_format (encoding), space);
+  if (space == babl_space("sRGB"))
+    return example_format;
+
+  if (babl_format_is_palette (example_format))
+  {
+    /* XXX we should allocate a new palette name, and 
+           duplicate the path data, converted for new space
+     */
+    return example_format;
+  }
+
+  return format_new_from_format_with_space (example_format, space);
 }
 
 int
