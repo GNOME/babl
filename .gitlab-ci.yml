@@ -10,7 +10,7 @@
     - _build/*/*.log
     - _build/*/*/*.log
 
-.meson-build-lcms: &meson-build-lcms
+.meson-build: &meson-build
   - meson _build
       -D enable-f16c=true
       -D enable-mmx=true
@@ -19,10 +19,11 @@
       -D enable-sse3=true
       -D enable-sse4_1=true
       -D with-docs=true
+      ${LCMS_OPTION}
   - ninja -C _build
   - ninja -C _build test
 
-.autotools-build-lcms: &autotools-build-lcms
+.autotools-build: &autotools-build
   - mkdir _build
   - cd _build
   - ../autogen.sh
@@ -33,7 +34,7 @@
       --enable-sse2
       --enable-sse3
       --enable-sse4_1
-      --with-lcms
+      ${LCMS_OPTION}
   - make
   - make check
 
@@ -41,21 +42,51 @@ latest-meson-lcms:
   stage: build
   image: base/archlinux:latest
   artifacts: *artifacts-meson
+  variables:
+    LCMS_OPTION : "-Dwith-lcms=true"
   before_script:
     - pacman -Syu --noconfirm --needed
         base-devel
         meson
         lcms2
         git
-  script: *meson-build-lcms
+  script: *meson-build
+
+latest-meson-nolcms:
+  stage: build
+  image: base/archlinux:latest
+  artifacts: *artifacts-meson
+  variables:
+    LCMS_OPTION : "-Dwith-lcms=false"
+  before_script:
+    - pacman -Syu --noconfirm --needed
+        base-devel
+        meson
+        lcms2
+        git
+  script: *meson-build
 
 latest-autotools-lcms:
   stage: build
   image: base/archlinux:latest
   artifacts: *artifacts-autotools
+  variables:
+    LCMS_OPTION : "--with-lcms"
   before_script:
     - pacman -Syu --noconfirm --needed
         base-devel
         lcms2
         git
-  script: *autotools-build-lcms
+  script: *autotools-build
+
+latest-autotools-nolcms:
+  stage: build
+  image: base/archlinux:latest
+  artifacts: *artifacts-autotools
+  variables:
+    LCMS_OPTION : "--without-lcms"
+  before_script:
+    - pacman -Syu --noconfirm --needed
+        base-devel
+        git
+  script: *autotools-build
