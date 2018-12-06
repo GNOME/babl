@@ -239,7 +239,7 @@ babl_palette_lookup (BablPalette         *pal,
     }
 }
 
-static BablPalette *make_pal (const Babl *format, const void *data, int count)
+static BablPalette *make_pal (const Babl *pal_space, const Babl *format, const void *data, int count)
 {
   BablPalette *pal = NULL;
   int bpp = babl_format_get_bytes_per_pixel (format);
@@ -258,9 +258,9 @@ static BablPalette *make_pal (const Babl *format, const void *data, int count)
 
   memcpy (pal->data, data, bpp * count);
 
-  babl_process (babl_fish (format, babl_format ("RGBA double")),
+  babl_process (babl_fish (format, babl_format_with_space ("RGBA double", pal_space)),
                 data, pal->data_double, count);
-  babl_process (babl_fish (format, babl_format ("R'G'B'A u8")),
+  babl_process (babl_fish (format, babl_format_with_space ("R'G'B'A u8", pal_space)),
                 data, pal->data_u8, count);
 
   babl_palette_init_radii (pal);
@@ -711,12 +711,11 @@ babl_format_is_palette (const Babl *format)
   return 0;
 }
 
-/* should return the BablModel, permitting to fetch
- * other formats out of it?
- */
-const Babl *babl_new_palette (const char  *name,
-                              const Babl **format_u8,
-                              const Babl **format_u8_with_alpha)
+
+const Babl *babl_new_palette_with_space (const char  *name,
+                                         const Babl  *space,
+                                         const Babl **format_u8,
+                                         const Babl **format_u8_with_alpha)
 {
   const Babl *model;
   const Babl *model_no_alpha;
@@ -736,7 +735,7 @@ const Babl *babl_new_palette (const char  *name,
     }
   else
     {
-      strcpy (cname, name);
+      snprintf (cname, sizeof (cname), "%s-%p", name, space);
       name = cname;
 
       if ((model = babl_db_exist_by_name (babl_model_db (), name)))
@@ -764,11 +763,11 @@ const Babl *babl_new_palette (const char  *name,
   cname[0] = 'v';
   model_no_alpha = babl_model_new ("name", name, component, NULL);
   cname[0] = '\\';
-  f_pal_a_u8 = (void*) babl_format_new ("name", name, model,
+  f_pal_a_u8 = (void*) babl_format_new ("name", name, model, space,
                                 babl_type ("u8"),
                                 component, alpha, NULL);
   cname[0] = ')';
-  f_pal_u8  = (void*) babl_format_new ("name", name, model_no_alpha,
+  f_pal_u8  = (void*) babl_format_new ("name", name, model_no_alpha, space,
                                babl_type ("u8"),
                                component, NULL);
 
@@ -867,6 +866,17 @@ const Babl *babl_new_palette (const char  *name,
   return model;
 }
 
+/* should return the BablModel, permitting to fetch
+ * other formats out of it?
+ */
+const Babl *babl_new_palette (const char  *name,
+                              const Babl **format_u8,
+                              const Babl **format_u8_with_alpha)
+{
+  return babl_new_palette_with_space (name, babl_space("sRGB"),
+                                      format_u8, format_u8_with_alpha);
+}
+
 void
 babl_palette_set_palette (const Babl *babl,
                           const Babl *format,
@@ -887,7 +897,7 @@ babl_palette_set_palette (const Babl *babl,
 
   if (count > 0)
     {
-      *palptr = make_pal (format, data, count);
+      *palptr = make_pal (babl_format_get_space (babl), format, data, count);
     }
   else
     {

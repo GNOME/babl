@@ -452,6 +452,20 @@ const Babl *babl_new_palette (const char  *name,
                               const Babl **format_u8_with_alpha);
 
 /**
+ * babl_new_palette_with_space:
+ *
+ * create a new palette based format, name is optional pass in NULL to get
+ * an anonymous format. If you pass in with_alpha the format also gets
+ * an 8bit alpha channel. Returns the BablModel of the color model. If
+ * you pass in the same name the previous formats will be provided
+ * again.
+ */
+const Babl *babl_new_palette_with_space (const char  *name,
+                                         const Babl  *space,
+                                         const Babl **format_u8,
+                                         const Babl **format_u8_with_alpha);
+
+/**
  * babl_format_is_palette:
  *
  * check whether a format is a palette backed format.
