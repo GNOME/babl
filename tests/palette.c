@@ -138,8 +138,28 @@ main (int    argc,
     CHECK_CONV("rgba to float pal", unsigned char,
          pal, babl_format("RGBA u8"),
          in, out);
+
+    {
+      const Babl *p2;
+      p2 = babl_format_with_space ((void*)pal, babl_space ("ACEScg"));
+
+
+      fprintf (stderr, "%p\n", p2);
+      fprintf (stderr, "%s\n", babl_get_name (pal));
+      fprintf (stderr, "%s\n", babl_get_name (p2));
+
+
+    CHECK_CONV("rgba to float pal", unsigned char,
+         p2, babl_format("RGBA u8"),
+         in, out);
+
+
+    }
+
   }
 #endif
+
+
 
   babl_exit ();
   return !OK;
