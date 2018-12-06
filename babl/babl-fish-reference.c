@@ -1017,9 +1017,12 @@ babl_fish_reference_process_double (const Babl *babl,
  else if (source_kind      == KIND_CMYK &&
           destination_kind == KIND_CMYK)
  {
-    if (source_space != destination_space &&
-        source_space->space.cmyk.lcms_profile &&
-        destination_space->space.cmyk.lcms_profile)
+    if (source_space != destination_space
+#if HAVE_LCMS
+        && source_space->space.cmyk.lcms_profile
+        && destination_space->space.cmyk.lcms_profile
+#endif
+ )
     {
 #if HAVE_LCMS
 
