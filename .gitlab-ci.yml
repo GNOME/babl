@@ -1,0 +1,61 @@
+.artifacts-meson: &artifacts-meson
+  when: always
+  paths:
+   - _build/meson-logs
+
+.artifacts-autotools: &artifacts-autotools
+  when: always
+  paths:
+    - _build/*.log
+    - _build/*/*.log
+    - _build/*/*/*.log
+
+.meson-build-lcms: &meson-build
+  - meson _build
+      -D enable-f16c=true
+      -D enable-mmx=true
+      -D enable-sse=true
+      -D enable-sse2=true
+      -D enable-sse3=true
+      -D enable-sse4_1=true
+      -D with-docs=true
+  - ninja -C _build
+  - ninja -C _build test
+
+.autotools-build-lcms: &autotools-build
+  - mkdir _build
+  - cd _build
+  - ../autogen.sh
+      --enable-docs
+      --with-lcms
+      --enable-f16c
+      --enable-mmx
+      --enable-sse
+      --enable-sse2
+      --enable-sse3
+      --enable-sse4_1
+      --wit-lcms
+  - make
+  - make check
+
+latest-meson-lcms:
+  stage: build
+  image: base/archlinux:latest
+  before_script:
+    - pacman -Syu --noconfirm --needed
+        base-devel
+        meson
+        lcms2
+        git
+  script: *meson-build-lcms
+
+latest-autotools-lcms:
+  stage: build
+  image: base/archlinux:latest
+  artifacts: *artifacts-autotools
+  before_script:
+    - pacman -Syu --noconfirm --needed
+        base-devel
+        lcms2
+        git
+  script: *autotools-build-lcms
