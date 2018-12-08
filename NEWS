@@ -3,6 +3,12 @@ The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
                                                                           -->
 
+2018-12-xx babl-0.1.62                                              </dt><dd>
+CMYK spaces with lcms2 based ICC support.
+Improved custom space support for palette formats.
+Added model introspection API permitting low overhead checks whether a
+format/model is RGB, CMYK type of alpha and similar.
+                                                                    </dd><dt>
 2018-10-05 babl-0.1.60                                              </dt><dd>
 Improved thread safety, acceleration for R'G'B'A u8 -> cairo-ARGB32 conversion.
                                                                     </dd><dt>
