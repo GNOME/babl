@@ -727,6 +727,9 @@ const Babl *babl_new_palette_with_space (const char  *name,
 
   char  cname[64];
 
+  if (!space)
+    space = babl_space ("sRGB");
+
   if (!name)
     {
       static int cnt = 0;
@@ -873,7 +876,7 @@ const Babl *babl_new_palette (const char  *name,
                               const Babl **format_u8,
                               const Babl **format_u8_with_alpha)
 {
-  return babl_new_palette_with_space (name, babl_space("sRGB"),
+  return babl_new_palette_with_space (name, NULL,
                                       format_u8, format_u8_with_alpha);
 }
 
