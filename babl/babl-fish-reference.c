@@ -1001,14 +1001,14 @@ babl_fish_reference_process_double (const Babl *babl,
     }
 
     /* color space conversions */
-     if ((babl_space ("babl-rgb")!=
+     if ((babl_space ("scRGB")!=
         ((babl->fish.destination)->format.space)))
     {
       double matrix[9];
       double *rgba = rgba_double_buf;
       babl_matrix_mul_matrix (
         (babl->fish.destination)->format.space->space.XYZtoRGB,
-        babl_space("babl-rgb")->space.RGBtoXYZ,
+        babl_space("scRGB")->space.RGBtoXYZ,
         matrix);
 
       babl_matrix_mul_vector_buf4 (matrix, rgba, rgba, n);

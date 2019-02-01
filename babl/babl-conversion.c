@@ -26,17 +26,6 @@
 #include "babl-db.h"
 #include "babl-ref-pixels.h"
 
-#if 0
-static int model_is_rgba (const Babl *model)
-{
-  const Babl *RGBA = babl_model_from_id (BABL_RGBA);
-  if (model == RGBA || model->model.model == RGBA)
-    return 1;
-  return 0;
-}
-#endif
-
-
 static void
 babl_conversion_plane_process (BablConversion *conversion,
                                const void     *source,

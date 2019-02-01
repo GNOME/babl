@@ -767,7 +767,7 @@ babl_space_from_icc (const char   *icc_data,
 #ifdef HAVE_LCMS
        if (sRGBProfile == 0)
        {
-         const Babl *rgb = babl_space("babl-rgb"); /* should use a forced linear profile */
+         const Babl *rgb = babl_space("scRGB"); /* should use a forced linear profile */
          sRGBProfile = cmsOpenProfileFromMem(rgb->space.icc_profile, rgb->space.icc_length);
        }
 

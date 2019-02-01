@@ -452,7 +452,10 @@ babl_space_class_init (void)
                 0);
   /* hard-coded pre-quantized values - to match exactly what is used in standards see issue #18 */
 #endif
-  babl_space_from_chromaticities ("babl-rgb",
+
+  /* sRGB with linear TRCs is scRGB.
+   */
+  babl_space_from_chromaticities ("scRGB",
                 0.3127,  0.3290, /* D65 */
                 0.639998686, 0.330010138,
                 0.300003784, 0.600003357,
