@@ -288,18 +288,21 @@ const Babl * babl_format_get_model             (const Babl *format);
 
 enum _BablModelFlag
 {
-  BABL_MODEL_FLAG_OTHER         = 0,
   BABL_MODEL_FLAG_ALPHA         = 1<<1,
   BABL_MODEL_FLAG_PREMULTIPLIED = 1<<2,
-  BABL_MODEL_FLAG_CIE           = 1<<3,
-  BABL_MODEL_FLAG_GRAY          = 1<<4,
-  BABL_MODEL_FLAG_RGB           = 1<<5,
-  BABL_MODEL_FLAG_CMYK          = 1<<6,
-  BABL_MODEL_FLAG_INVERTED      = 1<<7,
+  BABL_MODEL_FLAG_INVERTED      = 1<<3,
+  /* BABL_MODEL_FLAG_ALPHA_ENCODED = 1<<4, NYI */
 
-  BABL_MODEL_FLAG_LINEAR        = 1<<8,
-  BABL_MODEL_FLAG_NONLINEAR     = 1<<9,
-  BABL_MODEL_FLAG_PERCEPTUAL    = 1<<10,
+  BABL_MODEL_FLAG_LINEAR        = 1<<10,
+  BABL_MODEL_FLAG_NONLINEAR     = 1<<11,
+  BABL_MODEL_FLAG_PERCEPTUAL    = 1<<12,
+
+  BABL_MODEL_FLAG_GRAY          = 1<<20,
+  BABL_MODEL_FLAG_RGB           = 1<<21,
+  /* BABL_MODEL_FLAG_SPECTRAL   = 1<<22, NYI */
+  BABL_MODEL_FLAG_CIE           = 1<<23,
+  BABL_MODEL_FLAG_CMYK          = 1<<24,
+  /* BABL_MODEL_FLAG_LUZ        = 1<<25, NYI */
 };
 
 typedef enum _BablModelFlag BablModelFlag;
