@@ -1,6 +1,6 @@
 project('babl', 'c',
   license: 'LGPL3+',
-  version: '0.1.61',
+  version: '0.1.62',
   meson_version: '>=0.40.0',
   default_options: [
     'libdir=lib',
@@ -8,7 +8,7 @@ project('babl', 'c',
     'localstatedir=/var',
     'sharedstatedir=/var/lib'
   ],
-  # http://bugzilla.gnome.org/enter_bug.cgi?product=GEGL
+  # https://gitlab.gnome.org/GNOME/babl/issues/
 )
 
 # Making releases on the stable branch:
