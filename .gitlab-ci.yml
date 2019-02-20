@@ -40,7 +40,7 @@
 
 latest-meson-lcms:
   stage: build
-  image: base/archlinux:latest
+  image: archlinux/base:latest
   artifacts: *artifacts-meson
   variables:
     LCMS_OPTION : "-Dwith-lcms=true"
@@ -54,7 +54,7 @@ latest-meson-lcms:
 
 latest-meson-nolcms:
   stage: build
-  image: base/archlinux:latest
+  image: archlinux/base:latest
   artifacts: *artifacts-meson
   variables:
     LCMS_OPTION : "-Dwith-lcms=false"
@@ -68,7 +68,7 @@ latest-meson-nolcms:
 
 latest-autotools-lcms:
   stage: build
-  image: base/archlinux:latest
+  image: archlinux/base:latest
   artifacts: *artifacts-autotools
   variables:
     LCMS_OPTION : "--with-lcms"
@@ -81,7 +81,7 @@ latest-autotools-lcms:
 
 latest-autotools-nolcms:
   stage: build
-  image: base/archlinux:latest
+  image: archlinux/base:latest
   artifacts: *artifacts-autotools
   variables:
     LCMS_OPTION : "--without-lcms"
