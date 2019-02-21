@@ -154,7 +154,6 @@ babl_polynomial_set_degree (BablPolynomial *poly,
 static double
 babl_polynomial_get (const BablPolynomial *poly,
                      int                   i)
-
 {
   return poly->coeff[poly->degree - i];
 }
@@ -163,7 +162,6 @@ static void
 babl_polynomial_set (BablPolynomial *poly,
                      int             i,
                      double          c)
-
 {
   poly->coeff[poly->degree - i] = c;
 }

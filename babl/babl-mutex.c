@@ -43,7 +43,7 @@ get_mutex_attr (void)
 
 #endif
 
-BablMutex  *
+BablMutex *
 babl_mutex_new (void)
 {
   BablMutex *mutex = malloc (sizeof (BablMutex));

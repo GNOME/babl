@@ -58,7 +58,8 @@ type_new (const char *name,
 }
 
 static int
-is_type_duplicate (Babl *babl, int bits)
+is_type_duplicate (Babl *babl,
+                   int   bits)
 {
   if (babl->type.bits != bits)
     return 0;
@@ -161,7 +162,8 @@ babl_type_new (void *first_arg,
 
 #define TOLERANCE    0.000000001
 
-static const Babl *double_vector_format (void)
+static const Babl *
+double_vector_format (void)
 {
   static const Babl *self = NULL;
 

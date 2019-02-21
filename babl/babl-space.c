@@ -26,7 +26,7 @@ static BablSpace space_db[MAX_SPACES];
 
 static void babl_chromatic_adaptation_matrix (const double *whitepoint,
                                               const double *target_whitepoint,
-                                              double *chad_matrix)
+                                              double       *chad_matrix)
 {
   double bradford[9]={ 0.8951000, 0.2664000, -0.1614000,
                       -0.7502000, 1.7135000,  0.0367000,
@@ -101,7 +101,8 @@ XYZ_to_LAB (double X,
  * matrix looking for the bit-exact inverse of this integer-solution.
  *
  */
-static void babl_matrix_equalize (double *in_mat)
+static void 
+babl_matrix_equalize (double *in_mat)
 {
   double mat[9];
   int j[9];
@@ -167,7 +168,9 @@ static void babl_matrix_equalize (double *in_mat)
   }
 }
 
-static void babl_space_compute_matrices (BablSpace *space, BablSpaceFlags equalize_matrix)
+static void 
+babl_space_compute_matrices (BablSpace *space, 
+                             BablSpaceFlags equalize_matrix)
 {
 #define _ space->
   /* transform spaces xy(Y) specified data to XYZ */
@@ -220,7 +223,8 @@ babl_space (const char *name)
 }
 
 Babl *
-_babl_space_for_lcms (const char *icc_data, int icc_length)
+_babl_space_for_lcms (const char *icc_data, 
+                      int         icc_length)
 {
   int i=0;
   BablSpace space;
@@ -358,15 +362,16 @@ babl_space_from_rgbxyz_matrix (const char *name,
   return (Babl*)&space_db[i];
 }
 
-const Babl * babl_space_from_chromaticities (const char *name,
-                                             double wx, double wy,
-                                             double rx, double ry,
-                                             double gx, double gy,
-                                             double bx, double by,
-                                             const Babl *trc_red,
-                                             const Babl *trc_green,
-                                             const Babl *trc_blue,
-                                             BablSpaceFlags flags)
+const Babl * 
+babl_space_from_chromaticities (const char *name,
+                                double wx, double wy,
+                                double rx, double ry,
+                                double gx, double gy,
+                                double bx, double by,
+                                const Babl *trc_red,
+                                const Babl *trc_green,
+                                const Babl *trc_blue,
+                                BablSpaceFlags flags)
 {
   int i=0;
   static BablSpace space;
@@ -584,17 +589,24 @@ computations of uniform gray axis */
 
 }
 
-void babl_space_to_xyz (const Babl *space, const double *rgb, double *xyz)
+void 
+babl_space_to_xyz (const Babl   *space, 
+                   const double *rgb, 
+                   double       *xyz)
 {
   _babl_space_to_xyz (space, rgb, xyz);
 }
 
-void babl_space_from_xyz (const Babl *space, const double *xyz, double *rgb)
+void 
+babl_space_from_xyz (const Babl   *space, 
+                     const double *xyz, 
+                     double       *rgb)
 {
   _babl_space_from_xyz (space, xyz, rgb);
 }
 
-const double * babl_space_get_rgbtoxyz (const Babl *space)
+const double *
+babl_space_get_rgbtoxyz (const Babl *space)
 {
   return space->space.RGBtoXYZ;
 }
@@ -602,7 +614,8 @@ const double * babl_space_get_rgbtoxyz (const Babl *space)
 ///////////////////
 
 
-static void prep_conversion (const Babl *babl)
+static void 
+prep_conversion (const Babl *babl)
 {
   Babl *conversion = (void*) babl;
   const Babl *source_space = babl_conversion_get_source_space (conversion);
@@ -679,7 +692,11 @@ static void prep_conversion (const Babl *babl)
 
 
 static inline void
-universal_nonlinear_rgba_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples, void *data)
+universal_nonlinear_rgba_converter (const Babl    *conversion,
+                                    unsigned char *src_char, 
+                                    unsigned char *dst_char, 
+                                    long           samples, 
+                                    void          *data)
 {
   const Babl *source_space = babl_conversion_get_source_space (conversion);
   const Babl *destination_space = babl_conversion_get_destination_space (conversion);
@@ -696,7 +713,11 @@ universal_nonlinear_rgba_converter (const Babl *conversion,unsigned char *src_ch
 }
 
 static inline void
-universal_nonlinear_rgb_linear_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples, void *data)
+universal_nonlinear_rgb_linear_converter (const Babl    *conversion,
+                                          unsigned char *src_char, 
+                                          unsigned char *dst_char, 
+                                          long           samples, 
+                                          void          *data)
 {
   const Babl *source_space = babl_conversion_get_source_space (conversion);
   float * matrixf = data;
@@ -709,7 +730,11 @@ universal_nonlinear_rgb_linear_converter (const Babl *conversion,unsigned char *
 }
 
 static inline void
-universal_nonlinear_rgba_u8_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples, void *data)
+universal_nonlinear_rgba_u8_converter (const Babl    *conversion,
+                                       unsigned char *src_char, 
+                                       unsigned char *dst_char, 
+                                       long           samples, 
+                                       void          *data)
 {
   const Babl *destination_space = conversion->conversion.destination->format.space;
 
@@ -749,7 +774,11 @@ universal_nonlinear_rgba_u8_converter (const Babl *conversion,unsigned char *src
 
 
 static inline void
-universal_rgba_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples, void *data)
+universal_rgba_converter (const Babl    *conversion,
+                          unsigned char *src_char, 
+                          unsigned char *dst_char, 
+                          long           samples, 
+                          void          *data)
 {
   float *matrixf = data;
   float *rgba_in = (void*)src_char;
@@ -759,7 +788,11 @@ universal_rgba_converter (const Babl *conversion,unsigned char *src_char, unsign
 }
 
 static inline void
-universal_rgb_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples, void *data)
+universal_rgb_converter (const Babl    *conversion,
+                         unsigned char *src_char, 
+                         unsigned char *dst_char, 
+                         long           samples, 
+                         void          *data)
 {
   float *matrixf = data;
   float *rgb_in = (void*)src_char;
@@ -770,7 +803,11 @@ universal_rgb_converter (const Babl *conversion,unsigned char *src_char, unsigne
 
 
 static inline void
-universal_nonlinear_rgb_u8_converter (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples, void *data)
+universal_nonlinear_rgb_u8_converter (const Babl    *conversion,
+                                      unsigned char *src_char, 
+                                      unsigned char *dst_char, 
+                                      long           samples, 
+                                      void          *data)
 {
   const Babl *destination_space = conversion->conversion.destination->format.space;
 
@@ -815,8 +852,8 @@ universal_nonlinear_rgb_u8_converter (const Babl *conversion,unsigned char *src_
 
 static inline void babl_matrix_mul_vectorff_buf4_sse2 (const float *mat,
                                                        const float *v_in,
-                                                       float *v_out,
-                                                       int samples)
+                                                       float       *v_out,
+                                                       int          samples)
 {
   const __v4sf m___0 = {m(mat, 0, 0), m(mat, 1, 0), m(mat, 2, 0), 0};
   const __v4sf m___1 = {m(mat, 0, 1), m(mat, 1, 1), m(mat, 2, 1), 0};
@@ -839,7 +876,11 @@ static inline void babl_matrix_mul_vectorff_buf4_sse2 (const float *mat,
 
 
 static inline void
-universal_nonlinear_rgba_converter_sse2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples, void *data)
+universal_nonlinear_rgba_converter_sse2 (const Babl    *conversion,
+                                         unsigned char *src_char, 
+                                         unsigned char *dst_char, 
+                                         long           samples, 
+                                         void          *data)
 {
   const Babl *source_space = babl_conversion_get_source_space (conversion);
   const Babl *destination_space = babl_conversion_get_destination_space (conversion);
@@ -856,7 +897,11 @@ universal_nonlinear_rgba_converter_sse2 (const Babl *conversion,unsigned char *s
 
 
 static inline void
-universal_rgba_converter_sse2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples, void *data)
+universal_rgba_converter_sse2 (const Babl *conversion,
+                               unsigned char *src_char, 
+                               unsigned char *dst_char, 
+                               long samples, 
+                               void *data)
 {
   float *matrixf = data;
   float *rgba_in = (void*)src_char;
@@ -866,7 +911,11 @@ universal_rgba_converter_sse2 (const Babl *conversion,unsigned char *src_char, u
 }
 
 static inline void
-universal_nonlinear_rgba_u8_converter_sse2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples, void *data)
+universal_nonlinear_rgba_u8_converter_sse2 (const Babl    *conversion,
+                                            unsigned char *src_char, 
+                                            unsigned char *dst_char, 
+                                            long           samples, 
+                                            void          *data)
 {
   const Babl *destination_space = conversion->conversion.destination->format.space;
 
@@ -903,7 +952,11 @@ universal_nonlinear_rgba_u8_converter_sse2 (const Babl *conversion,unsigned char
 }
 
 static inline void
-universal_nonlinear_rgb_u8_converter_sse2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples, void *data)
+universal_nonlinear_rgb_u8_converter_sse2 (const Babl    *conversion,
+                                           unsigned char *src_char, 
+                                           unsigned char *dst_char, 
+                                           long           samples, 
+                                           void          *data)
 {
   const Babl *destination_space = conversion->conversion.destination->format.space;
 
@@ -940,7 +993,11 @@ universal_nonlinear_rgb_u8_converter_sse2 (const Babl *conversion,unsigned char 
 
 
 static inline void
-universal_nonlinear_rgb_linear_converter_sse2 (const Babl *conversion,unsigned char *src_char, unsigned char *dst_char, long samples, void *data)
+universal_nonlinear_rgb_linear_converter_sse2 (const Babl    *conversion,
+                                               unsigned char *src_char, 
+                                               unsigned char *dst_char, 
+                                               long           samples, 
+                                               void          *data)
 {
   const Babl *source_space = babl_conversion_get_source_space (conversion);
   float * matrixf = data;
@@ -1054,18 +1111,20 @@ add_rgb_adapter (Babl *babl,
  * with conversions internally as well as for conversions to and from other RGB
  * spaces.
  */
-void _babl_space_add_universal_rgb (const Babl *space)
+void 
+_babl_space_add_universal_rgb (const Babl *space)
 {
   babl_space_class_for_each (add_rgb_adapter, (void*)space);
 }
 
 
-const Babl *babl_space_match_trc_matrix (const Babl *trc_red,
-                                         const Babl *trc_green,
-                                         const Babl *trc_blue,
-                                         float rx, float ry, float rz,
-                                         float gx, float gy, float gz,
-                                         float bx, float by, float bz)
+const Babl *
+babl_space_match_trc_matrix (const Babl *trc_red,
+                             const Babl *trc_green,
+                             const Babl *trc_blue,
+                             float rx, float ry, float rz,
+                             float gx, float gy, float gz,
+                             float bx, float by, float bz)
 {
   int i;
   double delta = 0.001;
@@ -1092,7 +1151,9 @@ const Babl *babl_space_match_trc_matrix (const Babl *trc_red,
   return NULL;
 }
 
-const Babl *babl_space_with_trc (const Babl *babl, const Babl *trc)
+const Babl *
+babl_space_with_trc (const Babl *babl, 
+                     const Babl *trc)
 {
   double xw, yw, xr, yr, xg, yg, xb, yb;
   const Babl *red_trc = NULL;
@@ -1113,14 +1174,15 @@ const Babl *babl_space_with_trc (const Babl *babl, const Babl *trc)
 
 }
 
-void babl_space_get (const Babl *babl,
-                     double *xw, double *yw,
-                     double *xr, double *yr,
-                     double *xg, double *yg,
-                     double *xb, double *yb,
-                     const Babl **red_trc,
-                     const Babl **green_trc,
-                     const Babl **blue_trc)
+void 
+babl_space_get (const Babl *babl,
+                double *xw, double *yw,
+                double *xr, double *yr,
+                double *xg, double *yg,
+                double *xb, double *yb,
+                const Babl **red_trc,
+                const Babl **green_trc,
+                const Babl **blue_trc)
 {
   const BablSpace *space = &babl->space;
   /* XXX: note: for spaces set by matrix should be possible to derive
@@ -1140,7 +1202,8 @@ void babl_space_get (const Babl *babl,
   if(blue_trc)*blue_trc = space->trc[2];
 }
 
-int babl_space_is_cmyk (const Babl *space)
+int 
+babl_space_is_cmyk (const Babl *space)
 {
   return space?space->space.cmyk.is_cmyk:0;
 }

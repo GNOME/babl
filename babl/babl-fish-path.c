@@ -103,7 +103,8 @@ static int max_path_length (void);
 static int debug_conversions = 0;
 int _babl_instrument = 0;
 
-double _babl_legal_error (void)
+double 
+_babl_legal_error (void)
 {
   static double error = 0.0;
   const char   *env;
@@ -132,7 +133,8 @@ double _babl_legal_error (void)
   return error;
 }
 
-static int max_path_length (void)
+static int 
+max_path_length (void)
 {
   static int  max_length = 0;
   const char *env;
@@ -155,7 +157,8 @@ static int max_path_length (void)
   return max_length;
 }
 
-int _babl_max_path_len (void)
+int 
+_babl_max_path_len (void)
 {
   return max_path_length ();
 }
@@ -652,7 +655,8 @@ babl_fish_path2 (const Babl *source,
   return babl;
 }
 
-const Babl * babl_fast_fish (const void *source_format,
+const Babl * 
+babl_fast_fish (const void *source_format,
                              const void *destination_format,
                              const char *performance)
 {

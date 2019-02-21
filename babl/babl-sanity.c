@@ -29,7 +29,8 @@ foo (Babl *babl,
   return 0;
 }
 
-static Babl *babl_conversion_destination (Babl *babl);
+static Babl *
+babl_conversion_destination (Babl *babl);
 
 static int
 type_sanity (Babl *babl,
@@ -136,7 +137,8 @@ babl_sanity (void)
   return OK;
 }
 
-static Babl *babl_conversion_destination (Babl *babl)
+static Babl *
+babl_conversion_destination (Babl *babl)
 {
   return (Babl *)babl->conversion.destination;
 }

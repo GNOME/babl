@@ -183,7 +183,9 @@ babl_exit (void)
 
 #undef babl_model_is
 
-int babl_model_is (const Babl *babl, const char *model)
+int 
+babl_model_is (const Babl *babl,
+               const char *model)
 {
   return babl && ((babl)==babl_model_with_space(model, babl));
 }

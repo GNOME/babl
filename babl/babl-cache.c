@@ -73,7 +73,8 @@ mk_ancestry (const char *path)
   return mk_ancestry_iter (copy);
 }
 
-static const char *fish_cache_path (void)
+static const char *
+fish_cache_path (void)
 {
   struct stat stat_buf;
   static char path[4096];
@@ -153,14 +154,16 @@ babl_fish_serialize (Babl *fish, char *dest, int n)
   return dest;
 }
 
-static int compare_fish_pixels (const void *a, const void *b)
+static int 
+compare_fish_pixels (const void *a, const void *b)
 {
   const Babl **fa = (void*)a;
   const Babl **fb = (void*)b;
   return ((*fb)->fish.pixels - (*fa)->fish.pixels);
 }
 
-static const char *cache_header (void)
+static const char *
+cache_header (void)
 {
   static char buf[2048];
   if (strchr (BABL_GIT_VERSION, ' ')) // we must be building from tarball
@@ -174,7 +177,8 @@ static const char *cache_header (void)
   return buf;
 }
 
-void babl_store_db (void)
+void 
+babl_store_db (void)
 {
   BablDb *db = babl_fish_db ();
   int i;
@@ -223,7 +227,8 @@ _babl_fish_create_name (char       *buf,
                         const Babl *destination,
                         int         is_reference);
 
-void babl_init_db (void)
+void 
+babl_init_db (void)
 {
   const char *path = fish_cache_path ();
   long  length = -1;

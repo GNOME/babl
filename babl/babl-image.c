@@ -22,7 +22,8 @@
 
 #include "babl-internal.h"
 
-static int babl_image_destruct (void *babl)
+static int 
+babl_image_destruct (void *babl)
 {
   BablFormat *format = BABL (babl)->image.format;
   if (format && format->image_template == NULL)

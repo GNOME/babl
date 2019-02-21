@@ -27,7 +27,8 @@
 #include "babl-ref-pixels.h"
 
 
-static int babl_format_destruct (void *babl)
+static int 
+babl_format_destruct (void *babl)
 {
   BablFormat *format = babl;
   if (format->image_template != NULL)
@@ -49,8 +50,8 @@ format_new (const char      *name,
             int              components,
             BablModel       *model,
             const Babl      *space,
-            BablComponent **component,
-            BablSampling  **sampling,
+            BablComponent  **component,
+            BablSampling   **sampling,
             const BablType **type)
 {
   Babl *babl;
@@ -131,7 +132,8 @@ format_new (const char      *name,
 }
 
 Babl *
-format_new_from_format_with_space (const Babl *format, const Babl *space)
+format_new_from_format_with_space (const Babl *format, 
+                                   const Babl *space)
 {
   Babl *ret;
   char new_name[256];
@@ -674,7 +676,8 @@ babl_get_user_data (const Babl *babl)
 }
 
 void
-babl_set_user_data (const Babl *cbabl, void *data)
+babl_set_user_data (const Babl *cbabl, 
+                    void       *data)
 {
   Babl *babl = (Babl*) cbabl;
   switch (cbabl->instance.class_type)

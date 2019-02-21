@@ -239,7 +239,11 @@ babl_palette_lookup (BablPalette         *pal,
     }
 }
 
-static BablPalette *make_pal (const Babl *pal_space, const Babl *format, const void *data, int count)
+static BablPalette *
+make_pal (const Babl *pal_space, 
+          const Babl *format, 
+          const void *data, 
+          int         count)
 {
   BablPalette *pal = NULL;
   int bpp = babl_format_get_bytes_per_pixel (format);
@@ -270,7 +274,8 @@ static BablPalette *make_pal (const Babl *pal_space, const Babl *format, const v
   return pal;
 }
 
-static void babl_palette_free (BablPalette *pal)
+static void 
+babl_palette_free (BablPalette *pal)
 {
   babl_free (pal->data);
   babl_free (pal->data_double);
@@ -279,7 +284,8 @@ static void babl_palette_free (BablPalette *pal)
   babl_free (pal);
 }
 
-static BablPalette *default_palette (void)
+static BablPalette *
+default_palette (void)
 {
   static BablPalette pal;
   static int inited = 0;
@@ -673,8 +679,10 @@ pala_u8_to_rgba_u8 (Babl          *conversion,
 #include "base/util.h"
 
 static inline long
-conv_pal8_pala8 (Babl *conversion,
-                 unsigned char *src, unsigned char *dst, long samples)
+conv_pal8_pala8 (Babl          *conversion,
+                 unsigned char *src, 
+                 unsigned char *dst, 
+                 long           samples)
 {
   long n = samples;
 
@@ -689,8 +697,10 @@ conv_pal8_pala8 (Babl *conversion,
 }
 
 static inline long
-conv_pala8_pal8 (Babl *conversion,
-                 unsigned char *src, unsigned char *dst, long samples)
+conv_pala8_pal8 (Babl          *conversion,
+                 unsigned char *src, 
+                 unsigned char *dst, 
+                 long           samples)
 {
   long n = samples;
 
@@ -712,10 +722,11 @@ babl_format_is_palette (const Babl *format)
 }
 
 
-const Babl *babl_new_palette_with_space (const char  *name,
-                                         const Babl  *space,
-                                         const Babl **format_u8,
-                                         const Babl **format_u8_with_alpha)
+const Babl *
+babl_new_palette_with_space (const char  *name,
+                             const Babl  *space,
+                             const Babl **format_u8,
+                             const Babl **format_u8_with_alpha)
 {
   const Babl *model;
   const Babl *model_no_alpha;
@@ -872,9 +883,10 @@ const Babl *babl_new_palette_with_space (const char  *name,
 /* should return the BablModel, permitting to fetch
  * other formats out of it?
  */
-const Babl *babl_new_palette (const char  *name,
-                              const Babl **format_u8,
-                              const Babl **format_u8_with_alpha)
+const Babl *
+babl_new_palette (const char  *name,
+                  const Babl **format_u8,
+                  const Babl **format_u8_with_alpha)
 {
   return babl_new_palette_with_space (name, NULL,
                                       format_u8, format_u8_with_alpha);

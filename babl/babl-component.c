@@ -47,7 +47,10 @@ component_new (const char *name,
 
 
 static int
-is_component_duplicate (Babl *babl, int luma, int chroma, int alpha)
+is_component_duplicate (Babl *babl, 
+                        int   luma, 
+                        int   chroma, 
+                        int   alpha)
 {
   if (babl->component.luma   != luma   ||
       babl->component.chroma != chroma ||

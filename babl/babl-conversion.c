@@ -43,10 +43,10 @@ babl_conversion_plane_process (BablConversion *conversion,
 
 static void
 babl_conversion_planar_process (const Babl *babl,
-                                const char     *src,
-                                char           *dst,
-                                long            n,
-                                void           *user_data)
+                                const char *src,
+                                char       *dst,
+                                long        n,
+                                void       *user_data)
 {
   BablConversion *conversion = (void*)babl;
   const BablImage *source = (void*)src;
@@ -74,9 +74,9 @@ babl_conversion_planar_process (const Babl *babl,
 
 static void dispatch_plane (const Babl *babl,
                             const char *source,
-                            char *destination,
-                            long n,
-                            void *user_data)
+                            char       *destination,
+                            long        n,
+                            void       *user_data)
 {
   const BablConversion *conversion = &babl->conversion;
   const void *src_data  = NULL;
@@ -248,8 +248,11 @@ _conversion_new (const char    *name,
 
 static char buf[512] = "";
 static int collisions = 0;
+
 static char *
-create_name (Babl *source, Babl *destination, int type)
+create_name (Babl *source, 
+             Babl *destination, 
+             int   type)
 {
   if (babl_extender ())
     {
@@ -276,8 +279,10 @@ create_name (Babl *source, Babl *destination, int type)
 }
 
 const char *
-babl_conversion_create_name (Babl *source, Babl *destination, int type,
-                             int allow_collision)
+babl_conversion_create_name (Babl *source, 
+                             Babl *destination, 
+                             int   type,
+                             int   allow_collision)
 {
   Babl *babl;
   char *name;
@@ -533,12 +538,14 @@ babl_conversion_error (BablConversion *conversion)
   return error;
 }
 
-const Babl *babl_conversion_get_source_space      (const Babl *conversion)
+const Babl *
+babl_conversion_get_source_space (const Babl *conversion)
 {
   return conversion->conversion.source->format.space;
 }
 
-const Babl *babl_conversion_get_destination_space (const Babl *conversion)
+const Babl *
+babl_conversion_get_destination_space (const Babl *conversion)
 {
   return conversion->conversion.destination->format.space;
 }

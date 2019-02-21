@@ -56,7 +56,7 @@ static __thread char buf[1024];
 static char *
 create_name (const Babl *source,
              const Babl *destination,
-             int   is_reference)
+             int         is_reference)
 {
   int size = 0;
 
@@ -74,7 +74,7 @@ create_name (const Babl *source,
 static char *
 create_name (const Babl *source,
              const Babl *destination,
-             int   is_reference)
+             int         is_reference)
 {
   int size = 0;
   char *buf = NULL;

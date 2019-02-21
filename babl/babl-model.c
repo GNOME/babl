@@ -83,7 +83,10 @@ model_new (const char     *name,
 }
 
 static int
-is_model_duplicate (Babl *babl, const Babl *space, int components, BablComponent **component)
+is_model_duplicate (Babl           *babl, 
+                    const Babl     *space, 
+                    int             components, 
+                    BablComponent **component)
 {
   int   i;
 
@@ -274,7 +277,8 @@ babl_model_new (void *first_argument,
 
 #define TOLERANCE      0.001
 
-static const Babl *reference_format (void)
+static const Babl *
+reference_format (void)
 {
   static const Babl *self = NULL;
 
@@ -290,7 +294,8 @@ static const Babl *reference_format (void)
   return self;
 }
 
-static const Babl *construct_double_format (const Babl *model)
+static const Babl *
+construct_double_format (const Babl *model)
 {
   const void *argument[44 + 1];
   int   args = 0;
@@ -411,7 +416,8 @@ static const Babl *babl_remodels[512]={NULL,};
 int          babl_n_remodels = 0;
 
 const Babl *
-babl_remodel_with_space (const Babl *model, const Babl *space)
+babl_remodel_with_space (const Babl *model, 
+                         const Babl *space)
 {
   Babl *ret;
   int i;
@@ -458,12 +464,14 @@ babl_remodel_with_space (const Babl *model, const Babl *space)
 }
 
 const Babl *
-babl_model_with_space (const char *name, const Babl *space)
+babl_model_with_space (const char *name, 
+                       const Babl *space)
 {
   return babl_remodel_with_space (babl_model (name), space);
 }
 
-BablModelFlag babl_get_model_flags (const Babl *babl)
+BablModelFlag 
+babl_get_model_flags (const Babl *babl)
 {
   if (!babl) return 0;
   switch (babl->class_type)

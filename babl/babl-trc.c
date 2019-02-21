@@ -30,12 +30,16 @@
 
 static BablTRC trc_db[MAX_TRCS];
 
-static inline float _babl_trc_linear (const Babl *trc_, float value)
+static inline float 
+_babl_trc_linear (const Babl *trc_, 
+                  float       value)
 {
   return value;
 }
 
-static inline float babl_trc_lut_from_linear (const Babl *trc_, float x)
+static inline float 
+babl_trc_lut_from_linear (const Babl *trc_, 
+                          float       x)
 {
   BablTRC *trc = (void*)trc_;
   int entry;
@@ -62,7 +66,9 @@ static inline float babl_trc_lut_from_linear (const Babl *trc_, float x)
   return ret;
 }
 
-static inline float babl_trc_lut_to_linear (const Babl *trc_, float x)
+static inline float 
+babl_trc_lut_to_linear (const Babl *trc_, 
+                        float       x)
 {
   BablTRC *trc = (void*)trc_;
   int entry;
@@ -85,7 +91,9 @@ static inline float babl_trc_lut_to_linear (const Babl *trc_, float x)
   return ret;
 }
 
-static inline float _babl_trc_gamma_to_linear (const Babl *trc_, float value)
+static inline float 
+_babl_trc_gamma_to_linear (const Babl *trc_, 
+                           float       value)
 {
   BablTRC *trc = (void*)trc_;
   if (value >= trc->poly_gamma_to_linear_x0 &&
@@ -100,7 +108,9 @@ static inline float _babl_trc_gamma_to_linear (const Babl *trc_, float value)
   return 0.0f;
 }
 
-static inline float _babl_trc_gamma_from_linear (const Babl *trc_, float value)
+static inline float 
+_babl_trc_gamma_from_linear (const Babl *trc_, 
+                             float       value)
 {
   BablTRC *trc = (void*)trc_;
   if (value >= trc->poly_gamma_from_linear_x0 &&
@@ -115,7 +125,14 @@ static inline float _babl_trc_gamma_from_linear (const Babl *trc_, float value)
   return 0.0f;
 }
 
-static inline void _babl_trc_gamma_to_linear_buf (const Babl *trc_, const float *in, float *out, int in_gap, int out_gap, int components, int count)
+static inline void 
+_babl_trc_gamma_to_linear_buf (const Babl  *trc_, 
+                               const float *in, 
+                               float       *out, 
+                               int          in_gap, 
+                               int          out_gap, 
+                               int          components, 
+                               int          count)
 {
   int i, c;
   for (i = 0; i < count; i ++)
@@ -123,7 +140,14 @@ static inline void _babl_trc_gamma_to_linear_buf (const Babl *trc_, const float 
       out[out_gap * i + c] = _babl_trc_gamma_to_linear (trc_, in[in_gap *i + c]);
 }
 
-static inline void _babl_trc_gamma_from_linear_buf (const Babl *trc_, const float *in, float *out, int in_gap, int out_gap, int components, int count)
+static inline void 
+_babl_trc_gamma_from_linear_buf (const Babl  *trc_, 
+                                 const float *in, 
+                                 float       *out, 
+                                 int          in_gap, 
+                                 int          out_gap, 
+                                 int          components, 
+                                 int          count)
 {
   int i, c;
   for (i = 0; i < count; i ++)
@@ -131,7 +155,9 @@ static inline void _babl_trc_gamma_from_linear_buf (const Babl *trc_, const floa
       out[out_gap * i + c] = _babl_trc_gamma_from_linear (trc_, in[in_gap *i + c]);
 }
 
-static inline float _babl_trc_formula_srgb_from_linear (const Babl *trc_, float value)
+static inline float 
+_babl_trc_formula_srgb_from_linear (const Babl *trc_, 
+                                    float       value)
 {
   BablTRC *trc = (void*)trc_;
   float x= value;
@@ -152,7 +178,9 @@ static inline float _babl_trc_formula_srgb_from_linear (const Babl *trc_, float 
   return 0.0;
 }
 
-static inline float _babl_trc_formula_srgb_to_linear (const Babl *trc_, float value)
+static inline float 
+_babl_trc_formula_srgb_to_linear (const Babl *trc_, 
+                                  float       value)
 {
   BablTRC *trc = (void*)trc_;
   float x= value;
@@ -168,17 +196,28 @@ static inline float _babl_trc_formula_srgb_to_linear (const Babl *trc_, float va
   return c * x;
 }
 
-static inline float _babl_trc_srgb_to_linear (const Babl *trc_, float value)
+static inline float 
+_babl_trc_srgb_to_linear (const Babl *trc_, 
+                          float       value)
 {
   return babl_gamma_2_2_to_linearf (value);
 }
 
-static inline float _babl_trc_srgb_from_linear (const Babl *trc_, float value)
+static inline float 
+_babl_trc_srgb_from_linear (const Babl *trc_, 
+                            float       value)
 {
   return babl_linear_to_gamma_2_2f (value);
 }
 
-static inline void _babl_trc_srgb_to_linear_buf (const Babl *trc_, const float *in, float *out, int in_gap, int out_gap, int components, int count)
+static inline void 
+_babl_trc_srgb_to_linear_buf (const Babl  *trc_, 
+                              const float *in, 
+                              float       *out, 
+                              int          in_gap, 
+                              int          out_gap, 
+                              int          components, 
+                              int          count)
 {
   int i, c;
   for (i = 0; i < count; i ++)
@@ -186,11 +225,14 @@ static inline void _babl_trc_srgb_to_linear_buf (const Babl *trc_, const float *
       out[out_gap * i + c] = babl_gamma_2_2_to_linearf (in[in_gap * i + c]);
 }
 
-static inline void _babl_trc_srgb_from_linear_buf (const Babl *trc_,
-                                                   const float *in, float *out,
-                                                   int in_gap, int out_gap,
-                                                   int components,
-                                                   int count)
+static inline void 
+_babl_trc_srgb_from_linear_buf (const Babl  *trc_,
+                                const float *in, 
+                                float       *out,
+                                int          in_gap,
+                                int          out_gap,
+                                int          components,
+                                int          count)
 {
   int i, c;
   for (i = 0; i < count; i ++)
@@ -198,7 +240,14 @@ static inline void _babl_trc_srgb_from_linear_buf (const Babl *trc_,
       out[out_gap * i + c] = babl_linear_to_gamma_2_2f (in[in_gap * i + c]);
 }
 
-static inline void _babl_trc_to_linear_buf_generic (const Babl *trc_, const float *in, float *out, int in_gap, int out_gap, int components, int count)
+static inline void 
+_babl_trc_to_linear_buf_generic (const Babl  *trc_, 
+                                 const float *in, 
+                                 float       *out, 
+                                 int          in_gap, 
+                                 int          out_gap, 
+                                 int          components, 
+                                 int          count)
 {
   int i, c;
   BablTRC *trc = (void*)trc_;
@@ -207,11 +256,14 @@ static inline void _babl_trc_to_linear_buf_generic (const Babl *trc_, const floa
       out[out_gap * i + c] = trc->fun_to_linear (trc_, in[in_gap * i + c]);
 }
 
-static inline void _babl_trc_from_linear_buf_generic (const Babl *trc_,
-                                                      const float *in, float *out,
-                                                      int in_gap, int out_gap,
-                                                      int components,
-                                                      int count)
+static inline void 
+_babl_trc_from_linear_buf_generic (const Babl  *trc_,
+                                   const float *in, 
+                                   float       *out,
+                                   int          in_gap, 
+                                   int          out_gap,
+                                   int          components,
+                                   int          count)
 {
   int i, c;
   BablTRC *trc = (void*)trc_;
@@ -220,11 +272,13 @@ static inline void _babl_trc_from_linear_buf_generic (const Babl *trc_,
       out[out_gap * i + c] = trc->fun_from_linear (trc_, in[in_gap * i + c]);
 }
 
-static inline void _babl_trc_linear_buf (const Babl *trc_,
-                                         const float *in, float *out,
-                                         int in_gap, int out_gap,
-                                         int components,
-                                         int count)
+static inline void _babl_trc_linear_buf (const Babl  *trc_,
+                                         const float *in, 
+                                         float       *out,
+                                         int          in_gap, 
+                                         int          out_gap,
+                                         int          components,
+                                         int          count)
 {
   int i, c;
   for (i = 0; i < count; i ++)
@@ -402,14 +456,17 @@ babl_trc_new (const char *name,
   return (Babl*)&trc_db[i];
 }
 
-const Babl * babl_trc_lut (const char *name, int n, float *entries)
+const Babl * 
+babl_trc_lut (const char *name, 
+              int         n, 
+              float      *entries)
 {
   return babl_trc_new (name, BABL_TRC_LUT, 0, n, entries);
 }
 
 void
 babl_trc_class_for_each (BablEachFunction each_fun,
-                           void            *user_data)
+                         void            *user_data)
 {
   int i=0;
   for (i = 0; trc_db[i].instance.class_type; i++)
@@ -418,7 +475,11 @@ babl_trc_class_for_each (BablEachFunction each_fun,
 }
 
 const Babl *
-babl_trc_formula_srgb (double g, double a, double b, double c, double d)
+babl_trc_formula_srgb (double g, 
+                       double a, 
+                       double b, 
+                       double c, 
+                       double d)
 {
   char name[128];
   int i;
@@ -466,19 +527,25 @@ babl_trc_class_init (void)
 }
 
 #if 0
-float babl_trc_from_linear (const Babl *trc_, float value)
+float 
+babl_trc_from_linear (const Babl *trc_, 
+                      float       value)
 {
   return babl_trc_from_linear (trc_, value);
 }
 
-float babl_trc_to_linear (const Babl *trc_, float value)
+float 
+babl_trc_to_linear (const Babl *trc_,
+                    float       value)
 {
   return babl_trc_to_linear (trc_, value);
 }
 #endif
 
 static int
-babl_lut_match_gamma (float *lut, int lut_size, float gamma)
+babl_lut_match_gamma (float *lut, 
+                      int    lut_size, 
+                      float  gamma)
 {
   int match = 1;
   int i;
@@ -501,7 +568,9 @@ babl_lut_match_gamma (float *lut, int lut_size, float gamma)
   return match;
 }
 
-const Babl *babl_trc_lut_find (float *lut, int lut_size)
+const Babl *
+babl_trc_lut_find (float *lut, 
+                   int    lut_size)
 {
   int i;
   int match = 1;

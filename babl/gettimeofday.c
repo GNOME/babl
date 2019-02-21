@@ -33,7 +33,9 @@ struct timezone
 };
 
 
-int gettimeofday (struct timeval *tv, struct timezone *tz)
+int 
+gettimeofday (struct timeval *tv, 
+              struct timezone *tz)
 {
   FILETIME      ft;
   LARGE_INTEGER li;

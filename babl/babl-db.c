@@ -28,7 +28,8 @@
 #include "babl-internal.h"
 
 static int
-db_find_by_name (Babl *item, void *data)
+db_find_by_name (Babl *item, 
+                 void *data)
 {
   if (!strcmp (item->instance.name, (char *) data))
     return 1;
@@ -36,7 +37,8 @@ db_find_by_name (Babl *item, void *data)
 }
 
 static int
-db_find_by_id (Babl *item, void *data)
+db_find_by_id (Babl *item, 
+               void *data)
 {
   if (item->instance.id == *((int *) data))
     return 1;
@@ -44,13 +46,15 @@ db_find_by_id (Babl *item, void *data)
 }
 
 static int
-db_hash_by_name (BablHashTable *htab, Babl *item)
+db_hash_by_name (BablHashTable *htab, 
+                 Babl          *item)
 {
   return babl_hash_by_str (htab, item->instance.name);
 }
 
 static int
-db_hash_by_id (BablHashTable *htab, Babl *item)
+db_hash_by_id (BablHashTable *htab, 
+               Babl          *item)
 {
   return babl_hash_by_int (htab, item->instance.id);
 }
