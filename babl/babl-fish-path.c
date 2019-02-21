@@ -657,8 +657,8 @@ babl_fish_path2 (const Babl *source,
 
 const Babl * 
 babl_fast_fish (const void *source_format,
-                             const void *destination_format,
-                             const char *performance)
+                const void *destination_format,
+                const char *performance)
 {
   double tolerance = 0.0;
 
