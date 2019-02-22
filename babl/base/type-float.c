@@ -27,11 +27,11 @@
 
 static void
 convert_double_float (BablConversion *conversion,
-                      char *src,
-                      char *dst,
-                      int   src_pitch,
-                      int   dst_pitch,
-                      long  n)
+                      char           *src,
+                      char           *dst,
+                      int             src_pitch,
+                      int             dst_pitch,
+                      long            n)
 {
   while (n--)
     {
@@ -43,11 +43,11 @@ convert_double_float (BablConversion *conversion,
 
 static void
 convert_float_double (BablConversion *conversion,
-                      char *src,
-                      char *dst,
-                      int   src_pitch,
-                      int   dst_pitch,
-                      long  n)
+                      char           *src,
+                      char           *dst,
+                      int             src_pitch,
+                      int             dst_pitch,
+                      long            n)
 {
   while (n--)
     {

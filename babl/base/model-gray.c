@@ -30,7 +30,8 @@ static void conversions (void);
 static void formats (void);
 static void init_single_precision (void);
 
-void babl_base_model_gray (void)
+void 
+babl_base_model_gray (void)
 {
   components ();
   models ();
@@ -339,7 +340,7 @@ rgb_to_gray_perceptual (Babl  *conversion,
 }
 
 static void
-gray_perceptual_to_rgb (Babl *conversion,
+gray_perceptual_to_rgb (Babl  *conversion,
                         int    src_bands,
                         char **src,
                         int   *src_pitch,
@@ -434,7 +435,7 @@ gray_to_rgba (Babl *conversion,
 }
 
 static void
-gray_alpha_premultiplied_to_rgba (Babl   *conversion,
+gray_alpha_premultiplied_to_rgba (Babl  *conversion,
                                   int    src_bands,
                                   char **src,
                                   int   *src_pitch,
@@ -471,7 +472,7 @@ gray_alpha_premultiplied_to_rgba (Babl   *conversion,
 
 
 static void
-rgba_to_gray_alpha_premultiplied (Babl   *conversion,
+rgba_to_gray_alpha_premultiplied (Babl  *conversion,
                                   int    src_bands,
                                   char **src,
                                   int   *src_pitch,
@@ -1097,7 +1098,7 @@ rgb_to_gray_perceptual_float (Babl  *conversion,
 }
 
 static void
-gray_perceptual_to_rgb_float (Babl *conversion,
+gray_perceptual_to_rgb_float (Babl  *conversion,
                               int    src_bands,
                               char **src,
                               int   *src_pitch,
@@ -1192,7 +1193,7 @@ gray_to_rgba_float (Babl *conversion,
 }
 
 static void
-gray_alpha_premultiplied_to_rgba_float (Babl   *conversion,
+gray_alpha_premultiplied_to_rgba_float (Babl  *conversion,
                                         int    src_bands,
                                         char **src,
                                         int   *src_pitch,
@@ -1229,7 +1230,7 @@ gray_alpha_premultiplied_to_rgba_float (Babl   *conversion,
 
 
 static void
-rgba_to_gray_alpha_premultiplied_float (Babl   *conversion,
+rgba_to_gray_alpha_premultiplied_float (Babl  *conversion,
                                         int    src_bands,
                                         char **src,
                                         int   *src_pitch,

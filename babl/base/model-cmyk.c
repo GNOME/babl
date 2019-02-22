@@ -36,9 +36,10 @@
 
 
 static void
-cmyka_to_cmykA (const Babl *conversion,char *src,
-                char *dst,
-                long  n)
+cmyka_to_cmykA (const Babl *conversion,
+                char       *src,
+                char       *dst,
+                long        n)
 {
   while (n--)
     {
@@ -60,9 +61,10 @@ cmyka_to_cmykA (const Babl *conversion,char *src,
 }
 
 static void
-cmykA_to_cmyka (const Babl *conversion,char *src,
-                char *dst,
-                long  n)
+cmykA_to_cmyka (const Babl *conversion,
+                char       *src,
+                char       *dst,
+                long        n)
 {
   while (n--)
     {
@@ -85,9 +87,10 @@ cmykA_to_cmyka (const Babl *conversion,char *src,
 }
 
 static void
-cmyk_to_cmyka (const Babl *conversion,char *src,
-               char *dst,
-               long  n)
+cmyk_to_cmyka (const Babl *conversion,
+               char       *src,
+               char       *dst,
+               long        n)
 {
   while (n--)
     {
@@ -108,9 +111,10 @@ cmyk_to_cmyka (const Babl *conversion,char *src,
 }
 
 static void
-cmyka_to_cmyk (const Babl *conversion,char *src,
-               char *dst,
-               long  n)
+cmyka_to_cmyk (const Babl *conversion,
+               char       *src,
+               char       *dst,
+               long        n)
 {
   while (n--)
     {
@@ -131,9 +135,10 @@ cmyka_to_cmyk (const Babl *conversion,char *src,
 
 /////////////////////
 static void
-cmyka_to_CMYKA (const Babl *conversion,char *src,
-                char *dst,
-                long  n)
+cmyka_to_CMYKA (const Babl *conversion,
+                char       *src,
+                char       *dst,
+                long        n)
 {
   while (n--)
     {
@@ -155,9 +160,10 @@ cmyka_to_CMYKA (const Babl *conversion,char *src,
 }
 
 static void
-CMYKA_to_cmyka (const Babl *conversion,char *src,
-                char *dst,
-                long  n)
+CMYKA_to_cmyka (const Babl *conversion,
+                char       *src,
+                char       *dst,
+                long        n)
 {
   while (n--)
     {
@@ -182,9 +188,10 @@ CMYKA_to_cmyka (const Babl *conversion,char *src,
 
 
 static void
-CMYK_to_cmyka (const Babl *conversion,char *src,
-               char *dst,
-               long  n)
+CMYK_to_cmyka (const Babl *conversion,
+               char       *src,
+               char       *dst,
+               long        n)
 {
   while (n--)
     {
@@ -205,9 +212,10 @@ CMYK_to_cmyka (const Babl *conversion,char *src,
 }
 
 static void
-cmyka_to_CMYK (const Babl *conversion,char *src,
-               char *dst,
-               long  n)
+cmyka_to_CMYK (const Babl *conversion,
+               char       *src,
+               char       *dst,
+               long        n)
 {
   while (n--)
     {
@@ -227,9 +235,10 @@ cmyka_to_CMYK (const Babl *conversion,char *src,
 }
 
 static void
-cmyka_to_CMYKa (const Babl *conversion,char *src,
-                char *dst,
-                long  n)
+cmyka_to_CMYKa (const Babl *conversion,
+                char       *src,
+                char       *dst,
+                long        n)
 {
   while (n--)
     {
@@ -258,9 +267,10 @@ cmyka_to_CMYKa (const Babl *conversion,char *src,
 
 #if 0
 static void
-rgba_to_cmykA (const Babl *conversion,char *src,
-               char *dst,
-               long  n)
+rgba_to_cmykA (const Babl *conversion,
+               char       *src,
+               char       *dst,
+               long        n)
 {
   while (n--)
     {
@@ -309,9 +319,10 @@ rgba_to_cmykA (const Babl *conversion,char *src,
 }
 
 static void
-cmykA_to_rgba (const Babl *conversion,char *src,
-               char *dst,
-               long  n)
+cmykA_to_rgba (const Babl *conversion,
+               char       *src,
+               char       *dst,
+               long        n)
 {
   while (n--)
     {
@@ -355,9 +366,10 @@ cmykA_to_rgba (const Babl *conversion,char *src,
 }
 
 static void
-rgba_to_cmyka (const Babl *conversion,char *src,
-               char *dst,
-               long  n)
+rgba_to_cmyka (const Babl *conversion,
+               char       *src,
+               char       *dst,
+               long        n)
 {
   while (n--)
     {
@@ -406,9 +418,10 @@ rgba_to_cmyka (const Babl *conversion,char *src,
 }
 
 static void
-cmyka_to_rgba (const Babl *conversion,char *src,
-               char *dst,
-               long  n)
+cmyka_to_rgba (const Babl *conversion,
+               char       *src,
+               char       *dst,
+               long        n)
 {
   while (n--)
     {
@@ -446,9 +459,10 @@ cmyka_to_rgba (const Babl *conversion,char *src,
 }
 
 static void
-rgba_to_cmyk (const Babl *conversion,char *src,
-              char *dst,
-              long  n)
+rgba_to_cmyk (const Babl *conversion,
+              char       *src,
+              char       *dst,
+              long        n)
 {
   while (n--)
     {
@@ -495,9 +509,10 @@ rgba_to_cmyk (const Babl *conversion,char *src,
 }
 
 static void
-cmyk_to_rgba (const Babl *conversion,char *src,
-              char *dst,
-              long  n)
+cmyk_to_rgba (const Babl *conversion,
+              char       *src,
+              char       *dst,
+              long        n)
 {
   while (n--)
     {
@@ -535,9 +550,10 @@ cmyk_to_rgba (const Babl *conversion,char *src,
 }
 
 static void
-rgba_to_cmy (const Babl *conversion,char *src,
-             char *dst,
-             long  n)
+rgba_to_cmy (const Babl *conversion,
+             char       *src,
+             char       *dst,
+             long        n)
 {
   while (n--)
     {
@@ -561,9 +577,10 @@ rgba_to_cmy (const Babl *conversion,char *src,
 }
 
 static void
-cmy_to_rgba (const Babl *conversion,char *src,
-              char *dst,
-              long  n)
+cmy_to_rgba (const Babl *conversion,
+             char       *src,
+             char       *dst,
+             long        n)
 {
   while (n--)
     {

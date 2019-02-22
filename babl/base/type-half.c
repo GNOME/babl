@@ -72,7 +72,10 @@ static int next = 1; /* should be 0 for big endian */
 
 //-----------------------------------------------------------------------------
 
-static void doubles2halfp(void *target, void *source, long numel)
+static void 
+doubles2halfp(void *target, 
+              void *source, 
+              long  numel)
 {
     uint16_t *hp = (uint16_t *) target; // Type pun output as an unsigned 16-bit int
     uint32_t *xp = (uint32_t *) source; // Type pun input as an unsigned 32-bit int
@@ -129,7 +132,10 @@ static void doubles2halfp(void *target, void *source, long numel)
     }
 }
 
-static void halfp2doubles(void *target, void *source, long numel)
+static void 
+halfp2doubles(void *target, 
+              void *source, 
+              long  numel)
 {
     uint16_t *hp = (uint16_t *) source; // Type pun input as an unsigned 16-bit int
     uint32_t *xp = (uint32_t *) target; // Type pun output as an unsigned 32-bit int
@@ -185,7 +191,9 @@ static void halfp2doubles(void *target, void *source, long numel)
 
 
 static void
-singles2halfp(uint16_t *hp, const uint32_t *xp, int numel)
+singles2halfp(uint16_t       *hp, 
+              const uint32_t *xp,
+              int             numel)
 {
     
     uint16_t    hs, he, hm;
@@ -262,7 +270,9 @@ singles2halfp(uint16_t *hp, const uint32_t *xp, int numel)
 //-----------------------------------------------------------------------------
 
 static void
-halfp2singles(uint32_t *xp, const uint16_t *hp, int numel)
+halfp2singles(uint32_t       *xp, 
+              const uint16_t *hp, 
+              int             numel)
 {
     
     uint16_t h, hs, he, hm;
@@ -318,11 +328,11 @@ halfp2singles(uint32_t *xp, const uint16_t *hp, int numel)
 
 static void
 convert_double_half (BablConversion *conversion,
-                     char *src,
-                     char *dst,
-                     int   src_pitch,
-                     int   dst_pitch,
-                     long  n)
+                     char           *src,
+                     char           *dst,
+                     int             src_pitch,
+                     int             dst_pitch,
+                     long            n)
 {
   while (n--)
     {
@@ -334,11 +344,11 @@ convert_double_half (BablConversion *conversion,
 
 static void
 convert_half_double (BablConversion *conversion,
-                     char *src,
-                     char *dst,
-                     int   src_pitch,
-                     int   dst_pitch,
-                     long  n)
+                     char           *src,
+                     char           *dst,
+                     int             src_pitch,
+                     int             dst_pitch,
+                     long            n)
 {
   while (n--)
     {
@@ -351,11 +361,11 @@ convert_half_double (BablConversion *conversion,
 
 static void
 convert_float_half (BablConversion *conversion,
-                    char *src,
-                    char *dst,
-                    int   src_pitch,
-                    int   dst_pitch,
-                    long  n)
+                    char           *src,
+                    char           *dst,
+                    int             src_pitch,
+                    int             dst_pitch,
+                    long            n)
 {
   while (n--)
     {
@@ -367,11 +377,11 @@ convert_float_half (BablConversion *conversion,
 
 static void
 convert_half_float (BablConversion *conversion,
-                    char *src,
-                    char *dst,
-                    int   src_pitch,
-                    int   dst_pitch,
-                    long  n)
+                    char           *src,
+                    char           *dst,
+                    int             src_pitch,
+                    int             dst_pitch,
+                    long            n)
 {
   while (n--)
     {

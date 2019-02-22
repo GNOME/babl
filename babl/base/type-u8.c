@@ -27,15 +27,15 @@
 #include <math.h>
 static inline void
 convert_double_u8_scaled (BablConversion *c,
-                          double        min_val,
-                          double        max_val,
-                          unsigned char min,
-                          unsigned char max,
-                          char         *src,
-                          char         *dst,
-                          int           src_pitch,
-                          int           dst_pitch,
-                          long          n)
+                          double          min_val,
+                          double          max_val,
+                          unsigned char   min,
+                          unsigned char   max,
+                          char           *src,
+                          char           *dst,
+                          int             src_pitch,
+                          int             dst_pitch,
+                          long            n)
 {
   while (n--)
     {
@@ -57,15 +57,15 @@ convert_double_u8_scaled (BablConversion *c,
 
 static inline void
 convert_u8_double_scaled (BablConversion *c,
-                          double        min_val,
-                          double        max_val,
-                          unsigned char min,
-                          unsigned char max,
-                          char         *src,
-                          char         *dst,
-                          int           src_pitch,
-                          int           dst_pitch,
-                          long          n)
+                          double          min_val,
+                          double          max_val,
+                          unsigned char   min,
+                          unsigned char   max,
+                          char           *src,
+                          char           *dst,
+                          int             src_pitch,
+                          int             dst_pitch,
+                          long            n)
 {
   while (n--)
     {
@@ -115,15 +115,15 @@ MAKE_CONVERSIONS (u8_chroma, -0.5, 0.5, 16, 240)
 
 static inline void
 convert_float_u8_scaled (BablConversion *c,
-                         double        min_val,
-                         double        max_val,
-                         unsigned char min,
-                         unsigned char max,
-                         char         *src,
-                         char         *dst,
-                         int           src_pitch,
-                         int           dst_pitch,
-                         long          n)
+                         double          min_val,
+                         double          max_val,
+                         unsigned char   min,
+                         unsigned char   max,
+                         char           *src,
+                         char           *dst,
+                         int             src_pitch,
+                         int             dst_pitch,
+                         long            n)
 {
   while (n--)
     {
@@ -145,15 +145,15 @@ convert_float_u8_scaled (BablConversion *c,
 
 static inline void
 convert_u8_float_scaled (BablConversion *c,
-                          double        min_val,
-                          double        max_val,
-                          unsigned char min,
-                          unsigned char max,
-                          char         *src,
-                          char         *dst,
-                          int           src_pitch,
-                          int           dst_pitch,
-                          long          n)
+                          double         min_val,
+                          double         max_val,
+                          unsigned char  min,
+                          unsigned char  max,
+                          char          *src,
+                          char          *dst,
+                          int            src_pitch,
+                          int            dst_pitch,
+                          long           n)
 {
   while (n--)
     {

@@ -33,7 +33,11 @@
  * has a better convergence rate once you get reasonably close to the answer.
  */
 static inline double
-init_newton (double x, double exponent, double c0, double c1, double c2)
+init_newton (double x, 
+             double exponent, 
+             double c0, 
+             double c1, 
+             double c2)
 {
     int iexp;
     double y = frexp(x, &iexp);
@@ -97,7 +101,11 @@ babl_pow_1_24 (double x)
  * has a better convergence rate once you get reasonably close to the answer.
  */
 static inline float
-init_newtonf (float x, float exponent, float c0, float c1, float c2)
+init_newtonf (float x, 
+              float exponent, 
+              float c0, 
+              float c1, 
+              float c2)
 {
     int iexp;
     float y = frexpf(x, &iexp);

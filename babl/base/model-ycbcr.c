@@ -80,9 +80,9 @@ models (void)
 
 static void
 rgba_to_ycbcra (BablConversion *conversion,
-                char *src,
-                char *dst,
-                long  n)
+                char           *src,
+                char           *dst,
+                long            n)
 {
   while (n--)
     {
@@ -114,9 +114,9 @@ rgba_to_ycbcra (BablConversion *conversion,
 
 static void
 rgba_to_ycbcr (BablConversion *conversion,
-               char *src,
-               char *dst,
-               long  n)
+               char           *src,
+               char           *dst,
+               long            n)
 {
   while (n--)
     {
@@ -145,9 +145,9 @@ rgba_to_ycbcr (BablConversion *conversion,
 
 static void
 ycbcra_to_rgba (BablConversion *conversion,
-                char *src,
-                char *dst,
-                long  n)
+                char           *src,
+                char           *dst,
+                long            n)
 {
   while (n--)
     {
@@ -178,9 +178,9 @@ ycbcra_to_rgba (BablConversion *conversion,
 
 static void
 ycbcr_to_rgba (BablConversion *conversion,
-               char *src,
-               char *dst,
-               long  n)
+               char           *src,
+               char           *dst,
+               long            n)
 {
   while (n--)
     {

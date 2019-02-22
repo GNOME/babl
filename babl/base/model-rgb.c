@@ -448,9 +448,9 @@ rgba2rgba_nonlinear_premultiplied (Babl *conversion,
 
 static void
 rgba_nonlinear_premultiplied2rgba (Babl *conversion,
-                                   char           *src,
-                                   char           *dst,
-                                   long            samples)
+                                   char *src,
+                                   char *dst,
+                                   long  samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
   const Babl **trc  = (void*)space->space.trc;
@@ -535,13 +535,13 @@ static const Babl *perceptual_trc = NULL;
 
 static void
 g3_perceptual_from_linear (Babl  *conversion,
-                          int    src_bands,
-                          char **src,
-                          int   *src_pitch,
-                          int    dst_bands,
-                          char **dst,
-                          int   *dst_pitch,
-                          long   samples)
+                          int     src_bands,
+                          char  **src,
+                          int    *src_pitch,
+                          int     dst_bands,
+                          char  **dst,
+                          int    *dst_pitch,
+                          long    samples)
 {
   const Babl *trc  = perceptual_trc;
 
@@ -562,13 +562,13 @@ g3_perceptual_from_linear (Babl  *conversion,
 
 static void
 g3_perceptual_to_linear (Babl  *conversion,
-                        int    src_bands,
-                        char **src,
-                        int   *src_pitch,
-                        int    dst_bands,
-                        char **dst,
-                        int   *dst_pitch,
-                        long   samples)
+                        int     src_bands,
+                        char  **src,
+                        int    *src_pitch,
+                        int     dst_bands,
+                        char  **dst,
+                        int    *dst_pitch,
+                        long    samples)
 {
   const Babl *trc  = perceptual_trc;
   long n = samples;
@@ -594,9 +594,9 @@ g3_perceptual_to_linear (Babl  *conversion,
 
 static void
 rgba2rgba_perceptual_premultiplied (Babl *conversion,
-                                   char *src,
-                                   char *dst,
-                                   long  samples)
+                                    char *src,
+                                    char *dst,
+                                    long  samples)
 {
   const Babl *trc  = perceptual_trc;
   long n = samples;
@@ -659,9 +659,9 @@ rgba_perceptual_premultiplied2rgba (Babl *conversion,
 
 static void
 rgba2rgba_perceptual (Babl *conversion,
-                     char *src,
-                     char *dst,
-                     long  samples)
+                      char *src,
+                      char *dst,
+                      long  samples)
 {
   const Babl *trc   = perceptual_trc;
   long n = samples;
@@ -680,9 +680,9 @@ rgba2rgba_perceptual (Babl *conversion,
 
 static void
 rgba_perceptual2rgba (Babl *conversion,
-                     char *src,
-                     char *dst,
-                     long  samples)
+                      char *src,
+                      char *dst,
+                      long  samples)
 {
   const Babl *trc   = perceptual_trc;
   long n = samples;
@@ -1297,9 +1297,9 @@ rgba2rgba_nonlinear_premultiplied_float (Babl *conversion,
 
 static void
 rgba_nonlinear_premultiplied2rgba_float (Babl *conversion,
-                                         char           *src,
-                                         char           *dst,
-                                         long            samples)
+                                         char *src,
+                                         char *dst,
+                                         long  samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
   const Babl **trc  = (void*)space->space.trc;
@@ -1455,7 +1455,8 @@ g3_perceptual_to_linear_float (Babl  *conversion,
 }
 
 
-static void init_single_precision (void)
+static void 
+init_single_precision (void)
 {
 
   babl_format_new (

@@ -27,15 +27,15 @@
 
 static inline void
 convert_double_u32_scaled (BablConversion *c,
-                           double   min_val,
-                           double   max_val,
-                           uint32_t min,
-                           uint32_t max,
-                           char    *src,
-                           char    *dst,
-                           int      src_pitch,
-                           int      dst_pitch,
-                           long     n)
+                           double          min_val,
+                           double          max_val,
+                           uint32_t        min,
+                           uint32_t        max,
+                           char           *src,
+                           char           *dst,
+                           int             src_pitch,
+                           int             dst_pitch,
+                           long            n)
 {
   while (n--)
     {
@@ -57,15 +57,15 @@ convert_double_u32_scaled (BablConversion *c,
 
 static inline void
 convert_u32_double_scaled (BablConversion *c,
-                           double   min_val,
-                           double   max_val,
-                           uint32_t min,
-                           uint32_t max,
-                           char    *src,
-                           char    *dst,
-                           int      src_pitch,
-                           int      dst_pitch,
-                           long     n)
+                           double          min_val,
+                           double          max_val,
+                           uint32_t        min,
+                           uint32_t        max,
+                           char           *src,
+                           char           *dst,
+                           int             src_pitch,
+                           int             dst_pitch,
+                           long            n)
 {
   while (n--)
     {
@@ -112,15 +112,15 @@ MAKE_CONVERSIONS (u32, 0.0, 1.0, 0, UINT32_MAX)
 
 static inline void
 convert_float_u32_scaled (BablConversion *c,
-                          float   min_val,
-                          float   max_val,
-                          uint32_t min,
-                          uint32_t max,
-                          char    *src,
-                          char    *dst,
-                          int      src_pitch,
-                          int      dst_pitch,
-                          long     n)
+                          float           min_val,
+                          float           max_val,
+                          uint32_t        min,
+                          uint32_t        max,
+                          char           *src,
+                          char           *dst,
+                          int             src_pitch,
+                          int             dst_pitch,
+                          long            n)
 {
   while (n--)
     {
@@ -142,15 +142,15 @@ convert_float_u32_scaled (BablConversion *c,
 
 static inline void
 convert_u32_float_scaled (BablConversion *c,
-                          float   min_val,
-                          float   max_val,
-                          uint32_t min,
-                          uint32_t max,
-                          char    *src,
-                          char    *dst,
-                          int      src_pitch,
-                          int      dst_pitch,
-                          long     n)
+                          float           min_val,
+                          float           max_val,
+                          uint32_t        min,
+                          uint32_t        max,
+                          char           *src,
+                          char           *dst,
+                          int             src_pitch,
+                          int             dst_pitch,
+                          long            n)
 {
   while (n--)
     {

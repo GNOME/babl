@@ -60,13 +60,13 @@ static inline void
 convert_u15_double_scaled (BablConversion *conversion,
                            double          min_val,
                            double          max_val,
-                           uint16_t min,
-                           uint16_t max,
-                           char    *src,
-                           char    *dst,
-                           int      src_pitch,
-                           int      dst_pitch,
-                           long     n)
+                           uint16_t        min,
+                           uint16_t        max,
+                           char           *src,
+                           char           *dst,
+                           int             src_pitch,
+                           int             dst_pitch,
+                           long            n)
 {
   while (n--)
     {

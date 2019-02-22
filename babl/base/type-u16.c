@@ -28,15 +28,15 @@
 
 static inline void
 convert_double_u16_scaled (BablConversion *conversion,
-                           double   min_val,
-                           double   max_val,
-                           uint16_t min,
-                           uint16_t max,
-                           char    *src,
-                           char    *dst,
-                           int      src_pitch,
-                           int      dst_pitch,
-                           long     n)
+                           double          min_val,
+                           double          max_val,
+                           uint16_t        min,
+                           uint16_t        max,
+                           char           *src,
+                           char           *dst,
+                           int             src_pitch,
+                           int             dst_pitch,
+                           long            n)
 {
   while (n--)
     {
@@ -58,15 +58,15 @@ convert_double_u16_scaled (BablConversion *conversion,
 
 static inline void
 convert_u16_double_scaled (BablConversion *conversion,
-                           double   min_val,
-                           double   max_val,
-                           uint16_t min,
-                           uint16_t max,
-                           char    *src,
-                           char    *dst,
-                           int      src_pitch,
-                           int      dst_pitch,
-                           long     n)
+                           double          min_val,
+                           double          max_val,
+                           uint16_t        min,
+                           uint16_t        max,
+                           char           *src,
+                           char           *dst,
+                           int             src_pitch,
+                           int             dst_pitch,
+                           long            n)
 {
   while (n--)
     {
@@ -112,15 +112,15 @@ MAKE_CONVERSIONS (u16, 0.0, 1.0, 0, UINT16_MAX)
 
 static inline void
 convert_float_u16_scaled (BablConversion *conversion,
-                          double    min_val,
-                          double    max_val,
-                          uint16_t min,
-                          uint16_t max,
-                          char    *src,
-                          char    *dst,
-                          int      src_pitch,
-                          int      dst_pitch,
-                          long     n)
+                          double          min_val,
+                          double          max_val,
+                          uint16_t        min,
+                          uint16_t        max,
+                          char           *src,
+                          char           *dst,
+                          int             src_pitch,
+                          int             dst_pitch,
+                          long            n)
 {
   while (n--)
     {
@@ -142,15 +142,15 @@ convert_float_u16_scaled (BablConversion *conversion,
 
 static inline void
 convert_u16_float_scaled (BablConversion *conversion,
-                          double   min_val,
-                          double   max_val,
-                          uint16_t min,
-                          uint16_t max,
-                          char    *src,
-                          char    *dst,
-                          int      src_pitch,
-                          int      dst_pitch,
-                          long     n)
+                          double          min_val,
+                          double          max_val,
+                          uint16_t        min,
+                          uint16_t        max,
+                          char           *src,
+                          char           *dst,
+                          int             src_pitch,
+                          int             dst_pitch,
+                          long            n)
 {
   while (n--)
     {
