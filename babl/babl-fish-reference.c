@@ -1229,15 +1229,14 @@ babl_fish_reference_process_float (const Babl *babl,
     }
     {
       sprintf (dst_name, "%s float", babl_get_name((void*)babl->fish.destination->format.model));
+      destination_float_format =
+        babl_format_with_space (dst_name,
+                   BABL (BABL ((babl->fish.destination))->format.space));
       conv_from_rgba  =
         babl_conversion_find (
         babl_format_with_space ("RGBA float",
                    BABL (BABL ((babl->fish.destination))->format.space)),
-        babl_format_with_space (dst_name,
-                   BABL (BABL ((babl->fish.destination))->format.space)));
-      destination_float_format =
-        babl_format_with_space (dst_name,
-                   BABL (BABL ((babl->fish.destination))->format.space));
+                   destination_float_format);
     }
 
     if (!conv_to_rgba || !conv_from_rgba)
