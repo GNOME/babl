@@ -191,7 +191,7 @@ if cc.has_argument('-mmmx') and get_option('enable-mmx')
             sse2_cflags = '-msse2'
             conf.set('USE_SSE2', 1, description:
               'Define to 1 if sse2 assembly is available.')
-            add_project_arguments('-DMYPROJ=projname', language : 'c')
+            add_project_arguments('-march=native', language : 'c')
 
             # sse4.1 assembly
             if cc.has_argument('-msse4.1') and get_option('enable-sse4_1')
