@@ -36,19 +36,19 @@ typedef struct BablLookup
 {
   BablLookupFunction function;
   void              *data;
-  int               shift;
-  uint32_t          positive_min, positive_max, negative_min, negative_max;
-  uint32_t          bitmask[babl_LOOKUP_MAX_ENTRIES/32];
-  int               entries;
-  float             table[];
+  int                shift;
+  uint32_t           positive_min, positive_max, negative_min, negative_max;
+  uint32_t           bitmask[babl_LOOKUP_MAX_ENTRIES/32];
+  int                entries;
+  float              table[];
 } BablLookup;
 
 
-static BablLookup *babl_lookup_new (BablLookupFunction  function,
-                                    void *              data,
-                                    float               start,
-                                    float               end,
-                                    float               precision);
+static BablLookup *babl_lookup_new (BablLookupFunction function,
+                                    void *             data,
+                                    float              start,
+                                    float              end,
+                                    float              precision);
 #if 0
 static void        babl_lookup_free      (BablLookup         *lookup);
 #endif
@@ -286,7 +286,8 @@ babl_lookup_free (BablLookup *lookup)
 #endif
 
 static void
-conv_rgbaF_linear_rgbAF_gamma (const Babl *conversion,unsigned char *src, 
+conv_rgbaF_linear_rgbAF_gamma (const Babl    *conversion,
+                               unsigned char *src, 
                                unsigned char *dst, 
                                long           samples)
 {
@@ -327,7 +328,8 @@ conv_rgbaF_linear_rgbAF_gamma (const Babl *conversion,unsigned char *src,
 
 
 static void
-conv_rgbaF_linear_rgba8_gamma (const Babl *conversion,unsigned char *src, 
+conv_rgbaF_linear_rgba8_gamma (const Babl    *conversion,
+                               unsigned char *src, 
                                unsigned char *dst, 
                                long           samples)
 {
@@ -363,7 +365,8 @@ conv_rgbaF_linear_rgba8_gamma (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_rgbaF_linear_rgbA8_gamma (const Babl *conversion,unsigned char *src, 
+conv_rgbaF_linear_rgbA8_gamma (const Babl    *conversion,
+                               unsigned char *src, 
                                unsigned char *dst, 
                                long           samples)
 {
@@ -481,7 +484,8 @@ conv_rgbaF_linear_rgbA8_gamma_cairo (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_rgbAF_linear_rgbAF_gamma (const Babl *conversion,unsigned char *src, 
+conv_rgbAF_linear_rgbAF_gamma (const Babl    *conversion,
+                               unsigned char *src, 
                                unsigned char *dst, 
                                long           samples)
 {
@@ -515,7 +519,8 @@ conv_rgbAF_linear_rgbAF_gamma (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_rgbaF_linear_rgbaF_gamma (const Babl *conversion,unsigned char *src, 
+conv_rgbaF_linear_rgbaF_gamma (const Babl    *conversion,
+                               unsigned char *src, 
                                unsigned char *dst, 
                                long           samples)
 {
@@ -551,7 +556,8 @@ conv_rgbF_linear_rgbF_gamma (const Babl *conversion,unsigned char *src,
 
 
 static void
-conv_rgbaF_gamma_rgbaF_linear (const Babl *conversion,unsigned char *src, 
+conv_rgbaF_gamma_rgbaF_linear (const Babl    *conversion,
+                               unsigned char *src, 
                                unsigned char *dst, 
                                long           samples)
 {
@@ -569,7 +575,8 @@ conv_rgbaF_gamma_rgbaF_linear (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_rgbF_gamma_rgbF_linear (const Babl *conversion,unsigned char *src, 
+conv_rgbF_gamma_rgbF_linear (const Babl    *conversion,
+                             unsigned char *src, 
                              unsigned char *dst, 
                              long           samples)
 {

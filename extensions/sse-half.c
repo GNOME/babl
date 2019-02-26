@@ -30,7 +30,10 @@
 #include "extensions/util.h"
 
 static inline void
-conv_yHalf_yF (const Babl *conversion,const uint16_t *src, float *dst, long samples)
+conv_yHalf_yF (const Babl     *conversion,
+               const uint16_t *src, 
+               float          *dst, 
+               long            samples)
 {
   const uint64_t *s_vec;
   __v4sf         *d_vec;
@@ -61,25 +64,37 @@ conv_yHalf_yF (const Babl *conversion,const uint16_t *src, float *dst, long samp
 }
 
 static void
-conv_yaHalf_yaF (const Babl *conversion,const uint16_t *src, float *dst, long samples)
+conv_yaHalf_yaF (const Babl     *conversion,
+                 const uint16_t *src, 
+                 float          *dst, 
+                 long            samples)
 {
   conv_yHalf_yF (conversion, src, dst, samples * 2);
 }
 
 static void
-conv_rgbHalf_rgbF (const Babl *conversion,const uint16_t *src, float *dst, long samples)
+conv_rgbHalf_rgbF (const Babl     *conversion,
+                   const uint16_t *src, 
+                   float          *dst, 
+                   long            samples)
 {
   conv_yHalf_yF (conversion, src, dst, samples * 3);
 }
 
 static void
-conv_rgbaHalf_rgbaF (const Babl *conversion,const uint16_t *src, float *dst, long samples)
+conv_rgbaHalf_rgbaF (const Babl     *conversion,
+                     const uint16_t *src, 
+                     float          *dst, 
+                     long            samples)
 {
   conv_yHalf_yF (conversion, src, dst, samples * 4);
 }
 
 static inline void
-conv_yF_yHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
+conv_yF_yHalf (const Babl  *conversion,
+               const float *src, 
+               uint16_t    *dst, 
+               long         samples)
 {
   const __v4sf *s_vec;
   uint64_t     *d_vec;
@@ -110,19 +125,28 @@ conv_yF_yHalf (const Babl *conversion,const float *src, uint16_t *dst, long samp
 }
 
 static void
-conv_yaF_yaHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
+conv_yaF_yaHalf (const Babl  *conversion,
+                 const float *src, 
+                 uint16_t    *dst, 
+                 long         samples)
 {
   conv_yF_yHalf (conversion, src, dst, samples * 2);
 }
 
 static void
-conv_rgbF_rgbHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
+conv_rgbF_rgbHalf (const Babl  *conversion,
+                   const float *src, 
+                   uint16_t    *dst, 
+                   long         samples)
 {
   conv_yF_yHalf (conversion, src, dst, samples * 3);
 }
 
 static void
-conv_rgbaF_rgbaHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
+conv_rgbaF_rgbaHalf (const Babl  *conversion,
+                     const float *src, 
+                     uint16_t    *dst, 
+                     long         samples)
 {
   conv_yF_yHalf (conversion, src, dst, samples * 4);
 }

@@ -31,7 +31,10 @@
 #include "extensions/util.h"
 
 static inline void
-conv_yF_y8 (const Babl *conversion,const float *src, uint8_t *dst, long samples)
+conv_yF_y8 (const Babl  *conversion,
+            const float *src, 
+            uint8_t     *dst, 
+            long         samples)
 {
   const __v4sf *s_vec;
   __m128i      *d_vec;
@@ -126,26 +129,38 @@ conv_yF_y8 (const Babl *conversion,const float *src, uint8_t *dst, long samples)
 }
 
 static void
-conv_yaF_ya8 (const Babl *conversion,const float *src, uint8_t *dst, long samples)
+conv_yaF_ya8 (const Babl  *conversion,
+              const float *src, 
+              uint8_t     *dst, 
+              long         samples)
 {
   conv_yF_y8 (conversion, src, dst, samples * 2);
 }
 
 
 static void
-conv_rgbF_rgb8 (const Babl *conversion,const float *src, uint8_t *dst, long samples)
+conv_rgbF_rgb8 (const Babl  *conversion,
+                const float *src, 
+                uint8_t     *dst, 
+                long         samples)
 {
   conv_yF_y8 (conversion, src, dst, samples * 3);
 }
 
 static void
-conv_rgbaF_rgba8 (const Babl *conversion,const float *src, uint8_t *dst, long samples)
+conv_rgbaF_rgba8 (const Babl  *conversion,
+                  const float *src, 
+                  uint8_t     *dst, 
+                  long         samples)
 {
   conv_yF_y8 (conversion, src, dst, samples * 4);
 }
 
 static void
-conv_rgbAF_rgbA8 (const Babl *conversion,const float *src, uint8_t *dst, long samples)
+conv_rgbAF_rgbA8 (const Babl  *conversion,
+                  const float *src, 
+                  uint8_t     *dst, 
+                  long         samples)
 {
   conv_yF_y8 (conversion, src, dst, samples * 4);
 }

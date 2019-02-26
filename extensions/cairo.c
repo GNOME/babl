@@ -27,7 +27,10 @@
 int init (void);
 
 static void
-conv_rgba8_cairo24_le (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
+conv_rgba8_cairo24_le (const Babl    *conversion,
+                       unsigned char *src, 
+                       unsigned char *dst, 
+                       long           samples)
 {
   long n = samples;
   uint32_t *srci = (void *)src;
@@ -45,7 +48,10 @@ conv_rgba8_cairo24_le (const Babl *conversion,unsigned char *src, unsigned char 
 }
 
 static void
-conv_rgb8_cairo24_le (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
+conv_rgb8_cairo24_le (const Babl    *conversion,
+                      unsigned char *src, 
+                      unsigned char *dst, 
+                      long           samples)
 {
   long n = samples;
   while (n--)
@@ -64,7 +70,10 @@ conv_rgb8_cairo24_le (const Babl *conversion,unsigned char *src, unsigned char *
 
 #if 0
 static void
-conv_rgbA8_premul_cairo32_le (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
+conv_rgbA8_premul_cairo32_le (const Babl    *conversion,
+                              unsigned char *src, 
+                              unsigned char *dst, 
+                              long           samples)
 {
   long n = samples;
   while (n--)
@@ -83,7 +92,10 @@ conv_rgbA8_premul_cairo32_le (const Babl *conversion,unsigned char *src, unsigne
 #else
 
 static void
-conv_rgbA8_premul_cairo32_le (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
+conv_rgbA8_premul_cairo32_le (const Babl    *conversion,
+                              unsigned char *src, 
+                              unsigned char *dst, 
+                              long           samples)
 {
   long n = samples;
   uint32_t *srci = (void *)src;
@@ -101,7 +113,11 @@ conv_rgbA8_premul_cairo32_le (const Babl *conversion,unsigned char *src, unsigne
 }
 #endif
 
-static void conv_cairo32_rgbA8_premul_le (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
+static void 
+conv_cairo32_rgbA8_premul_le (const Babl    *conversion,
+                              unsigned char *src, 
+                              unsigned char *dst, 
+                              long           samples)
 {
   long n = samples;
   while (n--)
@@ -118,7 +134,11 @@ static void conv_cairo32_rgbA8_premul_le (const Babl *conversion,unsigned char *
     }
 }
 
-static void conv_cairo32_rgba8_le (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
+static void 
+conv_cairo32_rgba8_le (const Babl    *conversion,
+                       unsigned char *src, 
+                       unsigned char *dst, 
+                       long           samples)
 {
   long n = samples;
   while (n--)
@@ -162,7 +182,11 @@ static void conv_cairo32_rgba8_le (const Babl *conversion,unsigned char *src, un
 }
 
 
-static void conv_cairo32_rgbAF_premul_le (const Babl *conversion,unsigned char *src, unsigned char *dst_char, long samples)
+static void 
+conv_cairo32_rgbAF_premul_le (const Babl    *conversion,
+                              unsigned char *src, 
+                              unsigned char *dst_char, 
+                              long           samples)
 {
   long n = samples;
   float *dst = (void*)dst_char;
@@ -181,7 +205,10 @@ static void conv_cairo32_rgbAF_premul_le (const Babl *conversion,unsigned char *
 }
 
 static void
-conv_rgba8_cairo32_le (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
+conv_rgba8_cairo32_le (const Babl    *conversion,
+                       unsigned char *src, 
+                       unsigned char *dst, 
+                       long           samples)
 {
   long n = samples;
   uint32_t *dsti = (void*) dst;
@@ -220,7 +247,10 @@ conv_rgba8_cairo32_le (const Babl *conversion,unsigned char *src, unsigned char 
 }
 
 static void
-conv_rgb8_cairo32_le (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
+conv_rgb8_cairo32_le (const Babl    *conversion,
+                      unsigned char *src, 
+                      unsigned char *dst, 
+                      long           samples)
 {
   long n = samples;
   while (n--)
@@ -240,7 +270,10 @@ conv_rgb8_cairo32_le (const Babl *conversion,unsigned char *src, unsigned char *
 
 
 static void
-conv_yA8_cairo32_le (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
+conv_yA8_cairo32_le (const Babl    *conversion,
+                     unsigned char *src, 
+                     unsigned char *dst, 
+                     long           samples)
 {
   long n = samples;
   while (n--)
@@ -261,7 +294,10 @@ conv_yA8_cairo32_le (const Babl *conversion,unsigned char *src, unsigned char *d
 }
 
 static void
-conv_yA16_cairo32_le (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
+conv_yA16_cairo32_le (const Babl    *conversion,
+                      unsigned char *src, 
+                      unsigned char *dst, 
+                      long           samples)
 {
   long n = samples;
   uint16_t *ssrc = (void*) src;
@@ -278,7 +314,10 @@ conv_yA16_cairo32_le (const Babl *conversion,unsigned char *src, unsigned char *
 }
 
 static void
-conv_y8_cairo32_le (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
+conv_y8_cairo32_le (const Babl    *conversion,
+                    unsigned char *src, 
+                    unsigned char *dst, 
+                    long           samples)
 {
   long n = samples;
   while (n--)
@@ -292,7 +331,10 @@ conv_y8_cairo32_le (const Babl *conversion,unsigned char *src, unsigned char *ds
 }
 
 static void
-conv_y16_cairo32_le (const Babl *conversion,unsigned char *src, unsigned char *dst, long samples)
+conv_y16_cairo32_le (const Babl    *conversion,
+                     unsigned char *src, 
+                     unsigned char *dst, 
+                     long           samples)
 {
   long n = samples;
   uint16_t *s16 = (void*)src;
@@ -310,7 +352,8 @@ conv_y16_cairo32_le (const Babl *conversion,unsigned char *src, unsigned char *d
 }
 
 static void
-conv_rgbA_gamma_float_cairo32_le (const Babl *conversion,unsigned char *src,
+conv_rgbA_gamma_float_cairo32_le (const Babl    *conversion,
+                                  unsigned char *src,
                                   unsigned char *dst,
                                   long           samples)
 {
@@ -382,7 +425,8 @@ conv_rgbafloat_cairo32_le (const Babl    *conversion,
 
 
 static void
-conv_yafloat_cairo32_le (const Babl *conversion,unsigned char *src,
+conv_yafloat_cairo32_le (const Babl    *conversion,
+                         unsigned char *src,
                          unsigned char *dst,
                          long           samples)
 {

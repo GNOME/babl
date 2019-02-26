@@ -68,7 +68,8 @@ tables_init (const Babl *space)
 }
 
 static inline void
-u8_linear_to_float_linear (const Babl *conversion,unsigned char *src,
+u8_linear_to_float_linear (const Babl    *conversion,
+                           unsigned char *src,
                            unsigned char *dst,
                            long           samples)
 {
@@ -81,7 +82,8 @@ u8_linear_to_float_linear (const Babl *conversion,unsigned char *src,
 
 
 static void
-u8_linear_to_float_linear_premul (const Babl *conversion,unsigned char *src,
+u8_linear_to_float_linear_premul (const Babl    *conversion,
+                                  unsigned char *src,
                                   unsigned char *dst,
                                   long           samples)
 {
@@ -101,7 +103,8 @@ u8_linear_to_float_linear_premul (const Babl *conversion,unsigned char *src,
 }
 
 static inline void
-u8_gamma_2_2_to_float_linear (const Babl *conversion,unsigned char *src,
+u8_gamma_2_2_to_float_linear (const Babl    *conversion,
+                              unsigned char *src,
                               unsigned char *dst,
                               long           samples)
 {
@@ -114,7 +117,8 @@ u8_gamma_2_2_to_float_linear (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_rgba8_linear_rgbaF_linear (const Babl *conversion,unsigned char *src,
+conv_rgba8_linear_rgbaF_linear (const Babl    *conversion,
+                                unsigned char *src,
                                 unsigned char *dst,
                                 long           samples)
 {
@@ -122,16 +126,18 @@ conv_rgba8_linear_rgbaF_linear (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_rgba8_linear_ragabaaF_linear (const Babl *conversion,unsigned char *src,
-                                unsigned char *dst,
-                                long           samples)
+conv_rgba8_linear_ragabaaF_linear (const Babl    *conversion,
+                                   unsigned char *src,
+                                   unsigned char *dst,
+                                   long           samples)
 {
   u8_linear_to_float_linear_premul (conversion, src, dst, samples);
 }
 
 
 static void
-conv_rgba8_gamma_2_2_rgbaF_linear (const Babl *conversion,unsigned char *src,
+conv_rgba8_gamma_2_2_rgbaF_linear (const Babl    *conversion,
+                                   unsigned char *src,
                                    unsigned char *dst,
                                    long           samples)
 {
@@ -149,7 +155,8 @@ conv_rgba8_gamma_2_2_rgbaF_linear (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_rgb8_linear_rgbF_linear (const Babl *conversion,unsigned char *src,
+conv_rgb8_linear_rgbF_linear (const Babl    *conversion,
+                              unsigned char *src,
                               unsigned char *dst,
                               long           samples)
 {
@@ -157,7 +164,8 @@ conv_rgb8_linear_rgbF_linear (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_rgb8_gamma_2_2_rgbF_linear (const Babl *conversion,unsigned char *src,
+conv_rgb8_gamma_2_2_rgbF_linear (const Babl    *conversion,
+                                 unsigned char *src,
                                  unsigned char *dst,
                                  long           samples)
 {
@@ -165,7 +173,8 @@ conv_rgb8_gamma_2_2_rgbF_linear (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_rgb8_linear_rgbaF_linear (const Babl *conversion,unsigned char *src,
+conv_rgb8_linear_rgbaF_linear (const Babl    *conversion,
+                               unsigned char *src,
                                unsigned char *dst,
                                long           samples)
 {
@@ -184,7 +193,8 @@ conv_rgb8_linear_rgbaF_linear (const Babl *conversion,unsigned char *src,
 #define conv_rgb8_linear_ragabaaF_linear conv_rgb8_linear_rgbaF_linear
 
 static void
-conv_rgb8_gamma_2_2_rgbaF_linear (const Babl *conversion,unsigned char *src,
+conv_rgb8_gamma_2_2_rgbaF_linear (const Babl    *conversion,
+                                  unsigned char *src,
                                   unsigned char *dst,
                                   long           samples)
 {
@@ -202,7 +212,8 @@ conv_rgb8_gamma_2_2_rgbaF_linear (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_ga8_linear_gaF_linear (const Babl *conversion,unsigned char *src,
+conv_ga8_linear_gaF_linear (const Babl    *conversion,
+                            unsigned char *src,
                             unsigned char *dst,
                             long           samples)
 {
@@ -210,7 +221,8 @@ conv_ga8_linear_gaF_linear (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_ga8_gamma_2_2_gaF_linear (const Babl *conversion,unsigned char *src,
+conv_ga8_gamma_2_2_gaF_linear (const Babl    *conversion,
+                               unsigned char *src,
                                unsigned char *dst,
                                long           samples)
 {
@@ -226,7 +238,8 @@ conv_ga8_gamma_2_2_gaF_linear (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_ga8_gamma_2_2_rgba8_gamma_2_2 (const Babl *conversion,unsigned char *src,
+conv_ga8_gamma_2_2_rgba8_gamma_2_2 (const Babl    *conversion,
+                                    unsigned char *src,
                                     unsigned char *dst,
                                     long           samples)
 {
@@ -242,7 +255,8 @@ conv_ga8_gamma_2_2_rgba8_gamma_2_2 (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_ga8_linear_rgbaF_linear (const Babl *conversion,unsigned char *src,
+conv_ga8_linear_rgbaF_linear (const Babl    *conversion,
+                              unsigned char *src,
                               unsigned char *dst,
                               long           samples)
 {
@@ -261,7 +275,8 @@ conv_ga8_linear_rgbaF_linear (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_ga8_gamma_2_2_rgbaF_linear (const Babl *conversion,unsigned char *src,
+conv_ga8_gamma_2_2_rgbaF_linear (const Babl    *conversion,
+                                 unsigned char *src,
                                  unsigned char *dst,
                                  long           samples)
 {
@@ -281,7 +296,8 @@ conv_ga8_gamma_2_2_rgbaF_linear (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_g8_linear_gF_linear (const Babl *conversion,unsigned char *src,
+conv_g8_linear_gF_linear (const Babl    *conversion,
+                          unsigned char *src,
                           unsigned char *dst,
                           long           samples)
 {
@@ -289,7 +305,8 @@ conv_g8_linear_gF_linear (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_g8_gamma_2_2_gF_linear (const Babl *conversion,unsigned char *src,
+conv_g8_gamma_2_2_gF_linear (const Babl    *conversion,
+                             unsigned char *src,
                              unsigned char *dst,
                              long           samples)
 {
@@ -297,7 +314,8 @@ conv_g8_gamma_2_2_gF_linear (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_g8_linear_rgbaF_linear (const Babl *conversion,unsigned char *src,
+conv_g8_linear_rgbaF_linear (const Babl    *conversion,
+                             unsigned char *src,
                              unsigned char *dst,
                              long           samples)
 {
@@ -316,7 +334,8 @@ conv_g8_linear_rgbaF_linear (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_g8_gamma_2_2_rgbaF_linear (const Babl *conversion,unsigned char *src,
+conv_g8_gamma_2_2_rgbaF_linear (const Babl    *conversion,
+                                unsigned char *src,
                                 unsigned char *dst,
                                 long           samples)
 {
@@ -336,7 +355,8 @@ conv_g8_gamma_2_2_rgbaF_linear (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_rgbaF_linear_rgb8_linear (const Babl *conversion,unsigned char *src,
+conv_rgbaF_linear_rgb8_linear (const Babl    *conversion,
+                               unsigned char *src,
                                unsigned char *dst,
                                long           samples)
 {
@@ -360,7 +380,8 @@ conv_rgbaF_linear_rgb8_linear (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_rgbaF_linear_rgba8_linear (const Babl *conversion,unsigned char *src,
+conv_rgbaF_linear_rgba8_linear (const Babl    *conversion,
+                                unsigned char *src,
                                 unsigned char *dst,
                                 long           samples)
 {

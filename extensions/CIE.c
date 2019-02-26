@@ -186,42 +186,42 @@ static inline void  CHab_to_ab    (double  C,
                                    double *to_a,
                                    double *to_b);
 
-static inline void XYZ_to_LAB     (double X,
-                                   double Y,
-                                   double Z,
+static inline void XYZ_to_LAB     (double  X,
+                                   double  Y,
+                                   double  Z,
                                    double *to_L,
                                    double *to_a,
                                    double *to_b
                                    );
 
-static inline void LAB_to_XYZ     (double L,
-                                   double a,
-                                   double b,
+static inline void LAB_to_XYZ     (double  L,
+                                   double  a,
+                                   double  b,
                                    double *to_X,
                                    double *to_Y,
                                    double *to_Z
                                    );
 
-static inline void XYZ_to_xyY     (double X,
-                                   double Y,
-                                   double Z,
+static inline void XYZ_to_xyY     (double  X,
+                                   double  Y,
+                                   double  Z,
                                    double *to_x,
                                    double *to_y,
                                    double *to_Y
                                    );
 
-static inline void xyY_to_XYZ     (double x,
-                                   double y,
-                                   double Y,
+static inline void xyY_to_XYZ     (double  x,
+                                   double  y,
+                                   double  Y,
                                    double *to_X,
                                    double *to_Y,
                                    double *to_Z
                                    );
 
 static inline void
-XYZ_to_LAB (double X,
-            double Y,
-            double Z,
+XYZ_to_LAB (double  X,
+            double  Y,
+            double  Z,
             double *to_L,
             double *to_a,
             double *to_b)
@@ -240,9 +240,9 @@ XYZ_to_LAB (double X,
 }
 
 static inline void
-LAB_to_XYZ (double L,
-            double a,
-            double b,
+LAB_to_XYZ (double  L,
+            double  a,
+            double  b,
             double *to_X,
             double *to_Y,
             double *to_Z)
@@ -267,9 +267,9 @@ LAB_to_XYZ (double L,
 
 
 static inline void
-XYZ_to_xyY (double X,
-            double Y,
-            double Z,
+XYZ_to_xyY (double  X,
+            double  Y,
+            double  Z,
             double *to_x,
             double *to_y,
             double *to_Y)
@@ -289,9 +289,9 @@ XYZ_to_xyY (double X,
 }
 
 static inline void
-xyY_to_XYZ (double x,
-            double y,
-            double Y,
+xyY_to_XYZ (double  x,
+            double  y,
+            double  Y,
             double *to_X,
             double *to_Y,
             double *to_Z)
@@ -313,9 +313,10 @@ xyY_to_XYZ (double x,
 /* rgb <-> XYZ */
 
 static void
-rgba_to_xyz (const Babl *conversion,char *src,
-             char *dst,
-             long  n)
+rgba_to_xyz (const Babl *conversion,
+             char       *src,
+             char       *dst,
+             long        n)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
   while (n--)
@@ -331,9 +332,10 @@ rgba_to_xyz (const Babl *conversion,char *src,
 }
 
 static void
-xyz_to_rgba (const Babl *conversion,char *src,
-             char *dst,
-             long  n)
+xyz_to_rgba (const Babl *conversion,
+             char       *src,
+             char       *dst,
+             long        n)
 {
   const Babl *space = babl_conversion_get_destination_space (conversion);
   while (n--)
@@ -381,9 +383,10 @@ xyza_to_rgba (const Babl *conversion,char *src,
 /* rgb -> xyY */
 
 static void
-rgba_to_xyY (const Babl *conversion,char *src,
-             char *dst,
-             long  n)
+rgba_to_xyY (const Babl *conversion,
+             char       *src,
+             char       *dst,
+             long        n)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
   while (n--)
@@ -585,9 +588,10 @@ rgbaf_to_xyYf (const Babl *conversion,
 /* xyY -> rgb */
 
 static void
-xyY_to_rgba (const Babl *conversion,char *src,
-             char *dst,
-             long  n)
+xyY_to_rgba (const Babl *conversion,
+             char       *src,
+             char       *dst,
+             long        n)
 {
   const Babl *space = babl_conversion_get_destination_space (conversion);
   while (n--)
@@ -815,9 +819,10 @@ xyYaf_to_rgbaf (const Babl *conversion,
 /* rgb <-> LAB */
 
 static void
-rgba_to_lab (const Babl *conversion,char *src,
-             char *dst,
-             long  n)
+rgba_to_lab (const Babl *conversion,
+             char       *src,
+             char       *dst,
+             long        n)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
   while (n--)
@@ -838,9 +843,10 @@ rgba_to_lab (const Babl *conversion,char *src,
 
 
 static void
-lab_to_rgba (const Babl *conversion,char *src,
-             char *dst,
-             long  n)
+lab_to_rgba (const Babl *conversion,
+             char       *src,
+             char       *dst,
+             long        n)
 {
   const Babl *space = babl_conversion_get_destination_space (conversion);
   while (n--)
@@ -875,9 +881,10 @@ lab_to_rgba (const Babl *conversion,char *src,
 }
 
 static void
-rgba_to_laba (const Babl *conversion,char *src,
-              char *dst,
-              long  n)
+rgba_to_laba (const Babl *conversion,
+              char       *src,
+              char       *dst,
+              long        n)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
   while (n--)
@@ -902,9 +909,10 @@ rgba_to_laba (const Babl *conversion,char *src,
 }
 
 static void
-laba_to_rgba (const Babl *conversion,char *src,
-              char *dst,
-              long  n)
+laba_to_rgba (const Babl *conversion,
+              char       *src,
+              char       *dst,
+              long        n)
 {
   const Babl *space = babl_conversion_get_destination_space (conversion);
   while (n--)
@@ -959,9 +967,10 @@ ab_to_CHab (double  a,
 }
 
 static void
-rgba_to_lchab (const Babl *conversion,char *src,
-               char *dst,
-               long  n)
+rgba_to_lchab (const Babl *conversion,
+               char       *src,
+               char       *dst,
+               long        n)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
 
@@ -989,9 +998,10 @@ rgba_to_lchab (const Babl *conversion,char *src,
 }
 
 static void
-lchab_to_rgba (const Babl *conversion,char *src,
-               char *dst,
-               long  n)
+lchab_to_rgba (const Babl *conversion,
+               char       *src,
+               char       *dst,
+               long        n)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
 
@@ -1022,9 +1032,10 @@ lchab_to_rgba (const Babl *conversion,char *src,
 }
 
 static void
-rgba_to_lchaba (const Babl *conversion,char *src,
-                char *dst,
-                long  n)
+rgba_to_lchaba (const Babl *conversion,
+                char       *src,
+                char       *dst,
+                long        n)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
 
@@ -1053,9 +1064,10 @@ rgba_to_lchaba (const Babl *conversion,char *src,
 }
 
 static void
-lchaba_to_rgba (const Babl *conversion,char *src,
-                char *dst,
-                long  n)
+lchaba_to_rgba (const Babl *conversion,
+                char       *src,
+                char       *dst,
+                long        n)
 {
   const Babl *space = babl_conversion_get_destination_space (conversion);
   while (n--)
@@ -1118,9 +1130,10 @@ cubef (float f)
 }
 
 static void
-Yf_to_Lf (const Babl *conversion,float *src,
-          float *dst,
-          long   samples)
+Yf_to_Lf (const Babl *conversion,
+          float      *src,
+          float      *dst,
+          long        samples)
 {
   long n = samples;
 
@@ -1137,9 +1150,10 @@ Yf_to_Lf (const Babl *conversion,float *src,
 }
 
 static void
-Yaf_to_Lf (const Babl *conversion,float *src,
-           float *dst,
-           long   samples)
+Yaf_to_Lf (const Babl *conversion,
+           float      *src,
+           float      *dst,
+           long        samples)
 {
   long n = samples;
 
@@ -1156,9 +1170,10 @@ Yaf_to_Lf (const Babl *conversion,float *src,
 }
 
 static void
-Yaf_to_Laf (const Babl *conversion,float *src,
-            float *dst,
-            long   samples)
+Yaf_to_Laf (const Babl *conversion,
+            float      *src,
+            float      *dst,
+            long        samples)
 {
   long n = samples;
 
@@ -1177,9 +1192,10 @@ Yaf_to_Laf (const Babl *conversion,float *src,
 }
 
 static void
-rgbf_to_Labf (const Babl *conversion,float *src,
-              float *dst,
-              long   samples)
+rgbf_to_Labf (const Babl *conversion,
+              float      *src,
+              float      *dst,
+              long        samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
   float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_X;
@@ -1221,9 +1237,10 @@ rgbf_to_Labf (const Babl *conversion,float *src,
 }
 
 static void
-rgbaf_to_Lf (const Babl *conversion,float *src,
-             float *dst,
-             long   samples)
+rgbaf_to_Lf (const Babl *conversion,
+             float      *src,
+             float      *dst,
+             long        samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
   float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Y;
@@ -1248,9 +1265,10 @@ rgbaf_to_Lf (const Babl *conversion,float *src,
 }
 
 static void
-rgbaf_to_Labf (const Babl *conversion,float *src,
-               float *dst,
-               long   samples)
+rgbaf_to_Labf (const Babl *conversion,
+               float      *src,
+               float      *dst,
+               long        samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
   float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_X;
@@ -1292,9 +1310,10 @@ rgbaf_to_Labf (const Babl *conversion,float *src,
 }
 
 static void
-rgbaf_to_Labaf (const Babl *conversion,float *src,
-                float *dst,
-                long   samples)
+rgbaf_to_Labaf (const Babl *conversion,
+                float      *src,
+                float      *dst,
+                long        samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
   float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_X;
@@ -1338,9 +1357,10 @@ rgbaf_to_Labaf (const Babl *conversion,float *src,
 }
 
 static void
-Labf_to_Lf (const Babl *conversion,float *src,
-            float *dst,
-            long   samples)
+Labf_to_Lf (const Babl *conversion,
+            float      *src,
+            float      *dst,
+            long        samples)
 {
   long n = samples;
 
@@ -1354,9 +1374,10 @@ Labf_to_Lf (const Babl *conversion,float *src,
 }
 
 static void
-Labaf_to_Lf (const Babl *conversion,float *src,
-             float *dst,
-             long   samples)
+Labaf_to_Lf (const Babl *conversion,
+             float      *src,
+             float      *dst,
+             long        samples)
 {
   long n = samples;
 
@@ -1370,9 +1391,10 @@ Labaf_to_Lf (const Babl *conversion,float *src,
 }
 
 static void
-Labf_to_rgbf (const Babl *conversion,float *src,
-                float *dst,
-                long   samples)
+Labf_to_rgbf (const Babl *conversion,
+              float      *src,
+              float      *dst,
+              long        samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
   float m_0_0 = space->space.XYZtoRGBf[0] * D50_WHITE_REF_X;
@@ -1460,9 +1482,10 @@ Labf_to_rgbaf (const Babl *conversion,float *src,
 }
 
 static void
-Labaf_to_rgbaf (const Babl *conversion,float *src,
-                float *dst,
-                long   samples)
+Labaf_to_rgbaf (const Babl *conversion,
+                float      *src,
+                float      *dst,
+                long        samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
   float m_0_0 = space->space.XYZtoRGBf[0] * D50_WHITE_REF_X;
@@ -1506,9 +1529,10 @@ Labaf_to_rgbaf (const Babl *conversion,float *src,
 }
 
 static void
-Labf_to_Lchabf (const Babl *conversion,float *src,
-                float *dst,
-                long   samples)
+Labf_to_Lchabf (const Babl *conversion,
+                float      *src,
+                float      *dst,
+                long        samples)
 {
   long n = samples;
 
@@ -1535,9 +1559,10 @@ Labf_to_Lchabf (const Babl *conversion,float *src,
 }
 
 static void
-Lchabf_to_Labf (const Babl *conversion,float *src,
-                float *dst,
-                long   samples)
+Lchabf_to_Labf (const Babl *conversion,
+                float      *src,
+                float      *dst,
+                long        samples)
 {
   long n = samples;
 
@@ -1560,9 +1585,10 @@ Lchabf_to_Labf (const Babl *conversion,float *src,
 }
 
 static void
-Labaf_to_Lchabaf (const Babl *conversion,float *src,
-                  float *dst,
-                  long   samples)
+Labaf_to_Lchabaf (const Babl *conversion,
+                  float      *src,
+                  float      *dst,
+                  long        samples)
 {
   long n = samples;
 
@@ -1591,9 +1617,10 @@ Labaf_to_Lchabaf (const Babl *conversion,float *src,
 }
 
 static void
-Lchabaf_to_Labaf (const Babl *conversion,float *src,
-                  float *dst,
-                  long   samples)
+Lchabaf_to_Labaf (const Babl *conversion,
+                  float      *src,
+                  float      *dst,
+                  long        samples)
 {
   long n = samples;
 
@@ -1704,7 +1731,10 @@ lab_r_to_f_sse2 (__m128 r)
 }
 
 static void
-Yf_to_Lf_sse2 (const Babl *conversion, const float *src, float *dst, long samples)
+Yf_to_Lf_sse2 (const Babl  *conversion, 
+               const float *src, 
+               float       *dst, 
+               long         samples)
 {
   long i = 0;
   long remainder;
@@ -1742,7 +1772,10 @@ Yf_to_Lf_sse2 (const Babl *conversion, const float *src, float *dst, long sample
 }
 
 static void
-Yaf_to_Lf_sse2 (const Babl *conversion, const float *src, float *dst, long samples)
+Yaf_to_Lf_sse2 (const Babl  *conversion, 
+                const float *src, 
+                float       *dst, 
+                long         samples)
 {
   long i = 0;
   long remainder;
@@ -1783,7 +1816,10 @@ Yaf_to_Lf_sse2 (const Babl *conversion, const float *src, float *dst, long sampl
 }
 
 static void
-rgbaf_to_Lf_sse2 (const Babl *conversion, const float *src, float *dst, long samples)
+rgbaf_to_Lf_sse2 (const Babl  *conversion, 
+                  const float *src, 
+                  float       *dst, 
+                  long         samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
   const float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Y;
@@ -1846,7 +1882,10 @@ rgbaf_to_Lf_sse2 (const Babl *conversion, const float *src, float *dst, long sam
 }
 
 static void
-rgbaf_to_Labaf_sse2 (const Babl *conversion, const float *src, float *dst, long samples)
+rgbaf_to_Labaf_sse2 (const Babl  *conversion, 
+                     const float *src, 
+                     float       *dst, 
+                     long         samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
   const float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_X;
@@ -2362,9 +2401,9 @@ formats (void)
 /******** begin  integer RGB/CIE color space conversions **************/
 
 static inline void
-convert_double_u8_scaled (const Babl *conversion,
-                          double          min_val,
-                          double          max_val,
+convert_double_u8_scaled (const Babl   *conversion,
+                          double        min_val,
+                          double        max_val,
                           unsigned char min,
                           unsigned char max,
                           char         *src,
@@ -2392,7 +2431,7 @@ convert_double_u8_scaled (const Babl *conversion,
 }
 
 static inline void
-convert_u8_double_scaled (const Babl *conversion,
+convert_u8_double_scaled (const Babl   *conversion,
                           double        min_val,
                           double        max_val,
                           unsigned char min,
@@ -2452,16 +2491,16 @@ MAKE_CONVERSIONS (u8_ab, -128.0, 127.0, 0x00, 0xff)
 #undef MAKE_CONVERSIONS
 
 static inline void
-convert_float_u8_scaled (const Babl *conversion,
+convert_float_u8_scaled (const Babl     *conversion,
                           float          min_val,
                           float          max_val,
-                          unsigned char min,
-                          unsigned char max,
-                          char         *src,
-                          char         *dst,
-                          int           src_pitch,
-                          int           dst_pitch,
-                          long          n)
+                          unsigned char  min,
+                          unsigned char  max,
+                          char          *src,
+                          char          *dst,
+                          int            src_pitch,
+                          int            dst_pitch,
+                          long           n)
 {
   while (n--)
     {
@@ -2482,9 +2521,9 @@ convert_float_u8_scaled (const Babl *conversion,
 }
 
 static inline void
-convert_u8_float_scaled (const Babl *conversion,
-                          float        min_val,
-                          float        max_val,
+convert_u8_float_scaled (const Babl    *conversion,
+                          float         min_val,
+                          float         max_val,
                           unsigned char min,
                           unsigned char max,
                           char         *src,
@@ -2618,7 +2657,7 @@ types_u8 (void)
 }
 
 static inline void
-convert_double_u16_scaled (const Babl *conversion,
+convert_double_u16_scaled (const Babl    *conversion,
                            double         min_val,
                            double         max_val,
                            unsigned short min,
@@ -2648,7 +2687,7 @@ convert_double_u16_scaled (const Babl *conversion,
 }
 
 static inline void
-convert_u16_double_scaled (const Babl *conversion,
+convert_u16_double_scaled (const Babl    *conversion,
                            double         min_val,
                            double         max_val,
                            unsigned short min,
@@ -2706,9 +2745,9 @@ MAKE_CONVERSIONS (u16_ab, -128.0, 127.0, 0x00, 0xffff)
 
 
 static inline void
-convert_float_u16_scaled (const Babl *conversion,
-                           float         min_val,
-                           float         max_val,
+convert_float_u16_scaled (const Babl     *conversion,
+                           float          min_val,
+                           float          max_val,
                            unsigned short min,
                            unsigned short max,
                            char          *src,
@@ -2736,9 +2775,9 @@ convert_float_u16_scaled (const Babl *conversion,
 }
 
 static inline void
-convert_u16_float_scaled (const Babl *conversion,
-                           float         min_val,
-                           float         max_val,
+convert_u16_float_scaled (const Babl     *conversion,
+                           float          min_val,
+                           float          max_val,
                            unsigned short min,
                            unsigned short max,
                            char          *src,
