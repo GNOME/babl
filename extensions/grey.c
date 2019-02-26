@@ -25,7 +25,8 @@
 #include "extensions/util.h"
 
 static void
-conv_rgbaF_linear_y8_linear (const Babl *conversion,unsigned char *src,
+conv_rgbaF_linear_y8_linear (const Babl    *conversion,
+                             unsigned char *src,
                              unsigned char *dst,
                              long           samples)
 {
@@ -53,7 +54,8 @@ conv_rgbaF_linear_y8_linear (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_rgbaF_linear_yF_linear (const Babl *conversion,unsigned char *src,
+conv_rgbaF_linear_yF_linear (const Babl    *conversion,
+                             unsigned char *src,
                              unsigned char *dst,
                              long           samples)
 {
@@ -79,7 +81,8 @@ conv_rgbaF_linear_yF_linear (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_rgbaF_linear_yaF_linear (const Babl *conversion,unsigned char *src,
+conv_rgbaF_linear_yaF_linear (const Babl    *conversion,
+                              unsigned char *src,
                               unsigned char *dst,
                               long           samples)
 {

@@ -75,7 +75,10 @@
 #include "babl.h"
 #include "extensions/util.h"
 
-static void halfp2singles_fun(void *target, const void *source, long numel)
+static void 
+halfp2singles_fun(void       *target, 
+                  const void *source, 
+                  long        numel)
 {
     uint16_t *hp = (uint16_t *) source; // Type pun input as an unsigned 16-bit int
     uint32_t *xp = (uint32_t *) target; // Type pun output as an unsigned 32-bit int
@@ -124,7 +127,10 @@ static void halfp2singles_fun(void *target, const void *source, long numel)
 
 static float half_float_table[65536];
 
-static void halfp2singles(void *target, const void *source, long numel)
+static void 
+halfp2singles(void       *target, 
+              const void *source, 
+              long        numel)
 {
   uint16_t *src = (uint16_t *) source;
   float *dst = (float *) target;
@@ -204,7 +210,8 @@ const unsigned char half_float_shift_table[512] = {
 24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,13
 };
 
-static inline unsigned short float_to_half_float(float f)
+static inline unsigned short 
+float_to_half_float(float f)
 {
   // See Blink::Source/platform/graphics/gpu/WebGLImageConversion.cpp::convertFloatToHalfFloat() and http://crbug.com/491784
   union {
@@ -219,7 +226,10 @@ static inline unsigned short float_to_half_float(float f)
   return half_float_base_table[signexp] + ((temp & 0x007fffff) >> half_float_shift_table[signexp]);
 }
 
-static void singles2halfp(void *target, const void *source, long numel)
+static void 
+singles2halfp(void       *target, 
+              const void *source, 
+              long        numel)
 {
   const float *src = source;
   uint16_t    *dst = target;
@@ -229,25 +239,37 @@ static void singles2halfp(void *target, const void *source, long numel)
 }
 
 static inline void
-conv_yHalf_yF (const Babl *conversion,const uint16_t *src, float *dst, long samples)
+conv_yHalf_yF (const Babl     *conversion,
+               const uint16_t *src, 
+               float          *dst, 
+               long            samples)
 {
   halfp2singles(dst, src, samples);
 }
 
 static void
-conv_yaHalf_yaF (const Babl *conversion,const uint16_t *src, float *dst, long samples)
+conv_yaHalf_yaF (const Babl     *conversion,
+                 const uint16_t *src, 
+                 float          *dst, 
+                 long            samples)
 {
   conv_yHalf_yF (conversion, src, dst, samples * 2);
 }
 
 static void
-conv_rgbHalf_rgbF (const Babl *conversion,const uint16_t *src, float *dst, long samples)
+conv_rgbHalf_rgbF (const Babl     *conversion,
+                   const uint16_t *src, 
+                   float          *dst, 
+                   long            samples)
 {
   conv_yHalf_yF (conversion, src, dst, samples * 3);
 }
 
 static void
-conv_rgbaHalf_rgbaF (const Babl *conversion,const uint16_t *src, float *dst, long samples)
+conv_rgbaHalf_rgbaF (const Babl     *conversion,
+                     const uint16_t *src, 
+                     float          *dst, 
+                     long            samples)
 {
   conv_yHalf_yF (conversion, src, dst, samples * 4);
 }
@@ -255,32 +277,47 @@ conv_rgbaHalf_rgbaF (const Babl *conversion,const uint16_t *src, float *dst, lon
 #define conv_rgbAHalf_rgbAF  conv_rgbaHalf_rgbaF
 
 static void
-conv_yF_yHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
+conv_yF_yHalf (const Babl  *conversion,
+               const float *src, 
+               uint16_t    *dst, 
+               long         samples)
 {
   singles2halfp (dst, src, samples);
 }
 
 static void
-conv_yaF_yaHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
+conv_yaF_yaHalf (const Babl  *conversion,
+                 const float *src, 
+                 uint16_t    *dst, 
+                 long         samples)
 {
   conv_yF_yHalf (conversion, src, dst, samples * 2);
 }
 
 static void
-conv_rgbF_rgbHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
+conv_rgbF_rgbHalf (const Babl  *conversion,
+                   const float *src, 
+                   uint16_t    *dst, 
+                   long         samples)
 {
   conv_yF_yHalf (conversion, src, dst, samples * 3);
 }
 
 static void
-conv_rgbaF_rgbaHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
+conv_rgbaF_rgbaHalf (const Babl  *conversion,
+                     const float *src, 
+                     uint16_t    *dst, 
+                     long         samples)
 {
   conv_yF_yHalf (conversion, src, dst, samples * 4);
 }
 
 #define conv_rgbAF_rgbAHalf  conv_rgbaF_rgbaHalf
 
-static void singles2halfp2(void *target, const void *source, long numel)
+static void 
+singles2halfp2(void       *target, 
+               const void *source, 
+               long        numel)
 {
     uint16_t *hp = (uint16_t *) target; // Type pun output as an unsigned 16-bit int
     uint32_t *xp = (uint32_t *) source; // Type pun input as an unsigned 32-bit int
@@ -336,25 +373,37 @@ static void singles2halfp2(void *target, const void *source, long numel)
 }
 
 static void
-conv2_yF_yHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
+conv2_yF_yHalf (const Babl  *conversion,
+                const float *src, 
+                uint16_t    *dst, 
+                long         samples)
 {
   singles2halfp2 (dst, src, samples);
 }
 
 static void
-conv2_yaF_yaHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
+conv2_yaF_yaHalf (const Babl  *conversion,
+                  const float *src, 
+                  uint16_t    *dst, 
+                  long         samples)
 {
   conv2_yF_yHalf (conversion, src, dst, samples * 2);
 }
 
 static void
-conv2_rgbF_rgbHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
+conv2_rgbF_rgbHalf (const Babl  *conversion,
+                    const float *src, 
+                    uint16_t    *dst, 
+                    long         samples)
 {
   conv2_yF_yHalf (conversion, src, dst, samples * 3);
 }
 
 static void
-conv2_rgbaF_rgbaHalf (const Babl *conversion,const float *src, uint16_t *dst, long samples)
+conv2_rgbaF_rgbaHalf (const Babl  *conversion,
+                      const float *src, 
+                      uint16_t    *dst, 
+                      long         samples)
 {
   conv2_yF_yHalf (conversion, src, dst, samples * 4);
 }

@@ -38,7 +38,10 @@
 static const float BABL_ALPHA_THRESHOLD_FLOAT = (float)BABL_ALPHA_THRESHOLD;
 
 static void
-conv_rgbaF_linear_rgbAF_linear (const Babl *conversion,const float *src, float *dst, long samples)
+conv_rgbaF_linear_rgbAF_linear (const Babl  *conversion,
+                                const float *src,  
+                                float       *dst, 
+                                long         samples)
 {
   long i = 0;
   long remainder;
@@ -121,7 +124,10 @@ conv_rgbaF_linear_rgbAF_linear (const Babl *conversion,const float *src, float *
 }
 
 static void
-conv_rgbAF_linear_rgbaF_linear_shuffle (const Babl *conversion,const float *src, float *dst, long samples)
+conv_rgbAF_linear_rgbaF_linear_shuffle (const Babl  *conversion,
+                                        const float *src,  
+                                        float       *dst, 
+                                        long         samples)
 {
   long i = 0;
   long remainder;
@@ -190,7 +196,10 @@ conv_rgbAF_linear_rgbaF_linear_shuffle (const Babl *conversion,const float *src,
 }
 
 static void
-conv_rgbAF_linear_rgbaF_linear_spin (const Babl *conversion,const float *src, float *dst, long samples)
+conv_rgbAF_linear_rgbaF_linear_spin (const Babl  *conversion,
+                                     const float *src,  
+                                     float       *dst, 
+                                     long         samples)
 {
   long i = 0;
   long remainder;
@@ -409,7 +418,10 @@ func (const Babl *conversion,const float *src, float *dst, long samples)\
 GAMMA_RGBA(conv_rgbaF_linear_rgbaF_gamma, linear_to_gamma_2_2_sse2)
 GAMMA_RGBA(conv_rgbaF_gamma_rgbaF_linear, gamma_2_2_to_linear_sse2)
 
-static void conv_rgbaF_linear_rgbAF_gamma (const Babl *conversion,const float *src, float *dst, long samples)
+static void conv_rgbaF_linear_rgbAF_gamma (const Babl  *conversion,
+                                           const float *src,  
+                                           float       *dst, 
+                                           long         samples)
 {
   float *tmp = alloca (sizeof(float)*4*samples);
   conv_rgbaF_linear_rgbaF_gamma (conversion, src, tmp, samples);
@@ -435,7 +447,10 @@ static void conv_rgbaF_linear_rgbAF_gamma (const Babl *conversion,const float *s
 }\
 
 static void
-conv_yaF_linear_yaF_gamma (const Babl *conversion,const float *src, float *dst, long samples)
+conv_yaF_linear_yaF_gamma (const Babl  *conversion,
+                           const float *src,  
+                           float       *dst, 
+                           long         samples)
 {
   const __v4sf *s = (const __v4sf*)src;
         __v4sf *d = (__v4sf*)dst;
@@ -470,7 +485,10 @@ conv_yaF_linear_yaF_gamma (const Babl *conversion,const float *src, float *dst, 
 
 
 static void
-conv_yaF_gamma_yaF_linear (const Babl *conversion,const float *src, float *dst, long samples)
+conv_yaF_gamma_yaF_linear (const Babl  *conversion,
+                           const float *src,  
+                           float       *dst, 
+                           long         samples)
 {
   const __v4sf *s = (const __v4sf*)src;
         __v4sf *d = (__v4sf*)dst;
@@ -504,7 +522,10 @@ conv_yaF_gamma_yaF_linear (const Babl *conversion,const float *src, float *dst, 
 }
 
 static inline void
-conv_yF_linear_yF_gamma (const Babl *conversion,const float *src, float *dst, long samples)
+conv_yF_linear_yF_gamma (const Babl  *conversion,
+                         const float *src,  
+                         float       *dst, 
+                         long         samples)
 {
   const __v4sf *s = (const __v4sf*)src;
         __v4sf *d = (__v4sf*)dst;
@@ -541,7 +562,10 @@ conv_yF_linear_yF_gamma (const Babl *conversion,const float *src, float *dst, lo
 }
 
 static inline void
-conv_yF_gamma_yF_linear (const Babl *conversion,const float *src, float *dst, long samples)
+conv_yF_gamma_yF_linear (const Babl  *conversion,
+                         const float *src,  
+                         float       *dst, 
+                         long         samples)
 {
   const __v4sf *s = (const __v4sf*)src;
         __v4sf *d = (__v4sf*)dst;
@@ -579,14 +603,20 @@ conv_yF_gamma_yF_linear (const Babl *conversion,const float *src, float *dst, lo
 
 
 static void
-conv_rgbF_linear_rgbF_gamma (const Babl *conversion,const float *src, float *dst, long samples)
+conv_rgbF_linear_rgbF_gamma (const Babl  *conversion,
+                             const float *src,  
+                             float       *dst, 
+                             long         samples)
 {
   conv_yF_linear_yF_gamma (conversion, src, dst, samples * 3);
 }
 
 
 static void
-conv_rgbF_gamma_rgbF_linear (const Babl *conversion,const float *src, float *dst, long samples)
+conv_rgbF_gamma_rgbF_linear (const Babl  *conversion,
+                             const float *src,  
+                             float       *dst, 
+                             long         samples)
 {
   conv_yF_gamma_yF_linear (conversion, src, dst, samples * 3);
 }

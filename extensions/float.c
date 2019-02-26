@@ -29,9 +29,10 @@
 static const Babl *trc_srgb = NULL;
 
 static void
-conv_rgbaF_linear_rgbAF_nonlinear (const Babl *conversion,unsigned char *src,
-                               unsigned char *dst,
-                               long           samples)
+conv_rgbaF_linear_rgbAF_nonlinear (const Babl    *conversion,
+                                   unsigned char *src,
+                                   unsigned char *dst,
+                                   long           samples)
 {
    const Babl  *space = babl_conversion_get_destination_space (conversion);
    const Babl **trc   = (void*)space->space.trc;
@@ -59,7 +60,8 @@ conv_rgbaF_linear_rgbAF_nonlinear (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_rgbaF_linear_rgbAF_perceptual (const Babl *conversion,unsigned char *src,
+conv_rgbaF_linear_rgbAF_perceptual (const Babl    *conversion,
+                                    unsigned char *src,
                                     unsigned char *dst,
                                     long           samples)
 {
@@ -156,7 +158,8 @@ conv_rgbAF_linear_rgbAF_perceptual (const Babl    *conversion,
 
 
 static void
-conv_rgbaF_linear_rgbaF_nonlinear (const Babl *conversion,unsigned char *src, 
+conv_rgbaF_linear_rgbaF_nonlinear (const Babl    *conversion,
+                                   unsigned char *src, 
                                    unsigned char *dst, 
                                    long           samples)
 {
@@ -177,7 +180,8 @@ conv_rgbaF_linear_rgbaF_nonlinear (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_rgbaF_linear_rgbaF_perceptual (const Babl *conversion,unsigned char *src, 
+conv_rgbaF_linear_rgbaF_perceptual (const Babl    *conversion,
+                                    unsigned char *src, 
                                     unsigned char *dst, 
                                     long           samples)
 {
@@ -196,7 +200,8 @@ conv_rgbaF_linear_rgbaF_perceptual (const Babl *conversion,unsigned char *src,
 
 
 static void
-conv_rgbF_linear_rgbF_nonlinear (const Babl *conversion,unsigned char *src,
+conv_rgbF_linear_rgbF_nonlinear (const Babl    *conversion,
+                                 unsigned char *src,
                                  unsigned char *dst,
                                  long           samples)
 {
@@ -215,7 +220,8 @@ conv_rgbF_linear_rgbF_nonlinear (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_rgbF_linear_rgbF_perceptual (const Babl *conversion,unsigned char *src,
+conv_rgbF_linear_rgbF_perceptual (const Babl    *conversion,
+                                  unsigned char *src,
                                   unsigned char *dst,
                                   long           samples)
 {
@@ -233,7 +239,8 @@ conv_rgbF_linear_rgbF_perceptual (const Babl *conversion,unsigned char *src,
 
 
 static void
-conv_rgbaF_nonlinear_rgbaF_linear (const Babl *conversion,unsigned char *src,
+conv_rgbaF_nonlinear_rgbaF_linear (const Babl    *conversion,
+                                   unsigned char *src,
                                    unsigned char *dst,
                                    long           samples)
 {
@@ -253,7 +260,8 @@ conv_rgbaF_nonlinear_rgbaF_linear (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_rgbaF_perceptual_rgbaF_linear (const Babl *conversion,unsigned char *src,
+conv_rgbaF_perceptual_rgbaF_linear (const Babl    *conversion,
+                                    unsigned char *src,
                                     unsigned char *dst,
                                     long           samples)
 {
@@ -272,7 +280,8 @@ conv_rgbaF_perceptual_rgbaF_linear (const Babl *conversion,unsigned char *src,
 
 
 static void
-conv_rgbF_nonlinear_rgbF_linear (const Babl *conversion,unsigned char *src,
+conv_rgbF_nonlinear_rgbF_linear (const Babl    *conversion,
+                                 unsigned char *src,
                                  unsigned char *dst,
                                  long           samples)
 {
@@ -291,7 +300,8 @@ conv_rgbF_nonlinear_rgbF_linear (const Babl *conversion,unsigned char *src,
 }
 
 static void
-conv_rgbF_perceptual_rgbF_linear (const Babl *conversion,unsigned char *src,
+conv_rgbF_perceptual_rgbF_linear (const Babl    *conversion,
+                                  unsigned char *src,
                                   unsigned char *dst,
                                   long           samples)
 {
