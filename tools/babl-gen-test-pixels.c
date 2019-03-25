@@ -37,17 +37,21 @@
                                         BABL_COMPONENT_FMT_STR ", " \
                                         BABL_COMPONENT_FMT_STR
 
-static double rand_double (void)
+static double 
+rand_double (void)
 {
   return (double) random () / RAND_MAX;
 }
 
-static double rand_range_double (double min, double max)
+static double 
+rand_range_double (double min, 
+                   double max)
 {
   return rand_double () * (max - min) + min;
 }
 
-static void gen_path_pixels (void)
+static void 
+gen_path_pixels (void)
 {
   int i;
   srandom (20050728);
@@ -119,7 +123,8 @@ static void gen_path_pixels (void)
   printf ("static const double *babl_format_test_pixels = babl_path_test_pixels;\n\n");
 }
 
-static void gen_model_pixels (void)
+static void 
+gen_model_pixels (void)
 {
   int i;
   srandom (20050728);
@@ -141,7 +146,8 @@ static void gen_model_pixels (void)
   printf ("};\n\n");
 }
 
-static void gen_type_pixels (void)
+static void 
+gen_type_pixels (void)
 {
   int i;
   srandom (20050728);
@@ -163,7 +169,9 @@ static void gen_type_pixels (void)
   printf ("};\n\n");
 }
 
-int main (int argc, char **argv)
+int 
+main (int argc, 
+      char **argv)
 {
   printf (
     "/* babl - dynamically extendable universal pixel conversion library.\n"

@@ -34,7 +34,9 @@ int ITERATIONS = 2;
 
 #define  N_BYTES  N_PIXELS * (4 * 8)
 
-static const char *unicode_hbar (int width, double fraction)
+static const char *
+unicode_hbar (int    width, 
+              double fraction)
 {
   static char ret[200]="";
   const char *block[9]= {" ", "▏", "▎", "▍", "▌", "▋", "▊", "▉","█"};

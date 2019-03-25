@@ -26,7 +26,10 @@ file_get_contents (const char  *path,
                    long        *length,
                    void        *error);
 
-void file_set_contents (const char *path, const char *data, long length);
+void 
+file_set_contents (const char *path, 
+                   const char *data, 
+                   long        length);
 
 int
 main (int    argc,
@@ -181,7 +184,10 @@ file_get_contents (const char  *path,
   return 0;
 }
 
-void file_set_contents (const char *path, const char *data, long length)
+void 
+file_set_contents (const char *path, 
+                   const char *data, 
+                   long        length)
 {
   FILE *fp = fopen (path, "wb");
   if (length == -1)
