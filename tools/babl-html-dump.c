@@ -20,17 +20,29 @@
 #include "config.h"
 #include "babl-internal.h"    /* needed for babl_log */
 
-static void model_html (Babl *babl);
-static void type_html (Babl *babl);
-static void format_html (Babl *babl);
-static void conversion_html (Babl *babl);
+static void 
+model_html (Babl *babl);
 
-static int  each_item (Babl *babl,
-                       void *user_data);
-static int  show_item (Babl *babl,
-                       void *user_data);
-static int  hide_item (Babl *babl,
-                       void *user_data);
+static void 
+type_html (Babl *babl);
+
+static void 
+format_html (Babl *babl);
+
+static void 
+conversion_html (Babl *babl);
+
+static int  
+each_item (Babl *babl,
+           void *user_data);
+           
+static int 
+ show_item (Babl *babl,
+            void *user_data);
+
+static int  
+hide_item (Babl *babl,
+           void *user_data);
 
 
 int
@@ -88,7 +100,8 @@ main (void)
 
 static char normalized_buf[512];
 
-static const char *normalize (const char *str)
+static const char *
+normalize (const char *str)
 {
   char *s = normalized_buf;
 

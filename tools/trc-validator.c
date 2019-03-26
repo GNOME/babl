@@ -141,7 +141,8 @@ static inline float to_linear (float x)
 #define DEGREE 6
 #define SCALE  2
 
-static inline float from_linear (float x)
+static inline float 
+from_linear (float x)
 {
   if (x >= X0 && x <= X1)
   {
@@ -155,7 +156,8 @@ static inline float from_linear (float x)
   return powf (x, 1.0f/GAMMA);
 }
 
-static inline float to_linear (float x)
+static inline float 
+to_linear (float x)
 {
   if (x >= X0 && x <= X1)
   {
@@ -170,17 +172,21 @@ static inline float to_linear (float x)
 }
 #endif
 
-static inline float from_linear_ref (float x)
+static inline float 
+from_linear_ref (float x)
 {
   return powf (x, 1.0/GAMMA);
 }
 
-static inline float to_linear_ref (float x)
+static inline float 
+to_linear_ref (float x)
 {
   return powf (x, GAMMA);
 }
 
-int main (int argc, char **argv)
+int 
+main (int    argc, 
+      char **argv)
 {
   int i;
   float max_diff = 0.0;

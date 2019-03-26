@@ -62,17 +62,21 @@ static char  test_pixels_in[NUM_TEST_PIXELS * 6 * 8];
 static char  test_pixels_out[NUM_TEST_PIXELS * 6 * 8];
 
 
-static double rand_double (void)
+static double 
+rand_double (void)
 {
   return (double) random () / RAND_MAX;
 }
 
-static double rand_range_double (double min, double max)
+static double 
+rand_range_double (double min, 
+                   double max)
 {
   return rand_double () * (max - min) + min;
 }
 
-static void init_test_pixels (void)
+static void 
+init_test_pixels (void)
 {
   static int done = 0;
   int i = 0;
@@ -227,7 +231,8 @@ static int source_each (Babl *babl,
   return 0;
 }
 
-int main (void)
+int 
+main (void)
 {
   babl_init ();
 
