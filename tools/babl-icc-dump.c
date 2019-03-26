@@ -22,7 +22,10 @@ typedef struct {
 #define ICC_HEADER_LEN 128
 #define TAG_COUNT_OFF  ICC_HEADER_LEN
 
-static int load_u8 (const char *icc, int length, int offset)
+static int 
+load_u8 (const char *icc, 
+         int         length, 
+         int         offset)
 {
 /* all reading functions take both the char *pointer and the length of the
  * buffer, and all reads thus gets protected by this condition.
@@ -33,7 +36,10 @@ static int load_u8 (const char *icc, int length, int offset)
   return *(uint8_t*) (&icc[offset]);
 }
 
-static int load_s8 (const char *icc, int length, int offset)
+static int 
+load_s8 (const char *icc, 
+         int         length, 
+         int         offset)
 {
   if (offset < 0 || offset > length)
     return 0;
@@ -41,53 +47,74 @@ static int load_s8 (const char *icc, int length, int offset)
   return *(int8_t*) (&icc[offset]);
 }
 
-static int16_t load_u1f15 (const char *icc, int length, int offset)
+static int16_t 
+load_u1f15 (const char *icc, 
+            int         length, 
+            int         offset)
 {
   return load_u8 (icc, length, offset + 1) +
          (load_s8 (icc, length, offset + 0) << 8);
 }
 
-static uint16_t load_u16 (const char *icc, int length, int offset)
+static uint16_t 
+load_u16 (const char *icc, 
+          int         length,  
+          int         offset)
 {
   return load_u8 (icc, length, offset + 1) +
          (load_u8 (icc, length, offset + 0) << 8);
 }
 
-static u8f8_t load_u8f8_ (const char *icc, int length, int offset)
+static u8f8_t 
+load_u8f8_ (const char *icc, 
+            int         length, 
+            int         offset)
 {
   u8f8_t ret ={load_u8 (icc, length, offset),
                load_u8 (icc, length, offset + 1)};
   return ret;
 }
 
-static s15f16_t load_s15f16_ (const char *icc, int length, int offset)
+static s15f16_t 
+load_s15f16_ (const char *icc, 
+              int         length, 
+              int         offset)
 {
   s15f16_t ret ={load_u1f15 (icc, length, offset),
                  load_u16 (icc, length, offset + 2)};
   return ret;
 }
 
-static double s15f16_to_d (s15f16_t fix)
+static double 
+s15f16_to_d (s15f16_t fix)
 {
   return fix.integer + fix.fraction / 65535.0;
 }
 
-static double u8f8_to_d (u8f8_t fix)
+static double 
+u8f8_to_d (u8f8_t fix)
 {
   return fix.integer + fix.fraction / 255.0;
 }
 
-static double load_s15f16 (const char *icc, int length, int offset)
+static double 
+load_s15f16 (const char *icc, 
+             int         length, 
+             int         offset)
 {
   return s15f16_to_d (load_s15f16_ (icc, length, offset));
 }
 
-static double load_u8f8 (const char *icc, int length, int offset)
+static double 
+load_u8f8 (const char *icc, 
+           int         length, 
+           int         offset)
 {
   return u8f8_to_d (load_u8f8_ (icc, length, offset));
 }
 
-static void print_u8f8 (u8f8_t fix)
+static void 
+print_u8f8 (u8f8_t fix)
 {
   int i;
   uint32_t foo;
@@ -101,7 +128,8 @@ static void print_u8f8 (u8f8_t fix)
   }
 }
 
-static void print_s15f16 (s15f16_t fix)
+static void 
+print_s15f16 (s15f16_t fix)
 {
   int i;
   uint32_t foo;
@@ -131,7 +159,10 @@ static void print_s15f16 (s15f16_t fix)
   }
 }
 
-static uint32_t load_u32 (const char *icc, int length, int offset)
+static uint32_t 
+load_u32 (const char *icc, 
+          int         length, 
+          int         offset)
 {
   return load_u8 (icc, length, offset + 3) +
          (load_u8 (icc, length, offset + 2) << 8) +
@@ -139,8 +170,11 @@ static uint32_t load_u32 (const char *icc, int length, int offset)
          (load_u8 (icc, length, offset + 0) << 24);
 }
 
-static void load_sign (const char *icc, int length,
-                       int offset, char *sign)
+static void 
+load_sign (const char *icc, 
+           int         length,
+           int         offset, 
+           char       *sign)
 {
   sign[0]=load_u8(icc, length, offset);
   sign[1]=load_u8(icc, length, offset + 1);
@@ -151,8 +185,12 @@ static void load_sign (const char *icc, int length,
 
 /* looks up offset and length for a specific icc tag
  */
-static int icc_tag (const char *icc, int length,
-                    const char *tag, int *offset, int *el_length)
+static int 
+icc_tag (const char *icc, 
+         int         length,
+         const char *tag, 
+         int        *offset, 
+         int        *el_length)
 {
   int tag_count = load_u32 (icc, length, TAG_COUNT_OFF);
   int t;
@@ -276,7 +314,10 @@ static int icc_tag (const char *icc, const char *tag, int *offset, int *length)
 
 int exact = 0;
 
-static int load_icc_from_memory (const char *icc, long length, char **error)
+static int 
+load_icc_from_memory (const char  *icc, 
+                      long         length, 
+                      char       **error)
 {
   int  tag_count         = load_u32 (icc, length, TAG_COUNT_OFF);
   int  profile_size      = load_u32 (icc, length, 0);
@@ -591,7 +632,9 @@ static int load_icc_from_memory (const char *icc, long length, char **error)
   return 0;
 }
 
-static int load_icc (const char *path, char **error)
+static int 
+load_icc (const char  *path, 
+          char       **error)
 {
   char *icc = NULL;
   long length = 0;
@@ -643,7 +686,9 @@ file_get_contents (const char  *path,
   return 0;
 }
 
-int main (int argc, char **argv)
+int 
+main (int    argc, 
+      char **argv)
 {
   int i = 1;
   if (argc < 2)

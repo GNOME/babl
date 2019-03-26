@@ -3,7 +3,9 @@
 #include "../config.h"
 #include "babl/babl-internal.h"
 
-int main (int argc, char **argv)
+int 
+main (int    argc, 
+      char **argv)
 {
   int final = 0;
   const Babl *fish;
