@@ -13,9 +13,11 @@ index_static_html = configure_file(
   configuration: conf,
 )
 
-babl_css = configure_file(input : 'babl.css',
+babl_css = configure_file(
+  input : 'babl.css',
   output : 'babl.css',
-  configuration : configuration_data())
+  copy: true
+)
 
 index_html_tmp_env = [
   'BABL_PATH='+ join_paths(meson.build_root(), 'extensions'),

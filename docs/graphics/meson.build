@@ -7,20 +7,19 @@ graphic_files = [
 
 graphic_files_install = []
 
-# Dummy config to copy index.html to build
+# Copy index.html to build
 graphic_files_install += configure_file(
   input:  'index.html',
   output: '@PLAINNAME@',
-  configuration: configuration_data()
+  copy: true
 )
 
-
 foreach file : graphic_files
-  # Dummy config to copy svg files to build
+  # Copy svg files to build
   graphic_files_install += configure_file(
     input:  file,
     output: '@PLAINNAME@',
-    configuration: configuration_data()
+    copy: true
   )
 endforeach
 
