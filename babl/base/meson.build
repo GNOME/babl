@@ -19,5 +19,5 @@ babl_base_sources = [
 babl_base = static_library('babl_base',
   babl_base_sources,
   include_directories: [ rootInclude, bablInclude, ],
-  dependencies: [ math, ],
+  dependencies: [ math, lcms],
 )
