@@ -25,5 +25,6 @@ libbase_la_LIBADD = $(MATH_LIB)
 
 EXTRA_DIST = 		\
 	util.h	\
-	pow-24.h
+	pow-24.h \
+	meson.build
 

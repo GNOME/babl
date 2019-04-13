@@ -24,7 +24,9 @@ EXTRA_DIST = \
 	TODO			\
 	autogen.sh		\
 	babl.pc.in		\
-	export-symbols
+	export-symbols \
+	meson_options.txt \
+	meson.build
 
 DISTCLEANFILES = \
 	$(built_dist_files)	\

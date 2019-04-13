@@ -106,7 +106,9 @@ libbabl_@BABL_API_VERSION@_la_LDFLAGS=			\
 	-export-symbols $(top_srcdir)/export-symbols 	\
 	-version-info $(BABL_LIBRARY_VERSION)
 
-EXTRA_DIST = babl-ref-pixels.inc 
+EXTRA_DIST = \
+	babl-ref-pixels.inc \
+	meson.build
 
 
 # If git is available, always check if git-version.h should be

@@ -41,7 +41,9 @@ AM_LDFLAGS  = $(THREAD_LIB) -no-install
 LDADD = $(top_builddir)/babl/libbabl-@BABL_API_VERSION@.la \
 	$(MATH_LIB) $(THREAD_LIB)
 
-EXTRA_DIST=common.inc
+EXTRA_DIST = \
+	common.inc \
+	meson.build
 
 noinst_PROGRAMS =		\
 	$(C_TESTS)

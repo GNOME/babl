@@ -19,3 +19,6 @@ if HAVE_SRANDOM
 noinst_PROGRAMS +=		\
 	babl-gen-test-pixels
 endif
+
+EXTRA_DIST = \
+	meson.build

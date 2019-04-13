@@ -15,7 +15,8 @@ SVG_FILES = 			\
 EXTRA_DIST = 			\
 	index.html		\
 	$(PNG_FILES)		\
-	$(SVG_FILES)
+	$(SVG_FILES)	\
+	meson.build
 
 MAINTAINERCLEANFILES = $(PNG_FILES)
 

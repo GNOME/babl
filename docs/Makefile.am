@@ -21,7 +21,8 @@ EXTRA_DIST= 			\
 	tools/changelog2rss	\
 	index-static.html.in	\
 	COPYING			\
-	COPYING.LESSER
+	COPYING.LESSER \
+	meson.build
 
 BUILT_EXTRA_DIST = index.html 
 
