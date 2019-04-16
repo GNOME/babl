@@ -32,3 +32,9 @@
 /types
 /hsva
 /hsl
+/cairo_cmyk_hack
+/chromaticities
+/format_with_space
+/n_components_cast
+/palette-concurrency-stress-test
+/transparent

@@ -5,3 +5,4 @@
 /Makefile
 /Makefile.in
 /babl-version.h
+/git-version.h
