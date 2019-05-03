@@ -31,6 +31,9 @@ cc        = meson.get_compiler('c')
 prefix    = get_option('prefix')
 buildtype = get_option('buildtype')
 
+babl_prefix = get_option('prefix')
+babl_libdir = join_paths(babl_prefix, get_option('libdir'))
+
 ################################################################################
 # Projects infos
 
@@ -283,7 +286,7 @@ endif
 
 # LCMS
 if get_option('with-lcms')
-  lcms = dependency('lcms2', required : true)
+  lcms = dependency('lcms2', required: true, native: false)
   if lcms.found()
     conf.set('HAVE_LCMS', 1, description: 
       'Define to 1 if liblcms2 is available')
@@ -322,7 +325,7 @@ w3m_bin = find_program('w3m', required: false, native: true)
 build_docs = false
 
 if get_option('with-docs')
-  if cc_can_run and env_bin.found() and not build_platform_win32
+  if cc_can_run and env_bin.found() and not platform_win32
     build_docs = true
   else
     warning('Unable to generate docs in this environment')
@@ -372,7 +375,7 @@ endif
 if w3m_bin.found() and build_docs
   custom_target('README',
     input: index_html,
-    output: [ 'README' ] ,
+    output: 'README',
     command: [
       w3m_bin,
       '-cols', '72',
