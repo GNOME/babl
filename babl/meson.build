@@ -15,6 +15,11 @@ version_script_target = custom_target(version_script,
   capture: true,
 )
 
+# c compiler arguments
+babl_c_args = [
+  sse2_cflags,
+  '-DLIBDIR="@0@"'.format(babl_libdir),
+]
 
 # Linker arguments
 babl_link_args = [
@@ -121,13 +126,11 @@ install_headers(babl_headers,
   subdir: join_paths(lib_name, 'babl')
 )
 
-
 babl = library(
   lib_name,
   babl_sources,
   include_directories: [ rootInclude, bablBaseInclude],
-  c_args:   [ '-DLIBDIR="' + join_paths(get_option('prefix'), get_option('libdir')) + '"', ],
-  cpp_args: [ '-DLIBDIR="' + join_paths(get_option('prefix'), get_option('libdir')) + '"', ],
+  c_args: babl_c_args,
   link_whole: [ babl_base, ],
   link_args: [ babl_link_args, ],
   dependencies: [ math, thread, dl, lcms, ],
