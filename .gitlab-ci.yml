@@ -1,6 +1,15 @@
+cache:
+  paths:
+    - _pacman_cache
+
 .build:
   stage: build
   image: archlinux/base:latest
+  before_script:
+    - pacman -Syu --noconfirm --needed --cachedir `pwd`/_pacman_cache
+        base-devel
+        git
+        ${EXTRA_PKGS}
 
 .meson-build:
   extends: .build
@@ -48,39 +57,21 @@ latest-meson-lcms:
   extends: .meson-build
   variables:
     LCMS_OPTION : "-Dwith-lcms=true"
-  before_script:
-    - pacman -Syu --noconfirm --needed
-        base-devel
-        meson
-        lcms2
-        git
+    EXTRA_PKGS: "lcms2 meson"
 
 latest-meson-nolcms:
   extends: .meson-build
   variables:
     LCMS_OPTION : "-Dwith-lcms=false"
-  before_script:
-    - pacman -Syu --noconfirm --needed
-        base-devel
-        meson
-        lcms2
-        git
+    EXTRA_PKGS: "meson"
 
 latest-autotools-lcms:
   extends: .autotools-build
   variables:
     LCMS_OPTION : "--with-lcms"
-  before_script:
-    - pacman -Syu --noconfirm --needed
-        base-devel
-        lcms2
-        git
+    EXTRA_PKGS: "lcms2"
 
 latest-autotools-nolcms:
   extends: .autotools-build
   variables:
     LCMS_OPTION : "--without-lcms"
-  before_script:
-    - pacman -Syu --noconfirm --needed
-        base-devel
-        git
