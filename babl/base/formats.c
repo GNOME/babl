@@ -132,6 +132,13 @@ babl_formats_init (void)
     NULL);
 
   babl_format_new (
+    babl_model_from_id (BABL_MODEL_GRAY_PERCEPTUAL_ALPHA_PREMULTIPLIED),
+    type,
+    babl_component_from_id (BABL_GRAY_PERCEPTUAL_MUL_ALPHA),
+    babl_component_from_id (BABL_ALPHA),
+    NULL);
+
+  babl_format_new (
     babl_model_from_id (BABL_MODEL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED),
     type,
     babl_component_from_id (BABL_GRAY_NONLINEAR_MUL_ALPHA),

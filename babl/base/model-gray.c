@@ -72,6 +72,12 @@ components (void)
     "id", BABL_GRAY_PERCEPTUAL,
     "luma",
     NULL);
+
+  babl_component_new (
+    "Y~a",
+    "id", BABL_GRAY_PERCEPTUAL_MUL_ALPHA,
+    "luma",
+    NULL);
 }
 
 static void
@@ -143,6 +149,16 @@ models (void)
     babl_component_from_id (BABL_ALPHA),
     "gray",
     "perceptual",
+    "alpha",
+    NULL);
+
+  babl_model_new (
+    "id", BABL_MODEL_GRAY_PERCEPTUAL_ALPHA_PREMULTIPLIED,
+    babl_component_from_id (BABL_GRAY_PERCEPTUAL_MUL_ALPHA),
+    babl_component_from_id (BABL_ALPHA),
+    "gray",
+    "perceptual",
+    "premultiplied",
     "alpha",
     NULL);
 
@@ -584,6 +600,49 @@ premultiplied_to_non_premultiplied (Babl  *conversion,
     }
 }
 
+
+
+static void
+rgba2gray_perceptual_premultiplied (Babl *conversion,
+                                    char *src,
+                                    char *dst,
+                                    long  n)
+{
+  const Babl *space = babl_conversion_get_destination_space (conversion);
+  const Babl *trc = perceptual_trc;
+  double RGB_LUMINANCE_RED   = space->space.RGBtoXYZ[3];
+  double RGB_LUMINANCE_GREEN = space->space.RGBtoXYZ[4];
+  double RGB_LUMINANCE_BLUE  = space->space.RGBtoXYZ[5];
+
+  while (n--)
+    {
+      double red   = ((double *) src)[0];
+      double green = ((double *) src)[1];
+      double blue  = ((double *) src)[2];
+      double luminance;
+      double luma;
+      double alpha = ((double *) src)[3];
+      if (alpha < BABL_ALPHA_FLOOR)
+      {
+        if (alpha >= 0.0f)
+          alpha = BABL_ALPHA_FLOOR;
+        else if (alpha >= -BABL_ALPHA_FLOOR)
+          alpha = -BABL_ALPHA_FLOOR;
+      }
+
+      luminance = red * RGB_LUMINANCE_RED +
+                  green * RGB_LUMINANCE_GREEN +
+                  blue * RGB_LUMINANCE_BLUE;
+      luma = babl_trc_from_linear (trc, luminance);
+
+      ((double *) dst)[0] = luma * alpha;
+      ((double *) dst)[1] = alpha;
+
+      src += 4 * sizeof (double);
+      dst += 2 * sizeof (double);
+    }
+}
+
 static void
 rgba2gray_nonlinear_premultiplied (Babl *conversion,
                                    char *src,
@@ -625,6 +684,40 @@ rgba2gray_nonlinear_premultiplied (Babl *conversion,
     }
 }
 
+
+static void
+gray_perceptual_premultiplied2rgba (Babl *conversion,
+                                    char *src,
+                                    char *dst,
+                                    long  n)
+{
+  const Babl *trc = perceptual_trc;
+
+  while (n--)
+    {
+      double luma  = ((double *) src)[0];
+      double luminance;
+      double alpha;
+      alpha = ((double *) src)[1];
+      if (alpha == 0.0)
+        luma = 0.0;
+      else
+        luma = luma / alpha;
+
+      luminance = babl_trc_to_linear (trc, luma);
+
+      if (alpha == BABL_ALPHA_FLOOR || alpha == -BABL_ALPHA_FLOOR)
+        alpha = 0.0;
+
+      ((double *) dst)[0] = luminance;
+      ((double *) dst)[1] = luminance;
+      ((double *) dst)[2] = luminance;
+      ((double *) dst)[3] = alpha;
+
+      src += 2 * sizeof (double);
+      dst += 4 * sizeof (double);
+    }
+}
 
 static void
 gray_nonlinear_premultiplied2rgba (Babl *conversion,
@@ -702,13 +795,25 @@ conversions (void)
   );
 
   babl_conversion_new (
+    babl_model_from_id (BABL_MODEL_GRAY_PERCEPTUAL_ALPHA_PREMULTIPLIED),
+    babl_model_from_id (BABL_RGBA),
+    "linear", gray_perceptual_premultiplied2rgba,
+    NULL
+  );
+
+  babl_conversion_new (
     babl_model_from_id (BABL_RGBA),
     babl_model_from_id (BABL_MODEL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED),
     "linear", rgba2gray_nonlinear_premultiplied,
     NULL
   );
 
-
+  babl_conversion_new (
+    babl_model_from_id (BABL_RGBA),
+    babl_model_from_id (BABL_MODEL_GRAY_PERCEPTUAL_ALPHA_PREMULTIPLIED),
+    "linear", rgba2gray_perceptual_premultiplied,
+    NULL
+  );
 
   babl_conversion_new (
     babl_model_from_id (BABL_MODEL_GRAY_PERCEPTUAL),
@@ -833,6 +938,23 @@ formats (void)
     babl_type_from_id (BABL_HALF),
     babl_component_from_id (BABL_GRAY_NONLINEAR),
     NULL);
+  babl_format_new (
+    babl_model_from_id (BABL_MODEL_GRAY_PERCEPTUAL),
+    babl_type_from_id (BABL_HALF),
+    babl_component_from_id (BABL_GRAY_PERCEPTUAL),
+    NULL);
+  babl_format_new (
+    babl_model_from_id (BABL_MODEL_GRAY_PERCEPTUAL_ALPHA),
+    babl_type_from_id (BABL_HALF),
+    babl_component_from_id (BABL_GRAY_PERCEPTUAL),
+    babl_component_from_id (BABL_ALPHA),
+    NULL);
+  babl_format_new (
+    babl_model_from_id (BABL_MODEL_GRAY_PERCEPTUAL_ALPHA_PREMULTIPLIED),
+    babl_type_from_id (BABL_HALF),
+    babl_component_from_id (BABL_GRAY_PERCEPTUAL_MUL_ALPHA),
+    babl_component_from_id (BABL_ALPHA),
+    NULL);
   /***********/
 
   babl_format_new (
@@ -903,6 +1025,24 @@ formats (void)
     babl_model_from_id (BABL_MODEL_GRAY_NONLINEAR),
     babl_type_from_id (BABL_U32),
     babl_component_from_id (BABL_GRAY_NONLINEAR),
+    NULL);
+
+  babl_format_new (
+    babl_model_from_id (BABL_MODEL_GRAY_PERCEPTUAL),
+    babl_type_from_id (BABL_U32),
+    babl_component_from_id (BABL_GRAY_PERCEPTUAL),
+    NULL);
+  babl_format_new (
+    babl_model_from_id (BABL_MODEL_GRAY_PERCEPTUAL_ALPHA),
+    babl_type_from_id (BABL_U32),
+    babl_component_from_id (BABL_GRAY_PERCEPTUAL),
+    babl_component_from_id (BABL_ALPHA),
+    NULL);
+  babl_format_new (
+    babl_model_from_id (BABL_MODEL_GRAY_PERCEPTUAL_ALPHA_PREMULTIPLIED),
+    babl_type_from_id (BABL_U32),
+    babl_component_from_id (BABL_GRAY_PERCEPTUAL_MUL_ALPHA),
+    babl_component_from_id (BABL_ALPHA),
     NULL);
 }
 
@@ -1428,6 +1568,81 @@ gray_nonlinear_premultiplied2rgba_float (Babl *conversion,
     }
 }
 
+static void
+rgba2gray_perceptual_premultiplied_float (Babl *conversion,
+                                         char *src,
+                                         char *dst,
+                                         long  n)
+{
+  const Babl *space = babl_conversion_get_destination_space (conversion);
+  const Babl *trc = perceptual_trc;
+  float RGB_LUMINANCE_RED   = space->space.RGBtoXYZf[3];
+  float RGB_LUMINANCE_GREEN = space->space.RGBtoXYZf[4];
+  float RGB_LUMINANCE_BLUE  = space->space.RGBtoXYZf[5];
+
+  while (n--)
+    {
+      float red   = ((float *) src)[0];
+      float green = ((float *) src)[1];
+      float blue  = ((float *) src)[2];
+      float luminance;
+      float luma;
+      float alpha = ((float *) src)[3];
+      if (alpha < BABL_ALPHA_FLOOR)
+      {
+        if (alpha >= 0.0f)
+          alpha = BABL_ALPHA_FLOOR;
+        else if (alpha >= -BABL_ALPHA_FLOOR)
+          alpha = -BABL_ALPHA_FLOOR;
+      }
+
+      luminance = red * RGB_LUMINANCE_RED +
+                  green * RGB_LUMINANCE_GREEN +
+                  blue * RGB_LUMINANCE_BLUE;
+      luma = babl_trc_from_linear (trc, luminance);
+
+      ((float *) dst)[0] = luma * alpha;
+      ((float *) dst)[1] = alpha;
+
+      src += 4 * sizeof (float);
+      dst += 2 * sizeof (float);
+    }
+}
+
+static void
+gray_perceptual_premultiplied2rgba_float (Babl *conversion,
+                                          char *src,
+                                          char *dst,
+                                          long  n)
+{
+  const Babl *trc = perceptual_trc;
+
+  while (n--)
+    {
+      float luma  = ((float *) src)[0];
+      float luminance;
+      float alpha;
+      alpha = ((float *) src)[1];
+      if (alpha == 0.0f)
+        luma = 0.0f;
+      else
+        luma = luma / alpha;
+
+      luminance = babl_trc_to_linear (trc, luma);
+
+      if (alpha == BABL_ALPHA_FLOOR || alpha == -BABL_ALPHA_FLOOR)
+        alpha = 0.0f;
+
+      ((float *) dst)[0] = luminance;
+      ((float *) dst)[1] = luminance;
+      ((float *) dst)[2] = luminance;
+      ((float *) dst)[3] = alpha;
+
+      src += 2 * sizeof (float);
+      dst += 4 * sizeof (float);
+    }
+}
+
 static void init_single_precision (void)
 {
   babl_format_new (
@@ -1479,6 +1694,12 @@ static void init_single_precision (void)
     babl_component ("Y'a"),
     babl_component ("A"),
     NULL);
+  babl_format_new (
+    babl_model ("Y~aA"),
+    babl_type_from_id (BABL_FLOAT),
+    babl_component ("Y~a"),
+    babl_component ("A"),
+    NULL);
 
   babl_conversion_new (
     babl_format ("Y' float"),
@@ -1517,13 +1738,25 @@ static void init_single_precision (void)
   );
 
   babl_conversion_new (
+    babl_format ("Y~aA float"),
+    babl_format ("RGBA float"),
+    "linear", gray_perceptual_premultiplied2rgba_float,
+    NULL
+  );
+
+  babl_conversion_new (
     babl_format ("RGBA float"),
     babl_format ("Y'aA float"),
     "linear", rgba2gray_nonlinear_premultiplied_float,
     NULL
   );
 
-
+  babl_conversion_new (
+    babl_format ("RGBA float"),
+    babl_format ("Y~aA float"),
+    "linear", rgba2gray_perceptual_premultiplied_float,
+    NULL
+  );
 
   babl_conversion_new (
     babl_format ("Y~ float"),
