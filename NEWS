@@ -3,6 +3,11 @@ The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
                                                                           -->
 
+2019-05-25 babl-0.1.64                                              </dt><dd>
+Support for Hygon Dhyana, and Y~aA formats for symmetric completeness.
+Code consistency, gitlab CI, autotools and meson build improvements.
+
+                                                                    </dd><dt>
 2019-02-01 babl-0.1.62                                              </dt><dd>
 Continuous integration with gitlab.
 Initial CMYK spaces with lcms2 based ICC support, much room for optimization.
