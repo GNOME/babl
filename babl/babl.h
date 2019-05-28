@@ -577,6 +577,14 @@ void babl_space_get (const Babl *space,
                      const Babl **green_trc,
                      const Babl **blue_trc);
 
+/* returns a pointer to the 9 element RGB to XYZ matrix */
+const double *
+babl_space_get_RGBtoXYZ (const Babl *space);
+
+/* returns a pointer to the 9 element XYZ to RGB matrix */
+const double *
+babl_space_get_XYZtoRGB (const Babl *space);
+
 
 /**
  * babl_model_is:
