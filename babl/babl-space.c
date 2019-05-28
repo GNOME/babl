@@ -1230,3 +1230,19 @@ babl_space_get_XYZtoRGB (const Babl *space)
    return &space->space.XYZtoRGB[0];
 }
 
+
+void
+babl_space_get_rgb_luminance (const Babl *space,
+                              double     *red_luminance,
+                              double     *green_luminance,
+                              double     *blue_luminance)
+{
+  if (!space)
+    space = babl_space ("sRGB");
+  if (red_luminance)
+    *red_luminance = space->space.RGBtoXYZ[3];
+  if (green_luminance)
+    *green_luminance = space->space.RGBtoXYZ[4];
+  if (blue_luminance)
+    *blue_luminance = space->space.RGBtoXYZ[5];
+}

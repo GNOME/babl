@@ -585,6 +585,20 @@ babl_space_get_RGBtoXYZ (const Babl *space);
 const double *
 babl_space_get_XYZtoRGB (const Babl *space);
 
+/**
+ * babl_space_get_rgb_luminance:
+ * @space: a BablSpace
+ * @red_luminance: pointer to a double where red luminance factor is stored
+ * @green_luminance: pointer to a double where green luminance factor is stored
+ * @blue_luminance: pointer to a double where blue luminance factor is stored
+ *
+ * Retrieve the relevant RGB luminance constants for a babl space.
+ */
+void
+babl_space_get_rgb_luminance (const Babl *space,
+                              double     *red_luminance,
+                              double     *green_luminance,
+                              double     *blue_luminance);
 
 /**
  * babl_model_is:

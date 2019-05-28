@@ -47,8 +47,9 @@ babl_space_from_rgbxyz_matrix
 babl_space_from_chromaticities
 babl_space_from_icc
 babl_space_get
-babl_space_get_rgbtoxyz
 babl_space_get_icc
+babl_space_get_rgbtoxyz
+babl_space_get_rgb_luminance
 babl_space_to_xyz
 babl_space_from_xyz
 babl_space_to_icc
