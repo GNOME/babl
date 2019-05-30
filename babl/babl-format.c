@@ -127,6 +127,7 @@ format_new (const char      *name,
   babl->format.palette = 0;
 
   babl->format.space = (void*)space;
+  babl->format.encoding = NULL;
 
   return babl;
 }
