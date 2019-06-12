@@ -3,6 +3,10 @@ The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
                                                                           -->
 
+2019-06-12 babl-0.1.66                                              </dt><dd>
+Added API call, babl_space_get_rgb_luminance,
+Make most SIMD code-paths optional again on i686.
+                                                                    </dd><dt>
 2019-05-25 babl-0.1.64                                              </dt><dd>
 Support for Hygon Dhyana, and Y~aA formats for symmetric completeness.
 Code consistency, gitlab CI, autotools and meson build improvements.
