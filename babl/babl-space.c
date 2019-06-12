@@ -1218,19 +1218,6 @@ babl_space_is_cmyk (const Babl *space)
  * of Adobe Systems Incorporated in many countires.
  */
 
-const double *
-babl_space_get_RGBtoXYZ (const Babl *space)
-{
-   return &space->space.RGBtoXYZ[0];
-}
-
-const double *
-babl_space_get_XYZtoRGB (const Babl *space)
-{
-   return &space->space.XYZtoRGB[0];
-}
-
-
 void
 babl_space_get_rgb_luminance (const Babl *space,
                               double     *red_luminance,
