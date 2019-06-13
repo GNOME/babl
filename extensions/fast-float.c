@@ -310,16 +310,10 @@ conv_rgbaF_linear_rgbAF_gamma (const Babl    *conversion,
        }
        else
        {
-         if (alpha < BABL_ALPHA_FLOOR)
-         {
-           if (alpha >= 0.0f)
-             alpha = BABL_ALPHA_FLOOR;
-           else if (alpha >= -BABL_ALPHA_FLOOR)
-             alpha = -BABL_ALPHA_FLOOR;
-         }
-         *fdst++ = linear_to_gamma_2_2_lut (red)   * alpha;
-         *fdst++ = linear_to_gamma_2_2_lut (green) * alpha;
-         *fdst++ = linear_to_gamma_2_2_lut (blue)  * alpha;
+         float used_alpha = babl_epsilon_for_zero_float (alpha);
+         *fdst++ = linear_to_gamma_2_2_lut (red)   * used_alpha;
+         *fdst++ = linear_to_gamma_2_2_lut (green) * used_alpha;
+         *fdst++ = linear_to_gamma_2_2_lut (blue)  * used_alpha;
          *fdst++ = alpha;
        }
      }

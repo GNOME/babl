@@ -27,6 +27,7 @@ C_TESTS =				\
 	models			\
 	cairo-RGB24		\
 	transparent		\
+	transparent_symmetry	\
 	$(CONCURRENCY_STRESS_TESTS)
 
 TESTS = \

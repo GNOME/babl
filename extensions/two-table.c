@@ -92,18 +92,9 @@ conv_rgbafloat_linear_rgbu8_gamma (const Babl    *conversion,
 
   while (n--)
     {
-      if (src[3] <= BABL_ALPHA_FLOOR)
-        {
-          dst[0] = 0;
-          dst[1] = 0;
-          dst[2] = 0;
-        }
-      else
-        {
-          dst[0] = conv_float_u8_two_table_map (src[0]);
-          dst[1] = conv_float_u8_two_table_map (src[1]);
-          dst[2] = conv_float_u8_two_table_map (src[2]);
-        }
+      dst[0] = conv_float_u8_two_table_map (src[0]);
+      dst[1] = conv_float_u8_two_table_map (src[1]);
+      dst[2] = conv_float_u8_two_table_map (src[2]);
       src += 4;
       dst += 3;
     }

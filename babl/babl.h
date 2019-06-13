@@ -648,7 +648,8 @@ int babl_space_is_cmyk (const Babl *space);
  * it can also be used as a generic alpha zero epsilon in GEGL
  *
  */
-#define BABL_ALPHA_FLOOR (1/65536.0)
+#define BABL_ALPHA_FLOOR   (1/65536.0)
+#define BABL_ALPHA_FLOOR_F (1/65536.0f)
 
 #ifdef __cplusplus
 }

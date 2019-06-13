@@ -35,12 +35,12 @@
 
 #define Q(a) { a, a, a, a }
 
-static const float BABL_ALPHA_THRESHOLD_FLOAT = (float)BABL_ALPHA_THRESHOLD;
+static const float BABL_ALPHA_FLOOR_FLOAT = (float)BABL_ALPHA_FLOOR;
 
 static void
 conv_rgbaF_linear_rgbAF_linear (const Babl  *conversion,
-                                const float *src,  
-                                float       *dst, 
+                                const float *src,
+                                float       *dst,
                                 long         samples)
 {
   long i = 0;
@@ -56,21 +56,9 @@ conv_rgbaF_linear_rgbAF_linear (const Babl  *conversion,
         {
           float alpha0 = ((float *)s)[3];
           float alpha1 = ((float *)s)[7];
+          float used_alpha0 = babl_epsilon_for_zero_float (alpha0);
+          float used_alpha1 = babl_epsilon_for_zero_float (alpha1);
 
-          if (alpha0 < BABL_ALPHA_FLOOR)
-          {
-            if (alpha0 >= 0.0f)
-              alpha0 = BABL_ALPHA_FLOOR;
-            else
-              alpha0 = -BABL_ALPHA_FLOOR;
-          }
-          if (alpha1 < BABL_ALPHA_FLOOR)
-          {
-            if (alpha1 >= 0.0f)
-              alpha1 = BABL_ALPHA_FLOOR;
-            else
-              alpha1 = -BABL_ALPHA_FLOOR;
-          }
          {
           __v4sf rbaa0, rbaa1;
         
@@ -79,13 +67,16 @@ conv_rgbaF_linear_rgbAF_linear (const Babl  *conversion,
 
 
           /* Expand alpha */
-          __v4sf aaaa0 = (__v4sf)_mm_set1_ps(alpha0);
-          __v4sf aaaa1 = (__v4sf)_mm_set1_ps(alpha1);
+          __v4sf aaaa0 = (__v4sf)_mm_set1_ps(used_alpha0);
+          __v4sf aaaa1 = (__v4sf)_mm_set1_ps(used_alpha1);
           
           /* Premultiply */
           rgba0 = rgba0 * aaaa0;
           rgba1 = rgba1 * aaaa1;
-          
+    
+          aaaa0 = (__v4sf)_mm_set1_ps(alpha0);
+          aaaa1 = (__v4sf)_mm_set1_ps(alpha1);
+
           /* Shuffle the original alpha value back in */
           rbaa0 = _mm_shuffle_ps(rgba0, aaaa0, _MM_SHUFFLE(0, 0, 2, 0));
           rbaa1 = _mm_shuffle_ps(rgba1, aaaa1, _MM_SHUFFLE(0, 0, 2, 0));
@@ -106,16 +97,10 @@ conv_rgbaF_linear_rgbAF_linear (const Babl  *conversion,
   while (remainder--)
   {
     float a = src[3];
-    if (a <= BABL_ALPHA_FLOOR)
-    {
-      if (a >= 0.0f)
-        a = BABL_ALPHA_FLOOR;
-      else if (a >= -BABL_ALPHA_FLOOR)
-        a = -BABL_ALPHA_FLOOR;
-    }
-    dst[0] = src[0] * a;
-    dst[1] = src[1] * a;
-    dst[2] = src[2] * a;
+    float used_alpha = babl_epsilon_for_zero_float (a);
+    dst[0] = src[0] * used_alpha;
+    dst[1] = src[1] * used_alpha;
+    dst[2] = src[2] * used_alpha;
     dst[3] = a;
     
     src += 4;
@@ -143,16 +128,11 @@ conv_rgbAF_linear_rgbaF_linear_shuffle (const Babl  *conversion,
           __v4sf pre_rgba0, rgba0, rbaa0, raaaa0;
           
           float alpha0 = ((float *)s)[3];
+          float used_alpha0 = babl_epsilon_for_zero_float (alpha0);
           pre_rgba0 = *s;
           
-          if (alpha0 == 0.0f)
           {
-            /* Zero RGB */
-            rgba0 = _mm_setzero_ps();
-          }
-          else
-          {
-            float recip0 = 1.0f/alpha0;
+            float recip0 = 1.0f/used_alpha0;
             
             /* Expand reciprocal */
             raaaa0 = _mm_load1_ps(&recip0);
@@ -164,9 +144,6 @@ conv_rgbAF_linear_rgbaF_linear_shuffle (const Babl  *conversion,
           /* Shuffle the original alpha value back in */
           rbaa0 = _mm_shuffle_ps(rgba0, pre_rgba0, _MM_SHUFFLE(3, 3, 2, 0));
           rgba0 = _mm_shuffle_ps(rgba0, rbaa0, _MM_SHUFFLE(2, 1, 1, 0));
-
-          if (alpha0 == BABL_ALPHA_FLOOR || alpha0 == -BABL_ALPHA_FLOOR)
-            ((float *)d)[3] = 0.0f;
 
           s++;
           *d++ = rgba0;
@@ -209,7 +186,7 @@ conv_rgbAF_linear_rgbaF_linear_spin (const Babl  *conversion,
       const long    n = samples;
       const __v4sf *s = (const __v4sf*) src;
             __v4sf *d = (__v4sf*)dst;
-      const __v4sf zero = _mm_set_ss (BABL_ALPHA_THRESHOLD_FLOAT);
+      const __v4sf zero = _mm_set_ss (BABL_ALPHA_FLOOR_FLOAT);
       const __v4sf one = _mm_set_ss(1.0f);
 
       for ( ; i < n; i += 1)

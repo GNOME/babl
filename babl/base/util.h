@@ -22,13 +22,7 @@
 #include <assert.h>
 #include <math.h>
 #include "pow-24.h"
-
-/* Alpha threshold used in the reference implementation for
- * un-pre-multiplication of color data, deprecated in favor of the following
- *
- * 0.01 / (2^16 - 1)
- */
-#define BABL_ALPHA_THRESHOLD 0.000000152590219
+#include <babl.h>
 
 
 #define BABL_PLANAR_SANITY  \
@@ -51,6 +45,43 @@
     for (i=0; i< dst_bands; i++)  \
       dst[i]+=dst_pitch[i];       \
   }
+
+
+#if 1
+
+static inline double
+babl_epsilon_for_zero (double value)
+{
+ if (value <= BABL_ALPHA_FLOOR)
+ {
+   if (value >= 0.0)
+     return BABL_ALPHA_FLOOR;
+   else if (value >= -BABL_ALPHA_FLOOR)
+     return -BABL_ALPHA_FLOOR;
+ }
+ return value;
+}
+
+static inline float
+babl_epsilon_for_zero_float (float value)
+{
+ if (value <= BABL_ALPHA_FLOOR_F)
+ {
+   if (value >= 0.0f)
+     return BABL_ALPHA_FLOOR_F;
+   else if (value >= -BABL_ALPHA_FLOOR_F)
+     return -BABL_ALPHA_FLOOR_F;
+ }
+ return value;
+}
+
+#else
+
+#define babl_alpha_avoid_zero(a) \
+  (a)<=BABL_ALPHA_FLOOR?(a)>=0.0?BABL_ALPHA_FLOOR:(a)>=-BABL_ALPHA_FLOOR?-BABL_ALPHA_FLOOR:(a):(a)
+
+#endif
+
 
 
 #define BABL_USE_SRGB_GAMMA
