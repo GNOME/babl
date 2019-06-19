@@ -21,7 +21,7 @@ test_names = [
   'sanity',
   'srgb_to_lab_u8',
   'transparent',
-  'transparent_symmetry',
+  'alpha_symmeric_transform',
   'types',
 ]
 if platform_unix

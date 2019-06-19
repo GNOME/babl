@@ -5,6 +5,7 @@ CONCURRENCY_STRESS_TESTS =		\
 endif
 
 C_TESTS =				\
+	alpha_symmetric_transform \
 	cairo_cmyk_hack \
 	grayscale_to_rgb	\
 	chromaticities          \
@@ -27,7 +28,6 @@ C_TESTS =				\
 	models			\
 	cairo-RGB24		\
 	transparent		\
-	transparent_symmetry	\
 	$(CONCURRENCY_STRESS_TESTS)
 
 TESTS = \
