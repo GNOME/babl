@@ -1,5 +1,12 @@
 <h2>TODO</h2>
 
+<p>These are among desired or expected changes to babl, that are missing.</p>
+
 <ul>
+  <li>extensions for many SIMD variants for many archiectures.</li>
+  <li>Spectral pixel formats - with configurable spectral mapping to tristimulus with configurable illuminant + observer</li>
+  <li>Spectral substrate + ink/paint job configuration as a pixel format,
+combined with above to achieve soft proofing, and stochastic sparse LUT for
+separation.</li>
   <li>Support for datatypes that are not a multiple of 8bit.</li>
 </ul>
