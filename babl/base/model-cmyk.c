@@ -43,16 +43,17 @@ cmyka_to_cmykA (const Babl *conversion,
 {
   while (n--)
     {
-      double cyan    = ((double *) src)[0];
-      double magenta = ((double *) src)[1];
-      double yellow  = ((double *) src)[2];
-      double key     = ((double *) src)[3];
-      double alpha   = ((double *) src)[4];
+      double cyan        = ((double *) src)[0];
+      double magenta     = ((double *) src)[1];
+      double yellow      = ((double *) src)[2];
+      double key         = ((double *) src)[3];
+      double alpha       = ((double *) src)[4];
+      double used_alpha  = babl_epsilon_for_zero (alpha);
 
-      ((double *) dst)[0] = (cyan)    * alpha;
-      ((double *) dst)[1] = (magenta) * alpha;
-      ((double *) dst)[2] = (yellow)  * alpha;
-      ((double *) dst)[3] = (key)     * alpha;
+      ((double *) dst)[0] = (cyan)    * used_alpha;
+      ((double *) dst)[1] = (magenta) * used_alpha;
+      ((double *) dst)[2] = (yellow)  * used_alpha;
+      ((double *) dst)[3] = (key)     * used_alpha;
       ((double *) dst)[4] = alpha;
 
       src += 5 * sizeof (double);
@@ -68,12 +69,13 @@ cmykA_to_cmyka (const Babl *conversion,
 {
   while (n--)
     {
-      double alpha   = ((double *) src)[4];
-      double ralpha  = alpha>0.000001?1.0/alpha:0.0;
-      double cyan   = ((double *) src)[0] * ralpha;
-      double magenta= ((double *) src)[1] * ralpha;
-      double yellow = ((double *) src)[2] * ralpha;
-      double key    = ((double *) src)[3] * ralpha;
+      double alpha       = ((double *) src)[4];
+      double used_alpha  = babl_epsilon_for_zero (alpha);
+      double ralpha      = 1.0/used_alpha;
+      double cyan        = ((double *) src)[0] * ralpha;
+      double magenta     = ((double *) src)[1] * ralpha;
+      double yellow      = ((double *) src)[2] * ralpha;
+      double key         = ((double *) src)[3] * ralpha;
 
       ((double *) dst)[0] = cyan;
       ((double *) dst)[1] = magenta;
@@ -142,16 +144,17 @@ cmyka_to_CMYKA (const Babl *conversion,
 {
   while (n--)
     {
-      double cyan    = ((double *) src)[0];
-      double magenta = ((double *) src)[1];
-      double yellow  = ((double *) src)[2];
-      double key     = ((double *) src)[3];
-      double alpha   = ((double *) src)[4];
+      double cyan        = ((double *) src)[0];
+      double magenta     = ((double *) src)[1];
+      double yellow      = ((double *) src)[2];
+      double key         = ((double *) src)[3];
+      double alpha       = ((double *) src)[4];
+      double used_alpha  = babl_epsilon_for_zero (alpha);
 
-      ((double *) dst)[0] = (1.0-cyan)    * alpha;
-      ((double *) dst)[1] = (1.0-magenta) * alpha;
-      ((double *) dst)[2] = (1.0-yellow)  * alpha;
-      ((double *) dst)[3] = (1.0-key)     * alpha;
+      ((double *) dst)[0] = (1.0-cyan)    * used_alpha;
+      ((double *) dst)[1] = (1.0-magenta) * used_alpha;
+      ((double *) dst)[2] = (1.0-yellow)  * used_alpha;
+      ((double *) dst)[3] = (1.0-key)     * used_alpha;
       ((double *) dst)[4] = alpha;
 
       src += 5 * sizeof (double);
@@ -167,12 +170,13 @@ CMYKA_to_cmyka (const Babl *conversion,
 {
   while (n--)
     {
-      double alpha   = ((double *) src)[4];
-      double ralpha  = alpha>0.000001?1.0/alpha:0.0;
-      double cyan   = ((double *) src)[0] * ralpha;
-      double magenta= ((double *) src)[1] * ralpha;
-      double yellow = ((double *) src)[2] * ralpha;
-      double key    = ((double *) src)[3] * ralpha;
+      double alpha       = ((double *) src)[4];
+      double used_alpha  = babl_epsilon_for_zero (alpha);
+      double ralpha      = 1.0 / used_alpha;
+      double cyan        = ((double *) src)[0] * ralpha;
+      double magenta     = ((double *) src)[1] * ralpha;
+      double yellow      = ((double *) src)[2] * ralpha;
+      double key         = ((double *) src)[3] * ralpha;
 
       ((double *) dst)[0] = 1.0-cyan;
       ((double *) dst)[1] = 1.0-magenta;
@@ -278,6 +282,7 @@ rgba_to_cmykA (const Babl *conversion,
       double green = (((double *) src)[1]);
       double blue  = (((double *) src)[2]);
       double alpha = ((double *) src)[3];
+      double used_alpha = babl_epsilon_for_zero (alpha);
 
       double cyan, magenta, yellow, key;
 
@@ -307,10 +312,10 @@ rgba_to_cmykA (const Babl *conversion,
           yellow  = 0.0;
         }
 
-      ((double *) dst)[0] = (1.0-cyan) * alpha;
-      ((double *) dst)[1] = (1.0-magenta) * alpha;
-      ((double *) dst)[2] = (1.0-yellow) * alpha;
-      ((double *) dst)[3] = (1.0-key) * alpha;
+      ((double *) dst)[0] = (1.0-cyan) * used_alpha;
+      ((double *) dst)[1] = (1.0-magenta) * used_alpha;
+      ((double *) dst)[2] = (1.0-yellow) * used_alpha;
+      ((double *) dst)[3] = (1.0-key) * used_alpha;
       ((double *) dst)[4] = alpha;
 
       src += 4 * sizeof (double);
@@ -327,7 +332,8 @@ cmykA_to_rgba (const Babl *conversion,
   while (n--)
     {
       double alpha   = ((double *) src)[4];
-      double ralpha  = alpha>0.000001?1.0/alpha:0.0;
+      double used_alpha = babl_epsilon_for_zero (alpha);
+      double ralpha  = 1.0 / used_alpha;
       double cyanI   = ((double *) src)[0] * ralpha;
       double magentaI= ((double *) src)[1] * ralpha;
       double yellowI = ((double *) src)[2] * ralpha;
