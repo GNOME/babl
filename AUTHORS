@@ -64,6 +64,7 @@
   <dt>Michael Henning</dt>
         <dd>Conversion fixes</dd>
   <dt>Elle Stone</dt>
+        <dd>CIE xyY color space</dd>
         <dd>Verification and improvements to accuracy of color space
         conversions.</dd>
   <dt>Thomas Manni</dt>
@@ -78,4 +79,8 @@
         <dd>fast paths</dd>
   <dt>Félix Piédallu</dt>
         <dd>Initial meson build</dd>
+  <dt>Yaakov Selkowitz</dt>
+        <dd>Cygwin patch</dd>
+  <dt>Étienne Bersac</dt>
+        <dd>build/packaging</dd>
 </dl>
