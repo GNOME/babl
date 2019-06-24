@@ -565,10 +565,11 @@ premultiplied_to_non_premultiplied (Babl  *conversion,
       int    band;
       double alpha = *(double *) src[src_bands-1];
       double used_alpha = babl_epsilon_for_zero (alpha);
+      double recip_alpha = 1.0 / used_alpha;
 
       for (band = 0; band < src_bands - 1; band++)
         {
-          *(double *) dst[band] = *(double *) src[band] / used_alpha;
+          *(double *) dst[band] = *(double *) src[band] * recip_alpha;
         }
       *(double *) dst[dst_bands - 1] = alpha;
 
@@ -1398,10 +1399,11 @@ premultiplied_to_non_premultiplied_float (Babl  *conversion,
       int    band;
       float alpha = *(float *) src[src_bands-1];
       float used_alpha = babl_epsilon_for_zero_float (alpha);
+      float recip_alpha  = 1.0f / used_alpha;
 
       for (band = 0; band < src_bands - 1; band++)
         {
-          *(float *) dst[band] = *(float *) src[band] / used_alpha;
+          *(float *) dst[band] = *(float *) src[band] * recip_alpha;
         }
       *(float *) dst[dst_bands - 1] = alpha;
 
