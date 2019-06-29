@@ -93,6 +93,9 @@ components (void)
   babl_component_new ("CIE Z", NULL);
   babl_component_new ("CIE x", NULL);
   babl_component_new ("CIE y", NULL);
+  /* CIE 1976 UCS */
+  babl_component_new ("CIE u", NULL);
+  babl_component_new ("CIE v", NULL);
 /*  babl_component_new ("CIE z", NULL);*/
 }
 
@@ -170,6 +173,22 @@ models (void)
     "CIE",
     "alpha",
     NULL);
+
+/* CIE 1976 UCS */
+  babl_model_new (
+    "name", "CIE Yuv",
+    babl_component ("CIE Y"),
+    babl_component ("CIE u"),
+    babl_component ("CIE v"),
+    NULL);
+
+  babl_model_new (
+    "name", "CIE Yuv alpha",
+    babl_component ("CIE Y"),
+    babl_component ("CIE u"),
+    babl_component ("CIE v"),
+    babl_component ("A"),
+    NULL);
 }
 
 static void  rgbcie_init (void);
@@ -213,6 +232,23 @@ static inline void XYZ_to_xyY     (double  X,
 static inline void xyY_to_XYZ     (double  x,
                                    double  y,
                                    double  Y,
+                                   double *to_X,
+                                   double *to_Y,
+                                   double *to_Z
+                                   );
+
+/* CIE 1976 UCS */
+static inline void XYZ_to_Yuv     (double X,
+                                   double Y,
+                                   double Z,
+                                   double *to_Y,
+                                   double *to_u,
+                                   double *to_v
+                                   );
+
+static inline void Yuv_to_XYZ     (double Y,
+                                   double u,
+                                   double v,
                                    double *to_X,
                                    double *to_Y,
                                    double *to_Z
@@ -265,7 +301,7 @@ LAB_to_XYZ (double  L,
   *to_Z = zr * D50_WHITE_REF_Z;
 }
 
-
+/* CIE xyY */
 static inline void
 XYZ_to_xyY (double  X,
             double  Y,
@@ -280,7 +316,7 @@ XYZ_to_xyY (double  X,
 	  *to_x = D50_WHITE_REF_x;
 	  *to_y = D50_WHITE_REF_y;
 	}
-	else 
+	else
 	{
 	*to_x = X / sum;
 	*to_y = Y / sum;
@@ -296,12 +332,13 @@ xyY_to_XYZ (double  x,
             double *to_Y,
             double *to_Z)
 {
-   if ( Y < NEAR_ZERO ) 
-	{ *to_X = 0.0;
+  if ( Y < NEAR_ZERO )
+    {
+	  *to_X = 0.0;
 	  *to_Y = 0.0;
 	  *to_Z = 0.0;
 	}
-	else 
+  else
 	{
 	*to_X = (x * Y) / y;
 	*to_Y = Y;
@@ -309,6 +346,58 @@ xyY_to_XYZ (double  x,
     }
 }
 
+
+/* CIE 1976 UCS */
+
+/* Code for near-zero XYZ and RGB for CIE 1976 UCS patterned
+ * after code written by and used with kind permission of Graeme Gill.
+ * Graeme Gill's code is in "icc.c"
+ * downloadable from http://argyllcms.com/ */
+
+static inline void
+XYZ_to_Yuv (double X,
+            double Y,
+            double Z,
+            double *to_Y,
+            double *to_u,
+            double *to_v)
+{
+  double sum = X + (15.0 * Y) + (3.0 * Z);
+  if (sum < NEAR_ZERO)
+	{
+	*to_Y = 0.0;
+	*to_u = 4.0/19.0;
+	*to_v = 9.0/19.0;
+	}
+	else
+	{
+	*to_Y = Y;
+	*to_u = (4.0 * X) / sum;
+	*to_v = (9.0 * Y) / sum;
+    }
+}
+
+static inline void
+Yuv_to_XYZ (double Y,
+            double u,
+            double v,
+            double *to_X,
+            double *to_Y,
+            double *to_Z)
+{
+  if ( v < NEAR_ZERO ) 
+    {
+      *to_X = 0.0;
+      *to_Y = 0.0;
+      *to_Z = 0.0;
+    }
+  else
+    {
+      *to_X = ((9.0 * u * Y)/(4.0 * v));
+      *to_Y = Y;
+      *to_Z = -(((20.0 * v + 3.0 * u - 12.0) * Y)/(4.0 * v));
+    }
+}
 
 /* rgb <-> XYZ */
 
@@ -381,7 +470,6 @@ xyza_to_rgba (const Babl *conversion,char *src,
 
 
 /* rgb -> xyY */
-
 static void
 rgba_to_xyY (const Babl *conversion,
              char       *src,
@@ -432,6 +520,60 @@ rgba_to_xyYa (const Babl *conversion,char *src,
     }
 }
 
+
+
+/* rgb -> Yuv */
+static void
+rgba_to_Yuv (const Babl *conversion,char *src,
+             char *dst,
+             long  n)
+{
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  while (n--)
+    {
+      double XYZ[3], Y, u, v;
+
+      babl_space_to_xyz (space, (double*)src, XYZ);
+      XYZ_to_Yuv (XYZ[0], XYZ[1], XYZ[2], &Y, &u, &v);
+
+      ((double *) dst)[0] = Y;
+      ((double *) dst)[1] = u;
+      ((double *) dst)[2] = v;
+
+      src += sizeof (double) * 4;
+      dst += sizeof (double) * 3;
+    }
+}
+
+static void
+rgba_to_Yuva (const Babl *conversion,char *src,
+              char *dst,
+              long  n)
+{
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  while (n--)
+    {
+      double alpha = ((double *) src)[3];
+      double XYZ[3], Y, u, v;
+
+      //convert RGB to XYZ
+      babl_space_to_xyz (space, (double*)src, XYZ);
+
+      //convert XYZ to Yuv
+      XYZ_to_Yuv (XYZ[0], XYZ[1], XYZ[2], &Y, &u, &v);
+
+      ((double *) dst)[0] = Y;
+      ((double *) dst)[1] = u;
+      ((double *) dst)[2] = v;
+      ((double *) dst)[3] = alpha;
+
+      src += sizeof (double) * 4;
+      dst += sizeof (double) * 4;
+    }
+}
+
+
+/* rgbf <->xyYf */
 static void
 rgbaf_to_xyYaf (const Babl *conversion,
                 float *src,
@@ -585,6 +727,166 @@ rgbaf_to_xyYf (const Babl *conversion,
 }
 
 
+
+/* rgbf -> Yuv */
+static void
+rgbaf_to_Yuvaf (const Babl *conversion,
+                float *src,
+                float *dst,
+                long   samples)
+{
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_X;
+  float m_0_1 = space->space.RGBtoXYZf[1] / D50_WHITE_REF_X;
+  float m_0_2 = space->space.RGBtoXYZf[2] / D50_WHITE_REF_X;
+  float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Y;
+  float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Y;
+  float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Y;
+  float m_2_0 = space->space.RGBtoXYZf[6] / D50_WHITE_REF_Z;
+  float m_2_1 = space->space.RGBtoXYZf[7] / D50_WHITE_REF_Z;
+  float m_2_2 = space->space.RGBtoXYZf[8] / D50_WHITE_REF_Z;
+  long n = samples;
+
+  while (n--)
+    {
+      float u, v, X, Y, Z, r, g, b, a, sum;
+      r = src[0];
+      g = src[1];
+      b = src[2];
+      a = src[3];
+
+      if ( r < NEAR_ZERO && g < NEAR_ZERO && b < NEAR_ZERO )
+        {
+          Y = 0.0f;
+		  u = 4.0/19.0;
+		  v = 9.0/19.0;
+        }
+      else
+        {
+          X = m_0_0 * r + m_0_1 * g + m_0_2 * b;
+          Y = m_1_0 * r + m_1_1 * g + m_1_2 * b;
+          Z = m_2_0 * r + m_2_1 * g + m_2_2 * b;
+
+	      sum = (X + 15.0 * Y + 3.0 * Z);
+	      u = (4.0 * X) / sum;
+	      v = (9.0 * Y) / sum;
+        }
+
+      dst[0] = Y;
+      dst[1] = u;
+      dst[2] = v;
+      dst[3] = a;
+
+      src += 4;
+      dst += 4;
+    }
+}
+
+static void
+rgbf_to_Yuvf (const Babl *conversion,float *src,
+              float *dst,
+              long   samples)
+{
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_X;
+  float m_0_1 = space->space.RGBtoXYZf[1] / D50_WHITE_REF_X;
+  float m_0_2 = space->space.RGBtoXYZf[2] / D50_WHITE_REF_X;
+  float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Y;
+  float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Y;
+  float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Y;
+  float m_2_0 = space->space.RGBtoXYZf[6] / D50_WHITE_REF_Z;
+  float m_2_1 = space->space.RGBtoXYZf[7] / D50_WHITE_REF_Z;
+  float m_2_2 = space->space.RGBtoXYZf[8] / D50_WHITE_REF_Z;
+  long n = samples;
+
+  while (n--)
+    {
+  float u, v, X, Y, Z, r, g, b, sum;
+      r = src[0];
+      g = src[1];
+      b = src[2];
+
+      if ( r < NEAR_ZERO && g < NEAR_ZERO && b < NEAR_ZERO )
+        {
+          Y = 0.0f;
+		  u = 4.0/19.0;
+		  v = 9.0/19.0;
+        }
+      else
+        {
+          X = m_0_0 * r + m_0_1 * g + m_0_2 * b;
+          Y = m_1_0 * r + m_1_1 * g + m_1_2 * b;
+          Z = m_2_0 * r + m_2_1 * g + m_2_2 * b;
+
+	      sum = (X + 15.0 * Y + 3.0 * Z);
+	      u = (4.0 * X) / sum;
+	      v = (9.0 * Y) / sum;
+        }
+
+      dst[0] = Y;
+      dst[1] = u;
+      dst[2] = v;
+
+      src += 3;
+      dst += 3;
+    }
+}
+
+
+static void
+rgbaf_to_Yuvf (const Babl *conversion,
+               float      *src,
+               float      *dst,
+               long        samples)
+{
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_X;
+  float m_0_1 = space->space.RGBtoXYZf[1] / D50_WHITE_REF_X;
+  float m_0_2 = space->space.RGBtoXYZf[2] / D50_WHITE_REF_X;
+  float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Y;
+  float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Y;
+  float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Y;
+  float m_2_0 = space->space.RGBtoXYZf[6] / D50_WHITE_REF_Z;
+  float m_2_1 = space->space.RGBtoXYZf[7] / D50_WHITE_REF_Z;
+  float m_2_2 = space->space.RGBtoXYZf[8] / D50_WHITE_REF_Z;
+  long n = samples;
+
+  while (n--)
+    {
+  float u, v, X, Y, Z, r, g, b, sum;
+      r = src[0];
+      g = src[1];
+      b = src[2];
+
+      if ( r < NEAR_ZERO && g < NEAR_ZERO && b < NEAR_ZERO )
+        {
+          Y = 0.0f;
+		  u = 4.0/19.0;
+		  v = 9.0/19.0;
+        }
+      else
+        {
+          X = m_0_0 * r + m_0_1 * g + m_0_2 * b;
+          Y = m_1_0 * r + m_1_1 * g + m_1_2 * b;
+          Z = m_2_0 * r + m_2_1 * g + m_2_2 * b;
+
+	      sum = (X + 15.0 * Y + 3.0 * Z);
+	      u = (4.0 * X) / sum;
+	      v = (9.0 * Y) / sum;
+        }
+
+      dst[0] = Y;
+      dst[1] = u;
+      dst[2] = v;
+
+      src += 4;
+      dst += 3;
+    }
+}
+
+
+
+
 /* xyY -> rgb */
 
 static void
@@ -656,6 +958,80 @@ xyYa_to_rgba (const Babl *conversion,char *src,
     }
 }
 
+
+
+/* Yuv -> rgb */
+
+static void
+Yuv_to_rgba (const Babl *conversion,char *src,
+             char *dst,
+             long  n)
+{
+  const Babl *space = babl_conversion_get_destination_space (conversion);
+  while (n--)
+    {
+      double Y = ((double *) src)[0];
+      double u = ((double *) src)[1];
+      double v = ((double *) src)[2];
+
+      double R, G, B, X, Z;
+
+      //convert Yuv to XYZ
+      Yuv_to_XYZ (Y, u, v, &X, &Y, &Z);
+
+      //convert XYZ to RGB
+      {
+        double XYZ[3]  = {X,Y,Z};
+        double RGB[3];
+        babl_space_from_xyz (space, XYZ, RGB);
+        R = RGB[0];
+        G = RGB[1];
+        B = RGB[2];
+      }
+
+      ((double *) dst)[0] = R;
+      ((double *) dst)[1] = G;
+      ((double *) dst)[2] = B;
+      ((double *) dst)[3] = 1.0;
+
+      src += sizeof (double) * 3;
+      dst += sizeof (double) * 4;
+    }
+}
+
+
+static void
+Yuva_to_rgba (const Babl *conversion,char *src,
+              char *dst,
+              long  n)
+{
+  const Babl *space = babl_conversion_get_destination_space (conversion);
+  while (n--)
+    {
+      double Y     = ((double *) src)[0];
+      double u     = ((double *) src)[1];
+      double v     = ((double *) src)[2];
+      double alpha = ((double *) src)[3];
+
+      double X, Z;
+
+      //convert Yuv to XYZ
+      Yuv_to_XYZ (Y, u, v, &X, &Y, &Z);
+
+      {
+        //convert XYZ to RGB
+        double XYZ[3]  = {X,Y,Z};
+        babl_space_from_xyz (space, XYZ, (double*)dst);
+      }
+      ((double *) dst)[3] = alpha;
+
+      src += sizeof (double) * 4;
+      dst += sizeof (double) * 4;
+    }
+}
+
+
+/* xyYf -> rgbf */
 
 static void
 xyYf_to_rgbf (const Babl *conversion,float *src,
@@ -799,6 +1175,167 @@ xyYaf_to_rgbaf (const Babl *conversion,
           X = (x * Y) / y;
           Y = Y;
           Z = ((1 - x - y) * Y) / y;
+        }
+
+      r = m_0_0 * X + m_0_1 * Y + m_0_2 * Z;
+      g = m_1_0 * X + m_1_1 * Y + m_1_2 * Z;
+      b = m_2_0 * X + m_2_1 * Y + m_2_2 * Z;
+
+      dst[0] = r;
+      dst[1] = g;
+      dst[2] = b;
+      dst[3] = a;
+
+      src += 4;
+      dst += 4;
+    }
+}
+
+
+
+/* Yuvf -> rgbf */
+
+static void
+Yuvf_to_rgbf (const Babl *conversion,float *src,
+              float *dst,
+              long   samples)
+{
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  float m_0_0 = space->space.XYZtoRGBf[0] * D50_WHITE_REF_X;
+  float m_0_1 = space->space.XYZtoRGBf[1] * D50_WHITE_REF_Y;
+  float m_0_2 = space->space.XYZtoRGBf[2] * D50_WHITE_REF_Z;
+  float m_1_0 = space->space.XYZtoRGBf[3] * D50_WHITE_REF_X;
+  float m_1_1 = space->space.XYZtoRGBf[4] * D50_WHITE_REF_Y;
+  float m_1_2 = space->space.XYZtoRGBf[5] * D50_WHITE_REF_Z;
+  float m_2_0 = space->space.XYZtoRGBf[6] * D50_WHITE_REF_X;
+  float m_2_1 = space->space.XYZtoRGBf[7] * D50_WHITE_REF_Y;
+  float m_2_2 = space->space.XYZtoRGBf[8] * D50_WHITE_REF_Z;
+  long n = samples;
+
+  while (n--)
+    {
+      float X, Z, r, g, b;
+      float Y = src[0];
+      float u = src[1];
+      float v = src[2];
+
+      if ( v < NEAR_ZERO )
+        {
+          X = 0.0f;
+          Y = 0.0f;
+          Z = 0.0f;
+        }
+      else
+        {
+          X = ((9.0 * u * Y)/(4.0 * v));
+          Y = Y;
+          Z = -(((20.0 * v + 3.0 * u - 12.0) * Y)/(4.0 * v));
+        }
+
+      r = m_0_0 * X + m_0_1 * Y + m_0_2 * Z;
+      g = m_1_0 * X + m_1_1 * Y + m_1_2 * Z;
+      b = m_2_0 * X + m_2_1 * Y + m_2_2 * Z;
+
+      dst[0] = r;
+      dst[1] = g;
+      dst[2] = b;
+
+      src += 3;
+      dst += 3;
+    }
+}
+
+
+
+static void
+Yuvf_to_rgbaf (const Babl *conversion,
+               float      *src,
+               float      *dst,
+               long        samples)
+{
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  float m_0_0 = space->space.XYZtoRGBf[0] * D50_WHITE_REF_X;
+  float m_0_1 = space->space.XYZtoRGBf[1] * D50_WHITE_REF_Y;
+  float m_0_2 = space->space.XYZtoRGBf[2] * D50_WHITE_REF_Z;
+  float m_1_0 = space->space.XYZtoRGBf[3] * D50_WHITE_REF_X;
+  float m_1_1 = space->space.XYZtoRGBf[4] * D50_WHITE_REF_Y;
+  float m_1_2 = space->space.XYZtoRGBf[5] * D50_WHITE_REF_Z;
+  float m_2_0 = space->space.XYZtoRGBf[6] * D50_WHITE_REF_X;
+  float m_2_1 = space->space.XYZtoRGBf[7] * D50_WHITE_REF_Y;
+  float m_2_2 = space->space.XYZtoRGBf[8] * D50_WHITE_REF_Z;
+  long n = samples;
+
+  while (n--)
+    {
+      float X, Z, r, g, b;
+      float Y = src[0];
+      float u = src[1];
+      float v = src[2];
+
+      if ( v < NEAR_ZERO )
+        {
+          X = 0.0f;
+          Y = 0.0f;
+          Z = 0.0f;
+        }
+      else
+        {
+          X = ((9.0 * u * Y)/(4.0 * v));
+          Y = Y;
+          Z = -(((20.0 * v + 3.0 * u - 12.0) * Y)/(4.0 * v));
+        }
+
+      r = m_0_0 * X + m_0_1 * Y + m_0_2 * Z;
+      g = m_1_0 * X + m_1_1 * Y + m_1_2 * Z;
+      b = m_2_0 * X + m_2_1 * Y + m_2_2 * Z;
+
+      dst[0] =    r;
+      dst[1] =    g;
+      dst[2] =    b;
+      dst[3] = 1.0f;
+
+      src += 3;
+      dst += 4;
+    }
+}
+
+static void
+Yuvaf_to_rgbaf (const Babl *conversion,
+                float      *src,
+                float      *dst,
+                long        samples)
+{
+  const Babl *space = babl_conversion_get_source_space (conversion);
+  float m_0_0 = space->space.XYZtoRGBf[0] * D50_WHITE_REF_X;
+  float m_0_1 = space->space.XYZtoRGBf[1] * D50_WHITE_REF_Y;
+  float m_0_2 = space->space.XYZtoRGBf[2] * D50_WHITE_REF_Z;
+  float m_1_0 = space->space.XYZtoRGBf[3] * D50_WHITE_REF_X;
+  float m_1_1 = space->space.XYZtoRGBf[4] * D50_WHITE_REF_Y;
+  float m_1_2 = space->space.XYZtoRGBf[5] * D50_WHITE_REF_Z;
+  float m_2_0 = space->space.XYZtoRGBf[6] * D50_WHITE_REF_X;
+  float m_2_1 = space->space.XYZtoRGBf[7] * D50_WHITE_REF_Y;
+  float m_2_2 = space->space.XYZtoRGBf[8] * D50_WHITE_REF_Z;
+  long n = samples;
+
+  while (n--)
+    {
+      float X, Z, r, g, b;
+      float Y = src[0];
+      float u = src[1];
+      float v = src[2];
+      float a = src[3];
+
+      if ( v < NEAR_ZERO )
+        {
+          X = 0.0f;
+          Y = 0.0f;
+          Z = 0.0f;
+        }
+      else
+        {
+          X = ((9.0 * u * Y)/(4.0 * v));
+          Y = Y;
+          Z = -(((20.0 * v + 3.0 * u - 12.0) * Y)/(4.0 * v));
         }
 
       r = m_0_0 * X + m_0_1 * Y + m_0_2 * Z;
@@ -2073,6 +2610,8 @@ conversions (void)
     "linear", xyza_to_rgba,
     NULL
   );
+
+  /* CIE xyY */
   babl_conversion_new (
     babl_model ("RGBA"),
     babl_model ("CIE xyY"),
@@ -2095,6 +2634,32 @@ conversions (void)
     babl_model ("CIE xyY alpha"),
     babl_model ("RGBA"),
     "linear", xyYa_to_rgba,
+    NULL
+  );
+
+  /* CIE 1976 UCS */
+  babl_conversion_new (
+    babl_model ("RGBA"),
+    babl_model ("CIE Yuv"),
+    "linear", rgba_to_Yuv,
+    NULL
+  );
+  babl_conversion_new (
+    babl_model ("CIE Yuv"),
+    babl_model ("RGBA"),
+    "linear", Yuv_to_rgba,
+    NULL
+  );
+  babl_conversion_new (
+    babl_model ("RGBA"),
+    babl_model ("CIE Yuv alpha"),
+    "linear", rgba_to_Yuva,
+    NULL
+  );
+  babl_conversion_new (
+    babl_model ("CIE Yuv alpha"),
+    babl_model ("RGBA"),
+    "linear", Yuva_to_rgba,
     NULL
   );
 
@@ -2196,6 +2761,8 @@ conversions (void)
     "linear", Lchabaf_to_Labaf,
     NULL
   );
+
+  /* CIE xyY */
   babl_conversion_new (
     babl_format ("RGB float"),
     babl_format ("CIE xyY float"),
@@ -2203,9 +2770,9 @@ conversions (void)
     NULL
   );
   babl_conversion_new (
-    babl_format ("CIE xyY float"),
-    babl_format ("RGB float"),
-    "linear", xyYf_to_rgbf,
+    babl_format ("RGBA float"),
+    babl_format ("CIE xyY alpha float"),
+    "linear", rgbaf_to_xyYaf,
     NULL
   );
   babl_conversion_new (
@@ -2216,14 +2783,14 @@ conversions (void)
   );
   babl_conversion_new (
     babl_format ("CIE xyY float"),
-    babl_format ("RGBA float"),
-    "linear", xyYf_to_rgbaf,
+    babl_format ("RGB float"),
+    "linear", xyYf_to_rgbf,
     NULL
   );
   babl_conversion_new (
+    babl_format ("CIE xyY float"),
     babl_format ("RGBA float"),
-    babl_format ("CIE xyY alpha float"),
-    "linear", rgbaf_to_xyYaf,
+    "linear", xyYf_to_rgbaf,
     NULL
   );
   babl_conversion_new (
@@ -2232,7 +2799,43 @@ conversions (void)
     "linear", xyYaf_to_rgbaf,
     NULL
   );
-
+  /* CIE 1976 UCS */
+  babl_conversion_new (
+    babl_format ("RGB float"),
+    babl_format ("CIE Yuv float"),
+    "linear", rgbf_to_Yuvf,
+    NULL
+  );
+  babl_conversion_new (
+    babl_format ("RGBA float"),
+    babl_format ("CIE Yuv alpha float"),
+    "linear", rgbaf_to_Yuvaf,
+    NULL
+  );
+  babl_conversion_new (
+    babl_format ("RGBA float"),
+    babl_format ("CIE Yuv float"),
+    "linear", rgbaf_to_Yuvf,
+    NULL
+  );
+  babl_conversion_new (
+    babl_format ("CIE Yuv float"),
+    babl_format ("RGB float"),
+    "linear", Yuvf_to_rgbf,
+    NULL
+  );
+  babl_conversion_new (
+    babl_format ("CIE Yuv float"),
+    babl_format ("RGBA float"),
+    "linear", Yuvf_to_rgbaf,
+    NULL
+  );
+  babl_conversion_new (
+    babl_format ("CIE Yuv alpha float"),
+    babl_format ("RGBA float"),
+    "linear", Yuvaf_to_rgbaf,
+    NULL
+  );
 #if defined(USE_SSE2)
 
   if (babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_SSE2)
@@ -2391,6 +2994,28 @@ formats (void)
     babl_component ("CIE x"),
     babl_component ("CIE y"),
     babl_component ("CIE Y"),
+    babl_component ("A"),
+    NULL);
+
+  /* CIE 1976 UCS */
+  babl_format_new (
+    "name", "CIE Yuv float",
+    babl_model ("CIE Yuv"),
+
+    babl_type ("float"),
+    babl_component ("CIE Y"),
+    babl_component ("CIE u"),
+    babl_component ("CIE v"),
+    NULL);
+
+  babl_format_new (
+    "name", "CIE Yuv alpha float",
+    babl_model ("CIE Yuv alpha"),
+
+    babl_type ("float"),
+    babl_component ("CIE Y"),
+    babl_component ("CIE u"),
+    babl_component ("CIE v"),
     babl_component ("A"),
     NULL);
 }
