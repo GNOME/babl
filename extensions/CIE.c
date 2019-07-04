@@ -1,7 +1,7 @@
 /* babl - dynamically extendable universal pixel conversion library.
- * Copyright (C) 2005, 2014 Øyvind Kolås.
+ * Copyright (C) 2005, 2014, 2019 Øyvind Kolås.
  * Copyright (C) 2009, Martin Nordholts
- * Copyright (C) 2014, Elle Stone
+ * Copyright (C) 2014, 2019 Elle Stone
  * Copyright (C) 2017, 2018 Red Hat, Inc.
  *
  * This library is free software; you can redistribute it and/or
@@ -57,6 +57,8 @@
 #define D50_WHITE_REF_Z   0.824905400f
 
 #define NEAR_ZERO         0.0000000001f
+#define near_zero(a)   ((a) < NEAR_ZERO && (a) > -NEAR_ZERO)
+
 #define D50_WHITE_REF_x   0.345702921222f
 #define D50_WHITE_REF_y   0.358537532290f
 
@@ -311,7 +313,7 @@ XYZ_to_xyY (double  X,
             double *to_Y)
 {
    double sum = X + Y + Z;
-   if (sum < NEAR_ZERO)
+   if (near_zero (sum))
 	{ *to_Y = 0.0;
 	  *to_x = D50_WHITE_REF_x;
 	  *to_y = D50_WHITE_REF_y;
@@ -332,7 +334,7 @@ xyY_to_XYZ (double  x,
             double *to_Y,
             double *to_Z)
 {
-  if ( Y < NEAR_ZERO )
+  if (near_zero (Y))
     {
 	  *to_X = 0.0;
 	  *to_Y = 0.0;
@@ -363,17 +365,17 @@ XYZ_to_Yuv (double X,
             double *to_v)
 {
   double sum = X + (15.0 * Y) + (3.0 * Z);
-  if (sum < NEAR_ZERO)
-	{
-	*to_Y = 0.0;
-	*to_u = 4.0/19.0;
-	*to_v = 9.0/19.0;
-	}
-	else
-	{
-	*to_Y = Y;
-	*to_u = (4.0 * X) / sum;
-	*to_v = (9.0 * Y) / sum;
+  if (near_zero (sum))
+    {
+        *to_Y = 0.0;
+        *to_u = 4.0/19.0;
+        *to_v = 9.0/19.0;
+    }
+        else
+    {
+        *to_Y = Y;
+        *to_u = (4.0 * X) / sum;
+        *to_v = (9.0 * Y) / sum;
     }
 }
 
@@ -385,7 +387,7 @@ Yuv_to_XYZ (double Y,
             double *to_Y,
             double *to_Z)
 {
-  if ( v < NEAR_ZERO ) 
+  if (near_zero (v))
     {
       *to_X = 0.0;
       *to_Y = 0.0;
@@ -600,7 +602,7 @@ rgbaf_to_xyYaf (const Babl *conversion,
       b = src[2];
       a = src[3];
 
-      if ( r < NEAR_ZERO && g < NEAR_ZERO && b < NEAR_ZERO )
+      if (near_zero(r) && near_zero(g) && near_zero(b))
         {
           Y = 0.0f;
           x = D50_WHITE_REF_x;
@@ -650,7 +652,7 @@ rgbf_to_xyYf (const Babl *conversion,float *src,
       g = src[1];
       b = src[2];
 
-      if ( r < NEAR_ZERO && g < NEAR_ZERO && b < NEAR_ZERO )
+      if (near_zero(r) && near_zero(g) && near_zero(b))
         {
           Y = 0.0f;
           x = D50_WHITE_REF_x;
@@ -701,7 +703,7 @@ rgbaf_to_xyYf (const Babl *conversion,
       g = src[1];
       b = src[2];
 
-      if ( r < NEAR_ZERO && g < NEAR_ZERO && b < NEAR_ZERO )
+      if (near_zero(r) && near_zero(g) && near_zero(b))
         {
           Y = 0.0f;
           x = D50_WHITE_REF_x;
@@ -755,7 +757,7 @@ rgbaf_to_Yuvaf (const Babl *conversion,
       b = src[2];
       a = src[3];
 
-      if ( r < NEAR_ZERO && g < NEAR_ZERO && b < NEAR_ZERO )
+      if (near_zero(r) && near_zero(g) && near_zero(b))
         {
           Y = 0.0f;
 		  u = 4.0/19.0;
@@ -806,7 +808,7 @@ rgbf_to_Yuvf (const Babl *conversion,float *src,
       g = src[1];
       b = src[2];
 
-      if ( r < NEAR_ZERO && g < NEAR_ZERO && b < NEAR_ZERO )
+      if (near_zero(r) && near_zero(g) && near_zero(b))
         {
           Y = 0.0f;
 		  u = 4.0/19.0;
@@ -858,7 +860,7 @@ rgbaf_to_Yuvf (const Babl *conversion,
       g = src[1];
       b = src[2];
 
-      if ( r < NEAR_ZERO && g < NEAR_ZERO && b < NEAR_ZERO )
+      if (near_zero(r) && near_zero(g) && near_zero(b))
         {
           Y = 0.0f;
 		  u = 4.0/19.0;
@@ -1057,7 +1059,7 @@ xyYf_to_rgbf (const Babl *conversion,float *src,
       float y = src[1];
       float Y = src[2];
 
-      if ( Y < NEAR_ZERO )
+      if (near_zero (y))
         {
           X = 0.0f;
           Y = 0.0f;
@@ -1111,7 +1113,7 @@ xyYf_to_rgbaf (const Babl *conversion,
       float Y = src[2];
 
 
-      if ( Y < NEAR_ZERO )
+      if (near_zero (Y))
         {
           X = 0.0f;
           Y = 0.0f;
@@ -1164,7 +1166,7 @@ xyYaf_to_rgbaf (const Babl *conversion,
       float Y = src[2];
       float a = src[3];
 
-      if ( Y < NEAR_ZERO )
+      if (near_zero (Y))
         {
           X = 0.0f;
           Y = 0.0f;
@@ -1219,7 +1221,7 @@ Yuvf_to_rgbf (const Babl *conversion,float *src,
       float u = src[1];
       float v = src[2];
 
-      if ( v < NEAR_ZERO )
+      if (near_zero (v))
         {
           X = 0.0f;
           Y = 0.0f;
@@ -1272,7 +1274,7 @@ Yuvf_to_rgbaf (const Babl *conversion,
       float u = src[1];
       float v = src[2];
 
-      if ( v < NEAR_ZERO )
+      if (near_zero (v))
         {
           X = 0.0f;
           Y = 0.0f;
@@ -1325,7 +1327,7 @@ Yuvaf_to_rgbaf (const Babl *conversion,
       float v = src[2];
       float a = src[3];
 
-      if ( v < NEAR_ZERO )
+      if (near_zero (v))
         {
           X = 0.0f;
           Y = 0.0f;
