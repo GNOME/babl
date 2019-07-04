@@ -374,12 +374,17 @@ babl_model_is_symmetric (const Babl *cbabl)
       {
         int j;
         for (j = 0; j < 4; j++)
-          if (fabs (clipped[i *4 + j] - transformed[i * 4 + j]) > TOLERANCE)
+        {
+          float tolerance = TOLERANCE;
+          if (fabs(clipped[i*4+j]) > 1.0)
+            tolerance = fabs(clipped[i*4+j]) * 0.01;
+          if (fabs (clipped[i *4 + j] - transformed[i * 4 + j]) > tolerance)
             {
               if (!log)
                 log = 1;
               symmetric = 0;
             }
+        }
         if (log && log < 5)
           {
             babl_log ("%s", babl->instance.name);
