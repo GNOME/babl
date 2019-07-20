@@ -227,7 +227,7 @@ _babl_space_for_lcms (const char *icc_data,
                       int         icc_length)
 {
   int i=0;
-  BablSpace space;
+  BablSpace space = {0,};
 
 
   for (i = 0; space_db[i].instance.class_type; i++)
@@ -278,10 +278,9 @@ babl_space_from_rgbxyz_matrix (const char *name,
                                const Babl *trc_blue)
 {
   int i=0;
-  BablSpace space;
+  BablSpace space = {0,};
   space.instance.class_type = BABL_SPACE;
   space.instance.id         = 0;
-
   /* transplant matrixes */
 
   space.RGBtoXYZ[0] = rx;
@@ -374,7 +373,7 @@ babl_space_from_chromaticities (const char *name,
                                 BablSpaceFlags flags)
 {
   int i=0;
-  static BablSpace space;
+  BablSpace space = {0,};
   space.instance.class_type = BABL_SPACE;
   space.instance.id         = 0;
 
