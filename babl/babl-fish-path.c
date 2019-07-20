@@ -339,6 +339,7 @@ static int
 alias_conversion (Babl *babl,
                   void *user_data)
 {
+  const Babl *sRGB = babl_space ("sRGB");
   BablConversion *conv = (void *)babl;
   BablSpace *space = user_data;
 
@@ -347,8 +348,8 @@ alias_conversion (Babl *babl,
       (!babl_format_is_palette (conv->source)) &&
       (!babl_format_is_palette (conv->destination)))
   {
-    if ((conv->source->format.space == (void*)babl_space ("sRGB")) &&
-        (conv->destination->format.space == babl_space ("sRGB")))
+    if ((conv->source->format.space == sRGB) &&
+        (conv->destination->format.space == sRGB))
   {
     switch (conv->instance.class_type)
     {
@@ -391,8 +392,8 @@ alias_conversion (Babl *babl,
   if ((conv->source->class_type == BABL_MODEL) &&
       (conv->destination->class_type == BABL_MODEL))
   {
-    if ((conv->source->model.space == (void*)babl_space ("sRGB")) &&
-        (conv->destination->model.space == babl_space ("sRGB")))
+    if ((conv->source->model.space == sRGB) &&
+        (conv->destination->model.space == sRGB))
   {
     switch (conv->instance.class_type)
     {
@@ -544,6 +545,7 @@ babl_fish_path2 (const Babl *source,
         done |= 2;
     }
 
+    /* source space not in initialization array */
     if ((done & 1) == 0 && (source->format.space != sRGB))
     {
       run_once[i++] = source->format.space;
@@ -551,6 +553,8 @@ babl_fish_path2 (const Babl *source,
 
       _babl_space_add_universal_rgb (source->format.space);
     }
+
+    /* destination space not in initialization array */
     if ((done & 2) == 0 && (destination->format.space != source->format.space) && (destination->format.space != sRGB))
     {
       run_once[i++] = destination->format.space;
@@ -773,7 +777,7 @@ _babl_fish_rig_dispatch (Babl *babl)
     }
 }
 
-static long
+static inline long
 _babl_process (const Babl *cbabl,
                const void *source,
                void       *destination,
