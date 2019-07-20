@@ -282,10 +282,11 @@ babl_fish (const void *source,
             const Babl *dst_space = (void*)destination_format->format.space;
             /* we haven't tried to search for suitable path yet */
 
-            if (src_space->space.cmyk.is_cmyk == 0 &&
-                dst_space->space.cmyk.is_cmyk == 0)
+            if (!babl_space_is_cmyk (src_space) &&
+                !babl_space_is_cmyk (dst_space))
               {
                 Babl *fish_path = babl_fish_path (source_format, destination_format);
+
                 if (fish_path)
                   {
                     return fish_path;
