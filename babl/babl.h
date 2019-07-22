@@ -646,9 +646,9 @@ const char * babl_format_get_encoding (const Babl *babl);
 
 int babl_space_is_cmyk (const Babl *space);
 
-/* values below this are stored premultiplied with this value,
- * it can also be used as a generic alpha zero epsilon in GEGL
- *
+/* values below this are stored associated with this value, it should also be
+ * used as a generic alpha zero epsilon in GEGL to keep the threshold effects
+ * on one known value.
  */
 #define BABL_ALPHA_FLOOR   (1/65536.0)
 #define BABL_ALPHA_FLOOR_F (1/65536.0f)

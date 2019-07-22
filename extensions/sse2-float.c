@@ -180,7 +180,7 @@ conv_rgbAF_linear_rgbaF_linear_spin (const Babl  *conversion,
 {
   long i = 0;
   long remainder;
-  // XXX : not ported to color preserving premul
+  // XXX : not ported to zero preserving alpha transforms
   if (((uintptr_t)src % 16) + ((uintptr_t)dst % 16) == 0)
     {
       const long    n = samples;
