@@ -13,16 +13,20 @@ DIST_SUBDIRS= graphics
 #
 #
 HTML_FILES = index-static.html 	\
-	     index.html		
+	     index.html		\
+	     CMYK.html		\
+	     ColorManagement.html \
+	     SymmetricAlpha.html \
+	     Vocabulary.html
 
 EXTRA_DIST= 			\
 	babl.css  		\
 	tools/xml_insert.sh	\
 	tools/changelog2rss	\
 	index-static.html.in	\
-	ColorManagement.html	\
-	CMYK.html	\
-	SymmetricAlpha.html	\
+	ColorManagement-static.html	\
+	CMYK-static.html	\
+	SymmetricAlpha-static.html	\
 	COPYING			\
 	toc			\
 	COPYING.LESSER		\
@@ -35,11 +39,41 @@ DISTCLEANFILES = index-static.html $(BUILT_EXTRA_DIST)
 
 all: $(HTML_FILES)
 
+SymmetricAlpha.html: SymmetricAlpha-static.html toc
+	echo -n "HTML: $@"
+	cp $< $@ 
+	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ TOC $(top_srcdir)/docs/toc
+	echo " [OK]"
+
+CMYK.html: CMYK-static.html toc
+	echo -n "HTML: $@"
+	cp $< $@ 
+	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ TOC $(top_srcdir)/docs/toc
+	echo " [OK]"
+
+ColorManagement.html: ColorManagement-static.html toc
+	echo -n "HTML: $@"
+	cp $< $@ 
+	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ TOC $(top_srcdir)/docs/toc
+	echo " [OK]"
+
 index.html: index-static.html                    \
-	    $(babl_html_dump) 			 \
 	    $(top_srcdir)/AUTHORS                \
 	    $(top_srcdir)/TODO                   \
 	    $(top_srcdir)/NEWS                   \
+	    toc					 \
+	    Makefile.am
+	echo -n "HTML: $@"
+	cp $< $@ 
+	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ AUTHORS $(top_srcdir)/AUTHORS
+	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ TODO $(top_srcdir)/TODO
+	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ NEWS $(top_srcdir)/NEWS
+	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ TOC $(top_srcdir)/docs/toc
+	echo " [OK]"
+
+
+Vocabulary.html: Vocabulary-static.html                    \
+	    $(babl_html_dump) 			 \
 	    toc					 \
 	    Makefile.am
 	echo -n "HTML: $@"
@@ -49,9 +83,6 @@ index.html: index-static.html                    \
 	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ BablBase $$TMPFILE;\
 	rm -f $$TMPFILE )
 	echo -n "."
-	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ AUTHORS $(top_srcdir)/AUTHORS
-	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ TODO $(top_srcdir)/TODO
-	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ NEWS $(top_srcdir)/NEWS
 	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ TOC $(top_srcdir)/docs/toc
 	echo " [OK]"
 

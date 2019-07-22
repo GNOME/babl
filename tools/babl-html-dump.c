@@ -37,8 +37,8 @@ each_item (Babl *babl,
            void *user_data);
            
 static int 
- show_item (Babl *babl,
-            void *user_data);
+show_item (Babl *babl,
+           void *user_data);
 
 static int  
 hide_item (Babl *babl,
