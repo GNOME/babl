@@ -451,14 +451,14 @@ gray_to_rgba (Babl *conversion,
 }
 
 static void
-gray_alpha_premultiplied_to_rgba (Babl  *conversion,
-                                  int    src_bands,
-                                  char **src,
-                                  int   *src_pitch,
-                                  int    dst_bands,
-                                  char **dst,
-                                  int   *dst_pitch,
-                                  long   n)
+gray_alpha_associated_alpha_to_rgba (Babl  *conversion,
+                                     int    src_bands,
+                                     char **src,
+                                     int   *src_pitch,
+                                     int    dst_bands,
+                                     char **dst,
+                                     int   *dst_pitch,
+                                     long   n)
 {
   BABL_PLANAR_SANITY
   assert (src_bands == 2);
@@ -481,14 +481,14 @@ gray_alpha_premultiplied_to_rgba (Babl  *conversion,
 
 
 static void
-rgba_to_gray_alpha_premultiplied (Babl  *conversion,
-                                  int    src_bands,
-                                  char **src,
-                                  int   *src_pitch,
-                                  int    dst_bands,
-                                  char **dst,
-                                  int   *dst_pitch,
-                                  long   n)
+rgba_to_gray_alpha_associated_alpha (Babl  *conversion,
+                                     int    src_bands,
+                                     char **src,
+                                     int   *src_pitch,
+                                     int    dst_bands,
+                                     char **dst,
+                                     int   *dst_pitch,
+                                     long   n)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
   double RGB_LUMINANCE_RED   = space->space.RGBtoXYZ[3];
@@ -521,7 +521,7 @@ rgba_to_gray_alpha_premultiplied (Babl  *conversion,
 }
 
 static void
-non_premultiplied_to_premultiplied (Babl  *conversion,
+separate_alpha_to_associated_alpha (Babl  *conversion,
                                     int    src_bands,
                                     char **src,
                                     int   *src_pitch,
@@ -549,7 +549,7 @@ non_premultiplied_to_premultiplied (Babl  *conversion,
 }
 
 static void
-premultiplied_to_non_premultiplied (Babl  *conversion,
+associated_alpha_to_separate_alpha (Babl  *conversion,
                                     int    src_bands,
                                     char **src,
                                     int   *src_pitch,
@@ -580,10 +580,10 @@ premultiplied_to_non_premultiplied (Babl  *conversion,
 
 
 static void
-rgba2gray_perceptual_premultiplied (Babl *conversion,
-                                    char *src,
-                                    char *dst,
-                                    long  n)
+rgba2gray_perceptual_associated_alpha (Babl *conversion,
+                                       char *src,
+                                       char *dst,
+                                       long  n)
 {
   const Babl *space = babl_conversion_get_destination_space (conversion);
   const Babl *trc = perceptual_trc;
@@ -615,10 +615,10 @@ rgba2gray_perceptual_premultiplied (Babl *conversion,
 }
 
 static void
-rgba2gray_nonlinear_premultiplied (Babl *conversion,
-                                   char *src,
-                                   char *dst,
-                                   long  n)
+rgba2gray_nonlinear_associated_alpha (Babl *conversion,
+                                      char *src,
+                                      char *dst,
+                                      long  n)
 {
   const Babl *space = babl_conversion_get_destination_space (conversion);
   const Babl *trc = space->space.trc[0];
@@ -651,10 +651,10 @@ rgba2gray_nonlinear_premultiplied (Babl *conversion,
 
 
 static void
-gray_perceptual_premultiplied2rgba (Babl *conversion,
-                                    char *src,
-                                    char *dst,
-                                    long  n)
+gray_perceptual_associated_alpha2rgba (Babl *conversion,
+                                       char *src,
+                                       char *dst,
+                                       long  n)
 {
   const Babl *trc = perceptual_trc;
 
@@ -679,10 +679,10 @@ gray_perceptual_premultiplied2rgba (Babl *conversion,
 }
 
 static void
-gray_nonlinear_premultiplied2rgba (Babl *conversion,
-                                   char *src,
-                                   char *dst,
-                                   long  n)
+gray_nonlinear_associated_alpha2rgba (Babl *conversion,
+                                      char *src,
+                                      char *dst,
+                                      long  n)
 {
   const Babl *space = babl_conversion_get_destination_space (conversion);
   const Babl *trc = space->space.trc[0];
@@ -742,28 +742,28 @@ conversions (void)
   babl_conversion_new (
     babl_model_from_id (BABL_MODEL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED),
     babl_model_from_id (BABL_RGBA),
-    "linear", gray_nonlinear_premultiplied2rgba,
+    "linear", gray_nonlinear_associated_alpha2rgba,
     NULL
   );
 
   babl_conversion_new (
     babl_model_from_id (BABL_MODEL_GRAY_PERCEPTUAL_ALPHA_PREMULTIPLIED),
     babl_model_from_id (BABL_RGBA),
-    "linear", gray_perceptual_premultiplied2rgba,
+    "linear", gray_perceptual_associated_alpha2rgba,
     NULL
   );
 
   babl_conversion_new (
     babl_model_from_id (BABL_RGBA),
     babl_model_from_id (BABL_MODEL_GRAY_NONLINEAR_ALPHA_PREMULTIPLIED),
-    "linear", rgba2gray_nonlinear_premultiplied,
+    "linear", rgba2gray_nonlinear_associated_alpha,
     NULL
   );
 
   babl_conversion_new (
     babl_model_from_id (BABL_RGBA),
     babl_model_from_id (BABL_MODEL_GRAY_PERCEPTUAL_ALPHA_PREMULTIPLIED),
-    "linear", rgba2gray_perceptual_premultiplied,
+    "linear", rgba2gray_perceptual_associated_alpha,
     NULL
   );
 
@@ -827,28 +827,28 @@ conversions (void)
   babl_conversion_new (
     babl_model_from_id (BABL_GRAY_ALPHA),
     babl_model_from_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
-    "planar", non_premultiplied_to_premultiplied,
+    "planar", separate_alpha_to_associated_alpha,
     NULL
   );
 
   babl_conversion_new (
     babl_model_from_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
     babl_model_from_id (BABL_GRAY_ALPHA),
-    "planar", premultiplied_to_non_premultiplied,
+    "planar", associated_alpha_to_separate_alpha,
     NULL
   );
 
   babl_conversion_new (
     babl_model_from_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
     babl_model_from_id (BABL_RGBA),
-    "planar", gray_alpha_premultiplied_to_rgba,
+    "planar", gray_alpha_associated_alpha_to_rgba,
     NULL
   );
 
   babl_conversion_new (
     babl_model_from_id (BABL_RGBA),
     babl_model_from_id (BABL_GRAY_ALPHA_PREMULTIPLIED),
-    "planar", rgba_to_gray_alpha_premultiplied,
+    "planar", rgba_to_gray_alpha_associated_alpha,
     NULL
   );
 }
@@ -1285,7 +1285,7 @@ gray_to_rgba_float (Babl *conversion,
 }
 
 static void
-gray_alpha_premultiplied_to_rgba_float (Babl  *conversion,
+gray_alpha_associated_alpha_to_rgba_float (Babl  *conversion,
                                         int    src_bands,
                                         char **src,
                                         int   *src_pitch,
@@ -1315,7 +1315,7 @@ gray_alpha_premultiplied_to_rgba_float (Babl  *conversion,
 
 
 static void
-rgba_to_gray_alpha_premultiplied_float (Babl  *conversion,
+rgba_to_gray_alpha_associated_alpha_float (Babl  *conversion,
                                         int    src_bands,
                                         char **src,
                                         int   *src_pitch,
@@ -1355,7 +1355,7 @@ rgba_to_gray_alpha_premultiplied_float (Babl  *conversion,
 }
 
 static void
-non_premultiplied_to_premultiplied_float (Babl  *conversion,
+separate_alpha_to_associated_alpha_float (Babl  *conversion,
                                           int    src_bands,
                                           char **src,
                                           int   *src_pitch,
@@ -1383,7 +1383,7 @@ non_premultiplied_to_premultiplied_float (Babl  *conversion,
 }
 
 static void
-premultiplied_to_non_premultiplied_float (Babl  *conversion,
+associated_alpha_to_separate_alpha_float (Babl  *conversion,
                                           int    src_bands,
                                           char **src,
                                           int   *src_pitch,
@@ -1412,7 +1412,7 @@ premultiplied_to_non_premultiplied_float (Babl  *conversion,
 }
 
 static void
-rgba2gray_nonlinear_premultiplied_float (Babl *conversion,
+rgba2gray_nonlinear_associated_alpha_float (Babl *conversion,
                                          char *src,
                                          char *dst,
                                          long  n)
@@ -1447,7 +1447,7 @@ rgba2gray_nonlinear_premultiplied_float (Babl *conversion,
 }
 
 static void
-gray_nonlinear_premultiplied2rgba_float (Babl *conversion,
+gray_nonlinear_associated_alpha2rgba_float (Babl *conversion,
                                          char *src,
                                          char *dst,
                                          long  n)
@@ -1476,7 +1476,7 @@ gray_nonlinear_premultiplied2rgba_float (Babl *conversion,
 }
 
 static void
-rgba2gray_perceptual_premultiplied_float (Babl *conversion,
+rgba2gray_perceptual_associated_alpha_float (Babl *conversion,
                                          char *src,
                                          char *dst,
                                          long  n)
@@ -1511,7 +1511,7 @@ rgba2gray_perceptual_premultiplied_float (Babl *conversion,
 }
 
 static void
-gray_perceptual_premultiplied2rgba_float (Babl *conversion,
+gray_perceptual_associated_alpha2rgba_float (Babl *conversion,
                                           char *src,
                                           char *dst,
                                           long  n)
@@ -1629,28 +1629,28 @@ static void init_single_precision (void)
   babl_conversion_new (
     babl_format ("Y'aA float"),
     babl_format ("RGBA float"),
-    "linear", gray_nonlinear_premultiplied2rgba_float,
+    "linear", gray_nonlinear_associated_alpha2rgba_float,
     NULL
   );
 
   babl_conversion_new (
     babl_format ("Y~aA float"),
     babl_format ("RGBA float"),
-    "linear", gray_perceptual_premultiplied2rgba_float,
+    "linear", gray_perceptual_associated_alpha2rgba_float,
     NULL
   );
 
   babl_conversion_new (
     babl_format ("RGBA float"),
     babl_format ("Y'aA float"),
-    "linear", rgba2gray_nonlinear_premultiplied_float,
+    "linear", rgba2gray_nonlinear_associated_alpha_float,
     NULL
   );
 
   babl_conversion_new (
     babl_format ("RGBA float"),
     babl_format ("Y~aA float"),
-    "linear", rgba2gray_perceptual_premultiplied_float,
+    "linear", rgba2gray_perceptual_associated_alpha_float,
     NULL
   );
 
@@ -1714,28 +1714,28 @@ static void init_single_precision (void)
   babl_conversion_new (
     babl_format ("YA float"),
     babl_format ("YaA float"),
-    "planar", non_premultiplied_to_premultiplied_float,
+    "planar", separate_alpha_to_associated_alpha_float,
     NULL
   );
 
   babl_conversion_new (
     babl_format ("YaA float"),
     babl_format ("YA float"),
-    "planar", premultiplied_to_non_premultiplied_float,
+    "planar", associated_alpha_to_separate_alpha_float,
     NULL
   );
 
   babl_conversion_new (
     babl_format ("YaA float"),
     babl_format ("RGBA float"),
-    "planar", gray_alpha_premultiplied_to_rgba_float,
+    "planar", gray_alpha_associated_alpha_to_rgba_float,
     NULL
   );
 
   babl_conversion_new (
     babl_format ("RGBA float"),
     babl_format ("YaA float"),
-    "planar", rgba_to_gray_alpha_premultiplied_float,
+    "planar", rgba_to_gray_alpha_associated_alpha_float,
     NULL
   );
 }
