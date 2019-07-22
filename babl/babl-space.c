@@ -1151,12 +1151,12 @@ add_rgb_adapter (Babl *babl,
        prep_conversion(babl_conversion_new(
                        babl_format_with_space("R'G'B'A float", space),
                        babl_format_with_space("RGBA float", babl),
-                       "linear", universal_nonlinear_rgb_linear_converter_sse2,
+                       "linear", universal_nonlinear_rgb_linear_converter,
                        NULL));
        prep_conversion(babl_conversion_new(
                        babl_format_with_space("R'G'B'A float", babl),
                        babl_format_with_space("RGBA float", space),
-                       "linear", universal_nonlinear_rgb_linear_converter_sse2,
+                       "linear", universal_nonlinear_rgb_linear_converter,
                        NULL));
 
        prep_conversion(babl_conversion_new(
