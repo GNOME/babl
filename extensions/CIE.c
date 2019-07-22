@@ -85,11 +85,11 @@ init (void)
 static void
 components (void)
 {
-  babl_component_new ("CIE L", NULL);
-  babl_component_new ("CIE a", "chroma", NULL);
-  babl_component_new ("CIE b", "chroma", NULL);
-  babl_component_new ("CIE C(ab)", "chroma", NULL);
-  babl_component_new ("CIE H(ab)", "chroma", NULL);
+  babl_component_new ("CIE L", "doc", "Luminance, range 0.0-100.0 in float", NULL);
+  babl_component_new ("CIE a", "chroma", "doc", "chroma component 0.0 is no saturation", NULL);
+  babl_component_new ("CIE b", "chroma", "doc", "chroma component 0.0 is no saturation", NULL);
+  babl_component_new ("CIE C(ab)", "chroma", "doc", "chrominance/saturation", NULL);
+  babl_component_new ("CIE H(ab)", "chroma", "doc", "hue value range 0.0-360.0", NULL);
   babl_component_new ("CIE X", NULL);
   babl_component_new ("CIE Y", NULL);
   babl_component_new ("CIE Z", NULL);
@@ -106,6 +106,7 @@ models (void)
 {
   babl_model_new (
     "name", "CIE Lab",
+    "doc", "CIE Lab color model, a perceptually uniform space, euclidian distance in this space represents delta E.",
     babl_component ("CIE L"),
     babl_component ("CIE a"),
     babl_component ("CIE b"),
@@ -114,6 +115,7 @@ models (void)
 
   babl_model_new (
     "name", "CIE Lab alpha",
+    "doc", "CIE Lab color model, with separate alpha",
     babl_component ("CIE L"),
     babl_component ("CIE a"),
     babl_component ("CIE b"),
@@ -124,6 +126,7 @@ models (void)
 
   babl_model_new (
     "name", "CIE LCH(ab)",
+    "doc", "CIE LCH color model, using cylindrical coordinates",
     babl_component ("CIE L"),
     babl_component ("CIE C(ab)"),
     babl_component ("CIE H(ab)"),
@@ -132,6 +135,7 @@ models (void)
 
   babl_model_new (
     "name", "CIE LCH(ab) alpha",
+    "doc", "CIE LCH color model, using cylindrical coordinates, with separate alpha",
     babl_component ("CIE L"),
     babl_component ("CIE C(ab)"),
     babl_component ("CIE H(ab)"),

@@ -63,6 +63,7 @@ models (void)
 {
   babl_model_new (
     "id", BABL_YCBCR,
+    "doc", "Y'CbCr video format model, NB! math is tuned to sRGB space",
     babl_component_from_id (BABL_GRAY_NONLINEAR),
     babl_component_from_id (BABL_CB),
     babl_component_from_id (BABL_CR),
@@ -70,6 +71,7 @@ models (void)
 
   babl_model_new (
     "id", BABL_YCBCR_ALPHA,
+    "doc", "Y'CbCr video format model, separate alpha NB! math is tuned to sRGB space",
     babl_component_from_id (BABL_GRAY_NONLINEAR),
     babl_component_from_id (BABL_CB),
     babl_component_from_id (BABL_CR),

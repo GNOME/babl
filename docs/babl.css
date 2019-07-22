@@ -2,6 +2,7 @@
       body {
         margin: 0;
         padding: 0;
+        font-size: 14pt;
       }
       div.paper {
         background-color: #fff;
@@ -149,6 +150,7 @@
       span.NULL {
         color: #555;
       }
+      tt { font-size: 110%; }
       pre.authors {
         font-size: 100%;
         font-family: FreeSans, Verdana, sans-serif;
@@ -314,7 +316,7 @@
         }
       }
 
-.item_title {  font-weight: bold; margin-top: 1.5em; margin-bottom: 0.6em;
+.item_title {  font-weight: bold; margin-top: 2.5em; margin-bottom: 0.6em;
 }
 
 

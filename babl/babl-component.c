@@ -29,7 +29,8 @@ component_new (const char *name,
                int         id,
                int         luma,
                int         chroma,
-               int         alpha)
+               int         alpha,
+               const char *doc)
 {
   Babl *babl;
 
@@ -39,6 +40,7 @@ component_new (const char *name,
 
   babl->class_type       = BABL_COMPONENT;
   babl->instance.id      = id;
+  babl->instance.doc     = doc;
   babl->component.luma   = luma;
   babl->component.chroma = chroma;
   babl->component.alpha  = alpha;
@@ -73,6 +75,7 @@ babl_component_new (void *first_arg,
   int         alpha  = 0;
   const char *name   = first_arg;
   const char *arg;
+  const char *doc = NULL;
 
   va_start (varg, first_arg);
 
@@ -86,6 +89,10 @@ babl_component_new (void *first_arg,
       if (!strcmp (arg, "id"))
         {
           id = va_arg (varg, int);
+        }
+      else if (!strcmp (arg, "doc"))
+        {
+          doc = va_arg (varg, const char *);
         }
 
       else if (!strcmp (arg, "luma"))
@@ -136,7 +143,7 @@ babl_component_new (void *first_arg,
       return babl;
     }
 
-  babl = component_new (name, id, luma, chroma, alpha);
+  babl = component_new (name, id, luma, chroma, alpha, doc);
 
   /* Since there is not an already registered instance by the required
    * id/name, inserting newly created class into database.

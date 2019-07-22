@@ -44,23 +44,20 @@ main (void)
 {
   babl_init ();
 
-  printf ("<div class='expander'>");
-  printf ("<div class='expander_title'><a style='font-size:110%%' name='Data-types' href='javascript:toggle_visible(\"x_types\")'>Data types</a></div><div class='expander_content' id='x_types'>\n");
+  printf ("<div>");
+  printf ("<h3>Types</h3>");
   babl_type_class_for_each (each_item, NULL);
   printf ("</div>\n");
-  printf ("</div>\n");
 
-  printf ("<div class='expander'>");
-  printf ("<div class='expander_title'><a style='font-size:110%%' name='Color-models' href='javascript:toggle_visible(\"x_models\")'>Color models</a></div><div class='expander_content' id='x_models'>\n");
+  printf ("<div>");
+  printf ("<h3>Models</h3>");
   babl_model_class_for_each (each_item, NULL);
   printf ("</div>\n");
-  printf ("</div>\n");
 
 
-  printf ("<div class='expander'>");
-  printf ("<div class='expander_title'><a style='font-size:110%%' name='Pixel-formats' href='javascript:toggle_visible(\"x_formats\")'>Pixel formats</a></div><div class='expander_content' id='x_formats'>\n");
+  printf ("<div>");
+  printf ("<h3>Pixelformats</h3>");
   babl_format_class_for_each (each_item, NULL);
-  printf ("</div>\n");
   printf ("</div>\n");
 
 /*
@@ -109,10 +106,23 @@ static int
 each_item (Babl *babl,
            void *user_data)
 {
-  printf ("<div><div class='item_title'><a href='#%s', name='%s'>%s</a></div>\n",
+  const char *fun_pre = "babl_type";
+  const char *fun_post = ")";
+
+  switch (babl->class_type)
+  {
+    case BABL_MODEL: fun_pre = "babl_model"; break;
+    case BABL_FORMAT: fun_pre = "babl_format_with_space";
+                      fun_post = ", space|NULL)";
+    break;
+  }
+
+  printf ("<div><div class='item_title'><a href='#%s', name='%s'><tt>%s (\"%s\"%s</tt></a></div>\n",
           normalize (babl->instance.name),
           normalize (babl->instance.name),
-          babl->instance.name);
+          fun_pre,
+          babl->instance.name,
+          fun_post);
   printf ("<div class='item_body'>");
 
 
@@ -157,6 +167,38 @@ model_doc (const Babl *babl)
     printf ("%s", babl->instance.doc);
   else
     {
+      BablModelFlag flags = babl_get_model_flags (babl);
+      if (flags & BABL_MODEL_FLAG_RGB)
+        printf ("RGB");
+      else if (flags & BABL_MODEL_FLAG_GRAY)
+        printf ("Grayscale");
+      else if (flags & BABL_MODEL_FLAG_CMYK)
+      {
+        if (flags & BABL_MODEL_FLAG_INVERTED)
+          printf ("CMYK with inverted color components (0.0=full coverage), for additive compositing");
+        else
+          printf ("CMYK");
+      }
+
+      if (flags & BABL_MODEL_FLAG_LINEAR)
+        printf (" linear");
+      if (flags & BABL_MODEL_FLAG_NONLINEAR)
+        printf (" with TRC from space");
+      if (flags & BABL_MODEL_FLAG_PERCEPTUAL)
+        printf (" with perceptual (sRGB) TRC");
+
+      if (flags & BABL_MODEL_FLAG_ALPHA)
+      {
+        if (flags & BABL_MODEL_FLAG_ASSOCIATED)
+        {
+          printf (", associated alpha");
+        }
+        else
+        {
+          printf (", separate alpha");
+        }
+      }
+
     }
 }
 
@@ -214,12 +256,12 @@ format_html (Babl *babl)
     printf ("%s", babl->instance.doc);
   else
     {
-      const Babl *type = BABL (babl->format.type[0]);
+      //const Babl *type = BABL (babl->format.type[0]);
       model_doc (model);
-      if (type->instance.doc)
-        printf (" %s", type->instance.doc);
-      else
-        printf (" %s", type->instance.name);
+      //if (type->instance.doc)
+      //  printf (" %s", type->instance.doc);
+      //else
+      //  printf (" %s", type->instance.name);
     }
   printf ("</p>");
 
