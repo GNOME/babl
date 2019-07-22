@@ -478,6 +478,7 @@ init (void)
     {
       const Babl *f32 = babl_format_new (
         "name", "cairo-ARGB32",
+        "doc", "endianness adaptive native cairo format with alpha",
         babl_model ("R'aG'aB'aA"),
         babl_type ("u8"),
         babl_component ("B'a"),
@@ -489,6 +490,7 @@ init (void)
 
       const Babl *f24 = babl_format_new (
         "name", "cairo-RGB24",
+        "doc", "endianness adaptive native cairo format without alpha",
         babl_model ("R'G'B'"),
         babl_type ("u8"),
         babl_component ("B'"),
@@ -544,6 +546,7 @@ init (void)
     {
       babl_format_new (
         "name", "cairo-ARGB32",
+        "doc", "endianness adaptive native cairo format with alpha",
         babl_model ("R'aG'aB'aA"),
         babl_type ("u8"),
         babl_component ("A"),
@@ -554,6 +557,7 @@ init (void)
       );
       babl_format_new (
         "name", "cairo-RGB24",
+        "doc", "endianness adaptive native cairo format without alpha",
         babl_model ("R'G'B'"),
         babl_type ("u8"),
         babl_component ("PAD"),
@@ -582,6 +586,7 @@ init (void)
   if (littleendian)
   {
     babl_format_new ("name", "cairo-ACMK32",
+                     "doc", "3 component CMYK subset format, to be used to two-pass CMYK processing/rendering with cairo.",
                      babl_model ("camayakaA"),
                      babl_type ("u8"),
                      babl_component ("ka"),
@@ -590,6 +595,7 @@ init (void)
                      babl_component ("A"),
                      NULL);
     babl_format_new ("name", "cairo-ACYK32",
+                     "doc", "3 component CMYK subset format, to be used to two-pass CMYK processing/rendering with cairo.",
                      babl_model ("camayakaA"),
                      babl_type ("u8"),
                      babl_component ("ka"),
@@ -601,6 +607,7 @@ init (void)
   else
   {
     babl_format_new ("name", "cairo-ACMK32",
+                     "doc", "3 component CMYK subset format, to be used to two-pass CMYK processing/rendering with cairo.",
                      babl_model ("camayakaA"),
                      babl_type ("u8"),
                      babl_component ("A"),
@@ -609,6 +616,7 @@ init (void)
                      babl_component ("ka"),
                      NULL);
     babl_format_new ("name", "cairo-ACYK32",
+                     "doc", "3 component CMYK subset format, to be used to two-pass CMYK processing/rendering with cairo.",
                      babl_model ("camayakaA"),
                      babl_type ("u8"),
                      babl_component ("A"),
@@ -621,6 +629,7 @@ init (void)
   /* companion subset formats for setting pango u16 RGB color values from cmykA
    * */
   babl_format_new ("name", "cykA u16",
+                   "doc", "3 component CMYK subset format, to be used to two-pass CMYK processing/rendering with pango.",
                    babl_model ("cmykA"),
                    babl_type ("u16"),
                    babl_component ("cyan"),
@@ -629,6 +638,7 @@ init (void)
                    babl_component ("A"),
                    NULL);
   babl_format_new ("name", "cmkA u16",
+                   "doc", "3 component CMYK subset format, to be used to two-pass CMYK processing/rendering with pango.",
                    babl_model ("cmykA"),
                    babl_type ("u16"),
                    babl_component ("cyan"),

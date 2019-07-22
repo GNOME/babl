@@ -164,6 +164,7 @@ models (void)
 
   babl_model_new (
     "name", "CIE xyY",
+    "doc", "the coordinate system often used for drawing chromaticity diagrams. Y is luminance.",
     babl_component ("CIE x"),
     babl_component ("CIE y"),
     babl_component ("CIE Y"),
@@ -172,6 +173,7 @@ models (void)
 
   babl_model_new (
     "name", "CIE xyY alpha",
+    "doc", "the coordinate system often used for drawing chromaticity diagrams. Y is luminance, with separate alpha",
     babl_component ("CIE x"),
     babl_component ("CIE y"),
     babl_component ("CIE Y"),
@@ -183,6 +185,7 @@ models (void)
 /* CIE 1976 UCS */
   babl_model_new (
     "name", "CIE Yuv",
+    "doc", "A newer more perceptually uniform space than xyY for chromaticity diagrams.",
     babl_component ("CIE Y"),
     babl_component ("CIE u"),
     babl_component ("CIE v"),
@@ -190,6 +193,7 @@ models (void)
 
   babl_model_new (
     "name", "CIE Yuv alpha",
+    "doc", "A newer more perceptually uniform space than xyY for chromaticity diagrams, with separate alpha.",
     babl_component ("CIE Y"),
     babl_component ("CIE u"),
     babl_component ("CIE v"),
