@@ -70,10 +70,10 @@ conv_rgb8_cairo24_le (const Babl    *conversion,
 
 #if 0
 static void
-conv_rgbA8_premul_cairo32_le (const Babl    *conversion,
-                              unsigned char *src, 
-                              unsigned char *dst, 
-                              long           samples)
+conv_rgbA8_cairo32_le (const Babl    *conversion,
+                       unsigned char *src,
+                       unsigned char *dst,
+                       long           samples)
 {
   long n = samples;
   while (n--)
@@ -92,10 +92,10 @@ conv_rgbA8_premul_cairo32_le (const Babl    *conversion,
 #else
 
 static void
-conv_rgbA8_premul_cairo32_le (const Babl    *conversion,
-                              unsigned char *src, 
-                              unsigned char *dst, 
-                              long           samples)
+conv_rgbA8_cairo32_le (const Babl    *conversion,
+                       unsigned char *src, 
+                       unsigned char *dst, 
+                       long           samples)
 {
   long n = samples;
   uint32_t *srci = (void *)src;
@@ -113,11 +113,11 @@ conv_rgbA8_premul_cairo32_le (const Babl    *conversion,
 }
 #endif
 
-static void 
-conv_cairo32_rgbA8_premul_le (const Babl    *conversion,
-                              unsigned char *src, 
-                              unsigned char *dst, 
-                              long           samples)
+static void
+conv_cairo32_rgbA8_le (const Babl    *conversion,
+                       unsigned char *src,
+                       unsigned char *dst,
+                       long           samples)
 {
   long n = samples;
   while (n--)
@@ -182,11 +182,11 @@ conv_cairo32_rgba8_le (const Babl    *conversion,
 }
 
 
-static void 
-conv_cairo32_rgbAF_premul_le (const Babl    *conversion,
-                              unsigned char *src, 
-                              unsigned char *dst_char, 
-                              long           samples)
+static void
+conv_cairo32_rgbAF_le (const Babl    *conversion,
+                       unsigned char *src,
+                       unsigned char *dst_char,
+                       long           samples)
 {
   long n = samples;
   float *dst = (void*)dst_char;
@@ -206,8 +206,8 @@ conv_cairo32_rgbAF_premul_le (const Babl    *conversion,
 
 static void
 conv_rgba8_cairo32_le (const Babl    *conversion,
-                       unsigned char *src, 
-                       unsigned char *dst, 
+                       unsigned char *src,
+                       unsigned char *dst,
                        long           samples)
 {
   long n = samples;
@@ -499,16 +499,16 @@ init (void)
       );
 
       babl_conversion_new (f32, babl_format ("R'aG'aB'aA float"), "linear",
-                           conv_cairo32_rgbAF_premul_le, NULL);
+                           conv_cairo32_rgbAF_le, NULL);
 
       babl_conversion_new (f32, babl_format ("R'aG'aB'aA u8"), "linear",
-                           conv_cairo32_rgbA8_premul_le, NULL);
+                           conv_cairo32_rgbA8_le, NULL);
 
       babl_conversion_new (f32, babl_format ("R'G'B'A u8"), "linear",
                            conv_cairo32_rgba8_le, NULL);
 
       babl_conversion_new (babl_format ("R'aG'aB'aA u8"), f32, "linear",
-                           conv_rgbA8_premul_cairo32_le, NULL);
+                           conv_rgbA8_cairo32_le, NULL);
 
       babl_conversion_new (babl_format ("R'G'B'A u8"), f32, "linear",
                            conv_rgba8_cairo32_le, NULL);
