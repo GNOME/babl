@@ -729,6 +729,23 @@ universal_nonlinear_rgb_linear_converter (const Babl    *conversion,
 }
 
 static inline void
+universal_linear_rgb_nonlinear_converter (const Babl    *conversion,
+                                          unsigned char *src_char,
+                                          unsigned char *dst_char,
+                                          long           samples,
+                                          void          *data)
+{
+  const Babl *destination_space = conversion->conversion.destination->format.space;
+  float * matrixf = data;
+  float *rgba_in = (void*)src_char;
+  float *rgba_out = (void*)dst_char;
+
+  babl_matrix_mul_vectorff_buf4 (matrixf, rgba_in, rgba_out, samples);
+
+  TRC_OUT(rgba_out, rgba_out);
+}
+
+static inline void
 universal_nonlinear_rgba_u8_converter (const Babl    *conversion,
                                        unsigned char *src_char,
                                        unsigned char *dst_char,
@@ -1007,6 +1024,24 @@ universal_nonlinear_rgb_linear_converter_sse2 (const Babl    *conversion,
 
   babl_matrix_mul_vectorff_buf4_sse2 (matrixf, rgba_out, rgba_out, samples);
 }
+
+
+static inline void
+universal_linear_rgb_nonlinear_converter_sse2 (const Babl    *conversion,
+                                               unsigned char *src_char,
+                                               unsigned char *dst_char,
+                                               long           samples,
+                                               void          *data)
+{
+  const Babl *destination_space = conversion->conversion.destination->format.space;
+  float * matrixf = data;
+  float *rgba_in = (void*)src_char;
+  float *rgba_out = (void*)dst_char;
+
+  babl_matrix_mul_vectorff_buf4_sse2 (matrixf, rgba_in, rgba_out, samples);
+
+  TRC_OUT(rgba_out, rgba_out);
+}
 #endif
 
 
@@ -1021,6 +1056,8 @@ add_rgb_adapter (Babl *babl,
     if ((babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_SSE) &&
         (babl_cpu_accel_get_support () & BABL_CPU_ACCEL_X86_SSE2))
     {
+
+
        prep_conversion(babl_conversion_new(
                        babl_format_with_space("RGBA float", space),
                        babl_format_with_space("RGBA float", babl),
@@ -1041,6 +1078,29 @@ add_rgb_adapter (Babl *babl,
                        babl_format_with_space("R'G'B'A float", space),
                        "linear", universal_nonlinear_rgba_converter_sse2,
                        NULL));
+
+       prep_conversion(babl_conversion_new(
+                       babl_format_with_space("R'G'B'A float", space),
+                       babl_format_with_space("RGBA float", babl),
+                       "linear", universal_nonlinear_rgb_linear_converter_sse2,
+                       NULL));
+       prep_conversion(babl_conversion_new(
+                       babl_format_with_space("R'G'B'A float", babl),
+                       babl_format_with_space("RGBA float", space),
+                       "linear", universal_nonlinear_rgb_linear_converter_sse2,
+                       NULL));
+
+       prep_conversion(babl_conversion_new(
+                       babl_format_with_space("RGBA float", babl),
+                       babl_format_with_space("R'G'B'A float", space),
+                       "linear", universal_linear_rgb_nonlinear_converter_sse2,
+                       NULL));
+       prep_conversion(babl_conversion_new(
+                       babl_format_with_space("RGBA float", space),
+                       babl_format_with_space("R'G'B'A float", babl),
+                       "linear", universal_linear_rgb_nonlinear_converter_sse2,
+                       NULL));
+
        prep_conversion(babl_conversion_new(
                        babl_format_with_space("R'G'B'A u8", space),
                        babl_format_with_space("R'G'B'A u8", babl),
@@ -1076,6 +1136,7 @@ add_rgb_adapter (Babl *babl,
                        babl_format_with_space("RGBA float", space),
                        "linear", universal_rgba_converter,
                        NULL));
+
        prep_conversion(babl_conversion_new(
                        babl_format_with_space("R'G'B'A float", space),
                        babl_format_with_space("R'G'B'A float", babl),
@@ -1086,6 +1147,18 @@ add_rgb_adapter (Babl *babl,
                        babl_format_with_space("R'G'B'A float", space),
                        "linear", universal_nonlinear_rgba_converter,
                        NULL));
+
+       prep_conversion(babl_conversion_new(
+                       babl_format_with_space("R'G'B'A float", space),
+                       babl_format_with_space("RGBA float", babl),
+                       "linear", universal_nonlinear_rgb_linear_converter_sse2,
+                       NULL));
+       prep_conversion(babl_conversion_new(
+                       babl_format_with_space("R'G'B'A float", babl),
+                       babl_format_with_space("RGBA float", space),
+                       "linear", universal_nonlinear_rgb_linear_converter_sse2,
+                       NULL));
+
        prep_conversion(babl_conversion_new(
                        babl_format_with_space("R'G'B'A u8", space),
                        babl_format_with_space("R'G'B'A u8", babl),
@@ -1106,6 +1179,17 @@ add_rgb_adapter (Babl *babl,
                        babl_format_with_space("R'G'B' u8", babl),
                        babl_format_with_space("R'G'B' u8", space),
                        "linear", universal_nonlinear_rgb_u8_converter,
+                       NULL));
+
+       prep_conversion(babl_conversion_new(
+                       babl_format_with_space("RGBA float", babl),
+                       babl_format_with_space("R'G'B'A float", space),
+                       "linear", universal_linear_rgb_nonlinear_converter,
+                       NULL));
+       prep_conversion(babl_conversion_new(
+                       babl_format_with_space("RGBA float", space),
+                       babl_format_with_space("R'G'B'A float", babl),
+                       "linear", universal_linear_rgb_nonlinear_converter,
                        NULL));
     }
 

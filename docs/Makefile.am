@@ -20,11 +20,15 @@ EXTRA_DIST= 			\
 	tools/xml_insert.sh	\
 	tools/changelog2rss	\
 	index-static.html.in	\
+	ColorManagement.html	\
+	CMYK.html	\
+	SymmetricAlpha.html	\
 	COPYING			\
-	COPYING.LESSER \
+	toc			\
+	COPYING.LESSER		\
 	meson.build
 
-BUILT_EXTRA_DIST = index.html 
+BUILT_EXTRA_DIST = index.html ColorManagement.html CMYK.html SymmetricAlpha.html
 
 CLEANFILES = README changelog.rss
 DISTCLEANFILES = index-static.html $(BUILT_EXTRA_DIST)
@@ -36,6 +40,7 @@ index.html: index-static.html                    \
 	    $(top_srcdir)/AUTHORS                \
 	    $(top_srcdir)/TODO                   \
 	    $(top_srcdir)/NEWS                   \
+	    toc					 \
 	    Makefile.am
 	echo -n "HTML: $@"
 	cp $< $@ 
@@ -44,10 +49,11 @@ index.html: index-static.html                    \
 	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ BablBase $$TMPFILE;\
 	rm -f $$TMPFILE )
 	echo -n "."
-
+	$(SHELL) $(top_srcdir)/docs/build-docs.sh $(top_srcdir) $(top_builddir)/docs
 	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ AUTHORS $(top_srcdir)/AUTHORS
 	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ TODO $(top_srcdir)/TODO
 	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ NEWS $(top_srcdir)/NEWS
+	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ TOC $(top_srcdir)/docs/toc
 	echo " [OK]"
 
 distclean-local:

@@ -41,6 +41,7 @@ index_html = custom_target('index.html',
     join_paths(meson.source_root(), 'AUTHORS'),
     join_paths(meson.source_root(), 'TODO'),
     join_paths(meson.source_root(), 'NEWS'),
+    'toc',
   ],
   output: [ 'index.html', ],
   command: [
@@ -50,6 +51,50 @@ index_html = custom_target('index.html',
     '&&', xml_insert, '@OUTPUT@', 'AUTHORS',  '@INPUT2@',
     '&&', xml_insert, '@OUTPUT@', 'TODO',     '@INPUT3@',
     '&&', xml_insert, '@OUTPUT@', 'NEWS',     '@INPUT4@',
+    '&&', xml_insert, '@OUTPUT@', 'toc',     '@INPUT5@',
+  ],
+  build_by_default: true,
+)
+
+
+CMYK_html = custom_target('CMYK.html',
+  input : [
+    'CMYK-static.html',
+    'toc',
+  ],
+  output: [ 'CMYK.html', ],
+  command: [
+    env_bin,
+    'cp', '@INPUT0@', '@OUTPUT@',
+    '&&', xml_insert, '@OUTPUT@', 'toc',     '@INPUT1@',
+  ],
+  build_by_default: true,
+)
+
+ColorManagement_html = custom_target('ColorManagement.html',
+  input : [
+    'ColorManagement-static.html',
+    'toc',
+  ],
+  output: [ 'ColorManagement.html', ],
+  command: [
+    env_bin,
+    'cp', '@INPUT0@', '@OUTPUT@',
+    '&&', xml_insert, '@OUTPUT@', 'toc',     '@INPUT1@',
+  ],
+  build_by_default: true,
+)
+
+SymmetricAlpha_html = custom_target('SymmetricAlpha.html',
+  input : [
+    'SymmetricAlpha-static.html',
+    'toc',
+  ],
+  output: [ 'SymmetricAlpha.html', ],
+  command: [
+    env_bin,
+    'cp', '@INPUT0@', '@OUTPUT@',
+    '&&', xml_insert, '@OUTPUT@', 'toc',     '@INPUT1@',
   ],
   build_by_default: true,
 )

@@ -41,6 +41,52 @@ typedef struct
 #endif
 } BablCMYK;
 
+typedef struct _BablSpectrumType BablSpectrumType;
+
+struct _BablSpectrumType {
+  double        nm_start;
+  double        nm_gap;
+  double        nm_end; /* last band, computed */
+  int           bands;
+};
+
+typedef struct
+{
+  BablSpectrumType spectrum_type;
+  int              is_spectral;
+  float           *observer_x;
+  float           *observer_y;
+  float           *observer_z;
+  float           *illuminant;
+  float            rev_y_scale;
+} BablSpectralSpace;
+
+typedef struct
+{
+  BablSpectralSpace *spectral_space;
+  int                inks;
+  float             *on_white;
+  float             *on_black;
+  float             *opaqueness;
+  float              scale;
+  float              trc_gamma;
+  float             *illuminant;
+} BablCoat;
+
+#define BABL_MAX_COATS 16
+
+typedef struct
+{
+  BablSpectralSpace *spectral_space;
+  BablCoat           coat_def[BABL_MAX_COATS];
+  int                coats;
+  float             *substrate;
+
+  int    stochastic_iterations;
+  float  stochastic_diffusion0;
+  float  stochastic_diffusion1;
+} BablProcessSpace;
+
 typedef struct
 {
   BablInstance     instance;
@@ -76,7 +122,6 @@ typedef struct
    */
   char *icc_profile;
   int   icc_length;
-
   BablCMYK cmyk;
 } BablSpace;
 
