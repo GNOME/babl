@@ -82,10 +82,10 @@ u8_linear_to_float_linear (const Babl    *conversion,
 
 
 static void
-u8_linear_to_float_linear_premul (const Babl    *conversion,
-                                  unsigned char *src,
-                                  unsigned char *dst,
-                                  long           samples)
+u8_linear_to_float_linear_assoc (const Babl    *conversion,
+                                 unsigned char *src,
+                                 unsigned char *dst,
+                                 long           samples)
 {
   float *d = (float *) dst;
   long   n = samples;
@@ -131,7 +131,7 @@ conv_rgba8_linear_ragabaaF_linear (const Babl    *conversion,
                                    unsigned char *dst,
                                    long           samples)
 {
-  u8_linear_to_float_linear_premul (conversion, src, dst, samples);
+  u8_linear_to_float_linear_assoc (conversion, src, dst, samples);
 }
 
 
