@@ -33,7 +33,7 @@ EXTRA_DIST= 			\
 	COPYING.LESSER		\
 	meson.build
 
-BUILT_EXTRA_DIST = index.html ColorManagement.html CMYK.html SymmetricAlpha.html
+BUILT_EXTRA_DIST = index.html ColorManagement.html CMYK.html SymmetricAlpha.html Reference.html
 
 CLEANFILES = README changelog.rss
 DISTCLEANFILES = index-static.html $(BUILT_EXTRA_DIST)
