@@ -208,12 +208,14 @@ babl_base_type_u8 (void)
     "u8",
     "id", BABL_U8,
     "bits", 8,
+    "doc", "uint8_t, 8 bit unsigned integer, values from 0-255",
     NULL);
 
   babl_type_new (
     "u8-luma",
     "id", BABL_U8_LUMA,
     "bits", 8,
+    "doc", "8 bit unsigned integer, values from 16-235",
     NULL
   );
 
@@ -227,6 +229,7 @@ babl_base_type_u8 (void)
     "max", (long) 240,
     "min_val", -0.5,
     "max_val", 0.5,
+    "doc", "8 bit unsigned integer -0.5 to 0.5 maps to 16-240",
     NULL
   );
   babl_conversion_new (

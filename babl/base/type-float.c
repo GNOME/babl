@@ -89,6 +89,7 @@ babl_base_type_float (void)
     "float",
     "id", BABL_FLOAT,
     "bits", 32,
+    "doc", "IEEE 754 single precision",
     NULL);
 
   babl_conversion_new (

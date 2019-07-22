@@ -401,6 +401,7 @@ babl_base_type_half (void)
     "half",
     "id", BABL_HALF,
     "bits", 16,
+    "doc", "IEEE 754 half precision.",
     NULL);
 
   babl_conversion_new (

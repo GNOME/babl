@@ -113,3 +113,17 @@ babl_get_name (const Babl *babl)
   babl_assert (BABL_IS_BABL (babl));
   return babl->instance.name;
 }
+
+const char *
+babl_get_doc (const Babl *babl)
+{
+  babl_assert (BABL_IS_BABL (babl));
+  return babl->instance.doc;
+}
+
+void babl_doc (const Babl     *babl,
+               const char     *doc)
+{
+  babl_assert (BABL_IS_BABL (babl));
+  ((Babl*)babl)->instance.doc = doc;
+}

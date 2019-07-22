@@ -93,6 +93,7 @@ babl_core_init (void)
     "double",
     "id", BABL_DOUBLE,
     "bits", 64,
+    "doc", "IEEE 754 double precision.",
     NULL);
 
   babl_component_new (

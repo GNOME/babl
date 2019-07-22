@@ -38,7 +38,8 @@ babl_type_destroy (void *data)
 static Babl *
 type_new (const char *name,
           int         id,
-          int         bits)
+          int         bits,
+          const char *doc)
 {
   Babl *babl;
 
@@ -50,6 +51,7 @@ type_new (const char *name,
   babl->instance.name  = (void *) ((char *) babl + sizeof (BablType));
   babl->class_type     = BABL_TYPE;
   babl->instance.id    = id;
+  babl->instance.doc   = doc;
   strcpy (babl->instance.name, name);
   babl->type.bits      = bits;
   babl->type.from_list = NULL;
@@ -77,6 +79,7 @@ babl_type_new (void *first_arg,
   int         bits       = 0;
   const char *name = first_arg;
   const char *arg;
+  const char *doc = NULL;
 
   va_start (varg, first_arg);
 
@@ -103,6 +106,10 @@ babl_type_new (void *first_arg,
       else if (!strcmp (arg, "min"))
         {
           (void) va_arg (varg, long);
+        }
+      else if (!strcmp (arg, "doc"))
+        {
+          doc = va_arg (varg, const char*);
         }
       else if (!strcmp (arg, "max"))
         {
@@ -150,7 +157,7 @@ babl_type_new (void *first_arg,
       return babl;
     }
 
-  babl = type_new (name, id, bits);
+  babl = type_new (name, id, bits, doc);
 
   /* Since there is not an already registered instance by the required
    * id/name, inserting newly created class into database.

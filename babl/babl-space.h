@@ -41,6 +41,7 @@ typedef struct
 #endif
 } BablCMYK;
 
+#if 0  // draft datastructures for spectral spaces
 typedef struct _BablSpectrumType BablSpectrumType;
 
 struct _BablSpectrumType {
@@ -86,6 +87,7 @@ typedef struct
   float  stochastic_diffusion0;
   float  stochastic_diffusion1;
 } BablProcessSpace;
+#endif
 
 typedef struct
 {

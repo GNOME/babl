@@ -50,6 +50,7 @@ typedef struct
                               ones */
   void          *creator;
   char          *name;    /*< the name this type exists under         */
+  const char    *doc;     /*< the name this type exists under */
 } BablInstance;
 
 

@@ -100,6 +100,11 @@ double   babl_model_is_symmetric        (const Babl     *babl);
 void     babl_die                       (void);
 int      babl_sanity                    (void);
 
+void     babl_doc                       (const Babl     *babl,
+                                         const char     *doc);
+
+const char * babl_get_doc (const Babl *babl);
+
 void     babl_core_init                 (void);
 const Babl *babl_format_with_model_as_type (const Babl     *model,
                                          const Babl     *type);

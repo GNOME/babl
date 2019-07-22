@@ -60,7 +60,6 @@
       }
       div.expander_content {
         margin-left: 3em;
-        display: none;
         padding-bottom: 1em;
       }
       div.expander_content dl{
@@ -314,3 +313,10 @@
           display: none;
         }
       }
+
+.item_title {  font-weight: bold; margin-top: 1.5em; margin-bottom: 0.6em;
+}
+
+
+.item_body { 
+}

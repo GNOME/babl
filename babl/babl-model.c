@@ -57,7 +57,8 @@ model_new (const char     *name,
            int             id,
            int             components,
            BablComponent **component,
-           BablModelFlag   flags)
+           BablModelFlag   flags,
+           const char     *doc)
 {
   Babl *babl;
 
@@ -70,6 +71,7 @@ model_new (const char     *name,
 
   babl->class_type       = BABL_MODEL;
   babl->instance.id      = id;
+  babl->instance.doc     = doc;
   babl->model.components = components;
   babl->model.space      = space;
   babl->model.data       = NULL;
@@ -117,6 +119,7 @@ babl_model_new (void *first_argument,
   const char    *arg           = first_argument;
   const char    *assigned_name = NULL;
   char          *name          = NULL;
+  const char    *doc           = NULL;
   const Babl    *space         = babl_space ("sRGB");
   BablComponent *component [BABL_MAX_COMPONENTS];
   BablModelFlag  flags         = 0;
@@ -130,7 +133,10 @@ babl_model_new (void *first_argument,
         {
           id = va_arg (varg, int);
         }
-
+      else if (!strcmp (arg, "doc"))
+        {
+          doc = va_arg (varg, const char *);
+        }
       else if (!strcmp (arg, "name"))
         {
           assigned_name = va_arg (varg, char *);
@@ -257,7 +263,7 @@ babl_model_new (void *first_argument,
 
   if (! babl)
     {
-      babl = model_new (name, space, id, components, component, flags);
+      babl = model_new (name, space, id, components, component, flags, doc);
       babl_db_insert (db, babl);
       construct_double_format (babl);
     }

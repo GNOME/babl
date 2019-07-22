@@ -52,7 +52,8 @@ format_new (const char      *name,
             const Babl      *space,
             BablComponent  **component,
             BablSampling   **sampling,
-            const BablType **type)
+            const BablType **type,
+            const char      *doc)
 {
   Babl *babl;
 
@@ -128,7 +129,7 @@ format_new (const char      *name,
 
   babl->format.space = (void*)space;
   babl->format.encoding = NULL;
-
+  babl->instance.doc = doc;
   return babl;
 }
 
@@ -149,7 +150,7 @@ format_new_from_format_with_space (const Babl *format,
                     format->format.planar, format->format.components,
                     (void*)babl_remodel_with_space (BABL(format->format.model), space),
                     space,
-                    format->format.component, format->format.sampling, (void*)format->format.type);
+                    format->format.component, format->format.sampling, (void*)format->format.type, NULL);
 
   ret->format.encoding = babl_get_name(format);
   babl_db_insert (db, (void*)ret);
@@ -285,7 +286,7 @@ babl_format_n (const Babl *btype,
                      id,
                      planar, components, model,
                      babl_space("sRGB"),
-                     component, sampling, type);
+                     component, sampling, type, NULL);
 
   babl_format_set_is_format_n (babl);
 
@@ -343,7 +344,8 @@ babl_format_new (const void *first_arg,
   int            planar     = 0;
   int            components = 0;
   BablModel     *model      = NULL;
-  const Babl    * space     = babl_space ("sRGB");
+  const Babl    *space      = babl_space ("sRGB");
+  const char    *doc        = NULL;
   BablComponent *component [BABL_MAX_COMPONENTS];
   BablSampling  *sampling  [BABL_MAX_COMPONENTS];
   const BablType*type      [BABL_MAX_COMPONENTS];
@@ -366,6 +368,11 @@ babl_format_new (const void *first_arg,
       else if (!strcmp (arg, "name"))
         {
           name = babl_strdup (va_arg (varg, char *));
+        }
+
+      else if (!strcmp (arg, "doc"))
+        {
+          doc = babl_strdup (va_arg (varg, const char *));
         }
 
       else if (!strcmp (arg, "packed"))
@@ -506,7 +513,7 @@ babl_format_new (const void *first_arg,
   babl = format_new ((void*)name,
                      id,
                      planar, components, model, space,
-                     component, sampling, type);
+                     component, sampling, type, doc);
 
   babl_db_insert (db, babl);
   babl_free (name);
