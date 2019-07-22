@@ -54,13 +54,13 @@ index_html = custom_target('index.html',
   build_by_default: true,
 )
 
-Vocabulary_html = custom_target('Vocabulary.html',
+Reference_html = custom_target('Reference.html',
   input : [
-    'Vocabulary-static.html',
+    'Reference-static.html',
     'toc',
     index_html_tmp,
   ],
-  output: [ 'Vocabulary.html', ],
+  output: [ 'Reference.html', ],
   command: [
     env_bin,
     'cp', '@INPUT0@', '@OUTPUT@',
