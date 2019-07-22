@@ -75,9 +75,9 @@ conversions using babl formats.
     </p>
 
     <p>Babl uses git. The main repository is hosted by GNOME.
-    It can be <a href='http://git.gnome.org/cgit/babl'>browsed online</a> and cloned with:
+    It can be <a href='https://gitlab.gnome.org/GNOME/babl/'>browsed online</a> and cloned with:
     </p>
-    <pre>git clone git://git.gnome.org/babl</pre>
+    <pre>git clone https://gitlab.gnome.org/GNOME/babl.git/</pre>
 
     <a name='NEWS'></a>
     <h2>NEWS</h2>
@@ -228,7 +228,7 @@ lab_buffer  = malloc (pixel_count * 3 * sizeof (float));
     <h2>Extending</h2>
     
     <p>For samples of how the current internal API specification of
-    data types, color models, and conversions look in the <tt><a href='http://git.gnome.org/cgit/babl/tree/extensions'>extensions/</a></tt>
+    data types, color models, and conversions look in the <tt><a href='https://gitlab.gnome.org/GNOME/babl/tree/master/extensions'>extensions/</a></tt>
     directory. The tables in this HTML file is directly generated
     based on the data registered by BablCore (double and RGBA), BablBase
     (core datatypes, and RGB models), extensions (CIE Lab, naive CMYK,
