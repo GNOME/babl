@@ -37,7 +37,6 @@ index_html_tmp = custom_target('index.html.tmp',
 index_html = custom_target('index.html',
   input : [
     index_static_html,
-    index_html_tmp,
     join_paths(meson.source_root(), 'AUTHORS'),
     join_paths(meson.source_root(), 'TODO'),
     join_paths(meson.source_root(), 'NEWS'),
@@ -47,11 +46,26 @@ index_html = custom_target('index.html',
   command: [
     env_bin,
     'cp', '@INPUT0@', '@OUTPUT@',
-    '&&', xml_insert, '@OUTPUT@', 'BablBase', '@INPUT1@',
-    '&&', xml_insert, '@OUTPUT@', 'AUTHORS',  '@INPUT2@',
-    '&&', xml_insert, '@OUTPUT@', 'TODO',     '@INPUT3@',
-    '&&', xml_insert, '@OUTPUT@', 'NEWS',     '@INPUT4@',
-    '&&', xml_insert, '@OUTPUT@', 'toc',     '@INPUT5@',
+    '&&', xml_insert, '@OUTPUT@', 'AUTHORS',  '@INPUT1@',
+    '&&', xml_insert, '@OUTPUT@', 'TODO',     '@INPUT2@',
+    '&&', xml_insert, '@OUTPUT@', 'NEWS',     '@INPUT3@',
+    '&&', xml_insert, '@OUTPUT@', 'TOC',     '@INPUT4@',
+  ],
+  build_by_default: true,
+)
+
+Vocabulary_html = custom_target('Vocabulary.html',
+  input : [
+    'Vocabulary-static.html',
+    'toc',
+    index_html_tmp,
+  ],
+  output: [ 'Vocabulary.html', ],
+  command: [
+    env_bin,
+    'cp', '@INPUT0@', '@OUTPUT@',
+    '&&', xml_insert, '@OUTPUT@', 'TOC', '@INPUT1@',
+    '&&', xml_insert, '@OUTPUT@', 'BablBase', '@INPUT2@',
   ],
   build_by_default: true,
 )
@@ -66,7 +80,7 @@ CMYK_html = custom_target('CMYK.html',
   command: [
     env_bin,
     'cp', '@INPUT0@', '@OUTPUT@',
-    '&&', xml_insert, '@OUTPUT@', 'toc',     '@INPUT1@',
+    '&&', xml_insert, '@OUTPUT@', 'TOC', '@INPUT1@',
   ],
   build_by_default: true,
 )
@@ -80,7 +94,7 @@ ColorManagement_html = custom_target('ColorManagement.html',
   command: [
     env_bin,
     'cp', '@INPUT0@', '@OUTPUT@',
-    '&&', xml_insert, '@OUTPUT@', 'toc',     '@INPUT1@',
+    '&&', xml_insert, '@OUTPUT@', 'TOC',     '@INPUT1@',
   ],
   build_by_default: true,
 )
@@ -94,7 +108,7 @@ SymmetricAlpha_html = custom_target('SymmetricAlpha.html',
   command: [
     env_bin,
     'cp', '@INPUT0@', '@OUTPUT@',
-    '&&', xml_insert, '@OUTPUT@', 'toc',     '@INPUT1@',
+    '&&', xml_insert, '@OUTPUT@', 'TOC',     '@INPUT1@',
   ],
   build_by_default: true,
 )
