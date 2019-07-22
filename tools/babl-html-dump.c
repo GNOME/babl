@@ -169,9 +169,25 @@ model_doc (const Babl *babl)
     {
       BablModelFlag flags = babl_get_model_flags (babl);
       if (flags & BABL_MODEL_FLAG_RGB)
+      {
         printf ("RGB");
+
+        if (flags & BABL_MODEL_FLAG_LINEAR)
+          printf (" linear");
+        if (flags & BABL_MODEL_FLAG_NONLINEAR)
+          printf (" with TRC from space");
+        if (flags & BABL_MODEL_FLAG_PERCEPTUAL)
+          printf (" with perceptual (sRGB) TRC");
+      }
       else if (flags & BABL_MODEL_FLAG_GRAY)
-        printf ("Grayscale");
+      {
+        if (flags & BABL_MODEL_FLAG_LINEAR)
+          printf (" Luminance");
+        if (flags & BABL_MODEL_FLAG_NONLINEAR)
+          printf (" Grayscale with TRC from space");
+        if (flags & BABL_MODEL_FLAG_PERCEPTUAL)
+          printf (" Grayscale with perceptual (sRGB) TRC");
+      }
       else if (flags & BABL_MODEL_FLAG_CMYK)
       {
         if (flags & BABL_MODEL_FLAG_INVERTED)
@@ -179,13 +195,6 @@ model_doc (const Babl *babl)
         else
           printf ("CMYK");
       }
-
-      if (flags & BABL_MODEL_FLAG_LINEAR)
-        printf (" linear");
-      if (flags & BABL_MODEL_FLAG_NONLINEAR)
-        printf (" with TRC from space");
-      if (flags & BABL_MODEL_FLAG_PERCEPTUAL)
-        printf (" with perceptual (sRGB) TRC");
 
       if (flags & BABL_MODEL_FLAG_ALPHA)
       {
