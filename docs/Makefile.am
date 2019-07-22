@@ -17,7 +17,7 @@ HTML_FILES = index-static.html 	\
 	     CMYK.html		\
 	     ColorManagement.html \
 	     SymmetricAlpha.html \
-	     Vocabulary.html
+	     Reference.html
 
 EXTRA_DIST= 			\
 	babl.css  		\
@@ -25,6 +25,7 @@ EXTRA_DIST= 			\
 	tools/changelog2rss	\
 	index-static.html.in	\
 	ColorManagement-static.html	\
+	Reference-static.html	\
 	CMYK-static.html	\
 	SymmetricAlpha-static.html	\
 	COPYING			\
@@ -72,7 +73,7 @@ index.html: index-static.html                    \
 	echo " [OK]"
 
 
-Vocabulary.html: Vocabulary-static.html                    \
+Reference.html: Reference-static.html                    \
 	    $(babl_html_dump) 			 \
 	    toc					 \
 	    Makefile.am
