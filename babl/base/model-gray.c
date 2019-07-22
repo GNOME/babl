@@ -106,7 +106,7 @@ models (void)
     babl_component_from_id (BABL_ALPHA),
     "gray",
     "linear",
-    "premultiplied",
+    "associated",
     "alpha",
     NULL);
 
@@ -132,7 +132,7 @@ models (void)
     babl_component_from_id (BABL_ALPHA),
     "gray",
     "nonlinear",
-    "premultiplied",
+    "associated",
     "alpha",
     NULL);
 
@@ -158,7 +158,7 @@ models (void)
     babl_component_from_id (BABL_ALPHA),
     "gray",
     "perceptual",
-    "premultiplied",
+    "associated",
     "alpha",
     NULL);
 

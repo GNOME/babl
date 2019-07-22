@@ -648,7 +648,7 @@ babl_base_model_cmyk (void)
     "cmyk",
     "inverted",
     "alpha",
-    "premultiplied",
+    "associated",
     NULL
   );
 
@@ -684,7 +684,7 @@ babl_base_model_cmyk (void)
     babl_component ("A"),
     "cmyk",
     "alpha",
-    "premultiplied",
+    "associated",
     NULL
   );
 

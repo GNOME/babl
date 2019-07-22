@@ -85,9 +85,9 @@ model_new (const char     *name,
 }
 
 static int
-is_model_duplicate (Babl           *babl, 
-                    const Babl     *space, 
-                    int             components, 
+is_model_duplicate (Babl           *babl,
+                    const Babl     *space,
+                    int             components,
                     BablComponent **component)
 {
   int   i;
@@ -161,9 +161,9 @@ babl_model_new (void *first_argument,
         {
           flags |= BABL_MODEL_FLAG_INVERTED;
         }
-      else if (!strcmp (arg, "premultiplied"))
+      else if (!strcmp (arg, "associated"))
         {
-          flags |= BABL_MODEL_FLAG_PREMULTIPLIED;
+          flags |= BABL_MODEL_FLAG_ASSOCIATED;
         }
       else if (!strcmp (arg, "alpha"))
         {

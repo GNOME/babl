@@ -289,9 +289,8 @@ const Babl * babl_format_get_model             (const Babl *format);
 enum _BablModelFlag
 {
   BABL_MODEL_FLAG_ALPHA         = 1<<1,
-  BABL_MODEL_FLAG_PREMULTIPLIED = 1<<2,
+  BABL_MODEL_FLAG_ASSOCIATED    = 1<<2,
   BABL_MODEL_FLAG_INVERTED      = 1<<3,
-  /* BABL_MODEL_FLAG_ALPHA_ENCODED = 1<<4, NYI */
 
   BABL_MODEL_FLAG_LINEAR        = 1<<10,
   BABL_MODEL_FLAG_NONLINEAR     = 1<<11,
@@ -304,6 +303,9 @@ enum _BablModelFlag
   BABL_MODEL_FLAG_CMYK          = 1<<24,
   /* BABL_MODEL_FLAG_LUZ        = 1<<25, NYI */
 };
+
+// XXX : should warn when used
+#define BABL_MODEL_FLAG_PREMULTIPLIED BABL_MODEL_FLAG_ASSOCIATED
 
 typedef enum _BablModelFlag BablModelFlag;
 
