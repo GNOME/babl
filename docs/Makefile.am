@@ -15,6 +15,7 @@ DIST_SUBDIRS= graphics
 HTML_FILES = index-static.html 	\
 	     index.html		\
 	     CMYK.html		\
+	     Glossary.html	\
 	     ColorManagement.html \
 	     SymmetricAlpha.html \
 	     Reference.html
@@ -27,6 +28,7 @@ EXTRA_DIST= 			\
 	ColorManagement-static.html	\
 	Reference-static.html	\
 	CMYK-static.html	\
+	Glossary-static.html	\
 	SymmetricAlpha-static.html	\
 	COPYING			\
 	toc			\
@@ -47,6 +49,13 @@ SymmetricAlpha.html: SymmetricAlpha-static.html toc
 	echo " [OK]"
 
 CMYK.html: CMYK-static.html toc
+	echo -n "HTML: $@"
+	cp $< $@ 
+	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ TOC $(top_srcdir)/docs/toc
+	echo " [OK]"
+
+
+Glossary.html: Glossary-static.html toc
 	echo -n "HTML: $@"
 	cp $< $@ 
 	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ TOC $(top_srcdir)/docs/toc

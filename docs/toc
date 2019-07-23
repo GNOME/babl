@@ -5,12 +5,13 @@
       <ul>
         <li><a href='index.html#Download'>&nbsp;&nbsp;Download</a></li>
         <li><a href='index.html#Features'>&nbsp;&nbsp;Features</a></li>
+        <li><a href='Reference.html'>&nbsp;&nbsp;Reference</a></li>
+        <li><a href='Glossary.html'>&nbsp;&nbsp;Glossary</a></li>
         <li><a href='ColorManagement.html'>&nbsp;&nbsp;Color Management</a></li>
         <li><a href='SymmetricAlpha.html'>&nbsp;&nbsp;Symmetric-Alpha</a></li>
         <li><a href='CMYK.html'>&nbsp;&nbsp;CMYK</a></li>
         <!--<li><a href='#Background'>Background</a></li>-->
         <li><a href='index.html#Usage'>&nbsp;&nbsp;Usage</a></li>
-        <li><a href='Reference.html'>&nbsp;&nbsp;Reference</a></li>
         <!--<li><a href='index.html#Data-types'>&nbsp;&nbsp;&nbsp;&nbsp;Data types</a></li>
         <li><a href='index.html#Color-models'>&nbsp;&nbsp;&nbsp;&nbsp;Color models</a></li>
         <li><a href='#Pixel-formats'>&nbsp;&nbsp;&nbsp;&nbsp;Pixel formats</a></li>-->

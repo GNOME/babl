@@ -85,6 +85,22 @@ CMYK_html = custom_target('CMYK.html',
   build_by_default: true,
 )
 
+
+Glossary_html = custom_target('Glossary.html',
+  input : [
+    'Glossary-static.html',
+    'toc',
+  ],
+  output: [ 'Glossary.html', ],
+  command: [
+    env_bin,
+    'cp', '@INPUT0@', '@OUTPUT@',
+    '&&', xml_insert, '@OUTPUT@', 'TOC', '@INPUT1@',
+  ],
+  build_by_default: true,
+)
+
+
 ColorManagement_html = custom_target('ColorManagement.html',
   input : [
     'ColorManagement-static.html',

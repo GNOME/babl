@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+  <head>
+    <title>babl - glossary</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+    <link rel="icon" href="graphics/babl-16x16.png" type="image/png" />
+    <link rel="shortcut icon" href="graphics/babl-16x16.png" type="image/png" />
+    <style type='text/css'>
+       @import url(babl.css);
+    </style>
+  </head>
+  <body>
+
+    <div class='print'>
+      <div class='print_title'>
+        <h1>Babl-0.1.67</h1>
+      </div>
+    </div>
+<!--TOC-->
+
+    <div class='paper'>
+  <div class='content'>
+
+  <h2>Glossary</h2>
+
+  <p>This vocabulary is meant as a guide to the concepts involved in babl to
+help with understanding of the code and APIs, and help continued development to
+keep the vocabulary small.</p>
+
+  <dl>
+
+    <dt><a name='alpha' href='#alpha'>Alpha</a></dt>
+    <dd>Alpha is the name used for transparency in computer programming, two main forms exist <a href='#associated_alpha'>associated alpha</a> and <a href='#separate_alpha'>separate alpha</a>.</dd>
+
+    <dt><a name='associated_alpha' href='#associated_alpha'>Associated alpha</a></dt>
+    <dd>Alpha in an additive light representation where each component has its
+own associated alpha. This representation is useful for avoiding color from
+empty pixels bleeding into surroundings. It is also able to represent emittance
+in addition to opacity.
+Babl uses <a href='SymmetricAlpha'>Symmetric alpha transformations</a> between <a href='#separate_alpha'>separate alpha</a> and associated alpha.</dd>
+
+
+    <dt><a name='BablFish' href='#BablFish'>BablFish</a></dt>
+    <dd>The objects used for processing pixels, it converts between two
+BablFormats, the first time a pair of formats are passed to
+babl_fish(format_in, format_out) a benchmark is run, and the fastest
+combination of conversions available in babl to achieve the conversion within
+configured accuracy is returned and cached for subsequent requests.</dd>
+
+    <dt><a name='BablFormat' href='#BablFormat'>BablFormat</a></dt>
+    <dd>The data type used to describe a pixel format encoding, it consists of the specific order of components.</dd>
+
+    <dt><a name='BablSpace' href='#BablSpace'>BablSpace</a></dt>
+    <dd>a BablSpace describes the specifics of a BablModel - current types of BablSpaces in use in babl are RGB and CMYK based ones; the space encodes the specific parameters like custom TRCs and Primaries.</dd>
+
+    <dt><a name='BablModel' href='#BablModel'>BablModel</a></dt>
+    <dd>In babl a model describes a specific family of color encodings - with its list of color components. For the RGB and Grayscale spaces, the model also specifies any nonlinearities as TRCs.</dd>
+
+    <dt><a name='CIE' href='#CIE'>CIE</a></dt>
+    <dt><a name='ICC_profile' href='#ICC_profile'>ICC Profile</a></dt>
+    <dt><a name='encoding' href='#encoding'>Encoding</a></dt>
+
+    <dt><a name='luminance' href='#luminance'>Luminance</a></dt>
+    <dd>The photometric measure of luminious intensity of per unit area of light. The luminance in babl is proportional to luminance - though it doesn't use the SI unit of candela per square meter.</dd>
+
+    <dt><a name='non_associated_alpha' href='#non_associated_alpha'>Non-associated alpha</a></dt>
+    <dd>deprecated term, see separate alpha</dd>
+
+    <dt><a name='premultiplied_alpha' href='#premultiplied_alpha'>Premultiplied alpha</a></dt>
+    <dd>deprecated term, see associated alpha</dd>
+
+    <dt><a name='separate_alpha' href='#separate_alpha'>Separate alpha</a></dt>
+    <dd>This representation of pixels has alpha as a fully separate component,
+that can be adjusted without affecting the color.
+Babl uses <a href='SymmetricAlpha'>Symmetric alpha transformations</a> between separate and <a href='#associated_alpha'>associated alpha</a>.</dd>
+
+    <dt><a name='trc' href='#trc'>TRC</a></dt>
+
+  </dl>
+
+  <a href='graphics/index.html'><img class='BablFish' alt='/babl' title='babl' src='graphics/babl-48x48.png'/></a>
+  </div>
+  </div>
+
+    <div class='graphic'>
+      <div class='print'>
+        <img src='graphics/babl-a4poster.png' alt=' '/>
+      </div>
+    </div>
+
+  </body>
+</html>
