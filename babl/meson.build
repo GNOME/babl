@@ -42,40 +42,30 @@ babl_version_h = configure_file(
 # already exists because then we are probably working with a tarball
 # in which case the git-version.h we ship is correct.
 
-if test_bin.found() and git_bin.found()
-  if run_command(
-      [test_bin.path(), '-d', join_paths(meson.source_root(), '.git')]
-    ).returncode() == 0
-    # git repo and git is available
-    git_version = run_command([git_bin.path(), 'describe', '--always']
-      ).stdout().strip()
-    git_last_commit_year = run_command([git_bin.path(), 
-      'log', '-n1', '--date=format:%Y', '--pretty=%cd']
-      ).stdout().strip()
-  endif
-else
-  # Not a git repo so expect git-version.h to exist
-  if test_bin.found() and git_bin.found() and
-    run_command(
-      [test_bin.path(), '-f', 'git-version.h']
-    ).returncode() == 0
-    git_version_h = 'git-version.h'
-  else
-    git_version = 'Unknown, shouldn\'t happen'
-    git_last_commit_year = 0
-  endif
-endif
-if not is_variable('git_version_h')
-  git_conf = configuration_data()
-  git_conf.set('BABL_GIT_VERSION', git_version)
-  git_conf.set('BABL_GIT_LAST_COMMIT_YEAR', git_last_commit_year)
-  git_version_h = configure_file(
-    input:  'git-version.h.in',
-    output: 'git-version.h',
-    configuration: git_conf,
-  )
-endif
+is_git_repo = (
+  test_bin.found() and
+  git_bin.found() and
+  run_command(test_bin, '-d', meson.source_root() / '.git').returncode() == 0
+)
 
+if is_git_repo
+  git_version_h = vcs_tag(
+    input : 'git-version.h.in',
+    output: 'git-version.h',
+    replace_string: '@BABL_GIT_VERSION@',
+    command: [ git_bin.path(), 'describe', '--always' ],
+  )
+
+  meson.add_dist_script(
+    [ 'sh', '-c', ' '.join(
+    [ 'cp', git_version_h.full_path(), '${MESON_DIST_ROOT}/babl' ]
+    )]
+  )
+
+else
+  git_version_h = files('git-version.h')
+
+endif
 
 babl_sources = [
   'babl-cache.c',

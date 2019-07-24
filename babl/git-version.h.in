@@ -1,5 +1,6 @@
 #ifndef __GIT_VERSION_H__
 #define __GIT_VERSION_H__
+
 #define BABL_GIT_VERSION "@BABL_GIT_VERSION@"
-#define BABL_GIT_LAST_COMMIT_YEAR "@BABL_GIT_LAST_COMMIT_YEAR@"
+
 #endif /* __GIT_VERSION_H__ */

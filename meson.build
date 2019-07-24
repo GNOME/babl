@@ -183,7 +183,7 @@ if cc.has_argument('-mmmx') and get_option('enable-mmx')
       'Define to 1 if MMX assembly is available.')
 
     # sse assembly
-    if cc.has_argument('-msse') and get_option('enable-sse') 
+    if cc.has_argument('-msse') and get_option('enable-sse')
       if cc.compiles('asm ("movntps %xmm0, 0");')
         add_project_arguments('-msse', language: 'c')
         message('sse assembly available')
@@ -251,7 +251,7 @@ if not platform_win32
 endif
 foreach header: check_headers
   if cc.has_header(header[1])
-    conf.set(header[0], 1, description: 
+    conf.set(header[0], 1, description:
       'Define to 1 if the <@0@> header is available'.format(header[1]))
   endif
 endforeach
@@ -261,12 +261,12 @@ endforeach
 # general
 check_functions = [
   ['HAVE_GETTIMEOFDAY', 'gettimeofday', '<sys/time.h>'],
-  ['HAVE_RINT',         'rint'        , '<math.h>'],  
+  ['HAVE_RINT',         'rint'        , '<math.h>'],
   ['HAVE_SRANDOM',      'srandom'     , '<stdlib.h>'],
 ]
 foreach func: check_functions
   if cc.has_function(func[1], prefix: '#include ' + func[2])
-    conf.set(func[0], 1, description: 
+    conf.set(func[0], 1, description:
       'Define to 1 if the @0@() function is available'.format(func[1]))
   endif
 endforeach
@@ -288,7 +288,7 @@ endif
 if get_option('with-lcms')
   lcms = dependency('lcms2', required: true, native: false)
   if lcms.found()
-    conf.set('HAVE_LCMS', 1, description: 
+    conf.set('HAVE_LCMS', 1, description:
       'Define to 1 if liblcms2 is available')
   endif
 else
@@ -302,7 +302,7 @@ if platform_android
 else
   log = []
 endif
-if platform_win32 
+if platform_win32
   dl = []
 else
   dl = cc.find_library('dl',  required: false)
