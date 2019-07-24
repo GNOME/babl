@@ -5,7 +5,7 @@
 -->
 <html>
   <head>
-    <title>babl-@BABL_VERSION@</title>
+    <title>babltitle>
     <meta http-equiv="content-type" content="text/html;charset=utf-8" />
 
     <link rel="icon" href="graphics/babl-16x16.png" type="image/png" />
@@ -19,7 +19,7 @@
 
     <div class='print'>
       <div class='print_title'>
-        <h1>Babl-@BABL_VERSION@</h1>
+        <h1>Babl</h1>
       </div>
     </div>
 <!--TOC-->
@@ -279,7 +279,7 @@ lab_buffer  = malloc (pixel_count * 3 * sizeof (float));
 
 <!--AUTHORS-->          
      
-        <a href='graphics/index.html'><img class='BablFish' alt='/babl-@BABL_VERSION@' title='babl-@BABL_VERSION@' src='graphics/babl-48x48.png'/></a>
+        <a href='graphics/index.html'><img class='BablFish' alt='babl' title='babl' src='graphics/babl-48x48.png'/></a>
       </div>
     </div>
     <div class='graphic'>
