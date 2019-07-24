@@ -46,6 +46,7 @@ extensions = [
   ['sse2-int16', sse2_cflags],
   ['sse2-int8', sse2_cflags],
   ['sse4-int8', sse4_1_cflags],
+  ['avx2-int8', avx2_cflags],
   ['two-table', sse2_cflags],
   ['ycbcr', sse2_cflags],
 ]
