@@ -72,17 +72,19 @@ init (void)
   babl_component_new ("lightness", NULL);
   babl_component_new ("alpha", NULL);
 
+  babl_model_new ("name", "HSL",
+                  "doc", "HSL - Hue Saturation Lightness, an improvement over HSV; which uses lightness; defined as (MAX(R,G,B) + MIN(R,G,B))/2 for the grayscale axis; better than HSV, but look into the CIE based spaces for better perceptual uniformity. The HSL space is relative to the RGB space associated with the format.",
+                  babl_component ("hue"),
+                  babl_component ("saturation"),
+                  babl_component ("lightness"),
+                  NULL);
   babl_model_new ("name", "HSLA",
+                  "doc", "HSL - with separate alpha component.",
                   babl_component ("hue"),
                   babl_component ("saturation"),
                   babl_component ("lightness"),
                   babl_component ("alpha"),
                   "alpha",
-                  NULL);
-  babl_model_new ("name", "HSL",
-                  babl_component ("hue"),
-                  babl_component ("saturation"),
-                  babl_component ("lightness"),
                   NULL);
 
 
