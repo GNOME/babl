@@ -57,7 +57,7 @@ if is_git_repo
   )
 
   meson.add_dist_script(
-    [ 'ninja', git_version_h.full_path(), ],
+    [ 'ninja', 'babl/git-version.h', ],
   )
   meson.add_dist_script(
     [ 'sh', '-c', ' '.join(
