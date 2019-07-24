@@ -77,10 +77,23 @@
         <dd>stability fixes</dd>
   <dt>Ell</dt>
         <dd>fast paths</dd>
+  <dt>Guiu Rocafort</dt>
+        <dd>sanity crash fix</dd>
+  <dt>Tobias Stoeckmann</dt>
+        <dd>bug fixes for leaks and crashers</dd>
+  <dt>Debarshi Ray</dt>
+        <dd>SSE2 version of CIE code paths</dd>
   <dt>Félix Piédallu</dt>
-        <dd>Initial meson build</dd>
+        <dd>Meson build; original port, and improvements.</dd>
   <dt>Yaakov Selkowitz</dt>
         <dd>Cygwin patch</dd>
   <dt>Étienne Bersac</dt>
         <dd>build/packaging</dd>
+  <dt>Nuno Ferreira</dt>
+        <dd>coding style fixes</dd>
+  <dt>John Marshall</dt>
+        <dd>meson build improvements</dd>
+
+
+
 </dl>

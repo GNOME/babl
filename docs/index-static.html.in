@@ -48,7 +48,7 @@
     <h2>Features</h2>
 
     <ul>
-      <li>Runtim-extendable with new formats, color models, components and datatypes, and SIMD code paths.</li>
+      <li>Dynamically extendable with new formats, color models, components and datatypes, and SIMD code paths.</li>
       <li>Reference 64bit floating point conversions for datatypes and color
           models, with 32bit floating point reference speed-ups in some places.
       </li>
@@ -88,8 +88,7 @@ conversions using babl formats.
     to the GEGL release.</p>
 
     <!--NEWS-->
-    For more detailed changes see git log, for summaries of older releases see
-    <a href='OldNews.html'>archived release summaries</a>.
+    For more detailed changes see git log.
 
 
     <a name='Usage'></a>
@@ -119,7 +118,7 @@ conversions using babl formats.
     64bit floating point.
     </p>
 
-    <p>To speed up operations, ffast path conversions are used.
+    <p>To speed up operations, fast path conversions are used.
     The registered shortcut might also be used by babl as an intermediate
 conversion when constructing BablFishes for other conversions.
     </p>
@@ -166,6 +165,7 @@ lab_buffer  = malloc (pixel_count * 3 * sizeof (float));
 /* the data has now been transformed back to srgb data */</pre>
 
         <p>If the existing pixel formats are not sufficient for your conversion
+        needs, new ones can be created on the fly. The constructor
         needs, new ones can be created on the fly. The constructor
         will provide the prior created one if duplicates are registered. </p>
         <pre
@@ -289,4 +289,3 @@ lab_buffer  = malloc (pixel_count * 3 * sizeof (float));
     </div>
 
   </body>
-</html>
