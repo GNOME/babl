@@ -29,10 +29,6 @@
 #include "babl.h"
 #include "base/util.h"
 
-/* Rec. 601 as in original code //Rec. 709 */
-#define RGB_LUMA_RED 0.299 //0.2126
-#define RGB_LUMA_GREEN 0.587 //0.7152
-#define RGB_LUMA_BLUE 0.114 //0.0722
 #define EPSILON 1e-10
 
 static void rgba_to_hcya     (const Babl *conversion,
@@ -55,13 +51,15 @@ static void hcy_to_rgba      (const Babl *conversion,
                               char       *dst,
                               long        samples);
 
-static void 
+static void
 rgba_to_hcy_step (char *src,
-                  char *dst);
+                  char *dst,
+                  const double weights[3]);
 
-static void 
+static void
 hcy_to_rgba_step (char *src,
-                  char *dst);
+                  char *dst,
+                  const double weights[3]);
 
 static void components       (void);
 static void models           (void);
@@ -148,16 +146,6 @@ conversions (void)
 static void
 formats (void)
 {
-  babl_format_new (
-    "name", "HCYA float",
-    babl_model ("HCYA"),
-    babl_type ("float"),
-    babl_component ("hue"),
-    babl_component ("HCY chroma"),
-    babl_component ("HCY luma"),
-    babl_component ("alpha"),
-    NULL
-  );
 
   babl_format_new (
     "name", "HCY float",
@@ -168,13 +156,24 @@ formats (void)
     babl_component ("HCY luma"),
     NULL
   );
+
+  babl_format_new (
+    "name", "HCYA float",
+    babl_model ("HCYA"),
+    babl_type ("float"),
+    babl_component ("hue"),
+    babl_component ("HCY chroma"),
+    babl_component ("HCY luma"),
+    babl_component ("alpha"),
+    NULL
+  );
 }
 
 static void
 rgba_to_hcy_step (char *src,
-                  char *dst)
+                  char *dst,
+                  const double weights[3])
 {
-  static const double weights[3] = {RGB_LUMA_RED,RGB_LUMA_GREEN,RGB_LUMA_BLUE};
   double hue, chroma, luma;
   double X, Y_peak = 0.;
   int H_sec = 4, t = -1;
@@ -219,7 +218,8 @@ rgba_to_hcy_step (char *src,
 
 static void
 hcy_to_rgba_step (char *src,
-                  char *dst)
+                  char *dst,
+                  const double weights[3])
 {
   double red, green, blue;
   double Y_peak = 0., H_insec, X, m;
@@ -239,50 +239,50 @@ hcy_to_rgba_step (char *src,
     {
       case 0:
         H_insec = hue - H_sec;
-        Y_peak = RGB_LUMA_RED + H_insec * RGB_LUMA_GREEN;
+        Y_peak = weights[0] + H_insec * weights[1];
         chroma *= luma < Y_peak ? luma/Y_peak : (1. - luma)/(1. - Y_peak);
         X = chroma * H_insec;
-        m = luma - (RGB_LUMA_RED * chroma + RGB_LUMA_GREEN * X);
+        m = luma - (weights[0] * chroma + weights[1] * X);
         red = m + chroma; green = m + X; blue = m;
         break;
       case 1:
         H_insec = 1. - (hue - H_sec);
-        Y_peak = RGB_LUMA_GREEN + H_insec * RGB_LUMA_RED;
+        Y_peak = weights[1] + H_insec * weights[0];
         chroma *= luma < Y_peak ? luma/Y_peak : (1. - luma)/(1. - Y_peak);
         X = chroma * H_insec;
-        m = luma - (RGB_LUMA_RED * X + RGB_LUMA_GREEN * chroma);
+        m = luma - (weights[0] * X + weights[1] * chroma);
         red = m + X; green = m + chroma; blue = m;
         break;
       case 2:
         H_insec = hue - H_sec;
-        Y_peak = RGB_LUMA_GREEN + H_insec * RGB_LUMA_BLUE;
+        Y_peak = weights[1] + H_insec * weights[2];
         chroma *= luma < Y_peak ? luma/Y_peak : (1. - luma)/(1. - Y_peak);
         X = chroma * H_insec;
-        m = luma - (RGB_LUMA_GREEN * chroma + RGB_LUMA_BLUE * X);
+        m = luma - (weights[1] * chroma + weights[2] * X);
         red = m; green = m + chroma; blue = m + X;
         break;
       case 3:
         H_insec = 1. - (hue - H_sec);
-        Y_peak = RGB_LUMA_BLUE + H_insec * RGB_LUMA_GREEN;
+        Y_peak = weights[2] + H_insec * weights[1];
         chroma *= luma < Y_peak ? luma/Y_peak : (1. - luma)/(1. - Y_peak);
         X = chroma * H_insec;
-        m = luma - (RGB_LUMA_GREEN * X + RGB_LUMA_BLUE * chroma);
+        m = luma - (weights[1] * X + weights[2] * chroma);
         red = m; green = m + X; blue = m + chroma;
         break;
       case 4:
         H_insec = hue - H_sec;
-        Y_peak = RGB_LUMA_BLUE + H_insec * RGB_LUMA_RED;
+        Y_peak = weights[2] + H_insec * weights[0];
         chroma *= luma < Y_peak ? luma/Y_peak : (1. - luma)/(1. - Y_peak);
         X = chroma * H_insec;
-        m = luma - (RGB_LUMA_RED * X + RGB_LUMA_BLUE * chroma);
+        m = luma - (weights[0] * X + weights[2] * chroma);
         red = m + X; green = m; blue = m + chroma;
         break;
       default:
         H_insec = 1. - (hue - H_sec);
-        Y_peak = RGB_LUMA_RED + H_insec * RGB_LUMA_BLUE;
+        Y_peak = weights[0] + H_insec * weights[2];
         chroma *= luma < Y_peak ? luma/Y_peak : (1. - luma)/(1. - Y_peak);
         X = chroma * H_insec;
-        m = luma - (RGB_LUMA_RED * chroma + RGB_LUMA_BLUE * X);
+        m = luma - (weights[0] * chroma + weights[2] * X);
         red = m + chroma; green = m; blue = m + X;
         break;
     }
@@ -299,13 +299,18 @@ rgba_to_hcya (const Babl *conversion,
               char       *dst,
               long        samples)
 {
+  const Babl *space = babl_conversion_get_source_space (conversion);
   long n = samples;
+  double weights[3];
+
+
+  babl_space_get_rgb_luminance (space, &weights[0], &weights[1], &weights[2]);
 
   while (n--)
   {
     double alpha = ((double *) src)[3];
 
-    rgba_to_hcy_step (src, dst);
+    rgba_to_hcy_step (src, dst, weights);
 
     ((double *) dst)[3] = alpha;
 
@@ -319,13 +324,18 @@ hcya_to_rgba (const Babl *conversion,char *src,
               char *dst,
               long  samples)
 {
+  const Babl *space = babl_conversion_get_source_space (conversion);
   long n = samples;
+  double weights[3];
+
+  space = babl_conversion_get_source_space (conversion);
+  babl_space_get_rgb_luminance (space, &weights[0], &weights[1], &weights[2]);
 
   while (n--)
   {
     double alpha = ((double *) src)[3];
 
-    hcy_to_rgba_step (src, dst);
+    hcy_to_rgba_step (src, dst, weights);
 
     ((double *) dst)[3] = alpha;
 
@@ -340,11 +350,16 @@ rgba_to_hcy (const Babl *conversion,
              char       *dst,
              long        samples)
 {
+  const Babl *space = babl_conversion_get_source_space (conversion);
   long n = samples;
+  double weights[3];
+
+  space = babl_conversion_get_source_space (conversion);
+  babl_space_get_rgb_luminance (space, &weights[0], &weights[1], &weights[2]);
 
   while (n--)
   {
-    rgba_to_hcy_step (src, dst);
+    rgba_to_hcy_step (src, dst, weights);
 
     src += 4 * sizeof (double);
     dst += 3 * sizeof (double);
@@ -357,11 +372,16 @@ hcy_to_rgba (const Babl *conversion,
              char       *dst,
              long        samples)
 {
+  const Babl *space = babl_conversion_get_source_space (conversion);
   long n = samples;
+  double weights[3];
+
+  space = babl_conversion_get_source_space (conversion);
+  babl_space_get_rgb_luminance (space, &weights[0], &weights[1], &weights[2]);
 
   while (n--)
   {
-    hcy_to_rgba_step (src, dst);
+    hcy_to_rgba_step (src, dst, weights);
 
     ((double *) dst)[3] = 1.0;
 
