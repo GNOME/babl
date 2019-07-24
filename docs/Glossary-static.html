@@ -59,8 +59,15 @@ configured accuracy is returned and cached for subsequent requests.</dd>
     <dd>In babl a model describes a specific family of color encodings - with its list of color components. For the RGB and Grayscale spaces, the model also specifies any nonlinearities as TRCs.</dd>
 
     <dt><a name='CIE' href='#CIE'>CIE</a></dt>
+
     <dt><a name='ICC_profile' href='#ICC_profile'>ICC Profile</a></dt>
-    <dt><a name='encoding' href='#encoding'>Encoding</a></dt>
+    <dd>A blob/file format from the International Color Consortium, that can be used for specifies RGB or CMYK color spaces, babl has support for v2 and v4 RGB matrix profiles, as well as support for CMYK based profiles by using LCMS2.</dd>
+
+    <dt><a name='encoding' href='#encoding'>Encoding</a>In babl, the encoding
+refers to the part of a bablformat comprised by model, and choice and order of
+components + data type. In other words all the aspects of the format apart from
+the BablSpace. A babl format can be recreated from its encoding and - for
+relevant spaces - the ICC profile for the space.</dt>
 
     <dt><a name='luminance' href='#luminance'>Luminance</a></dt>
     <dd>The photometric measure of luminious intensity of per unit area of light. The luminance in babl is proportional to luminance - though it doesn't use the SI unit of candela per square meter.</dd>
