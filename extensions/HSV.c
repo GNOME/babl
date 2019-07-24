@@ -102,6 +102,7 @@ models (void)
     babl_component ("value"),
     babl_component ("alpha"),
     "alpha",
+    "doc", "A legacy color model that exists for compatibility with old GIMP code, V is MAX(R,G,B), with separate alpha.",
     NULL
   );
 
@@ -110,6 +111,7 @@ models (void)
     babl_component ("hue"),
     babl_component ("saturation"),
     babl_component ("value"),
+    "doc", "A legacy color model that exists for compatibility with old GIMP code, V is MAX(R,G,B).",
     NULL
   );
 }
