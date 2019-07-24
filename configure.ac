@@ -342,26 +342,28 @@ AC_ARG_ENABLE(sse,
   enable_sse=$enable_mmx)
 
 AC_ARG_ENABLE(sse2,
-  [  --enable-sse2            enable SSE2 support (default=auto)],,
+  [  --enable-sse2           enable SSE2 support (default=auto)],,
   enable_sse2=$enable_sse)
 
 AC_ARG_ENABLE(sse3,
-  [  --enable-sse3            enable SSE3 support (default=auto)],,
+  [  --enable-sse3           enable SSE3 support (default=auto)],,
   enable_sse3=$enable_sse2)
 
 AC_ARG_ENABLE(sse4_1,
-  [  --enable-sse4_1            enable SSE4_1 support (default=auto)],,
+  [  --enable-sse4_1         enable SSE4_1 support (default=auto)],,
   enable_sse4_1=$enable_sse)
 
 AC_ARG_ENABLE(f16c,
-  [  --enable-f16c            enable hardware half-float support (default=auto)],,
+  [  --enable-f16c           enable hardware half-float support (default=auto)],,
   enable_f16c=$enable_sse)
 
 if test "x$enable_mmx" = xyes; then
   BABL_DETECT_CFLAGS(MMX_EXTRA_CFLAGS, '-mmmx')
   SSE_EXTRA_CFLAGS=
   SSE2_EXTRA_CFLAGS=
+  SSE3_EXTRA_CFLAGS=
   SSE4_1_EXTRA_CFLAGS=
+  F16C_EXTRA_CFLAGS=
 
   AC_MSG_CHECKING(whether we can compile MMX code)
 
@@ -432,7 +434,7 @@ if test "x$enable_mmx" = xyes; then
 
           if test "x$enable_sse4_1" = xyes; then
             BABL_DETECT_CFLAGS(sse4_1_flag, '-msse4.1')
-            SSE4_1_EXTRA_CFLAGS="$SSE_EXTRA_CFLAGS $sse4_1_flag"
+            SSE4_1_EXTRA_CFLAGS="$SSE3_EXTRA_CFLAGS $sse4_1_flag"
 
             AC_MSG_CHECKING(whether we can compile SSE4_1 code)
 
