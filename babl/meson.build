@@ -57,6 +57,9 @@ if is_git_repo
   )
 
   meson.add_dist_script(
+    [ 'ninja', git_version_h.full_path(), ],
+  )
+  meson.add_dist_script(
     [ 'sh', '-c', ' '.join(
     [ 'cp', git_version_h.full_path(), '${MESON_DIST_ROOT}/babl' ]
     )]
