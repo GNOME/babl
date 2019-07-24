@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+  <head>
+    <title>babl - old releases</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+    <link rel="icon" href="graphics/babl-16x16.png" type="image/png" />
+    <link rel="shortcut icon" href="graphics/babl-16x16.png" type="image/png" />
+    <style type='text/css'>
+       @import url(babl.css);
+    </style>
+  </head>
+  <body>
+
+    <div class='print'>
+      <div class='print_title'>
+        <h1>old feleases</h1>
+      </div>
+    </div>
+<!--TOC-->
+
+    <div class='paper'>
+  <div class='content'>
+  <h2>old babl releases</h2>
+<dl>
+
+2018-10-05 babl-0.1.60                                              </dt><dd>
+Improved thread safety, acceleration for R'G'B'A u8 -> cairo-ARGB32 conversion.
+                                                                    </dd><dt>
+2018-10-05 babl-0.1.58                                              </dt><dd>
+Preserve color of transparent pixels in conversion to premultiplied alpha,
+Added single precision code-paths for faster fallback/reference conversions.
+New BABL_ICC_INTENT_PERFORMANCE bitflag for combining with intent as bitflags,
+use of matrix+trc when relative colorimetric CLUT is present. New color model
+and formats, CIE xyY.
+
+                                                                    </dd><dt>
+2018-08-14 babl-0.1.56                                              </dt><dd>
+Improvements to the caching of profiled conversion chains between invocations
+by ignoring unknown bits in cache file and remember which conversions yielded
+reference fishes.
+
+2018-07-23 babl-0.1.54                                              </dt><dd>
+                                                                    </dd><dt>
+Export babl_space_get_icc, babl_space_get, babl_model_with_space,
+babl_space_with_trc, babl_format_get_encoding, babl_model_is, SSE2 versions of
+YA float and Y float to CIE L float.
+                                                                    </dd><dt>
+2018-06-02 babl-0.1.52                                              </dt><dd>
+Concurrency fixes and fixes to handling of 0/1 entry palettes, do not
+pre-equalize XYZ conversion matrices for sRGB, internal clean-ups, pre-define
+ACES2065-1 and ACEScg BablSpaces, add R~G~B~ set of spaces, which for all
+BablSpaces mean use sRGB TRC.
+                                                                    </dd><dt>
+2018-05-20 babl-0.1.50                                              </dt><dd>
+Improvements to speed and precision of indexed code, improvements to meson
+build.
+                                                                    </dd><dt>
+2018-05-15 babl-0.1.48                                              </dt><dd>
+fix u8 &lt;-&gt; double conversions for chroma, SSE2 version of RGBA float to
+CIE L / Lab. Build with -Ofast by default.
+                                                                    </dd><dt>
+2018-04-10 babl-0.1.46                                              </dt><dd>
+added extensions with more coverage for u32, half and other utilit fast paths
+improving fast path coverage.
+                                                                    </dd><dt>
+2018-02-18 babl-0.1.44                                              </dt><dd>
+Fix bug in custom primaries/ICC fast paths, improve meson build<br/>
+                                                                    </dd><dt>
+2018-01-23 babl-0.1.42                                              </dt><dd>
+Fully initialize fishes when loading from cache. <br/>
+                                                                    </dd><dt>
+2018-01-16 babl-0.1.40                                              </dt><dd>
+Added format "CIE XYZ alpha" color model and formats.
+New API babl_process_rows for reduced overhead in some scenarios; though bigger
+gains seen also for regular babl_process with reimplemented branch-free
+dispatch, and faster cbrt. Added meson build; being tested in parallel with
+auotmake, Improved reference conversions for formats skipping some of models
+components, Fixed gamma handling in indexed/palettized formats and improved
+gamma precision consistenct in sse2 conversions.<br/>
+                                                                    </dd><dt>
+2017-11-15 babl-0.1.38                                              </dt><dd>
+Added format "CIE L float", a couple of protections against division by 0.0
+                                                                    </dd><dt>
+2017-11-10 babl-0.1.36                                              </dt><dd>
+Optimized customized primary aware code paths for CIE Lab<->RGB conversions,
+improved accuracy of gamma approximations. New API babl_format_exists() for
+checking validity of babl format name, crash proofing of cache handling and use
+of environment variables.
+                                                                    </dd><dt>
+2017-10-06 babl-0.1.34                                              </dt><dd>
+Brown paper bag release, Fix indexed / custom primaries conflict, and re-export
+a symbol used by old GEGL/GIMPs.
+                                                                    </dd><dt>
+2017-10-03 babl-0.1.32                                              </dt><dd>
+Added custom primaries and TRC support through ICC parsing, improved
+float<->half performance, rewrite of all conversions functions to adhere to new
+signature.
+                                                                    </dd><dt>
+2017-07-15 babl-0.1.30                                              </dt><dd>
+Thread stability for palette modes, stricter alpha preservation, now
+cross-compilable on android.
+                                                                    </dd><dt>
+2017-05-30 babl-0.1.28                                              </dt><dd>
+Fast paths for Lav <-> Lch, release triggered by pending GIMP release.
+                                                                    </dd><dt>
+2017-05-09 babl-0.1.26                                              </dt><dd>
+Build and install HCY color space, platform independences fixes to fish cache.
+                                                                    </dd><dt>
+2017-02-01 babl-0.1.24                                              </dt><dd>
+Improvements to profile cache persistance, fast paths that improve actual GIMP
+use on various precisions, use single precision constants for some more of CIE
+computions.
+                                                                    </dd><dt>
+2016-11-05 babl-0.1.22                                              </dt><dd>
+Added cache of profiled conversions, added HCY color model, some precision and
+performance updated for fast paths.
+                                                                    </dd><dt>
+2016-11-05 babl-0.1.20                                              </dt><dd>
+Fix run-time errors, leaks, and race conditions. Add conditional fast paths.
+                                                                    </dd><dt>
+2016-06-13 babl-0.1.18                                              </dt><dd>
+Bugfix: take alpha threshold in consideration when processing floats in SSE2.
+                                                                    </dd><dt>
+2016-02-12 babl-0.1.16                                              </dt><dd>
+Improvements to half float reference, SIMD, and fast-paths, and CIE float fast
+paths; cleanups of fast path extensions.
+                                                                    </dd><dt>
+2015-11-19 babl-0.1.14                                              </dt><dd>
+sRGB precision tuning, stability fixes, locale fix for setting error tolerance.
+                                                                    </dd><dt>
+2015-02-03 babl-0.1.12                                              </dt><dd>
+optimizations for floating point conversions, HSV and HSL color models,
+removal of dead code, fixed CIE Lab conversions.
+                                                                    </dd><dt>
+2012-03-30 babl-0.1.10                                              </dt><dd>
+LUT based speedups for gamma correction / uncorrection.
+                                                                    </dd><dt>
+2012-03-30 babl-0.1.8                                               </dt><dd>
+Added support for indexed/pallette based formats, constified API.
+                                                                    </dd><dt>
+2011-11-18 babl-0.1.6                                               </dt><dd>
+Build improvements, remove blatantly wrong conversions from extensions,
+made it possible to distinguish format_n formats from others, improvements
+to vala/gobject introspection support.
+
+                                                                    </dd><dt>
+2011-01-20 babl-0.1.4                                               </dt><dd>
+Improved cross platform build ability, added code to handle n-component formats,
+remove extraenous runtime profiling that impacted performance.
+
+                                                                    </dd><dt>
+2010-01-15 babl-0.1.2                                               </dt><dd>
+Made babl mostly threadsafe (sufficient for GIMP/GEGLs needs). Streamlined core functionality, reducing number of function calls and removing overeager instrumentation.
+                                                                    </dd><dt>
+2009-05-20 babl-0.1.0                                               </dt><dd>
+Support for RGBA representation in the frequency domain,
+un-pre-multiply close-to-zero alpha values to complete black instead
+of slightly brighter than black, add a BABL_ALPHA_THRESHOLD constant
+to the API, do a complete overhaul of the babl API and do some
+changes to increase portability of the library.
+                                                                    </dd><dt>
+2008-06-12 babl-0.0.22                                              </dt><dd>
+Speed improvements due to: coalesced hashing, early bail out upon creation of
+duplicate formats, caching of non existing paths. Large amounts of the core has
+also been reviewed and refactored. Improved conversion coverage in the matrix.
+                                                                    </dd><dt>
+2008-02-27 babl-0.0.20                                              </dt><dd>
+Builds on OSX
+Check <0.0 and >1.0 values conversions for accuracy as well.
+
+                                                                   </dd></dl>
+
+<!--
+                                                                    </dd><dt>
+2007-12-30 babl-0.0.18                                              </dt><dd>
+Constified use of babl formats.
+
+                                                                    </dd><dt>
+2007-11-25 babl-0.0.16                                              </dt><dd>
+Reduced constant overhead for linear conversions.
+Misc build environment cleanups.
+
+                                                                    </dd><dt>
+2007-01-07 babl-0.0.14                                              </dt><dd>
+Cache values parsed from BABL_foo environment variables.
+                                                                    </dd><dt>
+2007-01-07 babl-0.0.12                                              </dt><dd>
+Speedups for GEGL
+Build environment fixes.
+                                                                    </dd><dt>
+2006-xx-xx babl-0.0.10                                              </dt><dd>
+Build environment fixes.
+
+                                                                    </dd><dt>
+2006-12-29 babl-0.0.8                                               </dt><dd>
+Made code adhere more strictly to C standard.
+Set the BABL_PATH based on build prefix
+
+                                                                    </dd><dt>
+2006-10-09 babl-0.0.6                                               </dt><dd>
+Build environment fixes.
+Fixed timing code for picking correct conversions.
+
+                                                                    </dd><dt>
+2006-08-31 babl-0.0.4                                               </dt><dd>
+Build environment fixes
+Reduced used/exposed API.
+Added GEGL speedup extension.
+                                                                    </dd><dt>
+2005-0x-xx babl-0.0.2 <em>Green fish release</em>                   </dt><dd>
+
+Initial release.
+
+                                                                    </dd><dt>
+2005-08-xx babl-0.0.1                                               </dt><dd>
+
+Development release of babl, minimal working configuration for
+RGB, CMYK and YCbCr for 8bit 16bit float and double. Emphasis is on
+precision and clarity of code not speed. </dd>
+
+  </dl>
+
+  <a href='graphics/index.html'><img class='BablFish' alt='/babl' title='babl' src='graphics/babl-48x48.png'/></a>
+  </div>
+  </div>
+
+    <div class='graphic'>
+      <div class='print'>
+        <img src='graphics/babl-a4poster.png' alt=' '/>
+      </div>
+    </div>
+
+  </body>
+</html>

@@ -85,6 +85,21 @@ CMYK_html = custom_target('CMYK.html',
   build_by_default: true,
 )
 
+OldNews_html = custom_target('OldNews.html',
+  input : [
+    'OldNews-static.html',
+    'toc',
+  ],
+  output: [ 'OldNews.html', ],
+  command: [
+    env_bin,
+    'cp', '@INPUT0@', '@OUTPUT@',
+    '&&', xml_insert, '@OUTPUT@', 'TOC', '@INPUT1@',
+  ],
+  build_by_default: true,
+)
+
+
 
 Glossary_html = custom_target('Glossary.html',
   input : [

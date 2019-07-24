@@ -15,6 +15,7 @@ DIST_SUBDIRS= graphics
 HTML_FILES = index-static.html 	\
 	     index.html		\
 	     CMYK.html		\
+	     OldNews.html		\
 	     Glossary.html	\
 	     ColorManagement.html \
 	     SymmetricAlpha.html \
@@ -28,6 +29,7 @@ EXTRA_DIST= 			\
 	ColorManagement-static.html	\
 	Reference-static.html	\
 	CMYK-static.html	\
+	OldNews-static.html	\
 	Glossary-static.html	\
 	SymmetricAlpha-static.html	\
 	COPYING			\
@@ -35,7 +37,7 @@ EXTRA_DIST= 			\
 	COPYING.LESSER		\
 	meson.build
 
-BUILT_EXTRA_DIST = index.html ColorManagement.html CMYK.html SymmetricAlpha.html Reference.html Glossary.html
+BUILT_EXTRA_DIST = index.html ColorManagement.html CMYK.html OldNews.html SymmetricAlpha.html Reference.html Glossary.html
 
 CLEANFILES = README changelog.rss
 DISTCLEANFILES = index-static.html $(BUILT_EXTRA_DIST)
@@ -54,6 +56,12 @@ CMYK.html: CMYK-static.html toc
 	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ TOC $(top_srcdir)/docs/toc
 	echo " [OK]"
 
+
+OldNews.html: OldNews-static.html toc
+	echo -n "HTML: $@"
+	cp $< $@ 
+	$(SHELL) $(top_srcdir)/docs/tools/xml_insert.sh $@ TOC $(top_srcdir)/docs/toc
+	echo " [OK]"
 
 Glossary.html: Glossary-static.html toc
 	echo -n "HTML: $@"
