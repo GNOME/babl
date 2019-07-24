@@ -95,16 +95,6 @@ components (void)
 static void
 models (void)
 {
-  babl_model_new (
-    "name", "HSVA",
-    babl_component ("hue"),
-    babl_component ("saturation"),
-    babl_component ("value"),
-    babl_component ("alpha"),
-    "alpha",
-    "doc", "A legacy color model that exists for compatibility with old GIMP code, V is MAX(R,G,B), with separate alpha.",
-    NULL
-  );
 
   babl_model_new (
     "name", "HSV",
@@ -112,6 +102,16 @@ models (void)
     babl_component ("saturation"),
     babl_component ("value"),
     "doc", "A legacy color model that exists for compatibility with old GIMP code, V is MAX(R,G,B).",
+    NULL
+  );
+  babl_model_new (
+    "name", "HSVA",
+    babl_component ("hue"),
+    babl_component ("saturation"),
+    babl_component ("value"),
+    babl_component ("alpha"),
+    "alpha",
+    "doc", "HSV with separate alpha.",
     NULL
   );
 }
