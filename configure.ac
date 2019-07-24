@@ -353,6 +353,10 @@ AC_ARG_ENABLE(sse4_1,
   [  --enable-sse4_1         enable SSE4_1 support (default=auto)],,
   enable_sse4_1=$enable_sse)
 
+AC_ARG_ENABLE(avx2,
+  [  --enable-avx2           enable AVX2 support (default=auto)],,
+  enable_avx2=$enable_sse)
+
 AC_ARG_ENABLE(f16c,
   [  --enable-f16c           enable hardware half-float support (default=auto)],,
   enable_f16c=$enable_sse)
@@ -363,6 +367,7 @@ if test "x$enable_mmx" = xyes; then
   SSE2_EXTRA_CFLAGS=
   SSE3_EXTRA_CFLAGS=
   SSE4_1_EXTRA_CFLAGS=
+  AVX2_EXTRA_CFLAGS=
   F16C_EXTRA_CFLAGS=
 
   AC_MSG_CHECKING(whether we can compile MMX code)
@@ -448,6 +453,24 @@ if test "x$enable_mmx" = xyes; then
               AC_MSG_RESULT(no)
               AC_MSG_WARN([The assembler does not support the SSE4_1 command set.])
             )
+
+            if test "x$enable_avx2" = xyes; then
+              BABL_DETECT_CFLAGS(avx2_flag, '-mavx2')
+              AVX2_EXTRA_CFLAGS="$SSE4_1_EXTRA_CFLAGS $avx2_flag"
+
+              AC_MSG_CHECKING(whether we can compile AVX2 code)
+
+              CFLAGS="$CFLAGS $avx2_flag"
+
+              AC_COMPILE_IFELSE([AC_LANG_PROGRAM(,[asm ("vpgatherdd %ymm0,(%rax,%ymm1,4),%ymm2");])],
+                AC_DEFINE(USE_AVX2, 1, [Define to 1 if AVX2 assembly is available.])
+                AC_MSG_RESULT(yes)
+              ,
+                enable_avx2=no
+                AC_MSG_RESULT(no)
+                AC_MSG_WARN([The assembler does not support the AVX2 command set.])
+              )
+            fi
           fi
         fi
       fi
@@ -486,6 +509,7 @@ if test "x$enable_mmx" = xyes; then
   AC_SUBST(SSE2_EXTRA_CFLAGS)
   AC_SUBST(SSE3_EXTRA_CFLAGS)
   AC_SUBST(SSE4_1_EXTRA_CFLAGS)
+  AC_SUBST(AVX2_EXTRA_CFLAGS)
   AC_SUBST(F16C_EXTRA_CFLAGS)
 fi
 

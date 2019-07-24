@@ -121,11 +121,15 @@ enum
   ARCH_X86_INTEL_FEATURE_SSE4_2   = 1 << 20,
   ARCH_X86_INTEL_FEATURE_AVX      = 1 << 28,
   ARCH_X86_INTEL_FEATURE_F16C     = 1 << 29,
+
+  /* extended features */
+  ARCH_X86_INTEL_FEATURE_AVX2     = 1 << 5
 };
 
 #if !defined(ARCH_X86_64) && (defined(PIC) || defined(__PIC__))
 #define cpuid(op,eax,ebx,ecx,edx)  \
   __asm__ ("movl %%ebx, %%esi\n\t" \
+           "xor %%ecx, %%ecx\n\t"  \
            "cpuid\n\t"             \
            "xchgl %%ebx,%%esi"     \
            : "=a" (eax),           \
@@ -135,7 +139,8 @@ enum
            : "0" (op))
 #else
 #define cpuid(op,eax,ebx,ecx,edx)  \
-  __asm__ ("cpuid"                 \
+  __asm__ ("xor %%ecx, %%ecx\n\t"  \
+           "cpuid"                 \
            : "=a" (eax),           \
              "=b" (ebx),           \
              "=c" (ecx),           \
@@ -253,6 +258,16 @@ arch_accel_intel (void)
 
     if (ecx & ARCH_X86_INTEL_FEATURE_F16C)
       caps |= BABL_CPU_ACCEL_X86_F16C;
+
+    cpuid (0, eax, ebx, ecx, edx);
+
+    if (eax >= 7)
+      {
+        cpuid (7, eax, ebx, ecx, edx);
+
+        if (ebx & ARCH_X86_INTEL_FEATURE_AVX2)
+          caps |= BABL_CPU_ACCEL_X86_AVX2;
+      }
 #endif /* USE_SSE */
   }
 #endif /* USE_MMX */

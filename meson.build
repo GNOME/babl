@@ -216,6 +216,16 @@ if cc.has_argument('-mmmx') and get_option('enable-mmx')
                 conf.set('USE_SSE4_1', 1, description:
                   'Define to 1 if sse4.1 assembly is available.')
               endif
+
+              # avx2 assembly
+              if cc.has_argument('-mavx2') and get_option('enable-avx2')
+                if cc.compiles('asm ("vpgatherdd %ymm0,(%rax,%ymm1,4),%ymm2");')
+                  message('avx2 assembly available')
+                  avx2_cflags = '-mavx2'
+                  conf.set('USE_AVX2', 1, description:
+                    'Define to 1 if avx2 assembly is available.')
+                endif
+              endif
             endif
           endif
         endif
