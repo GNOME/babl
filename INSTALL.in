@@ -13,9 +13,12 @@ installation (or a variation on this theme):
 
      ------------------------------------------------------------
      foo$ wget ftp://ftp.gtk.org/pub/babl/0.1/babl-@BABL_VERSION@.tar.bz2
-     foo$ tar jxf babl-@BABL_VERSION@.tar.gz
+     foo$ tar xvf babl-@BABL_VERSION@.tar.gz
      foo$ cd babl-@BABL_VERSION@
-     foo/babl-@BABL_VERSION@$ ./configure && make && sudo make install
+     foo/babl-@BABL_VERSION@$ meson build
+     foo/babl-@BABL_VERSION@$ cd build
+     foo/babl-@BABL_VERSION@/build$ ninja && ninja install
+
      ------------------------------------------------------------
 
 
