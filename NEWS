@@ -8,7 +8,12 @@ Added Yu'v' (CIE 1976 UCS) color model.  Fixed a severe non-initialised memory
 issue - that kept us from using fast paths for many babl spaces loaded from
 profile. More fully symmetric conversions between associated and separate
 alpha. Added more converters, both SSE2 and non-SSE2 for matrix-conversion
-between different RGB spaces.  Improvements to website/documentation; babl is now using the terms associated alpha and separate alpha, all of: nonpremultiplied-, premultiplied- and nonassociated- alpha are now considered deprecated API. HCY luminance is now relative to the RGB space used - no change for sRGB related pixel formats. AVX2 acceleration for some linear to float conversions.
+between different RGB spaces.  Improvements to website/documentation; babl is
+now using the terms associated alpha and separate alpha, all of:
+nonpremultiplied-, premultiplied- and nonassociated- alpha are now considered
+deprecated API. HCY luminance is now relative to the RGB space used - no change
+for sRGB related pixel formats. AVX2 acceleration for some linear to float
+conversions.
 
 2019-06-12 babl-0.1.66                                              </dt><dd>
 Added API call, babl_space_get_rgb_luminance,
