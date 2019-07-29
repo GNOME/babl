@@ -755,11 +755,11 @@ babl_fish_reference_process_double (const Babl *babl,
 
 
   void *source_double_buf_alloc = NULL;
-  void *source_double_buf;
+  void *source_double_buf       = NULL;
   void *rgba_double_buf_alloc   = NULL;
-  void *rgba_double_buf;
+  void *rgba_double_buf         = NULL;
   void *cmyka_double_buf_alloc  = NULL;
-  void *cmyka_double_buf;
+  void *cmyka_double_buf        = NULL;
   void *destination_double_buf_alloc = NULL;
   void *destination_double_buf;
   const void *type_double  = babl_type_from_id (BABL_DOUBLE);
