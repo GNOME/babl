@@ -30,29 +30,6 @@ cache:
     - ninja -C _build
     - ninja -C _build test
 
-.autotools-build:
-  extends: .build
-  artifacts:
-    when: always
-    paths:
-      - _build/*.log
-      - _build/*/*.log
-      - _build/*/*/*.log
-  script:
-    - mkdir _build
-    - cd _build
-    - ../autogen.sh
-        --enable-docs
-        --enable-f16c
-        --enable-mmx
-        --enable-sse
-        --enable-sse2
-        --enable-sse3
-        --enable-sse4_1
-        ${LCMS_OPTION}
-    - make
-    - make check
-
 latest-meson-lcms:
   extends: .meson-build
   variables:
@@ -64,14 +41,3 @@ latest-meson-nolcms:
   variables:
     LCMS_OPTION : "-Dwith-lcms=false"
     EXTRA_PKGS: "meson"
-
-latest-autotools-lcms:
-  extends: .autotools-build
-  variables:
-    LCMS_OPTION : "--with-lcms"
-    EXTRA_PKGS: "lcms2"
-
-latest-autotools-nolcms:
-  extends: .autotools-build
-  variables:
-    LCMS_OPTION : "--without-lcms"
