@@ -219,7 +219,7 @@ if cc.has_argument('-mmmx') and get_option('enable-mmx')
 
               # avx2 assembly
               if cc.has_argument('-mavx2') and get_option('enable-avx2')
-                if cc.compiles('asm ("vpgatherdd %ymm0,(%rax,%ymm1,4),%ymm2");')
+                if cc.compiles('asm ("vpgatherdd %ymm0,(%eax,%ymm1,4),%ymm2");')
                   message('avx2 assembly available')
                   avx2_cflags = '-mavx2'
                   conf.set('USE_AVX2', 1, description:
