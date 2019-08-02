@@ -176,7 +176,7 @@ add_project_arguments(common_c_flags, language: 'c')
 
 mmx_args = []
 sse_args = []
-sse2_args = []
+sse2_cflags = []
 sse4_1_cflags = []
 avx2_cflags = []
 
