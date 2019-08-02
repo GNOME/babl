@@ -3,6 +3,9 @@ The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
                                                                           -->
 
+2019-08-02 babl-0.1.70                                              </dt><dd>
+Build fixes making the meson build work with more architectures.
+                                                                    </dd><dt>
 2019-07-25 babl-0.1.68                                              </dt><dd>
 Added Yu'v' (CIE 1976 UCS) color model.  Fixed a severe non-initialised memory
 issue - that kept us from using fast paths for many babl spaces loaded from
@@ -14,7 +17,7 @@ nonpremultiplied-, premultiplied- and nonassociated- alpha are now considered
 deprecated API. HCY luminance is now relative to the RGB space used - no change
 for sRGB related pixel formats. AVX2 acceleration for some linear to float
 conversions.
-
+                                                                    </dd><dt>
 2019-06-12 babl-0.1.66                                              </dt><dd>
 Added API call, babl_space_get_rgb_luminance,
 Make most SIMD code-paths optional again on i686.
