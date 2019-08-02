@@ -174,6 +174,12 @@ add_project_arguments(common_c_flags, language: 'c')
 ################################################################################
 # Check for compiler CPU extensions
 
+mmx_args = []
+sse_args = []
+sse2_args = []
+sse4_1_cflags = []
+avx2_cflags = []
+
 # mmx assembly
 if cc.has_argument('-mmmx') and get_option('enable-mmx')
   if cc.compiles('asm ("movq 0, %mm0");')
@@ -215,8 +221,6 @@ if cc.has_argument('-mmmx') and get_option('enable-mmx')
                 sse4_1_cflags = '-msse4.1'
                 conf.set('USE_SSE4_1', 1, description:
                   'Define to 1 if sse4.1 assembly is available.')
-              else
-                sse4_1_cflags = '-Wall'
               endif
 
               # avx2 assembly
@@ -226,21 +230,11 @@ if cc.has_argument('-mmmx') and get_option('enable-mmx')
                   avx2_cflags = '-mavx2'
                   conf.set('USE_AVX2', 1, description:
                     'Define to 1 if avx2 assembly is available.')
-                else
-                  avx2_cflags = '-Wall'
                 endif
-              else
-                avx2_cflags = '-Wall'
               endif
             endif
-          else
-            sse2_cflags = '-Wall'
           endif
-        else
-          sse2_args = ['-Wall']
         endif
-      else
-        sse_args = ['-Wall']
       endif
       if cc.has_argument('-mf16c') and get_option('enable-f16c')
         if cc.compiles(
@@ -254,25 +248,8 @@ if cc.has_argument('-mmmx') and get_option('enable-mmx')
             'Define to 1 if f16c intrinsics are available.')
         endif
       endif
-    else
-      sse_args = '-Wall'
-      sse2_args = '-Wall'
-      sse4_1_cflags = '-Wall'
-      avx2_cflags = '-Wall'
     endif
-  else
-    mmx_args = '-Wall'
-    sse_args = '-Wall'
-    sse2_args = '-Wall'
-    sse4_1_cflags = '-Wall'
-    avx2_cflags = '-Wall'
   endif
-else
-  mmx_args = '-Wall'
-  sse_args = '-Wall'
-  sse2_args = '-Wall'
-  sse4_1_cflags = '-Wall'
-  avx2_cflags = '-Wall'
 endif
 
 ################################################################################
