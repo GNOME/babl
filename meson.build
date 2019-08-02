@@ -174,11 +174,12 @@ add_project_arguments(common_c_flags, language: 'c')
 ################################################################################
 # Check for compiler CPU extensions
 
-mmx_args = []
-sse_args = []
-sse2_cflags = []
+# intialize these to nothing, so meson doesn't complain on non-x86
+
+sse2_cflags   = []
+f16c_cflags   = []
 sse4_1_cflags = []
-avx2_cflags = []
+avx2_cflags   = []
 
 # mmx assembly
 if cc.has_argument('-mmmx') and get_option('enable-mmx')
