@@ -1,13 +1,15 @@
 bablInclude = include_directories('.')
 subdir('base')
 
+python = import('python').find_installation()
+
 version_script = 'babl.map'
 export_symbols = join_paths(meson.source_root(), 'export-symbols')
 version_script_target = custom_target(version_script,
   input : [ export_symbols, ] ,
   output: [ version_script ] ,
   command: [
-  'python',
+  python,
   join_paths(meson.source_root(), 'gen_babl_map.py'),
   export_symbols,
   version_script,
