@@ -256,12 +256,23 @@ if cc.has_argument('-mmmx') and get_option('enable-mmx')
       endif
     else
       sse_args = '-Wall'
+      sse2_args = '-Wall'
+      sse4_1_cflags = '-Wall'
+      avx2_cflags = '-Wall'
     endif
   else
     mmx_args = '-Wall'
+    sse_args = '-Wall'
+    sse2_args = '-Wall'
+    sse4_1_cflags = '-Wall'
+    avx2_cflags = '-Wall'
   endif
 else
   mmx_args = '-Wall'
+  sse_args = '-Wall'
+  sse2_args = '-Wall'
+  sse4_1_cflags = '-Wall'
+  avx2_cflags = '-Wall'
 endif
 
 ################################################################################
