@@ -103,7 +103,7 @@ elif host_cpu == 'ppc64' or host_cpu == 'powerpc64'
   conf.set10('ARCH_PPC64', true, description:
     'Define to 1 if you are compiling for PowerPC64.')
 else
-  error('Unknown host architecture')
+  warning('Unknown host architecture')
 endif
 
 host_os = host_machine.system()
