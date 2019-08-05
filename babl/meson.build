@@ -133,3 +133,21 @@ babl = library(
   version: so_version,
   install: true,
 )
+
+if get_option('enable-gir')
+  # identity filter, so GIR doesn't choke on the Babl type
+  # (since it has the same name as the Babl namespace)
+  identfilter_py = join_paths(meson.current_source_dir(), 'identfilter.py')
+
+  babl_gir = gnome.generate_gir(babl,
+    sources: babl_headers,
+    extra_args: [
+      '--identifier-filter-cmd=@0@ @1@'.format(python.path(), identfilter_py),
+      '-DBABL_IS_BEING_COMPILED',
+    ],
+    namespace: 'Babl',
+    nsversion: '1',
+    header: 'babl.h',
+    install: true,
+  )
+endif

@@ -26,6 +26,7 @@ conf = configuration_data()
 pkgconfig = import('pkgconfig')
 i18n      = import('i18n')
 gnome     = import('gnome')
+python    = import('python')
 
 cc        = meson.get_compiler('c')
 prefix    = get_option('prefix')
