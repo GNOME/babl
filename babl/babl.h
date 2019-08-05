@@ -111,12 +111,10 @@ typedef enum {
 
 /**
  * babl_space_from_icc:
- *
  * @icc_data: pointer to icc profile in memory
  * @icc_length: length of icc profile in bytes
  * @intent: the intent from the ICC profile to use.
- *
- " @error: pointer to a string where decoding errors can be stored,
+ * @error: (out): pointer to a string where decoding errors can be stored,
  *         if an error occurs, NULL is returned and an error message
  *         is provided in error.
  *
@@ -618,16 +616,15 @@ int babl_model_is (const Babl *babl, const char *model_name);
 
 /**
  * babl_space_get_icc:
+ * @babl: a #Babl
+ * @length: (out) (optional): Length of the profile in bytes.
  *
  * Return pointer to ICC profile for space note that this is
  * the ICC profile for R'G'B', though in formats only supporting linear
  * like EXR GEGL chooses to load this lienar data as RGB and use the sRGB
  * TRC.
  *
- * @babl: a BablSpace
- * @length: point to an integer where length of profile in bytes is stored.
- *
- * Returns pointer to ICC profile data.
+ * Returns: pointer to ICC profile data.
  */
 const char *babl_space_get_icc (const Babl *babl, int *length);
 

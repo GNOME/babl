@@ -19,8 +19,15 @@
 #ifndef _BABL_INTROSPECT_H
 #define _BABL_INTROSPECT_H
 
+#include <babl/babl.h>
 
-void         babl_introspect (Babl       *babl); /* introspect a given BablObject     */
+/**
+ * babl_introspect:
+ * @babl: A #Babl
+ *
+ * introspect a given BablObject
+ */
+void         babl_introspect (Babl       *babl);
 
 
 #endif
