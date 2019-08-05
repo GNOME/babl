@@ -133,3 +133,16 @@ babl = library(
   version: so_version,
   install: true,
 )
+
+if get_option('enable-gir')
+  babl_gir = gnome.generate_gir(babl,
+    sources: babl_headers,
+    extra_args: [
+      '-DBABL_IS_BEING_COMPILED',
+    ],
+    namespace: 'Babl',
+    nsversion: '1',
+    header: 'babl.h',
+    install: true,
+  )
+endif
