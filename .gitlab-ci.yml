@@ -9,6 +9,7 @@ cache:
     - pacman -Syu --noconfirm --needed --cachedir `pwd`/_pacman_cache
         base-devel
         git
+        gojbect-introspection
         ${EXTRA_PKGS}
 
 .meson-build:
