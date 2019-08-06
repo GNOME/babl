@@ -285,8 +285,21 @@ const Babl * babl_format_get_model             (const Babl *format);
 
 
 
-
-enum _BablModelFlag
+/**
+ * BablModelFlag
+ * @BABL_MODEL_FLAG_ALPHA:  the model encodes alpha.
+ * @BABL_MODEL_FLAG_ASSOCIATED: the alpha is associated alpha.
+ * @BABL_MODEL_FLAG_INVERTED: the components are inverted (used for getting the additive complement space of CMYK).
+ * @BABL_MODEL_FLAG_LINEAR: the data has no TRC, i.e. is linear
+ * @BABL_MODEL_FLAG_NONLINEAR: the data has a TRC - the TRC from the configured space
+ * @BABL_MODEL_FLAG_PERCEPTUAL: the data has a TRC - a perceptual TRC where 50% gray is 0.5
+ * @BABL_MODEL_FLAG_GRAY: this is a gray component model
+ * @BABL_MODEL_FLAG_RGB: this is an RGB based component model, the space associated is expected to contain an RGB matrix profile.
+ * @BABL_MODEL_FLAG_CIE: this model is part of the CIE family of spaces
+ * @BABL_MODEL_FLAG_CMYK: the encodings described are CMYK encodings, the space associated is expected to contain an CMYK ICC profile.
+ *
+ */
+typedef enum
 {
   BABL_MODEL_FLAG_ALPHA         = 1<<1,
   BABL_MODEL_FLAG_ASSOCIATED    = 1<<2,
@@ -302,12 +315,10 @@ enum _BablModelFlag
   BABL_MODEL_FLAG_CIE           = 1<<23,
   BABL_MODEL_FLAG_CMYK          = 1<<24,
   /* BABL_MODEL_FLAG_LUZ        = 1<<25, NYI */
-};
+} BablModelFlag;
 
 // XXX : should warn when used
 #define BABL_MODEL_FLAG_PREMULTIPLIED BABL_MODEL_FLAG_ASSOCIATED
-
-typedef enum _BablModelFlag BablModelFlag;
 
 /* linear, nonlinear and perceptual could occupy two bits with a decidated 0,
  * but we do not have a lack of bits in this bit pattern so leave it be.
