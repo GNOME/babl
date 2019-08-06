@@ -364,7 +364,6 @@ pkgconfig.generate(filebase: 'babl',
   description: 'Dynamic, any to any, pixel format conversion library',
   version: meson.project_version(),
   libraries: [
-    '-L${babl_libdir}',
     '-l' + lib_name,
   ],
   libraries_private: [
