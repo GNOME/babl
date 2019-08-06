@@ -32,7 +32,7 @@
     <!--<h1>Babl</h1>-->
     <p>
     <br/> <!-- FIXME: should be in CSS -->
-    <strong>babl is a dynamic, any to any, pixel format translation library</strong>.
+    <strong>babl is pixel encoding and color space conversion engine in C</strong>.
     <br/>
     </p>
     <p>It allows converting between different methods of storing <a

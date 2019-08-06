@@ -6,10 +6,10 @@
 
   <name xml:lang="en">babl</name>
 
-  <shortdesc xml:lang="en">babl is a dynamic, any to any, pixel format translation library.</shortdesc>
+  <shortdesc xml:lang="en">babl is a pixel encoding and color space conversion engine.</shortdesc>
   <shortdesc xml:lang="de">babl ist eine dynamische Bibliothek zur direkten Umwandlung von Pixelformaten.</shortdesc>
 
-  <description xml:lang="en">babl is a dynamic, any to any, pixel format translation library.</description>
+  <description xml:lang="en">babl is a pixel encoding and color space conversions engine.</description>
   <description xml:lang="de">babl ist eine dynamische Bibliothek zur direkten Umwandlung von Pixelformaten.</description>
 
   <homepage rdf:resource="http://www.gegl.org/babl" />

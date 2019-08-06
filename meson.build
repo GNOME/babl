@@ -390,7 +390,7 @@ endif
 # pkg-config file
 pkgconfig.generate(filebase: 'babl',
   name: 'babl',
-  description: 'Dynamic, any to any, pixel format conversion library',
+  description: 'Pixel encoding and color space conversion engine.',
   version: meson.project_version(),
   libraries: [ babl ],
   libraries_private: [
