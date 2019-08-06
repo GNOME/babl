@@ -358,21 +358,6 @@ configure_file(
   configuration: conf
 )
 
-# pkg-config file
-pkgconfig.generate(filebase: 'babl',
-  name: 'babl',
-  description: 'Dynamic, any to any, pixel format conversion library',
-  version: meson.project_version(),
-  libraries: [
-    '-l' + lib_name,
-  ],
-  libraries_private: [
-    '-lm', '-lpthread',
-  ],
-  subdirs: [
-    lib_name,
-  ],
-)
 
 ################################################################################
 # Subdirs
@@ -400,3 +385,18 @@ if w3m_bin.found() and build_docs
     capture: true,
   )
 endif
+
+
+# pkg-config file
+pkgconfig.generate(filebase: 'babl',
+  name: 'babl',
+  description: 'Dynamic, any to any, pixel format conversion library',
+  version: meson.project_version(),
+  libraries: [ babl ],
+  libraries_private: [
+    '-lm',
+  ],
+  subdirs: [
+    lib_name,
+  ],
+)
