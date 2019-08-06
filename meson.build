@@ -3,7 +3,6 @@ project('babl', 'c',
   version: '0.1.71',
   meson_version: '>=0.49.0',
   default_options: [
-    'libdir=lib',
     'sysconfdir=/etc',
     'localstatedir=/var',
     'sharedstatedir=/var/lib'
@@ -365,7 +364,7 @@ pkgconfig.generate(filebase: 'babl',
   description: 'Dynamic, any to any, pixel format conversion library',
   version: meson.project_version(),
   libraries: [
-    '-L${libdir}',
+    '-L${babl_libdir}',
     '-l' + lib_name,
   ],
   libraries_private: [
