@@ -111,12 +111,10 @@ typedef enum {
 
 /**
  * babl_space_from_icc:
- *
  * @icc_data: pointer to icc profile in memory
  * @icc_length: length of icc profile in bytes
  * @intent: the intent from the ICC profile to use.
- *
- " @error: pointer to a string where decoding errors can be stored,
+ * @error: (out): pointer to a string where decoding errors can be stored,
  *         if an error occurs, NULL is returned and an error message
  *         is provided in error.
  *
@@ -153,17 +151,17 @@ const Babl *babl_icc_make_space (const char       *icc_data,
  * @language: 2 char code for language to extract or NULL
  * @country: 2 char country code or NULL
  *
- * Returns NULL if key not found or a malloc allocated utf8 string of the key
- * when found, free with free() when done. Supported keys: "description",
- * "copyright", "manufacturer", "device", "profile-class", "color-space" and
- * "pcs".
+ * Returns: (transfer full) (nullable): %NULL if key not found or a newly
+ * allocated utf8 string of the key when found, free with free() when done.
+ * Supported keys: "description", "copyright", "manufacturer", "device",
+ * "profile-class", "color-space" and "pcs".
  */
 
 char *babl_icc_get_key (const char *icc_data,
                         int         icc_length,
                         const char *key,
                         const char *language,
-                        const char *counter);
+                        const char *country);
 
 
 /**
@@ -490,6 +488,10 @@ int   babl_format_is_palette   (const Babl *format);
 
 /**
  * babl_palette_set_palette:
+ * @babl: a #Babl
+ * @format: The pixel format
+ * @data: (array) (element-type guint8): The pixel data
+ * @count: The number of pixels in @data
  *
  * Assign a palette to a palette format, the data is a single span of pixels
  * representing the colors of the palette.
@@ -531,7 +533,22 @@ typedef enum {
 } BablSpaceFlags;
 
 /**
- * babl_space_from_chromaticities
+ * babl_space_from_chromaticities:
+ * @name: (nullable): The name for the color space
+ * @wx: The X-coordinate of the color space's white point
+ * @wy: The Y-coordinate of the color space's white point
+ * @rx: The X-coordinate of the red primary
+ * @ry: The Y-coordinate of the red primary
+ * @gx: The X-coordinate of the green primary
+ * @gy: The Y-coordinate of the green primary
+ * @bx: The X-coordinate of the blue primary
+ * @by: The Y-coordinate of the blue primary
+ * @trc_red: The red component of the TRC.
+ * @trc_green: (nullable): The green component of the TRC (can be %NULL if it's
+ *            the same as @trc_red).
+ * @trc_blue: (nullable): The blue component of the TRC (can be %NULL if it's
+ *            the same as @trc_red).
+ * @flags: The #BablSpaceFlags
  *
  * Creates a new babl-space/ RGB matrix color space definition with the
  * specified CIE xy(Y) values for white point: wx, wy and primary
@@ -577,9 +594,23 @@ const Babl *babl_space_with_trc (const Babl *space, const Babl *trc);
 
 /**
  * babl_space_get:
+ * @space: A #Babl instance
+ * @xw: (out) (optional): The X-coordinate of the color space's white point
+ * @yw: (out) (optional): The Y-coordinate of the color space's white point
+ * @xr: (out) (optional): The X-coordinate of the red primary
+ * @yr: (out) (optional): The Y-coordinate of the red primary
+ * @xg: (out) (optional): The X-coordinate of the blue primary
+ * @yg: (out) (optional): The Y-coordinate of the green primary
+ * @xb: (out) (optional): The X-coordinate of the blue primary
+ * @yb: (out) (optional): The Y-coordinate of the blue primary
+ * @red_trc: (out) (optional): The red component of the TRC.
+ * @green_trc: (out) (optional): The green component of the TRC (can be %NULL
+ *             if it's the same as @red_trc).
+ * @blue_trc: (out) (optional): The blue component of the TRC (can be %NULL if
+ *            it's the same as @red_trc).
  *
  * query the chromaticities of white point and primaries as well as trcs
- * used for r g a nd b, all arguments mights be NULL.
+ * used for r g a nd b, all arguments are optional (can be %NULL).
  */
 void babl_space_get (const Babl *space,
                      double *xw, double *yw,
@@ -593,9 +624,9 @@ void babl_space_get (const Babl *space,
 /**
  * babl_space_get_rgb_luminance:
  * @space: a BablSpace
- * @red_luminance: pointer to a double where red luminance factor is stored
- * @green_luminance: pointer to a double where green luminance factor is stored
- * @blue_luminance: pointer to a double where blue luminance factor is stored
+ * @red_luminance: (out) (optional): Location for the red luminance factor.
+ * @green_luminance: (out) (optional): Location for the green luminance factor.
+ * @blue_luminance: (out) (optional): Location for the blue luminance factor.
  *
  * Retrieve the relevant RGB luminance constants for a babl space.
  */
@@ -608,8 +639,8 @@ babl_space_get_rgb_luminance (const Babl *space,
 /**
  * babl_model_is:
  *
- * return 0 if the name of the model in babl does not correspond to the provided
- * model name.
+ * Returns: 0 if the name of the model in babl does not correspond to the
+ * provided model name.
  */
 int babl_model_is (const Babl *babl, const char *model_name);
 
@@ -618,21 +649,38 @@ int babl_model_is (const Babl *babl, const char *model_name);
 
 /**
  * babl_space_get_icc:
+ * @babl: a #Babl
+ * @length: (out) (optional): Length of the profile in bytes.
  *
  * Return pointer to ICC profile for space note that this is
  * the ICC profile for R'G'B', though in formats only supporting linear
  * like EXR GEGL chooses to load this lienar data as RGB and use the sRGB
  * TRC.
  *
- * @babl: a BablSpace
- * @length: point to an integer where length of profile in bytes is stored.
- *
- * Returns pointer to ICC profile data.
+ * Returns: pointer to ICC profile data.
  */
 const char *babl_space_get_icc (const Babl *babl, int *length);
 
 /**
  * babl_space_from_rgbxyz_matrix:
+ * @name: (nullable): The name for the color space
+ * @wx: The X-coordinate of the color space's white point
+ * @wy: The Y-coordinate of the color space's white point
+ * @wz: The Z-coordinate of the color space's white point
+ * @rx: The X-coordinate of the red primary
+ * @ry: The Y-coordinate of the red primary
+ * @rz: The Z-coordinate of the red primary
+ * @gx: The X-coordinate of the green primary
+ * @gy: The Y-coordinate of the green primary
+ * @gz: The Z-coordinate of the green primary
+ * @bx: The X-coordinate of the blue primary
+ * @by: The Y-coordinate of the blue primary
+ * @bz: The Z-coordinate of the blue primary
+ * @trc_red: The red component of the TRC.
+ * @trc_green: (nullable): The green component of the TRC (can be %NULL if it's
+ *            the same as @trc_red).
+ * @trc_blue: (nullable): The blue component of the TRC (can be %NULL if it's
+ *            the same as @trc_red).
  *
  * Creates a new RGB matrix color space definition using a precomputed D50
  * adapted 3x3 matrix and associated CIE XYZ whitepoint, as possibly read from

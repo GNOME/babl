@@ -36,7 +36,14 @@
 #define BABL_MINOR_VERSION @BABL_MINOR_VERSION@
 #define BABL_MICRO_VERSION @BABL_MICRO_VERSION@
 
-/** Get the version information on the babl library */
+/** 
+ * babl_get_version:
+ * @major: (out): The major version number
+ * @minor: (out): The minor version number
+ * @micro: (out): The micro version number
+ *
+ * Get the version information on the babl library
+ */
 void   babl_get_version (int *major,
                          int *minor,
                          int *micro);
