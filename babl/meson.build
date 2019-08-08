@@ -146,7 +146,7 @@ if get_option('enable-gir')
       '-DBABL_IS_BEING_COMPILED',
     ],
     namespace: 'Babl',
-    nsversion: '1',
+    nsversion: '0.1',
     header: 'babl.h',
     install: true,
   )
