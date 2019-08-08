@@ -24,7 +24,7 @@ extensions = [
   ['u16', no_cflags],
   ['u32', no_cflags],
   ['cairo', no_cflags],
-  ['CIE', no_cflags],
+  ['CIE', sse2_cflags],
   ['double', no_cflags],
   ['fast-float', no_cflags],
   ['half', no_cflags],
