@@ -17,6 +17,7 @@ cache:
         git
         gobject-introspection
         meson
+        vala
         ${EXTRA_PKGS}
   script:
     - meson _build
