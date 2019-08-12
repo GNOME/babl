@@ -150,4 +150,11 @@ if get_option('enable-gir')
     header: 'babl.h',
     install: true,
   )
+
+  if get_option('enable-vapi')
+    gnome.generate_vapi(lib_name,
+      sources: babl_gir[0],
+      install: true,
+    )
+  endif
 endif

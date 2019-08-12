@@ -10,6 +10,7 @@ cache:
         base-devel
         git
         gobject-introspection
+        vala
         ${EXTRA_PKGS}
 
 .meson-build:
