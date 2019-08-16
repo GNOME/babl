@@ -54,16 +54,11 @@ and 16bit extensions of pixel format conversions are needed.
 static inline float
 babl_epsilon_for_zero_float (float value)
 {
- if (value &lt;= BABL_ALPHA_FLOOR_F)
- {
-   /* for performance one could directly retun BABL_ALPHA_FLOOR_F here
-      and dropping handling negative values consistently. */
-   if (value &gt;= 0.0f)
-     return BABL_ALPHA_FLOOR_F;
-   else if (value &gt;= -BABL_ALPHA_FLOOR_F)
-     return -BABL_ALPHA_FLOOR_F;
- }
- return value;  /* most common case, return input value */
+ if (value &lt;= BABL_ALPHA_FLOOR_F &amp;&amp;
+     value &gt;= -BABL_ALPHA_FLOOR_F)
+   return BABL_ALPHA_FLOOR_F;
+ else
+   return value;
 }
 </pre>
 <p>And an example use of this clamping function that is consistent with babls behavior:</p>

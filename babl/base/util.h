@@ -47,17 +47,13 @@
   }
 
 
-#if 1
-
 static inline double
 babl_epsilon_for_zero (double value)
 {
- if (value <= BABL_ALPHA_FLOOR)
+ if (value <=  BABL_ALPHA_FLOOR &&
+     value >= -BABL_ALPHA_FLOOR)
  {
-   if (value >= 0.0)
-     return BABL_ALPHA_FLOOR;
-   else if (value >= -BABL_ALPHA_FLOOR)
-     return -BABL_ALPHA_FLOOR;
+   return BABL_ALPHA_FLOOR;
  }
  return value;
 }
@@ -65,23 +61,13 @@ babl_epsilon_for_zero (double value)
 static inline float
 babl_epsilon_for_zero_float (float value)
 {
- if (value <= BABL_ALPHA_FLOOR_F)
+ if (value <= BABL_ALPHA_FLOOR_F &&
+     value >= -BABL_ALPHA_FLOOR_F)
  {
-   if (value >= 0.0f)
-     return BABL_ALPHA_FLOOR_F;
-   else if (value >= -BABL_ALPHA_FLOOR_F)
-     return -BABL_ALPHA_FLOOR_F;
+   return BABL_ALPHA_FLOOR_F;
  }
  return value;
 }
-
-#else
-
-#define babl_alpha_avoid_zero(a) \
-  (a)<=BABL_ALPHA_FLOOR?(a)>=0.0?BABL_ALPHA_FLOOR:(a)>=-BABL_ALPHA_FLOOR?-BABL_ALPHA_FLOOR:(a):(a)
-
-#endif
-
 
 
 #define BABL_USE_SRGB_GAMMA
