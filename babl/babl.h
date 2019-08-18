@@ -704,6 +704,7 @@ babl_space_from_rgbxyz_matrix (const char *name,
 const char * babl_format_get_encoding (const Babl *babl);
 
 int babl_space_is_cmyk (const Babl *space);
+int babl_space_is_gray (const Babl *space);
 
 /* values below this are stored associated with this value, it should also be
  * used as a generic alpha zero epsilon in GEGL to keep the threshold effects

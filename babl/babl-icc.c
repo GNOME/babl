@@ -561,12 +561,13 @@ switch (trc->type)
 static void 
 symmetry_test (ICC *state);
 
-char *
-babl_space_to_icc (const Babl  *babl,
-                         const char  *description,
-                         const char  *copyright,
-                         BablICCFlags flags,
-                         int         *ret_length)
+
+static char *
+babl_space_to_icc_rgb (const Babl  *babl,
+                       const char  *description,
+                       const char  *copyright,
+                       BablICCFlags flags,
+                       int         *ret_length)
 {
   const BablSpace *space = &babl->space;
   char icc[65536];
@@ -689,6 +690,119 @@ babl_space_to_icc (const Babl  *babl,
     memcpy (ret, icc, length);
     return ret;
   }
+}
+
+
+static char *
+babl_space_to_icc_gray (const Babl  *babl,
+                        const char  *description,
+                        const char  *copyright,
+                        BablICCFlags flags,
+                        int         *ret_length)
+{
+  const BablSpace *space = &babl->space;
+  char icc[65536];
+  int length=65535;
+  ICC *state = icc_state_new (icc, length, 10);
+
+  icc[length]=0;
+
+  symmetry_test (state);
+
+  icc_write (sign, 4, "babl");  // ICC verison
+  icc_write (u8, 8, 2);         // ICC verison
+  icc_write (u8, 9, 0x20);      // 2.2 for now..
+  icc_write (u32,64, 0);        // rendering intent
+
+  icc_write (s15f16,68, 0.96421); // Illuminant
+  icc_write (s15f16,72, 1.0);
+  icc_write (s15f16,76, 0.82491);
+
+  icc_write (sign, 80, "babl"); // creator
+
+  icc_write (sign, 12, "mntr");
+  icc_write (sign, 16, "GRAY");
+  icc_write (sign, 20, "XYZ ");
+
+  icc_write (u16, 24, 2222);  // babl profiles
+  icc_write (u16, 26, 11);    // should
+  icc_write (u16, 28, 11);    // use a fixed
+  icc_write (u16, 30,  3);    // date
+  icc_write (u16, 32, 44);    // that gets updated
+  icc_write (u16, 34, 55);    // when the generator changes
+
+  icc_write (sign, 36, "acsp"); // changes
+
+  {
+    state->tags = 6; /* note: we could reserve a couple of spots and
+                        still use a very simple allocator and
+                        still be valid - albeit with tiny waste of
+                        space.
+                */
+    state->no = state->o = 128 + 4 + 12 * state->tags;
+
+    icc_write (u32,  128, state->tags);
+
+    icc_allocate_tag (state, "wtpt", 20);
+    icc_write (sign, state->o, "XYZ ");
+    icc_write (u32,  state->o + 4, 0);
+    icc_write (s15f16, state->o + 8,  space->whitepoint[0]);
+    icc_write (s15f16, state->o + 12, space->whitepoint[1]);
+    icc_write (s15f16, state->o + 16, space->whitepoint[2]);
+
+    write_trc (state, "kTRC", &space->trc[0]->trc, flags);
+
+    {
+      char str[128]="CC0/public domain";
+      int i;
+      if (!copyright) copyright = str;
+      icc_allocate_tag(state, "cprt", 8 + strlen (copyright) + 1);
+      icc_write (sign, state->o, "text");
+      icc_write (u32, state->o + 4, 0);
+      for (i = 0; copyright[i]; i++)
+        icc_write (u8, state->o + 8 + i, copyright[i]);
+    }
+    {
+      char str[128]="babl";
+      int i;
+      if (!description) description = str;
+      icc_allocate_tag(state, "desc", 90 + strlen (description) + 0);
+      icc_write (sign, state->o,"desc");
+      icc_write (u32, state->o + 4, 0);
+      icc_write (u32, state->o + 8, strlen(description) + 1);
+      for (i = 0; description[i]; i++)
+        icc_write (u8, state->o + 12 + i, description[i]);
+    }
+    icc_write (u32, 0, state->no + 0);
+    length = state->no + 0;
+  }
+
+  if (ret_length)
+    *ret_length = length;
+
+  babl_free (state);
+  {
+    char *ret = malloc (length);
+    memcpy (ret, icc, length);
+    return ret;
+  }
+}
+
+char *
+babl_space_to_icc (const Babl  *babl,
+                   const char  *description,
+                   const char  *copyright,
+                   BablICCFlags flags,
+                   int         *ret_length)
+{
+  if (babl->space.icc_type == BablICCTypeRGB)
+    return babl_space_to_icc_rgb (babl, description, copyright, flags,
+                                  ret_length);
+  else if (babl->space.icc_type == BablICCTypeGray)
+    return babl_space_to_icc_gray (babl, description, copyright, flags,
+                                   ret_length);
+  fprintf (stderr, "unexpected icc type in %s\n", __FUNCTION__);
+  return NULL;
 }
 
 const char *
@@ -819,9 +933,11 @@ babl_space_from_icc (const char   *icc_data,
   const Babl *trc_red   = NULL;
   const Babl *trc_green = NULL;
   const Babl *trc_blue  = NULL;
+  const Babl *trc_gray  = NULL;
   const char *int_err;
   Babl *ret = NULL;
   int speed_over_accuracy = intent & BABL_ICC_INTENT_PERFORMANCE;
+  int is_gray = 0;
 
   sign_t profile_class, color_space, pcs;
 
@@ -842,7 +958,6 @@ babl_space_from_icc (const char   *icc_data,
        ret = _babl_space_for_lcms (icc_data, icc_length);
        if (ret->space.icc_type == BablICCTypeCMYK)
          return ret;
-       ret->space.icc_type = BablICCTypeCMYK;
        ret->space.icc_length = icc_length;
        ret->space.icc_profile = malloc (icc_length);
        memcpy (ret->space.icc_profile, icc_data, icc_length);
@@ -877,12 +992,23 @@ babl_space_from_icc (const char   *icc_data,
        return ret;
     }
 
-    if (strcmp (color_space.str, "RGB "))
-      *error = "not defining an RGB space";
+
+
+
+    if (strcmp (color_space.str, "RGB ")
+#if 0  /* XXX: commented out, as gimp-2.99 doesn't like loading grayscale jpegs with grayscale icc profiles when it is enabled */
+        && strcmp (color_space.str, "GRAY")
+#endif
+    )
+    {
+      *error = "not defining RGB, CMYK or GRAY space..";
+    }
     else
      {
        if (strcmp (profile_class.str, "mntr"))
          *error = "not a monitor-class profile";
+       if (!strcmp (color_space.str, "GRAY"))
+         is_gray = 1;
      }
   }
 
@@ -946,11 +1072,25 @@ babl_space_from_icc (const char   *icc_data,
      {
        trc_blue = babl_trc_from_icc (state, offset, error);
      }
+     if (!*error && icc_tag (state, "kTRC", &offset, &element_size))
+     {
+       trc_gray = babl_trc_from_icc (state, offset, error);
+     }
   }
 
-  if (!*error && (!trc_red || !trc_green || !trc_blue))
+  if (is_gray)
   {
-     *error = "missing TRCs";
+     if (!*error && (!trc_gray))
+     {
+        *error = "missing TRC";
+     }
+  }
+  else
+  {
+     if (!*error && (!trc_red || !trc_green || !trc_blue))
+     {
+        *error = "missing TRCs";
+     }
   }
 
   if (*error)
@@ -960,6 +1100,27 @@ babl_space_from_icc (const char   *icc_data,
     return NULL;
   }
 
+  if (is_gray)
+  {
+    int offset, element_size;
+    if (icc_tag (state, "wtpt", &offset, &element_size))
+    {
+    //   wX = icc_read (s15f16, offset + 8);
+    //   wY = icc_read (s15f16, offset + 8 + 4);
+    //   wZ = icc_read (s15f16, offset + 8 + 4 * 2);
+    }
+    ret  = (void*)babl_space_from_gray_trc (NULL, trc_gray, 1);
+    ret->space.icc_length = icc_length;
+    ret->space.icc_profile = malloc (icc_length);
+    memcpy (ret->space.icc_profile, icc_data, icc_length);
+    babl_free (state);
+    return ret;
+
+
+    *error = "gray parsing NYI";
+  }
+  else
+  {
   if (icc_tag (state, "rXYZ", NULL, NULL) &&
       icc_tag (state, "gXYZ", NULL, NULL) &&
       icc_tag (state, "bXYZ", NULL, NULL) &&
@@ -1076,8 +1237,9 @@ babl_space_from_icc (const char   *icc_data,
        return ret;
      }
   }
-
   *error = "didnt find RGB primaries";
+  }
+
   babl_free (state);
   return NULL;
 }

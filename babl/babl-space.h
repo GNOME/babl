@@ -111,10 +111,14 @@ typedef struct
   double           xb;  // blue primary chromaticity
   double           yb;
 
+  BablICCType icc_type;  /* taken into account when looking for duplicate spaces*/
+  double whitepoint[3]; /* CIE XYZ whitepoint */
   const Babl      *trc[3];
+
+  /* ------------- end of dedup zone --------------  */
+
   char             name[512]; // XXX: allocate this dynamically instead -
                               //      or use iccv4 style hashes for name.
-  double whitepoint[3]; /* CIE XYZ whitepoint */
 
   double RGBtoXYZ[9]; /* matrices for conversions */
   double XYZtoRGB[9];
@@ -131,7 +135,6 @@ typedef struct
    */
   char *icc_profile;
   int   icc_length;
-  BablICCType icc_type;
   BablCMYK cmyk;
 } BablSpace;
 
@@ -163,6 +166,10 @@ static inline void _babl_space_from_xyz (const Babl *space, const double *xyz, d
 void
 babl_space_class_init (void);
 
+const Babl *
+babl_space_from_gray_trc (const char *name,
+                          const Babl *trc_gray,
+                          BablSpaceFlags flags);
 
 
 #endif

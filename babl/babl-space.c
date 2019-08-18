@@ -243,6 +243,7 @@ _babl_space_for_lcms (const char *icc_data,
   memset (&space, 0, sizeof(space));
   space.instance.class_type = BABL_SPACE;
   space.instance.id         = 0;
+  space.icc_type = BablICCTypeCMYK;
 
   if (i >= MAX_SPACES-1)
   {
@@ -292,12 +293,14 @@ babl_space_from_rgbxyz_matrix (const char *name,
   space.RGBtoXYZ[6] = rz;
   space.RGBtoXYZ[7] = gz;
   space.RGBtoXYZ[8] = bz;
+  space.icc_type = BablICCTypeRGB;
 
   babl_matrix_invert (space.RGBtoXYZ, space.XYZtoRGB);
 
   babl_matrix_to_float (space.RGBtoXYZ, space.RGBtoXYZf);
   babl_matrix_to_float (space.XYZtoRGB, space.XYZtoRGBf);
 
+  /* recover chromaticities from matrix */
   {
     double red[3]={1.,.0,.0};
     double xyz[3]={1.,.0,.0};
@@ -392,6 +395,7 @@ babl_space_from_chromaticities (const char *name,
   space.whitepoint[0] = wx / wy;
   space.whitepoint[1] = 1.0;
   space.whitepoint[2] = (1.0 - wx - wy) / wy;
+  space.icc_type = BablICCTypeRGB;
 
   for (i = 0; space_db[i].instance.class_type; i++)
   {
@@ -425,6 +429,67 @@ babl_space_from_chromaticities (const char *name,
   babl_space_get_icc ((Babl*)&space_db[i], NULL);
   return (Babl*)&space_db[i];
 }
+
+const Babl *
+babl_space_from_gray_trc (const char *name,
+                          const Babl *trc_gray,
+                          BablSpaceFlags flags)
+{
+  int i=0;
+  BablSpace space = {0,};
+  space.instance.class_type = BABL_SPACE;
+  space.instance.id         = 0;
+
+  space.xw = 0.3127;
+  space.yw = 0.3290;
+
+  space.xr = 0.639998686;
+  space.yr = 0.330010138;
+  space.xg = 0.300003784;
+  space.yg = 0.600003357;
+  space.xb = 0.150002046;
+  space.yb = 0.059997204;
+  space.trc[0] = trc_gray;
+  space.trc[1] = trc_gray;
+  space.trc[2] = trc_gray;
+
+  space.whitepoint[0] = space.xw / space.yw;
+  space.whitepoint[1] = 1.0;
+  space.whitepoint[2] = (1.0 - space.xw - space.yw) / space.yw;
+  space.icc_type = BablICCTypeGray;
+
+  for (i = 0; space_db[i].instance.class_type; i++)
+  {
+    int offset = ((char*)&space_db[i].xr) - (char*)(&space_db[i]);
+    int size   = ((char*)&space_db[i].trc) + sizeof(space_db[i].trc) - ((char*)&space_db[i].xr);
+
+    if (memcmp ((char*)(&space_db[i]) + offset, ((char*)&space) + offset, size)==0)
+      {
+        return (void*)&space_db[i];
+      }
+  }
+  if (i >= MAX_SPACES-1)
+  {
+    babl_log ("too many BablSpaces");
+    return NULL;
+  }
+  space_db[i]=space;
+  space_db[i].instance.name = space_db[i].name;
+  if (name)
+    snprintf (space_db[i].name, sizeof (space_db[i].name), "%s", name);
+  else
+          /* XXX: this can get longer than 256bytes ! */
+    snprintf (space_db[i].name, sizeof (space_db[i].name),
+             "space-gray-%s", babl_get_name(space.trc[0]));
+
+  /* compute matrixes */
+  babl_space_compute_matrices (&space_db[i], 1);
+
+  //babl_space_get_icc ((Babl*)&space_db[i], NULL);
+  return (Babl*)&space_db[i];
+
+}
+
 
 void
 babl_space_class_for_each (BablEachFunction each_fun,
@@ -1308,6 +1373,13 @@ babl_space_is_cmyk (const Babl *space)
 {
   return space?space->space.icc_type == BablICCTypeCMYK:0;
 }
+
+int
+babl_space_is_gray (const Babl *space)
+{
+  return space?space->space.icc_type == BablICCTypeGray:0;
+}
+
 
 /* Trademarks:
  *
