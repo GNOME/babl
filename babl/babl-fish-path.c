@@ -103,7 +103,7 @@ static int max_path_length (void);
 static int debug_conversions = 0;
 int _babl_instrument = 0;
 
-double 
+double
 _babl_legal_error (void)
 {
   static double error = 0.0;
@@ -133,7 +133,7 @@ _babl_legal_error (void)
   return error;
 }
 
-static int 
+static int
 max_path_length (void)
 {
   static int  max_length = 0;
@@ -146,9 +146,11 @@ max_path_length (void)
   if (env)
     max_length = atoi (env);
   else
-    max_length = 4; /* reducing this number makes finding short fishes much
+    max_length = 3; /* reducing this number makes finding short fishes much
                        faster - even if we lose out on some of the fast
-                       bigger fish
+                       bigger fish, the fishes we can get with a max_length of 3
+                       is actually 5, since we deepen the search twice if no
+                       sufficient results are found.
                      */
   if (max_length > BABL_HARD_MAX_PATH_LENGTH)
     max_length = BABL_HARD_MAX_PATH_LENGTH;
@@ -157,7 +159,7 @@ max_path_length (void)
   return max_length;
 }
 
-int 
+int
 _babl_max_path_len (void)
 {
   return max_path_length ();

@@ -130,6 +130,7 @@ format_new (const char      *name,
   babl->format.space = (void*)space;
   babl->format.encoding = NULL;
   babl->instance.doc = doc;
+
   return babl;
 }
 

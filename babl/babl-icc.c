@@ -996,9 +996,7 @@ babl_space_from_icc (const char   *icc_data,
 
 
     if (strcmp (color_space.str, "RGB ")
-#if 0  /* XXX: commented out, as gimp-2.99 doesn't like loading grayscale jpegs with grayscale icc profiles when it is enabled */
         && strcmp (color_space.str, "GRAY")
-#endif
     )
     {
       *error = "not defining RGB, CMYK or GRAY space..";
