@@ -55,7 +55,7 @@
       <li>Runtime profiling/validating and code-path optimizing with persistence of profiling data across runs, with caching of results.</li>
         <li>Can load <a href='ColorManagement.html'>Color Spaces</a> from ICC v2 and v4 profiles containing RGB matrix + TRC and with lcms2 dependency also <a
 href='CMYK.html'>CMYK</a> profiles.</li>
-      <li>Uses <a href='SymmetricAlpha.html'>Symmetric Alpha</a> conversions for conversions between separate and associate alpha, avoiding loss of color fidelity due to asymptotic behavior near alpha 0.0 in floating point.</li>
+      <li>Uses <a href='UnifiedAlpha.html'>Unified Alpha</a> conversions for conversions between separate and associate alpha, avoiding loss of color fidelity due to asymptotic behavior when dividing by 0.0 in floating point.</li>
       <li>Portable self contained C code working on win32, linux, bsds and mac
 on 32bit and 64bit systems.</li>
       <li>Stable, small API, with singleton objects returned.</li>

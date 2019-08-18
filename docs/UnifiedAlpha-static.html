@@ -6,7 +6,7 @@
 -->
 <html>
   <head>
-    <title>Symmetric Alpha - babl</title>
+    <title>Unified Alpha - babl</title>
     <meta http-equiv="content-type" content="text/html;charset=utf-8" />
     <link rel="icon" href="graphics/babl-16x16.png" type="image/png" />
     <link rel="shortcut icon" href="graphics/babl-16x16.png" type="image/png" />
@@ -68,13 +68,26 @@ associated_to_separate_rgba (const float *associated_rgba,
                                    float *separate_rgba)
 {
   float alpha = associated_rgba[3];
-  float clamped_alpha = babl_epsilon_for_zero_float (alpha);
-  float reciprocal_alpha = 1.0f / clamped_alpha;
+  float reciprocal_alpha = 1.0f / babl_epsilon_for_zero_float (alpha);
 
   separate_rgba[0] = associated_rgba[0] * reciprocal_alpha;
   separate_rgba[1] = associated_rgba[1] * reciprocal_alpha;
   separate_rgba[2] = associated_rgba[2] * reciprocal_alpha;
   separate_rgba[3] = alpha;
+}
+
+
+static inline void
+separate_to_associated_rgba (const float *separate_rgba,
+                                   float *associated_rgba)
+{
+  float alpha = associated_rgba[3];
+  float limited_alpha = babl_epsilon_for_zero_float (alpha);
+
+  associated_rgba[0] = separate_rgba[0] * limited_alpha;
+  associated_rgba[1] = separate_rgba[1] * limited_alpha;
+  associated_rgba[2] = separate_rgba[2] * limited_alpha;
+  associated_rgba[3] = alpha;
 }
 </pre>
 

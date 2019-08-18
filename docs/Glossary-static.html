@@ -39,7 +39,7 @@ keep the vocabulary small.</p>
 own associated alpha. This representation is useful for avoiding color from
 empty pixels bleeding into surroundings. It is also able to represent emittance
 in addition to opacity.
-Babl uses <a href='SymmetricAlpha'>Symmetric alpha transformations</a> between <a href='#separate_alpha'>separate alpha</a> and associated alpha.</dd>
+Babl uses <a href='UnifiedAlpha'>Unified alpha transformations</a> between <a href='#separate_alpha'>separate alpha</a> and associated alpha.</dd>
 
 
     <dt><a name='BablFish' href='#BablFish'>BablFish</a></dt>
@@ -72,16 +72,13 @@ relevant spaces - the ICC profile for the space.</dt>
     <dt><a name='luminance' href='#luminance'>Luminance</a></dt>
     <dd>The photometric measure of luminious intensity of per unit area of light. The luminance in babl is proportional to luminance - though it doesn't use the SI unit of candela per square meter.</dd>
 
-    <dt><a name='non_associated_alpha' href='#non_associated_alpha'>Non-associated alpha</a></dt>
-    <dd>deprecated term, see separate alpha</dd>
-
     <dt><a name='premultiplied_alpha' href='#premultiplied_alpha'>Premultiplied alpha</a></dt>
     <dd>deprecated term, see associated alpha</dd>
 
-    <dt><a name='separate_alpha' href='#separate_alpha'>Separate alpha</a></dt>
-    <dd>This representation of pixels has alpha as a fully separate component,
+    <dt><a name='straight_alpha' href='#straight_alpha'>Straight alpha</a></dt>
+    <dd>Straight or separate alpha has alpha as a fully separate component,
 that can be adjusted without affecting the color.
-Babl uses <a href='SymmetricAlpha'>Symmetric alpha transformations</a> between separate and <a href='#associated_alpha'>associated alpha</a>.</dd>
+Babl uses <a href='Unifiedlpha'>symetric alpha transformations</a> between straight and <a href='#associated_alpha'>associated alpha</a>.</dd>
 
     <dt><a name='trc' href='#trc'>TRC</a></dt>
 

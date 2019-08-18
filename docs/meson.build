@@ -130,12 +130,12 @@ ColorManagement_html = custom_target('ColorManagement.html',
   build_by_default: true,
 )
 
-SymmetricAlpha_html = custom_target('SymmetricAlpha.html',
+UnifiedAlpha_html = custom_target('UnifiedAlpha.html',
   input : [
-    'SymmetricAlpha-static.html',
+    'UnifiedAlpha-static.html',
     'toc',
   ],
-  output: [ 'SymmetricAlpha.html', ],
+  output: [ 'UnifiedAlpha.html', ],
   command: [
     env_bin,
     'cp', '@INPUT0@', '@OUTPUT@',
@@ -143,7 +143,6 @@ SymmetricAlpha_html = custom_target('SymmetricAlpha.html',
   ],
   build_by_default: true,
 )
-
 
 run_target('push_web',
   command: [
