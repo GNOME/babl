@@ -33,12 +33,13 @@ BABL_CLASS_DECLARE (space);
 
 typedef struct
 {
-  int           is_cmyk;
+  //int           is_cmyk;
 #ifdef HAVE_LCMS
   cmsHPROFILE   lcms_profile;
   cmsHTRANSFORM lcms_to_rgba;
   cmsHTRANSFORM lcms_from_rgba;
 #endif
+  int  filler;
 } BablCMYK;
 
 #if 0  // draft datastructures for spectral spaces
@@ -89,6 +90,12 @@ typedef struct
 } BablProcessSpace;
 #endif
 
+typedef enum {
+  BablICCTypeRGB = 0,
+  BablICCTypeGray = 2,
+  BablICCTypeCMYK = 3,
+} BablICCType;
+
 typedef struct
 {
   BablInstance     instance;
@@ -124,6 +131,7 @@ typedef struct
    */
   char *icc_profile;
   int   icc_length;
+  BablICCType icc_type;
   BablCMYK cmyk;
 } BablSpace;
 

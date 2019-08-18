@@ -1232,7 +1232,7 @@ babl_space_match_trc_matrix (const Babl *trc_red,
   for (i = 0; space_db[i].instance.class_type; i++)
   {
     BablSpace *space = &space_db[i];
-    if (space->cmyk.is_cmyk == 0 &&
+    if (space->icc_type == BablICCTypeRGB &&
         trc_red == space->trc[0] &&
         trc_green == space->trc[1] &&
         trc_blue == space->trc[2] &&
@@ -1306,7 +1306,7 @@ babl_space_get (const Babl *babl,
 int
 babl_space_is_cmyk (const Babl *space)
 {
-  return space?space->space.cmyk.is_cmyk:0;
+  return space?space->space.icc_type == BablICCTypeCMYK:0;
 }
 
 /* Trademarks:

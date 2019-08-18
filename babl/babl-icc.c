@@ -840,9 +840,9 @@ babl_space_from_icc (const char   *icc_data,
     if (!strcmp (color_space.str, "CMYK"))
     {
        ret = _babl_space_for_lcms (icc_data, icc_length);
-       if (ret->space.cmyk.is_cmyk)
+       if (ret->space.icc_type == BablICCTypeCMYK)
          return ret;
-       ret->space.cmyk.is_cmyk = 1;
+       ret->space.icc_type = BablICCTypeCMYK;
        ret->space.icc_length = icc_length;
        ret->space.icc_profile = malloc (icc_length);
        memcpy (ret->space.icc_profile, icc_data, icc_length);
