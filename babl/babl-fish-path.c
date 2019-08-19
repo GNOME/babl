@@ -601,6 +601,7 @@ babl_fish_path2 (const Babl *source,
 
     get_conversion_path (&pc, (Babl *) source, 0, max_path_length (), tolerance);
 
+#if 0
     /* second attempt,. at path length + 1*/
     if (babl->fish_path.conversion_list->count == 0 &&
         max_path_length () + 1 <= BABL_HARD_MAX_PATH_LENGTH)
@@ -615,6 +616,7 @@ babl_fish_path2 (const Babl *source,
       }
 #endif
     }
+#endif
 
     /* third attempt,. at path length + 2 */
     if (babl->fish_path.conversion_list->count == 0 &&
@@ -624,12 +626,22 @@ babl_fish_path2 (const Babl *source,
 #if 1
       if (babl->fish_path.conversion_list->count)
       {
-        fprintf (stderr, "babl is using very long chain, should be optimized\n");
-        babl_list_each (babl->fish_path.conversion_list, show_item, NULL);
+        //fprintf (stderr, "babl is a long chain, should be optimized\n");
+        //babl_list_each (babl->fish_path.conversion_list, show_item, NULL);
       }
       else
       {
-         fprintf (stderr, "babl is lacking conversion for %s to %s\n",
+         static int show_missing = -1;
+         if (show_missing < 0)
+         {
+            const char *val = getenv ("BABL_DEBUG_MISSING");
+            if (val && strcmp (val, "0"))
+              show_missing = 1;
+            else
+              show_missing = 0;
+         }
+         if (show_missing)
+           fprintf (stderr, "babl is lacking conversion for %s to %s\n",
                babl_get_name (source), babl_get_name (destination));
       }
 #endif

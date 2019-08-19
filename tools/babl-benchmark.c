@@ -25,7 +25,7 @@
 #define random  rand
 #endif
 
-int ITERATIONS = 2;
+int ITERATIONS = 1;
 #define  N_PIXELS (512*1024)  // a too small batch makes the test set live
                                // in l2 cache skewing results
 
@@ -80,12 +80,20 @@ test (void)
      babl_format_with_space("RGBA float",     babl_space("ProPhoto")),
      babl_format_with_space("R'G'B' u16",     babl_space("ProPhoto")),
 #endif
-     //babl_format("R'G'B'A u8"),
-     //babl_format("R'G'B'A u16"),
-       babl_format_with_space("R'G'B'A u8", babl_space("ProPhoto")),
-       babl_format_with_space("R'G'B'A half", babl_space("ProPhoto")),
+       //babl_format("R'G'B'A u8"),
+       babl_format("R'G'B'A u16"),
+       //babl_format_with_space("R'G'B'A u8", babl_space("ProPhoto")),
+       //babl_format_with_space("Y'A u8", babl_space("ProPhoto")),
+       babl_format_with_space("Y'A u16", babl_space("ProPhoto")),
+       babl_format_with_space("Y' u16", babl_space("ProPhoto")),
+       //babl_format_with_space("Y' u8", babl_space("ProPhoto")),
+       babl_format_with_space("Y float", babl_space("ProPhoto")),
+       babl_format_with_space("YaA float", babl_space("ProPhoto")),
+       babl_format_with_space("YA float", babl_space("ProPhoto")),
+       //babl_format_with_space("YA u16", babl_space("ProPhoto")),
+       //babl_format_with_space("R'G'B'A half", babl_space("ProPhoto")),
        babl_format_with_space("R'G'B'A float", babl_space("ProPhoto")),
-       babl_format_with_space("R'G'B'A double", babl_space("ProPhoto")),
+       babl_format_with_space("RaGaBaA float", babl_space("ProPhoto")),
        babl_format_with_space("cairo-RGB24", babl_space("Adobe")),
        babl_format_with_space("cairo-ARGB32", babl_space("Adobe")),
 
@@ -93,7 +101,7 @@ test (void)
   int n_formats = sizeof (formats) / sizeof (formats[0]);
   const Babl *fishes[50 * 50];
   double mbps[50 * 50] = {0,};
-  int n;
+  long n;
   double max = 0.0;
 
   assert (n_formats < 50);

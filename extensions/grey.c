@@ -107,6 +107,28 @@ conv_rgbaF_linear_yaF_linear (const Babl    *conversion,
     }
 }
 
+static void
+conv_yaF_linear_rgbaF_linear (const Babl    *conversion,
+                              unsigned char *src,
+                              unsigned char *dst,
+                              long           samples)
+{
+  float *s = (float *) src;
+  float *d = (float *) dst;
+  long   n = samples;
+
+  while (n--)
+    {
+      float value;
+      value  = *s++;
+      *d++ = value;
+      *d++ = value;
+      *d++ = value;
+      *d++ = *s++;  /* alpha */
+    }
+}
+
+
 int init (void);
 
 int
@@ -128,6 +150,25 @@ init (void)
                        babl_format ("YA float"),
                        "linear",
                        conv_rgbaF_linear_yaF_linear,
+                       NULL);
+
+
+  babl_conversion_new (babl_format ("YA float"),
+                       babl_format ("RGBA float"),
+                       "linear",
+                       conv_yaF_linear_rgbaF_linear,
+                       NULL);
+
+  babl_conversion_new (babl_format ("YaA float"),
+                       babl_format ("RaGaBaA float"),
+                       "linear",
+                       conv_yaF_linear_rgbaF_linear,
+                       NULL);
+
+  babl_conversion_new (babl_format ("Y'A float"),
+                       babl_format ("R'G'B'A float"),
+                       "linear",
+                       conv_yaF_linear_rgbaF_linear,
                        NULL);
 
   return 0;
