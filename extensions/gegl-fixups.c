@@ -318,6 +318,34 @@ conv_rgba8_rgbaF (const Babl    *conversion,
 }
 
 static void
+conv_ga8_rgbaF (const Babl    *conversion,
+                  unsigned char *src, 
+                  unsigned char *dst, 
+                  long           samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      float gray       = table_8g_F[*(unsigned char *) src];
+      (*(float *) dst) = gray;
+      dst             += 4;
+      src             += 1;
+
+      (*(float *) dst) = gray;
+      dst             += 4;
+
+      (*(float *) dst) = gray;
+      dst             += 4;
+
+      (*(float *) dst) = table_8_F[*(unsigned char *) src];
+      dst             += 4;
+      src             += 1;
+    }
+}
+
+
+static void
 conv_rgb8_rgbaF (const Babl    *conversion,
                  unsigned char *src, 
                  unsigned char *dst, 
@@ -567,6 +595,12 @@ init (void)
     babl_component ("G'"),
     babl_component ("B'"),
     NULL);
+  const Babl *ga8 = babl_format_new (
+    babl_model ("Y'A"),
+    babl_type ("u8"),
+    babl_component ("Y'"),
+    babl_component ("A"),
+    NULL);
 
   table_init ();
 
@@ -585,6 +619,7 @@ init (void)
   o (rgbAF, rgb8);
   o (bgrA8, rgba8);
   o (rgba8, rgb8);
+  o (ga8, rgbaF);
 
   return 0;
 }
