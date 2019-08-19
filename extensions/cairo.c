@@ -235,27 +235,6 @@ conv_cairo32_rgbaF_le (const Babl    *conversion,
 
 
 static void
-conv_cairo24_rgbF_le (const Babl    *conversion,
-                      unsigned char *src,
-                      unsigned char *dst_char,
-                      long           samples)
-{
-  long n = samples;
-  float *dst = (void*)dst_char;
-  while (n--)
-    {
-      unsigned char blue   = *src++;
-      unsigned char green  = *src++;
-      unsigned char red    = *src++;
-
-      *dst++ = red / 255.0;
-      *dst++ = green / 255.0;
-      *dst++ = blue / 255.0;
-      src++;
-    }
-}
-
-static void
 conv_cairo24_cairo32_le (const Babl    *conversion,
                          unsigned char *src,
                          unsigned char *dst,
@@ -264,8 +243,6 @@ conv_cairo24_cairo32_le (const Babl    *conversion,
   long n = samples;
   while (n--)
     {
-      unsigned char alpha = src[3];
-
       *dst++ = (*src++);
       *dst++ = (*src++);
       *dst++ = (*src++);
@@ -573,8 +550,6 @@ init (void)
       babl_conversion_new (f32, babl_format ("R'aG'aB'aA float"), "linear",
                            conv_cairo32_rgbAF_le, NULL);
 
-      babl_conversion_new (f32, babl_format ("R'G'B'A float"), "linear",
-                           conv_cairo32_rgbaF_le, NULL);
 
       babl_conversion_new (f32, babl_format ("R'aG'aB'aA u8"), "linear",
                            conv_cairo32_rgbA8_le, NULL);
@@ -582,11 +557,12 @@ init (void)
       babl_conversion_new (f32, babl_format ("R'G'B'A u8"), "linear",
                            conv_cairo32_rgba8_le, NULL);
 
+
+      babl_conversion_new (f32, babl_format ("R'G'B'A float"), "linear",
+                           conv_cairo32_rgbaF_le, NULL);
+
       babl_conversion_new (f24, f32, "linear",
                            conv_cairo24_cairo32_le, NULL);
-
-      babl_conversion_new (f24, babl_format ("R'G'B' float"), "linear",
-                           conv_cairo24_rgbF_le, NULL);
 
       babl_conversion_new (babl_format ("R'aG'aB'aA u8"), f32, "linear",
                            conv_rgbA8_cairo32_le, NULL);
