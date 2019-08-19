@@ -26,15 +26,14 @@
 #define BABL_HARD_MAX_PATH_LENGTH  8
 #define BABL_MAX_NAME_LEN          1024
 
-#define BABL_TEST_ITER             4
+#define BABL_TEST_ITER             16
 
 #ifndef MIN
 #define MIN(a, b) (((a) > (b)) ? (b) : (a))
 #endif
 
-#define NUM_TEST_PIXELS            (babl_get_num_path_test_pixels ())
 #define MAX_BUFFER_SIZE            512
-
+#define ITERATIONS                 4
 
 int   babl_in_fish_path = 0;
 
@@ -622,11 +621,16 @@ babl_fish_path2 (const Babl *source,
         max_path_length () + 2 <= BABL_HARD_MAX_PATH_LENGTH)
     {
       get_conversion_path (&pc, (Babl *) source, 0, max_path_length () + 2, tolerance);
-#if 0
+#if 1
       if (babl->fish_path.conversion_list->count)
       {
         fprintf (stderr, "babl is using very long chain, should be optimized\n");
         babl_list_each (babl->fish_path.conversion_list, show_item, NULL);
+      }
+      else
+      {
+         fprintf (stderr, "babl is lacking conversion for %s to %s\n",
+               babl_get_name (source), babl_get_name (destination));
       }
 #endif
     }

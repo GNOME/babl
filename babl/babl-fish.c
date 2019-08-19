@@ -276,6 +276,21 @@ babl_fish (const void *source,
             return ffish.fish_path;
           }
 
+        babl_mutex_lock (babl_fish_mutex);
+        /* do a second look in the database, in case another thread held the
+           mutex and made the fish
+         */
+        if (!ffish.fish_fish)
+        {
+        babl_hash_table_find (id_htable, hashval, find_fish_path, (void *) &ffish);
+        if (ffish.fish_path)
+          {
+            /* we have found suitable fish path in the database */
+            babl_mutex_unlock (babl_fish_mutex);
+            return ffish.fish_path;
+          }
+        }
+
         if (!ffish.fish_fish)
           {
             const Babl *src_space = (void*)source_format->format.space;
@@ -289,6 +304,7 @@ babl_fish (const void *source,
 
                 if (fish_path)
                   {
+                    babl_mutex_unlock (babl_fish_mutex);
                     return fish_path;
                   }
 #if 1
@@ -330,12 +346,15 @@ babl_fish (const void *source,
     if (ffish.fish_ref)
       {
         /* we have already found suitable reference fish */
+        babl_mutex_unlock (babl_fish_mutex);
         return ffish.fish_ref;
       }
     else
       {
         /* we have to create new reference fish */
-        return babl_fish_reference (source_format, destination_format);
+        Babl *ret = babl_fish_reference (source_format, destination_format);
+        babl_mutex_unlock (babl_fish_mutex);
+        return ret;
       }
   }
 }
