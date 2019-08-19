@@ -142,13 +142,6 @@ float_pre_to_u16_pre (const Babl    *conversion,
       float b = src[2];
       float a = src[3];
       
-      if (a > 1.0f) {
-        r /= a;
-        g /= a;
-        b /= a;
-        a /= a;
-      }
-      
       dst[0] = (r >= 1.0f) ? 0xFFFF : ((r <= 0.0f) ? 0x0 : 0xFFFF * r + 0.5f);
       dst[1] = (g >= 1.0f) ? 0xFFFF : ((g <= 0.0f) ? 0x0 : 0xFFFF * g + 0.5f);
       dst[2] = (b >= 1.0f) ? 0xFFFF : ((b <= 0.0f) ? 0x0 : 0xFFFF * b + 0.5f);
@@ -174,13 +167,6 @@ float_pre_to_u32_pre (const Babl    *conversion,
       float g = src[1];
       float b = src[2];
       float a = src[3];
-      
-      if (a > 1.0f) {
-        r /= a;
-        g /= a;
-        b /= a;
-        a /= a;
-      }
       
       dst[0] = (r >= 1.0f) ? 0xFFFFFFFF : ((r <= 0.0f) ? 0x0 : 0xFFFFFFFF * r + 0.5f);
       dst[1] = (g >= 1.0f) ? 0xFFFFFFFF : ((g <= 0.0f) ? 0x0 : 0xFFFFFFFF * g + 0.5f);
@@ -346,6 +332,146 @@ yau16_rgbaf (const Babl    *conversion,
       dst[3] = src[1] / 65535.0f;
       dst +=4;
       src +=2;
+    }
+}
+
+
+static inline void
+u8_to_float (const Babl    *conversion,
+              unsigned char *src_char, 
+              unsigned char *dst_char, 
+              long           samples)
+{
+  uint8_t *src = (uint8_t *)src_char;
+  float *dst    = (float *)dst_char;
+  long n = samples;
+  while (n--)
+    {
+      dst[0] = src[0] / 255.0f;
+      dst ++;
+      src ++;
+    }
+}
+
+static void
+u8_to_float_x4 (const Babl    *conversion,
+                 unsigned char *src_char, 
+                 unsigned char *dst_char, 
+                 long           samples)
+{
+  u8_to_float (conversion, src_char, dst_char, samples * 4);
+}
+
+static void
+u8_to_float_x3 (const Babl    *conversion,
+                 unsigned char *src_char, 
+                 unsigned char *dst_char, 
+                 long           samples)
+{
+  u8_to_float (conversion, src_char, dst_char, samples * 3);
+}
+
+
+static void
+u8_to_float_x2 (const Babl    *conversion,
+                 unsigned char *src_char, 
+                 unsigned char *dst_char, 
+                 long           samples)
+{
+  u8_to_float (conversion, src_char, dst_char, samples * 2);
+}
+
+static inline void
+yau8_rgbaf (const Babl    *conversion,
+             unsigned char *src_char, 
+             unsigned char *dst_char, 
+             long           samples)
+{
+  uint8_t *src = (uint8_t *)src_char;
+  float   *dst = (float *)dst_char;
+  long n = samples;
+  while (n--)
+    {
+      dst[0] = src[0] / 255.0f;
+      dst[1] = src[0] / 255.0f;
+      dst[2] = src[0] / 255.0f;
+      dst[3] = src[1] / 255.0f;
+      dst +=4;
+      src +=2;
+    }
+}
+
+
+static inline void
+yu8_yau8  (const Babl    *conversion,
+           unsigned char *src_char,
+           unsigned char *dst_char,
+           long           samples)
+{
+  uint8_t *src = (uint8_t *)src_char;
+  uint8_t *dst = (uint8_t *)dst_char;
+  long n = samples;
+  while (n--)
+    {
+      dst[0] = src[0];
+      dst[1] = 255;
+      dst += 2;
+      src += 1;
+    }
+}
+
+
+static inline void
+yau8_yu8  (const Babl    *conversion,
+           unsigned char *src_char,
+           unsigned char *dst_char,
+           long           samples)
+{
+  uint8_t *src = (uint8_t *)src_char;
+  uint8_t *dst = (uint8_t *)dst_char;
+  long n = samples;
+  while (n--)
+    {
+      dst[0] = src[0];
+      dst += 1;
+      src += 2;
+    }
+}
+
+
+
+static inline void
+yu16_yau16  (const Babl    *conversion,
+             unsigned char *src_char,
+             unsigned char *dst_char,
+             long           samples)
+{
+  uint16_t *src = (uint16_t *)src_char;
+  uint16_t *dst = (uint16_t *)dst_char;
+  long n = samples;
+  while (n--)
+    {
+      dst[0] = src[0];
+      dst[1] = 65535;
+      dst += 2;
+      src += 1;
+    }
+}
+
+static inline void
+yau16_yu16  (const Babl    *conversion,
+             unsigned char *src_char,
+             unsigned char *dst_char,
+             long           samples)
+{
+  uint16_t *src = (uint16_t *)src_char;
+  uint16_t *dst = (uint16_t *)dst_char;
+  long n = samples;
+  while (n--)
+    {
+      dst[0] = src[0];
+      dst += 1;
+      src += 2;
     }
 }
 
@@ -600,5 +726,105 @@ init (void)
                       "linear", 
                        yau16_rgbaf,
                        NULL);
+
+
+  babl_conversion_new (babl_format ("YA u8"),
+                       babl_format ("YA float"),
+                      "linear", 
+                       u8_to_float_x2,
+                       NULL);
+  babl_conversion_new (babl_format ("Y'A u8"),
+                       babl_format ("Y'A float"),
+                      "linear", 
+                       u8_to_float_x2,
+                       NULL);
+  babl_conversion_new (babl_format ("Y u8"),
+                       babl_format ("Y float"),
+                      "linear", 
+                       u8_to_float,
+                       NULL);
+  babl_conversion_new (babl_format ("Y' u8"),
+                       babl_format ("Y' float"),
+                      "linear", 
+                       u8_to_float,
+                       NULL);
+  babl_conversion_new (babl_format ("RGBA u8"),
+                       babl_format ("RGBA float"),
+                      "linear", 
+                       u8_to_float_x4,
+                       NULL);
+  babl_conversion_new (babl_format ("R'G'B'A u8"),
+                       babl_format ("R'G'B'A float"),
+                      "linear", 
+                       u8_to_float_x4,
+                       NULL);
+
+  babl_conversion_new (babl_format ("RGB u8"),
+                       babl_format ("RGB float"),
+                      "linear", 
+                       u8_to_float_x3,
+                       NULL);
+  babl_conversion_new (babl_format ("R'G'B' u8"),
+                       babl_format ("R'G'B' float"),
+                      "linear", 
+                       u8_to_float_x3,
+                       NULL);
+  babl_conversion_new (babl_format ("Y'A u8"),
+                       babl_format ("R'G'B'A float"),
+                      "linear", 
+                       yau8_rgbaf,
+                       NULL);
+
+
+  babl_conversion_new (babl_format ("Y' u8"),
+                       babl_format ("Y'A u8"),
+                      "linear",
+                       yu8_yau8,
+                       NULL);
+
+  babl_conversion_new (babl_format ("Y u8"),
+                       babl_format ("YA u8"),
+                      "linear",
+                       yu8_yau8,
+                       NULL);
+
+  babl_conversion_new (babl_format ("Y' u16"),
+                       babl_format ("Y'A u16"),
+                      "linear",
+                       yu16_yau16,
+                       NULL);
+
+  babl_conversion_new (babl_format ("Y u16"),
+                       babl_format ("YA u16"),
+                      "linear",
+                       yu16_yau16,
+                       NULL);
+
+
+  babl_conversion_new (babl_format ("Y'A u8"),
+                       babl_format ("Y' u8"),
+                      "linear",
+                       yau8_yu8,
+                       NULL);
+
+  babl_conversion_new (babl_format ("YA u8"),
+                       babl_format ("Y u8"),
+                      "linear",
+                       yau8_yu8,
+                       NULL);
+
+  babl_conversion_new (babl_format ("Y'A u16"),
+                       babl_format ("Y' u16"),
+                      "linear",
+                       yau16_yu16,
+                       NULL);
+
+  babl_conversion_new (babl_format ("YA u16"),
+                       babl_format ("Y u16"),
+                      "linear",
+                       yau16_yu16,
+                       NULL);
+
+
   return 0;
 }
