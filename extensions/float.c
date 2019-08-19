@@ -51,6 +51,27 @@ conv_yaF_linear_yAF_linear (const Babl    *conversion,
 
 
 static void
+conv_yAF_linear_yaF_linear (const Babl    *conversion,
+                            unsigned char *src,
+                            unsigned char *dst,
+                            long           samples)
+{
+   float *fsrc = (float *) src;
+   float *fdst = (float *) dst;
+   int n = samples;
+
+   while (n--)
+     {
+       float alpha = fsrc[1];
+       float alpha_reciprocal = 1.0f/babl_epsilon_for_zero_float (alpha);
+       *fdst++ = (*fsrc++) * alpha_reciprocal;
+       *fdst++ = alpha;
+       fsrc++;
+     }
+}
+
+
+static void
 conv_yaF_linear_yAF_nonlinear (const Babl    *conversion,
                                unsigned char *src,
                                unsigned char *dst,
@@ -585,10 +606,11 @@ init (void)
   o (rgbF_nonlinear,  rgbF_linear);
 
 
+  o (yaF_linear, yAF_linear);
+  o (yAF_linear, yaF_linear);
   o (yAF_linear, yAF_nonlinear);
   o (yaF_linear, yAF_nonlinear);
   o (yaF_linear, yaF_nonlinear);
-  o (yaF_linear, yAF_linear);
   o (yaF_nonlinear,  yaF_linear);
   o (yF_linear, yF_nonlinear);
   o (yF_nonlinear,  yF_linear);
