@@ -25,21 +25,29 @@
 static inline unsigned char
 conv_float_u8_two_table_map (float value)
 {
-  unsigned short index;
-  unsigned char result;
   if (value < 0.0f)
-    return 0;
-  else if (value > 1.0f)
-    return 0xFF;
-  index = (unsigned short)(value * 0xFFFF);
-  result = linear_to_gamma[index];
+    {
+      return 0;
+    }
+  else if (value <= 1.0f)
+    {
+      unsigned short index;
+      unsigned char  result;
 
-  if (value < u8_gamma_minimums[result])
-    result -= 1;
-  else if (value >= u8_gamma_minimums[result+1])
-    result += 1;
+      index  = (unsigned short) (value * 0xFFFF);
+      result = linear_to_gamma[index];
 
-  return result;
+      if (value < u8_gamma_minimums[result])
+        result -= 1;
+      else if (value >= u8_gamma_minimums[result+1])
+        result += 1;
+
+      return result;
+    }
+  else /* value > 1.0f || isnan (value) */
+    {
+      return 0xFF;
+    }
 }
 
 static void

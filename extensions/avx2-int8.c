@@ -41,31 +41,31 @@
                                                           \
       if (x < 0.0f)                                       \
         *dst = 0;                                         \
-      else if (x > 1.0f)                                  \
-        *dst = 255;                                       \
-      else                                                \
+      else if (x <= 1.0f)                                 \
         *dst = linear_to_gamma[(int) (SCALE * x + 0.5f)]; \
+      else /* x > 1.0f || isnan (x) */                    \
+        *dst = 255;                                       \
                                                           \
       src++;                                              \
       dst++;                                              \
     }                                                     \
   while (0)
 
-#define CVTA1(src, dst)           \
-  do                              \
-    {                             \
-      float x = *src;             \
-                                  \
-      if (x < 0.0f)               \
-        *dst = 0;                 \
-      else if (x > 1.0f)          \
-        *dst = 255;               \
-      else                        \
-        *dst = 255.0f * x + 0.5f; \
-                                  \
-      src++;                      \
-      dst++;                      \
-    }                             \
+#define CVTA1(src, dst)                                   \
+  do                                                      \
+    {                                                     \
+      float x = *src;                                     \
+                                                          \
+      if (x < 0.0f)                                       \
+        *dst = 0;                                         \
+      else if (x <= 1.0f)                                 \
+        *dst = 255.0f * x + 0.5f;                         \
+      else /* x > 1.0f || isnan (x) */                    \
+        *dst = 255;                                       \
+                                                          \
+      src++;                                              \
+      dst++;                                              \
+    }                                                     \
   while (0)
 
 static inline void
