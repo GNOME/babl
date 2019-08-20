@@ -408,6 +408,9 @@ conv2_rgbaF_rgbaHalf (const Babl  *conversion,
   conv2_yF_yHalf (conversion, src, dst, samples * 4);
 }
 
+#define conv_yAF_yAHalf conv_yaF_yaHalf
+#define conv_yAHalf_yAF conv_yaHalf_yaF
+
 int init (void);
 
 int
@@ -513,10 +516,22 @@ init (void)
     babl_component ("Y"),
     babl_component ("A"),
     NULL);
+  const Babl *yAF_linear = babl_format_new (
+    babl_model ("YaA"),
+    babl_type ("float"),
+    babl_component ("Ya"),
+    babl_component ("A"),
+    NULL);
   const Babl *yaHalf_linear = babl_format_new (
     babl_model ("YA"),
     babl_type ("half"),
     babl_component ("Y"),
+    babl_component ("A"),
+    NULL);
+  const Babl *yAHalf_linear = babl_format_new (
+    babl_model ("YaA"),
+    babl_type ("half"),
+    babl_component ("Ya"),
     babl_component ("A"),
     NULL);
   const Babl *yaF_gamma = babl_format_new (
@@ -525,10 +540,22 @@ init (void)
     babl_component ("Y'"),
     babl_component ("A"),
     NULL);
+  const Babl *yAF_gamma = babl_format_new (
+    babl_model ("Y'aA"),
+    babl_type ("float"),
+    babl_component ("Y'a"),
+    babl_component ("A"),
+    NULL);
   const Babl *yaHalf_gamma = babl_format_new (
     babl_model ("Y'A"),
     babl_type ("half"),
     babl_component ("Y'"),
+    babl_component ("A"),
+    NULL);
+  const Babl *yAHalf_gamma = babl_format_new (
+    babl_model ("Y'aA"),
+    babl_type ("half"),
+    babl_component ("Y'a"),
     babl_component ("A"),
     NULL);
   const Babl *yF_linear = babl_format_new (
@@ -581,6 +608,10 @@ init (void)
   CONV(rgbF,     rgbHalf);
   CONV(yaF,      yaHalf);
   CONV(yF,       yHalf);
+
+  CONV(yAF,      yAHalf);
+  CONV(yAHalf,   yAF);
+
   CONV2(rgbaF,    rgbaHalf);
   CONV2(rgbF,     rgbHalf);
   CONV2(yaF,      yaHalf);
