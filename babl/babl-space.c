@@ -884,6 +884,27 @@ universal_rgb_converter (const Babl    *conversion,
 
 
 static inline void
+universal_ya_converter (const Babl    *conversion,
+                        unsigned char *src_char,
+                        unsigned char *dst_char,
+                        long           samples,
+                        void          *data)
+{
+  memcpy (dst_char, src_char, samples * 4 * 2);
+}
+
+static inline void
+universal_y_converter (const Babl    *conversion,
+                       unsigned char *src_char,
+                       unsigned char *dst_char,
+                       long           samples,
+                       void          *data)
+{
+  memcpy (dst_char, src_char, samples * 4);
+}
+
+
+static inline void
 universal_nonlinear_rgb_u8_converter (const Babl    *conversion,
                                       unsigned char *src_char,
                                       unsigned char *dst_char,
@@ -1267,6 +1288,22 @@ add_rgb_adapter (Babl *babl,
                     babl_format_with_space("RGB float", babl),
                     babl_format_with_space("RGB float", space),
                     "linear", universal_rgb_converter,
+                    NULL));
+
+    prep_conversion(babl_conversion_new(
+                    babl_format_with_space("Y float", space),
+                    babl_format_with_space("Y float", babl),
+                    "linear", universal_y_converter,
+                    NULL));
+    prep_conversion(babl_conversion_new(
+                    babl_format_with_space("YaA float", babl),
+                    babl_format_with_space("YaA float", space),
+                    "linear", universal_ya_converter,
+                    NULL));
+    prep_conversion(babl_conversion_new(
+                    babl_format_with_space("YA float", babl),
+                    babl_format_with_space("YA float", space),
+                    "linear", universal_ya_converter,
                     NULL));
   }
   return 0;
