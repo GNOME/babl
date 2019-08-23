@@ -6,5 +6,6 @@ option('enable-sse4_1', type: 'boolean', value: true, description: 'enable SSE4.
 option('enable-avx2',   type: 'boolean', value: true, description: 'enable AVX2 support')
 option('enable-f16c',   type: 'boolean', value: true, description: 'enable hardware half-float support')
 option('enable-gir',    type: 'boolean', value: true, description: 'enable GObject-Introspection (GIR)')
+option('enable-vapi',   type: 'boolean', value: true, description: 'enable Vala .vapi generation (requires GIR)')
 option('with-docs',     type: 'boolean', value: true, description: 'build website')
 option('with-lcms',     type: 'boolean', value: true, description: 'build with lcms')
