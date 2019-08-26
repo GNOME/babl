@@ -5,7 +5,7 @@ location= 'public_html/babl'
 scptarget = host + ':' + location + '/'
 
 
-xml_insert = find_program(join_paths('tools', 'xml_insert.sh'))
+xml_insert = find_program('tools' / 'xml_insert.sh')
 
 index_static_html = configure_file(
   input : 'index-static.html.in',
@@ -20,12 +20,12 @@ babl_css = configure_file(
 )
 
 index_html_tmp_env = [
-  'BABL_PATH='+ join_paths(meson.build_root(), 'extensions'),
+  'BABL_PATH='+ meson.build_root() / 'extensions',
 ]
 
 index_html_tmp = custom_target('index.html.tmp',
-  input : [ babl_html_dump, ],
-  output: [ 'index.html.tmp', ],
+  input : babl_html_dump,
+  output: 'index.html.tmp',
   command: [
     env_bin,
     index_html_tmp_env,
@@ -37,19 +37,19 @@ index_html_tmp = custom_target('index.html.tmp',
 index_html = custom_target('index.html',
   input : [
     index_static_html,
-    join_paths(meson.source_root(), 'AUTHORS'),
-    join_paths(meson.source_root(), 'TODO'),
-    join_paths(meson.source_root(), 'NEWS'),
+    meson.source_root() / 'AUTHORS',
+    meson.source_root() / 'TODO',
+    meson.source_root() / 'NEWS',
     'toc',
   ],
-  output: [ 'index.html', ],
+  output: 'index.html',
   command: [
     env_bin,
     'cp', '@INPUT0@', '@OUTPUT@',
     '&&', xml_insert, '@OUTPUT@', 'AUTHORS',  '@INPUT1@',
     '&&', xml_insert, '@OUTPUT@', 'TODO',     '@INPUT2@',
     '&&', xml_insert, '@OUTPUT@', 'NEWS',     '@INPUT3@',
-    '&&', xml_insert, '@OUTPUT@', 'TOC',     '@INPUT4@',
+    '&&', xml_insert, '@OUTPUT@', 'TOC',      '@INPUT4@',
   ],
   build_by_default: true,
 )
@@ -60,11 +60,11 @@ Reference_html = custom_target('Reference.html',
     'toc',
     index_html_tmp,
   ],
-  output: [ 'Reference.html', ],
+  output: 'Reference.html',
   command: [
     env_bin,
     'cp', '@INPUT0@', '@OUTPUT@',
-    '&&', xml_insert, '@OUTPUT@', 'TOC', '@INPUT1@',
+    '&&', xml_insert, '@OUTPUT@', 'TOC',      '@INPUT1@',
     '&&', xml_insert, '@OUTPUT@', 'BablBase', '@INPUT2@',
   ],
   build_by_default: true,
@@ -76,7 +76,7 @@ CMYK_html = custom_target('CMYK.html',
     'CMYK-static.html',
     'toc',
   ],
-  output: [ 'CMYK.html', ],
+  output: 'CMYK.html',
   command: [
     env_bin,
     'cp', '@INPUT0@', '@OUTPUT@',
@@ -90,7 +90,7 @@ OldNews_html = custom_target('OldNews.html',
     'OldNews-static.html',
     'toc',
   ],
-  output: [ 'OldNews.html', ],
+  output: 'OldNews.html',
   command: [
     env_bin,
     'cp', '@INPUT0@', '@OUTPUT@',
@@ -106,7 +106,7 @@ Glossary_html = custom_target('Glossary.html',
     'Glossary-static.html',
     'toc',
   ],
-  output: [ 'Glossary.html', ],
+  output: 'Glossary.html',
   command: [
     env_bin,
     'cp', '@INPUT0@', '@OUTPUT@',
@@ -121,7 +121,7 @@ ColorManagement_html = custom_target('ColorManagement.html',
     'ColorManagement-static.html',
     'toc',
   ],
-  output: [ 'ColorManagement.html', ],
+  output: 'ColorManagement.html',
   command: [
     env_bin,
     'cp', '@INPUT0@', '@OUTPUT@',
@@ -135,7 +135,7 @@ UnifiedAlpha_html = custom_target('UnifiedAlpha.html',
     'UnifiedAlpha-static.html',
     'toc',
   ],
-  output: [ 'UnifiedAlpha.html', ],
+  output: 'UnifiedAlpha.html',
   command: [
     env_bin,
     'cp', '@INPUT0@', '@OUTPUT@',
