@@ -20,9 +20,12 @@ babl_c_args = [
 ]
 
 # Linker arguments
-babl_link_args = [
-  '-Wl,--version-script,' + version_script,
-]
+babl_link_args = []
+
+link_arg_version_script = '-Wl,--version-script,' + version_script.full_path()
+if cc.has_link_argument(link_arg_version_script)
+  babl_link_args += link_arg_version_script
+endif
 if platform_win32
   babl_link_args += '-Wl,--no-undefined'
 endif
