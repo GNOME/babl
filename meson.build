@@ -1,12 +1,8 @@
-project('babl', 'c',
+project('babl',
+  'c',
   license: 'LGPL3+',
   version: '0.1.73',
   meson_version: '>=0.50.0',
-  default_options: [
-    'sysconfdir=/etc',
-    'localstatedir=/var',
-    'sharedstatedir=/var/lib'
-  ],
   # https://gitlab.gnome.org/GNOME/babl/issues/
 )
 
@@ -31,8 +27,7 @@ cc        = meson.get_compiler('c')
 prefix    = get_option('prefix')
 buildtype = get_option('buildtype')
 
-babl_prefix = get_option('prefix')
-babl_libdir = join_paths(babl_prefix, get_option('libdir'))
+babl_libdir = get_option('prefix') / get_option('libdir')
 
 ################################################################################
 # Projects infos
@@ -62,14 +57,9 @@ conf.set10('BABL_UNSTABLE', not stable, Description:
 conf.set       ('BABL_MAJOR_VERSION',    '@0@'.format(major_version))
 conf.set       ('BABL_MINOR_VERSION',    '@0@'.format(minor_version))
 conf.set       ('BABL_MICRO_VERSION',    '@0@'.format(micro_version))
-conf.set_quoted('BABL_INTERFACE_AGE',    '@0@'.format(interface_age))
-conf.set_quoted('BABL_BINARY_AGE',       '@0@'.format(binary_age))
 conf.set_quoted('BABL_VERSION',          '@0@'.format(version))
 conf.set_quoted('BABL_REAL_VERSION',     '@0@'.format(version))
 conf.set_quoted('BABL_API_VERSION',      '@0@'.format(api_version))
-conf.set_quoted('BABL_RELEASE',          '@0@'.format(api_version))
-conf.set_quoted('BABL_LIBRARY_VERSION',  '@0@'.format(lib_version))
-conf.set_quoted('BABL_CURRENT_MINUS_AGE','@0@'.format(0))
 conf.set_quoted('BABL_LIBRARY',          '@0@'.format(lib_name))
 
 ################################################################################
@@ -155,9 +145,8 @@ cc_can_run = not meson.is_cross_build() or meson.has_exe_wrapper()
 # Compiler arguments
 
 common_c_flags = []
-if cc.get_id().startswith('clang') or cc.get_id().startswith('gcc')
-  common_c_flags += cc.get_supported_arguments(['-Ofast'])
-endif
+
+common_c_flags += cc.get_supported_arguments(['-Ofast'])
 
 extra_warnings_list = [
   '-Wdeclaration-after-statement',

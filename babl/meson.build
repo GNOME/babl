@@ -3,18 +3,14 @@ subdir('base')
 
 python = import('python').find_installation()
 
-version_script = 'babl.map'
-export_symbols = join_paths(meson.source_root(), 'export-symbols')
-version_script_target = custom_target(version_script,
-  input : [ export_symbols, ] ,
-  output: [ version_script ] ,
+version_script = custom_target('babl.map',
+  input : meson.source_root() / 'export-symbols',
+  output: 'babl.map',
   command: [
-  python,
-  join_paths(meson.source_root(), 'gen_babl_map.py'),
-  export_symbols,
-  version_script,
+    python, meson.source_root() / 'gen_babl_map.py',
+    '@INPUT@',
+    '@OUTPUT@',
   ],
-  capture: true,
 )
 
 # c compiler arguments
@@ -24,9 +20,12 @@ babl_c_args = [
 ]
 
 # Linker arguments
-babl_link_args = [
-  '-Wl,--version-script,' + version_script,
-]
+babl_link_args = []
+
+link_arg_version_script = '-Wl,--version-script,' + version_script.full_path()
+if cc.has_link_argument(link_arg_version_script)
+  babl_link_args += link_arg_version_script
+endif
 if platform_win32
   babl_link_args += '-Wl,--no-undefined'
 endif
@@ -118,7 +117,7 @@ babl_headers = [
 ]
 
 install_headers(babl_headers,
-  subdir: join_paths(lib_name, 'babl')
+  subdir: lib_name / 'babl'
 )
 
 babl = library(
@@ -129,7 +128,7 @@ babl = library(
   link_whole: [ babl_base, ],
   link_args: [ babl_link_args, ],
   dependencies: [ math, thread, dl, lcms, ],
-  link_depends: [ version_script_target, ],
+  link_depends: [ version_script, ],
   version: so_version,
   install: true,
 )

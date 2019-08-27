@@ -41,7 +41,7 @@ extensions = [
   ['HSV', no_cflags],
   ['naive-CMYK', no_cflags],
   ['simple', no_cflags],
-  ['sse-half', [sse4_1_cflags, f16c_cflags]], 
+  ['sse-half', [sse4_1_cflags, f16c_cflags]],
   ['sse2-float', sse2_cflags],
   ['sse2-int16', sse2_cflags],
   ['sse2-int8', sse2_cflags],
@@ -62,6 +62,6 @@ foreach ext : extensions
     dependencies: babl_ext_dep,
     name_prefix: '',
     install: true,
-    install_dir: join_paths(get_option('libdir'), lib_name),
+    install_dir: get_option('libdir') / lib_name,
   )
 endforeach
