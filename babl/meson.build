@@ -3,17 +3,14 @@ subdir('base')
 
 python = import('python').find_installation()
 
-version_script = 'babl.map'
-export_symbols = meson.source_root() / 'export-symbols'
-version_script_target = custom_target(version_script,
-  input : export_symbols,
-  output: version_script,
+version_script = custom_target('babl.map',
+  input : meson.source_root() / 'export-symbols',
+  output: 'babl.map',
   command: [
     python, meson.source_root() / 'gen_babl_map.py',
-    export_symbols,
-    version_script,
+    '@INPUT@',
+    '@OUTPUT@',
   ],
-  capture: true,
 )
 
 # c compiler arguments
@@ -128,7 +125,7 @@ babl = library(
   link_whole: [ babl_base, ],
   link_args: [ babl_link_args, ],
   dependencies: [ math, thread, dl, lcms, ],
-  link_depends: [ version_script_target, ],
+  link_depends: [ version_script, ],
   version: so_version,
   install: true,
 )
