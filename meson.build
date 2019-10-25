@@ -5,7 +5,8 @@ project('babl', 'c',
   default_options: [
     'sysconfdir=/etc',
     'localstatedir=/var',
-    'sharedstatedir=/var/lib'
+    'sharedstatedir=/var/lib',
+    'buildtype=debugoptimized'
   ],
   # https://gitlab.gnome.org/GNOME/babl/issues/
 )
