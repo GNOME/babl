@@ -155,7 +155,8 @@ cc_can_run = not meson.is_cross_build() or meson.has_exe_wrapper()
 # Compiler arguments
 
 common_c_flags = []
-if cc.get_id().startswith('clang') or cc.get_id().startswith('gcc')
+
+if buildtype == 'debugoptimized' or buildtype == 'release'
   common_c_flags += cc.get_supported_arguments(['-Ofast'])
 endif
 
