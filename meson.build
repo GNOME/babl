@@ -80,31 +80,24 @@ platform_android = false
 platform_osx = false
 platform_win32 = false
 
-host_cpu = host_machine.cpu()
-message('Architecture: ' + host_cpu)
+host_cpu_family = host_machine.cpu_family()
+message('Host machine cpu family: ' + host_cpu_family)
 
-if   host_cpu.startswith('i') and host_cpu.endswith('86')
+host_cpu_family = host_machine.cpu_family()
+if   host_cpu_family == 'x86'
   have_x86 = true
-  conf.set10('ARCH_X86', true, description:
-    'Define to 1 if you are compiling for ix86.')
-elif host_cpu == 'x86_64'
+  conf.set10('ARCH_X86',    true)
+elif host_cpu_family == 'x86_64'
   have_x86 = true
-  conf.set10('ARCH_X86', true, description:
-    'Define to 1 if you are compiling for ix86.')
-  conf.set10('ARCH_X86_64', true, description:
-    'Define to 1 if you are compiling for amd64.')
-elif host_cpu == 'ppc' or host_cpu == 'powerpc'
+  conf.set10('ARCH_X86',    true)
+  conf.set10('ARCH_X86_64', true)
+elif host_cpu_family == 'ppc'
   have_ppc = true
-  conf.set10('ARCH_PPC', true, description:
-    'Define to 1 if you are compiling for PowerPC.')
-elif host_cpu == 'ppc64' or host_cpu == 'powerpc64'
+  conf.set10('ARCH_PPC',    true)
+elif host_cpu_family == 'ppc64'
   have_ppc = true
-  conf.set10('ARCH_PPC', true, description:
-    'Define to 1 if you are compiling for PowerPC.')
-  conf.set10('ARCH_PPC64', true, description:
-    'Define to 1 if you are compiling for PowerPC64.')
-else
-  warning('Unknown host architecture')
+  conf.set10('ARCH_PPC',    true)
+  conf.set10('ARCH_PPC64',  true)
 endif
 
 host_os = host_machine.system()
