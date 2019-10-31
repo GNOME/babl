@@ -4,6 +4,12 @@ subdir('base')
 python = import('python').find_installation()
 
 version_script = 'babl.map'
+version_script_clang = 'babl.map.clang'
+
+babl_gnu_sym_path = join_paths(meson.current_source_dir(), 'test-gnu.map')
+babl_clang_sym_path = join_paths(meson.current_source_dir(), 'test-clang.map')
+
+
 export_symbols = join_paths(meson.source_root(), 'export-symbols')
 version_script_target = custom_target(version_script,
   input : [ export_symbols, ] ,
@@ -24,9 +30,14 @@ babl_c_args = [
 ]
 
 # Linker arguments
-babl_link_args = [
-  '-Wl,--version-script,' + version_script,
-]
+if cc.links('', name: '-Wl,--version-script', args: ['-shared', '-Wl,--version-script=' + babl_gnu_sym_path])
+  babl_link_args = ['-Wl,--version-script,' + version_script]
+elif host_machine.system() == 'darwin' and cc.has_multi_link_arguments('-Wl,-exported_symbols_list', babl_clang_sym_path)
+	# Clang on Darwin
+  babl_link_args = ['-Wl,-exported_symbols_list',version_script_clang]
+else
+	error('Linker doesn\'t support --version-script or -exported_symbols_list')
+endif
 if platform_win32
   babl_link_args += '-Wl,--no-undefined'
 endif
