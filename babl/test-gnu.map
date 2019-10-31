@@ -1,0 +1,6 @@
+{
+	global:
+		babl_*;
+	local:
+		*;
+};
