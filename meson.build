@@ -118,7 +118,13 @@ platform_android = host_os.contains('android')
 
 path_sep = ( platform_win32 ? ';'     : ':' )
 dirs_sep = ( platform_win32 ? '\\\\'  : '/' )
-lib_ext  = ( platform_win32 ? '.dll'  : '.so' )
+if platform_win32
+  lib_ext = '.dll'
+elif platform_osx
+  lib_ext = '.dylib'
+else
+  lib_ext = '.so'
+endif
 
 conf.set('BABL_PATH_SEPARATOR', '\'' + path_sep + '\'', description:
   'separator between paths in BABL_PATH')
