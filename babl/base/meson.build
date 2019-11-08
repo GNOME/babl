@@ -16,6 +16,12 @@ babl_base_sources = [
   'type-u8.c',
 ]
 
+babl_base_c_args = [
+  sse2_cflags,
+  '-DLIBDIR="@0@"'.format(babl_libdir),
+  '-fno-unsafe-math-optimizations'
+]
+
 babl_base = static_library('babl_base',
   babl_base_sources,
   include_directories: [ rootInclude, bablInclude, ],
