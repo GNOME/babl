@@ -1076,7 +1076,7 @@ xyYf_to_rgbf (const Babl *conversion,float *src,
       else
         {
           X = (x * Y) / y;
-          Y = Y;
+          //Y = Y;
           Z = ((1 - x - y) * Y) / y;
         }
 
@@ -1130,7 +1130,7 @@ xyYf_to_rgbaf (const Babl *conversion,
       else
         {
           X = (x * Y) / y;
-          Y = Y;
+          //Y = Y;
           Z = ((1 - x - y) * Y) / y;
         }
 
@@ -1183,7 +1183,7 @@ xyYaf_to_rgbaf (const Babl *conversion,
       else
         {
           X = (x * Y) / y;
-          Y = Y;
+          //Y = Y;
           Z = ((1 - x - y) * Y) / y;
         }
 
@@ -1238,7 +1238,7 @@ Yuvf_to_rgbf (const Babl *conversion,float *src,
       else
         {
           X = ((9.0 * u * Y)/(4.0 * v));
-          Y = Y;
+          //Y = Y;
           Z = -(((20.0 * v + 3.0 * u - 12.0) * Y)/(4.0 * v));
         }
 
@@ -1291,7 +1291,7 @@ Yuvf_to_rgbaf (const Babl *conversion,
       else
         {
           X = ((9.0 * u * Y)/(4.0 * v));
-          Y = Y;
+          //Y = Y;
           Z = -(((20.0 * v + 3.0 * u - 12.0) * Y)/(4.0 * v));
         }
 
@@ -1344,7 +1344,7 @@ Yuvaf_to_rgbaf (const Babl *conversion,
       else
         {
           X = ((9.0 * u * Y)/(4.0 * v));
-          Y = Y;
+          //Y = Y;
           Z = -(((20.0 * v + 3.0 * u - 12.0) * Y)/(4.0 * v));
         }
 
