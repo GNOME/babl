@@ -57,7 +57,7 @@ test (void)
 
   for (i = 0; i < PIXELS * 5; i++)
     {
-      if (fabs (dest_buf[i] - source_buf[i]) > TOLERANCE)
+      if (fabs (dest_buf[i] - source_buf[i] * 1.0) > TOLERANCE)
         {
           fprintf (stderr, "%i is wrong\n", i);
           OK = 0;

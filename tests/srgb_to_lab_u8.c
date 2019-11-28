@@ -53,7 +53,7 @@ test (void)
 
   for (i = 0; i < PIXELS * 3; i++)
     {
-      if (fabs (destination_buf[i] - reference_buf[i]) > TOLERANCE)
+      if (fabs (1.0 * destination_buf[i] - reference_buf[i]) > TOLERANCE)
         {
           fprintf (stderr, "%2i (%2i%%3=%i, %2i/3=%i) is %i should be %i",
                     i, i, i % 3, i, i / 3, destination_buf[i], reference_buf[i]);
