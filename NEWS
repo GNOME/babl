@@ -3,7 +3,10 @@ The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
                                                                           -->
 
+2019-08-22 babl-0.1.74                                              </dt><dd>
+Build fixes, improved host cpu detection, OSX fixes, clang warning squelches.
 2019-08-22 babl-0.1.72                                              </dt><dd>
+                                                                    </dd><dt>
 Added handling for grayscale ICC profiles and gobject introspection support.
 Optimizations for many format conversions for u8, u16 and half formats. And
 fixed a crash for NANs in float to u8 conversions.
