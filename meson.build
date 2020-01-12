@@ -159,6 +159,7 @@ common_c_flags = []
 if buildtype == 'debugoptimized' or buildtype == 'release'
   common_c_flags += cc.get_supported_arguments(['-Ofast'])
 endif
+common_c_flags += cc.get_supported_arguments(['-fno-unsafe-math-optimizations'])
 
 extra_warnings_list = [
   '-Wdeclaration-after-statement',
