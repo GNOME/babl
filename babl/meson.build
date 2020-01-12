@@ -27,7 +27,6 @@ version_script_target = custom_target(version_script,
 babl_c_args = [
   sse2_cflags,
   '-DLIBDIR="@0@"'.format(babl_libdir),
-  '-fno-unsafe-math-optimizations'
 ]
 
 # Linker arguments
