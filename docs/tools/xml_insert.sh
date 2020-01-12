@@ -91,7 +91,7 @@ tmp_file="$tmp_dir/one"
 cp $1 $tmp_file
 
 numlines=`wc -l $tmp_file | $AWK '{print $1;}'`
-splitno=`$AWK "/<\!--$2-->/ { print NR; exit 0; }" $tmp_file`
+splitno=`$AWK "/<!--$2-->/ { print NR; exit 0; }" $tmp_file`
 tailno=`expr $numlines - $splitno`
 
 head -$splitno $tmp_file > $1
