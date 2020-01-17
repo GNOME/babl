@@ -184,7 +184,7 @@ sse4_1_cflags = []
 avx2_cflags   = []
 
 # mmx assembly
-if cc.has_argument('-mmmx') and get_option('enable-mmx')
+if cc.get_id() != 'msvc' and cc.has_argument('-mmmx') and get_option('enable-mmx')
   if cc.compiles('asm ("movq 0, %mm0");')
     message('mmx assembly available')
     add_project_arguments('-mmmx', language: 'c')
