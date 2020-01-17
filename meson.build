@@ -171,6 +171,24 @@ extra_warnings_list = [
 ]
 common_c_flags += cc.get_supported_arguments(extra_warnings_list)
 
+if cc.get_id() == 'msvc'
+  msvc_cflags = [
+    '-utf-8',              # Avoid C4819 (Unicode handling) compiler warnings
+    '-D_USE_MATH_DEFINES', # Allow more math macro usage
+    '-wd4244',             # Silence some unneeded compiler warnings
+    '-wd4305'
+  ]
+
+  # MSVC does not come with ssize_t
+  if host_cpu_family == 'x86_64' or host_cpu_family == 'arm64'
+    msvc_cflags += '-Dssize_t=signed __int64'
+  else
+    msvc_cflags += '-Dssize_t=signed int'
+  endif
+
+  common_c_flags += cc.get_supported_arguments(msvc_cflags)
+endif
+
 add_project_arguments(common_c_flags, language: 'c')
 
 ################################################################################
