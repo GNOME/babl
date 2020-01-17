@@ -305,7 +305,29 @@ endif
 
 # LCMS
 if get_option('with-lcms')
-  lcms = dependency('lcms2', required: true, native: false)
+  lcms = dependency('lcms2', required: cc.get_id() != 'msvc', native: false)
+  if cc.get_id() == 'msvc'
+    if not lcms.found()
+      lcms = cc.find_library('lcms2', has_headers: 'lcms2.h', required: true)
+    endif
+
+    # MSVC builds: We must check whether the lcms2 library is a static or DLL build,
+    # at least for 32-bit builds, otherwise the code will fail to link.
+    lcms_dll_test = '''
+      #define CMS_DLL
+      #include <lcms2.h>
+
+      int main(int argc, char* argv[])
+        {
+          cmsGetEncodedCMMversion();
+          return 0;
+        }
+    '''
+
+    if cc.links(lcms_dll_test, dependencies: lcms, name: 'lcms_dll_check')
+      add_project_arguments('-DCMS_DLL', language: 'c')
+    endif
+  endif
   if lcms.found()
     conf.set('HAVE_LCMS', 1, description:
       'Define to 1 if liblcms2 is available')
