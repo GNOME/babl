@@ -58,7 +58,12 @@ babl_class_name (BablClassType klass)
 int babl_hmpf_on_name_lookups = 0;
 
 #include <sys/types.h>
+
+#ifdef _WIN32
+#include <process.h>
+#else
 #include <unistd.h>
+#endif
 
 int
 babl_backtrack (void)
