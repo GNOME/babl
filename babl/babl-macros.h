@@ -30,4 +30,10 @@
 #define BABL_ARG_NULL_TERMINATED
 #endif
 
+#ifdef  __GNUC__
+#define BABL_GNUC_ATTRIBUTE_UNUSED __attribute__((unused))
+#else
+#define BABL_GNUC_ATTRIBUTE_UNUSED
 #endif
+
+#endif /* _BABL_MACROS_H */
