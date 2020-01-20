@@ -260,9 +260,17 @@ babl_format_n (const Babl *btype,
   int            id         = 0;
   int            planar     = 0;
   BablModel     *model      = (BablModel *)babl_model ("Y");
+
+#ifdef USE_ALLOCA
+  BablComponent **component = alloca (sizeof (void *) *  components);
+  BablSampling  **sampling  = alloca (sizeof (void *) *  components);
+  const BablType **type     = alloca (sizeof (void *) *  components);
+#else
   BablComponent *component [components];
   BablSampling  *sampling  [components];
   const BablType *type      [components];
+#endif
+
   char          *name       = NULL;
 
   for (i = 0; i<components; i++)
