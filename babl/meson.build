@@ -29,6 +29,14 @@ babl_c_args = [
   '-DLIBDIR="@0@"'.format(babl_libdir),
 ]
 
+if cc.get_id() == 'msvc'
+  bablExtraInclude = include_directories('dirent')
+  babl_extra_sources = [ 'dirent/dirent.c' ]
+else
+  bablExtraInclude = []
+  babl_extra_sources = []
+endif
+
 # Linker arguments
 if cc.get_id() != 'msvc'
   if cc.links('', name: '-Wl,--version-script', args: ['-shared', '-Wl,--version-script=' + babl_gnu_sym_path])
@@ -138,8 +146,8 @@ install_headers(babl_headers,
 
 babl = library(
   lib_name,
-  babl_sources,
-  include_directories: [ rootInclude, bablBaseInclude],
+  babl_sources, babl_extra_sources,
+  include_directories: [ rootInclude, bablBaseInclude, bablExtraInclude],
   c_args: babl_c_args,
   link_whole: [ babl_base, ],
   link_args: [ babl_link_args, ],
