@@ -178,6 +178,7 @@ if cc.get_id() == 'msvc'
     '-D_USE_MATH_DEFINES', # Allow more math macro usage
     '-DUSE_ALLOCA',        # Use alloca via _alloca()
     '-Dalloca=_alloca',
+    '-Dstrtok_r=strtok_s', # Use strtok_s in place of strtok_r
     '-wd4244',             # Silence some unneeded compiler warnings
     '-wd4305'
   ]
