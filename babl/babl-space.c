@@ -111,8 +111,8 @@ babl_matrix_equalize (double *in_mat)
                    0.0,  0.0,  0.0,   // black
                    0.5,  0.5,  0.5,   // gray
                    0.33, 0.33, 0.33}; // grey
-  double out[12] = {};
-  double lab[12] = {};
+  double out[12] = {0,};
+  double lab[12] = {0,};
   double best_error = 1000000.0;
   int i;
 
