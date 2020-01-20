@@ -174,6 +174,7 @@ common_c_flags += cc.get_supported_arguments(extra_warnings_list)
 if cc.get_id() == 'msvc'
   msvc_cflags = [
     '-utf-8',              # Avoid C4819 (Unicode handling) compiler warnings
+    '-D__WIN32__',         # MSVC does not define this by default
     '-D_USE_MATH_DEFINES', # Allow more math macro usage
     '-wd4244',             # Silence some unneeded compiler warnings
     '-wd4305'
