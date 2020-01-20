@@ -179,6 +179,7 @@ if cc.get_id() == 'msvc'
     '-DUSE_ALLOCA',        # Use alloca via _alloca()
     '-Dalloca=_alloca',
     '-Dstrtok_r=strtok_s', # Use strtok_s in place of strtok_r
+    '-Dstrcasecmp=_stricmp', # Use _stricmp in place of strcasecmp
     '-wd4244',             # Silence some unneeded compiler warnings
     '-wd4305'
   ]
