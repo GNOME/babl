@@ -16,7 +16,11 @@ babl_ext_inc = [
 babl_ext_link_args = [
 ]
 if platform_win32
-  babl_ext_link_args += '-Wl,--no-undefined'
+  if cc.get_id() == 'msvc'
+    babl_ext_link_args += '-export:init'
+  else
+    babl_ext_link_args += '-Wl,--no-undefined'
+  endif
 endif
 
 
