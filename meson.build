@@ -273,6 +273,16 @@ if cc.get_id() != 'msvc' and cc.has_argument('-mmmx') and get_option('enable-mmx
   endif
 endif
 
+gcc_atomic_exchg_test = '''
+  int a = 0;
+  __atomic_exchange_n (&a, 1, __ATOMIC_ACQ_REL);
+'''
+
+if cc.compiles(gcc_atomic_exchg_test, name: 'GCC \'__atomic_exchange_n()\' with \'__ATOMIC_ACQ_REL\'')
+  conf.set('HAVE_GCC_ATOMIC_EXCHANGE_N', 1, description:
+    'Define to 1 if GCC __atomic_exchange_n is available')
+endif
+
 ################################################################################
 # Check environment
 

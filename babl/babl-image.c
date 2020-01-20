@@ -20,6 +20,10 @@
 #include <string.h>
 #include <stdarg.h>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 #include "babl-internal.h"
 
 static int 
@@ -107,9 +111,11 @@ babl_image_from_linear (char       *buffer,
       case BABL_FORMAT:
         components = format->format.components;
 
-#if 1
+#if HAVE_GCC_ATOMIC_EXCHANGE_N
         babl = __atomic_exchange_n (&format->format.image_template, NULL,
                                     __ATOMIC_ACQ_REL);
+#elif defined (_WIN32)
+        babl = InterlockedExchangePointer (&format->format.image_template, NULL);
 #else
         /* todo: add a configure check for the above gcc extension and use
                  a mutex if we do not have it?
