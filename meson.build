@@ -298,6 +298,12 @@ if cc.get_id() == 'msvc' and have_x86
         if get_option('enable-sse4_1')
           conf.set('USE_SSE4_1', 1, description:
                    'Define to 1 if sse4.1 assembly is available.')
+
+          # avx2 assembly
+          if get_option('enable-avx2')
+            conf.set('USE_AVX2', 1, description:
+              'Define to 1 if avx2 assembly is available.')
+          endif
         endif
       endif
     endif

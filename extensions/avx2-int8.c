@@ -74,11 +74,11 @@ conv_yF_linear_y8_gamma (const Babl  *conversion,
                          uint8_t     *dst,
                          long         samples)
 {
-  const __v8sf *src_vec;
+  const __m256 *src_vec;
   __m256i      *dst_vec;
-  const __v8sf  scale = _mm256_set1_ps (SCALE);
-  const __v8sf  zero  = _mm256_setzero_ps ();
-  const __v8sf  half  = _mm256_set1_ps (0.5f);
+  const __m256  scale = _mm256_set1_ps (SCALE);
+  const __m256  zero  = _mm256_setzero_ps ();
+  const __m256  half  = _mm256_set1_ps (0.5f);
 
   while ((uintptr_t) src % 32 && samples > 0)
     {
@@ -87,7 +87,7 @@ conv_yF_linear_y8_gamma (const Babl  *conversion,
       samples--;
     }
 
-  src_vec = (const __v8sf  *) src;
+  src_vec = (const __m256  *) src;
   dst_vec = (__m256i       *) dst;
 
   while (samples >= 32)
@@ -96,17 +96,17 @@ conv_yF_linear_y8_gamma (const Babl  *conversion,
       __m256i i16_01,       i16_23;
       __m256i i8_0123;
 
-      #define CVT8(i)                                                        \
-        do                                                                   \
-          {                                                                  \
-            __v8sf yyyyyyyy;                                                 \
-                                                                             \
-            yyyyyyyy = scale * src_vec[i] + half;                            \
-            yyyyyyyy = _mm256_max_ps (yyyyyyyy, zero);                       \
-            yyyyyyyy = _mm256_min_ps (yyyyyyyy, scale);                      \
-            i32_##i  = _mm256_cvttps_epi32 (yyyyyyyy);                       \
-            i32_##i  = _mm256_i32gather_epi32 (linear_to_gamma, i32_##i, 4); \
-          }                                                                  \
+      #define CVT8(i)                                                           \
+        do                                                                      \
+          {                                                                     \
+            __m256 yyyyyyyy;                                                    \
+                                                                                \
+            yyyyyyyy = _mm256_add_ps (_mm256_mul_ps (scale, src_vec[i]), half); \
+            yyyyyyyy = _mm256_max_ps (yyyyyyyy, zero);                          \
+            yyyyyyyy = _mm256_min_ps (yyyyyyyy, scale);                         \
+            i32_##i  = _mm256_cvttps_epi32 (yyyyyyyy);                          \
+            i32_##i  = _mm256_i32gather_epi32 (linear_to_gamma, i32_##i, 4);    \
+          }                                                                     \
         while (0)
 
       CVT8 (0);
@@ -154,12 +154,12 @@ conv_yaF_linear_ya8_gamma (const Babl  *conversion,
 {
   if ((uintptr_t) src % 8 == 0)
     {
-      const __v8sf  *src_vec;
+      const __m256  *src_vec;
       __m256i       *dst_vec;
-      const __v8sf   scale = _mm256_setr_ps (SCALE, 255.0f, SCALE, 255.0f,
+      const __m256   scale = _mm256_setr_ps (SCALE, 255.0f, SCALE, 255.0f,
                                              SCALE, 255.0f, SCALE, 255.0f);
-      const __v8sf   zero  = _mm256_setzero_ps ();
-      const __v8sf   half  = _mm256_set1_ps (0.5f);
+      const __m256   zero  = _mm256_setzero_ps ();
+      const __m256   half  = _mm256_set1_ps (0.5f);
       const __m256i  mask  = _mm256_setr_epi32 (-1, 0, -1, 0,
                                                 -1, 0, -1, 0);
 
@@ -171,7 +171,7 @@ conv_yaF_linear_ya8_gamma (const Babl  *conversion,
           samples--;
         }
 
-      src_vec = (const __v8sf  *) src;
+      src_vec = (const __m256  *) src;
       dst_vec = (__m256i       *) dst;
 
       while (samples >= 16)
@@ -180,19 +180,19 @@ conv_yaF_linear_ya8_gamma (const Babl  *conversion,
           __m256i i16_01,       i16_23;
           __m256i i8_0123;
 
-          #define CVT8(i)                                                  \
-            do                                                             \
-              {                                                            \
-                __v8sf yayayaya;                                           \
-                                                                           \
-                yayayaya = scale * src_vec[i] + half;                      \
-                yayayaya = _mm256_max_ps (yayayaya, zero);                 \
-                yayayaya = _mm256_min_ps (yayayaya, scale);                \
-                i32_##i  = _mm256_cvttps_epi32 (yayayaya);                 \
-                i32_##i  = _mm256_mask_i32gather_epi32 (i32_##i,           \
-                                                        linear_to_gamma,   \
-                                                        i32_##i, mask, 4); \
-              }                                                            \
+          #define CVT8(i)                                                           \
+            do                                                                      \
+              {                                                                     \
+                __m256 yayayaya;                                                    \
+                                                                                    \
+                yayayaya = _mm256_add_ps (_mm256_mul_ps (scale, src_vec[i]), half); \
+                yayayaya = _mm256_max_ps (yayayaya, zero);                          \
+                yayayaya = _mm256_min_ps (yayayaya, scale);                         \
+                i32_##i  = _mm256_cvttps_epi32 (yayayaya);                          \
+                i32_##i  = _mm256_mask_i32gather_epi32 (i32_##i,                    \
+                                                        linear_to_gamma,            \
+                                                        i32_##i, mask, 4);          \
+              }                                                                     \
             while (0)
 
           CVT8 (0);
@@ -251,12 +251,12 @@ conv_rgbaF_linear_rgba8_gamma (const Babl  *conversion,
 {
   if ((uintptr_t) src % 16 == 0)
     {
-      const __v8sf  *src_vec;
+      const __m256  *src_vec;
       __m256i       *dst_vec;
-      const __v8sf   scale = _mm256_setr_ps (SCALE, SCALE, SCALE, 255.0f,
+      const __m256   scale = _mm256_setr_ps (SCALE, SCALE, SCALE, 255.0f,
                                              SCALE, SCALE, SCALE, 255.0f);
-      const __v8sf   zero  = _mm256_setzero_ps ();
-      const __v8sf   half  = _mm256_set1_ps (0.5f);
+      const __m256   zero  = _mm256_setzero_ps ();
+      const __m256   half  = _mm256_set1_ps (0.5f);
       const __m256i  mask  = _mm256_setr_epi32 (-1, -1, -1, 0,
                                                 -1, -1, -1, 0);
 
@@ -270,7 +270,7 @@ conv_rgbaF_linear_rgba8_gamma (const Babl  *conversion,
           samples--;
         }
 
-      src_vec = (const __v8sf  *) src;
+      src_vec = (const __m256  *) src;
       dst_vec = (__m256i       *) dst;
 
       while (samples >= 8)
@@ -279,19 +279,19 @@ conv_rgbaF_linear_rgba8_gamma (const Babl  *conversion,
           __m256i i16_01,       i16_23;
           __m256i i8_0123;
 
-          #define CVT8(i)                                                  \
-            do                                                             \
-              {                                                            \
-                __v8sf rgbargba;                                           \
-                                                                           \
-                rgbargba = scale * src_vec[i] + half;                      \
-                rgbargba = _mm256_max_ps (rgbargba, zero);                 \
-                rgbargba = _mm256_min_ps (rgbargba, scale);                \
-                i32_##i  = _mm256_cvttps_epi32 (rgbargba);                 \
-                i32_##i  = _mm256_mask_i32gather_epi32 (i32_##i,           \
-                                                        linear_to_gamma,   \
-                                                        i32_##i, mask, 4); \
-              }                                                            \
+          #define CVT8(i)                                                           \
+            do                                                                      \
+              {                                                                     \
+                __m256 rgbargba;                                                    \
+                                                                                    \
+                rgbargba = _mm256_add_ps (_mm256_mul_ps (scale, src_vec[i]), half); \
+                rgbargba = _mm256_max_ps (rgbargba, zero);                          \
+                rgbargba = _mm256_min_ps (rgbargba, scale);                         \
+                i32_##i  = _mm256_cvttps_epi32 (rgbargba);                          \
+                i32_##i  = _mm256_mask_i32gather_epi32 (i32_##i,                    \
+                                                        linear_to_gamma,            \
+                                                        i32_##i, mask, 4);          \
+              }                                                                     \
             while (0)
 
           CVT8 (0);
