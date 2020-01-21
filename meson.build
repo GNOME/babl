@@ -307,6 +307,10 @@ if cc.get_id() == 'msvc' and have_x86
         endif
       endif
     endif
+    if get_option('enable-f16c')
+      conf.set('USE_F16C', 1, description:
+        'Define to 1 if f16c intrinsics are available.')
+    endif
   endif
 endif
 

@@ -36,17 +36,17 @@ conv_yHalf_yF (const Babl     *conversion,
                long            samples)
 {
   const uint64_t *s_vec;
-  __v4sf         *d_vec;
+  __m128         *d_vec;
 
   long n = samples;
 
   s_vec = (const uint64_t *)src;
-  d_vec = (__v4sf *)dst;
+  d_vec = (__m128 *)dst;
 
   while (n >= 4)
     {
-      __m128i in_val = _mm_insert_epi64((__m128i)_mm_setzero_ps(), *s_vec++, 0);
-      __v4sf out_val = (__v4sf)_mm_cvtph_ps(in_val);
+      __m128i in_val = _mm_insert_epi64(_mm_castps_si128(_mm_setzero_ps()), *s_vec++, 0);
+      __m128 out_val = _mm_cvtph_ps(in_val);
       _mm_storeu_ps((float *)d_vec++, out_val);
       n -= 4;
     }
@@ -56,8 +56,8 @@ conv_yHalf_yF (const Babl     *conversion,
 
   while (n)
     {
-      __m128i in_val = _mm_insert_epi16((__m128i)_mm_setzero_ps(), *src++, 0);
-      __v4sf out_val = (__v4sf)_mm_cvtph_ps(in_val);
+      __m128i in_val = _mm_insert_epi16(_mm_castps_si128(_mm_setzero_ps()), *src++, 0);
+      __m128 out_val = _mm_cvtph_ps(in_val);
       _mm_store_ss(dst++, out_val);
       n -= 1;
     }
@@ -96,12 +96,12 @@ conv_yF_yHalf (const Babl  *conversion,
                uint16_t    *dst, 
                long         samples)
 {
-  const __v4sf *s_vec;
+  const __m128 *s_vec;
   uint64_t     *d_vec;
 
   long n = samples;
 
-  s_vec = (const __v4sf *)src;
+  s_vec = (const __m128 *)src;
   d_vec = (uint64_t *)dst;
 
   while (n >= 4)
