@@ -36,14 +36,14 @@ conv_yF_y8 (const Babl  *conversion,
             uint8_t     *dst, 
             long         samples)
 {
-  const __v4sf *s_vec;
+  const __m128 *s_vec;
   __m128i      *d_vec;
   uint32_t     *d_int;
 
   long n = samples;
 
-  const __v4sf byte_fill = _mm_set_ps1(255.0f);
-  const __v4sf half      = _mm_set_ps1(0.5);
+  const __m128 byte_fill = _mm_set_ps1(255.0f);
+  const __m128 half      = _mm_set_ps1(0.5);
 
   while (((uintptr_t)src % 16) && n > 0)
     {
@@ -54,14 +54,14 @@ conv_yF_y8 (const Babl  *conversion,
       n -= 1;
     }
 
-  s_vec = (__v4sf *)src;
+  s_vec = (__m128 *)src;
   d_vec = (__m128i *)dst;
 
   /* Aligned chunks */
 
   while (n > 16)
     {
-      __v4sf  yyyy0, yyyy1, yyyy2, yyyy3;
+      __m128  yyyy0, yyyy1, yyyy2, yyyy3;
       __m128i i32_0, i32_1, i32_2, i32_3;
       __m128i i16_01, i16_23;
       __m128i mm_ints;
@@ -72,23 +72,23 @@ conv_yF_y8 (const Babl  *conversion,
        * signed saturation, the unsigned version wasn't added
        * until SSE4.
        */
-      yyyy0 = *s_vec++ * byte_fill + half;
+      yyyy0 = _mm_add_ps(_mm_mul_ps(*s_vec++, byte_fill), half);
       yyyy0 = _mm_min_ps(yyyy0, byte_fill);
-      i32_0 = _mm_cvttps_epi32 ((__m128)yyyy0);
+      i32_0 = _mm_cvttps_epi32 (yyyy0);
 
-      yyyy1 = *s_vec++ * byte_fill + half;
+      yyyy1 = _mm_add_ps(_mm_mul_ps(*s_vec++, byte_fill), half);
       yyyy1 = _mm_min_ps(yyyy1, byte_fill);
-      i32_1 = _mm_cvttps_epi32 ((__m128)yyyy1);
+      i32_1 = _mm_cvttps_epi32 (yyyy1);
 
       i16_01 = _mm_packs_epi32 (i32_0, i32_1);
 
-      yyyy2 = *s_vec++ * byte_fill + half;
+      yyyy2 = _mm_add_ps(_mm_mul_ps(*s_vec++, byte_fill), half);
       yyyy2 = _mm_min_ps(yyyy2, byte_fill);
-      i32_2 = _mm_cvttps_epi32 ((__m128)yyyy2);
+      i32_2 = _mm_cvttps_epi32 (yyyy2);
 
-      yyyy3 = *s_vec++ * byte_fill + half;
+      yyyy3 = _mm_add_ps(_mm_mul_ps(*s_vec++, byte_fill), half);
       yyyy3 = _mm_min_ps(yyyy3, byte_fill);
-      i32_3 = _mm_cvttps_epi32 ((__m128)yyyy3);
+      i32_3 = _mm_cvttps_epi32 (yyyy3);
 
       i16_23 = _mm_packs_epi32 (i32_2, i32_3);
 
@@ -103,15 +103,15 @@ conv_yF_y8 (const Babl  *conversion,
 
   while (n > 4)
     {
-      __v4sf  yyyy0;
+      __m128  yyyy0;
       __m128i mm_ints;
 
-      yyyy0 = *s_vec++ * byte_fill + half;
+      yyyy0 = _mm_add_ps(_mm_mul_ps(*s_vec++, byte_fill), half);
       yyyy0 = _mm_min_ps(yyyy0, byte_fill);
-      mm_ints = _mm_cvttps_epi32 ((__m128)yyyy0);
+      mm_ints = _mm_cvttps_epi32 (yyyy0);
       mm_ints = _mm_packs_epi32 (mm_ints, mm_ints);
       mm_ints = _mm_packus_epi16 (mm_ints, mm_ints);
-      _mm_store_ss ((float *)d_int++, (__v4sf)mm_ints);
+      _mm_store_ss ((float *)d_int++, _mm_castsi128_ps(mm_ints));
 
       n -= 4;
     }

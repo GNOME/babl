@@ -957,21 +957,28 @@ static inline void babl_matrix_mul_vectorff_buf4_sse2 (const float *mat,
                                                        float       *v_out,
                                                        int          samples)
 {
-  const __v4sf m___0 = {m(mat, 0, 0), m(mat, 1, 0), m(mat, 2, 0), 0};
-  const __v4sf m___1 = {m(mat, 0, 1), m(mat, 1, 1), m(mat, 2, 1), 0};
-  const __v4sf m___2 = {m(mat, 0, 2), m(mat, 1, 2), m(mat, 2, 2), 1};
+  const __m128 m___0 = {m(mat, 0, 0), m(mat, 1, 0), m(mat, 2, 0), 0};
+  const __m128 m___1 = {m(mat, 0, 1), m(mat, 1, 1), m(mat, 2, 1), 0};
+  const __m128 m___2 = {m(mat, 0, 2), m(mat, 1, 2), m(mat, 2, 2), 1};
   int i;
   for (i = 0; i < samples; i ++)
   {
-    __v4sf a, b, c = _mm_load_ps(&v_in[0]);
-    a = (__v4sf) _mm_shuffle_epi32((__m128i)c, _MM_SHUFFLE(0,0,0,0));
-    b = (__v4sf) _mm_shuffle_epi32((__m128i)c, _MM_SHUFFLE(1,1,1,1));
-    c = (__v4sf) _mm_shuffle_epi32((__m128i)c, _MM_SHUFFLE(3,2,2,2));
-    _mm_store_ps (v_out, m___0 * a + m___1 * b + m___2 * c);
+    __m128 a, b, c = _mm_load_ps(&v_in[0]);
+    __m128 a_m0, b_m1, c_m2;
+    a = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(c), _MM_SHUFFLE(0,0,0,0)));
+    b = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(c), _MM_SHUFFLE(1,1,1,1)));
+    c = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(c), _MM_SHUFFLE(3,2,2,2)));
+    a_m0 = _mm_mul_ps(m___0, a);
+    b_m1 = _mm_mul_ps(m___1, b);
+    c_m2 = _mm_mul_ps(m___2, c);
+    _mm_store_ps (v_out, _mm_add_ps(_mm_add_ps (a_m0, b_m1), c_m2));
     v_out += 4;
     v_in  += 4;
   }
+
+#if !defined (_MSC_VER) || (!defined (_M_X64) && !defined  (_M_AMD64))
   _mm_empty ();
+#endif
 }
 
 #undef m
