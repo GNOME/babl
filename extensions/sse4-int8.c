@@ -37,22 +37,22 @@ conv_y8_yF (const Babl    *conversion,
             long           samples)
 {
   const float     factor = 1.0f / 255.0f;
-  const __v4sf    factor_vec = {1.0f / 255.0f, 1.0f / 255.0f, 1.0f / 255.0f, 1.0f / 255.0f};
+  const __m128    factor_vec = {1.0f / 255.0f, 1.0f / 255.0f, 1.0f / 255.0f, 1.0f / 255.0f};
   const uint32_t *s_vec;
-  __v4sf         *d_vec;
+  __m128         *d_vec;
 
   long n = samples;
 
   s_vec = (const uint32_t *)src;
-  d_vec = (__v4sf *)dst;
+  d_vec = (__m128 *)dst;
 
   while (n >= 4)
     {
       __m128i in_val;
-      __v4sf out_val;
-      in_val = _mm_insert_epi32 ((__m128i)_mm_setzero_ps(), *s_vec++, 0);
+      __m128 out_val;
+      in_val = _mm_insert_epi32 (_mm_castps_si128(_mm_setzero_ps()), *s_vec++, 0);
       in_val = _mm_cvtepu8_epi32 (in_val);
-      out_val = _mm_cvtepi32_ps (in_val) * factor_vec;
+      out_val = _mm_mul_ps(_mm_cvtepi32_ps (in_val), factor_vec);
       _mm_storeu_ps ((float *)d_vec++, out_val);
       n -= 4;
     }

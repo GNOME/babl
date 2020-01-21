@@ -279,15 +279,26 @@ if cc.get_id() != 'msvc' and cc.has_argument('-mmmx') and get_option('enable-mmx
 endif
 
 if cc.get_id() == 'msvc' and have_x86
+  # mmx assembly
   if get_option('enable-mmx')
     conf.set('USE_MMX', 1, description:
       'Define to 1 if MMX assembly are available.')
+
+    # sse assembly
     if get_option('enable-sse')
       conf.set('USE_SSE', 1, description:
         'Define to 1 if SSE assembly are available.')
+
+      # sse2 assembly
       if get_option('enable-sse2')
         conf.set('USE_SSE2', 1, description:
           'Define to 1 if sse2 assembly are available.')
+
+        # sse4.1 assembly
+        if get_option('enable-sse4_1')
+          conf.set('USE_SSE4_1', 1, description:
+                   'Define to 1 if sse4.1 assembly is available.')
+        endif
       endif
     endif
   endif
