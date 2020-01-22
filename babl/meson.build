@@ -69,9 +69,8 @@ babl_version_h = configure_file(
 # in which case the git-version.h we ship is correct.
 
 is_git_repo = (
-  test_bin.found() and
   git_bin.found() and
-  run_command(test_bin, '-d', meson.source_root() / '.git').returncode() == 0
+  run_command(check_is_git).returncode() == 0
 )
 
 if is_git_repo
@@ -85,12 +84,8 @@ if is_git_repo
   meson.add_dist_script(
     [ 'ninja', 'babl/git-version.h', ],
   )
-  meson.add_dist_script(
-    [ 'sh', '-c', ' '.join(
-    [ 'cp', git_version_h.full_path(), '${MESON_DIST_ROOT}/babl' ]
-    )]
-  )
 
+  meson.add_dist_script([ copy_git_version_h.path(), meson.current_build_dir() ])
 else
   git_version_h = files('git-version.h')
 
