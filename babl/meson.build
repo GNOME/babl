@@ -5,6 +5,7 @@ python = import('python').find_installation()
 
 version_script = 'babl.map'
 version_script_clang = 'babl.map.clang'
+msvc_def = 'babl.map.def'
 
 babl_gnu_sym_path = join_paths(meson.current_source_dir(), 'test-gnu.map')
 babl_clang_sym_path = join_paths(meson.current_source_dir(), 'test-clang.map')
@@ -51,7 +52,7 @@ if cc.get_id() != 'msvc'
     babl_link_args += '-Wl,--no-undefined'
   endif
 else
-  babl_link_args= []
+  babl_link_args = [ '-def:@0@'.format(msvc_def) ]
 endif
 
 

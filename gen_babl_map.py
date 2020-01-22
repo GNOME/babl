@@ -3,6 +3,7 @@ import sys
 export_symbols=sys.argv[1]
 version_file=sys.argv[2]
 version_file_clang=sys.argv[2] + ".clang"
+def_file_msvc=sys.argv[2] + ".def"
 
 with open(export_symbols, 'r') as syms, \
      open(version_file, 'w') as version:
@@ -15,3 +16,9 @@ with open(export_symbols, 'r') as syms, \
      open(version_file_clang, 'w') as version:
      for sym in syms:
         version.write("_{}\n".format(sym.strip()))
+
+with open(export_symbols, 'r') as syms, \
+     open(def_file_msvc, 'w') as def_file:
+     def_file.write('EXPORTS\n')
+     for sym in syms:
+        def_file.write("{}\n".format(sym.strip()))
