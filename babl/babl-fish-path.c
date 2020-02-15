@@ -351,43 +351,43 @@ alias_conversion (Babl *babl,
   {
     if ((conv->source->format.space == sRGB) &&
         (conv->destination->format.space == sRGB))
-  {
-    switch (conv->instance.class_type)
     {
-      case BABL_CONVERSION_LINEAR:
-       babl_conversion_new (
-              babl_format_with_space (
-                    (void*)conv->source->instance.name, (void*)space),
-              babl_format_with_space (
-                    (void*)conv->destination->instance.name, (void*)space),
-              "linear", conv->function.linear,
-              "data", conv->data,
-              NULL);
-        break;
-      case BABL_CONVERSION_PLANAR:
-       babl_conversion_new (
-              babl_format_with_space (
-                    (void*)conv->source->instance.name, (void*)space),
-              babl_format_with_space (
-                    (void*)conv->destination->instance.name, (void*)space),
-              "planar", conv->function.planar,
-              "data", conv->data,
-              NULL);
-        break;
-      case BABL_CONVERSION_PLANE:
-        babl_conversion_new (
-              babl_format_with_space (
-                    (void*)conv->source->instance.name, (void*)space),
-              babl_format_with_space (
-                    (void*)conv->destination->instance.name, (void*)space),
-              "plane", conv->function.plane,
-              "data", conv->data,
-              NULL);
-        break;
-      default:
-        break;
+      switch (conv->instance.class_type)
+      {
+        case BABL_CONVERSION_LINEAR:
+         babl_conversion_new (
+                babl_format_with_space (
+                      (void*)conv->source->instance.name, (void*)space),
+                babl_format_with_space (
+                      (void*)conv->destination->instance.name, (void*)space),
+                "linear", conv->function.linear,
+                "data", conv->data,
+                NULL);
+          break;
+        case BABL_CONVERSION_PLANAR:
+         babl_conversion_new (
+                babl_format_with_space (
+                      (void*)conv->source->instance.name, (void*)space),
+                babl_format_with_space (
+                      (void*)conv->destination->instance.name, (void*)space),
+                "planar", conv->function.planar,
+                "data", conv->data,
+                NULL);
+          break;
+        case BABL_CONVERSION_PLANE:
+          babl_conversion_new (
+                babl_format_with_space (
+                      (void*)conv->source->instance.name, (void*)space),
+                babl_format_with_space (
+                      (void*)conv->destination->instance.name, (void*)space),
+                "plane", conv->function.plane,
+                "data", conv->data,
+                NULL);
+          break;
+        default:
+          break;
+      }
     }
-  }
   }
   else
   if ((conv->source->class_type == BABL_MODEL) &&
@@ -395,40 +395,40 @@ alias_conversion (Babl *babl,
   {
     if ((conv->source->model.space == sRGB) &&
         (conv->destination->model.space == sRGB))
-  {
-    switch (conv->instance.class_type)
     {
-      case BABL_CONVERSION_LINEAR:
-        babl_conversion_new (
-              babl_remodel_with_space (
-                    (void*)conv->source, (void*)space),
-              babl_remodel_with_space (
-                    (void*)conv->destination, (void*)space),
-              "linear", conv->function.linear,
-              NULL);
-        break;
-      case BABL_CONVERSION_PLANAR:
-        babl_conversion_new (
-              babl_remodel_with_space (
-                    (void*)conv->source, (void*)space),
-              babl_remodel_with_space (
-                    (void*)conv->destination, (void*)space),
-              "planar", conv->function.planar,
-              NULL);
-        break;
-      case BABL_CONVERSION_PLANE:
-        babl_conversion_new (
-              babl_remodel_with_space (
-                    (void*)conv->source, (void*)space),
-              babl_remodel_with_space (
-                    (void*)conv->destination, (void*)space),
-              "plane", conv->function.plane,
-              NULL);
-        break;
-      default:
-        break;
+      switch (conv->instance.class_type)
+      {
+        case BABL_CONVERSION_LINEAR:
+          babl_conversion_new (
+                babl_remodel_with_space (
+                      (void*)conv->source, (void*)space),
+                babl_remodel_with_space (
+                      (void*)conv->destination, (void*)space),
+                "linear", conv->function.linear,
+                NULL);
+          break;
+        case BABL_CONVERSION_PLANAR:
+          babl_conversion_new (
+                babl_remodel_with_space (
+                      (void*)conv->source, (void*)space),
+                babl_remodel_with_space (
+                      (void*)conv->destination, (void*)space),
+                "planar", conv->function.planar,
+                NULL);
+          break;
+        case BABL_CONVERSION_PLANE:
+          babl_conversion_new (
+                babl_remodel_with_space (
+                      (void*)conv->source, (void*)space),
+                babl_remodel_with_space (
+                      (void*)conv->destination, (void*)space),
+                "plane", conv->function.plane,
+                NULL);
+          break;
+        default:
+          break;
+      }
     }
-  }
   }
   else
   if ((conv->source->class_type == BABL_TYPE) &&
@@ -453,7 +453,8 @@ _babl_fish_prepare_bpp (Babl *babl)
          babl->fish_path.source_bpp = babl_source->type.bits / 8;
          break;
        default:
-         babl_log ("=eeek{%i}\n", babl_source->instance.class_type - BABL_MAGIC);
+         babl_log ("=eeek{%i}\n",
+			  babl_source->instance.class_type - BABL_MAGIC);
      }
 
    switch (babl_dest->instance.class_type)
@@ -655,11 +656,6 @@ babl_fish_path2 (const Babl *source,
     {
       babl_free (babl);
       babl_mutex_unlock (babl_format_mutex);
-
-      /* it is legitimate for reference paths to be faster than long chains
-         of paths, thus it is time to retire this warning. XXX: remove it fully 
-
-          _babl_fish_missing_fast_path_warning (source, destination); */
 
       return NULL;
     }
