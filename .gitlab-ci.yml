@@ -5,19 +5,17 @@ cache:
 .build:
   stage: build
   image: archlinux/base:latest
+  artifacts:
+    when: always
+    paths:
+      - _build/meson-logs
   before_script:
     - pacman -Syu --noconfirm --needed --cachedir `pwd`/_pacman_cache
         base-devel
         git
         gobject-introspection
+        meson
         ${EXTRA_PKGS}
-
-.meson-build:
-  extends: .build
-  artifacts:
-    when: always
-    paths:
-      - _build/meson-logs
   script:
     - meson _build
         -D enable-f16c=true
@@ -27,18 +25,18 @@ cache:
         -D enable-sse3=true
         -D enable-sse4_1=true
         -D with-docs=true
-        ${LCMS_OPTION}
+        ${EXTRA_OPTIONS}
     - ninja -C _build
     - ninja -C _build test
 
-latest-meson-lcms:
-  extends: .meson-build
+latest-lcms:
+  extends: .build
   variables:
-    LCMS_OPTION : "-Dwith-lcms=true"
-    EXTRA_PKGS: "lcms2 meson"
+    EXTRA_OPTIONS : "-Dwith-lcms=true"
+    EXTRA_PKGS: "lcms2"
 
-latest-meson-nolcms:
-  extends: .meson-build
+latest-nolcms:
+  extends: .build
   variables:
-    LCMS_OPTION : "-Dwith-lcms=false"
-    EXTRA_PKGS: "meson"
+    EXTRA_OPTIONS : "-Dwith-lcms=false"
+    EXTRA_PKGS: ""
