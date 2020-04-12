@@ -338,6 +338,184 @@ conv_rgbaF_linear_rgba8_gamma (const Babl  *conversion,
 #undef CVT1
 #undef CVTA1
 
+#define CVT1(src, dst) \
+  (*dst++ = gamma_to_linear[*src++])
+
+#define CVTA1(src, dst) \
+  (*dst++ = gamma_to_linear[*src++ + 256])
+
+static inline void
+conv_y8_gamma_yF_linear (const Babl    *conversion,
+                         const uint8_t *src,
+                         float         *dst,
+                         long           samples)
+{
+  const __m128i *src_vec;
+  __v8sf        *dst_vec;
+
+  while ((uintptr_t) dst % 32 && samples > 0)
+    {
+      CVT1 (src, dst);
+
+      samples--;
+    }
+
+  src_vec = (const __m128i *) src;
+  dst_vec = (__v8sf        *) dst;
+
+  while (samples >= 16)
+    {
+      __m128i i8_01;
+      __m256i i32_0;
+
+      i8_01 = _mm_loadu_si128 (src_vec++);
+
+      i32_0      = _mm256_cvtepu8_epi32 (i8_01);
+      *dst_vec++ = _mm256_i32gather_ps (gamma_to_linear, i32_0, 4);
+
+      i8_01 = _mm_shuffle_epi32 (i8_01, _MM_SHUFFLE (1, 0, 3, 2));
+
+      i32_0      = _mm256_cvtepu8_epi32 (i8_01);
+      *dst_vec++ = _mm256_i32gather_ps (gamma_to_linear, i32_0, 4);
+
+      samples -= 16;
+    }
+
+  src = (const uint8_t *) src_vec;
+  dst = (float         *) dst_vec;
+
+  while (samples > 0)
+    {
+      CVT1 (src, dst);
+
+      samples--;
+    }
+}
+
+static inline void
+conv_ya8_gamma_yaF_linear (const Babl    *conversion,
+                           const uint8_t *src,
+                           float         *dst,
+                           long           samples)
+{
+  const __m128i *src_vec;
+  __v8sf        *dst_vec;
+  const __m256i  offset = _mm256_setr_epi32 (0, 256, 0, 256,
+                                             0, 256, 0, 256);
+
+  while ((uintptr_t) dst % 32 && samples > 0)
+    {
+      CVT1  (src, dst);
+      CVTA1 (src, dst);
+
+      samples--;
+    }
+
+  src_vec = (const __m128i *) src;
+  dst_vec = (__v8sf        *) dst;
+
+  while (samples >= 8)
+    {
+      __m128i i8_01;
+      __m256i i32_0;
+
+      i8_01 = _mm_loadu_si128 (src_vec++);
+
+      i32_0       = _mm256_cvtepu8_epi32 (i8_01);
+      i32_0      += offset;
+      *dst_vec++  = _mm256_i32gather_ps (gamma_to_linear, i32_0, 4);
+
+      i8_01 = _mm_shuffle_epi32 (i8_01, _MM_SHUFFLE (1, 0, 3, 2));
+
+      i32_0       = _mm256_cvtepu8_epi32 (i8_01);
+      i32_0      += offset;
+      *dst_vec++  = _mm256_i32gather_ps (gamma_to_linear, i32_0, 4);
+
+      samples -= 8;
+    }
+
+  src = (const uint8_t *) src_vec;
+  dst = (float         *) dst_vec;
+
+  while (samples > 0)
+    {
+      CVT1  (src, dst);
+      CVTA1 (src, dst);
+
+      samples--;
+    }
+}
+
+static inline void
+conv_rgb8_gamma_rgbF_linear (const Babl    *conversion,
+                             const uint8_t *src,
+                             float         *dst,
+                             long           samples)
+{
+  conv_y8_gamma_yF_linear (conversion, src, dst, 3 * samples);
+}
+
+static inline void
+conv_rgba8_gamma_rgbaF_linear (const Babl    *conversion,
+                               const uint8_t *src,
+                               float         *dst,
+                               long           samples)
+{
+  const __m128i *src_vec;
+  __v8sf        *dst_vec;
+  const __m256i  offset = _mm256_setr_epi32 (0, 0, 0, 256,
+                                             0, 0, 0, 256);
+
+  while ((uintptr_t) dst % 32 && samples > 0)
+    {
+      CVT1  (src, dst);
+      CVT1  (src, dst);
+      CVT1  (src, dst);
+      CVTA1 (src, dst);
+
+      samples--;
+    }
+
+  src_vec = (const __m128i *) src;
+  dst_vec = (__v8sf        *) dst;
+
+  while (samples >= 4)
+    {
+      __m128i i8_01;
+      __m256i i32_0;
+
+      i8_01 = _mm_loadu_si128 (src_vec++);
+
+      i32_0       = _mm256_cvtepu8_epi32 (i8_01);
+      i32_0      += offset;
+      *dst_vec++  = _mm256_i32gather_ps (gamma_to_linear, i32_0, 4);
+
+      i8_01 = _mm_shuffle_epi32 (i8_01, _MM_SHUFFLE (1, 0, 3, 2));
+
+      i32_0       = _mm256_cvtepu8_epi32 (i8_01);
+      i32_0      += offset;
+      *dst_vec++  = _mm256_i32gather_ps (gamma_to_linear, i32_0, 4);
+
+      samples -= 4;
+    }
+
+  src = (const uint8_t *) src_vec;
+  dst = (float         *) dst_vec;
+
+  while (samples > 0)
+    {
+      CVT1  (src, dst);
+      CVT1  (src, dst);
+      CVT1  (src, dst);
+      CVTA1 (src, dst);
+
+      samples--;
+    }
+}
+
+#undef CVT1
+#undef CVTA1
+
 #endif /* defined(USE_AVX2) */
 
 int init (void);
@@ -407,6 +585,12 @@ init (void)
                            dst ## _gamma,                             \
                            "linear",                                  \
                            conv_ ## src ## _linear_ ## dst ## _gamma, \
+                           NULL);                                     \
+                                                                      \
+      babl_conversion_new (dst ## _gamma,                             \
+                           src ## _linear,                            \
+                           "linear",                                  \
+                           conv_ ## dst ## _gamma_ ## src ## _linear, \
                            NULL);                                     \
     }                                                                 \
   while (0)
