@@ -5,12 +5,14 @@ cache:
 .build:
   stage: build
   image: archlinux/base:latest
+  variables:
+    PACMAN_CACHE: $CI_PROJECT_DIR/_pacman_cache
   artifacts:
     when: always
     paths:
       - _build/meson-logs
   before_script:
-    - pacman -Syu --noconfirm --needed --cachedir `pwd`/_pacman_cache
+    - pacman -Syu --noconfirm --needed --cachedir $PACMAN_CACHE
         base-devel
         git
         gobject-introspection
@@ -28,6 +30,10 @@ cache:
         ${EXTRA_OPTIONS}
     - ninja -C _build
     - ninja -C _build test
+  after_script:
+    # Remove all cached packages but the latest version
+    - pacman -S --noconfirm --cachedir $PACMAN_CACHE pacman-contrib
+    - paccache -r -k1 --cachedir $PACMAN_CACHE
 
 latest-lcms:
   extends: .build
