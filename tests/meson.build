@@ -3,6 +3,7 @@ test_names = [
   'babl_class_name',
   'cairo_cmyk_hack',
   'cairo-RGB24',
+  'cmyk',
   'chromaticities',
   'extract',
   'floatclamp',
