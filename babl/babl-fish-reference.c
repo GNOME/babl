@@ -918,7 +918,7 @@ babl_fish_reference_process_double (const Babl *babl,
       for (i = 0; i < n; i++)
       {
         /* A very naive conversion - but it is usable */
-        double key=0.0;
+        double key=1.0;
         cmyka[i * 5 + 0] = 1.0 - rgba[i * 4 + 0];
         cmyka[i * 5 + 1] = 1.0 - rgba[i * 4 + 1];
         cmyka[i * 5 + 2] = 1.0 - rgba[i * 4 + 2];
