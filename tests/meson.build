@@ -5,6 +5,7 @@ test_names = [
   'cairo-RGB24',
   'cmyk',
   'chromaticities',
+  'conversions',
   'extract',
   'floatclamp',
   'float-to-8bit',
