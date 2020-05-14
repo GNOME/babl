@@ -1259,7 +1259,8 @@ babl_fish_reference_process_float (const Babl *babl,
     }
     else
     {
-      source_float_buf_alloc = babl_malloc (sizeof (float) * n *
+      /* the +1 is to mask a valgrind 'invalid read of size 16' false positive  */
+      source_float_buf_alloc = babl_malloc (sizeof (float) * (n+1) *
                                   (BABL (babl->fish.source)->format.model->components));
 
       source_float_buf = source_float_buf_alloc;
