@@ -27,6 +27,10 @@
 #include "babl.h"
 #include "babl-memory.h"
 
+#ifdef HAVE_STDATOMIC_H
+#include <stdatomic.h>
+#endif
+
 #define HASH_TABLE_SIZE 1111
 
 
@@ -110,7 +114,8 @@ babl_palette_radius_compare (const void *r1,
 }
 
 static void
-babl_palette_init_radii (BablPalette *pal)
+babl_palette_init_radii (BablPalette       *pal,
+                         BablPaletteRadius *radii)
 {
   int i, j;
 
@@ -122,12 +127,12 @@ babl_palette_init_radii (BablPalette *pal)
 
   for (i = 0; i < pal->count; i++)
     {
-      BablPaletteRadius   *radii1 = pal->radii + (pal->count - 1) * i;
+      BablPaletteRadius   *radii1 = radii + (pal->count - 1) * i;
       const unsigned char *p1     = pal->data_u8 + 4 * i;
 
       for (j = i + 1; j < pal->count; j++)
         {
-          BablPaletteRadius   *radii2 = pal->radii + (pal->count - 1) * j;
+          BablPaletteRadius   *radii2 = radii + (pal->count - 1) * j;
           const unsigned char *p2     = pal->data_u8 + 4 * j;
           unsigned short       diff;
 
@@ -143,6 +148,53 @@ babl_palette_init_radii (BablPalette *pal)
       qsort (radii1, pal->count - 1, sizeof (BablPaletteRadius),
              babl_palette_radius_compare);
     }
+}
+
+static BablPaletteRadius *
+babl_palette_create_radii (BablPalette *pal)
+{
+  BablPaletteRadius *radii;
+
+  radii = babl_malloc (sizeof (BablPaletteRadius) *
+                       (pal->count - 1)           *
+                       pal->count);
+
+  babl_palette_init_radii (pal, radii);
+
+  return radii;
+}
+
+static const BablPaletteRadius *
+babl_palette_get_radii (BablPalette *pal,
+                        int          entry)
+{
+  BablPaletteRadius *radii;
+
+#ifdef HAVE_STDATOMIC_H
+  radii = atomic_load_explicit (&pal->radii, memory_order_consume);
+
+  if (! radii)
+    {
+      BablPaletteRadius *existing_radii;
+
+      existing_radii = NULL;
+      radii          = babl_palette_create_radii (pal);
+
+      if (! atomic_compare_exchange_strong_explicit (&pal->radii,
+                                                     &existing_radii, radii,
+                                                     memory_order_acq_rel,
+                                                     memory_order_consume))
+        {
+          babl_free (radii);
+
+          radii = existing_radii;
+        }
+    }
+#else
+  radii = pal->radii;
+#endif
+
+  return radii + (pal->count - 1) * entry;
 }
 
 static void
@@ -181,7 +233,7 @@ babl_palette_lookup (BablPalette         *pal,
     }
   else
     {
-      const BablPaletteRadius *radii = pal->radii + (pal->count - 1) * best_idx;
+      const BablPaletteRadius *radii = babl_palette_get_radii (pal, best_idx);
       const unsigned char     *q;
       int                      best_diff2;
       int                      best_diff;
@@ -256,9 +308,7 @@ make_pal (const Babl *pal_space,
   pal->data = babl_malloc (bpp * count);
   pal->data_double = babl_malloc (4 * sizeof(double) * count);
   pal->data_u8 = babl_malloc (4 * sizeof(char) * count);
-  pal->radii = babl_malloc (sizeof (BablPaletteRadius) *
-                            (pal->count - 1)           *
-                            pal->count);
+  pal->radii = NULL;
 
   memcpy (pal->data, data, bpp * count);
 
@@ -267,7 +317,9 @@ make_pal (const Babl *pal_space,
   babl_process (babl_fish (format, babl_format_with_space ("R'G'B'A u8", pal_space)),
                 data, pal->data_u8, count);
 
-  babl_palette_init_radii (pal);
+#ifndef HAVE_STDATOMIC_H
+  pal->radii = babl_palette_create_radii (pal);
+#endif
 
   babl_palette_reset_hash (pal);
 
@@ -315,7 +367,7 @@ default_palette (void)
   babl_process (babl_fish (pal.format, babl_format ("RGBA double")),
                 pal.data, pal.data_double, pal.count);
 
-  babl_palette_init_radii (&pal);
+  babl_palette_init_radii (&pal, pal.radii);
 
   babl_palette_reset_hash (&pal);
 

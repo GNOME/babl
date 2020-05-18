@@ -260,6 +260,7 @@ endif
 
 # Check headers
 check_headers = [
+  ['HAVE_STDATOMIC_H', 'stdatomic.h']
 ]
 # Don't check for dynamic load on windows
 if not platform_win32
