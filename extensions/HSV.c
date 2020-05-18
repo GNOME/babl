@@ -242,7 +242,11 @@ hsv_to_rgba_step (char *src,
   double chroma, h_tmp, x, min;
 
   chroma = saturation * value;
-  h_tmp = hue * 6.0;
+
+  h_tmp  = fmod (hue, 1.0);
+  h_tmp += h_tmp < 0.0;
+  h_tmp *= 6.0;
+
   x = chroma * (1.0 - fabs (fmod (h_tmp, 2.0) - 1.0));
 
   if (h_tmp < 1.0)

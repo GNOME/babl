@@ -251,6 +251,9 @@ hsl_to_rgb_step (double *src,
 
       double p = 2 * lightness - q;
 
+      hue  = fmod (hue, 1.0);
+      hue += hue < 0.0;
+
       red   = hue2cpn (p, q, hue + 1.0/3.0);
       green = hue2cpn (p, q, hue);
       blue  = hue2cpn (p, q, hue - 1.0/3.0);

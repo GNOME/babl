@@ -232,8 +232,11 @@ hcy_to_rgba_step (char *src,
   if(chroma < EPSILON) {
     red = green = blue = luma;
   } else {
-    hue *= 6.;
-    H_sec = (int)hue;
+    hue  = fmod (hue, 1.0);
+    hue += hue < 0.0;
+    hue *= 6.0;
+
+    H_sec = (int) hue;
 
     switch (H_sec)
     {
