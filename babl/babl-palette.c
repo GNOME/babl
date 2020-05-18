@@ -292,9 +292,9 @@ babl_palette_lookup (BablPalette         *pal,
 }
 
 static BablPalette *
-make_pal (const Babl *pal_space, 
-          const Babl *format, 
-          const void *data, 
+make_pal (const Babl *pal_space,
+          const Babl *format,
+          const void *data,
           int         count)
 {
   BablPalette *pal = NULL;
@@ -326,7 +326,7 @@ make_pal (const Babl *pal_space,
   return pal;
 }
 
-static void 
+static void
 babl_palette_free (BablPalette *pal)
 {
   babl_free (pal->data);
@@ -732,8 +732,8 @@ pala_u8_to_rgba_u8 (Babl          *conversion,
 
 static inline long
 conv_pal8_pala8 (Babl          *conversion,
-                 unsigned char *src, 
-                 unsigned char *dst, 
+                 unsigned char *src,
+                 unsigned char *dst,
                  long           samples)
 {
   long n = samples;
@@ -750,8 +750,8 @@ conv_pal8_pala8 (Babl          *conversion,
 
 static inline long
 conv_pala8_pal8 (Babl          *conversion,
-                 unsigned char *src, 
-                 unsigned char *dst, 
+                 unsigned char *src,
+                 unsigned char *dst,
                  long           samples)
 {
   long n = samples;
