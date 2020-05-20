@@ -1,11 +1,55 @@
-option('enable-mmx',    type: 'boolean', value: true, description: 'enable MMX support')
-option('enable-sse',    type: 'boolean', value: true, description: 'enable SSE support')
-option('enable-sse2',   type: 'boolean', value: true, description: 'enable SSE2 support')
-option('enable-sse3',   type: 'boolean', value: true, description: 'enable SSE3 support')
-option('enable-sse4_1', type: 'boolean', value: true, description: 'enable SSE4.1 support')
-option('enable-avx2',   type: 'boolean', value: true, description: 'enable AVX2 support')
-option('enable-f16c',   type: 'boolean', value: true, description: 'enable hardware half-float support')
-option('enable-gir',    type: 'boolean', value: true, description: 'enable GObject-Introspection (GIR)')
-option('enable-vapi',   type: 'boolean', value: true, description: 'enable Vala .vapi generation (requires GIR)')
-option('with-docs',     type: 'boolean', value: true, description: 'build website')
-option('with-lcms',     type: 'boolean', value: true, description: 'build with lcms')
+# Optional features
+option('with-docs',
+  type: 'boolean',
+  value: 'true', 
+  description: 'build documentation'
+)
+option('enable-gir',
+  type: 'boolean',
+  value: 'true', 
+  description: 'gobject introspection .gir generation'
+)
+option('enable-vapi',
+  type: 'boolean',
+  value: 'true', 
+  description: 'Vala .vapi generation - depends on introspection'
+)
+
+# Compiler extensions
+option('enable-mmx',
+  type: 'boolean', 
+  value: 'true', 
+  description: 'MMX support - disables all compiler extensons'
+)
+option('enable-sse',
+  type: 'boolean',
+  value: 'true',
+  description: 'SSE support - depends on MMX'
+)
+option('enable-sse2',
+  type: 'boolean',
+  value: 'true',
+  description: 'SSE2 support - depends on SSE'
+)
+option('enable-sse4_1',
+  type: 'boolean',
+  value: 'true',
+  description: 'SSE4.1 support - depends on SSE2'
+)
+option('enable-avx2',
+  type: 'boolean',
+  value: 'true',
+  description: 'AVX2 support - depends on SSE4.1'
+)
+option('enable-f16c',
+  type: 'boolean',
+  value: 'true',
+  description: 'Hardware half-float support - depends on SSE'
+)
+
+# Optional dependencies
+option('with-lcms',
+  type: 'boolean',
+  value: 'true', 
+  description: 'build with lcms'
+)
