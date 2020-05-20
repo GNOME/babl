@@ -184,7 +184,7 @@ sse4_1_cflags = []
 avx2_cflags   = []
 
 # mmx assembly
-if cc.has_argument('-mmmx') and get_option('enable-mmx')
+if get_option('enable-mmx') and cc.has_argument('-mmmx')
   if cc.compiles('asm ("movq 0, %mm0");')
     message('mmx assembly available')
     add_project_arguments('-mmmx', language: 'c')
@@ -192,7 +192,7 @@ if cc.has_argument('-mmmx') and get_option('enable-mmx')
       'Define to 1 if MMX assembly is available.')
 
     # sse assembly
-    if cc.has_argument('-msse') and get_option('enable-sse')
+    if get_option('enable-sse') and cc.has_argument('-msse')
       if cc.compiles('asm ("movntps %xmm0, 0");')
         add_project_arguments('-msse', language: 'c')
         message('sse assembly available')
@@ -210,7 +210,7 @@ if cc.has_argument('-mmmx') and get_option('enable-mmx')
         endforeach
 
         # sse2 assembly
-        if cc.has_argument('-msse2') and get_option('enable-sse2')
+        if get_option('enable-sse2') and cc.has_argument('-msse2')
           if cc.compiles('asm ("punpckhwd %xmm0,%xmm1");')
             message('sse2 assembly available')
             sse2_cflags = '-msse2'
@@ -218,7 +218,7 @@ if cc.has_argument('-mmmx') and get_option('enable-mmx')
               'Define to 1 if sse2 assembly is available.')
 
             # sse4.1 assembly
-            if cc.has_argument('-msse4.1') and get_option('enable-sse4_1')
+            if get_option('enable-sse4_1') and cc.has_argument('-msse4.1')
               if cc.compiles('asm ("pmovzxbd %xmm0,%xmm1");')
                 message('sse4.1 assembly available')
                 sse4_1_cflags = '-msse4.1'
@@ -227,7 +227,7 @@ if cc.has_argument('-mmmx') and get_option('enable-mmx')
               endif
 
               # avx2 assembly
-              if cc.has_argument('-mavx2') and get_option('enable-avx2')
+              if get_option('enable-avx2') and cc.has_argument('-mavx2')
                 if cc.compiles('asm ("vpgatherdd %ymm0,(%eax,%ymm1,4),%ymm2");')
                   message('avx2 assembly available')
                   avx2_cflags = '-mavx2'
@@ -239,7 +239,7 @@ if cc.has_argument('-mmmx') and get_option('enable-mmx')
           endif
         endif
       endif
-      if cc.has_argument('-mf16c') and get_option('enable-f16c')
+      if get_option('enable-f16c') and cc.has_argument('-mf16c')
         if cc.compiles(
           'asm ("#include <immintrin.h>],' +
           '[__m128 val = _mm_cvtph_ps ((__m128i)_mm_setzero_ps());' +
