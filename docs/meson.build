@@ -5,7 +5,10 @@ location= 'public_html/babl'
 scptarget = host + ':' + location + '/'
 
 
-xml_insert = find_program(join_paths('tools', 'xml_insert.sh'))
+xml_insert = find_program(
+  meson.source_root() / 'tools' / 'xml-insert.py',
+  native: true
+)
 
 index_static_html = configure_file(
   input : 'index-static.html.in',
@@ -20,129 +23,84 @@ babl_css = configure_file(
 )
 
 index_html_tmp_env = [
-  'BABL_PATH='+ join_paths(meson.build_root(), 'extensions'),
+  'BABL_PATH=' + meson.build_root() / 'extensions',
 ]
 
-index_html_tmp = custom_target('index.html.tmp',
-  input : [ babl_html_dump, ],
-  output: [ 'index.html.tmp', ],
-  command: [
-    env_bin,
-    index_html_tmp_env,
-    babl_html_dump
-  ],
-  capture: true,
-)
+# Don't build babl ref if cannot run compiled objects in this env
+if env_bin.found() and cc_can_run # and not meson.is_cross_build()
+  index_html_tmp = custom_target('index.html.tmp',
+    input : [ babl_html_dump, ],
+    output: [ 'index.html.tmp', ],
+    command: [
+      env_bin,
+      index_html_tmp_env,
+      babl_html_dump
+    ],
+    capture: true,
+  )
+else
+  warning('Cannot create babl reference in this environment')
+  index_html_tmp = 'index.html.tmp'
+endif
 
-index_html = custom_target('index.html',
-  input : [
-    index_static_html,
-    join_paths(meson.source_root(), 'AUTHORS'),
-    join_paths(meson.source_root(), 'TODO'),
-    join_paths(meson.source_root(), 'NEWS'),
-    'toc',
-  ],
-  output: [ 'index.html', ],
-  command: [
-    env_bin,
-    'cp', '@INPUT0@', '@OUTPUT@',
-    '&&', xml_insert, '@OUTPUT@', 'AUTHORS',  '@INPUT1@',
-    '&&', xml_insert, '@OUTPUT@', 'TODO',     '@INPUT2@',
-    '&&', xml_insert, '@OUTPUT@', 'NEWS',     '@INPUT3@',
-    '&&', xml_insert, '@OUTPUT@', 'TOC',     '@INPUT4@',
-  ],
-  build_by_default: true,
-)
+TOC = files('toc')
+html_files = {
+  'index': [index_static_html, [
+    ['AUTHORS', files(meson.source_root() / 'AUTHORS')],
+    ['TODO',    files(meson.source_root() / 'TODO')],
+    ['NEWS',    files(meson.source_root() / 'NEWS')],
+    ['TOC',     TOC],
+  ]],
+  'Reference': ['auto', [
+    ['BablBase', index_html_tmp],
+    ['TOC',      TOC],
+  ]],
+  'CMYK': ['auto', [
+    ['TOC', TOC]
+  ]],
+  'OldNews': ['auto', [
+    ['TOC', TOC],
+  ]],
+  'Glossary': ['auto', [
+    ['TOC', TOC],
+  ]],
+  'ColorManagement': ['auto', [
+    ['TOC', TOC],
+  ]],
+  'UnifiedAlpha': ['auto', [
+    ['TOC', TOC],
+  ]],
+}
 
-Reference_html = custom_target('Reference.html',
-  input : [
-    'Reference-static.html',
-    'toc',
-    index_html_tmp,
-  ],
-  output: [ 'Reference.html', ],
-  command: [
-    env_bin,
-    'cp', '@INPUT0@', '@OUTPUT@',
-    '&&', xml_insert, '@OUTPUT@', 'TOC', '@INPUT1@',
-    '&&', xml_insert, '@OUTPUT@', 'BablBase', '@INPUT2@',
-  ],
-  build_by_default: true,
-)
+foreach _file, _parms : html_files
+  if '@0@'.format(_parms[0]) == 'auto'
+    _in = '@0@-static.html'.format(_file)
+  else
+    _in = _parms[0]
+  endif
+  _out = '@0@.html'.format(_file)
 
+  inserts = []
+  foreach _parm : _parms[1]
+    inserts += ['--insert', _parm[0], _parm[1]]
+  endforeach
 
-CMYK_html = custom_target('CMYK.html',
-  input : [
-    'CMYK-static.html',
-    'toc',
-  ],
-  output: [ 'CMYK.html', ],
-  command: [
-    env_bin,
-    'cp', '@INPUT0@', '@OUTPUT@',
-    '&&', xml_insert, '@OUTPUT@', 'TOC', '@INPUT1@',
-  ],
-  build_by_default: true,
-)
+  _tgt = custom_target(_out,
+    input: _in,
+    output: _out,
+    command: [
+      xml_insert,
+      '--output' , '@OUTPUT@',
+      inserts,
+      '@INPUT@',
+    ],
+    build_by_default: true
+  )
+  if _file == 'index'
+    index_html = _tgt
+  endif
+endforeach
 
-OldNews_html = custom_target('OldNews.html',
-  input : [
-    'OldNews-static.html',
-    'toc',
-  ],
-  output: [ 'OldNews.html', ],
-  command: [
-    env_bin,
-    'cp', '@INPUT0@', '@OUTPUT@',
-    '&&', xml_insert, '@OUTPUT@', 'TOC', '@INPUT1@',
-  ],
-  build_by_default: true,
-)
-
-
-
-Glossary_html = custom_target('Glossary.html',
-  input : [
-    'Glossary-static.html',
-    'toc',
-  ],
-  output: [ 'Glossary.html', ],
-  command: [
-    env_bin,
-    'cp', '@INPUT0@', '@OUTPUT@',
-    '&&', xml_insert, '@OUTPUT@', 'TOC', '@INPUT1@',
-  ],
-  build_by_default: true,
-)
-
-
-ColorManagement_html = custom_target('ColorManagement.html',
-  input : [
-    'ColorManagement-static.html',
-    'toc',
-  ],
-  output: [ 'ColorManagement.html', ],
-  command: [
-    env_bin,
-    'cp', '@INPUT0@', '@OUTPUT@',
-    '&&', xml_insert, '@OUTPUT@', 'TOC',     '@INPUT1@',
-  ],
-  build_by_default: true,
-)
-
-UnifiedAlpha_html = custom_target('UnifiedAlpha.html',
-  input : [
-    'UnifiedAlpha-static.html',
-    'toc',
-  ],
-  output: [ 'UnifiedAlpha.html', ],
-  command: [
-    env_bin,
-    'cp', '@INPUT0@', '@OUTPUT@',
-    '&&', xml_insert, '@OUTPUT@', 'TOC',     '@INPUT1@',
-  ],
-  build_by_default: true,
-)
 
 run_target('push_web',
   command: [

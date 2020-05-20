@@ -342,14 +342,22 @@ w3m_bin = find_program('w3m', required: false, native: true)
 ################################################################################
 # Build flags
 
-build_docs = false
-
-if get_option('with-docs')
-  if cc_can_run and env_bin.found() and not platform_win32
-    build_docs = true
-  else
-    warning('Unable to generate docs in this environment')
+# Docs - don't build by default in cross-build environments
+#        can't build if no env binary
+build_docs = true
+build_docs_msg = ''
+if get_option('with-docs') != 'false' and not env_bin.found()
+  build_docs = false
+  build_docs_msg = '(env program not available)'
+  warning('env is required to build documentation')
+elif get_option('with-docs') == 'auto'
+  if meson.is_cross_build()
+    build_docs = false
+    build_docs_msg = '(configure with -Ddocs=true to cross-build docs)'
   endif
+elif get_option('with-docs') == 'false'
+  build_docs = false
+  build_docs_msg = '(disabled)'
 endif
 
 
@@ -376,6 +384,7 @@ if build_docs
   subdir('docs')
 endif
 
+# Create README file from web page
 if w3m_bin.found() and build_docs
   custom_target('README',
     input: index_html,
@@ -387,6 +396,7 @@ if w3m_bin.found() and build_docs
       '@INPUT@',
     ],
     capture: true,
+    build_by_default: true
   )
 endif
 

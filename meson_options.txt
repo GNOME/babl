@@ -1,7 +1,7 @@
 # Optional features
 option('with-docs',
-  type: 'boolean',
-  value: 'true', 
+  type: 'combo',
+  choices: ['auto', 'true', 'false'],
   description: 'build documentation'
 )
 option('enable-gir',
