@@ -1,7 +1,7 @@
 project('babl', 'c',
   license: 'LGPL3+',
   version: '0.1.79',
-  meson_version: '>=0.50.0',
+  meson_version: '>=0.53.0',
   default_options: [
     'sysconfdir=/etc',
     'localstatedir=/var',
@@ -79,9 +79,6 @@ conf.set_quoted('BABL_LIBRARY',          '@0@'.format(lib_name))
 platform_android = false
 platform_osx = false
 platform_win32 = false
-
-host_cpu_family = host_machine.cpu_family()
-message('Host machine cpu family: ' + host_cpu_family)
 
 host_cpu_family = host_machine.cpu_family()
 if   host_cpu_family == 'x86'
@@ -178,6 +175,13 @@ add_project_arguments(common_c_flags, language: 'c')
 
 # intialize these to nothing, so meson doesn't complain on non-x86
 
+have_mmx    = false
+have_sse    = false
+have_sse2   = false
+have_sse4_1 = false
+have_avx2   = false
+have_f16c   = false
+
 sse2_cflags   = []
 f16c_cflags   = []
 sse4_1_cflags = []
@@ -190,6 +194,7 @@ if get_option('enable-mmx') and cc.has_argument('-mmmx')
     add_project_arguments('-mmmx', language: 'c')
     conf.set('USE_MMX', 1, description:
       'Define to 1 if MMX assembly is available.')
+    have_mmx = true
 
     # sse assembly
     if get_option('enable-sse') and cc.has_argument('-msse')
@@ -198,6 +203,7 @@ if get_option('enable-mmx') and cc.has_argument('-mmmx')
         message('sse assembly available')
         conf.set('USE_SSE', 1, description:
           'Define to 1 if SSE assembly is available.')
+        have_sse = true
         sse_args = ['-mfpmath=sse']
         if platform_win32
           sse_args += '-mstackrealign'
@@ -216,6 +222,7 @@ if get_option('enable-mmx') and cc.has_argument('-mmmx')
             sse2_cflags = '-msse2'
             conf.set('USE_SSE2', 1, description:
               'Define to 1 if sse2 assembly is available.')
+            have_sse2 = true
 
             # sse4.1 assembly
             if get_option('enable-sse4_1') and cc.has_argument('-msse4.1')
@@ -224,6 +231,7 @@ if get_option('enable-mmx') and cc.has_argument('-mmmx')
                 sse4_1_cflags = '-msse4.1'
                 conf.set('USE_SSE4_1', 1, description:
                   'Define to 1 if sse4.1 assembly is available.')
+                have_sse4_1 = true
               endif
 
               # avx2 assembly
@@ -233,6 +241,7 @@ if get_option('enable-mmx') and cc.has_argument('-mmmx')
                   avx2_cflags = '-mavx2'
                   conf.set('USE_AVX2', 1, description:
                     'Define to 1 if avx2 assembly is available.')
+                  have_avx2 = true
                 endif
               endif
             endif
@@ -249,6 +258,7 @@ if get_option('enable-mmx') and cc.has_argument('-mmmx')
           f16c_cflags = '-mf16c'
           conf.set('USE_F16C', 1, description:
             'Define to 1 if f16c intrinsics are available.')
+          have_f16c = true
         endif
       endif
     endif
@@ -345,19 +355,15 @@ w3m_bin = find_program('w3m', required: false, native: true)
 # Docs - don't build by default in cross-build environments
 #        can't build if no env binary
 build_docs = true
-build_docs_msg = ''
 if get_option('with-docs') != 'false' and not env_bin.found()
   build_docs = false
-  build_docs_msg = '(env program not available)'
   warning('env is required to build documentation')
 elif get_option('with-docs') == 'auto'
   if meson.is_cross_build()
     build_docs = false
-    build_docs_msg = '(configure with -Ddocs=true to cross-build docs)'
   endif
 elif get_option('with-docs') == 'false'
   build_docs = false
-  build_docs_msg = '(disabled)'
 endif
 
 
@@ -413,4 +419,34 @@ pkgconfig.generate(filebase: 'babl',
   subdirs: [
     lib_name,
   ],
+)
+
+################################################################################
+# Build summary
+summary(
+  {
+    'prefix': babl_prefix,
+  }, section: 'Directories'
+)
+summary(
+  {
+    'BABL docs'      : build_docs,
+    'Introspection'  : build_gir,
+    'VALA support'   : build_gir and get_option('enable-vapi'),
+  }, section: 'Optional features'
+)
+summary(
+  {
+    'mmx'            : have_mmx,
+    'sse'            : have_sse,
+    'sse2'           : have_sse2,
+    'sse4_1'         : have_sse4_1,
+    'avx2'           : have_avx2,
+    'f16c (half fp)' : have_f16c,
+  }, section: 'Processor extensions'
+)
+summary(
+  {
+    'lcms' : get_option('with-lcms'),
+  }, section: 'Optional dependencies'
 )
