@@ -365,6 +365,12 @@ elif get_option('with-docs') == 'false'
   build_docs = false
 endif
 
+# Introspection - don't build  by default on cross-build environments
+if get_option('enable-gir') == 'auto'
+  build_gir = meson.is_cross_build() ? false : true
+else
+  build_gir = get_option('enable-gir') == 'true' ? true : false
+endif
 
 ################################################################################
 # Configuration files

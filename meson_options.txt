@@ -5,8 +5,8 @@ option('with-docs',
   description: 'build documentation'
 )
 option('enable-gir',
-  type: 'boolean',
-  value: 'true', 
+  type: 'combo',
+  choices: ['auto', 'true', 'false'],
   description: 'gobject introspection .gir generation'
 )
 option('enable-vapi',

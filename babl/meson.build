@@ -145,7 +145,7 @@ babl = library(
   install: true,
 )
 
-if get_option('enable-gir')
+if build_gir
   # identity filter, so GIR doesn't choke on the Babl type
   # (since it has the same name as the Babl namespace)
   identfilter_py = join_paths(meson.current_source_dir(), 'identfilter.py')
