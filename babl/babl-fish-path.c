@@ -603,10 +603,10 @@ babl_fish_path2 (const Babl *source,
 
     get_conversion_path (&pc, (Babl *) source, 0, max_path_length (), tolerance);
 
-    /* attempt with path length + 3 */
+    /* attempt with path length + 2 */
     if (babl->fish_path.conversion_list->count == 0)
     {
-      int max_length = max_path_length () + 3;
+      int max_length = max_path_length () + 2;
       if  (max_length > BABL_HARD_MAX_PATH_LENGTH)
         max_length = BABL_HARD_MAX_PATH_LENGTH;
 
