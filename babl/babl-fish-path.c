@@ -597,6 +597,7 @@ babl_fish_path2 (const Babl *source,
   babl->fish_path.cost            = BABL_MAX_COST_VALUE;
   babl->fish_path.conversion_list = babl_list_init_with_size (BABL_HARD_MAX_PATH_LENGTH);
 
+
   {
     PathContext pc;
     int start_depth = max_path_length ();
@@ -624,10 +625,14 @@ babl_fish_path2 (const Babl *source,
     if (debug_missing)
     {
       if (babl->fish_path.conversion_list->count == 0)
-        fprintf (stderr, "babl: lacking conversion path for %s to %s\n",
+        fprintf (stderr, "babl: WARNING lacking conversion path for %s to %s\n",
           babl_get_name (source), babl_get_name (destination));
       else if (babl->fish_path.conversion_list->count == end_depth)
-        fprintf (stderr, "babl: need %i step conversion for %s to %s\n", end_depth,
+        fprintf (stderr, "babl: WARNING need %i step conversion for %s to %s\n", end_depth,
+          babl_get_name (source), babl_get_name (destination));
+      else
+        fprintf (stderr, "babl: found %i step conversion for %s to %s\n",
+          babl->fish_path.conversion_list->count,
           babl_get_name (source), babl_get_name (destination));
     }
 
