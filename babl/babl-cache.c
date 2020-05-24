@@ -129,7 +129,7 @@ babl_fish_serialize (Babl *fish, char *dest, int n)
     n -= strlen (d);d += strlen (d);
   }
 
-  snprintf (d, n, " error=%f", fish->fish.error);
+  snprintf (d, n, " error=%.10f", fish->fish.error);
   n -= strlen (d);d += strlen (d);
 
   if (fish->class_type == BABL_FISH)
