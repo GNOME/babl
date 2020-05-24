@@ -590,6 +590,10 @@ babl_fish_path2 (const Babl *source,
 
   {
     PathContext pc;
+    int start_depth = max_path_length ();
+    int end_depth = start_depth + 2 + ((destination->format.space != sRGB)?1:0);
+    end_depth = MIN(end_depth, BABL_HARD_MAX_PATH_LENGTH);
+
     pc.current_path = babl_list_init_with_size (BABL_HARD_MAX_PATH_LENGTH);
     pc.fish_path = babl;
     pc.to_format = (Babl *) destination;
@@ -601,31 +605,27 @@ babl_fish_path2 (const Babl *source,
      */
     babl_in_fish_path++;
 
-    get_conversion_path (&pc, (Babl *) source, 0, max_path_length (), tolerance);
-
-    /* attempt with path length + 2 */
-    if (babl->fish_path.conversion_list->count == 0)
+    for (int max_depth = start_depth;
+         babl->fish_path.conversion_list->count == 0 && max_depth <= end_depth;
+         max_depth++)
     {
-      int max_length = max_path_length () + 2;
-      if  (max_length > BABL_HARD_MAX_PATH_LENGTH)
-        max_length = BABL_HARD_MAX_PATH_LENGTH;
+      get_conversion_path (&pc, (Babl *) source, 0, max_depth, tolerance);
+    }
 
-      get_conversion_path (&pc, (Babl *) source, 0, max_length, tolerance);
-      if (!babl->fish_path.conversion_list->count)
-      {
-         static int show_missing = -1;
-         if (show_missing < 0)
-         {
-            const char *val = getenv ("BABL_DEBUG_MISSING");
-            if (val && strcmp (val, "0"))
-              show_missing = 1;
-            else
-              show_missing = 0;
-         }
-         if (show_missing)
-           fprintf (stderr, "babl is lacking conversion for %s to %s\n",
-               babl_get_name (source), babl_get_name (destination));
-      }
+    if (!babl->fish_path.conversion_list->count)
+    {
+       static int show_missing = -1;
+       if (show_missing < 0)
+       {
+          const char *val = getenv ("BABL_DEBUG_MISSING");
+          if (val && strcmp (val, "0"))
+            show_missing = 1;
+          else
+            show_missing = 0;
+       }
+       if (show_missing)
+         fprintf (stderr, "babl is lacking conversion for %s to %s\n",
+             babl_get_name (source), babl_get_name (destination));
     }
 
     babl_in_fish_path--;
