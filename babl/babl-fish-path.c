@@ -509,6 +509,15 @@ babl_fish_path2 (const Babl *source,
   const Babl *sRGB = babl_space ("sRGB");
   char name[BABL_MAX_NAME_LEN];
   int is_fast = 0;
+  static int debug_missing = -1;
+  if (debug_missing < 0)
+  {
+     const char *val = getenv ("BABL_DEBUG_MISSING");
+     if (val && strcmp (val, "0"))
+       debug_missing = 1;
+     else
+       debug_missing = 0;
+  }
 
   _babl_fish_create_name (name, source, destination, 1);
   babl_mutex_lock (babl_format_mutex);
@@ -612,20 +621,14 @@ babl_fish_path2 (const Babl *source,
       get_conversion_path (&pc, (Babl *) source, 0, max_depth, tolerance);
     }
 
-    if (!babl->fish_path.conversion_list->count)
+    if (debug_missing)
     {
-       static int show_missing = -1;
-       if (show_missing < 0)
-       {
-          const char *val = getenv ("BABL_DEBUG_MISSING");
-          if (val && strcmp (val, "0"))
-            show_missing = 1;
-          else
-            show_missing = 0;
-       }
-       if (show_missing)
-         fprintf (stderr, "babl is lacking conversion for %s to %s\n",
-             babl_get_name (source), babl_get_name (destination));
+      if (babl->fish_path.conversion_list->count == 0)
+        fprintf (stderr, "babl: lacking conversion path for %s to %s\n",
+          babl_get_name (source), babl_get_name (destination));
+      else if (babl->fish_path.conversion_list->count == end_depth)
+        fprintf (stderr, "babl: need %i step conversion for %s to %s\n", end_depth,
+          babl_get_name (source), babl_get_name (destination));
     }
 
     babl_in_fish_path--;
