@@ -1,3 +1,5 @@
+babl_extensions_build_dir = meson.current_build_dir()
+
 no_cflags = []
 
 # Dependencies

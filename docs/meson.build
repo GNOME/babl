@@ -23,14 +23,14 @@ babl_css = configure_file(
 )
 
 index_html_tmp_env = [
-  'BABL_PATH=' + meson.build_root() / 'extensions',
+  'BABL_PATH=' + babl_extensions_build_dir,
 ]
 
 # Don't build babl ref if cannot run compiled objects in this env
-if env_bin.found() and cc_can_run # and not meson.is_cross_build()
+if env_bin.found() and cc_can_run
   index_html_tmp = custom_target('index.html.tmp',
-    input : [ babl_html_dump, ],
-    output: [ 'index.html.tmp', ],
+    input : babl_html_dump,
+    output:'index.html.tmp',
     command: [
       env_bin,
       index_html_tmp_env,

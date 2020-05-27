@@ -1,3 +1,5 @@
+babl_library_build_dir = meson.current_build_dir()
+
 bablInclude = include_directories('.')
 subdir('base')
 
