@@ -58,7 +58,8 @@ int
 main (int    argc,
       char **argv)
 {
-  setenv ("BABL_DEBUG_MISSING", "1", 1);
+  putenv ("BABL_DEBUG_CONVERSIONS" "=" "1");
+  putenv ("BABL_DEBUG_MISSING" "=" "1");
   babl_init ();
   
   for (int i = 0; i < sizeof (fishes)/sizeof(fishes[0]);i ++)
