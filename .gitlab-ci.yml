@@ -47,3 +47,42 @@ latest-nolcms:
   variables:
     EXTRA_OPTIONS : "-Dwith-lcms=false"
     EXTRA_PKGS: ""
+
+win64:
+  image: debian:testing
+  stage: build
+  artifacts:
+    when: always
+    paths:
+      - _build/meson-logs
+  variables:
+    XDG_CACHE_HOME: "$CI_PROJECT_DIR/.cache/"
+    XDG_DATA_HOME:  "$CI_PROJECT_DIR/.local/share/"
+  cache:
+    paths:
+    - .cache/crossroad/
+  before_script:
+    - apt-get update
+    - apt-get install -y --no-install-recommends
+        apt-utils
+    - apt-get install -y --no-install-recommends
+        build-essential
+        cpio
+        gcc-mingw-w64-x86-64
+        g++-mingw-w64-x86-64
+        git
+        meson
+        pkg-config
+        python3-distutils
+        python3-docutils
+        python3-pip
+        rpm
+    - apt-get install -y --reinstall ca-certificates
+    - git clone --depth=1 git://git.tuxfamily.org/gitroot/crossroad/crossroad.git
+    - cd crossroad && ./setup.py install --prefix=`pwd`/../.local && cd ..
+    - pip3 install zstandard
+  script:
+    - export PATH="`pwd`/.local/bin:$PATH"
+    - mkdir _build && cd _build
+    - echo 'crossroad source msys2 && crossroad install lcms2' | crossroad w64 gimp --run="-"
+    - echo 'crossroad meson .. -Denable-gir=false && ninja' | crossroad w64 gimp --run="-"
