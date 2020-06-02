@@ -57,13 +57,11 @@ babl_version_h = configure_file(
 # already exists because then we are probably working with a tarball
 # in which case the git-version.h we ship is correct.
 
-is_git_repo = (
-  test_bin.found() and
-  git_bin.found() and
-  run_command(test_bin, '-d', meson.source_root() / '.git').returncode() == 0
-)
-
-if is_git_repo
+if git_bin.found() and run_command(
+    git_bin,
+    'rev-parse',
+    '--is-inside-work-tree',
+).returncode() == 0
   git_version_h = vcs_tag(
     input : 'git-version.h.in',
     output: 'git-version.h',
@@ -71,18 +69,18 @@ if is_git_repo
     command: [ git_bin.path(), 'describe', '--always' ],
   )
 
-  meson.add_dist_script(
-    [ 'ninja', 'babl/git-version.h', ],
-  )
-  meson.add_dist_script(
-    [ 'sh', '-c', ' '.join(
-    [ 'cp', git_version_h.full_path(), '${MESON_DIST_ROOT}/babl' ]
-    )]
-  )
-
+  if env_bin.found()
+    meson.add_dist_script(
+      [ 'ninja', 'babl/git-version.h', ],
+    )
+    meson.add_dist_script(
+      [ 'sh', '-c', ' '.join(
+      [ 'cp', git_version_h.full_path(), '${MESON_DIST_ROOT}/babl' ]
+      )]
+    )
+  endif
 else
   git_version_h = files('git-version.h')
-
 endif
 
 babl_sources = [

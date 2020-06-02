@@ -346,7 +346,6 @@ env_bin = find_program('env', required: false, native: true)
 git_bin = find_program('git', required: false, native: true)
 rsvg_convert_bin = find_program('rsvg-convert', required: false,
   native: true)
-test_bin = find_program('test', required: false, native: true)
 w3m_bin = find_program('w3m', required: false, native: true)
 
 ################################################################################
