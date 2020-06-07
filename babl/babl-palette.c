@@ -29,6 +29,9 @@
 
 #ifdef HAVE_STDATOMIC_H
 #include <stdatomic.h>
+#define BABL_ATOMIC _Atomic
+#else
+#define BABL_ATOMIC
 #endif
 
 #define HASH_TABLE_SIZE 1111
@@ -49,7 +52,7 @@ typedef struct BablPalette
                                   */
   double                *data_double;
   unsigned char         *data_u8;
-  BablPaletteRadius     *radii;
+  BablPaletteRadius     *BABL_ATOMIC radii;
   volatile unsigned int  hash[HASH_TABLE_SIZE];
 } BablPalette;
 
