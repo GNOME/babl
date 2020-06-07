@@ -3,6 +3,9 @@ The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
                                                                           -->
 
+2020-06-07 babl-0.1.78                                              </dt><dd>
+Bugfix release - mutex and atomicity related issues.
+                                                                    </dd><dt>
 2020-05-27 babl-0.1.76                                              </dt><dd>
 Wrap hue in HSV, HSL, HCY. Fix black pullout in non ICC CMYK
 conversion. Added AV2 gamme u8->linear float conversions.  VAPI file generation
