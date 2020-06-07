@@ -34,13 +34,18 @@ babl_c_args = [
 # Linker arguments
 if cc.links('', name: '-Wl,--version-script', args: ['-shared', '-Wl,--version-script=' + babl_gnu_sym_path])
   babl_link_args = ['-Wl,--version-script,' + version_script]
-elif host_machine.system() == 'darwin' and cc.has_multi_link_arguments('-Wl,-exported_symbols_list', babl_clang_sym_path)
-  # Clang on Darwin
-  babl_link_args = ['-Wl,-exported_symbols_list',version_script_clang]
+elif cc.get_id() == 'clang' 
+  if cc.links('', name: '-Wl,-exported_symbols_list', args: ['-Wl,-exported_symbols_list', babl_clang_sym_path])
+    # Clang on Darwin
+    babl_link_args = ['-Wl,-exported_symbols_list',version_script_clang]
+  else
+    # Clang on windws
+    babl_link_args = []
+  endif
 else
   error('Linker doesn\'t support --version-script or -exported_symbols_list')
 endif
-if platform_win32
+if platform_win32 and cc.has_link_argument('-Wl,--no-undefined')
   babl_link_args += '-Wl,--no-undefined'
 endif
 
