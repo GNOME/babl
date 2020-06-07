@@ -15,9 +15,9 @@ tool_names = [
 foreach tool_name : tool_names
   tool = executable(tool_name,
     tool_name + '.c',
-    include_directories: [ rootInclude, bablInclude, ],
-    link_with: [ babl, ],
-    dependencies: [ math, thread, ],
+    include_directories: [rootInclude, bablInclude],
+    link_with: babl,
+    dependencies: [math, thread],
     install: false,
   )
 

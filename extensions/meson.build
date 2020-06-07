@@ -17,7 +17,7 @@ babl_ext_inc = [
 # Linker arguments
 babl_ext_link_args = [
 ]
-if platform_win32
+if platform_win32 and cc.has_link_argument('-Wl,--no-undefined')
   babl_ext_link_args += '-Wl,--no-undefined'
 endif
 
@@ -43,7 +43,7 @@ extensions = [
   ['HSV', no_cflags],
   ['naive-CMYK', no_cflags],
   ['simple', no_cflags],
-  ['sse-half', [sse4_1_cflags, f16c_cflags]], 
+  ['sse-half', [sse4_1_cflags, f16c_cflags]],
   ['sse2-float', sse2_cflags],
   ['sse2-int16', sse2_cflags],
   ['sse2-int8', sse2_cflags],
@@ -64,6 +64,6 @@ foreach ext : extensions
     dependencies: babl_ext_dep,
     name_prefix: '',
     install: true,
-    install_dir: join_paths(get_option('libdir'), lib_name),
+    install_dir: babl_libdir / lib_name,
   )
 endforeach

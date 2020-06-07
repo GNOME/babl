@@ -3,9 +3,6 @@ project('babl', 'c',
   version: '0.1.79',
   meson_version: '>=0.53.0',
   default_options: [
-    'sysconfdir=/etc',
-    'localstatedir=/var',
-    'sharedstatedir=/var/lib',
     'buildtype=debugoptimized'
   ],
   # https://gitlab.gnome.org/GNOME/babl/issues/
@@ -20,11 +17,9 @@ project('babl', 'c',
 # if backwards compatibility has been broken,
 #    set BABL_BINARY_AGE _and_ BABL_INTERFACE_AGE to 0.
 
-
 conf = configuration_data()
 
 pkgconfig = import('pkgconfig')
-i18n      = import('i18n')
 gnome     = import('gnome')
 python    = import('python')
 
@@ -156,7 +151,9 @@ common_c_flags = []
 if buildtype == 'debugoptimized' or buildtype == 'release'
   common_c_flags += cc.get_supported_arguments(['-Ofast'])
 endif
-common_c_flags += cc.get_supported_arguments(['-fno-unsafe-math-optimizations'])
+common_c_flags += cc.get_supported_arguments(
+  ['-fno-unsafe-math-optimizations']
+)
 
 extra_warnings_list = [
   '-Wdeclaration-after-statement',
@@ -342,11 +339,15 @@ endif
 ################################################################################
 # Build utilities
 
-env_bin = find_program('env', required: false, native: true)
+# build from git repo
 git_bin = find_program('git', required: false, native: true)
+
+# docs
+env_bin = find_program('env', required: false, native: true)
 rsvg_convert_bin = find_program('rsvg-convert', required: false,
   native: true)
 w3m_bin = find_program('w3m', required: false, native: true)
+
 
 ################################################################################
 # Build flags
@@ -360,6 +361,9 @@ if get_option('with-docs') != 'false' and not env_bin.found()
 elif get_option('with-docs') == 'auto'
   if meson.is_cross_build()
     build_docs = false
+    message(
+      'configure with -Ddocs=true to cross-build documentation'
+    )
   endif
 elif get_option('with-docs') == 'false'
   build_docs = false
@@ -431,6 +435,7 @@ pkgconfig.generate(filebase: 'babl',
 summary(
   {
     'prefix': babl_prefix,
+    'libdir': get_option('libdir'),
   }, section: 'Directories'
 )
 summary(
