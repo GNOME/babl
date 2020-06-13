@@ -960,6 +960,8 @@ babl_space_from_icc (const char   *icc_data,
          return ret;
        ret->space.icc_length = icc_length;
        ret->space.icc_profile = malloc (icc_length);
+       if (!ret->space.icc_profile)
+         return NULL;
        memcpy (ret->space.icc_profile, icc_data, icc_length);
 
 #ifdef HAVE_LCMS
