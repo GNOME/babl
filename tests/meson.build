@@ -34,16 +34,14 @@ if platform_unix
 endif
 
 test_env = environment()
-test_env.prepend('LD_LIBRARY_PATH', babl_library_build_dir)
-test_env.set('GI_TYPELIB_PATH', babl_library_build_dir)
 test_env.set('BABL_PATH', babl_extensions_build_dir)
+
 foreach test_name : test_names
-  test = executable(
-    test_name,
+  test = executable(test_name,
     test_name + '.c',
-    include_directories: [ rootInclude, bablInclude, ],
-    link_with: [ babl, ],
-    dependencies: [ thread, ],
+    include_directories: [rootInclude, bablInclude],
+    link_with: babl,
+    dependencies: thread,
     export_dynamic: true,
     install: false,
   )
