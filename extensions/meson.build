@@ -17,8 +17,8 @@ babl_ext_inc = [
 # Linker arguments
 babl_ext_link_args = [
 ]
-if platform_win32 and cc.has_link_argument('-Wl,--no-undefined')
-  babl_ext_link_args += '-Wl,--no-undefined'
+if platform_win32
+  babl_ext_link_args += no_undefined
 endif
 
 

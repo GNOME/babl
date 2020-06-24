@@ -167,6 +167,14 @@ common_c_flags += cc.get_supported_arguments(extra_warnings_list)
 
 add_project_arguments(common_c_flags, language: 'c')
 
+# Linker arguments
+if platform_win32 and cc.has_link_argument('-Wl,--no-undefined')
+  no_undefined = '-Wl,--no-undefined'
+else
+  no_undefined = []
+endif
+
+
 ################################################################################
 # Check for compiler CPU extensions
 

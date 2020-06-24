@@ -45,10 +45,9 @@ elif cc.get_id() == 'clang'
 else
   error('Linker doesn\'t support --version-script or -exported_symbols_list')
 endif
-if platform_win32 and cc.has_link_argument('-Wl,--no-undefined')
-  babl_link_args += '-Wl,--no-undefined'
+if platform_win32
+  babl_link_args += no_undefined
 endif
-
 
 babl_version_h = configure_file(
   input:  'babl-version.h.in',
