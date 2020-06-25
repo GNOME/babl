@@ -168,7 +168,7 @@ if build_gir
     install: true,
   )
 
-  if get_option('enable-vapi')
+  if build_vapi
     gnome.generate_vapi(lib_name,
       sources: babl_gir[0],
       install: true,

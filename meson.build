@@ -319,17 +319,6 @@ endif
 ################################################################################
 # Dependencies
 
-# LCMS
-if get_option('with-lcms')
-  lcms = dependency('lcms2', required: true, native: false)
-  if lcms.found()
-    conf.set('HAVE_LCMS', 1, description:
-      'Define to 1 if liblcms2 is available')
-  endif
-else
-  lcms = declare_dependency()
-endif
-
 math = cc.find_library('m',   required: false)
 thread = dependency('threads',  required: false)
 if platform_android
@@ -342,6 +331,25 @@ if platform_win32
 else
   dl = cc.find_library('dl',  required: false)
 endif
+
+
+# gobject introspection
+g_ir = dependency('gobject-introspection-1.0', version: '>=1.32.0',
+  required: false)
+
+# lcms
+if get_option('with-lcms')
+  lcms = dependency('lcms2', version: '>=2.8', required: true)
+  if lcms.found()
+    conf.set('HAVE_LCMS', 1, description:
+      'Define to 1 if liblcms2 is available')
+  endif
+else
+  lcms = declare_dependency()
+endif
+
+# vapigen
+vapigen   = dependency('vapigen', version:'>=0.20.0', required: false)
 
 
 ################################################################################
@@ -382,6 +390,16 @@ if get_option('enable-gir') == 'auto'
   build_gir = meson.is_cross_build() ? false : true
 else
   build_gir = get_option('enable-gir') == 'true' ? true : false
+endif
+if not g_ir.found()
+  build_gir = false
+endif
+
+# Vapi - only build if building introspection
+if build_gir and get_option('enable-vapi') and vapigen.found()
+  build_vapi = true
+else
+  build_vapi = false
 endif
 
 ################################################################################
@@ -450,7 +468,7 @@ summary(
   {
     'BABL docs'      : build_docs,
     'Introspection'  : build_gir,
-    'VALA support'   : build_gir and get_option('enable-vapi'),
+    'VALA support'   : build_vapi,
   }, section: 'Optional features'
 )
 summary(
