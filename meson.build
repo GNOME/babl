@@ -140,8 +140,12 @@ build_platform_win32 = (build_os.startswith('mingw') or
                         build_os.startswith('cygwin') or
                         build_os.startswith('windows'))
 
-# Only run cross compile objects if we have exe wrapper
-cc_can_run = not meson.is_cross_build() or meson.has_exe_wrapper()
+# Only try to run compiled programs if native compile or cross-compile
+# and have exe wrapper. If we don't need a wrapper (e.g. 32 bit build in
+# 64-bit environment) then set proprty has_exe_wrapper=true in cross 
+# file
+can_run_host_binaries = meson.has_exe_wrapper()
+
 
 ################################################################################
 # Compiler arguments

@@ -27,7 +27,7 @@ index_html_tmp_env = [
 ]
 
 # Don't build babl ref if cannot run compiled objects in this env
-if env_bin.found() and cc_can_run
+if env_bin.found() and can_run_host_binaries
   index_html_tmp = custom_target('index.html.tmp',
     input : babl_html_dump,
     output:'index.html.tmp',
