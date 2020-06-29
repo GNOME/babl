@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import sys
 
 export_symbols=sys.argv[1]

@@ -1,9 +1,29 @@
-
 babl_library_build_dir = meson.current_build_dir()
-bablInclude = include_directories('.')
 
+bablInclude = include_directories('.')
 subdir('base')
 
+python = import('python').find_installation()
+
+version_script = 'babl.map'
+version_script_clang = 'babl.map.clang'
+
+babl_gnu_sym_path = join_paths(meson.current_source_dir(), 'test-gnu.map')
+babl_clang_sym_path = join_paths(meson.current_source_dir(), 'test-clang.map')
+
+
+export_symbols = join_paths(meson.source_root(), 'export-symbols')
+version_script_target = custom_target(version_script,
+  input : [ export_symbols, ] ,
+  output: [ version_script ] ,
+  command: [
+  python,
+  join_paths(meson.source_root(), 'gen_babl_map.py'),
+  export_symbols,
+  version_script,
+  ],
+  capture: true,
+)
 
 # c compiler arguments
 babl_c_args = [
@@ -11,44 +31,19 @@ babl_c_args = [
   '-DLIBDIR="@0@"'.format(babl_libdir),
 ]
 
-# symbol maps
-version_script = custom_target('babl.map',
-  input : meson.source_root() / 'export-symbols',
-  output: ['babl.map', 'babl.map.clang'],
-  command: [
-  find_program(meson.source_root() / 'gen_babl_map.py'),
-  '@INPUT@',
-  '@OUTPUT0@',
-  ],
-)
-
 # Linker arguments
-if cc.links('', 
-    name: '-Wl,--version-script', 
-    args: ['-shared', '-Wl,--version-script=' 
-      + meson.current_source_dir() / 'test-gnu.map']
-  )
-  babl_link_args = [
-    '-Wl,--version-script=' + version_script[0].full_path()
-  ]
-elif cc.get_id() == 'clang'
-  if cc.links('', 
-      name: '-Wl,-exported_symbols_list', 
-      args: ['-Wl,-exported_symbols_list', 
-        meson.current_source_dir() / 'test-clang.map']
-    )
+if cc.links('', name: '-Wl,--version-script', args: ['-shared', '-Wl,--version-script=' + babl_gnu_sym_path])
+  babl_link_args = ['-Wl,--version-script,' + version_script]
+elif cc.get_id() == 'clang' 
+  if cc.links('', name: '-Wl,-exported_symbols_list', args: ['-Wl,-exported_symbols_list', babl_clang_sym_path])
     # Clang on Darwin
-    babl_link_args = [
-      '-Wl,-exported_symbols_list', version_script[1].full_path()
-    ]
-  else  
-    # Clang on msys/mingw
+    babl_link_args = ['-Wl,-exported_symbols_list',version_script_clang]
+  else
+    # Clang on windws
     babl_link_args = []
   endif
 else
-  error(
-    'Linker doesn\'t support --version-script or -exported_symbols_list'
-  )
+  error('Linker doesn\'t support --version-script or -exported_symbols_list')
 endif
 if platform_win32
   babl_link_args += no_undefined
@@ -60,10 +55,12 @@ babl_version_h = configure_file(
   configuration: conf,
 )
 
+
 # If git is available, always check if git-version.h should be
 # updated. If git is not available, don't do anything if git-version.h
 # already exists because then we are probably working with a tarball
 # in which case the git-version.h we ship is correct.
+
 if git_bin.found() and run_command(
     git_bin,
     'rev-parse',
@@ -142,12 +139,12 @@ install_headers(babl_headers,
 babl = library(
   lib_name,
   babl_sources,
-  include_directories: [rootInclude, bablBaseInclude],
+  include_directories: [ rootInclude, bablBaseInclude],
   c_args: babl_c_args,
-  link_whole: babl_base,
-  link_args: babl_link_args,
-  dependencies: [math, thread, dl, lcms],
-  link_depends: version_script,
+  link_whole: [ babl_base, ],
+  link_args: [ babl_link_args, ],
+  dependencies: [ math, thread, dl, lcms, ],
+  link_depends: [ version_script_target, ],
   version: so_version,
   install: true,
 )
