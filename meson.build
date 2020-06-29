@@ -1,7 +1,7 @@
 project('babl', 'c',
   license: 'LGPL3+',
   version: '0.1.79',
-  meson_version: '>=0.53.0',
+  meson_version: '>=0.54.0',
   default_options: [
     'buildtype=debugoptimized'
   ],
@@ -21,7 +21,7 @@ conf = configuration_data()
 
 pkgconfig = import('pkgconfig')
 gnome     = import('gnome')
-python    = import('python')
+python    = import('python').find_installation()
 
 cc        = meson.get_compiler('c')
 prefix    = get_option('prefix')
