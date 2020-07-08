@@ -611,3 +611,4 @@ babl_trc_lut_find (float *lut,
 
   return NULL;
 }
+

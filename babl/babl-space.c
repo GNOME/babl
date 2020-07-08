@@ -21,6 +21,7 @@
 #include "config.h"
 #include "babl-internal.h"
 #include "base/util.h"
+#include "babl-trc.h"
 
 static BablSpace space_db[MAX_SPACES];
 
@@ -1442,4 +1443,14 @@ babl_space_get_rgb_luminance (const Babl *space,
     *green_luminance = space->space.RGBtoXYZ[4];
   if (blue_luminance)
     *blue_luminance = space->space.RGBtoXYZ[5];
+}
+
+double
+babl_space_get_gamma (const Babl *space)
+{
+  if (space->space.trc[0] != space->space.trc[1] ||
+      space->space.trc[1] != space->space.trc[2] ||
+      space->space.trc[0]->trc.type != BABL_TRC_FORMULA_GAMMA)
+    return 0.0;
+  return space->space.trc[0]->trc.gamma;
 }

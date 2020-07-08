@@ -134,7 +134,14 @@ const Babl *babl_space_from_icc (const char       *icc_data,
                                  int               icc_length,
                                  BablIccIntent     intent,
                                  const char      **error);
-
+/* babl_space_get_gamma:
+ * @space: a babl space
+ * 
+ * Returns the gamma of the TRCs of the space, iff they are all equal
+ * and a simple gamma number, otherwise 0.0 is returned.
+ */
+double
+babl_space_get_gamma (const Babl *space);
 
 // XXX : deprecated
 const Babl *babl_icc_make_space (const char       *icc_data,
