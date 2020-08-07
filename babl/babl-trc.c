@@ -200,6 +200,44 @@ _babl_trc_formula_srgb_to_linear (const Babl *trc_,
   }
   return c * x + f;
 }
+static inline float 
+_babl_trc_formula_cie_from_linear (const Babl *trc_, 
+                                   float       value)
+{
+  BablTRC *trc = (void*)trc_;
+  float x= value;
+  float a = trc->lut[1];
+  float b = trc->lut[2];
+  float c = trc->lut[3];
+
+  if (x > c)
+  {
+    float v = _babl_trc_gamma_from_linear ((Babl *) trc, x - c);
+    v = (v-b)/a;
+    if (v < 0.0 || v >= 0.0)
+      return v;
+  }
+  return 0.0;
+}
+
+static inline float 
+_babl_trc_formula_cie_to_linear (const Babl *trc_, 
+                                 float       value)
+{
+  BablTRC *trc = (void*)trc_;
+  float x= value;
+  float a = trc->lut[1];
+  float b = trc->lut[2];
+  float c = trc->lut[3];
+
+  if (x >= -b / a)
+  {
+    return _babl_trc_gamma_to_linear ((Babl *) trc, a * x + b) + c;
+  }
+  return c;
+}
+
+
 
 static inline float 
 _babl_trc_srgb_to_linear (const Babl *trc_, 
@@ -421,6 +459,33 @@ babl_trc_new (const char *name,
                                          trc_db[i].poly_gamma_from_linear_x1,
                                          POLY_GAMMA_DEGREE, POLY_GAMMA_SCALE);
       break;
+    case BABL_TRC_FORMULA_CIE:
+      trc_db[i].lut = babl_calloc (sizeof (float), 4);
+      {
+        int j;
+        for (j = 0; j < 4; j++)
+          trc_db[i].lut[j] = lut[j];
+      }
+      trc_db[i].fun_to_linear = _babl_trc_formula_cie_to_linear;
+      trc_db[i].fun_from_linear = _babl_trc_formula_cie_from_linear;
+
+      trc_db[i].poly_gamma_to_linear_x0 = lut[4];
+      trc_db[i].poly_gamma_to_linear_x1 = POLY_GAMMA_X1;
+      babl_polynomial_approximate_gamma (&trc_db[i].poly_gamma_to_linear,
+                                         trc_db[i].gamma,
+                                         trc_db[i].poly_gamma_to_linear_x0,
+                                         trc_db[i].poly_gamma_to_linear_x1,
+                                         POLY_GAMMA_DEGREE, POLY_GAMMA_SCALE);
+
+      trc_db[i].poly_gamma_from_linear_x0 = lut[3] * lut[4];
+      trc_db[i].poly_gamma_from_linear_x1 = POLY_GAMMA_X1;
+      babl_polynomial_approximate_gamma (&trc_db[i].poly_gamma_from_linear,
+                                         trc_db[i].rgamma,
+                                         trc_db[i].poly_gamma_from_linear_x0,
+                                         trc_db[i].poly_gamma_from_linear_x1,
+                                         POLY_GAMMA_DEGREE, POLY_GAMMA_SCALE);
+      break;
+
     case BABL_TRC_FORMULA_SRGB:
       trc_db[i].lut = babl_calloc (sizeof (float), 7);
       {
@@ -509,6 +574,25 @@ babl_trc_formula_srgb (double g,
     name[strlen(name)-1]='\0';
   return babl_trc_new (name, BABL_TRC_FORMULA_SRGB, g, 0, params);
 }
+
+const Babl *
+babl_trc_formula_cie (double g, 
+                      double a, 
+                      double b, 
+                      double c)
+{
+  char name[128];
+  int i;
+  float params[4]={g, a, b, c};
+
+  snprintf (name, sizeof (name), "%.6f %.6f %.4f %.4f", g, a, b, c);
+  for (i = 0; name[i]; i++)
+    if (name[i] == ',') name[i] = '.';
+  while (name[strlen(name)-1]=='0')
+    name[strlen(name)-1]='\0';
+  return babl_trc_new (name, BABL_TRC_FORMULA_CIE, g, 0, params);
+}
+
 
 const Babl *
 babl_trc_gamma (double gamma)

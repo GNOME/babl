@@ -30,7 +30,8 @@ typedef enum {BABL_TRC_LINEAR,
               BABL_TRC_FORMULA_GAMMA,
               BABL_TRC_SRGB,
               BABL_TRC_FORMULA_SRGB,
-              BABL_TRC_LUT}
+              BABL_TRC_LUT,
+              BABL_TRC_FORMULA_CIE}
 BablTRCType;
 
 typedef struct

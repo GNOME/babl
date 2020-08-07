@@ -384,9 +384,27 @@ babl_trc_from_icc (ICC         *state,
               g = icc_read (s15f16, offset + 12 + 4 * 0);
               return babl_trc_gamma (g);
               break;
+            case 1:
+              {
+                float a,b,c;
+                g = icc_read (s15f16, offset + 12 + 4 * 0);
+                a = icc_read (s15f16, offset + 12 + 4 * 1);
+                b = icc_read (s15f16, offset + 12 + 4 * 2);
+                c = 0;
+                return babl_trc_formula_cie (g, a, b, c);
+              }
+            case 2:
+              {
+                float a,b,c;
+                g = icc_read (s15f16, offset + 12 + 4 * 0);
+                a = icc_read (s15f16, offset + 12 + 4 * 1);
+                b = icc_read (s15f16, offset + 12 + 4 * 2);
+                c = icc_read (s15f16, offset + 12 + 4 * 3);
+                return babl_trc_formula_cie (g, a, b, c);
+              }
             case 3:
               {
-                float a,b,c,d, e, f;
+                float a,b,c,d,e,f;
                 g = icc_read (s15f16, offset + 12 + 4 * 0);
                 a = icc_read (s15f16, offset + 12 + 4 * 1);
                 b = icc_read (s15f16, offset + 12 + 4 * 2);
@@ -408,8 +426,6 @@ babl_trc_from_icc (ICC         *state,
                 f = icc_read (s15f16, offset + 12 + 4 * 6);
                 return babl_trc_formula_srgb (g, a, b, c, d, e, f);
               }
-            case 1: // NYI
-            case 2: // NYI - can share code, like srgb formulas
             default:
               *error = "unhandled parametric TRC";
               fprintf (stderr, "unhandled parametric TRC type %i\n", function_type);
@@ -534,6 +550,7 @@ switch (trc->type)
       break;
     }
   case BABL_TRC_FORMULA_SRGB:
+  case BABL_TRC_FORMULA_CIE:
     {
       int lut_size = 512;
       if (flags == BABL_ICC_COMPACT_TRC_LUT)
@@ -670,7 +687,6 @@ babl_space_to_icc_rgb (const Babl  *babl,
       for (i = 0; description[i]; i++)
         icc_write (u8, state->o + 12 + i, description[i]);
     }
-
 
     icc_write (u32, 0, state->no + 0);
     length = state->no + 0;
