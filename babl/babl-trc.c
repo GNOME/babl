@@ -422,10 +422,10 @@ babl_trc_new (const char *name,
                                          POLY_GAMMA_DEGREE, POLY_GAMMA_SCALE);
       break;
     case BABL_TRC_FORMULA_SRGB:
-      trc_db[i].lut = babl_calloc (sizeof (float), 5);
+      trc_db[i].lut = babl_calloc (sizeof (float), 7);
       {
         int j;
-        for (j = 0; j < 5; j++)
+        for (j = 0; j < 7; j++)
           trc_db[i].lut[j] = lut[j];
       }
       trc_db[i].fun_to_linear = _babl_trc_formula_srgb_to_linear;
