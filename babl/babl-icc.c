@@ -386,16 +386,16 @@ babl_trc_from_icc (ICC         *state,
               break;
             case 3:
               {
-                float a,b,c,d;
+                float a,b,c,d, e, f;
                 g = icc_read (s15f16, offset + 12 + 4 * 0);
                 a = icc_read (s15f16, offset + 12 + 4 * 1);
                 b = icc_read (s15f16, offset + 12 + 4 * 2);
                 c = icc_read (s15f16, offset + 12 + 4 * 3);
                 d = icc_read (s15f16, offset + 12 + 4 * 4);
-                //fprintf (stderr, "%f %f %f %f %f\n", g, a, b, c, d);
-                return babl_trc_formula_srgb (g, a, b, c, d);
+                e = 0.0f;
+                f = 0.0f;
+                return babl_trc_formula_srgb (g, a, b, c, d, e, f);
               }
-              break;
             case 4:
               {
                 float a,b,c,d,e,f;
@@ -406,15 +406,10 @@ babl_trc_from_icc (ICC         *state,
                 d = icc_read (s15f16, offset + 12 + 4 * 4);
                 e = icc_read (s15f16, offset + 12 + 4 * 5);
                 f = icc_read (s15f16, offset + 12 + 4 * 6);
-                fprintf (stderr, "%f %f %f %f %f %f %f\n",
-                              g, a, b, c, d, e, f);
-            {
-              fprintf (stderr, "unhandled parametric sRGB formula TRC type %i\n", function_type);
-              *error = "unhandled sRGB formula like TRC";
-              return babl_trc_gamma (2.2);
-            }
-                              }
-              break;
+                return babl_trc_formula_srgb (g, a, b, c, d, e, f);
+              }
+            case 1: // NYI
+            case 2: // NYI - can share code, like srgb formulas
             default:
               *error = "unhandled parametric TRC";
               fprintf (stderr, "unhandled parametric TRC type %i\n", function_type);

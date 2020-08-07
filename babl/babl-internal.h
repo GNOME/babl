@@ -385,7 +385,7 @@ babl_conversion_create_name (Babl *source, Babl *destination, int type,
 
 void _babl_space_add_universal_rgb (const Babl *space);
 const Babl *
-babl_trc_formula_srgb (double gamma, double a, double b, double c, double d);
+babl_trc_formula_srgb (double gamma, double a, double b, double c, double d, double e, double f);
 
 
 const Babl *babl_space_match_trc_matrix (const Babl *trc_red,

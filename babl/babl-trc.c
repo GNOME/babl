@@ -165,16 +165,19 @@ _babl_trc_formula_srgb_from_linear (const Babl *trc_,
   float b = trc->lut[2];
   float c = trc->lut[3];
   float d = trc->lut[4];
-  if (x > c * d)  // XXX: verify that this math is the correct inverse
+  float e = trc->lut[5];
+  float f = trc->lut[6];
+
+  if (x - f > c * d)  // XXX: verify that this math is the correct inverse
   {
-    float v = _babl_trc_gamma_from_linear ((Babl *) trc, x);
+    float v = _babl_trc_gamma_from_linear ((Babl *) trc, x - f);
     v = (v-b)/a;
     if (v < 0.0 || v >= 0.0)
       return v;
     return 0.0;
   }
   if (c > 0.0)
-    return x / c;
+    return (x - e) / c;
   return 0.0;
 }
 
@@ -188,12 +191,14 @@ _babl_trc_formula_srgb_to_linear (const Babl *trc_,
   float b = trc->lut[2];
   float c = trc->lut[3];
   float d = trc->lut[4];
+  float e = trc->lut[5];
+  float f = trc->lut[6];
 
   if (x >= d)
   {
-    return _babl_trc_gamma_to_linear ((Babl *) trc, a * x + b);
+    return _babl_trc_gamma_to_linear ((Babl *) trc, a * x + b) + e;
   }
-  return c * x;
+  return c * x + f;
 }
 
 static inline float 
@@ -479,20 +484,25 @@ babl_trc_formula_srgb (double g,
                        double a, 
                        double b, 
                        double c, 
-                       double d)
+                       double d,
+                       double e,
+                       double f)
 {
   char name[128];
   int i;
-  float params[5]={g, a, b, c, d};
+  float params[7]={g, a, b, c, d, e, f};
 
   if (fabs (g - 2.400) < 0.01 &&
       fabs (a - 0.947) < 0.01 &&
       fabs (b - 0.052) < 0.01 &&
       fabs (c - 0.077) < 0.01 &&
-      fabs (d - 0.040) < 0.01)
+      fabs (d - 0.040) < 0.01 &&
+      fabs (e - 0.000) < 0.01 &&
+      fabs (f - 0.000) < 0.01
+      )
     return babl_trc ("sRGB");
 
-  snprintf (name, sizeof (name), "%.6f %.6f %.4f %.4f %.4f", g, a, b, c, d);
+  snprintf (name, sizeof (name), "%.6f %.6f %.4f %.4f %.4f %.4f %.4f", g, a, b, c, d, e, f);
   for (i = 0; name[i]; i++)
     if (name[i] == ',') name[i] = '.';
   while (name[strlen(name)-1]=='0')
