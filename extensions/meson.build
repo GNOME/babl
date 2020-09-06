@@ -54,7 +54,7 @@ extensions = [
 ]
 
 foreach ext : extensions
-  library(
+  shared_library(
     ext[0],
     ext[0] + '.c',
     c_args: ext[1],

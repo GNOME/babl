@@ -415,6 +415,15 @@ configure_file(
   configuration: conf
 )
 
+################################################################################
+# Global variables
+
+xml_insert_file = files('tools' / 'xml-insert.py')
+authors_file = files('AUTHORS')
+news_file = files('NEWS')
+todo_file = files('TODO')
+export_symbols_file = files('export-symbols')
+gen_babl_map_file = files('gen_babl_map.py')
 
 ################################################################################
 # Subdirs
@@ -447,11 +456,11 @@ endif
 
 
 # pkg-config file
-pkgconfig.generate(filebase: 'babl',
+pkgconfig.generate(babl,
+  filebase: 'babl',
   name: 'babl',
   description: 'Pixel encoding and color space conversion engine.',
   version: meson.project_version(),
-  libraries: [ babl ],
   libraries_private: [
     '-lm',
   ],

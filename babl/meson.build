@@ -13,10 +13,10 @@ babl_c_args = [
 
 # symbol maps
 version_script = custom_target('babl.map',
-  input : meson.source_root() / 'export-symbols',
+  input : export_symbols_file,
   output: ['babl.map', 'babl.map.clang'],
   command: [
-  find_program(meson.source_root() / 'gen_babl_map.py'),
+  find_program(gen_babl_map_file),
   '@INPUT@',
   '@OUTPUT0@',
   ],
@@ -76,7 +76,7 @@ if git_bin.found() and run_command(
     command: [ git_bin.path(), 'describe', '--always' ],
   )
 
-  if env_bin.found()
+  if env_bin.found() and not meson.is_subproject()
     meson.add_dist_script(
       [ 'ninja', 'babl/git-version.h', ],
     )
@@ -139,17 +139,26 @@ install_headers(babl_headers,
   subdir: join_paths(lib_name, 'babl')
 )
 
+babl_deps = [math, thread, dl, lcms]
+babl_includes = [rootInclude, bablBaseInclude]
+
 babl = library(
   lib_name,
   babl_sources,
-  include_directories: [rootInclude, bablBaseInclude],
+  include_directories: babl_includes,
   c_args: babl_c_args,
   link_whole: babl_base,
   link_args: babl_link_args,
-  dependencies: [math, thread, dl, lcms],
+  dependencies: babl_deps,
   link_depends: version_script,
   version: so_version,
   install: true,
+)
+
+libbabl_dep = declare_dependency(
+  include_directories: babl_includes,
+  link_with: babl,
+  dependencies: babl_deps
 )
 
 if build_gir
@@ -169,7 +178,7 @@ if build_gir
   )
 
   if build_vapi
-    gnome.generate_vapi(lib_name,
+    babl_vapi = gnome.generate_vapi(lib_name,
       sources: babl_gir[0],
       install: true,
     )

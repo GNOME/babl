@@ -6,7 +6,7 @@ scptarget = host + ':' + location + '/'
 
 
 xml_insert = find_program(
-  meson.source_root() / 'tools' / 'xml-insert.py',
+  xml_insert_file,
   native: true
 )
 
@@ -46,9 +46,9 @@ endif
 TOC = files('toc')
 html_files = {
   'index': [index_static_html, [
-    ['AUTHORS', files(meson.source_root() / 'AUTHORS')],
-    ['TODO',    files(meson.source_root() / 'TODO')],
-    ['NEWS',    files(meson.source_root() / 'NEWS')],
+    ['AUTHORS', authors_file],
+    ['TODO',    todo_file],
+    ['NEWS',    news_file],
     ['TOC',     TOC],
   ]],
   'Reference': ['auto', [
