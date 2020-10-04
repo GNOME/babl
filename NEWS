@@ -3,6 +3,13 @@ The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
                                                                           -->
 
+2020-10-04 babl-0.1.82                                              </dt><dd>
+Handle the parametric ICCv4 types that are not strictly the same type as core
+sRGB curve.
+                                                                    </dd><dt>
+2020-08-02 babl-0.1.80                                              </dt><dd>
+meson build cleanups, depend on meson 0.54
+                                                                    </dd><dt>
 2020-06-07 babl-0.1.78                                              </dt><dd>
 Bugfix release - mutex and atomicity related issues.
                                                                     </dd><dt>
