@@ -244,7 +244,6 @@ _babl_space_for_lcms (const char *icc_data,
   memset (&space, 0, sizeof(space));
   space.instance.class_type = BABL_SPACE;
   space.instance.id         = 0;
-  space.icc_type = BablICCTypeCMYK;
 
   if (i >= MAX_SPACES-1)
   {

@@ -967,6 +967,8 @@ babl_space_from_icc (const char   *icc_data,
     if (!strcmp (color_space.str, "CMYK"))
     {
        ret = _babl_space_for_lcms (icc_data, icc_length);
+       if (!ret)
+         return NULL;
        if (ret->space.icc_type == BablICCTypeCMYK)
          return ret;
        ret->space.icc_length = icc_length;
@@ -1002,11 +1004,9 @@ babl_space_from_icc (const char   *icc_data,
                                                     //  INTENT_PERCEPTUAL,0);//intent & 7, 0);
        cmsCloseProfile (ret->space.cmyk.lcms_profile); // XXX keep it open in case of CMYK to CMYK transforms needed?
 #endif
+       ret->space.icc_type = BablICCTypeCMYK;
        return ret;
     }
-
-
-
 
     if (strcmp (color_space.str, "RGB ")
         && strcmp (color_space.str, "GRAY")
