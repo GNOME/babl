@@ -3,6 +3,9 @@ The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
                                                                           -->
 
+2020-12-17 babl-0.1.84                                              </dt><dd>
+Fixed bug in caching of CMYK ICC profiles.
+                                                                    </dd><dt>
 2020-10-04 babl-0.1.82                                              </dt><dd>
 Handle the parametric ICCv4 types that are not strictly the same type as core
 sRGB curve.
