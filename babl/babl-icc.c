@@ -1008,19 +1008,19 @@ babl_space_from_icc (const char   *icc_data,
        return ret;
     }
 
-    if (strcmp (color_space.str, "RGB ")
-        && strcmp (color_space.str, "GRAY")
-    )
+    if (!(!strcmp (color_space.str, "RGB ")||
+          !strcmp (color_space.str, "GRAY")))
     {
       *error = "not defining RGB, CMYK or GRAY space..";
     }
     else
-     {
-       if (strcmp (profile_class.str, "mntr"))
-         *error = "not a monitor-class profile";
-       if (!strcmp (color_space.str, "GRAY"))
-         is_gray = 1;
-     }
+    {
+      if (!(!strcmp (profile_class.str, "mntr")||
+            !strcmp (profile_class.str, "scnr")))
+         *error = "not a display or input-class profile";
+      if (!strcmp (color_space.str, "GRAY"))
+        is_gray = 1;
+    }
   }
 
   if (!*error)
