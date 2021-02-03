@@ -249,6 +249,7 @@ extern int   babl_in_fish_path;
 extern BablMutex *babl_format_mutex;
 extern BablMutex *babl_fish_mutex;
 extern BablMutex *babl_reference_mutex;
+extern BablMutex *babl_space_mutex;
 
 #define BABL_DEBUG_MEM 0
 #if BABL_DEBUG_MEM

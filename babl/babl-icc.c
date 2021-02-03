@@ -957,6 +957,8 @@ babl_space_from_icc (const char   *icc_data,
 
   sign_t profile_class, color_space, pcs;
 
+  babl_mutex_lock (babl_space_mutex);
+
   if (!error) error = &int_err;
   *error = NULL;
 
@@ -973,13 +975,22 @@ babl_space_from_icc (const char   *icc_data,
     {
        ret = _babl_space_for_lcms (icc_data, icc_length);
        if (!ret)
+       {
+         babl_mutex_unlock (babl_space_mutex);
          return NULL;
+       }
        if (ret->space.icc_type == BablICCTypeCMYK)
+       {
+         babl_mutex_unlock (babl_space_mutex);
          return ret;
+       }
        ret->space.icc_length = icc_length;
        ret->space.icc_profile = malloc (icc_length);
        if (!ret->space.icc_profile)
+       {
+         babl_mutex_unlock (babl_space_mutex);
          return NULL;
+       }
        memcpy (ret->space.icc_profile, icc_data, icc_length);
 
 #ifdef HAVE_LCMS
@@ -1010,6 +1021,7 @@ babl_space_from_icc (const char   *icc_data,
        cmsCloseProfile (ret->space.cmyk.lcms_profile); // XXX keep it open in case of CMYK to CMYK transforms needed?
 #endif
        ret->space.icc_type = BablICCTypeCMYK;
+       babl_mutex_unlock (babl_space_mutex);
        return ret;
     }
 
@@ -1113,6 +1125,7 @@ babl_space_from_icc (const char   *icc_data,
   {
 
     babl_free (state);
+    babl_mutex_unlock (babl_space_mutex);
     return NULL;
   }
 
@@ -1130,6 +1143,7 @@ babl_space_from_icc (const char   *icc_data,
     ret->space.icc_profile = malloc (icc_length);
     memcpy (ret->space.icc_profile, icc_data, icc_length);
     babl_free (state);
+    babl_mutex_unlock (babl_space_mutex);
     return ret;
 
 
@@ -1175,6 +1189,7 @@ babl_space_from_icc (const char   *icc_data,
            *error = "Inconsistent ICC profile detected, profile contains both cLUTs and a matrix with swapped primaries, this likely means it is an intentionally inconsistent Argyll profile is in use; this profile is only capable of high accuracy rendering and does not permit acceleration for interactive previews.";
            fprintf (stderr, "babl ICC warning: %s\n", *error);
            babl_free (state);
+           babl_mutex_unlock (babl_space_mutex);
            return NULL;
         }
       }
@@ -1184,6 +1199,7 @@ babl_space_from_icc (const char   *icc_data,
      if (ret)
      {
         babl_free (state);
+        babl_mutex_unlock (babl_space_mutex);
         return ret;
      }
 
@@ -1199,6 +1215,7 @@ babl_space_from_icc (const char   *icc_data,
        ret->space.icc_length  = icc_length;
        ret->space.icc_profile = malloc (icc_length);
        memcpy (ret->space.icc_profile, icc_data, icc_length);
+       babl_mutex_unlock (babl_space_mutex);
        return ret;
      }
   }
@@ -1216,11 +1233,13 @@ babl_space_from_icc (const char   *icc_data,
      if (phosporant != 0)
      {
        *error = "unhandled phosporants, please report bug against babl with profile";
+       babl_mutex_unlock (babl_space_mutex);
        return NULL;
      }
      if (channels != 3)
      {
        *error = "unexpected non 3 count of channels";
+       babl_mutex_unlock (babl_space_mutex);
        return NULL;
      }
 
@@ -1250,6 +1269,7 @@ babl_space_from_icc (const char   *icc_data,
        ret->space.icc_profile = malloc (icc_length);
        memcpy (ret->space.icc_profile, icc_data, icc_length);
 
+       babl_mutex_unlock (babl_space_mutex);
        return ret;
      }
   }
@@ -1257,6 +1277,7 @@ babl_space_from_icc (const char   *icc_data,
   }
 
   babl_free (state);
+  babl_mutex_unlock (babl_space_mutex);
   return NULL;
 }
 

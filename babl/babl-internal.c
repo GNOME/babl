@@ -84,6 +84,7 @@ BablMutex *babl_format_mutex;
 BablMutex *babl_debug_mutex;
 #endif
 BablMutex *babl_reference_mutex;
+BablMutex *babl_space_mutex;
 
 void
 babl_internal_init (void)
@@ -93,6 +94,7 @@ babl_internal_init (void)
   babl_fish_mutex = babl_mutex_new ();
   babl_format_mutex = babl_mutex_new ();
   babl_reference_mutex = babl_mutex_new ();
+  babl_space_mutex = babl_mutex_new ();
 #if BABL_DEBUG_MEM
   babl_debug_mutex = babl_mutex_new ();
 #endif
