@@ -322,6 +322,11 @@ read_sign (ICC *state,
            int  offset)
 {
   sign_t ret;
+  if (offset < 0 || offset > state->length - 4)
+  {
+    for (int i = 0; i < 5; i ++) ret.str[0]=0;
+    return ret;
+  }
   ret.str[0]=icc_read (u8, offset);
   ret.str[1]=icc_read (u8, offset + 1);
   ret.str[2]=icc_read (u8, offset + 2);
@@ -1191,7 +1196,7 @@ babl_space_from_icc (const char   *icc_data,
                 trc_red, trc_green, trc_blue);
 
        babl_free (state);
-       ret->space.icc_length = icc_length;
+       ret->space.icc_length  = icc_length;
        ret->space.icc_profile = malloc (icc_length);
        memcpy (ret->space.icc_profile, icc_data, icc_length);
        return ret;
