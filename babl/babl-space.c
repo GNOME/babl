@@ -25,9 +25,9 @@
 
 static BablSpace space_db[MAX_SPACES];
 
-static void babl_chromatic_adaptation_matrix (const double *whitepoint,
-                                              const double *target_whitepoint,
-                                              double       *chad_matrix)
+void babl_chromatic_adaptation_matrix (const double *whitepoint,
+                                       const double *target_whitepoint,
+                                       double       *chad_matrix)
 {
   double bradford[9]={ 0.8951000, 0.2664000, -0.1614000,
                       -0.7502000, 1.7135000,  0.0367000,
