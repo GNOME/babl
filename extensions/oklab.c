@@ -140,22 +140,22 @@ formats (void)
 
 /* Convertion routine (space definition). */
 /* It's all float. The original definition is in float. */
-static double[9] M1 = {
+static double M1[9] = {
   +0.8189330101, +0.0329845436, +0.0482003018,
   ​+0.3618667424, ​+0.9293118715, +0.2643662691,
   -0.1288597137, +0.0361456387, ​+0.6338517070,
 }
 
-static double[9] M2 = {
+static double M2[9] = {
   +0.2104542553, +0.7936177850, - 0.0040720468,
   +1.9779984951, -2.4285922050, + 0.4505937099,
   +0.0259040371, +0.7827717662, - 0.8086757660,
 }
 
-static float[9] M1f;
-static float[9] M2f;
-static float[9] inv_M1f;
-static float[9] inv_M2f;
+static float M1f[9];
+static float M2f[9];
+static float inv_M1f[9];
+static float inv_M2f[9];
 static int mat_ready;
 
 /* fast approximate cube root
@@ -184,7 +184,7 @@ _cbrtf (float x)
 static inline void
 XYZ_to_Oklab_step (float *xyz, float *lab_out)
 {
-  float[3] lms;
+  float lms[3];
   babl_matrix_mul_vectorff (M1f, xyz, lms);
   for (int i = 0; i < 3; i++)
     {
@@ -196,7 +196,7 @@ XYZ_to_Oklab_step (float *xyz, float *lab_out)
 static inline void
 Oklab_to_XYZ_step (float *lab, float *xyz_out)
 {
-  float[3] lms;
+  float lms[3];
   babl_matrix_mul_vectorff (inv_M2f, lab, lms);
   for (int i = 0; i < 3; i++)
     {
@@ -237,7 +237,7 @@ xyz_to_Oklch_step (float *xyz, float *lch_out)
 static inline void
 Oklch_to_XYZ_step (float *lch, float *xyz_out)
 {
-  float[3] lab = { lch[0], lch[1], lch[2] };
+  float lab[3] = { lch[0], lch[1], lch[2] };
   ch_to_ab_step (lab + 1, lab + 1);
   Oklab_to_XYZ_step (lab, xyz_out);
 }
@@ -245,12 +245,14 @@ Oklch_to_XYZ_step (float *lch, float *xyz_out)
 static inline void
 constants ()
 {
-  /* FIXME: babl xyz is D50. Should adapt back to D65xy (0.3127, 0.3290) before
-   * doing M1, but babl_chromatic_adaptation_matrix is private :( */
   if (mat_ready)
     return;
 
-  double[9] tmp;
+  double tmp[9];
+  double D65[3] = {0.95047, 1.0, 1.08883};
+  double D50[3] = {0.96420288, 1.0, 0.82490540};
+  babl_chromatic_adaptation_matrix (D50, D65, tmp);
+  babl_matrix_mul_matrix (tmp, M1, M1);
 
   babl_matrix_invert (M1, tmp);
   babl_matrix_to_float (tmp, inv_M1f);

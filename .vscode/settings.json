@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "*.jnlp": "xml",
+        "babl-internal.h": "c"
+    }
+}
