@@ -249,8 +249,8 @@ constants ()
     return;
 
   double tmp[9];
-  double D65[3] = {0.95047, 1.0, 1.08883};
-  double D50[3] = {0.96420288, 1.0, 0.82490540};
+  double D65[3] = { 0.95047, 1.0, 1.08883 };
+  double D50[3] = { 0.96420288, 1.0, 0.82490540 };
   babl_chromatic_adaptation_matrix (D50, D65, tmp);
   babl_matrix_mul_matrix (tmp, M1, M1);
 
@@ -269,8 +269,8 @@ constants ()
 static void
 rgba_to_laba (const Babl *conversion, char *src_, char *dst_, long samples)
 {
-  long n = samples;+
-  float *src = (float *)src_, *dst = (float *)dst_;
+  long n = samples;
+  +float *src = (float *)src_, *dst = (float *)dst_;
   const Babl *space = babl_conversion_get_source_space (conversion);
 
   while (n--)
@@ -482,21 +482,27 @@ laba_to_lcha (const Babl *conversion, char *src_, char *dst_, long samples)
 /* End conversion routines. */
 
 static void
-conversions (void) {
+conversions (void)
+{
   constants ();
 
-  #define _pair(f1, f2, fwd, rev) do { \
-    babl_conversion_new(babl_format(f1), babl_format(f2), "linear", fwd, NULL); \
-    babl_conversion_new(babl_format(f2), babl_format(f1), "linear", rev, NULL); \
-  } while (0)
+#define _pair(f1, f2, fwd, rev)                                               \
+  do                                                                          \
+    {                                                                         \
+      babl_conversion_new (babl_format (f1), babl_format (f2), "linear", fwd, \
+                           NULL);                                             \
+      babl_conversion_new (babl_format (f2), babl_format (f1), "linear", rev, \
+                           NULL);                                             \
+    }                                                                         \
+  while (0)
 
-  _pair("RGB float", "Oklab float", rgb_to_lab, lab_to_rgb);
-  _pair("RGB float", "Oklch float", rgb_to_lch, lch_to_rgb);
+  _pair ("RGB float", "Oklab float", rgb_to_lab, lab_to_rgb);
+  _pair ("RGB float", "Oklch float", rgb_to_lch, lch_to_rgb);
 
-  _pair("RGBA float", "Oklab alpha float", rgba_to_laba, laba_to_rgba);
-  _pair("RGBA float", "Oklch alpha float", rgba_to_lcha, lcha_to_rgba);
+  _pair ("RGBA float", "Oklab alpha float", rgba_to_laba, laba_to_rgba);
+  _pair ("RGBA float", "Oklch alpha float", rgba_to_lcha, lcha_to_rgba);
 
-  _pair("Oklab float", "Oklch float", lab_to_lch, lch_to_lab);
-  _pair("Oklab alpha float", "Oklch alpha float", laba_to_lcha, lcha_to_laba);
-  #undef _pair
+  _pair ("Oklab float", "Oklch float", lab_to_lch, lch_to_lab);
+  _pair ("Oklab alpha float", "Oklch alpha float", laba_to_lcha, lcha_to_laba);
+#undef _pair
 }

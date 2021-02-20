@@ -174,7 +174,7 @@ babl_space_from_gray_trc (const char *name,
 void
 babl_chromatic_adaptation_matrix (const double *whitepoint,
                                   const double *target_whitepoint,
-                                  double       *chad_matrix)
+                                  double       *chad_matrix);
 
 
 #endif
