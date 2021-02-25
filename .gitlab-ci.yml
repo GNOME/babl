@@ -4,7 +4,7 @@ cache:
 
 .build:
   stage: build
-  image: archlinux:latest
+  image: archlinux:base-20210214.0.15477
   variables:
     PACMAN_CACHE: $CI_PROJECT_DIR/_pacman_cache
   artifacts:
