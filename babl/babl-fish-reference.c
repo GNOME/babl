@@ -358,7 +358,6 @@ ncomponent_convert_from_double (BablFormat *destination_fmt,
   src_img->stride[0] = 0;
 
   dst_img->data[0]  = destination_buf;
-  dst_img->type[0]  = (BablType *) babl_type_from_id (BABL_DOUBLE);
   dst_img->pitch[0] = destination_fmt->type[0]->bits/8;
   dst_img->stride[0] = 0;
 
@@ -480,7 +479,6 @@ ncomponent_convert_from_float (BablFormat *source_fmt,
   src_img->stride[0] = 0;
 
   dst_img->data[0]  = destination_buf;
-  dst_img->type[0]  = (BablType *) babl_type_from_id (BABL_FLOAT);
   dst_img->pitch[0] = destination_fmt->type[0]->bits/8;
   dst_img->stride[0] = 0;
 
