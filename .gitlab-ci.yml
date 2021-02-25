@@ -12,7 +12,6 @@ cache:
     paths:
       - _build/meson-logs
   before_script:
-    - pacman -U --noconfirm https://archive.archlinux.org/packages/g/glibc/glibc-2.33-3-x86_64.pkg.tar.zst
     - pacman -Syu --noconfirm --needed --cachedir $PACMAN_CACHE --ignore glibc
         base-devel
         git
