@@ -3,6 +3,11 @@ The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
                                                                           -->
 
+2021-02-26 babl-0.1.86                                              </dt><dd>
+input-class (scanner/RGB) ICC profiles are valid for creating RGB spaces.
+improved thread safety for babl_space_from_icc
+build: allow using babl a subproject in other meson projects.
+                                                                    </dd><dt>
 2020-12-17 babl-0.1.84                                              </dt><dd>
 Fixed bug in caching of CMYK ICC profiles.
                                                                     </dd><dt>
