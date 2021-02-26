@@ -54,43 +54,14 @@ if platform_win32
   babl_link_args += no_undefined
 endif
 
+# sources
 babl_version_h = configure_file(
   input:  'babl-version.h.in',
   output: 'babl-version.h',
   configuration: conf,
 )
 
-# If git is available, always check if git-version.h should be
-# updated. If git is not available, don't do anything if git-version.h
-# already exists because then we are probably working with a tarball
-# in which case the git-version.h we ship is correct.
-if git_bin.found() and run_command(
-    git_bin,
-    'rev-parse',
-    '--is-inside-work-tree',
-).returncode() == 0
-  git_version_h = vcs_tag(
-    input : 'git-version.h.in',
-    output: 'git-version.h',
-    replace_string: '@BABL_GIT_VERSION@',
-    command: [ git_bin.path(), 'describe', '--always' ],
-  )
-
-  if env_bin.found() and not meson.is_subproject()
-    meson.add_dist_script(
-      [ 'ninja', 'babl/git-version.h', ],
-    )
-    meson.add_dist_script(
-      [ 'sh', '-c', ' '.join(
-      [ 'cp', git_version_h.full_path(), '${MESON_DIST_ROOT}/babl' ]
-      )]
-    )
-  endif
-else
-  git_version_h = files('git-version.h')
-endif
-
-babl_sources = [
+babl_sources = files(
   'babl-cache.c',
   'babl-component.c',
   'babl-conversion.c',
@@ -123,25 +94,34 @@ babl_sources = [
   'babl-util.c',
   'babl-version.c',
   'babl.c',
+) + [
   babl_version_h,
   git_version_h,
 ]
 
-babl_headers = [
+babl_headers = files(
   'babl-introspect.h',
   'babl-macros.h',
   'babl-types.h',
   'babl.h',
+) + [
   babl_version_h,
 ]
 
 install_headers(babl_headers,
-  subdir: join_paths(lib_name, 'babl')
+  subdir: lib_name / 'babl'
 )
+# copy external headers to babl subdirectory for subproject builds as
+# we don't want to expose the project root folder due to potential
+# name clashes.
+if meson.is_subproject()
+  subdir('babl')
+endif
 
 babl_deps = [math, thread, dl, lcms]
 babl_includes = [rootInclude, bablBaseInclude]
 
+# build library
 babl = library(
   lib_name,
   babl_sources,
@@ -153,12 +133,6 @@ babl = library(
   link_depends: version_script,
   version: so_version,
   install: true,
-)
-
-libbabl_dep = declare_dependency(
-  include_directories: babl_includes,
-  link_with: babl,
-  dependencies: babl_deps
 )
 
 if build_gir

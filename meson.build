@@ -30,6 +30,9 @@ buildtype = get_option('buildtype')
 babl_prefix = get_option('prefix')
 babl_libdir = join_paths(babl_prefix, get_option('libdir'))
 
+project_build_root = meson.current_build_dir()
+project_source_root = meson.current_source_dir()
+
 ################################################################################
 # Projects infos
 
@@ -409,11 +412,45 @@ endif
 ################################################################################
 # Configuration files
 
+# This should not be made visible in babl_dep due to possible name clash
+# when built as a sub-project.
+rootInclude = include_directories('.')
+
 # config.h
 configure_file(
   output: 'config.h',
   configuration: conf
 )
+
+# If git is available, always check if git-version.h should be
+# updated. If git is not available, don't do anything if git-version.h
+# already exists because then we are probably working with a tarball
+# in which case the git-version.h we ship is correct.
+if git_bin.found() and run_command(
+    git_bin,
+    'rev-parse',
+    '--is-inside-work-tree',
+).returncode() == 0
+  git_version_h = vcs_tag(
+    input : 'git-version.h.in',
+    output: 'git-version.h',
+    replace_string: '@BABL_GIT_VERSION@',
+    command: [ git_bin.path(), 'describe', '--always' ],
+  )
+
+  if not meson.is_subproject()
+    meson.add_dist_script(
+      [ 'ninja', 'git-version.h', ],
+    )
+    meson.add_dist_script(
+      [ 'sh', '-c', ' '.join(
+      [ 'cp', git_version_h.full_path(), '${MESON_DIST_ROOT}' ]
+      )]
+    )
+  endif
+else
+  git_version_h = files('git-version.h')
+endif
 
 ################################################################################
 # Global variables
@@ -427,8 +464,6 @@ gen_babl_map_file = files('gen_babl_map.py')
 
 ################################################################################
 # Subdirs
-
-rootInclude = include_directories('.')
 
 subdir('babl')
 subdir('extensions')
@@ -456,17 +491,31 @@ endif
 
 
 # pkg-config file
-pkgconfig.generate(babl,
+pkgconfig.generate(
+  babl,
   filebase: 'babl',
   name: 'babl',
   description: 'Pixel encoding and color space conversion engine.',
   version: meson.project_version(),
-  libraries_private: [
-    '-lm',
+  subdirs: lib_name,
+  uninstalled_variables: [
+    'babl_path=@0@'.format(babl_extensions_build_dir),
+    'babl_libdir=@0@'.format(babl_library_build_dir),
   ],
-  subdirs: [
-    lib_name,
+)
+
+# dependency for wrap builds
+babl_dep = declare_dependency(
+  include_directories: bablInclude,
+  link_with : babl,
+  sources: [
+    babl_version_h,
+    is_variable('babl_gir') ? babl_gir : []
   ],
+  variables: {
+    'babl_path'   : babl_extensions_build_dir,
+    'babl_libdir' : babl_library_build_dir,
+  },
 )
 
 ################################################################################
