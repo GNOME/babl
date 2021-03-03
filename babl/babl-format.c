@@ -468,16 +468,18 @@ babl_format_new (const void *first_arg,
   va_end (varg);
 
   if (!name)
-    name = create_name (model, components, component, type);
+    {
+      name = create_name (model, components, component, type);
 
-  if (space != babl_space ("sRGB"))
-  {
-    char *new_name = babl_malloc (strlen (name) +
-                                  strlen (babl_get_name ((Babl*)space)) + 1);
-    sprintf (new_name, "%s-%s", name, babl_get_name ((Babl*)space));
-    babl_free (name);
-    name = new_name;
-  }
+      if (space != babl_space ("sRGB"))
+        {
+          char *new_name = babl_malloc (strlen (name) +
+                                        strlen (babl_get_name ((Babl*)space)) + 1);
+          sprintf (new_name, "%s-%s", name, babl_get_name ((Babl*)space));
+          babl_free (name);
+          name = new_name;
+        }
+    }
 
   if (!model)
     {
