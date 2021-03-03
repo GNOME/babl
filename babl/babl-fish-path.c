@@ -406,6 +406,7 @@ alias_conversion (Babl *babl,
                 babl_remodel_with_space (
                       (void*)conv->destination, (void*)space),
                 "linear", conv->function.linear,
+                "data",   conv->data,
                 NULL);
           break;
         case BABL_CONVERSION_PLANAR:
@@ -415,6 +416,7 @@ alias_conversion (Babl *babl,
                 babl_remodel_with_space (
                       (void*)conv->destination, (void*)space),
                 "planar", conv->function.planar,
+                "data",   conv->data,
                 NULL);
           break;
         case BABL_CONVERSION_PLANE:
@@ -424,6 +426,7 @@ alias_conversion (Babl *babl,
                 babl_remodel_with_space (
                       (void*)conv->destination, (void*)space),
                 "plane", conv->function.plane,
+                "data",  conv->data,
                 NULL);
           break;
         default:

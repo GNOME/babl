@@ -831,6 +831,10 @@ babl_new_palette_with_space (const char  *name,
   *palptr = default_palette ();;
   cname[0] = 'v';
   model_no_alpha = babl_model_new ("name", name, component, NULL);
+
+  babl_set_user_data (model, palptr);
+  babl_set_user_data (model_no_alpha, palptr);
+
   cname[0] = '\\';
   f_pal_a_u8 = (void*) babl_format_new ("name", name, model, space,
                                 babl_type ("u8"),
@@ -923,9 +927,6 @@ babl_new_palette_with_space (const char  *name,
      "linear", rgba_float_to_pal,
      "data", palptr,
      NULL);
-
-  babl_set_user_data (model, palptr);
-  babl_set_user_data (model_no_alpha, palptr);
 
   if (format_u8)
     *format_u8 = f_pal_u8;
