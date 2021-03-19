@@ -146,12 +146,14 @@ babl = library(
 if build_gir
   # identity filter, so GIR doesn't choke on the Babl type
   # (since it has the same name as the Babl namespace)
-  babl_gir = gnome.generate_gir(babl,
+  babl_gir = gnome.generate_gir(
+    babl,
     sources: babl_headers,
     extra_args: [
       '--identifier-filter-cmd=@0@ @1@'.format(python.path(), 
         meson.current_source_dir() / 'identfilter.py'),
       '-DBABL_IS_BEING_COMPILED',
+      '--quiet',
     ],
     namespace: 'Babl',
     nsversion: api_version,

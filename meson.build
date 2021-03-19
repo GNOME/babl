@@ -520,9 +520,17 @@ pkgconfig.generate(
   description: 'Pixel encoding and color space conversion engine.',
   version: meson.project_version(),
   subdirs: lib_name,
+  variables: [
+    'datadir=${prefix}/share',
+    'pluginsdir=${libdir}/@0@'.format(lib_name),
+    'girdir=${datadir}/gir-1.0',
+    'typelibdir=${libdir}/girepository-1.0',
+  ],
   uninstalled_variables: [
-    'babl_path=@0@'.format(babl_extensions_build_dir),
-    'babl_libdir=@0@'.format(babl_library_build_dir),
+    'babl_libdir=${prefix}/babl',
+    'pluginsdir=${prefix}/extensions',
+    'girdir=${babl_libdir}',
+    'typelibdir=${babl_libdir}',
   ],
 )
 
@@ -537,6 +545,8 @@ babl_dep = declare_dependency(
   variables: {
     'babl_path'   : babl_extensions_build_dir,
     'babl_libdir' : babl_library_build_dir,
+    'girdir'      : babl_library_build_dir,
+    'typelibdir'  : babl_library_build_dir,
   },
 )
 meson.override_dependency('babl-' + api_version, babl_dep)
