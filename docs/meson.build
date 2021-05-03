@@ -1,10 +1,5 @@
 subdir('graphics')
 
-host    = 'pippin.gimp.org'
-location= 'public_html/babl'
-scptarget = host + ':' + location + '/'
-
-
 xml_insert = find_program(
   xml_insert_file,
   native: true
@@ -100,12 +95,3 @@ foreach _file, _parms : html_files
     index_html = _tgt
   endif
 endforeach
-
-
-run_target('push_web',
-  command: [
-    'scp', index_html, index_static_html, babl_css, scptarget,
-    '&&',
-    'scp', graphic_files_install, scptarget + 'graphics/'
-  ],
-)
