@@ -3,6 +3,9 @@ The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
                                                                           -->
 
+2021-07-01 babl-0.1.88                                              </dt><dd>
+Consistency fixes to format names, in particular for palettized formats.
+
 2021-02-26 babl-0.1.86                                              </dt><dd>
 input-class (scanner/RGB) ICC profiles are valid for creating RGB spaces.
 improved thread safety for babl_space_from_icc
