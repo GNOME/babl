@@ -510,6 +510,7 @@ babl_format_new (const void *first_arg,
                     "with different content!", name);
 
       babl_free (name);
+      babl_free (doc);
       return babl;
     }
 
