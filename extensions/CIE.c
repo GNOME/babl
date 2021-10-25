@@ -3003,6 +3003,20 @@ formats (void)
     NULL);
 
   babl_format_new (
+    "name", "CIE Lab alpha u16",
+    babl_model ("CIE Lab alpha"),
+
+    babl_type ("CIE u16 L"),
+    babl_component ("CIE L"),
+    babl_type ("CIE u16 ab"),
+    babl_component ("CIE a"),
+    babl_type ("CIE u16 ab"),
+    babl_component ("CIE b"),
+    babl_type ("u16"),
+    babl_component ("A"),
+    NULL);
+
+  babl_format_new (
     "name", "CIE xyY float",
     babl_model ("CIE xyY"),
 
