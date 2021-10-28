@@ -142,15 +142,15 @@ formats (void)
 /* It's all float. The original definition is in float. */
 static double M1[9] = {
   +0.8189330101, +0.0329845436, +0.0482003018,
-  ​+0.3618667424, ​+0.9293118715, +0.2643662691,
-  -0.1288597137, +0.0361456387, ​+0.6338517070,
-}
+  +0.3618667424, +0.9293118715, +0.2643662691,
+  -0.1288597137, +0.0361456387, +0.6338517070,
+};
 
 static double M2[9] = {
   +0.2104542553, +0.7936177850, - 0.0040720468,
   +1.9779984951, -2.4285922050, + 0.4505937099,
   +0.0259040371, +0.7827717662, - 0.8086757660,
-}
+};
 
 static float M1f[9];
 static float M2f[9];
@@ -228,7 +228,7 @@ ch_to_ab_step (float *ch, float *ab_out)
 }
 
 static inline void
-xyz_to_Oklch_step (float *xyz, float *lch_out)
+XYZ_to_Oklch_step (float *xyz, float *lch_out)
 {
   XYZ_to_Oklab_step (xyz, lch_out);
   ab_to_ch_step (lch_out + 1, lch_out + 1);
@@ -243,14 +243,15 @@ Oklch_to_XYZ_step (float *lch, float *xyz_out)
 }
 
 static inline void
-constants ()
+constants (void)
 {
-  if (mat_ready)
-    return;
-
   double tmp[9];
   double D65[3] = { 0.95047, 1.0, 1.08883 };
   double D50[3] = { 0.96420288, 1.0, 0.82490540 };
+
+  if (mat_ready)
+    return;
+
   babl_chromatic_adaptation_matrix (D50, D65, tmp);
   babl_matrix_mul_matrix (tmp, M1, M1);
 
@@ -270,7 +271,7 @@ static void
 rgba_to_laba (const Babl *conversion, char *src_, char *dst_, long samples)
 {
   long n = samples;
-  +float *src = (float *)src_, *dst = (float *)dst_;
+  float *src = (float *)src_, *dst = (float *)dst_;
   const Babl *space = babl_conversion_get_source_space (conversion);
 
   while (n--)
@@ -282,6 +283,24 @@ rgba_to_laba (const Babl *conversion, char *src_, char *dst_, long samples)
 
       src += 4;
       dst += 4;
+    }
+}
+
+static void
+rgba_to_lab (const Babl *conversion, char *src_, char *dst_, long samples)
+{
+  long n = samples;
+  float *src = (float *)src_, *dst = (float *)dst_;
+  const Babl *space = babl_conversion_get_source_space (conversion);
+
+  while (n--)
+    {
+      float xyz[3];
+      babl_space_to_xyzf (space, src, xyz);
+      XYZ_to_Oklab_step (xyz, dst);
+
+      src += 4;
+      dst += 3;
     }
 }
 
@@ -305,25 +324,7 @@ rgba_to_lcha (const Babl *conversion, char *src_, char *dst_, long samples)
 }
 
 static void
-rgb_to_lab (const Babl *conversion, char *src_, char *dst_, long samples)
-{
-  long n = samples;
-  float *src = (float *)src_, *dst = (float *)dst_;
-  const Babl *space = babl_conversion_get_source_space (conversion);
-
-  while (n--)
-    {
-      float xyz[3];
-      babl_space_to_xyzf (space, src, xyz);
-      XYZ_to_Oklab_step (xyz, dst);
-
-      src += 3;
-      dst += 3;
-    }
-}
-
-static void
-rgb_to_lch (const Babl *conversion, char *src_, char *dst_, long samples)
+rgba_to_lch (const Babl *conversion, char *src_, char *dst_, long samples)
 {
   long n = samples;
   float *src = (float *)src_, *dst = (float *)dst_;
@@ -335,13 +336,13 @@ rgb_to_lch (const Babl *conversion, char *src_, char *dst_, long samples)
       babl_space_to_xyzf (space, src, xyz);
       XYZ_to_Oklch_step (xyz, dst);
 
-      src += 3;
+      src += 4;
       dst += 3;
     }
 }
 
 static void
-lab_to_rgb (const Babl *conversion, char *src_, char *dst_, long samples)
+lab_to_rgba (const Babl *conversion, char *src_, char *dst_, long samples)
 {
   long n = samples;
   float *src = (float *)src_, *dst = (float *)dst_;
@@ -352,27 +353,10 @@ lab_to_rgb (const Babl *conversion, char *src_, char *dst_, long samples)
       float xyz[3];
       Oklab_to_XYZ_step (src, xyz);
       babl_space_from_xyzf (space, xyz, dst);
+      dst[3] = 1.0;
 
       src += 3;
-      dst += 3;
-    }
-}
-
-static void
-lch_to_rgb (const Babl *conversion, char *src_, char *dst_, long samples)
-{
-  long n = samples;
-  float *src = (float *)src_, *dst = (float *)dst_;
-  const Babl *space = babl_conversion_get_destination_space (conversion);
-
-  while (n--)
-    {
-      float xyz[3];
-      Oklch_to_XYZ_step (src, xyz);
-      babl_space_from_xyzf (space, xyz, dst);
-
-      src += 3;
-      dst += 3;
+      dst += 4;
     }
 }
 
@@ -410,6 +394,25 @@ lcha_to_rgba (const Babl *conversion, char *src_, char *dst_, long samples)
       dst[3] = src[3];
 
       src += 4;
+      dst += 4;
+    }
+}
+
+static void
+lch_to_rgba (const Babl *conversion, char *src_, char *dst_, long samples)
+{
+  long n = samples;
+  float *src = (float *)src_, *dst = (float *)dst_;
+  const Babl *space = babl_conversion_get_destination_space (conversion);
+
+  while (n--)
+    {
+      float xyz[3];
+      Oklch_to_XYZ_step (src, xyz);
+      babl_space_from_xyzf (space, xyz, dst);
+      dst[3] = 1.0f;
+
+      src += 3;
       dst += 4;
     }
 }
@@ -496,11 +499,41 @@ conversions (void)
     }                                                                         \
   while (0)
 
-  _pair ("RGB float", "Oklab float", rgb_to_lab, lab_to_rgb);
-  _pair ("RGB float", "Oklch float", rgb_to_lch, lch_to_rgb);
+  babl_conversion_new (babl_model("RGBA"),
+                       babl_model("OklabA"),
+                       "linear", rgba_to_laba,
+                       NULL);
+  babl_conversion_new (babl_model("OklabA"),
+                       babl_model("RGBA"),
+                       "linear", laba_to_rgba,
+                       NULL);
 
-  _pair ("RGBA float", "Oklab alpha float", rgba_to_laba, laba_to_rgba);
-  _pair ("RGBA float", "Oklch alpha float", rgba_to_lcha, lcha_to_rgba);
+  babl_conversion_new (babl_model("RGBA"),
+                       babl_model("Oklab"),
+                       "linear", rgba_to_lab,
+                       NULL);
+  babl_conversion_new (babl_model("Oklab"),
+                       babl_model("RGBA"),
+                       "linear", lab_to_rgba,
+                       NULL);
+
+  babl_conversion_new (babl_model("RGBA"),
+                       babl_model("OklchA"),
+                       "linear", rgba_to_lcha,
+                       NULL);
+  babl_conversion_new (babl_model("OklchA"),
+                       babl_model("RGBA"),
+                       "linear", lcha_to_rgba,
+                       NULL);
+
+  babl_conversion_new (babl_model("RGBA"),
+                       babl_model("Oklch"),
+                       "linear", rgba_to_lch,
+                       NULL);
+  babl_conversion_new (babl_model("Oklch"),
+                       babl_model("RGBA"),
+                       "linear", lch_to_rgba,
+                       NULL);
 
   _pair ("Oklab float", "Oklch float", lab_to_lch, lch_to_lab);
   _pair ("Oklab alpha float", "Oklch alpha float", laba_to_lcha, lcha_to_laba);
