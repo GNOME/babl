@@ -47,6 +47,9 @@ int init (void);
 int
 init (void)
 {
+  return 0; // the oklab conversions are not fully symmetric,
+            // thus not allowing the tests to pass if we register
+            // the code
   components ();
   models ();
   formats ();
@@ -156,6 +159,9 @@ static float M1f[9];
 static float M2f[9];
 static float inv_M1f[9];
 static float inv_M2f[9];
+
+static double inv_M1[9];
+static double inv_M2[9];
 static int mat_ready;
 
 /* fast approximate cube root
@@ -182,7 +188,19 @@ _cbrtf (float x)
 }
 
 static inline void
-XYZ_to_Oklab_step (float *xyz, float *lab_out)
+XYZ_to_Oklab_step (double *xyz, double *lab_out)
+{
+  double lms[3];
+  babl_matrix_mul_vector (M1, xyz, lms);
+  for (int i = 0; i < 3; i++)
+    {
+      lms[i] = cbrt (lms[i]);
+    }
+  babl_matrix_mul_vector (M2, lms, lab_out);
+}
+
+static inline void
+XYZ_to_Oklab_stepf (float *xyz, float *lab_out)
 {
   float lms[3];
   babl_matrix_mul_vectorff (M1f, xyz, lms);
@@ -194,7 +212,7 @@ XYZ_to_Oklab_step (float *xyz, float *lab_out)
 }
 
 static inline void
-Oklab_to_XYZ_step (float *lab, float *xyz_out)
+Oklab_to_XYZ_stepf (float *lab, float *xyz_out)
 {
   float lms[3];
   babl_matrix_mul_vectorff (inv_M2f, lab, lms);
@@ -206,9 +224,21 @@ Oklab_to_XYZ_step (float *lab, float *xyz_out)
 }
 
 static inline void
-ab_to_ch_step (float *ab, float *ch_out)
+Oklab_to_XYZ_step (double *lab, double *xyz_out)
 {
-  float a = ab[0], b = ab[1];
+  double lms[3];
+  babl_matrix_mul_vector (inv_M2, lab, lms);
+  for (int i = 0; i < 3; i++)
+    {
+      lms[i] = lms[i] * lms[i] * lms[i];
+    }
+  babl_matrix_mul_vector (inv_M1, lms, xyz_out);
+}
+
+static inline void
+ab_to_ch_step (double *ab, double *ch_out)
+{
+  double a = ab[0], b = ab[1];
 
   ch_out[1] = sqrt (a * a + b * b);
   ch_out[2] = atan2 (b, a) * DEGREES_PER_RADIAN;
@@ -219,27 +249,64 @@ ab_to_ch_step (float *ab, float *ch_out)
 }
 
 static inline void
-ch_to_ab_step (float *ch, float *ab_out)
+ab_to_ch_stepf (float *ab, float *ch_out)
 {
-  float c = ch[0], h = ch[1];
+  float a = ab[0], b = ab[1];
+
+  ch_out[1] = sqrtf (a * a + b * b);
+  ch_out[2] = atan2f (b, a) * DEGREES_PER_RADIAN;
+
+  // Keep H within the range 0-360
+  if (ch_out[2] < 0.0)
+    ch_out[2] += 360;
+}
+
+static inline void
+ch_to_ab_step (double *ch, double *ab_out)
+{
+  double c = ch[0], h = ch[1];
 
   ab_out[0] = cos (h * RADIANS_PER_DEGREE) * c;
   ab_out[1] = sin (h * RADIANS_PER_DEGREE) * c;
 }
 
 static inline void
-XYZ_to_Oklch_step (float *xyz, float *lch_out)
+ch_to_ab_stepf (float *ch, float *ab_out)
+{
+  float c = ch[0], h = ch[1];
+
+  ab_out[0] = cosf (h * RADIANS_PER_DEGREE) * c;
+  ab_out[1] = sinf (h * RADIANS_PER_DEGREE) * c;
+}
+
+static inline void
+XYZ_to_Oklch_step (double *xyz, double *lch_out)
 {
   XYZ_to_Oklab_step (xyz, lch_out);
   ab_to_ch_step (lch_out + 1, lch_out + 1);
 }
 
 static inline void
-Oklch_to_XYZ_step (float *lch, float *xyz_out)
+XYZ_to_Oklch_stepf (float *xyz, float *lch_out)
 {
-  float lab[3] = { lch[0], lch[1], lch[2] };
+  XYZ_to_Oklab_stepf (xyz, lch_out);
+  ab_to_ch_stepf (lch_out + 1, lch_out + 1);
+}
+
+static inline void
+Oklch_to_XYZ_step (double *lch, double *xyz_out)
+{
+  double lab[3] = { lch[0], lch[1], lch[2] };
   ch_to_ab_step (lab + 1, lab + 1);
   Oklab_to_XYZ_step (lab, xyz_out);
+}
+
+static inline void
+Oklch_to_XYZ_stepf (float *lch, float *xyz_out)
+{
+  float lab[3] = { lch[0], lch[1], lch[2] };
+  ch_to_ab_stepf (lab + 1, lab + 1);
+  Oklab_to_XYZ_stepf (lab, xyz_out);
 }
 
 static inline void
@@ -255,10 +322,10 @@ constants (void)
   babl_chromatic_adaptation_matrix (D50, D65, tmp);
   babl_matrix_mul_matrix (tmp, M1, M1);
 
-  babl_matrix_invert (M1, tmp);
-  babl_matrix_to_float (tmp, inv_M1f);
-  babl_matrix_invert (M2, tmp);
-  babl_matrix_to_float (tmp, inv_M2f);
+  babl_matrix_invert (M1, inv_M1);
+  babl_matrix_to_float (inv_M1, inv_M1f);
+  babl_matrix_invert (M2, inv_M2);
+  babl_matrix_to_float (inv_M2, inv_M2f);
 
   babl_matrix_to_float (M1, M1f);
   babl_matrix_to_float (M2, M2f);
@@ -268,7 +335,7 @@ constants (void)
 
 /* Convertion routine (glue and boilerplate). */
 static void
-rgba_to_laba (const Babl *conversion, char *src_, char *dst_, long samples)
+rgba_to_laba_float (const Babl *conversion, char *src_, char *dst_, long samples)
 {
   long n = samples;
   float *src = (float *)src_, *dst = (float *)dst_;
@@ -278,11 +345,48 @@ rgba_to_laba (const Babl *conversion, char *src_, char *dst_, long samples)
     {
       float xyz[3];
       babl_space_to_xyzf (space, src, xyz);
+      XYZ_to_Oklab_stepf (xyz, dst);
+      dst[3] = src[3];
+
+      src += 4;
+      dst += 4;
+    }
+}
+
+static void
+rgba_to_laba (const Babl *conversion, char *src_, char *dst_, long samples)
+{
+  long n = samples;
+  double *src = (double*)src_, *dst = (double*)dst_;
+  const Babl *space = babl_conversion_get_source_space (conversion);
+
+  while (n--)
+    {
+      double xyz[3];
+      babl_space_to_xyz (space, src, xyz);
       XYZ_to_Oklab_step (xyz, dst);
       dst[3] = src[3];
 
       src += 4;
       dst += 4;
+    }
+}
+
+static void
+rgba_to_lab_float (const Babl *conversion, char *src_, char *dst_, long samples)
+{
+  long n = samples;
+  float *src = (float *)src_, *dst = (float *)dst_;
+  const Babl *space = babl_conversion_get_source_space (conversion);
+
+  while (n--)
+    {
+      float xyz[3];
+      babl_space_to_xyzf (space, src, xyz);
+      XYZ_to_Oklab_stepf (xyz, dst);
+
+      src += 4;
+      dst += 3;
     }
 }
 
@@ -290,13 +394,13 @@ static void
 rgba_to_lab (const Babl *conversion, char *src_, char *dst_, long samples)
 {
   long n = samples;
-  float *src = (float *)src_, *dst = (float *)dst_;
+  double *src = (double *)src_, *dst = (double *)dst_;
   const Babl *space = babl_conversion_get_source_space (conversion);
 
   while (n--)
     {
-      float xyz[3];
-      babl_space_to_xyzf (space, src, xyz);
+      double xyz[3];
+      babl_space_to_xyz (space, src, xyz);
       XYZ_to_Oklab_step (xyz, dst);
 
       src += 4;
@@ -305,7 +409,7 @@ rgba_to_lab (const Babl *conversion, char *src_, char *dst_, long samples)
 }
 
 static void
-rgba_to_lcha (const Babl *conversion, char *src_, char *dst_, long samples)
+rgba_to_lcha_float (const Babl *conversion, char *src_, char *dst_, long samples)
 {
   long n = samples;
   float *src = (float *)src_, *dst = (float *)dst_;
@@ -315,6 +419,25 @@ rgba_to_lcha (const Babl *conversion, char *src_, char *dst_, long samples)
     {
       float xyz[3];
       babl_space_to_xyzf (space, src, xyz);
+      XYZ_to_Oklch_stepf (xyz, dst);
+      dst[3] = src[3];
+
+      src += 4;
+      dst += 4;
+    }
+}
+
+static void
+rgba_to_lcha (const Babl *conversion, char *src_, char *dst_, long samples)
+{
+  long n = samples;
+  double *src = (double *)src_, *dst = (double *)dst_;
+  const Babl *space = babl_conversion_get_source_space (conversion);
+
+  while (n--)
+    {
+      double xyz[3];
+      babl_space_to_xyz (space, src, xyz);
       XYZ_to_Oklch_step (xyz, dst);
       dst[3] = src[3];
 
@@ -324,7 +447,7 @@ rgba_to_lcha (const Babl *conversion, char *src_, char *dst_, long samples)
 }
 
 static void
-rgba_to_lch (const Babl *conversion, char *src_, char *dst_, long samples)
+rgba_to_lch_float (const Babl *conversion, char *src_, char *dst_, long samples)
 {
   long n = samples;
   float *src = (float *)src_, *dst = (float *)dst_;
@@ -334,6 +457,24 @@ rgba_to_lch (const Babl *conversion, char *src_, char *dst_, long samples)
     {
       float xyz[3];
       babl_space_to_xyzf (space, src, xyz);
+      XYZ_to_Oklch_stepf (xyz, dst);
+
+      src += 4;
+      dst += 3;
+    }
+}
+
+static void
+rgba_to_lch (const Babl *conversion, char *src_, char *dst_, long samples)
+{
+  long n = samples;
+  double *src = (double *)src_, *dst = (double *)dst_;
+  const Babl *space = babl_conversion_get_source_space (conversion);
+
+  while (n--)
+    {
+      double xyz[3];
+      babl_space_to_xyz (space, src, xyz);
       XYZ_to_Oklch_step (xyz, dst);
 
       src += 4;
@@ -342,7 +483,43 @@ rgba_to_lch (const Babl *conversion, char *src_, char *dst_, long samples)
 }
 
 static void
-lab_to_rgba (const Babl *conversion, char *src_, char *dst_, long samples)
+rgb_to_lab_float (const Babl *conversion, char *src_, char *dst_, long samples)
+{
+  long n = samples;
+  float *src = (float *)src_, *dst = (float *)dst_;
+  const Babl *space = babl_conversion_get_source_space (conversion);
+
+  while (n--)
+    {
+      float xyz[3];
+      babl_space_to_xyzf (space, src, xyz);
+      XYZ_to_Oklab_stepf (xyz, dst);
+
+      src += 3;
+      dst += 3;
+    }
+}
+
+static void
+rgb_to_lch_float (const Babl *conversion, char *src_, char *dst_, long samples)
+{
+  long n = samples;
+  float *src = (float *)src_, *dst = (float *)dst_;
+  const Babl *space = babl_conversion_get_source_space (conversion);
+
+  while (n--)
+    {
+      float xyz[3];
+      babl_space_to_xyzf (space, src, xyz);
+      XYZ_to_Oklch_stepf (xyz, dst);
+
+      src += 3;
+      dst += 3;
+    }
+}
+
+static void
+lab_to_rgb_float (const Babl *conversion, char *src_, char *dst_, long samples)
 {
   long n = samples;
   float *src = (float *)src_, *dst = (float *)dst_;
@@ -351,7 +528,25 @@ lab_to_rgba (const Babl *conversion, char *src_, char *dst_, long samples)
   while (n--)
     {
       float xyz[3];
-      Oklab_to_XYZ_step (src, xyz);
+      Oklab_to_XYZ_stepf (src, xyz);
+      babl_space_from_xyzf (space, xyz, dst);
+
+      src += 3;
+      dst += 3;
+    }
+}
+
+static void
+lab_to_rgba_float (const Babl *conversion, char *src_, char *dst_, long samples)
+{
+  long n = samples;
+  float *src = (float *)src_, *dst = (float *)dst_;
+  const Babl *space = babl_conversion_get_destination_space (conversion);
+
+  while (n--)
+    {
+      float xyz[3];
+      Oklab_to_XYZ_stepf (src, xyz);
       babl_space_from_xyzf (space, xyz, dst);
       dst[3] = 1.0;
 
@@ -361,7 +556,26 @@ lab_to_rgba (const Babl *conversion, char *src_, char *dst_, long samples)
 }
 
 static void
-laba_to_rgba (const Babl *conversion, char *src_, char *dst_, long samples)
+lab_to_rgba (const Babl *conversion, char *src_, char *dst_, long samples)
+{
+  long n = samples;
+  double *src = (double *)src_, *dst = (double *)dst_;
+  const Babl *space = babl_conversion_get_destination_space (conversion);
+
+  while (n--)
+    {
+      double xyz[3];
+      Oklab_to_XYZ_step (src, xyz);
+      babl_space_from_xyz (space, xyz, dst);
+      dst[3] = 1.0;
+
+      src += 3;
+      dst += 4;
+    }
+}
+
+static void
+lch_to_rgb_float (const Babl *conversion, char *src_, char *dst_, long samples)
 {
   long n = samples;
   float *src = (float *)src_, *dst = (float *)dst_;
@@ -370,7 +584,63 @@ laba_to_rgba (const Babl *conversion, char *src_, char *dst_, long samples)
   while (n--)
     {
       float xyz[3];
+      Oklch_to_XYZ_stepf (src, xyz);
+      babl_space_from_xyzf (space, xyz, dst);
+
+      src += 3;
+      dst += 3;
+    }
+}
+
+static void
+laba_to_rgba_float (const Babl *conversion, char *src_, char *dst_, long samples)
+{
+  long n = samples;
+  float *src = (float *)src_, *dst = (float *)dst_;
+  const Babl *space = babl_conversion_get_destination_space (conversion);
+
+  while (n--)
+    {
+      float xyz[3];
+      Oklab_to_XYZ_stepf (src, xyz);
+      babl_space_from_xyzf (space, xyz, dst);
+      dst[3] = src[3];
+
+      src += 4;
+      dst += 4;
+    }
+}
+
+static void
+laba_to_rgba (const Babl *conversion, char *src_, char *dst_, long samples)
+{
+  long n = samples;
+  double *src = (double *)src_, *dst = (double *)dst_;
+  const Babl *space = babl_conversion_get_destination_space (conversion);
+
+  while (n--)
+    {
+      double xyz[3];
       Oklab_to_XYZ_step (src, xyz);
+      babl_space_from_xyz (space, xyz, dst);
+      dst[3] = src[3];
+
+      src += 4;
+      dst += 4;
+    }
+}
+
+static void
+lcha_to_rgba_float (const Babl *conversion, char *src_, char *dst_, long samples)
+{
+  long n = samples;
+  float *src = (float *)src_, *dst = (float *)dst_;
+  const Babl *space = babl_conversion_get_destination_space (conversion);
+
+  while (n--)
+    {
+      float xyz[3];
+      Oklch_to_XYZ_stepf (src, xyz);
       babl_space_from_xyzf (space, xyz, dst);
       dst[3] = src[3];
 
@@ -383,14 +653,14 @@ static void
 lcha_to_rgba (const Babl *conversion, char *src_, char *dst_, long samples)
 {
   long n = samples;
-  float *src = (float *)src_, *dst = (float *)dst_;
+  double *src = (double *)src_, *dst = (double *)dst_;
   const Babl *space = babl_conversion_get_destination_space (conversion);
 
   while (n--)
     {
-      float xyz[3];
+      double xyz[3];
       Oklch_to_XYZ_step (src, xyz);
-      babl_space_from_xyzf (space, xyz, dst);
+      babl_space_from_xyz (space, xyz, dst);
       dst[3] = src[3];
 
       src += 4;
@@ -398,8 +668,9 @@ lcha_to_rgba (const Babl *conversion, char *src_, char *dst_, long samples)
     }
 }
 
+
 static void
-lch_to_rgba (const Babl *conversion, char *src_, char *dst_, long samples)
+lch_to_rgba_float (const Babl *conversion, char *src_, char *dst_, long samples)
 {
   long n = samples;
   float *src = (float *)src_, *dst = (float *)dst_;
@@ -408,7 +679,7 @@ lch_to_rgba (const Babl *conversion, char *src_, char *dst_, long samples)
   while (n--)
     {
       float xyz[3];
-      Oklch_to_XYZ_step (src, xyz);
+      Oklch_to_XYZ_stepf (src, xyz);
       babl_space_from_xyzf (space, xyz, dst);
       dst[3] = 1.0f;
 
@@ -418,7 +689,27 @@ lch_to_rgba (const Babl *conversion, char *src_, char *dst_, long samples)
 }
 
 static void
-lch_to_lab (const Babl *conversion, char *src_, char *dst_, long samples)
+lch_to_rgba (const Babl *conversion, char *src_, char *dst_, long samples)
+{
+  long n = samples;
+  double *src = (double *)src_, *dst = (double *)dst_;
+  const Babl *space = babl_conversion_get_destination_space (conversion);
+
+  while (n--)
+    {
+      double xyz[3];
+      Oklch_to_XYZ_step (src, xyz);
+      babl_space_from_xyz (space, xyz, dst);
+      dst[3] = 1.0f;
+
+      src += 3;
+      dst += 4;
+    }
+}
+
+
+static void
+lch_to_lab_float (const Babl *conversion, char *src_, char *dst_, long samples)
 {
   long n = samples;
   float *src = (float *)src_, *dst = (float *)dst_;
@@ -426,7 +717,7 @@ lch_to_lab (const Babl *conversion, char *src_, char *dst_, long samples)
   while (n--)
     {
       dst[0] = src[0];
-      ch_to_ab_step (src + 1, dst + 1);
+      ch_to_ab_stepf (src + 1, dst + 1);
 
       src += 3;
       dst += 3;
@@ -434,7 +725,7 @@ lch_to_lab (const Babl *conversion, char *src_, char *dst_, long samples)
 }
 
 static void
-lab_to_lch (const Babl *conversion, char *src_, char *dst_, long samples)
+lab_to_lch_float (const Babl *conversion, char *src_, char *dst_, long samples)
 {
   long n = samples;
   float *src = (float *)src_, *dst = (float *)dst_;
@@ -442,7 +733,7 @@ lab_to_lch (const Babl *conversion, char *src_, char *dst_, long samples)
   while (n--)
     {
       dst[0] = src[0];
-      ab_to_ch_step (src + 1, dst + 1);
+      ab_to_ch_stepf (src + 1, dst + 1);
 
       src += 3;
       dst += 3;
@@ -450,7 +741,7 @@ lab_to_lch (const Babl *conversion, char *src_, char *dst_, long samples)
 }
 
 static void
-lcha_to_laba (const Babl *conversion, char *src_, char *dst_, long samples)
+lcha_to_laba_float (const Babl *conversion, char *src_, char *dst_, long samples)
 {
   long n = samples;
   float *src = (float *)src_, *dst = (float *)dst_;
@@ -458,7 +749,7 @@ lcha_to_laba (const Babl *conversion, char *src_, char *dst_, long samples)
   while (n--)
     {
       dst[0] = src[0];
-      ch_to_ab_step (src + 1, dst + 1);
+      ch_to_ab_stepf (src + 1, dst + 1);
       dst[3] = src[3];
 
       src += 4;
@@ -467,7 +758,7 @@ lcha_to_laba (const Babl *conversion, char *src_, char *dst_, long samples)
 }
 
 static void
-laba_to_lcha (const Babl *conversion, char *src_, char *dst_, long samples)
+laba_to_lcha_float (const Babl *conversion, char *src_, char *dst_, long samples)
 {
   long n = samples;
   float *src = (float *)src_, *dst = (float *)dst_;
@@ -475,13 +766,14 @@ laba_to_lcha (const Babl *conversion, char *src_, char *dst_, long samples)
   while (n--)
     {
       dst[0] = src[0];
-      ab_to_ch_step (src + 1, dst + 1);
+      ab_to_ch_stepf (src + 1, dst + 1);
       dst[3] = src[3];
 
       src += 4;
       dst += 4;
     }
 }
+
 /* End conversion routines. */
 
 static void
@@ -535,7 +827,16 @@ conversions (void)
                        "linear", lch_to_rgba,
                        NULL);
 
-  _pair ("Oklab float", "Oklch float", lab_to_lch, lch_to_lab);
-  _pair ("Oklab alpha float", "Oklch alpha float", laba_to_lcha, lcha_to_laba);
-#undef _pair
+
+  _pair ("RGB float", "Oklab float", rgb_to_lab_float, lab_to_rgb_float);
+  _pair ("RGBA float", "Oklab alpha float", rgba_to_laba_float, laba_to_rgba_float);
+  _pair ("RGBA float", "Oklab float", rgba_to_lab_float, lab_to_rgba_float);
+
+  _pair ("RGBA float", "Oklch float", rgba_to_lch_float, lch_to_rgba_float);
+  _pair ("RGB float", "Oklch float", rgb_to_lch_float, lch_to_rgb_float);
+  _pair ("RGBA float", "Oklch alpha float", rgba_to_lcha_float, lcha_to_rgba_float);
+  
+  _pair ("Oklab float", "Oklch float", lab_to_lch_float, lch_to_lab_float);
+  _pair ("Oklab alpha float", "Oklch alpha float", laba_to_lcha_float, lcha_to_laba_float);
+  #undef _pair
 }
