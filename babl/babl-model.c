@@ -382,8 +382,9 @@ babl_model_is_symmetric (const Babl *cbabl)
         for (j = 0; j < 4; j++)
         {
           float tolerance = TOLERANCE;
+          /* this to adapt to value ranges outside 0-1 */
           if (fabs(clipped[i*4+j]) > 1.0)
-            tolerance = fabs(clipped[i*4+j]) * 0.01;
+             tolerance = fabs(clipped[i*4+j]) * TOLERANCE;
           if (fabs (clipped[i *4 + j] - transformed[i * 4 + j]) > tolerance)
             {
               if (!log)
