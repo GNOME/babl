@@ -26,7 +26,6 @@ cache:
         -D enable-mmx=true
         -D enable-sse=true
         -D enable-sse2=true
-        -D enable-sse3=true
         -D enable-sse4_1=true
         -D with-docs=true
         ${EXTRA_OPTIONS}
