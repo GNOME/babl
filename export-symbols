@@ -3,6 +3,7 @@ babl_component_new
 babl_conversion_get_destination_space
 babl_conversion_get_source_space
 babl_conversion_new
+babl_chromatic_adaptation_matrix
 babl_cpu_accel_get_support
 babl_exit
 babl_fast_fish
