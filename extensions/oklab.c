@@ -44,12 +44,14 @@ static void formats (void);
 
 int init (void);
 
+static int enable_lch = 0;
+ // the Oklch conversions are not fully symmetric,
+ // thus not allowing the tests to pass if we register
+ // the code
+
 int
 init (void)
 {
-  return 0; // the oklab conversions are not fully symmetric,
-            // thus not allowing the tests to pass if we register
-            // the code
   components ();
   models ();
   formats ();
@@ -84,15 +86,18 @@ models (void)
       babl_component ("Ok L"), babl_component ("Ok a"),
       babl_component ("Ok b"), babl_component ("A"), "alpha", NULL);
 
-  babl_model_new ("name", "Oklch", "doc",
-                  "Cylindrical representation of Oklab.",
-                  babl_component ("Ok L"), babl_component ("Ok C"),
-                  babl_component ("Ok H"), NULL);
+  if (enable_lch)
+  {
+    babl_model_new ("name", "Oklch", "doc",
+                    "Cylindrical representation of Oklab.",
+                    babl_component ("Ok L"), babl_component ("Ok C"),
+                    babl_component ("Ok H"), NULL);
 
-  babl_model_new (
-      "name", "OklchA", "doc", "Oklch color model with separate alpha.",
-      babl_component ("Ok L"), babl_component ("Ok C"),
-      babl_component ("Ok H"), babl_component ("A"), "alpha", NULL);
+    babl_model_new (
+        "name", "OklchA", "doc", "Oklch color model with separate alpha.",
+        babl_component ("Ok L"), babl_component ("Ok C"),
+        babl_component ("Ok H"), babl_component ("A"), "alpha", NULL);
+  }
 }
 
 static void
@@ -108,15 +113,6 @@ formats (void)
     NULL
   );
 
-  babl_format_new (
-    "name", "Oklch float",
-    babl_model ("Oklch"),
-    babl_type ("float"),
-    babl_component ("Ok L"),
-    babl_component ("Ok C"),
-    babl_component ("Ok H"),
-    NULL
-  );
 
   babl_format_new (
     "name", "Oklab alpha float",
@@ -126,6 +122,18 @@ formats (void)
     babl_component ("Ok a"),
     babl_component ("Ok b"),
     babl_component ("A"),
+    NULL
+  );
+
+  if (enable_lch)
+  {
+  babl_format_new (
+    "name", "Oklch float",
+    babl_model ("Oklch"),
+    babl_type ("float"),
+    babl_component ("Ok L"),
+    babl_component ("Ok C"),
+    babl_component ("Ok H"),
     NULL
   );
 
@@ -139,6 +147,7 @@ formats (void)
     babl_component ("A"),
     NULL
   );
+  }
 }
 
 /* Convertion routine (space definition). */
@@ -323,12 +332,12 @@ constants (void)
   babl_matrix_mul_matrix (tmp, M1, M1);
 
   babl_matrix_invert (M1, inv_M1);
-  babl_matrix_to_float (inv_M1, inv_M1f);
   babl_matrix_invert (M2, inv_M2);
-  babl_matrix_to_float (inv_M2, inv_M2f);
 
   babl_matrix_to_float (M1, M1f);
   babl_matrix_to_float (M2, M2f);
+  babl_matrix_to_float (inv_M1, inv_M1f);
+  babl_matrix_to_float (inv_M2, inv_M2f);
 
   mat_ready = 1;
 }
@@ -809,6 +818,12 @@ conversions (void)
                        "linear", lab_to_rgba,
                        NULL);
 
+  _pair ("RGB float", "Oklab float", rgb_to_lab_float, lab_to_rgb_float);
+  _pair ("RGBA float", "Oklab alpha float", rgba_to_laba_float, laba_to_rgba_float);
+  _pair ("RGBA float", "Oklab float", rgba_to_lab_float, lab_to_rgba_float);
+
+  if (enable_lch)
+  {
   babl_conversion_new (babl_model("RGBA"),
                        babl_model("OklchA"),
                        "linear", rgba_to_lcha,
@@ -826,17 +841,12 @@ conversions (void)
                        babl_model("RGBA"),
                        "linear", lch_to_rgba,
                        NULL);
-
-
-  _pair ("RGB float", "Oklab float", rgb_to_lab_float, lab_to_rgb_float);
-  _pair ("RGBA float", "Oklab alpha float", rgba_to_laba_float, laba_to_rgba_float);
-  _pair ("RGBA float", "Oklab float", rgba_to_lab_float, lab_to_rgba_float);
-
   _pair ("RGBA float", "Oklch float", rgba_to_lch_float, lch_to_rgba_float);
   _pair ("RGB float", "Oklch float", rgb_to_lch_float, lch_to_rgb_float);
   _pair ("RGBA float", "Oklch alpha float", rgba_to_lcha_float, lcha_to_rgba_float);
   
   _pair ("Oklab float", "Oklch float", lab_to_lch_float, lch_to_lab_float);
   _pair ("Oklab alpha float", "Oklch alpha float", laba_to_lcha_float, lcha_to_laba_float);
+  }
   #undef _pair
 }
