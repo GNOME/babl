@@ -25,6 +25,7 @@ test_names = [
   'transparent',
   'alpha_symmetric_transform',
   'types',
+  'xyz_to_lab'
 ]
 if platform_unix
   test_names += [
