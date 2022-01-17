@@ -33,7 +33,7 @@ cache:
     - ninja -C _build test
   after_script:
     # Remove all cached packages but the latest version
-    - paccache -r -k1 --cachedir $PACMAN_CACHE
+    #- paccache -r -k1 --cachedir $PACMAN_CACHE
 
 latest-lcms:
   extends: .build
