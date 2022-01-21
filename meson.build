@@ -93,7 +93,11 @@ elif host_cpu_family == 'ppc64'
   have_ppc = true
   conf.set10('ARCH_PPC',    true)
   conf.set10('ARCH_PPC64',  true)
+elif host_cpu_family == 'arm'
+  have_arm = true
+  config.set10('ARCH_ARM',  true)
 endif
+
 
 host_os = host_machine.system()
 message('Host os: ' + host_os)
@@ -159,7 +163,7 @@ if buildtype == 'debugoptimized' or buildtype == 'release'
   common_c_flags += cc.get_supported_arguments(['-Ofast'])
 endif
 common_c_flags += cc.get_supported_arguments(
-  ['-fno-unsafe-math-optimizations']
+  ['-fno-unsafe-math-optimizations','-ftree-vectorize']
 )
 
 extra_warnings_list = [
@@ -179,6 +183,12 @@ if platform_win32 and cc.has_link_argument('-Wl,--no-undefined')
   no_undefined = '-Wl,--no-undefined'
 else
   no_undefined = []
+endif
+
+if host_cpu_family == 'arm'
+  arm_neon_flags = cc.get_supported_arguments(['-mfpu=neon'])
+elif host_cpu_family == 'aarch64'
+  common_cflags += cc.get_supported_arguments(['-mfpu=neon'])
 endif
 
 
