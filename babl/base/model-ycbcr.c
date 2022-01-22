@@ -34,7 +34,7 @@ static void conversions (void);
 static void formats (void);
 
 void
-babl_base_model_ycbcr (void)
+BABL_SIMD_SUFFIX (babl_base_model_ycbcr) (void)
 {
   components ();
   models ();

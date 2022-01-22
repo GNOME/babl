@@ -32,7 +32,7 @@ static void formats (void);
 static void init_single_precision (void);
 
 void
-babl_base_model_rgb (void)
+BABL_SIMD_SUFFIX (babl_base_model_rgb) (void)
 {
   components ();
   models ();

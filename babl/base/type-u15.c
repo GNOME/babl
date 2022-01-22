@@ -198,7 +198,7 @@ convert_u15_float_scaled (BablConversion *conversion,
 MAKE_CONVERSIONS_float (u15, 0.0, 1.0, 0, (1<<15))
 
 void
-babl_base_type_u15 (void)
+BABL_SIMD_SUFFIX (babl_base_type_u15) (void)
 {
   babl_hmpf_on_name_lookups--;
   babl_type_new (

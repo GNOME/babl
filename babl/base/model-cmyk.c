@@ -613,7 +613,7 @@ cmy_to_rgba (const Babl *conversion,
 #endif
 
 void
-babl_base_model_cmyk (void)
+BABL_SIMD_SUFFIX (babl_base_model_cmyk) (void)
 {
   babl_component_new ("cyan", NULL);
   babl_component_new ("yellow", NULL);

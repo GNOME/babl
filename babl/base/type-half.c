@@ -395,7 +395,7 @@ convert_half_float (BablConversion *conversion,
 
 
 void
-babl_base_type_half (void)
+BABL_SIMD_SUFFIX (babl_base_type_half) (void)
 {
   babl_type_new (
     "half",

@@ -166,6 +166,7 @@ common_c_flags += cc.get_supported_arguments(
   ['-fno-unsafe-math-optimizations','-ftree-vectorize']
 )
 
+
 extra_warnings_list = [
   '-Wdeclaration-after-statement',
   '-Winit-self',
@@ -185,12 +186,14 @@ else
   no_undefined = []
 endif
 
-if host_cpu_family == 'arm'
+if host_cpu_family == 'x86_64'
+  x86_64_v2_flags = cc.get_supported_arguments(['-march=x86-64','-msse2', '-msse2','-msse4.1','-msse4.2','-mpopcnt','-mssse3'])
+  x86_64_v3_flags = x86_64_v2_flags + cc.get_supported_arguments(['-mavx','-mavx2','-mf16c','-mfma','-mmovbe', '-mbmi', '-mbmi2'])
+elif host_cpu_family == 'arm'
   arm_neon_flags = cc.get_supported_arguments(['-mfpu=neon'])
 elif host_cpu_family == 'aarch64'
-  common_cflags += cc.get_supported_arguments(['-mfpu=neon'])
+  common_c_flags += cc.get_supported_arguments(['-mfpu=neon'])
 endif
-
 
 ################################################################################
 # Check for compiler CPU extensions

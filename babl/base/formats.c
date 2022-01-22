@@ -25,7 +25,7 @@
 #include "babl-base.h"
 
 void
-babl_formats_init (void)
+BABL_SIMD_SUFFIX (babl_formats_init) (void)
 {
   const Babl *types[]={
     babl_type_from_id (BABL_DOUBLE),

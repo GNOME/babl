@@ -196,7 +196,7 @@ MAKE_CONVERSIONS_float(u32, 0.0, 1.0, 0, UINT32_MAX)
 
 
 void
-babl_base_type_u32 (void)
+BABL_SIMD_SUFFIX (babl_base_type_u32) (void)
 {
   babl_type_new (
     "u32",

@@ -31,8 +31,30 @@
 #include "babl-internal.h"
 #include "babl-db.h"
 #include "babl-base.h"
+
+#include "babl-cpuaccel.h"
 #include <string.h>
 #include <stdarg.h>
+
+void (*babl_base_init)  (void) = babl_base_init_generic;
+#ifdef ARCH_X86_64
+void babl_base_init_x86_64_v2 (void);
+void babl_base_init_x86_64_v3 (void);
+#endif
+
+static void base_init (void)
+{
+#ifdef ARCH_X86_64
+  BablCpuAccelFlags accel = babl_cpu_accel_get_support ();
+  if (accel & BABL_CPU_ACCEL_X86_64_V3)
+    babl_base_init_x86_64_v3 ();
+  else if (accel & BABL_CPU_ACCEL_X86_64_V2)
+    babl_base_init_x86_64_v2 ();
+  else
+#endif
+    babl_base_init_generic ();
+}
+
 
 static Babl *babl_extension_current_extender = NULL;
 
@@ -107,7 +129,9 @@ babl_extension_base (void)
     if (ret != babl)
       babl_free (babl);
     else
-      babl_base_init ();
+    {
+        base_init ();
+    }
     babl = ret;
   }
   babl_set_extender (NULL);

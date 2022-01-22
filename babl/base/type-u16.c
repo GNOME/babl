@@ -196,7 +196,7 @@ MAKE_CONVERSIONS_float (u16, 0.0, 1.0, 0, UINT16_MAX)
 
 
 void
-babl_base_type_u16 (void)
+BABL_SIMD_SUFFIX (babl_base_type_u16) (void)
 {
   babl_type_new (
     "u16",

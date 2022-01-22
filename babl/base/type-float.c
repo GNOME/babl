@@ -83,7 +83,7 @@ convert_float_float (const Babl *babl,
 
 
 void
-babl_base_type_float (void)
+BABL_SIMD_SUFFIX (babl_base_type_float) (void)
 {
   babl_type_new (
     "float",

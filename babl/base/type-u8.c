@@ -202,7 +202,7 @@ MAKE_CONVERSIONS_float (u8_chroma, -0.5, 0.5, 16, 240)
 
 
 void
-babl_base_type_u8 (void)
+BABL_SIMD_SUFFIX (babl_base_type_u8) (void)
 {
   babl_type_new (
     "u8",

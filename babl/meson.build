@@ -121,6 +121,14 @@ endif
 babl_deps = [math, thread, dl, lcms]
 babl_includes = [rootInclude, bablBaseInclude]
 
+if host_cpu_family == 'x86_64'
+  simd_extra = [babl_base_x86_64_v2, babl_base_x86_64_v3]
+#elif host_cpu_family == 'arm'
+#  simd_extra = [babl_base_arm_neon]
+else
+  simd_extra = []
+endif
+
 # build library
 babl = library(
   lib_name,
@@ -129,6 +137,7 @@ babl = library(
   c_args: babl_c_args,
   link_whole: babl_base,
   link_args: babl_link_args,
+  link_with: simd_extra,
   dependencies: babl_deps,
   link_depends: version_script,
   version: so_version,
