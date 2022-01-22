@@ -113,27 +113,6 @@ conv_rgbA8_cairo32_le (const Babl    *conversion,
 }
 #endif
 
-static void
-conv_cairo32_rgbA8_le (const Babl    *conversion,
-                       unsigned char *__restrict__ src,
-                       unsigned char *__restrict__ dst,
-                       long           samples)
-{
-  long n = samples;
-  while (n--)
-    {
-      unsigned char blue   = *src++;
-      unsigned char green  = *src++;
-      unsigned char red    = *src++;
-      unsigned char alpha  = *src++;
-
-      *dst++ = red;
-      *dst++ = green;
-      *dst++ = blue;
-      *dst++ = alpha;
-    }
-}
-
 static void 
 conv_cairo32_rgba8_le (const Babl    *conversion,
                        unsigned char *__restrict__ src, 
@@ -165,19 +144,33 @@ conv_cairo32_rgba8_le (const Babl    *conversion,
       else
       {
         float falpha = alpha / 255.0;
-        float recip_alpha = 1.0 / falpha;
- //       unsigned int aa = ((255 << 16) + alpha) / falpha + 0.5;
-
-
-        *dst++ = ((red/255.0) * recip_alpha) * 255 + 0.5f;
-        *dst++ = ((green/255.0) * recip_alpha) * 255 + 0.5f;
-        *dst++ = ((blue/255.0) * recip_alpha) * 255 + 0.5f;
-
-//        *dst++ = (red   * aa + 0x8000) >> 16;
-//        *dst++ = (green * aa + 0x8000) >> 16;
-//        *dst++ = (blue  * aa + 0x8000) >> 16;
+        *dst++ = red / falpha + 0.5;
+        *dst++ = green / falpha + 0.5;
+        *dst++ = blue / falpha + 0.5;
         *dst++ = alpha;
       }
+    }
+}
+
+
+static void
+conv_cairo32_rgbA8_le (const Babl    *conversion,
+                       unsigned char *__restrict__ src,
+                       unsigned char *__restrict__ dst,
+                       long           samples)
+{
+  long n = samples;
+  while (n--)
+    {
+      unsigned char blue   = *src++;
+      unsigned char green  = *src++;
+      unsigned char red    = *src++;
+      unsigned char alpha  = *src++;
+
+      *dst++ = red;
+      *dst++ = green;
+      *dst++ = blue;
+      *dst++ = alpha;
     }
 }
 
@@ -197,42 +190,12 @@ conv_cairo32_rgbAF_le (const Babl    *conversion,
       unsigned char red    = *src++;
       unsigned char alpha  = *src++;
 
-      *dst++ = red / 255.0;
-      *dst++ = green / 255.0;
-      *dst++ = blue / 255.0;
-      *dst++ = alpha / 255.0;
+      *dst++ = red / 255.0f;
+      *dst++ = green / 255.0f;
+      *dst++ = blue / 255.0f;
+      *dst++ = alpha / 255.0f;
     }
 }
-
-
-static void
-conv_cairo32_rgbaF_le (const Babl    *conversion,
-                       unsigned char *__restrict__ src,
-                       unsigned char *__restrict__ dst_char,
-                       long           samples)
-{
-  long n = samples;
-  float *dst = (void*)dst_char;
-  while (n--)
-    {
-      unsigned char blue   = *src++;
-      unsigned char green  = *src++;
-      unsigned char red    = *src++;
-      unsigned char alpha  = *src++;
-
-      float reciprocal_alpha = 0.0f;
-
-      if (alpha)
-        reciprocal_alpha = 1.0f/(alpha/255.0f) / 255.0f;
-      
-
-      *dst++ = red * reciprocal_alpha;
-      *dst++ = green * reciprocal_alpha;
-      *dst++ = blue * reciprocal_alpha;
-      *dst++ = alpha / 255.0;
-    }
-}
-
 
 static void
 conv_cairo24_cairo32_le (const Babl    *conversion,
@@ -410,7 +373,7 @@ conv_rgbA_gamma_float_cairo32_le (const Babl    *conversion,
 
   while (n--)
     {
-      int val = fsrc[2] * 255.0f  + 0.5f;
+      int val = fsrc[2] * 255.0f + 0.5f;
       *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
       val = fsrc[1] * 255.0f + 0.5f;
       *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
@@ -443,11 +406,11 @@ conv_rgbafloat_cairo32_le (const Babl    *conversion,
       float alpha  = *fsrc++;
       if (alpha >= 1.0)
       {
-        int val = babl_trc_from_linear (trc[2], blue) * 0xff + 0.5f;
+        int val = babl_trc_from_linear (trc[2], blue) * 0xff + .0;
         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-        val = babl_trc_from_linear (trc[1], green) * 0xff + 0.5f;
+        val = babl_trc_from_linear (trc[1], green) * 0xff + .0;
         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-        val = babl_trc_from_linear (trc[0], red) * 0xff + 0.5f;
+        val = babl_trc_from_linear (trc[0], red) * 0xff + .0;
         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
         *cdst++ = 0xff;
       }
@@ -459,13 +422,15 @@ conv_rgbafloat_cairo32_le (const Babl    *conversion,
       else
       {
         float balpha = alpha * 0xff;
-        int val = babl_trc_from_linear (trc[2], blue) * balpha + 0.5f;
+        int val = babl_trc_from_linear (trc[2], blue) * balpha + 0.0;
         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-        val = babl_trc_from_linear (trc[1], green) * balpha + 0.5f;
+        val = babl_trc_from_linear (trc[1], green) * balpha + 0.0;
         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-        val = babl_trc_from_linear (trc[0], red) * balpha + 0.5f;
+        val = babl_trc_from_linear (trc[0], red) * balpha + 0.0;
         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-        *cdst++ = balpha + 0.5f;
+        balpha+=0.0;
+        if (balpha > 255)balpha=255;
+        *cdst++ = balpha;
       }
     }
 }
@@ -489,7 +454,7 @@ conv_yafloat_cairo32_le (const Babl    *conversion,
       float alpha  = *fsrc++;
       if (alpha >= 1.0)
       {
-        int val = babl_trc_from_linear (trc[0], gray) * 0xff + 0.5f;
+        int val = babl_trc_from_linear (trc[0], gray) * 0xff;
         val = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
         *cdst++ = val;
         *cdst++ = val;
@@ -531,7 +496,7 @@ conv_yafloat_nl_cairo32_le (const Babl    *conversion,
       float alpha  = *fsrc++;
       if (alpha >= 1.0)
       {
-        int val = gray * 0xff + 0.5f;
+        int val = gray * 0xff;
         val = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
         *cdst++ = val;
         *cdst++ = val;
@@ -602,9 +567,6 @@ init (void)
       babl_conversion_new (f32, babl_format ("R'G'B'A u8"), "linear",
                            conv_cairo32_rgba8_le, NULL);
 
-
-      babl_conversion_new (f32, babl_format ("R'G'B'A float"), "linear",
-                           conv_cairo32_rgbaF_le, NULL);
 
       babl_conversion_new (f24, f32, "linear",
                            conv_cairo24_cairo32_le, NULL);
