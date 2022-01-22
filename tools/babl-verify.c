@@ -4,11 +4,16 @@
 #include "babl/babl-internal.h"
 
 //#define SPACE1 babl_space("ProPhoto")
-#define SPACE1 babl_space("Apple")
-//#define SPACE1 babl_space("sRGB")
+//#define SPACE1 babl_space("Apple")
+#define SPACE1 babl_space("sRGB")
 //#define SPACE2 babl_space("Apple")
 
-static int
+int
+file_get_contents (const char  *path,
+                         char       **contents,
+                         long        *length,
+                         void        *error);
+int
 file_get_contents (const char  *path,
                          char       **contents,
                          long        *length,
@@ -80,7 +85,7 @@ main (int    argc,
 
   babl_init ();
 
-#define ICC_PATH "/tmp/my.icc"
+//#define ICC_PATH "/tmp/my.icc"
 //#define ICC_PATH "/usr/share/color/icc/colord/AppleRGB.icc"
 //#define ICC_PATH "/tmp/ACEScg-elle-V2-labl.icc"
 //#define ICC_PATH "/tmp/ACEScg-elle-V2-g10.icc"
@@ -89,11 +94,11 @@ main (int    argc,
 
 
   {
-    char *icc_data = NULL;
-    long     length = 0;
-    file_get_contents (ICC_PATH, &icc_data, &length, NULL);
-    SPACE2 = babl_space_from_icc (icc_data, length, BABL_ICC_INTENT_RELATIVE_COLORIMETRIC, NULL);
-    //SPACE2 = babl_space ("sRGB");
+    //char *icc_data = NULL;
+    //long     length = 0;
+    //file_get_contents (ICC_PATH, &icc_data, &length, NULL);
+    //SPACE2 = babl_space_from_icc (icc_data, length, BABL_ICC_INTENT_RELATIVE_COLORIMETRIC, NULL);
+    SPACE2 = babl_space ("sRGB");
   }
 
   fish = babl_fish (babl_format_with_space(argv[1], SPACE1), babl_format_with_space (argv[2], SPACE2));
