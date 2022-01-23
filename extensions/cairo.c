@@ -215,6 +215,49 @@ conv_cairo24_cairo32_le (const Babl    *conversion,
 
 
 static void
+conv_cairo32_cairo24_le (const Babl    *conversion,
+                         unsigned char *__restrict__ src,
+                         unsigned char *__restrict__ dst,
+                         long           samples)
+{
+#if 0
+  close .. but not quite acceptble this is perfect resolution for 1/300
+          /// 1/255 perfect resolution is around 0.0039
+          //  maybe we are good enough! and babls fidelity once 
+          //
+          //  bad conversions are identified should be allowed to use
+          //  the faster practically correct but not truely reversible variants?
+          //
+
+        $ rm ~/.cache/babl/babl-fishes;  ninja && BABL_PATH=extensions BABL_TOLERANCE=0.1 ./tools/babl-verify cairo-ARGB32 cairo-RGB24
+[7/7] Linking target extensions/x86-64-v3-cairo.so
+extensions/x86-64-v3-cairo.so 0: cairo-ARGB32 to cairo-RGB24  error:0.002999 cost:219.000000
+
+
+#endif
+
+
+  long n = samples;
+  while (n--)
+    {
+      int alpha = src[3];
+      if (alpha)
+      {
+        float falpha = (alpha/255.0);
+        for (int c = 0; c < 3; c++)
+          *dst++ = (*src++)/falpha + .5;
+      }
+      else
+      {
+        *dst++ = (*src++);
+        *dst++ = (*src++);
+        *dst++ = (*src++);
+      }
+      *dst++ = 0;  src++;
+    }
+}
+
+static void
 conv_rgba8_cairo32_le (const Babl    *conversion,
                        unsigned char *__restrict__ src,
                        unsigned char *__restrict__ dst,
@@ -570,6 +613,9 @@ init (void)
 
       babl_conversion_new (f24, f32, "linear",
                            conv_cairo24_cairo32_le, NULL);
+
+      babl_conversion_new (f32, f24, "linear",
+                           conv_cairo32_cairo24_le, NULL);
 
       babl_conversion_new (babl_format ("R'aG'aB'aA u8"), f32, "linear",
                            conv_rgbA8_cairo32_le, NULL);
