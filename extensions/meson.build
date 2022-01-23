@@ -72,7 +72,7 @@ foreach ext : extensions
   shared_library(
     ext[0],
     ext[0] + '.c',
-    c_args: ext[1],
+    c_args: [ext[1], '-DBABL_SIMDFREE' ],
     include_directories: babl_ext_inc,
     link_with: babl,
     link_args: babl_ext_link_args,
