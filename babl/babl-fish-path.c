@@ -654,8 +654,11 @@ babl_fish_path2 (const Babl *source,
 
   _babl_fish_prepare_bpp (babl);
   if (source->format.space != destination->format.space &&
-      babl->fish_path.source_bpp == babl->fish_path.dest_bpp &&
-      babl->fish_path.source_bpp == 4)
+     (source->format.model->flags & BABL_MODEL_FLAG_ASSOCIATED)==0  &&
+     (
+      (babl->fish_path.source_bpp == 4 && babl->fish_path.dest_bpp == 4) ||
+      (babl->fish_path.source_bpp == 8 && babl->fish_path.dest_bpp == 4))
+     )
   {
      if ((source->format.model->flags & BABL_MODEL_FLAG_ASSOCIATED)==0)
        babl->fish_path.is_u8_color_conv = 1;
@@ -716,10 +719,35 @@ babl_fish_path_process (const Babl *babl,
   {
      uint32_t *lut = (uint32_t*)babl->fish_path.u8_lut;
      ((Babl*)babl)->fish.pixels += n;
-     if (!lut && babl->fish.pixels > 256 * 256)
+     if (!lut && babl->fish.pixels > 256 * 128)
      {
        ((Babl*)babl)->fish_path.u8_lut = malloc (256 * 256 * 256 * 4);
        lut = (uint32_t*)babl->fish_path.u8_lut;
+       if (babl->fish_path.source_bpp == 8)
+       {
+          uint64_t *lut_in = malloc (256 * 256  * 256 * 8);
+          for (int o = 0; o < 256 * 256 * 256; o++)
+          {
+            uint64_t v = o;
+            int v0 =     v & 0xff;
+            int v1 =   v & 0xff00;
+            int v2 = v & 0xff0000;
+            v0 << 8;
+            v1 << 16;
+            v2 << 24;
+            lut_in[o] = v | (uint64_t)0xffff000000000000;
+          }
+
+          process_conversion_path (babl->fish_path.conversion_list,
+                                   lut_in,
+                                   babl->fish_path.source_bpp,
+                                   lut,
+                                   babl->fish_path.dest_bpp,
+                                   256*256*256);
+          free (lut_in);
+       }
+       else
+       {
        for (int o = 0; o < 256 * 256 * 256; o++)
          lut[o] = o | 0xff000000;
        process_conversion_path (babl->fish_path.conversion_list,
@@ -728,17 +756,39 @@ babl_fish_path_process (const Babl *babl,
                                 lut,
                                 babl->fish_path.dest_bpp,
                                 256*256*256);
+       }
      }
      if (lut)
      {
-        uint32_t *src = (uint32_t*)source;
-        uint32_t *dst = (uint32_t*)destination;
-        lut = (uint32_t*)babl->fish_path.u8_lut;
-        while (n--)
+        if (babl->fish_path.source_bpp == 8)
         {
-           uint32_t col = *src++;
-           uint32_t alpha = col & 0xff000000;
-           *dst++ = lut[col & 0xffffff] | alpha;
+          uint32_t *src = (uint32_t*)source;
+          uint32_t *dst = (uint32_t*)destination;
+          lut = (uint32_t*)babl->fish_path.u8_lut;
+          while (n--)
+          {
+             uint32_t col_a = *src++;
+             uint32_t col_b = *src++;
+             uint32_t col;
+             col_a = col_a & 0xff00ff00;
+             col_b = (col_b & 0xff00ff00)>>8;
+
+             col = col_a | col_b;
+             uint32_t alpha = col & 0xff000000;
+             *dst++ = lut[col & 0xffffff] | alpha;
+          }
+        }
+        else
+        {
+          uint32_t *src = (uint32_t*)source;
+          uint32_t *dst = (uint32_t*)destination;
+          lut = (uint32_t*)babl->fish_path.u8_lut;
+          while (n--)
+          {
+             uint32_t col = *src++;
+             uint32_t alpha = col & 0xff000000;
+             *dst++ = lut[col & 0xffffff] | alpha;
+          }
         }
         return;
      }
