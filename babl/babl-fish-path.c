@@ -732,9 +732,10 @@ babl_fish_path_process (const Babl *babl,
             int v0 =     v & 0xff;
             int v1 =   v & 0xff00;
             int v2 = v & 0xff0000;
-            v0 << 8;
-            v1 << 16;
-            v2 << 24;
+            v0 <<= 8;
+            v1 <<= 16;
+            v2 <<= 24;
+            v = v0||v1||v2;
             lut_in[o] = v | (uint64_t)0xffff000000000000;
           }
 
@@ -769,12 +770,12 @@ babl_fish_path_process (const Babl *babl,
           {
              uint32_t col_a = *src++;
              uint32_t col_b = *src++;
-             uint32_t col;
+             uint32_t col, alpha;
              col_a = col_a & 0xff00ff00;
              col_b = (col_b & 0xff00ff00)>>8;
 
              col = col_a | col_b;
-             uint32_t alpha = col & 0xff000000;
+             alpha = col & 0xff000000;
              *dst++ = lut[col & 0xffffff] | alpha;
           }
         }
