@@ -145,9 +145,9 @@ max_path_length (void)
   if (env)
     max_length = atoi (env);
   else
-    max_length = 2; /* reducing this number makes finding short fishes much
+    max_length = 3; /* reducing this number makes finding short fishes much
                        faster - even if we lose out on some of the fast
-                       bigger fish, the fishes we can get with a max_length of 2
+                       bigger fish, the fishes we can get with a max_length of 3
                        is actually 5, since we deepen the search to that
                        depth if none are found within two steps in the
                        initial search.
@@ -604,7 +604,7 @@ babl_fish_path2 (const Babl *source,
   {
     PathContext pc;
     int start_depth = max_path_length ();
-    int end_depth = start_depth + 2 + ((destination->format.space != sRGB)?1:0);
+    int end_depth = start_depth + 1 + ((destination->format.space != sRGB)?1:0);
     end_depth = MIN(end_depth, BABL_HARD_MAX_PATH_LENGTH);
 
     pc.current_path = babl_list_init_with_size (BABL_HARD_MAX_PATH_LENGTH);
