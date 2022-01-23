@@ -496,8 +496,6 @@ BABL_SIMD_SUFFIX (babl_trc_new) (const char *name,
 
   trc_db[i].fun_to_linear_buf = _babl_trc_to_linear_buf_generic;
   trc_db[i].fun_from_linear_buf = _babl_trc_from_linear_buf_generic;
-  trc_db[i].fun_from_linear_buf_u8 = _babl_trc_from_linear_buf_u8_generic;
-  trc_db[i].fun_to_linear_buf_u8 = _babl_trc_to_linear_buf_u8_generic;
 
   switch (trc_db[i].type)
   {
@@ -506,14 +504,12 @@ BABL_SIMD_SUFFIX (babl_trc_new) (const char *name,
       trc_db[i].fun_from_linear = _babl_trc_linear;
       trc_db[i].fun_from_linear_buf = _babl_trc_linear_buf;
       trc_db[i].fun_to_linear_buf = _babl_trc_linear_buf;
-      //trc_db[i].fun_to_linear_buf_u8 = _babl_trc_linear_buf_u8;
       break;
     case BABL_TRC_FORMULA_GAMMA:
       trc_db[i].fun_to_linear = _babl_trc_gamma_to_linear;
       trc_db[i].fun_from_linear = _babl_trc_gamma_from_linear;
       trc_db[i].fun_to_linear_buf = _babl_trc_gamma_to_linear_buf;
       trc_db[i].fun_from_linear_buf = _babl_trc_gamma_from_linear_buf;
-      //trc_db[i].fun_from_linear_buf_u8 = _babl_trc_gamma_from_linear_buf_u8;
 
       trc_db[i].poly_gamma_to_linear_x0 = POLY_GAMMA_X0;
       trc_db[i].poly_gamma_to_linear_x1 = POLY_GAMMA_X1;
@@ -588,7 +584,6 @@ BABL_SIMD_SUFFIX (babl_trc_new) (const char *name,
       trc_db[i].fun_to_linear = _babl_trc_srgb_to_linear;
       trc_db[i].fun_from_linear = _babl_trc_srgb_from_linear;
       trc_db[i].fun_from_linear_buf = _babl_trc_srgb_from_linear_buf;
-      //trc_db[i].fun_from_linear_buf_u8 = _babl_trc_srgb_from_linear_buf_u8;
       trc_db[i].fun_to_linear_buf = _babl_trc_srgb_to_linear_buf;
       break;
     case BABL_TRC_LUT:
