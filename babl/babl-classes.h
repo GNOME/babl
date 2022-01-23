@@ -59,7 +59,7 @@ enum {
 
 #include "babl-type.h"
 #include "babl-sampling.h"
-#include "babl-trc.h"
+#include "base/babl-trc.h"
 #include "babl-space.h"
 #include "babl-component.h"
 #include "babl-model.h"

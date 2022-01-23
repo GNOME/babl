@@ -89,7 +89,6 @@ babl_sources = files(
   'babl-sampling.c',
   'babl-sanity.c',
   'babl-space.c',
-  'babl-trc.c',
   'babl-type.c',
   'babl-util.c',
   'babl-version.c',
@@ -123,8 +122,8 @@ babl_includes = [rootInclude, bablBaseInclude]
 
 if host_cpu_family == 'x86_64'
   simd_extra = [babl_base_x86_64_v2, babl_base_x86_64_v3]
-#elif host_cpu_family == 'arm'
-#  simd_extra = [babl_base_arm_neon]
+elif host_cpu_family == 'arm'
+  simd_extra = [babl_base_arm_neon]
 else
   simd_extra = []
 endif

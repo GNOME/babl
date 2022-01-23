@@ -313,7 +313,6 @@ init (void)
     }
 
 #endif /* defined(USE_SSE4_1) && defined(USE_F16C) && defined(ARCH_X86_64) */
-
   return 0;
 }
 

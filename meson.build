@@ -95,7 +95,10 @@ elif host_cpu_family == 'ppc64'
   conf.set10('ARCH_PPC64',  true)
 elif host_cpu_family == 'arm'
   have_arm = true
-  config.set10('ARCH_ARM',  true)
+  conf.set10('ARCH_ARM',  true)
+elif host_cpu_family == 'aarch64'
+  have_aarch64 = true
+  conf.set10('ARCH_AARCH64',  true)
 endif
 
 
@@ -189,10 +192,15 @@ endif
 if host_cpu_family == 'x86_64'
   x86_64_v2_flags = cc.get_supported_arguments(['-march=x86-64','-msse2', '-msse2','-msse4.1','-msse4.2','-mpopcnt','-mssse3'])
   x86_64_v3_flags = x86_64_v2_flags + cc.get_supported_arguments(['-mavx','-mavx2','-mf16c','-mfma','-mmovbe', '-mbmi', '-mbmi2'])
+
+  x86_64_v2_flags += '-DX86_64_V2'
+  x86_64_v3_flags += '-DX86_64_V3'
+
 elif host_cpu_family == 'arm'
-  arm_neon_flags = cc.get_supported_arguments(['-mfpu=neon'])
+  arm_neon_flags = cc.get_supported_arguments(['-mfpu=neon-vfpv4'])
+  arm_neon_flags += '-DARM_NEON'
 elif host_cpu_family == 'aarch64'
-  common_c_flags += cc.get_supported_arguments(['-mfpu=neon'])
+  common_c_flags += cc.get_supported_arguments(['-mfpu=neon-fp-armv8'])
 endif
 
 ################################################################################

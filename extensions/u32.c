@@ -190,9 +190,11 @@ conv_yu32_yau32 (const Babl    *conversion,
 
 int init (void);
 
+#include "babl-verify-cpu.inc"
 int
 init (void)
 {
+  BABL_VERIFY_CPU();
   babl_conversion_new (
     babl_format ("R'G'B'A u32"),
     babl_format ("R'G'B'A u16"),

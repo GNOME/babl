@@ -18,6 +18,7 @@
 
 #include "config.h"
 #include "babl-internal.h"
+#include "babl-base.h"
 
 static int ref_count = 0;
 
@@ -125,10 +126,13 @@ babl_dir_list (void)
   return ret;
 }
 
+
+static void simd_init (void);
 void
 babl_init (void)
 {
   babl_cpu_accel_set_use (1);
+  simd_init ();
 
   if (ref_count++ == 0)
     {
@@ -188,5 +192,107 @@ babl_model_is (const Babl *babl,
                const char *model)
 {
   return babl && ((babl)==babl_model_with_space(model, babl));
+}
+
+
+#include "babl-cpuaccel.h"
+void (*babl_base_init)  (void) = babl_base_init_generic;
+
+const Babl * babl_trc_lookup_by_name_generic (const char *name);
+
+
+const Babl *
+babl_trc_new_generic (const char *name,
+                      BablTRCType type,
+                      double      gamma,
+                      int         n_lut,
+                      float      *lut);
+
+void _babl_space_add_universal_rgb_generic (const Babl *space);
+void (*_babl_space_add_universal_rgb) (const Babl *space) =
+  _babl_space_add_universal_rgb_generic;
+
+const Babl *
+(*babl_trc_lookup_by_name) (const char *name) = babl_trc_lookup_by_name_generic;
+const Babl *
+(*babl_trc_new) (const char *name,
+              BablTRCType type,
+              double      gamma,
+              int         n_lut,
+              float      *lut) = babl_trc_new_generic;
+
+#ifdef ARCH_X86_64
+void babl_base_init_x86_64_v2 (void);
+void babl_base_init_x86_64_v3 (void);
+void _babl_space_add_universal_rgb_x86_64_v2 (const Babl *space);
+void _babl_space_add_universal_rgb_x86_64_v3 (const Babl *space);
+
+const Babl *
+babl_trc_lookup_by_name_x86_64_v2 (const char *name);
+const Babl *
+babl_trc_lookup_by_name_x86_64_v3 (const char *name);
+
+const Babl *
+babl_trc_new_x86_64_v2 (const char *name,
+                        BablTRCType type,
+                        double      gamma,
+                        int         n_lut,
+                        float      *lut);
+const Babl *
+babl_trc_new_x86_64_v3 (const char *name,
+                        BablTRCType type,
+                        double      gamma,
+                        int         n_lut,
+                        float      *lut);
+
+#endif
+#ifdef ARCH_ARM
+void babl_base_init_arm_neon (void);
+void _babl_space_add_universal_rgb_arm_neon (const Babl *space);
+
+const Babl *
+babl_trc_lookup_by_name_arm_neon (const char *name);
+
+const Babl *
+babl_trc_new_arm_neon (const char *name,
+                       BablTRCType type,
+                       double      gamma,
+                       int         n_lut,
+                       float      *lut);
+
+#endif
+
+static void simd_init (void)
+{
+#ifdef ARCH_X86_64
+  BablCpuAccelFlags accel = babl_cpu_accel_get_support ();
+  if ((accel & BABL_CPU_ACCEL_X86_64_V3) == BABL_CPU_ACCEL_X86_64_V3)
+  {
+    babl_base_init = babl_base_init_x86_64_v2; /// !!
+                                               // this is correct,
+                                               // it performs better
+                                               // as observed in benchmarking
+    babl_trc_new = babl_trc_new_x86_64_v2;
+    babl_trc_lookup_by_name = babl_trc_lookup_by_name_x86_64_v2;
+    _babl_space_add_universal_rgb = _babl_space_add_universal_rgb_x86_64_v3;
+  }
+  else if ((accel & BABL_CPU_ACCEL_X86_64_V2) == BABL_CPU_ACCEL_X86_64_V2)
+  {
+    babl_base_init = babl_base_init_x86_64_v2;
+    babl_trc_new = babl_trc_new_x86_64_v2;
+    babl_trc_lookup_by_name = babl_trc_lookup_by_name_x86_64_v2;
+    _babl_space_add_universal_rgb = _babl_space_add_universal_rgb_x86_64_v2;
+  }
+#endif
+#ifdef ARCH_ARM
+  BablCpuAccelFlags accel = babl_cpu_accel_get_support ();
+  if ((accel & BABL_CPU_ACCEL_ARM_NEON) == BABL_CPU_ACCEL_ARM_NEON)
+  {
+    babl_base_init = babl_base_init_arm_neon;
+    babl_trc_new = babl_trc_new_arm_neon;
+    babl_trc_lookup_by_name = babl_trc_lookup_by_name_arm_neon;
+    _babl_space_add_universal_rgb = _babl_space_add_universal_rgb_arm_neon;
+  }
+#endif
 }
 

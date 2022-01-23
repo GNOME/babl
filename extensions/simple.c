@@ -7,8 +7,8 @@ int init (void);
 
 static inline void
 float_to_u8_x1 (const Babl    *conversion,
-                unsigned char *src_char, 
-                unsigned char *dst, 
+                unsigned char *__restrict__ src_char, 
+                unsigned char *__restrict__ dst, 
                 long           samples)
 {
   float *src = (float *)src_char;
@@ -24,8 +24,8 @@ float_to_u8_x1 (const Babl    *conversion,
 
 static inline void
 float_to_u8_x4 (const Babl    *conversion,
-                unsigned char *src_char, 
-                unsigned char *dst, 
+                unsigned char *__restrict__ src_char, 
+                unsigned char *__restrict__ dst, 
                 long           samples)
 {
   float_to_u8_x1 (conversion, src_char, dst, samples * 4);
@@ -33,8 +33,8 @@ float_to_u8_x4 (const Babl    *conversion,
 
 static inline void
 float_to_u8_x3 (const Babl    *conversion,
-                unsigned char *src_char, 
-                unsigned char *dst, 
+                unsigned char *__restrict__ src_char, 
+                unsigned char *__restrict__ dst, 
                 long           samples)
 {
   float_to_u8_x1 (conversion, src_char, dst, samples * 3);
@@ -42,8 +42,8 @@ float_to_u8_x3 (const Babl    *conversion,
 
 static inline void
 float_to_u8_x2 (const Babl    *conversion,
-                unsigned char *src_char, 
-                unsigned char *dst, 
+                unsigned char *__restrict__ src_char, 
+                unsigned char *__restrict__ dst, 
                 long           samples)
 {
   float_to_u8_x1 (conversion, src_char, dst, samples * 2);
@@ -53,8 +53,8 @@ float_to_u8_x2 (const Babl    *conversion,
 
 static inline void
 float_pre_to_u8_pre (const Babl    *conversion,
-                     unsigned char *src_char, 
-                     unsigned char *dst, 
+                     unsigned char *__restrict__ src_char, 
+                     unsigned char *__restrict__ dst, 
                      long           samples)
 {
   float *src = (float *)src_char;
@@ -86,8 +86,8 @@ float_pre_to_u8_pre (const Babl    *conversion,
 
 static inline void
 float_to_u16_x1 (const Babl    *conversion,
-                 unsigned char *src_char, 
-                 unsigned char *dst_char, 
+                 unsigned char *__restrict__ src_char, 
+                 unsigned char *__restrict__ dst_char, 
                  long           samples)
 {
   float *src    = (float *)src_char;
@@ -103,24 +103,24 @@ float_to_u16_x1 (const Babl    *conversion,
 }
 static inline void
 float_to_u16_x2 (const Babl    *conversion,
-                 unsigned char *src_char, 
-                 unsigned char *dst_char, 
+                 unsigned char *__restrict__ src_char, 
+                 unsigned char *__restrict__ dst_char, 
                  long           samples)
 {
   float_to_u16_x1 (conversion, src_char, dst_char, samples * 2);
 }
 static inline void
 float_to_u16_x3 (const Babl    *conversion,
-                 unsigned char *src_char, 
-                 unsigned char *dst_char, 
+                 unsigned char *__restrict__ src_char, 
+                 unsigned char *__restrict__ dst_char, 
                  long           samples)
 {
   float_to_u16_x1 (conversion, src_char, dst_char, samples * 3);
 }
 static inline void
 float_to_u16_x4 (const Babl    *conversion,
-                 unsigned char *src_char, 
-                 unsigned char *dst_char, 
+                 unsigned char *__restrict__ src_char, 
+                 unsigned char *__restrict__ dst_char, 
                  long           samples)
 {
   float_to_u16_x1 (conversion, src_char, dst_char, samples * 4);
@@ -128,8 +128,8 @@ float_to_u16_x4 (const Babl    *conversion,
 
 static inline void
 float_pre_to_u16_pre (const Babl    *conversion,
-                      unsigned char *src_char, 
-                      unsigned char *dst_char, 
+                      unsigned char *__restrict__ src_char, 
+                      unsigned char *__restrict__ dst_char, 
                       long           samples)
 {
   float *src = (float *)src_char;
@@ -154,8 +154,8 @@ float_pre_to_u16_pre (const Babl    *conversion,
 
 static inline void
 float_pre_to_u32_pre (const Babl    *conversion,
-                      unsigned char *src_char, 
-                      unsigned char *dst_char, 
+                      unsigned char *__restrict__ src_char, 
+                      unsigned char *__restrict__ dst_char, 
                       long           samples)
 {
   float *src = (float *)src_char;
@@ -181,8 +181,8 @@ float_pre_to_u32_pre (const Babl    *conversion,
 
 static inline void
 float_to_u32_x1 (const Babl    *conversion,
-                 unsigned char *src_char, 
-                 unsigned char *dst_char, 
+                 unsigned char *__restrict__ src_char, 
+                 unsigned char *__restrict__ dst_char, 
                  long           samples)
 {
   float *src    = (float *)src_char;
@@ -200,24 +200,24 @@ float_to_u32_x1 (const Babl    *conversion,
 }
 static void
 float_to_u32_x2 (const Babl    *conversion,
-                 unsigned char *src_char, 
-                 unsigned char *dst_char, 
+                 unsigned char *__restrict__ src_char, 
+                 unsigned char *__restrict__ dst_char, 
                  long           samples)
 {
   float_to_u32_x1 (conversion, src_char, dst_char, samples * 2);
 }
 static void
 float_to_u32_x3 (const Babl    *conversion,
-                 unsigned char *src_char, 
-                 unsigned char *dst_char, 
+                 unsigned char *__restrict__ src_char, 
+                 unsigned char *__restrict__ dst_char, 
                  long           samples)
 {
   float_to_u32_x1 (conversion, src_char, dst_char, samples * 3);
 }
 static void
 float_to_u32_x4 (const Babl    *conversion,
-                 unsigned char *src_char, 
-                 unsigned char *dst_char, 
+                 unsigned char *__restrict__ src_char, 
+                 unsigned char *__restrict__ dst_char, 
                  long           samples)
 {
   float_to_u32_x1 (conversion, src_char, dst_char, samples * 4);
@@ -226,8 +226,8 @@ float_to_u32_x4 (const Babl    *conversion,
 
 static inline void
 u32_to_float (const Babl    *conversion,
-              unsigned char *src_char, 
-              unsigned char *dst_char, 
+              unsigned char *__restrict__ src_char, 
+              unsigned char *__restrict__ dst_char, 
               long           samples)
 {
   uint32_t *src = (uint32_t *)src_char;
@@ -243,8 +243,8 @@ u32_to_float (const Babl    *conversion,
 
 static void
 u32_to_float_x4 (const Babl    *conversion,
-                 unsigned char *src_char, 
-                 unsigned char *dst_char, 
+                 unsigned char *__restrict__ src_char, 
+                 unsigned char *__restrict__ dst_char, 
                  long           samples)
 {
   u32_to_float (conversion, src_char, dst_char, samples * 4);
@@ -252,8 +252,8 @@ u32_to_float_x4 (const Babl    *conversion,
 
 static void
 u32_to_float_x3 (const Babl    *conversion,
-                 unsigned char *src_char, 
-                 unsigned char *dst_char, 
+                 unsigned char *__restrict__ src_char, 
+                 unsigned char *__restrict__ dst_char, 
                  long           samples)
 {
   u32_to_float (conversion, src_char, dst_char, samples * 3);
@@ -262,8 +262,8 @@ u32_to_float_x3 (const Babl    *conversion,
 
 static void
 u32_to_float_x2 (const Babl    *conversion,
-                 unsigned char *src_char, 
-                 unsigned char *dst_char, 
+                 unsigned char *__restrict__ src_char, 
+                 unsigned char *__restrict__ dst_char, 
                  long           samples)
 {
   u32_to_float (conversion, src_char, dst_char, samples * 2);
@@ -272,8 +272,8 @@ u32_to_float_x2 (const Babl    *conversion,
 
 static inline void
 u16_to_float (const Babl    *conversion,
-              unsigned char *src_char, 
-              unsigned char *dst_char, 
+              unsigned char *__restrict__ src_char, 
+              unsigned char *__restrict__ dst_char, 
               long           samples)
 {
   uint16_t *src = (uint16_t *)src_char;
@@ -289,8 +289,8 @@ u16_to_float (const Babl    *conversion,
 
 static void
 u16_to_float_x4 (const Babl    *conversion,
-                 unsigned char *src_char, 
-                 unsigned char *dst_char, 
+                 unsigned char *__restrict__ src_char, 
+                 unsigned char *__restrict__ dst_char, 
                  long           samples)
 {
   u16_to_float (conversion, src_char, dst_char, samples * 4);
@@ -298,8 +298,8 @@ u16_to_float_x4 (const Babl    *conversion,
 
 static void
 u16_to_float_x3 (const Babl    *conversion,
-                 unsigned char *src_char, 
-                 unsigned char *dst_char, 
+                 unsigned char *__restrict__ src_char, 
+                 unsigned char *__restrict__ dst_char, 
                  long           samples)
 {
   u16_to_float (conversion, src_char, dst_char, samples * 3);
@@ -308,8 +308,8 @@ u16_to_float_x3 (const Babl    *conversion,
 
 static void
 u16_to_float_x2 (const Babl    *conversion,
-                 unsigned char *src_char, 
-                 unsigned char *dst_char, 
+                 unsigned char *__restrict__ src_char, 
+                 unsigned char *__restrict__ dst_char, 
                  long           samples)
 {
   u16_to_float (conversion, src_char, dst_char, samples * 2);
@@ -317,8 +317,8 @@ u16_to_float_x2 (const Babl    *conversion,
 
 static inline void
 yau16_rgbaf (const Babl    *conversion,
-             unsigned char *src_char, 
-             unsigned char *dst_char, 
+             unsigned char *__restrict__ src_char, 
+             unsigned char *__restrict__ dst_char, 
              long           samples)
 {
   uint16_t *src = (uint16_t *)src_char;
@@ -338,8 +338,8 @@ yau16_rgbaf (const Babl    *conversion,
 
 static inline void
 u8_to_float (const Babl    *conversion,
-              unsigned char *src_char, 
-              unsigned char *dst_char, 
+              unsigned char *__restrict__ src_char, 
+              unsigned char *__restrict__ dst_char, 
               long           samples)
 {
   uint8_t *src = (uint8_t *)src_char;
@@ -355,8 +355,8 @@ u8_to_float (const Babl    *conversion,
 
 static void
 u8_to_float_x4 (const Babl    *conversion,
-                 unsigned char *src_char, 
-                 unsigned char *dst_char, 
+                 unsigned char *__restrict__ src_char, 
+                 unsigned char *__restrict__ dst_char, 
                  long           samples)
 {
   u8_to_float (conversion, src_char, dst_char, samples * 4);
@@ -364,8 +364,8 @@ u8_to_float_x4 (const Babl    *conversion,
 
 static void
 u8_to_float_x3 (const Babl    *conversion,
-                 unsigned char *src_char, 
-                 unsigned char *dst_char, 
+                 unsigned char *__restrict__ src_char, 
+                 unsigned char *__restrict__ dst_char, 
                  long           samples)
 {
   u8_to_float (conversion, src_char, dst_char, samples * 3);
@@ -374,8 +374,8 @@ u8_to_float_x3 (const Babl    *conversion,
 
 static void
 u8_to_float_x2 (const Babl    *conversion,
-                 unsigned char *src_char, 
-                 unsigned char *dst_char, 
+                 unsigned char *__restrict__ src_char, 
+                 unsigned char *__restrict__ dst_char, 
                  long           samples)
 {
   u8_to_float (conversion, src_char, dst_char, samples * 2);
@@ -383,8 +383,8 @@ u8_to_float_x2 (const Babl    *conversion,
 
 static inline void
 yau8_rgbaf (const Babl    *conversion,
-             unsigned char *src_char, 
-             unsigned char *dst_char, 
+             unsigned char *__restrict__ src_char, 
+             unsigned char *__restrict__ dst_char, 
              long           samples)
 {
   uint8_t *src = (uint8_t *)src_char;
@@ -404,8 +404,8 @@ yau8_rgbaf (const Babl    *conversion,
 
 static inline void
 yu8_yau8  (const Babl    *conversion,
-           unsigned char *src_char,
-           unsigned char *dst_char,
+           unsigned char *__restrict__ src_char,
+           unsigned char *__restrict__ dst_char,
            long           samples)
 {
   uint8_t *src = (uint8_t *)src_char;
@@ -423,8 +423,8 @@ yu8_yau8  (const Babl    *conversion,
 
 static inline void
 yau8_yu8  (const Babl    *conversion,
-           unsigned char *src_char,
-           unsigned char *dst_char,
+           unsigned char *__restrict__ src_char,
+           unsigned char *__restrict__ dst_char,
            long           samples)
 {
   uint8_t *src = (uint8_t *)src_char;
@@ -442,8 +442,8 @@ yau8_yu8  (const Babl    *conversion,
 
 static inline void
 yu16_yau16  (const Babl    *conversion,
-             unsigned char *src_char,
-             unsigned char *dst_char,
+             unsigned char *__restrict__ src_char,
+             unsigned char *__restrict__ dst_char,
              long           samples)
 {
   uint16_t *src = (uint16_t *)src_char;
@@ -460,8 +460,8 @@ yu16_yau16  (const Babl    *conversion,
 
 static inline void
 yau16_yu16  (const Babl    *conversion,
-             unsigned char *src_char,
-             unsigned char *dst_char,
+             unsigned char *__restrict__ src_char,
+             unsigned char *__restrict__ dst_char,
              long           samples)
 {
   uint16_t *src = (uint16_t *)src_char;
@@ -476,9 +476,11 @@ yau16_yu16  (const Babl    *conversion,
 }
 
 
+#include "babl-verify-cpu.inc"
 int
 init (void)
 {
+  BABL_VERIFY_CPU();
   /* float and u8 */
   babl_conversion_new (babl_format ("R'G'B'A float"),
                        babl_format ("R'G'B'A u8"),

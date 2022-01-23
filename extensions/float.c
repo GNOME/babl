@@ -31,8 +31,8 @@ static const Babl *trc_srgb = NULL;
 
 static void
 conv_yaF_linear_yAF_linear (const Babl    *conversion,
-                            unsigned char *src,
-                            unsigned char *dst,
+                            unsigned char *__restrict__ src,
+                            unsigned char *__restrict__ dst,
                             long           samples)
 {
    float *fsrc = (float *) src;
@@ -52,8 +52,8 @@ conv_yaF_linear_yAF_linear (const Babl    *conversion,
 
 static void
 conv_yAF_linear_yaF_linear (const Babl    *conversion,
-                            unsigned char *src,
-                            unsigned char *dst,
+                            unsigned char *__restrict__ src,
+                            unsigned char *__restrict__ dst,
                             long           samples)
 {
    float *fsrc = (float *) src;
@@ -73,8 +73,8 @@ conv_yAF_linear_yaF_linear (const Babl    *conversion,
 
 static void
 conv_yaF_linear_yAF_nonlinear (const Babl    *conversion,
-                               unsigned char *src,
-                               unsigned char *dst,
+                               unsigned char *__restrict__ src,
+                               unsigned char *__restrict__ dst,
                                long           samples)
 {
    const Babl  *space = babl_conversion_get_destination_space (conversion);
@@ -96,8 +96,8 @@ conv_yaF_linear_yAF_nonlinear (const Babl    *conversion,
 
 static void
 conv_rgbaF_linear_rgbAF_nonlinear (const Babl    *conversion,
-                                   unsigned char *src,
-                                   unsigned char *dst,
+                                   unsigned char *__restrict__ src,
+                                   unsigned char *__restrict__ dst,
                                    long           samples)
 {
    const Babl  *space = babl_conversion_get_destination_space (conversion);
@@ -121,8 +121,8 @@ conv_rgbaF_linear_rgbAF_nonlinear (const Babl    *conversion,
 
 static void
 conv_rgbaF_linear_rgbAF_perceptual (const Babl    *conversion,
-                                    unsigned char *src,
-                                    unsigned char *dst,
+                                    unsigned char *__restrict__ src,
+                                    unsigned char *__restrict__ dst,
                                     long           samples)
 {
    float *fsrc = (float *) src;
@@ -144,8 +144,8 @@ conv_rgbaF_linear_rgbAF_perceptual (const Babl    *conversion,
 
 static void
 conv_rgbAF_linear_rgbAF_nonlinear (const Babl    *conversion,
-                                   unsigned char *src,
-                                   unsigned char *dst,
+                                   unsigned char *__restrict__ src,
+                                   unsigned char *__restrict__ dst,
                                    long           samples)
 {
    const Babl  *space = babl_conversion_get_destination_space (conversion);
@@ -180,8 +180,8 @@ conv_rgbAF_linear_rgbAF_nonlinear (const Babl    *conversion,
 
 static void
 conv_yAF_linear_yAF_nonlinear (const Babl    *conversion,
-                               unsigned char *src,
-                               unsigned char *dst,
+                               unsigned char *__restrict__ src,
+                               unsigned char *__restrict__ dst,
                                long           samples)
 {
    const Babl  *space = babl_conversion_get_destination_space (conversion);
@@ -215,8 +215,8 @@ conv_yAF_linear_yAF_nonlinear (const Babl    *conversion,
 
 static void
 conv_rgbAF_linear_rgbAF_perceptual (const Babl    *conversion,
-                                    unsigned char *src,
-                                    unsigned char *dst,
+                                    unsigned char *__restrict__ src,
+                                    unsigned char *__restrict__ dst,
                                     long           samples)
 {
 
@@ -249,8 +249,8 @@ conv_rgbAF_linear_rgbAF_perceptual (const Babl    *conversion,
 
 static void
 conv_yaF_linear_yaF_nonlinear (const Babl    *conversion,
-                                   unsigned char *src, 
-                                   unsigned char *dst, 
+                                   unsigned char *__restrict__ src, 
+                                   unsigned char *__restrict__ dst, 
                                    long           samples)
 {
    const Babl  *space = babl_conversion_get_destination_space (conversion);
@@ -258,19 +258,13 @@ conv_yaF_linear_yaF_nonlinear (const Babl    *conversion,
 
    float *fsrc = (float *) src;
    float *fdst = (float *) dst;
-   int n = samples;
-
-   while (n--)
-     {
-       *fdst++ = babl_trc_from_linear (trc[0], *fsrc++);
-       *fdst++ = *fsrc++;
-     }
+   babl_trc_from_linear_buf (trc[0], fsrc, fdst, 2, 2, 1, samples);
 }
 
 static void
 conv_rgbaF_linear_rgbaF_nonlinear (const Babl    *conversion,
-                                   unsigned char *src, 
-                                   unsigned char *dst, 
+                                   unsigned char *__restrict__ src, 
+                                   unsigned char *__restrict__ dst, 
                                    long           samples)
 {
    const Babl  *space = babl_conversion_get_destination_space (conversion);
@@ -291,46 +285,33 @@ conv_rgbaF_linear_rgbaF_nonlinear (const Babl    *conversion,
 
 static void
 conv_rgbaF_linear_rgbaF_perceptual (const Babl    *conversion,
-                                    unsigned char *src, 
-                                    unsigned char *dst, 
+                                    unsigned char *__restrict__ src, 
+                                    unsigned char *__restrict__ dst, 
                                     long           samples)
 {
    float *fsrc = (float *) src;
    float *fdst = (float *) dst;
-   int n = samples;
-
-   while (n--)
-     {
-       *fdst++ = babl_trc_from_linear (trc_srgb, *fsrc++);
-       *fdst++ = babl_trc_from_linear (trc_srgb, *fsrc++);
-       *fdst++ = babl_trc_from_linear (trc_srgb, *fsrc++);
-       *fdst++ = *fsrc++;
-     }
+   babl_trc_from_linear_buf (trc_srgb, fsrc, fdst, 4, 4, 3, samples);
 }
 
 static void
 conv_yF_linear_yF_nonlinear (const Babl    *conversion,
-                             unsigned char *src,
-                             unsigned char *dst,
+                             unsigned char *__restrict__ src,
+                             unsigned char *__restrict__ dst,
                              long           samples)
 {
    const Babl  *space = babl_conversion_get_destination_space (conversion);
    const Babl **trc   = (void*)space->space.trc;
    float *fsrc = (float *) src;
    float *fdst = (float *) dst;
-   int n = samples;
-
-   while (n--)
-     {
-       *fdst++ = babl_trc_from_linear (trc[0], *fsrc++);
-     }
+   babl_trc_from_linear_buf (trc[0], fsrc, fdst, 1, 1, 1, samples);
 }
 
 
 static void
 conv_rgbF_linear_rgbF_nonlinear (const Babl    *conversion,
-                                 unsigned char *src,
-                                 unsigned char *dst,
+                                 unsigned char *__restrict__ src,
+                                 unsigned char *__restrict__ dst,
                                  long           samples)
 {
    const Babl  *space = babl_conversion_get_destination_space (conversion);
@@ -349,26 +330,19 @@ conv_rgbF_linear_rgbF_nonlinear (const Babl    *conversion,
 
 static void
 conv_rgbF_linear_rgbF_perceptual (const Babl    *conversion,
-                                  unsigned char *src,
-                                  unsigned char *dst,
+                                  unsigned char *__restrict__ src,
+                                  unsigned char *__restrict__ dst,
                                   long           samples)
 {
    float *fsrc = (float *) src;
    float *fdst = (float *) dst;
-   int n = samples;
-
-   while (n--)
-     {
-       *fdst++ = babl_trc_from_linear (trc_srgb, *fsrc++);
-       *fdst++ = babl_trc_from_linear (trc_srgb, *fsrc++);
-       *fdst++ = babl_trc_from_linear (trc_srgb, *fsrc++);
-     }
+   babl_trc_from_linear_buf (trc_srgb, fsrc, fdst, 3, 3, 3, samples);
 }
 
 static void
 conv_rgbaF_nonlinear_rgbaF_linear (const Babl    *conversion,
-                                   unsigned char *src,
-                                   unsigned char *dst,
+                                   unsigned char *__restrict__ src,
+                                   unsigned char *__restrict__ dst,
                                    long           samples)
 {
    const Babl  *space = babl_conversion_get_destination_space (conversion);
@@ -389,48 +363,34 @@ conv_rgbaF_nonlinear_rgbaF_linear (const Babl    *conversion,
 
 static void
 conv_yaF_nonlinear_yaF_linear (const Babl    *conversion,
-                               unsigned char *src,
-                               unsigned char *dst,
+                               unsigned char *__restrict__ src,
+                               unsigned char *__restrict__ dst,
                                long           samples)
 {
    const Babl  *space = babl_conversion_get_destination_space (conversion);
    const Babl **trc   = (void*)space->space.trc;
    float *fsrc = (float *) src;
    float *fdst = (float *) dst;
-   int n = samples;
-
-   while (n--)
-     {
-       *fdst++ = babl_trc_to_linear (trc[0], *fsrc++);
-       *fdst++ = *fsrc++;
-     }
+   babl_trc_to_linear_buf (trc[0], fsrc, fdst, 2, 2, 1, samples);
 }
 
 
 static void
 conv_rgbaF_perceptual_rgbaF_linear (const Babl    *conversion,
-                                    unsigned char *src,
-                                    unsigned char *dst,
+                                    unsigned char *__restrict__ src,
+                                    unsigned char *__restrict__ dst,
                                     long           samples)
 {
    float *fsrc = (float *) src;
    float *fdst = (float *) dst;
-   int n = samples;
-
-   while (n--)
-     {
-       *fdst++ = babl_trc_to_linear (trc_srgb, *fsrc++);
-       *fdst++ = babl_trc_to_linear (trc_srgb, *fsrc++);
-       *fdst++ = babl_trc_to_linear (trc_srgb, *fsrc++);
-       *fdst++ = *fsrc++;
-     }
+   babl_trc_to_linear_buf (trc_srgb, fsrc, fdst, 4, 4, 3, samples);
 }
 
 
 static void
 conv_rgbF_nonlinear_rgbF_linear (const Babl    *conversion,
-                                 unsigned char *src,
-                                 unsigned char *dst,
+                                 unsigned char *__restrict__ src,
+                                 unsigned char *__restrict__ dst,
                                  long           samples)
 {
    const Babl  *space = babl_conversion_get_destination_space (conversion);
@@ -450,38 +410,27 @@ conv_rgbF_nonlinear_rgbF_linear (const Babl    *conversion,
 
 static void
 conv_yF_nonlinear_yF_linear (const Babl    *conversion,
-                                 unsigned char *src,
-                                 unsigned char *dst,
+                                 unsigned char *__restrict__ src,
+                                 unsigned char *__restrict__ dst,
                                  long           samples)
 {
    const Babl  *space = babl_conversion_get_destination_space (conversion);
    const Babl **trc   = (void*)space->space.trc;
    float *fsrc = (float *) src;
    float *fdst = (float *) dst;
-   int n = samples;
 
-   while (n--)
-     {
-       *fdst++ = babl_trc_to_linear (trc[0], *fsrc++);
-     }
+   babl_trc_to_linear_buf (trc[0], fsrc, fdst, 1, 1, 1, samples);
 }
 
 static void
 conv_rgbF_perceptual_rgbF_linear (const Babl    *conversion,
-                                  unsigned char *src,
-                                  unsigned char *dst,
+                                  unsigned char *__restrict__ src,
+                                  unsigned char *__restrict__ dst,
                                   long           samples)
 {
    float *fsrc = (float *) src;
    float *fdst = (float *) dst;
-   int n = samples;
-
-   while (n--)
-     {
-       *fdst++ = babl_trc_to_linear (trc_srgb, *fsrc++);
-       *fdst++ = babl_trc_to_linear (trc_srgb, *fsrc++);
-       *fdst++ = babl_trc_to_linear (trc_srgb, *fsrc++);
-     }
+   babl_trc_to_linear_buf (trc_srgb, fsrc, fdst, 3, 3, 3, samples);
 }
 
 
@@ -489,10 +438,13 @@ conv_rgbF_perceptual_rgbF_linear (const Babl    *conversion,
   babl_conversion_new (src, dst, "linear", conv_ ## src ## _ ## dst, NULL)
 
 int init (void);
+#include "babl-verify-cpu.inc"
 
 int
 init (void)
 {
+  BABL_VERIFY_CPU();
+  {
   const Babl *yaF_linear = babl_format_new (
     babl_model ("YA"),
     babl_type ("float"),
@@ -621,7 +573,7 @@ init (void)
   o (rgbaF_perceptual,  rgbaF_linear);
   o (rgbF_linear, rgbF_perceptual);
   o (rgbF_perceptual,  rgbF_linear);
-
+  }
   return 0;
 }
 

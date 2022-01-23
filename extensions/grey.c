@@ -26,8 +26,8 @@
 
 static void
 conv_rgbaF_linear_y8_linear (const Babl    *conversion,
-                             unsigned char *src,
-                             unsigned char *dst,
+                             unsigned char *__restrict__ src,
+                             unsigned char *__restrict__ dst,
                              long           samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
@@ -55,8 +55,8 @@ conv_rgbaF_linear_y8_linear (const Babl    *conversion,
 
 static void
 conv_rgbaF_linear_yF_linear (const Babl    *conversion,
-                             unsigned char *src,
-                             unsigned char *dst,
+                             unsigned char *__restrict__ src,
+                             unsigned char *__restrict__ dst,
                              long           samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
@@ -82,8 +82,8 @@ conv_rgbaF_linear_yF_linear (const Babl    *conversion,
 
 static void
 conv_rgbaF_linear_yaF_linear (const Babl    *conversion,
-                              unsigned char *src,
-                              unsigned char *dst,
+                              unsigned char *__restrict__ src,
+                              unsigned char *__restrict__ dst,
                               long           samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
@@ -109,8 +109,8 @@ conv_rgbaF_linear_yaF_linear (const Babl    *conversion,
 
 static void
 conv_yaF_linear_rgbaF_linear (const Babl    *conversion,
-                              unsigned char *src,
-                              unsigned char *dst,
+                              unsigned char *__restrict__ src,
+                              unsigned char *__restrict__ dst,
                               long           samples)
 {
   float *s = (float *) src;
@@ -130,10 +130,13 @@ conv_yaF_linear_rgbaF_linear (const Babl    *conversion,
 
 
 int init (void);
+#include "babl-verify-cpu.inc"
 
 int
 init (void)
 {
+  BABL_VERIFY_CPU();
+  {
   babl_conversion_new (babl_format ("RGBA float"),
                        babl_format ("Y u8"),
                        "linear",
@@ -171,5 +174,6 @@ init (void)
                        conv_yaF_linear_rgbaF_linear,
                        NULL);
 
+  }
   return 0;
 }

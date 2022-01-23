@@ -68,7 +68,7 @@ babl_introspect (Babl *babl)
   babl_conversion_class_for_each (each_introspect, NULL);
   babl_log ("");
   babl_log ("trcs:");
-  babl_trc_class_for_each (each_introspect, NULL);
+  //babl_trc_class_for_each (each_introspect, NULL);
   babl_log ("");
   babl_log ("spaces:");
   babl_space_class_for_each (each_introspect, NULL);

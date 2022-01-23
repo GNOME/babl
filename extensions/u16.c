@@ -27,8 +27,8 @@
 
 static void
 conv_rgbu16_rgbau16 (const Babl    *conversion,
-                     unsigned char *src, 
-                     unsigned char *dst, 
+                     unsigned char *__restrict__ src, 
+                     unsigned char *__restrict__ dst, 
                      long           samples)
 
 
@@ -48,8 +48,8 @@ conv_rgbu16_rgbau16 (const Babl    *conversion,
 
 static void
 conv_yu16_yau16 (const Babl    *conversion,
-                 unsigned char *src, 
-                 unsigned char *dst, 
+                 unsigned char *__restrict__ src, 
+                 unsigned char *__restrict__ dst, 
                  long           samples)
 
 
@@ -67,8 +67,11 @@ conv_yu16_yau16 (const Babl    *conversion,
 
 int init (void);
 
+#include "babl-verify-cpu.inc"
 int
 init (void)
+{
+  BABL_VERIFY_CPU();
 {
   babl_conversion_new (
     babl_format ("R'G'B' u16"),
@@ -111,5 +114,6 @@ init (void)
     "linear",
     conv_yu16_yau16,
     NULL);
+}
   return 0;
 }

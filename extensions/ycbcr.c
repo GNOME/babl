@@ -32,9 +32,11 @@ static void formats     (void);
 int init (void);
 
 
+#include "babl-verify-cpu.inc"
 int
 init (void)
 {
+  BABL_VERIFY_CPU();
   components ();
   models ();
   conversions ();

@@ -363,12 +363,15 @@ void babl_store_db (void);
 int _babl_max_path_len (void);
 
 
-const Babl *
-babl_trc_new (const char *name,
+extern const Babl *
+(*babl_trc_new) (const char *name,
               BablTRCType type,
               double      gamma,
               int         n_lut,
               float      *lut);
+
+extern const Babl *
+(*babl_trc_lookup_by_name) (const char *name);
 
 void babl_space_to_xyz   (const Babl *space, const double *rgb, double *xyz);
 void babl_space_from_xyz (const Babl *space, const double *xyz, double *rgb);
@@ -384,7 +387,7 @@ const char *
 babl_conversion_create_name (Babl *source, Babl *destination, int type,
                              int allow_collision);
 
-void _babl_space_add_universal_rgb (const Babl *space);
+extern void (*_babl_space_add_universal_rgb) (const Babl *space);
 const Babl *
 babl_trc_formula_srgb (double gamma, double a, double b, double c, double d, double e, double f);
 const Babl *
@@ -467,5 +470,8 @@ char *babl_space_to_icc (const Babl  *space,
                          int         *icc_length);
 Babl *
 _babl_space_for_lcms (const char *icc_data, int icc_length); // XXX pass profile for dedup?
+
+void
+babl_trc_class_init (void);
 
 #endif

@@ -63,7 +63,6 @@ hue2cpn  (double  p,
           
 int init (void);
 
-
 int
 init (void)
 {

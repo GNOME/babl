@@ -328,7 +328,6 @@ init (void)
     }
 
 #endif
-
   return 0;
 }
 

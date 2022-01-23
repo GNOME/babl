@@ -589,11 +589,14 @@ conv_rgbF_gamma_rgbF_linear (const Babl    *conversion,
 #define o(src, dst) \
   babl_conversion_new (src, dst, "linear", conv_ ## src ## _ ## dst, NULL)
 
-int init (void);
+#include "babl-verify-cpu.inc"
 
+int init (void);
 int
 init (void)
 {
+  BABL_VERIFY_CPU();
+  {
   const Babl *yaF_linear = babl_format_new (
     babl_model ("YA"),
     babl_type ("float"),
@@ -713,6 +716,7 @@ init (void)
   o (rgbF_linear,  rgbF_gamma);
   o (rgbF_gamma,   rgbF_linear);
   o (yaF_linear,   rgbA8_gamma);
+  }
   return 0;
 }
 

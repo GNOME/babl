@@ -162,3 +162,184 @@ babl_core_init (void)
     NULL
   );
 }
+
+
+/////////////////// temporary here
+///////////////////
+
+const Babl * 
+babl_trc_lut (const char *name, 
+              int         n, 
+              float      *entries)
+{
+  return babl_trc_new (name, BABL_TRC_LUT, 0, n, entries);
+}
+
+
+const Babl *
+babl_trc_formula_srgb (double g, 
+                       double a, 
+                       double b, 
+                       double c, 
+                       double d,
+                       double e,
+                       double f)
+{
+  char name[128];
+  int i;
+  float params[7]={g, a, b, c, d, e, f};
+
+  if (fabs (g - 2.400) < 0.01 &&
+      fabs (a - 0.947) < 0.01 &&
+      fabs (b - 0.052) < 0.01 &&
+      fabs (c - 0.077) < 0.01 &&
+      fabs (d - 0.040) < 0.01 &&
+      fabs (e - 0.000) < 0.01 &&
+      fabs (f - 0.000) < 0.01
+      )
+    return babl_trc ("sRGB");
+
+  snprintf (name, sizeof (name), "%.6f %.6f %.4f %.4f %.4f %.4f %.4f", g, a, b, c, d, e, f);
+  for (i = 0; name[i]; i++)
+    if (name[i] == ',') name[i] = '.';
+  while (name[strlen(name)-1]=='0')
+    name[strlen(name)-1]='\0';
+  return babl_trc_new (name, BABL_TRC_FORMULA_SRGB, g, 0, params);
+}
+
+const Babl *
+babl_trc_formula_cie (double g, 
+                      double a, 
+                      double b, 
+                      double c)
+{
+  char name[128];
+  int i;
+  float params[4]={g, a, b, c};
+
+  snprintf (name, sizeof (name), "%.6f %.6f %.4f %.4f", g, a, b, c);
+  for (i = 0; name[i]; i++)
+    if (name[i] == ',') name[i] = '.';
+  while (name[strlen(name)-1]=='0')
+    name[strlen(name)-1]='\0';
+  return babl_trc_new (name, BABL_TRC_FORMULA_CIE, g, 0, params);
+}
+
+
+const Babl *
+babl_trc_gamma (double gamma)
+{
+  char name[32];
+  int i;
+  if (fabs (gamma - 1.0) < 0.01)
+     return babl_trc_new ("linear", BABL_TRC_LINEAR, 1.0, 0, NULL);
+
+  snprintf (name, sizeof (name), "%.6f", gamma);
+  for (i = 0; name[i]; i++)
+    if (name[i] == ',') name[i] = '.';
+  while (name[strlen(name)-1]=='0')
+    name[strlen(name)-1]='\0';
+  return babl_trc_new (name, BABL_TRC_FORMULA_GAMMA, gamma, 0, NULL);
+}
+
+void
+babl_trc_class_init (void)
+{
+  babl_trc_new ("sRGB",  BABL_TRC_SRGB, 2.2, 0, NULL);
+  babl_trc_gamma (2.2);
+  babl_trc_gamma (1.8);
+  babl_trc_gamma (1.0);
+  babl_trc_new ("linear", BABL_TRC_LINEAR, 1.0, 0, NULL);
+}
+
+#if 0
+float 
+babl_trc_from_linear (const Babl *trc_, 
+                      float       value)
+{
+  return babl_trc_from_linear (trc_, value);
+}
+
+float 
+babl_trc_to_linear (const Babl *trc_,
+                    float       value)
+{
+  return babl_trc_to_linear (trc_, value);
+}
+#endif
+
+static int
+babl_lut_match_gamma (float *lut, 
+                      int    lut_size, 
+                      float  gamma)
+{
+  int match = 1;
+  int i;
+  if (lut_size > 1024)
+  {
+    for (i = 0; match && i < lut_size; i++)
+    {
+      if (fabs (lut[i] - pow ((i / (lut_size-1.0)), gamma)) > 0.0001)
+        match = 0;
+    }
+  }
+  else
+  {
+    for (i = 0; match && i < lut_size; i++)
+    {
+      if (fabs (lut[i] - pow ((i / (lut_size-1.0)), gamma)) > 0.001)
+        match = 0;
+    }
+  }
+  return match;
+}
+
+const Babl *
+babl_trc_lut_find (float *lut, 
+                   int    lut_size)
+{
+  int i;
+  int match = 1;
+
+  /* look for linear match */
+  for (i = 0; match && i < lut_size; i++)
+    if (fabs (lut[i] - i / (lut_size-1.0)) > 0.015)
+      match = 0;
+  if (match)
+    return babl_trc_gamma (1.0);
+
+  /* look for sRGB match: */
+  match = 1;
+  if (lut_size > 1024)
+  {
+    for (i = 0; match && i < lut_size; i++)
+    {
+      if (fabs (lut[i] - gamma_2_2_to_linear (i / (lut_size-1.0))) > 0.0001)
+        match = 0;
+    }
+  }
+  else
+  {
+    for (i = 0; match && i < lut_size; i++)
+    {
+      if (fabs (lut[i] - gamma_2_2_to_linear (i / (lut_size-1.0))) > 0.001)
+        match = 0;
+    }
+  }
+  if (match)
+    return babl_trc ("sRGB");
+
+  if (babl_lut_match_gamma (lut, lut_size, 2.2))
+    return babl_trc_gamma(2.2);
+
+  if (babl_lut_match_gamma (lut, lut_size, 1.8))
+    return babl_trc_gamma(1.8);
+
+  return NULL;
+}
+
+const Babl * babl_trc (const char *name)
+{
+  return babl_trc_lookup_by_name (name);
+}
+

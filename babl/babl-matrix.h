@@ -9,7 +9,7 @@ static inline void babl_matrix_mul_matrix (const double *matA_,
                                            const double *matB_,
                                            double *out)
 {
-  int i, j;
+  unsigned int i, j;
   double matA[9];
   double matB[9];
   double t1, t2, t3;
@@ -36,7 +36,7 @@ static inline void babl_matrix_mul_matrixf (const float *matA_,
                                             const float *matB_,
                                             float *out)
 {
-  int i, j;
+  unsigned int i, j;
   float matA[9];
   float matB[9];
   float t1, t2, t3;
@@ -60,7 +60,7 @@ static inline void babl_matrix_mul_matrixf (const float *matA_,
 
 static inline void babl_matrix_to_float (const double *in, float *out)
 {
-  int i;
+  unsigned int i;
   for (i = 0; i < 9; i ++)
     out[i] = in[i];
 }
@@ -141,9 +141,9 @@ static inline void babl_matrix_mul_vectorff (const float *mat, const float *v_in
 }
 
 static inline void babl_matrix_mul_vectorff_buf3 (const float *mat, const float *v_in, float *v_out,
-                                                  int samples)
+                                                  unsigned int samples)
 {
-  int i;
+  unsigned int i;
   const float m_0_0 = m(mat, 0, 0);
   const float m_0_1 = m(mat, 0, 1);
   const float m_0_2 = m(mat, 0, 2);
@@ -166,7 +166,7 @@ static inline void babl_matrix_mul_vectorff_buf3 (const float *mat, const float 
 }
 
 static inline void babl_matrix_mul_vectorff_buf4 (const float *mat, const float *v_in, float *v_out,
-                                                  int samples)
+                                                  unsigned int samples)
 {
   const float m_0_0 = m(mat, 0, 0);
   const float m_0_1 = m(mat, 0, 1);
@@ -177,7 +177,7 @@ static inline void babl_matrix_mul_vectorff_buf4 (const float *mat, const float 
   const float m_2_0 = m(mat, 2, 0);
   const float m_2_1 = m(mat, 2, 1);
   const float m_2_2 = m(mat, 2, 2);
-  int i;
+  unsigned int i;
   for (i = 0; i < samples; i ++)
   {
     float a = v_in[0], b = v_in[1], c = v_in[2];
@@ -192,9 +192,9 @@ static inline void babl_matrix_mul_vectorff_buf4 (const float *mat, const float 
 }
 
 static inline void babl_matrix_mul_vector_buf4 (const double *mat, const double *v_in, double *v_out,
-                                                int samples)
+                                                unsigned int samples)
 {
-  int i;
+  unsigned int i;
   const double m_0_0 = m(mat, 0, 0);
   const double m_0_1 = m(mat, 0, 1);
   const double m_0_2 = m(mat, 0, 2);

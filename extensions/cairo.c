@@ -28,8 +28,8 @@ int init (void);
 
 static void
 conv_rgba8_cairo24_le (const Babl    *conversion,
-                       unsigned char *src, 
-                       unsigned char *dst, 
+                       unsigned char *__restrict__ src, 
+                       unsigned char *__restrict__ dst, 
                        long           samples)
 {
   long n = samples;
@@ -49,8 +49,8 @@ conv_rgba8_cairo24_le (const Babl    *conversion,
 
 static void
 conv_rgb8_cairo24_le (const Babl    *conversion,
-                      unsigned char *src, 
-                      unsigned char *dst, 
+                      unsigned char *__restrict__ src, 
+                      unsigned char *__restrict__ dst, 
                       long           samples)
 {
   long n = samples;
@@ -71,8 +71,8 @@ conv_rgb8_cairo24_le (const Babl    *conversion,
 #if 0
 static void
 conv_rgbA8_cairo32_le (const Babl    *conversion,
-                       unsigned char *src,
-                       unsigned char *dst,
+                       unsigned char *__restrict__ src,
+                       unsigned char *__restrict__ dst,
                        long           samples)
 {
   long n = samples;
@@ -93,8 +93,8 @@ conv_rgbA8_cairo32_le (const Babl    *conversion,
 
 static void
 conv_rgbA8_cairo32_le (const Babl    *conversion,
-                       unsigned char *src, 
-                       unsigned char *dst, 
+                       unsigned char *__restrict__ src, 
+                       unsigned char *__restrict__ dst, 
                        long           samples)
 {
   long n = samples;
@@ -115,8 +115,8 @@ conv_rgbA8_cairo32_le (const Babl    *conversion,
 
 static void
 conv_cairo32_rgbA8_le (const Babl    *conversion,
-                       unsigned char *src,
-                       unsigned char *dst,
+                       unsigned char *__restrict__ src,
+                       unsigned char *__restrict__ dst,
                        long           samples)
 {
   long n = samples;
@@ -136,8 +136,8 @@ conv_cairo32_rgbA8_le (const Babl    *conversion,
 
 static void 
 conv_cairo32_rgba8_le (const Babl    *conversion,
-                       unsigned char *src, 
-                       unsigned char *dst, 
+                       unsigned char *__restrict__ src, 
+                       unsigned char *__restrict__ dst, 
                        long           samples)
 {
   long n = samples;
@@ -184,8 +184,8 @@ conv_cairo32_rgba8_le (const Babl    *conversion,
 
 static void
 conv_cairo32_rgbAF_le (const Babl    *conversion,
-                       unsigned char *src,
-                       unsigned char *dst_char,
+                       unsigned char *__restrict__ src,
+                       unsigned char *__restrict__ dst_char,
                        long           samples)
 {
   long n = samples;
@@ -207,8 +207,8 @@ conv_cairo32_rgbAF_le (const Babl    *conversion,
 
 static void
 conv_cairo32_rgbaF_le (const Babl    *conversion,
-                       unsigned char *src,
-                       unsigned char *dst_char,
+                       unsigned char *__restrict__ src,
+                       unsigned char *__restrict__ dst_char,
                        long           samples)
 {
   long n = samples;
@@ -236,8 +236,8 @@ conv_cairo32_rgbaF_le (const Babl    *conversion,
 
 static void
 conv_cairo24_cairo32_le (const Babl    *conversion,
-                         unsigned char *src,
-                         unsigned char *dst,
+                         unsigned char *__restrict__ src,
+                         unsigned char *__restrict__ dst,
                          long           samples)
 {
   long n = samples;
@@ -253,8 +253,8 @@ conv_cairo24_cairo32_le (const Babl    *conversion,
 
 static void
 conv_rgba8_cairo32_le (const Babl    *conversion,
-                       unsigned char *src,
-                       unsigned char *dst,
+                       unsigned char *__restrict__ src,
+                       unsigned char *__restrict__ dst,
                        long           samples)
 {
   long n = samples;
@@ -295,8 +295,8 @@ conv_rgba8_cairo32_le (const Babl    *conversion,
 
 static void
 conv_rgb8_cairo32_le (const Babl    *conversion,
-                      unsigned char *src, 
-                      unsigned char *dst, 
+                      unsigned char *__restrict__ src, 
+                      unsigned char *__restrict__ dst, 
                       long           samples)
 {
   long n = samples;
@@ -318,8 +318,8 @@ conv_rgb8_cairo32_le (const Babl    *conversion,
 
 static void
 conv_yA8_cairo32_le (const Babl    *conversion,
-                     unsigned char *src, 
-                     unsigned char *dst, 
+                     unsigned char *__restrict__ src, 
+                     unsigned char *__restrict__ dst, 
                      long           samples)
 {
   long n = samples;
@@ -342,8 +342,8 @@ conv_yA8_cairo32_le (const Babl    *conversion,
 
 static void
 conv_yA16_cairo32_le (const Babl    *conversion,
-                      unsigned char *src, 
-                      unsigned char *dst, 
+                      unsigned char *__restrict__ src, 
+                      unsigned char *__restrict__ dst, 
                       long           samples)
 {
   long n = samples;
@@ -362,8 +362,8 @@ conv_yA16_cairo32_le (const Babl    *conversion,
 
 static void
 conv_y8_cairo32_le (const Babl    *conversion,
-                    unsigned char *src, 
-                    unsigned char *dst, 
+                    unsigned char *__restrict__ src, 
+                    unsigned char *__restrict__ dst, 
                     long           samples)
 {
   long n = samples;
@@ -379,8 +379,8 @@ conv_y8_cairo32_le (const Babl    *conversion,
 
 static void
 conv_y16_cairo32_le (const Babl    *conversion,
-                     unsigned char *src, 
-                     unsigned char *dst, 
+                     unsigned char *__restrict__ src, 
+                     unsigned char *__restrict__ dst, 
                      long           samples)
 {
   long n = samples;
@@ -400,8 +400,8 @@ conv_y16_cairo32_le (const Babl    *conversion,
 
 static void
 conv_rgbA_gamma_float_cairo32_le (const Babl    *conversion,
-                                  unsigned char *src,
-                                  unsigned char *dst,
+                                  unsigned char *__restrict__ src,
+                                  unsigned char *__restrict__ dst,
                                   long           samples)
 {
   float *fsrc = (float *) src;
@@ -424,8 +424,8 @@ conv_rgbA_gamma_float_cairo32_le (const Babl    *conversion,
 
 static void
 conv_rgbafloat_cairo32_le (const Babl    *conversion,
-                           unsigned char *src,
-                           unsigned char *dst,
+                           unsigned char *__restrict__ src,
+                           unsigned char *__restrict__ dst,
                            long           samples)
 {
   const Babl  *space = babl_conversion_get_destination_space (conversion);
@@ -473,8 +473,8 @@ conv_rgbafloat_cairo32_le (const Babl    *conversion,
 
 static void
 conv_yafloat_cairo32_le (const Babl    *conversion,
-                         unsigned char *src,
-                         unsigned char *dst,
+                         unsigned char *__restrict__ src,
+                         unsigned char *__restrict__ dst,
                          long           samples)
 {
   const Babl  *space = babl_conversion_get_destination_space (conversion);
@@ -517,8 +517,8 @@ conv_yafloat_cairo32_le (const Babl    *conversion,
 
 static void
 conv_yafloat_nl_cairo32_le (const Babl    *conversion,
-                            unsigned char *src,
-                            unsigned char *dst,
+                            unsigned char *__restrict__ src,
+                            unsigned char *__restrict__ dst,
                             long           samples)
 {
   float *fsrc = (float *) src;
@@ -556,6 +556,7 @@ conv_yafloat_nl_cairo32_le (const Babl    *conversion,
     }
 }
 
+#include "babl-verify-cpu.inc"
 
 int
 init (void)
@@ -563,6 +564,7 @@ init (void)
   int   testint  = 23;
   char *testchar = (char*) &testint;
   int   littleendian = (testchar[0] == 23);
+  BABL_VERIFY_CPU();
 
   if (littleendian)
     {

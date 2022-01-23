@@ -249,6 +249,5 @@ init (void)
                        "linear",
                        conv_yafloat_linear_yau8_gamma,
                        NULL);
-
   return 0;
 }

@@ -19,6 +19,9 @@
 #ifndef _BABL_BASE_H
 #define _BABL_BASE_H
 
+#ifdef ARM_NEON
+#define BABL_SIMD_SUFFIX(symbol) symbol##_arm_neon
+#else
 #ifdef X86_64_V2
 #define BABL_SIMD_SUFFIX(symbol) symbol##_x86_64_v2
 #else 
@@ -28,22 +31,9 @@
 #define BABL_SIMD_SUFFIX(symbol) symbol##_generic
 #endif
 #endif
+#endif
 
 extern void (*babl_base_init)    (void);
-extern void (*babl_base_destroy) (void);
-extern void (*babl_formats_init) (void);
-
-extern void (*babl_base_type_half) (void);
-extern void (*babl_base_type_float)  (void);
-extern void (*babl_base_type_u8)     (void);
-extern void (*babl_base_type_u16)    (void);
-extern void (*babl_base_type_u15)    (void);
-extern void (*babl_base_type_u32)    (void);
-
-extern void (*babl_base_model_rgb)   (void);
-extern void (*babl_base_model_cmyk)  (void);
-extern void (*babl_base_model_gray)  (void);
-extern void (*babl_base_model_ycbcr) (void);
 
 void BABL_SIMD_SUFFIX(babl_base_init)    (void);
 void BABL_SIMD_SUFFIX(babl_base_destroy) (void);

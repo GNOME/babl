@@ -222,10 +222,13 @@ conv_rgbD_linear_rgbaD_linear (const Babl    *conversion,
   babl_conversion_new (src, dst, "linear", conv_ ## src ## _ ## dst, NULL)
 
 int init (void);
+#include "babl-verify-cpu.inc"
 
 int
 init (void)
 {
+  BABL_VERIFY_CPU();
+  {
   const Babl *rgbaD_linear = babl_format_new (
     babl_model ("RGBA"),
     babl_type ("double"),
@@ -288,6 +291,7 @@ init (void)
   o (rgbaD_linear, rgbD_linear);
   o (rgbaD_gamma, rgbD_gamma);
 
+  }
   return 0;
 }
 

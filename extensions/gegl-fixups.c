@@ -524,10 +524,13 @@ conv_rgba8_rgb8 (const Babl    *conversion,
 #define conv_gamma_rgbAF_gamma_rgbaF   conv_rgbAF_rgbaF
 
 int init (void);
+#include "babl-verify-cpu.inc"
 
 int
 init (void)
 {
+  BABL_VERIFY_CPU();
+  {
   const Babl *rgbaF = babl_format_new (
     babl_model ("RGBA"),
     babl_type ("float"),
@@ -621,5 +624,6 @@ init (void)
   o (rgba8, rgb8);
   o (ga8, rgbaF);
 
+  }
   return 0;
 }

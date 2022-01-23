@@ -21,6 +21,20 @@ if platform_win32
   babl_ext_link_args += no_undefined
 endif
 
+autosimd_extensions = [
+  ['u16', no_cflags],
+  ['u32', no_cflags],
+  ['cairo', no_cflags],
+  ['grey', no_cflags],
+  ['gggl', no_cflags],
+  ['gggl-lies', no_cflags],
+  ['gegl-fixups', no_cflags],
+  ['CIE', sse2_cflags],
+  ['float', no_cflags],
+  ['double', no_cflags],
+  ['simple', no_cflags],
+  ['ycbcr', no_cflags],
+]
 
 extensions = [
   ['u16', no_cflags],
@@ -68,3 +82,37 @@ foreach ext : extensions
     install_dir: babl_libdir / lib_name,
   )
 endforeach
+
+if host_cpu_family == 'x86_64'
+ 
+  foreach ext : autosimd_extensions
+    shared_library(
+      'x86-64-v2-' + ext[0],
+      ext[0] + '.c',
+      c_args: [ext[1]] + x86_64_v2_flags,
+      include_directories: babl_ext_inc,
+      link_with: babl,
+      link_args: babl_ext_link_args,
+      dependencies: babl_ext_dep,
+      name_prefix: '',
+      install: true,
+      install_dir: babl_libdir / lib_name,
+   )
+  endforeach
+
+  foreach ext : autosimd_extensions
+    shared_library(
+      'x86-64-v3-' + ext[0],
+      ext[0] + '.c',
+      c_args: [ext[1]] + x86_64_v3_flags,
+      include_directories: babl_ext_inc,
+      link_with: babl,
+      link_args: babl_ext_link_args,
+      dependencies: babl_ext_dep,
+      name_prefix: '',
+      install: true,
+      install_dir: babl_libdir / lib_name,
+   )
+  endforeach
+
+endif

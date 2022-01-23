@@ -412,10 +412,13 @@ conv2_rgbaF_rgbaHalf (const Babl  *conversion,
 #define conv_yAHalf_yAF conv_yaHalf_yaF
 
 int init (void);
+#include "babl-verify-cpu.inc"
 
 int
 init (void)
 {
+  BABL_VERIFY_CPU();
+  {
   int i;
   const Babl *rgbaF_linear = babl_format_new (
     babl_model ("RGBA"),
@@ -617,5 +620,6 @@ init (void)
   CONV2(yaF,      yaHalf);
   CONV2(yF,       yHalf);
 
+  }
   return 0;
 }
