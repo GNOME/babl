@@ -581,7 +581,7 @@ arch_accel (void)
     }
     close (fd);
   }
-  return has_neon?ARM_CPU_ACCEL_ARM_NEON:0;
+  return has_neon?BABL_CPU_ACCEL_ARM_NEON:0;
 }
 
 #endif /* ARCH_ARM  */
