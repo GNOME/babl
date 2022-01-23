@@ -721,8 +721,7 @@ babl_fish_path_process (const Babl *babl,
      ((Babl*)babl)->fish.pixels += n;
      if (!lut && babl->fish.pixels > 256 * 128)
      {
-       ((Babl*)babl)->fish_path.u8_lut = malloc (256 * 256 * 256 * 4);
-       lut = (uint32_t*)babl->fish_path.u8_lut;
+       lut = malloc (256 * 256 * 256 * 4);
        if (babl->fish_path.source_bpp == 8)
        {
           uint64_t *lut_in = malloc (256 * 256  * 256 * 8);
@@ -757,6 +756,18 @@ babl_fish_path_process (const Babl *babl,
                                 lut,
                                 babl->fish_path.dest_bpp,
                                 256*256*256);
+       }
+       // XXX : there is still a micro race, if lost we should only
+       // leak a LUT not produce wrong results.
+       if (babl->fish_path.u8_lut == NULL)
+       {
+         (((Babl*)babl)->fish_path.u8_lut) = (uint8_t*)lut;
+
+       }
+       else
+       {
+         free (lut);
+         lut = (uint32_t*)babl->fish_path.u8_lut;
        }
      }
      if (lut)
