@@ -69,6 +69,8 @@ typedef struct
   double     cost;   /* number of  ticks *10 + chain_length */
   int        source_bpp;
   int        dest_bpp;
+  unsigned int is_u8_color_conv:1; // keep track of count, and make 
+  uint8_t   *u8_lut;
   BablList  *conversion_list;
 } BablFishPath;
 

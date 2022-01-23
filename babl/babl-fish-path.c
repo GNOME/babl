@@ -552,6 +552,7 @@ babl_fish_path2 (const Babl *source,
     static const Babl *run_once[512]={NULL};
     int i;
     int done = 0;
+
     for (i = 0; run_once[i]; i++)
     {
       if (run_once[i] == source->format.space)
@@ -582,7 +583,6 @@ babl_fish_path2 (const Babl *source,
     {
       babl_conversion_class_for_each (show_item, (void*)source->format.space);
     }
-
   }
 
   babl = babl_calloc (1, sizeof (BablFishPath) +
@@ -599,6 +599,7 @@ babl_fish_path2 (const Babl *source,
   babl->fish.error                = BABL_MAX_COST_VALUE;
   babl->fish_path.cost            = BABL_MAX_COST_VALUE;
   babl->fish_path.conversion_list = babl_list_init_with_size (BABL_HARD_MAX_PATH_LENGTH);
+
 
 
   {
@@ -652,6 +653,14 @@ babl_fish_path2 (const Babl *source,
     }
 
   _babl_fish_prepare_bpp (babl);
+  if (source->format.space != destination->format.space &&
+      babl->fish_path.source_bpp == babl->fish_path.dest_bpp &&
+      babl->fish_path.source_bpp == 4)
+  {
+     if ((source->format.model->flags & BABL_MODEL_FLAG_ASSOCIATED)==0)
+       babl->fish_path.is_u8_color_conv = 1;
+  }
+
   _babl_fish_rig_dispatch (babl);
   /* Since there is not an already registered instance by the required
    * name, inserting newly created class into database.
@@ -696,7 +705,6 @@ babl_fish_path (const Babl *source,
   return babl_fish_path2 (source, destination, 0.0);
 }
 
-
 static void
 babl_fish_path_process (const Babl *babl,
                         const char *source,
@@ -704,6 +712,37 @@ babl_fish_path_process (const Babl *babl,
                         long        n,
                         void       *data)
 {
+  if (babl->fish_path.is_u8_color_conv)
+  {
+     uint32_t *lut = (uint32_t*)babl->fish_path.u8_lut;
+     ((Babl*)babl)->fish.pixels += n;
+     if (!lut && babl->fish.pixels > 256 * 256)
+     {
+       ((Babl*)babl)->fish_path.u8_lut = malloc (256 * 256 * 256 * 4);
+       lut = (uint32_t*)babl->fish_path.u8_lut;
+       for (int o = 0; o < 256 * 256 * 256; o++)
+         lut[o] = o | 0xff000000;
+       process_conversion_path (babl->fish_path.conversion_list,
+                                lut,
+                                babl->fish_path.source_bpp,
+                                lut,
+                                babl->fish_path.dest_bpp,
+                                256*256*256);
+     }
+     if (lut)
+     {
+        uint32_t *src = (uint32_t*)source;
+        uint32_t *dst = (uint32_t*)destination;
+        lut = (uint32_t*)babl->fish_path.u8_lut;
+        while (n--)
+        {
+           uint32_t col = *src++;
+           uint32_t alpha = col & 0xff000000;
+           *dst++ = lut[col & 0xffffff] | alpha;
+        }
+        return;
+     }
+  }
   process_conversion_path (babl->fish_path.conversion_list,
                            source,
                            babl->fish_path.source_bpp,
