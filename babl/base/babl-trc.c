@@ -211,7 +211,7 @@ _babl_trc_formula_srgb_to_linear (const Babl *trc_,
   float e = trc->lut[5];
   float f = trc->lut[6];
 
-  if (x >= d)
+  if (x >= d)  // OPT can be reduced to be branchless
   {
     return _babl_trc_gamma_to_linear ((Babl *) trc, a * x + b) + e;
   }
@@ -364,6 +364,8 @@ _babl_trc_from_linear_buf_generic (const Babl  *trc_,
   }
 }
 
+
+
 static inline void _babl_trc_linear_buf (const Babl  *trc_,
                                          const float *__restrict__ in, 
                                          float       *__restrict__ out,
@@ -494,6 +496,8 @@ BABL_SIMD_SUFFIX (babl_trc_new) (const char *name,
 
   trc_db[i].fun_to_linear_buf = _babl_trc_to_linear_buf_generic;
   trc_db[i].fun_from_linear_buf = _babl_trc_from_linear_buf_generic;
+  trc_db[i].fun_from_linear_buf_u8 = _babl_trc_from_linear_buf_u8_generic;
+  trc_db[i].fun_to_linear_buf_u8 = _babl_trc_to_linear_buf_u8_generic;
 
   switch (trc_db[i].type)
   {
@@ -502,12 +506,14 @@ BABL_SIMD_SUFFIX (babl_trc_new) (const char *name,
       trc_db[i].fun_from_linear = _babl_trc_linear;
       trc_db[i].fun_from_linear_buf = _babl_trc_linear_buf;
       trc_db[i].fun_to_linear_buf = _babl_trc_linear_buf;
+      //trc_db[i].fun_to_linear_buf_u8 = _babl_trc_linear_buf_u8;
       break;
     case BABL_TRC_FORMULA_GAMMA:
       trc_db[i].fun_to_linear = _babl_trc_gamma_to_linear;
       trc_db[i].fun_from_linear = _babl_trc_gamma_from_linear;
       trc_db[i].fun_to_linear_buf = _babl_trc_gamma_to_linear_buf;
       trc_db[i].fun_from_linear_buf = _babl_trc_gamma_from_linear_buf;
+      //trc_db[i].fun_from_linear_buf_u8 = _babl_trc_gamma_from_linear_buf_u8;
 
       trc_db[i].poly_gamma_to_linear_x0 = POLY_GAMMA_X0;
       trc_db[i].poly_gamma_to_linear_x1 = POLY_GAMMA_X1;
@@ -582,6 +588,7 @@ BABL_SIMD_SUFFIX (babl_trc_new) (const char *name,
       trc_db[i].fun_to_linear = _babl_trc_srgb_to_linear;
       trc_db[i].fun_from_linear = _babl_trc_srgb_from_linear;
       trc_db[i].fun_from_linear_buf = _babl_trc_srgb_from_linear_buf;
+      //trc_db[i].fun_from_linear_buf_u8 = _babl_trc_srgb_from_linear_buf_u8;
       trc_db[i].fun_to_linear_buf = _babl_trc_srgb_to_linear_buf;
       break;
     case BABL_TRC_LUT:
