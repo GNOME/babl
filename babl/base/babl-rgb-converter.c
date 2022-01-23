@@ -155,7 +155,7 @@ universal_nonlinear_rgba_u8_converter (const Babl    *conversion,
   uint8_t *rgba_in_u8 = (void*)src_char;
   uint8_t *rgba_out_u8 = (void*)dst_char;
 
-  float *rgb = babl_malloc (sizeof(float) * 4 * samples);
+  float rgb[4*samples];
 
   for (i = 0; i < samples; i++)
   {
@@ -178,7 +178,6 @@ universal_nonlinear_rgba_u8_converter (const Babl    *conversion,
       rgba_out_u8[i+2] = babl_trc_from_linear (from_trc_blue,  rgb[i+2]) * 255.5f;
     }
   }
-  babl_free (rgb);
 }
 
 
@@ -249,7 +248,7 @@ universal_nonlinear_rgb_u8_converter (const Babl    *conversion,
   uint8_t *rgb_in_u8 = (void*)src_char;
   uint8_t *rgb_out_u8 = (void*)dst_char;
 
-  float *rgba_out = babl_malloc (sizeof(float) * 4 * samples);
+  float rgba_out[4*samples];
 
   for (i = 0; i < samples; i++)
   {
@@ -269,7 +268,6 @@ universal_nonlinear_rgb_u8_converter (const Babl    *conversion,
         rgb_out_u8[i*3+c] = rgba_out[i*4+c] * 255.5f;
   }
 
-  babl_free (rgba_out);
 }
 
 
@@ -356,7 +354,7 @@ universal_nonlinear_rgba_u8_converter_sse2 (const Babl    *conversion,
   uint8_t *rgba_in_u8 = (void*)src_char;
   uint8_t *rgba_out_u8 = (void*)dst_char;
 
-  float *rgba_out = babl_malloc (sizeof(float) * 4 * samples);
+  float rgba_out[4*samples];
 
   for (i = 0; i < samples * 4; i+= 4)
   {
@@ -376,8 +374,6 @@ universal_nonlinear_rgba_u8_converter_sse2 (const Babl    *conversion,
       for (c = 0; c < 3; c ++)
         rgba_out_u8[i+c] = rgba_out[i+c] * 255.5f;
   }
-
-  babl_free (rgba_out);
 }
 
 static inline void
@@ -397,7 +393,7 @@ universal_nonlinear_rgb_u8_converter_sse2 (const Babl    *conversion,
   uint8_t *rgb_in_u8 = (void*)src_char;
   uint8_t *rgb_out_u8 = (void*)dst_char;
 
-  float *rgba_out = babl_malloc (sizeof(float) * 4 * samples);
+  float rgba_out[4*samples];
 
   for (i = 0; i < samples; i++)
   {
@@ -415,8 +411,6 @@ universal_nonlinear_rgb_u8_converter_sse2 (const Babl    *conversion,
       for (unsigned c = 0; c < 3; c ++)
         rgb_out_u8[i*3+c] = rgba_out[i*4+c] * 255.5f;
   }
-
-  babl_free (rgba_out);
 }
 
 
