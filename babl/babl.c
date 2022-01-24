@@ -200,6 +200,19 @@ void (*babl_base_init)  (void) = babl_base_init_generic;
 
 const Babl * babl_trc_lookup_by_name_generic (const char *name);
 
+int babl_fish_lut_process_maybe_generic (const Babl *babl,
+                                        const char *source,
+                                        const char *destination,
+                                        long        n,
+                                        void       *data);
+
+int (*babl_fish_lut_process_maybe) (const Babl *babl,
+                                    const char *source,
+                                    const char *destination,
+                                    long        n,
+                                    void       *data) =
+         babl_fish_lut_process_maybe_generic;
+
 
 const Babl *
 babl_trc_new_generic (const char *name,
@@ -222,15 +235,25 @@ const Babl *
               float      *lut) = babl_trc_new_generic;
 
 #ifdef ARCH_X86_64
+
+int babl_fish_lut_process_maybe_x86_64_v2 (const Babl *babl,
+                                           const char *source,
+                                           const char *destination,
+                                           long        n,
+                                           void       *data);
+int babl_fish_lut_process_maybe_x86_64_v3 (const Babl *babl,
+                                           const char *source,
+                                           const char *destination,
+                                           long        n,
+                                           void       *data);
+
 void babl_base_init_x86_64_v2 (void);
 void babl_base_init_x86_64_v3 (void);
 void _babl_space_add_universal_rgb_x86_64_v2 (const Babl *space);
 void _babl_space_add_universal_rgb_x86_64_v3 (const Babl *space);
 
-const Babl *
-babl_trc_lookup_by_name_x86_64_v2 (const char *name);
-const Babl *
-babl_trc_lookup_by_name_x86_64_v3 (const char *name);
+const Babl * babl_trc_lookup_by_name_x86_64_v2 (const char *name);
+const Babl * babl_trc_lookup_by_name_x86_64_v3 (const char *name);
 
 const Babl *
 babl_trc_new_x86_64_v2 (const char *name,
@@ -247,6 +270,13 @@ babl_trc_new_x86_64_v3 (const char *name,
 
 #endif
 #ifdef ARCH_ARM
+
+int babl_fish_lut_process_maybe_arm_neon (const Babl *babl,
+                                          const char *source,
+                                          const char *destination,
+                                          long        n,
+                                          void       *data);
+
 void babl_base_init_arm_neon (void);
 void _babl_space_add_universal_rgb_arm_neon (const Babl *space);
 
@@ -268,6 +298,7 @@ static void simd_init (void)
   BablCpuAccelFlags accel = babl_cpu_accel_get_support ();
   if ((accel & BABL_CPU_ACCEL_X86_64_V3) == BABL_CPU_ACCEL_X86_64_V3)
   {
+    babl_fish_lut_process_maybe = babl_fish_lut_process_maybe_x86_64_v3;
     babl_base_init = babl_base_init_x86_64_v2; /// !!
                                                // this is correct,
                                                // it performs better
@@ -278,6 +309,7 @@ static void simd_init (void)
   }
   else if ((accel & BABL_CPU_ACCEL_X86_64_V2) == BABL_CPU_ACCEL_X86_64_V2)
   {
+    babl_fish_lut_process_maybe = babl_fish_lut_process_maybe_x86_64_v2;
     babl_base_init = babl_base_init_x86_64_v2;
     babl_trc_new = babl_trc_new_x86_64_v2;
     babl_trc_lookup_by_name = babl_trc_lookup_by_name_x86_64_v2;
@@ -288,6 +320,7 @@ static void simd_init (void)
   BablCpuAccelFlags accel = babl_cpu_accel_get_support ();
   if ((accel & BABL_CPU_ACCEL_ARM_NEON) == BABL_CPU_ACCEL_ARM_NEON)
   {
+    babl_fish_lut_process_maybe = babl_fish_lut_process_maybe_arm_neon;
     babl_base_init = babl_base_init_arm_neon;
     babl_trc_new = babl_trc_new_arm_neon;
     babl_trc_lookup_by_name = babl_trc_lookup_by_name_arm_neon;

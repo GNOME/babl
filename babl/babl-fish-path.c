@@ -76,7 +76,7 @@ get_path_instrumentation (FishPathInstrumentation *fpi,
 
 
 static inline void
-process_conversion_path (BablList   *path,
+_babl_process_conversion_path (BablList   *path,
                          const void *source_buffer,
                          int         source_bpp,
                          void       *destination_buffer,
@@ -756,118 +756,6 @@ babl_gc_fishes (void)
   //  is responsibility of higher layers
 }
 
-static int babl_fish_lut_process_maybe (const Babl *babl,
-                                        const char *source,
-                                        const char *destination,
-                                        long        n,
-                                        void       *data)
-{
-     uint32_t *lut = (uint32_t*)babl->fish_path.u8_lut;
-     ((Babl*)babl)->fish.pixels += n;
-
-
-     if (!lut && babl->fish.pixels > 256 * 128)
-     {
-#if 0
-       fprintf (stderr, "building LUT for %s to %s\n",
-                        babl_get_name (babl->conversion.source),
-                        babl_get_name (babl->conversion.destination));
-#endif
-       lut = malloc (256 * 256 * 256 * 4);
-       if (babl->fish_path.source_bpp == 8)
-       {
-          uint64_t *lut_in = malloc (256 * 256  * 256 * 8);
-          for (int o = 0; o < 256 * 256 * 256; o++)
-          {
-            uint64_t v = o;
-            uint64_t v0 =       v & 0xff;
-            uint64_t v1 =   (v & 0xff00) >> 8;
-            uint64_t v2 = (v & 0xff0000) >> 16;
-
-#if 1
-            // gives same results... but purer white is better?
-            v0 = (v0 <<  8) | (((v0&1)?0xff:0)<<0);
-            v1 = (v1 << 24) | (((v1&1)?(uint64_t)0xff:0)<<16);
-            v2 = (v2 << 40) | (((v2&1)?(uint64_t)0xff:0)<<32);
-#else
-            v0 = (v0 <<  8);
-            v1 = (v1 << 24);
-            v2 = (v2 << 40);
-#endif
-            lut_in[o] = v;
-          }
-
-          process_conversion_path (babl->fish_path.conversion_list,
-                                   lut_in,
-                                   babl->fish_path.source_bpp,
-                                   lut,
-                                   babl->fish_path.dest_bpp,
-                                   256*256*256);
-          free (lut_in);
-       }
-       else
-       {
-       for (int o = 0; o < 256 * 256 * 256; o++)
-         lut[o] = o;
-       process_conversion_path (babl->fish_path.conversion_list,
-                                lut,
-                                babl->fish_path.source_bpp,
-                                lut,
-                                babl->fish_path.dest_bpp,
-                                256*256*256);
-       }
-       // XXX : there is still a micro race, if lost we should only
-       // leak a LUT not produce wrong results.
-       if (babl->fish_path.u8_lut == NULL)
-       {
-         (((Babl*)babl)->fish_path.u8_lut) = (uint8_t*)lut;
-
-       }
-       else
-       {
-         free (lut);
-         lut = (uint32_t*)babl->fish_path.u8_lut;
-       }
-     }
-     if (lut)
-     {
-        if (babl->fish_path.source_bpp == 8) // 16 bit, not working yet
-        {                                    // half and u16 need their
-                                             // own separate handling
-          uint32_t *src = (uint32_t*)source;
-          uint32_t *dst = (uint32_t*)destination;
-          lut = (uint32_t*)babl->fish_path.u8_lut;
-          while (n--)
-          {
-             uint32_t col_a = *src++;
-             uint32_t col_b = *src++;
-             uint32_t col;
-
-             uint32_t c_ar = ((col_a & 0xff000000)|
-                             ((col_a & 0x0000ff00) << 8));
-             uint32_t c_gb = ((col_b & 0xff000000)|
-                             ((col_b & 0x0000ff00) << 8))>>16;
-             col = c_ar|c_gb;
-
-             *dst++ = lut[col & 0xffffff] | (col & 0xff000000);
-          }
-        }
-        else
-        {
-          uint32_t *src = (uint32_t*)source;
-          uint32_t *dst = (uint32_t*)destination;
-          lut = (uint32_t*)babl->fish_path.u8_lut;
-          while (n--)
-          {
-             uint32_t col = *src++;
-             *dst++ = lut[col & 0xffffff] | (col & 0xff000000);
-          }
-        }
-        BABL(babl)->fish_path.last_lut_use = babl_ticks ();
-        return 1;
-     }
-     return 0;
-}
 
 static void
 babl_fish_path_process (const Babl *babl,
@@ -895,7 +783,7 @@ babl_fish_path_process (const Babl *babl,
       conv_counter = 0;
     }
   }
-  process_conversion_path (babl->fish_path.conversion_list,
+  _babl_process_conversion_path (babl->fish_path.conversion_list,
                            source,
                            babl->fish_path.source_bpp,
                            destination,
@@ -1037,7 +925,7 @@ static void inline *align_16 (unsigned char *ret)
 }
 
 static inline void
-process_conversion_path (BablList   *path,
+_babl_process_conversion_path (BablList   *path,
                          const void *source_buffer,
                          int         source_bpp,
                          void       *destination_buffer,
@@ -1108,6 +996,23 @@ process_conversion_path (BablList   *path,
         }
   }
 }
+
+void
+babl_process_conversion_path (BablList   *path,
+                         const void *source_buffer,
+                         int         source_bpp,
+                         void       *destination_buffer,
+                         int         dest_bpp,
+                         long        n)
+{
+  _babl_process_conversion_path (path,
+                          source_buffer,
+                          source_bpp,
+                          destination_buffer,
+                          dest_bpp,
+                          n);
+}
+
 
 static void
 init_path_instrumentation (FishPathInstrumentation *fpi,
@@ -1244,7 +1149,7 @@ get_path_instrumentation (FishPathInstrumentation *fpi,
   /* calculate this path's view of what the result should be */
   ticks_start = babl_ticks ();
   for (int i = 0; i < BABL_TEST_ITER; i ++)
-  process_conversion_path (path, fpi->source, source_bpp, fpi->destination,
+  _babl_process_conversion_path (path, fpi->source, source_bpp, fpi->destination,
                            dest_bpp, fpi->num_test_pixels);
   ticks_end = babl_ticks ();
   *path_cost = (ticks_end - ticks_start);

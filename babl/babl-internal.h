@@ -373,6 +373,12 @@ extern const Babl *
 extern const Babl *
 (*babl_trc_lookup_by_name) (const char *name);
 
+extern int (*babl_fish_lut_process_maybe) (const Babl *babl,
+                                        const char *source,
+                                        const char *destination,
+                                        long        n,
+                                        void       *data);
+
 void babl_space_to_xyz   (const Babl *space, const double *rgb, double *xyz);
 void babl_space_from_xyz (const Babl *space, const double *xyz, double *rgb);
 
@@ -473,5 +479,12 @@ _babl_space_for_lcms (const char *icc_data, int icc_length); // XXX pass profile
 
 void
 babl_trc_class_init (void);
+void
+babl_process_conversion_path (BablList   *path,
+                         const void *source_buffer,
+                         int         source_bpp,
+                         void       *destination_buffer,
+                         int         dest_bpp,
+                         long        n);
 
 #endif
