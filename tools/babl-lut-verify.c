@@ -62,6 +62,57 @@ test_u8_premul (void)
 
 
 static double
+test_rgb (void)
+{
+  uint8_t *src = malloc (PIXELS*4);
+  uint8_t *dst = malloc (PIXELS*4);
+  uint8_t *dst2 = malloc (PIXELS*4);
+  double error = 0.0;
+
+  for (int i = 0; i < PIXELS; i++)
+    for (int c = 0; c < 4; c++)
+      src[i*4+c] = random();
+
+  babl_process (
+      babl_fish (
+          babl_format_with_space ("R'G'B' u8", babl_space("Apple")),
+          babl_format_with_space ("R'G'B' u8", babl_space("ProPhoto"))),
+      src, dst, PIXELS);
+  babl_process (
+      babl_fish (
+          babl_format_with_space ("R'G'B' u8", babl_space("Apple")),
+          babl_format_with_space ("R'G'B' u8", babl_space("ProPhoto"))),
+      src, dst2, PIXELS);
+  babl_process (
+      babl_fish (
+          babl_format_with_space ("R'G'B' u8", babl_space("Apple")),
+          babl_format_with_space ("R'G'B' u8", babl_space("ProPhoto"))),
+      src, dst2, PIXELS);
+  babl_process (
+      babl_fish (
+          babl_format_with_space ("R'G'B' u8", babl_space("Apple")),
+          babl_format_with_space ("R'G'B' u8", babl_space("ProPhoto"))),
+      src, dst2, PIXELS);
+
+  for (int i = 0; i < PIXELS; i++)
+  {
+    error += sqrt ((dst[i*3+0] - dst2[i*3+0])*
+                   (dst[i*3+0] - dst2[i*3+0])+
+                   (dst[i*3+1] - dst2[i*3+1])*
+                   (dst[i*3+1] - dst2[i*3+1])+
+                   (dst[i*3+2] - dst2[i*3+2])*
+                   (dst[i*3+2] - dst2[i*3+2]));
+  }
+
+  free (src);
+  free (dst);
+  free (dst2);
+
+  return error;
+}
+
+
+static double
 test_u8 (void)
 {
   uint8_t *src = malloc (PIXELS*4);
@@ -390,6 +441,14 @@ int main (int argc, char **argv)
     fprintf (stdout, "%.20f\n", error/(PIXELS*4));
   else
     fprintf (stdout, "OK\n");
+
+  fprintf (stdout, "R'G'B u8 ");
+  error = test_rgb ();
+  if (error != 0.0)
+    fprintf (stdout, "%.20f\n", error/(PIXELS*4));
+  else
+    fprintf (stdout, "OK\n");
+
 
   fprintf (stdout, "u8 premul ");
   error = test_u8_premul ();

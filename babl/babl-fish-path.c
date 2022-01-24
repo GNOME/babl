@@ -660,6 +660,8 @@ babl_fish_path2 (const Babl *source,
      (source->format.model->flags & BABL_MODEL_FLAG_ASSOCIATED)==0  &&
      (
       (babl->fish_path.source_bpp == 4 && babl->fish_path.dest_bpp == 4)
+      ||(babl->fish_path.source_bpp == 3 && babl->fish_path.dest_bpp == 4)
+      ||(babl->fish_path.source_bpp == 3 && babl->fish_path.dest_bpp == 3)
       // XXX 16bit code paths not enabled yet.
       //
       //|| (babl->fish_path.source_bpp == 8 && babl->fish_path.dest_bpp == 4)
@@ -756,17 +758,21 @@ babl_gc_fishes (void)
   //  is responsibility of higher layers
 }
 
+#define BABL_LIKELY(x)      __builtin_expect(!!(x), 1)
+#define BABL_UNLIKELY(x)    __builtin_expect(!!(x), 0)
+
 static int babl_fish_lut_process_maybe (const Babl *babl,
                                         const char *source,
                                         const char *destination,
                                         long        n,
                                         void       *data)
 {
+     int source_bpp = babl->fish_path.source_bpp;
+     int dest_bpp = babl->fish_path.dest_bpp;
      uint32_t *lut = (uint32_t*)babl->fish_path.u8_lut;
-     ((Babl*)babl)->fish.pixels += n;
+     BABL(babl)->fish.pixels += n;
 
-
-     if (!lut && babl->fish.pixels > 256 * 128)
+     if (BABL_UNLIKELY(!lut && babl->fish.pixels >= 128 * 256))
      {
 #if 0
        fprintf (stderr, "building LUT for %s to %s\n",
@@ -774,44 +780,128 @@ static int babl_fish_lut_process_maybe (const Babl *babl,
                         babl_get_name (babl->conversion.destination));
 #endif
        lut = malloc (256 * 256 * 256 * 4);
+       if (source_bpp ==4)
        {
-       for (int o = 0; o < 256 * 256 * 256; o++)
-         lut[o] = o;
-       process_conversion_path (babl->fish_path.conversion_list,
-                                lut,
-                                babl->fish_path.source_bpp,
-                                lut,
-                                babl->fish_path.dest_bpp,
-                                256*256*256);
+         for (int o = 0; o < 256 * 256 * 256; o++)
+           lut[o] = o;
+         process_conversion_path (babl->fish_path.conversion_list,
+                                  lut, 4,
+                                  lut, 4,
+                                  256*256*256);
+         for (int o = 0; o < 256 * 256 * 256; o++)
+           lut[o] = lut[o] & 0x00ffffff;
        }
+       else if (source_bpp = 3 && dest_bpp == 3)
+       {
+         uint8_t *temp_lut = malloc (256 * 256 * 256 * 3);
+         uint8_t *temp_lut2 = malloc (256 * 256 * 256 * 3);
+         int o = 0;
+         for (int r = 0; r < 256; r++)
+         for (int g = 0; g < 256; g++)
+         for (int b = 0; b < 256; b++, o++)
+         {
+           temp_lut[o*3+0]=r;
+           temp_lut[o*3+1]=g;
+           temp_lut[o*3+2]=b;
+         }
+         process_conversion_path (babl->fish_path.conversion_list,
+                                  temp_lut, 3,
+                                  temp_lut2, 3,
+                                  256*256*256);
+         babl_process (babl_fish (babl_format ("R'G'B' u8"), babl_format ("R'G'B'A u8")),
+                       temp_lut2, lut, 256*256*256);
+         for (int o = 0; o < 256 * 256 * 256; o++)
+           lut[o] = lut[o] & 0x00ffffff;
+         free (temp_lut);
+         free (temp_lut2);
+       }
+       else if (source_bpp = 3 && dest_bpp == 4)
+       {
+         uint8_t *temp_lut = malloc (256 * 256 * 256 * 3);
+         int o = 0;
+         for (int r = 0; r < 256; r++)
+         for (int g = 0; g < 256; g++)
+         for (int b = 0; b < 256; b++, o++)
+         {
+           temp_lut[o*3+0]=r;
+           temp_lut[o*3+1]=g;
+           temp_lut[o*3+2]=b;
+         }
+         process_conversion_path (babl->fish_path.conversion_list,
+                                  temp_lut, 3,
+                                  lut, 4,
+                                  256*256*256);
+         for (int o = 0; o < 256 * 256 * 256; o++)
+           lut[o] = lut[o] & 0x00ffffff;
+         free (temp_lut);
+       }
+
        if (babl->fish_path.u8_lut == NULL)
        {
-         (((Babl*)babl)->fish_path.u8_lut) = (uint8_t*)lut;
+         (BABL(babl)->fish_path.u8_lut) = lut;
          // XXX need memory barrier?
-         if ((((Babl*)babl)->fish_path.u8_lut) != (uint8_t*)lut)
+         if ((BABL(babl)->fish_path.u8_lut) != lut)
          {
            free (lut);
-           lut = (uint32_t*)babl->fish_path.u8_lut;
+           lut = babl->fish_path.u8_lut;
          }
        }
        else
        {
          free (lut);
-         lut = (uint32_t*)babl->fish_path.u8_lut;
+         lut = babl->fish_path.u8_lut;
        }
      }
      if (lut)
      {
-        uint32_t *src = (uint32_t*)source;
-        uint32_t *dst = (uint32_t*)destination;
-        lut = (uint32_t*)babl->fish_path.u8_lut;
-        while (n--)
+        if (source_bpp == 4 && dest_bpp == 4)
         {
-           uint32_t col = *src++;
-           *dst++ = lut[col & 0xffffff] | (col & 0xff000000);
+          uint32_t *src = (uint32_t*)source;
+          uint32_t *dst = (uint32_t*)destination;
+          lut = (uint32_t*)babl->fish_path.u8_lut;
+          BABL(babl)->fish_path.last_lut_use = babl_ticks ();
+          while (n--)
+          {
+             uint32_t col = *src++;
+             *dst = col & 0xff000000;
+             *dst |= lut[col & 0xffffff];
+             dst++;
+          }
+          return 1;
         }
-        BABL(babl)->fish_path.last_lut_use = babl_ticks ();
-        return 1;
+        else if (source_bpp == 3 && dest_bpp == 3)
+        {
+          uint8_t *src = (uint8_t*)source;
+          uint8_t *dst = (uint8_t*)destination;
+          lut = (uint32_t*)babl->fish_path.u8_lut;
+          BABL(babl)->fish_path.last_lut_use = babl_ticks ();
+          while (n--)
+          {
+             uint32_t col = src[0]*256*256+src[1]*256+src[2];
+             uint32_t val = lut[col];
+             dst[2]=(val >> 16) & 0xff;
+             dst[1]=(val >> 8) & 0xff;
+             dst[0]=val & 0xff;
+             dst+=3;
+             src+=3;
+          }
+          return 1;
+        }
+        else if (source_bpp == 3 && dest_bpp == 4)
+        {
+          uint8_t *src = (uint8_t*)source;
+          uint32_t *dst = (uint32_t*)destination;
+          lut = (uint32_t*)babl->fish_path.u8_lut;
+          BABL(babl)->fish_path.last_lut_use = babl_ticks ();
+          while (n--)
+          {
+             uint32_t col = src[0]*256*256+src[1]*256+src[2];
+             *dst = lut[col];
+             dst++;
+             src+=3;
+          }
+          return 1;
+        }
      }
      return 0;
 }
@@ -826,17 +916,15 @@ babl_fish_path_process (const Babl *babl,
   if (babl->fish_path.is_u8_color_conv)
   {
      if (babl_fish_lut_process_maybe (babl,
-                                      source,
-                                      destination,
-                                      n,
+                                      source, destination, n,
                                       data))
-         return;
+       return;
   }
   else
   {
     static long conv_counter = 0;
     conv_counter+=n;
-    if (conv_counter > 1000 * 1000 * 10) // possibly run gc every 10 megapixels
+    if (conv_counter > 1000 * 1000 * 10) // run gc every 10 megapixels
     {
       babl_gc_fishes ();
       conv_counter = 0;

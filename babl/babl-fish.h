@@ -70,7 +70,7 @@ typedef struct
   int        source_bpp;
   int        dest_bpp;
   unsigned int is_u8_color_conv:1; // keep track of count, and make 
-  uint8_t   *u8_lut;
+  uint32_t  *u8_lut;
   long       last_lut_use;
   BablList  *conversion_list;
 } BablFishPath;

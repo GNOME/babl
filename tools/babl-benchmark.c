@@ -25,8 +25,8 @@
 #define random  rand
 #endif
 
-int ITERATIONS = 20;
-#define  N_PIXELS (512*256)  // a too small batch makes the test set live
+int ITERATIONS = 5;
+#define  N_PIXELS (1024*1024)  // a too small batch makes the test set live
                                // in l2 cache skewing results
 
                                // we could also add a cache purger..
