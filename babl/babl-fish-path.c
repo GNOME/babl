@@ -774,38 +774,6 @@ static int babl_fish_lut_process_maybe (const Babl *babl,
                         babl_get_name (babl->conversion.destination));
 #endif
        lut = malloc (256 * 256 * 256 * 4);
-       if (babl->fish_path.source_bpp == 8)
-       {
-          uint64_t *lut_in = malloc (256 * 256  * 256 * 8);
-          for (int o = 0; o < 256 * 256 * 256; o++)
-          {
-            uint64_t v = o;
-            uint64_t v0 =       v & 0xff;
-            uint64_t v1 =   (v & 0xff00) >> 8;
-            uint64_t v2 = (v & 0xff0000) >> 16;
-
-#if 1
-            // gives same results... but purer white is better?
-            v0 = (v0 <<  8) | (((v0&1)?0xff:0)<<0);
-            v1 = (v1 << 24) | (((v1&1)?(uint64_t)0xff:0)<<16);
-            v2 = (v2 << 40) | (((v2&1)?(uint64_t)0xff:0)<<32);
-#else
-            v0 = (v0 <<  8);
-            v1 = (v1 << 24);
-            v2 = (v2 << 40);
-#endif
-            lut_in[o] = v;
-          }
-
-          process_conversion_path (babl->fish_path.conversion_list,
-                                   lut_in,
-                                   babl->fish_path.source_bpp,
-                                   lut,
-                                   babl->fish_path.dest_bpp,
-                                   256*256*256);
-          free (lut_in);
-       }
-       else
        {
        for (int o = 0; o < 256 * 256 * 256; o++)
          lut[o] = o;
@@ -816,12 +784,15 @@ static int babl_fish_lut_process_maybe (const Babl *babl,
                                 babl->fish_path.dest_bpp,
                                 256*256*256);
        }
-       // XXX : there is still a micro race, if lost we should only
-       // leak a LUT not produce wrong results.
        if (babl->fish_path.u8_lut == NULL)
        {
          (((Babl*)babl)->fish_path.u8_lut) = (uint8_t*)lut;
-
+         // XXX need memory barrier?
+         if ((((Babl*)babl)->fish_path.u8_lut) != (uint8_t*)lut)
+         {
+           free (lut);
+           lut = (uint32_t*)babl->fish_path.u8_lut;
+         }
        }
        else
        {
@@ -831,37 +802,13 @@ static int babl_fish_lut_process_maybe (const Babl *babl,
      }
      if (lut)
      {
-        if (babl->fish_path.source_bpp == 8) // 16 bit, not working yet
-        {                                    // half and u16 need their
-                                             // own separate handling
-          uint32_t *src = (uint32_t*)source;
-          uint32_t *dst = (uint32_t*)destination;
-          lut = (uint32_t*)babl->fish_path.u8_lut;
-          while (n--)
-          {
-             uint32_t col_a = *src++;
-             uint32_t col_b = *src++;
-             uint32_t col;
-
-             uint32_t c_ar = ((col_a & 0xff000000)|
-                             ((col_a & 0x0000ff00) << 8));
-             uint32_t c_gb = ((col_b & 0xff000000)|
-                             ((col_b & 0x0000ff00) << 8))>>16;
-             col = c_ar|c_gb;
-
-             *dst++ = lut[col & 0xffffff] | (col & 0xff000000);
-          }
-        }
-        else
+        uint32_t *src = (uint32_t*)source;
+        uint32_t *dst = (uint32_t*)destination;
+        lut = (uint32_t*)babl->fish_path.u8_lut;
+        while (n--)
         {
-          uint32_t *src = (uint32_t*)source;
-          uint32_t *dst = (uint32_t*)destination;
-          lut = (uint32_t*)babl->fish_path.u8_lut;
-          while (n--)
-          {
-             uint32_t col = *src++;
-             *dst++ = lut[col & 0xffffff] | (col & 0xff000000);
-          }
+           uint32_t col = *src++;
+           *dst++ = lut[col & 0xffffff] | (col & 0xff000000);
         }
         BABL(babl)->fish_path.last_lut_use = babl_ticks ();
         return 1;
