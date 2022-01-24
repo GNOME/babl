@@ -656,8 +656,11 @@ babl_fish_path2 (const Babl *source,
   if (source->format.space != destination->format.space &&
      (source->format.model->flags & BABL_MODEL_FLAG_ASSOCIATED)==0  &&
      (
-      (babl->fish_path.source_bpp == 4 && babl->fish_path.dest_bpp == 4) ||
-      (babl->fish_path.source_bpp == 8 && babl->fish_path.dest_bpp == 4))
+      (babl->fish_path.source_bpp == 4 && babl->fish_path.dest_bpp == 4)
+      // XXX 16bit code paths not enabled yet.
+      //
+      //|| (babl->fish_path.source_bpp == 8 && babl->fish_path.dest_bpp == 4)
+      )
      )
   {
      if ((source->format.model->flags & BABL_MODEL_FLAG_ASSOCIATED)==0)
@@ -719,8 +722,15 @@ babl_fish_path_process (const Babl *babl,
   {
      uint32_t *lut = (uint32_t*)babl->fish_path.u8_lut;
      ((Babl*)babl)->fish.pixels += n;
+
+
      if (!lut && babl->fish.pixels > 256 * 128)
      {
+#if 0
+       fprintf (stderr, "building LUT for %s to %s\n",
+                        babl_get_name (babl->conversion.source),
+                        babl_get_name (babl->conversion.destination));
+#endif
        lut = malloc (256 * 256 * 256 * 4);
        if (babl->fish_path.source_bpp == 8)
        {
@@ -728,14 +738,21 @@ babl_fish_path_process (const Babl *babl,
           for (int o = 0; o < 256 * 256 * 256; o++)
           {
             uint64_t v = o;
-            int v0 =     v & 0xff;
-            int v1 =   v & 0xff00;
-            int v2 = v & 0xff0000;
-            v0 <<= 8;
-            v1 <<= 16;
-            v2 <<= 24;
-            v = v0||v1||v2;
-            lut_in[o] = v | (uint64_t)0xffff000000000000;
+            uint64_t v0 =       v & 0xff;
+            uint64_t v1 =   (v & 0xff00) >> 8;
+            uint64_t v2 = (v & 0xff0000) >> 16;
+
+#if 1
+            // gives same results... but purer white is better?
+            v0 = (v0 <<  8) | (((v0&1)?0xff:0)<<0);
+            v1 = (v1 << 24) | (((v1&1)?(uint64_t)0xff:0)<<16);
+            v2 = (v2 << 40) | (((v2&1)?(uint64_t)0xff:0)<<32);
+#else
+            v0 = (v0 <<  8);
+            v1 = (v1 << 24);
+            v2 = (v2 << 40);
+#endif
+            lut_in[o] = v;
           }
 
           process_conversion_path (babl->fish_path.conversion_list,
@@ -749,7 +766,7 @@ babl_fish_path_process (const Babl *babl,
        else
        {
        for (int o = 0; o < 256 * 256 * 256; o++)
-         lut[o] = o | 0xff000000;
+         lut[o] = o;
        process_conversion_path (babl->fish_path.conversion_list,
                                 lut,
                                 babl->fish_path.source_bpp,
@@ -772,8 +789,9 @@ babl_fish_path_process (const Babl *babl,
      }
      if (lut)
      {
-        if (babl->fish_path.source_bpp == 8)
-        {
+        if (babl->fish_path.source_bpp == 8) // 16 bit, not working yet
+        {                                    // half and u16 need their
+                                             // own separate handling
           uint32_t *src = (uint32_t*)source;
           uint32_t *dst = (uint32_t*)destination;
           lut = (uint32_t*)babl->fish_path.u8_lut;
@@ -781,13 +799,15 @@ babl_fish_path_process (const Babl *babl,
           {
              uint32_t col_a = *src++;
              uint32_t col_b = *src++;
-             uint32_t col, alpha;
-             col_a = col_a & 0xff00ff00;
-             col_b = (col_b & 0xff00ff00)>>8;
+             uint32_t col;
 
-             col = col_a | col_b;
-             alpha = col & 0xff000000;
-             *dst++ = lut[col & 0xffffff] | alpha;
+             uint32_t c_ar = ((col_a & 0xff000000)|
+                             ((col_a & 0x0000ff00) << 8));
+             uint32_t c_gb = ((col_b & 0xff000000)|
+                             ((col_b & 0x0000ff00) << 8))>>16;
+             col = c_ar|c_gb;
+
+             *dst++ = lut[col & 0xffffff] | (col & 0xff000000);
           }
         }
         else
@@ -798,8 +818,7 @@ babl_fish_path_process (const Babl *babl,
           while (n--)
           {
              uint32_t col = *src++;
-             uint32_t alpha = col & 0xff000000;
-             *dst++ = lut[col & 0xffffff] | alpha;
+             *dst++ = lut[col & 0xffffff] | (col & 0xff000000);
           }
         }
         return;
