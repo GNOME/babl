@@ -90,7 +90,6 @@ models (void)
     "linear",
     NULL);
 
-
   babl_model_new (
     "id", BABL_GRAY_ALPHA,
     babl_component_from_id (BABL_GRAY_LINEAR),

@@ -317,6 +317,9 @@ int
 _babl_fish_path_destroy (void *data)
 {
   Babl *babl=data;
+  if (babl->fish_path.u8_lut)
+    free (babl->fish_path.u8_lut);
+  babl->fish_path.u8_lut = NULL;
   if (babl->fish_path.conversion_list)
     babl_free (babl->fish_path.conversion_list);
   babl->fish_path.conversion_list = NULL;
@@ -663,6 +666,10 @@ babl_fish_path2 (const Babl *source,
       )
      )
   {
+     // as long as the highest 8bit of the 32bit of a 4 byte input is ignored
+     // (alpha) - and it is not an associated color model. A 24 bit LUT provides
+     // exact data. Thus this is valid for instance for "YA half"
+
      if ((source->format.model->flags & BABL_MODEL_FLAG_ASSOCIATED)==0)
        babl->fish_path.is_u8_color_conv = 1;
   }
@@ -709,6 +716,44 @@ babl_fish_path (const Babl *source,
                 const Babl *destination)
 {
   return babl_fish_path2 (source, destination, 0.0);
+}
+
+typedef struct GcContext {
+   long time;
+} GcContext;
+
+static int gc_fishes (Babl *babl, void *userdata)
+{
+  GcContext *context = userdata;
+  if (babl->class_type == BABL_FISH_PATH)
+  {
+    if (babl->fish_path.u8_lut)
+    {
+      if (context->time - babl->fish_path.last_lut_use >
+          1000 * 1000 * 60 * )
+      {
+        void *lut =babl->fish_path.u8_lut;
+        BABL(babl)->fish_path.u8_lut = NULL;
+        free (lut);
+#if 0
+        fprintf (stderr, "freeing LUT %s to %s unused for >5 minutes\n",
+                        babl_get_name (babl->conversion.source),
+                        babl_get_name (babl->conversion.destination));
+#endif
+      }
+    }
+  }
+  return 0;
+}
+                           
+static void
+babl_gc_fishes (void)
+{
+  GcContext context;
+  context.time = babl_ticks ();
+  babl_fish_class_for_each (gc_fishes, &context);
+  //malloc_trim (0); 
+  //  is responsibility of higher layers
 }
 
 static void
@@ -821,8 +866,19 @@ babl_fish_path_process (const Babl *babl,
              *dst++ = lut[col & 0xffffff] | (col & 0xff000000);
           }
         }
+        BABL(babl)->fish_path.last_lut_use = babl_ticks ();
         return;
      }
+  }
+  else
+  {
+    static long conv_counter = 0;
+    conv_counter+=n;
+    if (conv_counter > 1000 * 1000 * 10) // possibly run gc every 10 megapixels
+    {
+      babl_gc_fishes ();
+      conv_counter = 0;
+    }
   }
   process_conversion_path (babl->fish_path.conversion_list,
                            source,
