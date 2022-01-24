@@ -730,7 +730,7 @@ static int gc_fishes (Babl *babl, void *userdata)
     if (babl->fish_path.u8_lut)
     {
       if (context->time - babl->fish_path.last_lut_use >
-          1000 * 1000 * 60 * )
+          1000 * 1000 * 60 * 5)
       {
         void *lut =babl->fish_path.u8_lut;
         BABL(babl)->fish_path.u8_lut = NULL;

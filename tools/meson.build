@@ -1,6 +1,7 @@
 
 tool_names = [
   'babl_fish_path_fitness',
+  'babl-lut-verify',
   'babl-benchmark',
   'babl-html-dump',
   'babl-icc-dump',

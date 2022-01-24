@@ -25,7 +25,7 @@
 #define random  rand
 #endif
 
-int ITERATIONS = 100;
+int ITERATIONS = 20;
 #define  N_PIXELS (512*256)  // a too small batch makes the test set live
                                // in l2 cache skewing results
 
@@ -68,15 +68,19 @@ test (int set_no)
   int i, j;
   int OK = 1;
 
+  //printf("\e[3g");
+  //printf("     \eH       \eH    \eH      \eH ");
+
   char *src_data = babl_malloc (N_BYTES);
   char *dst_data = babl_malloc (N_BYTES);
-  double sum = 0;
 
 #define default_set(space, out_space) \
        babl_format_with_space("RGBA float", babl_space(space)), \
        babl_format_with_space("RaGaBaA float", babl_space(space)), \
        babl_format_with_space("R'G'B'A float", babl_space(space)), \
-       babl_format_with_space("cairo-ARGB32", babl_space(out_space)) 
+       babl_format_with_space("R'G'B'A u8", babl_space(out_space)) 
+
+//  babl_format_with_space("cairo-ARGB32", babl_space(out_space)) 
 
   const Babl **formats=NULL;
   const Babl *format_sets[][20]={
@@ -84,50 +88,53 @@ test (int set_no)
         { babl_format_with_space("R'G'B'A u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("R'G'B'A half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("R'G'B'A float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("RGBA u8", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("RGBA u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("RGBA half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("RGBA float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("Y' u8", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("Y' u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("Y' half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("Y' float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("Y u8", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("Y u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("Y half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("Y float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("Y'A u8", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("Y'A u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("Y'A half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("Y'A float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("YA u8", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("YA u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("YA half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("YA float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
 
 
         { babl_format_with_space("R'G'B'A u8", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
         { babl_format_with_space("R'G'B'A u16", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
         { babl_format_with_space("R'G'B'A half", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
         { babl_format_with_space("R'G'B'A float", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+        { babl_format_with_space("RGBA u8", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
         { babl_format_with_space("RGBA u16", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
         { babl_format_with_space("RGBA half", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
         { babl_format_with_space("RGBA float", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("Y' u8", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("Y' u16", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("Y' half", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("Y' float", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("Y u8", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("Y u16", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("Y half", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("Y float", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+        { babl_format_with_space("Y'A u8", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+        { babl_format_with_space("Y'A u16", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+        { babl_format_with_space("Y'A half", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+        { babl_format_with_space("Y'A float", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+        { babl_format_with_space("YA u8", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+        { babl_format_with_space("YA u16", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+        { babl_format_with_space("YA half", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+        { babl_format_with_space("YA float", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
 
         { babl_format_with_space("R'G'B'A u8", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
         { babl_format_with_space("R'G'B'A u16", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
         { babl_format_with_space("R'G'B'A half", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
         { babl_format_with_space("R'G'B'A float", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
+        { babl_format_with_space("RGBA u8", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
         { babl_format_with_space("RGBA u16", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
         { babl_format_with_space("RGBA half", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
         { babl_format_with_space("RGBA float", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("Y' u8", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("Y' u16", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("Y' half", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("Y' float", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("Y u8", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("Y u16", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("Y half", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("Y float", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
+        { babl_format_with_space("Y'A u8", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
+        { babl_format_with_space("Y'A u16", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
+        { babl_format_with_space("Y'A half", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
+        { babl_format_with_space("Y'A float", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
+        { babl_format_with_space("YA u8", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
+        { babl_format_with_space("YA u16", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
+        { babl_format_with_space("YA half", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
+        { babl_format_with_space("YA float", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
      };
 
   int n_formats = 0;
@@ -136,16 +143,19 @@ test (int set_no)
   const Babl *fishes[50 * 50];
   double mbps[50 * 50] = {0,};
   long n;
-  double max = 0.0;
 
   int show_details = 0;
   int set_iter = 0;
   int first_run = 1;
+  float max_throughput = 0;
 
   if (set_no > n_sets-1) set_no = n_sets-1;
 
+  double max = 0.0;
   while (set_iter < n_sets)
   {
+  double sum = 0;
+          n_formats = 0;
   if (set_no >= 0)
     formats=&format_sets[set_no][0];
   else
@@ -156,32 +166,32 @@ test (int set_no)
    src_data[i] = random();
 
  fprintf (stdout, "\n\n");
- fprintf (stdout, "set %i formats:\n", set_iter);
+ //fprintf (stdout, "set %i:\n", set_iter);
  for (i = 0; formats[i]; i++)
  {
-   fprintf (stdout, "  %s\n", babl_get_name (formats[i]));
+  // fprintf (stdout, "  %s\n", babl_get_name (formats[i]));
    n_formats++;
  }
- fprintf (stdout, "\n");
+ //fprintf (stdout, "\n");
 
  //fprintf (stdout,"%i iterations of %i pixels, mp/s is for sum of source and destinations bytes\n", ITERATIONS, N_PIXELS);
  
-
  n = 0;
  for (i = 0; formats[i]; i++)
    for (j = 0; formats[j]; j++)
-   if (i != j)
+   if (i != j && i != (n_formats - 1) && (i==0 || j!=n_formats-1))
    {
       const Babl *fish = babl_fish (formats[i], formats[j]);
       long end, start;
       int iters = ITERATIONS;
-
-      fprintf (stdout, "%s to %s          \r", babl_get_name (formats[i]),
-                                               babl_get_name (formats[j]));
+#if  1
+      fprintf (stdout, "%s to %s               \r", babl_get_name (formats[i]),
+                                                   babl_get_name (formats[j]));
+#endif
       fflush (0);
 
-      /* a quarter round of warmup */
-      babl_process (fish, src_data, dst_data, N_PIXELS * 0.25);
+      /* a round of warmup */
+      babl_process (fish, src_data, dst_data, N_PIXELS);
       start = babl_ticks ();
       while (iters--)
       {
@@ -195,47 +205,60 @@ test (int set_no)
 		      babl_format_get_bytes_per_pixel (formats[j]));
 
       sum += mbps[n];
+#if 1
       if (mbps[n] > max && first_run)
         max = mbps[n];
+      max = 500;
+#endif
       n++;
    }
 
+  fprintf (stdout, "                                                       \r");
 
-  fprintf (stdout, "\n%s %03.1f mb/s\taverage\n",
-                      unicode_hbar(16, sum / (n_formats * n_formats - n_formats) / max),
-                      sum / (n_formats * n_formats - n_formats));
+  float throughput  = sum / (n_formats * n_formats - n_formats);
+  if (throughput > max_throughput) max_throughput = throughput;
+  fprintf (stdout, "%s %03.3f mp/s\t%s layers with %s output\n\n",
+                      unicode_hbar(16, throughput / max_throughput), throughput,
+                      babl_get_name (formats[0]),
+                      babl_get_name (formats[n_formats-1]));
+
+      if (mbps[n] > max && first_run)
+        max = mbps[n];
 
 
  n = 0;
  for (i = 0; formats[i]; i++)
    for (j = 0; formats[j]; j++)
-   if (i != j)
+   if (i != j && i != (n_formats - 1) && (i==0 || j!=n_formats-1))
    {
-      fprintf (stdout, "%s %03.1f m%s/s\t%s to %s %.9f",
+      fprintf (stdout, "%s %03.3f m%s/s\t",
                       unicode_hbar(16, mbps[n] / max),
                       mbps[n],
-		      unit_pixels?"p":"b",
-                      babl_get_name (formats[i]),
-                      babl_get_name (formats[j]),
-                      fishes[n]->fish.error);
+		      unit_pixels?"p":"b");
 
 
       if (fishes[n]->class_type == BABL_FISH_REFERENCE)
       {
-        fprintf (stdout, "[R]");
+        fprintf (stdout, "-  ");
       }
       else if (fishes[n]->class_type == BABL_FISH_PATH)
       {
-        int k;
-        fprintf (stdout, "[%d]", fishes[n]->fish_path.conversion_list->count);
-        if (show_details)
-        {
-        for (k = 0; k < fishes[n]->fish_path.conversion_list->count; k++)
-        {
-          fprintf (stdout, "\n\t\t\t\t%s", babl_get_name (
-                   fishes[n]->fish_path.conversion_list->items[k]));
-        }
-        }
+        fprintf (stdout, "%d  ", fishes[n]->fish_path.conversion_list->count);
+      }
+
+      fprintf (stdout, "%s to %s\t%.9f",
+                      babl_get_name (formats[i]),
+                      babl_get_name (formats[j]),
+                      fishes[n]->fish.error);
+
+      if (fishes[n]->class_type == BABL_FISH_PATH && show_details)
+      {
+      for (int k = 0; k < fishes[n]->fish_path.conversion_list->count; k++)
+      {
+        fprintf (stdout, "\n  %s", babl_get_name (
+                 fishes[n]->fish_path.conversion_list->items[k]));
+      }
+      fprintf (stdout, "\n");
       }
       fprintf (stdout, "\n");
       n++;
@@ -244,6 +267,8 @@ test (int set_no)
   fflush (0);
   set_iter++;
   first_run = 0;
+  if (set_no>=0)
+          return !OK;
   }
 
   if (!OK)
@@ -261,10 +286,14 @@ main (int    argc,
   {
     if (test (atoi(argv[1])))
       return -1;
+ // if (test (atoi(argv[1])))
+ //   return -1;
   }
   else
-    if (test (-1))
-      return -1;
+  {
+    test (-1);
+//  test (-1);
+  }
   babl_exit ();
   return 0;
 }
