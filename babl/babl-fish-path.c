@@ -756,15 +756,12 @@ babl_gc_fishes (void)
   //  is responsibility of higher layers
 }
 
-static void
-babl_fish_path_process (const Babl *babl,
-                        const char *source,
-                        char       *destination,
-                        long        n,
-                        void       *data)
+static int babl_fish_lut_process_maybe (const Babl *babl,
+                                        const char *source,
+                                        const char *destination,
+                                        long        n,
+                                        void       *data)
 {
-  if (babl->fish_path.is_u8_color_conv)
-  {
      uint32_t *lut = (uint32_t*)babl->fish_path.u8_lut;
      ((Babl*)babl)->fish.pixels += n;
 
@@ -867,8 +864,26 @@ babl_fish_path_process (const Babl *babl,
           }
         }
         BABL(babl)->fish_path.last_lut_use = babl_ticks ();
-        return;
+        return 1;
      }
+     return 0;
+}
+
+static void
+babl_fish_path_process (const Babl *babl,
+                        const char *source,
+                        char       *destination,
+                        long        n,
+                        void       *data)
+{
+  if (babl->fish_path.is_u8_color_conv)
+  {
+     if (babl_fish_lut_process_maybe (babl,
+                                      source,
+                                      destination,
+                                      n,
+                                      data))
+         return;
   }
   else
   {
