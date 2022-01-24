@@ -6,6 +6,9 @@
 
 #define PIXELS 127*256 //less than threshold for generating
 
+#ifndef HAVE_SRANDOM
+#define random rand
+#endif
 
 static double
 test_u8_premul (void)
