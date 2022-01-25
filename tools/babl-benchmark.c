@@ -35,6 +35,8 @@ int unit_pixels = 1; // use megapixels per second instead of bytes
 
 #define  N_BYTES  N_PIXELS * (4 * 8)
 
+#define BAR_WIDTH 40
+
 static const char *
 unicode_hbar (int    width, 
               double fraction)
@@ -80,18 +82,24 @@ test (int set_no)
        babl_format_with_space("R'G'B'A float", babl_space(space)), \
        babl_format_with_space("R'G'B'A u8", babl_space(out_space)) 
 
-//  babl_format_with_space("cairo-ARGB32", babl_space(out_space)) 
-
   const Babl **formats=NULL;
   const Babl *format_sets[][20]={
         { babl_format_with_space("R'G'B'A u8", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("R'G'B'A u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("R'G'B'A half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("R'G'B'A float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("R'G'B' u8", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("R'G'B' u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("R'G'B' half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("R'G'B' float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("RGBA u8", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("RGBA u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("RGBA half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("RGBA float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("RGB u8", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("RGB u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("RGB half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("RGB float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("Y'A u8", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("Y'A u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("Y'A half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
@@ -106,14 +114,26 @@ test (int set_no)
         { babl_format_with_space("R'G'B'A u16", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
         { babl_format_with_space("R'G'B'A half", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
         { babl_format_with_space("R'G'B'A float", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+        { babl_format_with_space("R'G'B' u8", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+        { babl_format_with_space("R'G'B' u16", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+        { babl_format_with_space("R'G'B' half", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+        { babl_format_with_space("R'G'B' float", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+
         { babl_format_with_space("RGBA u8", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
         { babl_format_with_space("RGBA u16", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
         { babl_format_with_space("RGBA half", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
         { babl_format_with_space("RGBA float", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+
+        { babl_format_with_space("RGB u8", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+        { babl_format_with_space("RGB u16", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+        { babl_format_with_space("RGB half", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+        { babl_format_with_space("RGB float", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+
         { babl_format_with_space("Y'A u8", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
         { babl_format_with_space("Y'A u16", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
         { babl_format_with_space("Y'A half", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
         { babl_format_with_space("Y'A float", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+
         { babl_format_with_space("YA u8", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
         { babl_format_with_space("YA u16", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
         { babl_format_with_space("YA half", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
@@ -123,10 +143,18 @@ test (int set_no)
         { babl_format_with_space("R'G'B'A u16", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
         { babl_format_with_space("R'G'B'A half", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
         { babl_format_with_space("R'G'B'A float", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
+        { babl_format_with_space("R'G'B' u8", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
+        { babl_format_with_space("R'G'B' u16", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
+        { babl_format_with_space("R'G'B' half", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
+        { babl_format_with_space("R'G'B' float", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
         { babl_format_with_space("RGBA u8", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
         { babl_format_with_space("RGBA u16", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
         { babl_format_with_space("RGBA half", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
         { babl_format_with_space("RGBA float", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
+        { babl_format_with_space("RGB u8", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
+        { babl_format_with_space("RGB u16", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
+        { babl_format_with_space("RGB half", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
+        { babl_format_with_space("RGB float", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
         { babl_format_with_space("Y'A u8", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
         { babl_format_with_space("Y'A u16", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
         { babl_format_with_space("Y'A half", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
@@ -191,7 +219,7 @@ test (int set_no)
       fflush (0);
 
       /* a round of warmup */
-      babl_process (fish, src_data, dst_data, N_PIXELS);
+      babl_process (fish, src_data, dst_data, N_PIXELS/4);
       start = babl_ticks ();
       while (iters--)
       {
@@ -215,10 +243,10 @@ test (int set_no)
 
   fprintf (stdout, "                                                       \r");
 
-  float throughput  = sum / (n_formats * n_formats - n_formats);
+  float throughput  = sum / n;
   if (throughput > max_throughput) max_throughput = throughput;
-  fprintf (stdout, "%s %03.3f mp/s\t%s layers with %s output\n\n",
-                      unicode_hbar(16, throughput / max_throughput), throughput,
+  fprintf (stdout, "%s %03.3f mp/s\tWorkflow: %s to %s\n\n",
+                      unicode_hbar(BAR_WIDTH, throughput / max_throughput), throughput,
                       babl_get_name (formats[0]),
                       babl_get_name (formats[n_formats-1]));
 
@@ -232,7 +260,7 @@ test (int set_no)
    if (i != j && i != (n_formats - 1) && (i==0 || j!=n_formats-1))
    {
       fprintf (stdout, "%s %03.3f m%s/s\t",
-                      unicode_hbar(16, mbps[n] / max),
+                      unicode_hbar(BAR_WIDTH, mbps[n] / max),
                       mbps[n],
 		      unit_pixels?"p":"b");
 
