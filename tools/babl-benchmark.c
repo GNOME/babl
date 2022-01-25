@@ -104,10 +104,18 @@ test (int set_no)
         { babl_format_with_space("Y'A u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("Y'A half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("Y'A float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("Y' u8", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("Y' u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("Y' half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("Y' float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("YA u8", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("YA u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("YA half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("YA float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("Y u8", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("Y u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("Y half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("Y float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
 
 
         { babl_format_with_space("R'G'B'A u8", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
@@ -139,6 +147,16 @@ test (int set_no)
         { babl_format_with_space("YA half", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
         { babl_format_with_space("YA float", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
 
+        { babl_format_with_space("Y' u8", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+        { babl_format_with_space("Y' u16", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+        { babl_format_with_space("Y' half", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+        { babl_format_with_space("Y' float", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+
+        { babl_format_with_space("Y u8", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+        { babl_format_with_space("Y u16", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+        { babl_format_with_space("Y half", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+        { babl_format_with_space("Y float", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+
         { babl_format_with_space("R'G'B'A u8", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
         { babl_format_with_space("R'G'B'A u16", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
         { babl_format_with_space("R'G'B'A half", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
@@ -163,6 +181,14 @@ test (int set_no)
         { babl_format_with_space("YA u16", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
         { babl_format_with_space("YA half", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
         { babl_format_with_space("YA float", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
+        { babl_format_with_space("Y' u8", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
+        { babl_format_with_space("Y' u16", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
+        { babl_format_with_space("Y' half", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
+        { babl_format_with_space("Y' float", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
+        { babl_format_with_space("Y u8", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
+        { babl_format_with_space("Y u16", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
+        { babl_format_with_space("Y half", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
+        { babl_format_with_space("Y float", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
      };
 
   int n_formats = 0;
@@ -207,7 +233,8 @@ test (int set_no)
  n = 0;
  for (i = 0; formats[i]; i++)
    for (j = 0; formats[j]; j++)
-   if (i != j && i != (n_formats - 1) && (i==0 || j!=n_formats-1))
+   //if (i != j && i != (n_formats - 1) && (i==0 || j!=n_formats-1))
+   if (i != j && i != (n_formats - 1) && (i==0 || j!=n_formats-1) && (j==0 || i==0))
    {
       const Babl *fish = babl_fish (formats[i], formats[j]);
       long end, start;
@@ -257,7 +284,8 @@ test (int set_no)
  n = 0;
  for (i = 0; formats[i]; i++)
    for (j = 0; formats[j]; j++)
-   if (i != j && i != (n_formats - 1) && (i==0 || j!=n_formats-1))
+   //if (i != j && i != (n_formats - 1) && (i==0 || j!=n_formats-1))
+   if (i != j && i != (n_formats - 1) && (i==0 || j!=n_formats-1) && (j==0 || i==0))
    {
       fprintf (stdout, "%s %03.3f m%s/s\t",
                       unicode_hbar(BAR_WIDTH, mbps[n] / max),
