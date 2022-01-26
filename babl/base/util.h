@@ -50,23 +50,17 @@
 static inline double
 babl_epsilon_for_zero (double value)
 {
- if (value <=  BABL_ALPHA_FLOOR &&
-     value >= -BABL_ALPHA_FLOOR)
- {
-   return BABL_ALPHA_FLOOR;
- }
- return value;
+   return value * (value >  BABL_ALPHA_FLOOR || value < -BABL_ALPHA_FLOOR) +
+          BABL_ALPHA_FLOOR * (value <=  BABL_ALPHA_FLOOR &&
+                              value >= -BABL_ALPHA_FLOOR);
 }
 
 static inline float
 babl_epsilon_for_zero_float (float value)
 {
- if (value <= BABL_ALPHA_FLOOR_F &&
-     value >= -BABL_ALPHA_FLOOR_F)
- {
-   return BABL_ALPHA_FLOOR_F;
- }
- return value;
+   return value * (value >  BABL_ALPHA_FLOOR_F || value < -BABL_ALPHA_FLOOR_F) +
+          BABL_ALPHA_FLOOR * (value <=  BABL_ALPHA_FLOOR_F &&
+                              value >= -BABL_ALPHA_FLOOR_F);
 }
 
 
