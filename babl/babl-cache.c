@@ -334,7 +334,6 @@ babl_init_db (void)
               babl->fish.source               = from_format;
               babl->fish.destination          = to_format;
               babl->fish_path.conversion_list = babl_list_init_with_size (10);
-              _babl_fish_prepare_bpp (babl);
               _babl_fish_rig_dispatch (babl);
             }
 
@@ -356,6 +355,7 @@ babl_init_db (void)
               }
               token2 = strtok_r (NULL, seps2, &tokp2);
             }
+            _babl_fish_prepare_bpp (babl);
           }
           else if (to_format && babl && babl->class_type == BABL_FISH_PATH)
           {
