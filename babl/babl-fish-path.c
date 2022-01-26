@@ -42,7 +42,8 @@ static int lut_info_level = 0;
 
 #define _LUT_LOG(level, ...) do{\
      if (level <= lut_info_level)\
-       fprintf (stdout, __VA_ARGS__);fflush(NULL);\
+       fprintf (stdout, __VA_ARGS__);\
+     fflush(NULL);\
      }while(0)
 #define LUT_LOG(...) _LUT_LOG(1, __VA_ARGS__)
 #define LUT_INFO(...) _LUT_LOG(2, __VA_ARGS__)
@@ -69,21 +70,28 @@ static int gc_fishes (Babl *babl, void *userdata)
       }
       else if (lut_info_level >=4)
       {
-        LUT_DETAIL("active LUT %s to %s ,%8li pixels last used %.1f minutes ago\n",
+        LUT_DETAIL("active LUT %s to %s  %8li pixels last used %.1f minutes ago\n",
                 babl_get_name (babl->conversion.source),
                 babl_get_name (babl->conversion.destination),
                 babl->fish.pixels,
          (context->time - babl->fish_path.last_lut_use)/1000.0/1000.0/60.0);
       }
     }
-    else if (lut_info_level >= 5 && babl->fish.pixels)
+    else if (lut_info_level >= 4 && babl->fish.pixels)
     {
-        LUT_DETAIL("%i step path %s to %s ,%8li pixels\n",
-                -1,
+        if (babl->fish_path.is_u8_color_conv)
+        LUT_DETAIL("potential LUT %s to %s  %8li pixels\n",
+                babl_get_name (babl->conversion.source),
+                babl_get_name (babl->conversion.destination),
+                babl->fish.pixels);
+        else if (lut_info_level >=5)
+        LUT_DETAIL("%i step path %s to %s  %8li pixels\n",
+                babl->fish_path.conversion_list->count,
                 babl_get_name (babl->conversion.source),
                 babl_get_name (babl->conversion.destination),
                 babl->fish.pixels);
     }
+    babl->fish.pixels /= 2; // decay pixel count// this is enough that we *will* reach 0
   }
   return 0;
 }
@@ -130,7 +138,6 @@ static inline void _do_lut (uint32_t *lut,
              ((float*)(dst))[0] = alpha;
              dst++;
           }
-          return 1;
         }
         else if (source_bpp == 4 && dest_bpp == 4)
         {
@@ -143,7 +150,6 @@ static inline void _do_lut (uint32_t *lut,
              *dst |= lut[col & 0xffffff];
              dst++;
           }
-          return 1;
         }
         else if (source_bpp == 2 && dest_bpp == 4)
         {
@@ -154,19 +160,17 @@ static inline void _do_lut (uint32_t *lut,
              *dst = lut[*src++];
              dst++;
           }
-          return 1;
         }
         else if (source_bpp == 2 && dest_bpp == 2)
         {
           uint16_t *src = (uint16_t*)source;
-          uint16_t *dst = (uint32_t*)destination;
+          uint16_t *dst = (uint16_t*)destination;
           uint16_t *lut16 = (uint16_t*)lut;
           while (n--)
           {
              *dst = lut16[*src++];
              dst++;
           }
-          return 1;
         }
         else if (source_bpp == 1 && dest_bpp == 4)
         {
@@ -177,7 +181,6 @@ static inline void _do_lut (uint32_t *lut,
              *dst = lut[*src++];
              dst++;
           }
-          return 1;
         }
         else if (source_bpp == 3 && dest_bpp == 3)
         {
@@ -193,7 +196,6 @@ static inline void _do_lut (uint32_t *lut,
              dst+=3;
              src+=3;
           }
-          return 1;
         }
         else if (source_bpp == 3 && dest_bpp == 4)
         {
@@ -206,7 +208,6 @@ static inline void _do_lut (uint32_t *lut,
              dst++;
              src+=3;
           }
-          return 1;
         }
 }
 
@@ -232,6 +233,9 @@ static void measure_timings(void)
    uint32_t *lut = malloc (256 * 256 * 256 * 16);
    uint32_t *src = malloc (num_pixels * 16);
    uint32_t *dst = malloc (num_pixels * 16);
+
+   memset (lut, 11, 256 * 256 * 256 *16);
+   memset (src, 12, num_pixels * 16);
 
    if (getenv ("BABL_LUT_INFO"))
    {
@@ -285,7 +289,7 @@ static int babl_fish_lut_process_maybe (const Babl *babl,
 
      if (BABL_UNLIKELY(!lut && babl->fish.pixels >= 128 * 256))
      {
-       LUT_LOG("building LUT for %s to %s\n",
+       LUT_LOG("generating LUT for %s to %s\n",
                babl_get_name (babl->conversion.source),
                babl_get_name (babl->conversion.destination));
        if (source_bpp ==4 && dest_bpp == 4)
@@ -1160,8 +1164,8 @@ babl_fish_path_process (const Babl *babl,
     conv_counter+=n;
     if (conv_counter > 1000 * 1000 * 10) // run gc every 10 megapixels
     {
-      babl_gc_fishes ();
       conv_counter = 0;
+      babl_gc_fishes ();
     }
   }
   process_conversion_path (babl->fish_path.conversion_list,
