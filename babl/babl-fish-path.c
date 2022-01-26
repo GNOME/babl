@@ -32,7 +32,6 @@
 #define MIN(a, b) (((a) > (b)) ? (b) : (a))
 #endif
 
-
 typedef struct GcContext {
    long time;
 } GcContext;
@@ -462,7 +461,6 @@ _babl_fish_create_name (char       *buf,
 static int max_path_length (void);
 
 static int debug_conversions = 0;
-int _babl_instrument = 0;
 
 double
 _babl_legal_error (void)
@@ -484,12 +482,6 @@ _babl_legal_error (void)
     debug_conversions = 1;
   else
     debug_conversions = 0;
-
-  env = getenv ("BABL_INSTRUMENT");
-  if (env && env[0] != '\0')
-    _babl_instrument = 1;
-  else
-    _babl_instrument = 0;
 
   return error;
 }
@@ -1219,8 +1211,6 @@ _babl_process (const Babl *cbabl,
 {
   Babl *babl = (void*)cbabl;
   babl->fish.dispatch (babl, source, destination, n, *babl->fish.data);
-  if (_babl_instrument)
-    babl->fish.pixels += n;
   return n;
 }
 
@@ -1252,8 +1242,6 @@ babl_process_rows (const Babl *fish,
   if (n <= 0)
     return 0;
 
-  if (_babl_instrument)
-    babl->fish.pixels += n * rows;
   for (row = 0; row < rows; row++)
     {
       babl->fish.dispatch (babl, (void*)src, (void*)dst, n, *babl->fish.data);

@@ -64,6 +64,8 @@ unicode_hbar (int    width,
   return ret;
 }
 
+int show_details = 0;
+
 static int
 test (int set_no)
 {
@@ -80,7 +82,6 @@ test (int set_no)
        babl_format_with_space("RGBA float", babl_space(space)), \
        babl_format_with_space("RaGaBaA float", babl_space(space)), \
        babl_format_with_space("R'G'B'A float", babl_space(space)), \
-       babl_format_with_space("R'G'B'A float", babl_space(out_space)),  \
        babl_format_with_space("R'G'B'A u8", babl_space(out_space)) 
 
   const Babl **formats=NULL;
@@ -199,7 +200,6 @@ test (int set_no)
   double mbps[50 * 50] = {0,};
   long n;
 
-  int show_details = 0;
   int set_iter = 0;
   int first_run = 1;
   float max_throughput = 0;
@@ -339,6 +339,7 @@ main (int    argc,
 {
   //if (argv[1]) ITERATIONS = atoi (argv[1]);
   babl_init ();
+  if (argv[1] && argv[2]) show_details = 1;
   if (argv[1])
   {
     if (test (atoi(argv[1])))
