@@ -156,6 +156,18 @@ static inline void _do_lut (uint32_t *lut,
           }
           return 1;
         }
+        else if (source_bpp == 2 && dest_bpp == 2)
+        {
+          uint16_t *src = (uint16_t*)source;
+          uint16_t *dst = (uint32_t*)destination;
+          uint16_t *lut16 = (uint16_t*)lut;
+          while (n--)
+          {
+             *dst = lut16[*src++];
+             dst++;
+          }
+          return 1;
+        }
         else if (source_bpp == 1 && dest_bpp == 4)
         {
           uint8_t *src = (uint8_t*)source;
@@ -216,7 +228,7 @@ static inline float lut_timing_for (int source_bpp, int dest_bpp)
 static void measure_timings(void)
 {
    int num_pixels = babl_get_num_path_test_pixels () * 1000;
-   int pairs[][2]={{4,4},{3,4},{3,3},{2,4},{1,4},{4,16}};
+   int pairs[][2]={{4,4},{3,4},{3,3},{2,4},{2,2},{1,4},{4,16}};
    uint32_t *lut = malloc (256 * 256 * 256 * 16);
    uint32_t *src = malloc (num_pixels * 16);
    uint32_t *dst = malloc (num_pixels * 16);
@@ -344,6 +356,20 @@ static int babl_fish_lut_process_maybe (const Babl *babl,
                                   256*256*256);
          for (int o = 0; o < 256 * 256 * 256; o++)
            lut[o] = lut[o] & 0x00ffffff;
+         free (temp_lut);
+       }
+       else if (source_bpp == 2 && dest_bpp == 2)
+       {
+         lut = malloc (256 * 256 * 4);
+         uint16_t *temp_lut = malloc (256 * 256 * 2);
+         for (int o = 0; o < 256*256; o++)
+         {
+           temp_lut[o]=o;
+         }
+         process_conversion_path (babl->fish_path.conversion_list,
+                                  temp_lut, 2,
+                                  lut, 2,
+                                  256*256);
          free (temp_lut);
        }
        else if (source_bpp == 2 && dest_bpp == 4)
@@ -1030,6 +1056,7 @@ babl_fish_path2 (const Babl *source,
       ||(source_bpp == 4 && dest_bpp == 4)
       ||(source_bpp == 3 && dest_bpp == 4)
       ||(source_bpp == 2 && dest_bpp == 4)
+      ||(source_bpp == 2 && dest_bpp == 2)
       ||(source_bpp == 1 && dest_bpp == 4)
       ||(source_bpp == 3 && dest_bpp == 3)
       )
