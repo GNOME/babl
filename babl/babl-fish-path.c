@@ -139,6 +139,19 @@ static inline void _do_lut (uint32_t *lut,
              dst++;
           }
         }
+        else if (source_bpp == 2 && dest_bpp == 16)
+        {
+          uint16_t *src = (uint16_t*)source;
+          uint32_t *dst = (uint32_t*)destination;
+          while (n--)
+          {
+             uint32_t col = *src++;
+             *dst++ = lut[col*4+0];
+             *dst++ = lut[col*4+1];
+             *dst++ = lut[col*4+2];
+             *dst++ = lut[col*4+3];
+          }
+        }
         else if (source_bpp == 4 && dest_bpp == 4)
         {
           uint32_t *src = (uint32_t*)source;
@@ -229,7 +242,7 @@ static inline float lut_timing_for (int source_bpp, int dest_bpp)
 static void measure_timings(void)
 {
    int num_pixels = babl_get_num_path_test_pixels () * 1000;
-   int pairs[][2]={{4,4},{3,4},{3,3},{2,4},{2,2},{1,4},{4,16}};
+   int pairs[][2]={{4,4},{3,4},{3,3},{2,4},{2,2},{1,4},{2,16},{4,16}};
    uint32_t *lut = malloc (256 * 256 * 256 * 16);
    uint32_t *src = malloc (num_pixels * 16);
    uint32_t *dst = malloc (num_pixels * 16);
@@ -390,6 +403,20 @@ static int babl_fish_lut_process_maybe (const Babl *babl,
                                   256*256);
          for (int o = 0; o < 256 * 256; o++)
            lut[o] = lut[o] & 0x00ffffff;
+         free (temp_lut);
+       }
+       else if (source_bpp == 2 && dest_bpp == 16)
+       {
+         uint16_t *temp_lut = malloc (256 * 256 * 2);
+         lut = malloc (256 * 256 * 16);
+         for (int o = 0; o < 256*256; o++)
+         {
+           temp_lut[o]=o;
+         }
+         process_conversion_path (babl->fish_path.conversion_list,
+                                  temp_lut, 2,
+                                  lut, 16,
+                                  256*256);
          free (temp_lut);
        }
        else if (source_bpp == 1 && dest_bpp == 4)
@@ -870,6 +897,54 @@ _babl_fish_prepare_bpp (Babl *babl)
        default:
          babl_log ("-eeek{%i}\n", babl_dest->instance.class_type - BABL_MAGIC);
      }
+
+  {
+  int source_bpp = babl->fish_path.source_bpp;
+  int dest_bpp = babl->fish_path.dest_bpp;
+  if (//source->format.space != destination->format.space &&
+     (
+        (source_bpp == 2 && dest_bpp == 16)
+      ||(source_bpp == 4 && dest_bpp == 16)
+      ||(source_bpp == 4 && dest_bpp == 4)
+      ||(source_bpp == 3 && dest_bpp == 4)
+      ||(source_bpp == 2 && dest_bpp == 4)
+      ||(source_bpp == 2 && dest_bpp == 2)
+      ||(source_bpp == 1 && dest_bpp == 4)
+      ||(source_bpp == 3 && dest_bpp == 3)
+      )
+     )
+  {
+     // as long as the highest 8bit of the 32bit of a 4 byte input is ignored
+     // (alpha) - and it is not an associated color model. A 24 bit LUT provides
+     // exact data. Thus this is valid for instance for "YA half"
+
+     if ((babl->conversion.source->format.type[0]->bits < 32 &&
+          (source_bpp < 4 
+         || (babl->conversion.source->format.model->flags & BABL_MODEL_FLAG_ASSOCIATED)==0)))
+     {
+       static int measured_timings = 0;
+       float scaling = 10.0;
+       if (!measured_timings) measure_timings ();
+       measured_timings = 1;
+       LUT_LOG ("%sLUT for %s to %s   %.2f%s%.2f\n",
+
+       ((lut_timing_for (source_bpp, dest_bpp) * scaling) <
+                           babl->fish_path.cost)?"possible ":"no ",
+
+                        babl_get_name (babl->conversion.source),
+                        babl_get_name (babl->conversion.destination),
+                        (lut_timing_for (source_bpp, dest_bpp) * scaling),
+       ((lut_timing_for (source_bpp, dest_bpp) * scaling) <
+                           babl->fish_path.cost)?" < ":" > ",
+                        babl->fish_path.cost);
+       if ((lut_timing_for (source_bpp, dest_bpp) * scaling) <
+                           babl->fish_path.cost)
+       {
+         babl->fish_path.is_u8_color_conv = 1;
+       }
+     }
+  }
+  }
 }
 
 void
@@ -1051,52 +1126,6 @@ babl_fish_path2 (const Babl *source,
     }
 
   _babl_fish_prepare_bpp (babl);
-  {
-  int source_bpp = babl->fish_path.source_bpp;
-  int dest_bpp = babl->fish_path.dest_bpp;
-  if (//source->format.space != destination->format.space &&
-     (
-        (source_bpp == 4 && dest_bpp == 16)
-      ||(source_bpp == 4 && dest_bpp == 4)
-      ||(source_bpp == 3 && dest_bpp == 4)
-      ||(source_bpp == 2 && dest_bpp == 4)
-      ||(source_bpp == 2 && dest_bpp == 2)
-      ||(source_bpp == 1 && dest_bpp == 4)
-      ||(source_bpp == 3 && dest_bpp == 3)
-      )
-     )
-  {
-     // as long as the highest 8bit of the 32bit of a 4 byte input is ignored
-     // (alpha) - and it is not an associated color model. A 24 bit LUT provides
-     // exact data. Thus this is valid for instance for "YA half"
-
-     if ((babl->conversion.source->format.type[0]->bits < 32 &&
-          (source_bpp < 4 
-         || (source->format.model->flags & BABL_MODEL_FLAG_ASSOCIATED)==0)))
-     {
-       static int measured_timings = 0;
-       float scaling = 10.0;
-       if (!measured_timings) measure_timings ();
-       measured_timings = 1;
-       LUT_LOG ("%sLUT for %s to %s   %.2f%s%.2f\n",
-
-       ((lut_timing_for (source_bpp, dest_bpp) * scaling) <
-                           babl->fish_path.cost)?"possible ":"no ",
-
-                        babl_get_name (babl->conversion.source),
-                        babl_get_name (babl->conversion.destination),
-                        (lut_timing_for (source_bpp, dest_bpp) * scaling),
-       ((lut_timing_for (source_bpp, dest_bpp) * scaling) <
-                           babl->fish_path.cost)?" < ":" > ",
-                        babl->fish_path.cost);
-       if ((lut_timing_for (source_bpp, dest_bpp) * scaling) <
-                           babl->fish_path.cost)
-       {
-         babl->fish_path.is_u8_color_conv = 1;
-       }
-     }
-  }
-  }
 
   _babl_fish_rig_dispatch (babl);
   /* Since there is not an already registered instance by the required
