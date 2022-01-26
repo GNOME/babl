@@ -118,7 +118,7 @@ static float timings[256] = {0,};
 static inline void _do_lut (uint32_t *lut,
                            int   source_bpp,
                            int   dest_bpp,
-                           void *__restrict__ source,
+                           const void *__restrict__ source,
                            void *__restrict__ destination,
                            long n)
 {
@@ -224,12 +224,19 @@ static inline void _do_lut (uint32_t *lut,
         }
 }
 
-void do_lut (uint32_t *lut,
-                           int   source_bpp,
-                           int   dest_bpp,
-                           void *__restrict__ source,
-                           void *__restrict__ dest,
-                           long count)
+
+void babl_test_lut (uint32_t *lut,
+             int   source_bpp,
+             int   dest_bpp,
+             void *__restrict__ source,
+             void *__restrict__ dest,
+             long count);
+void babl_test_lut (uint32_t *lut,
+             int   source_bpp,
+             int   dest_bpp,
+             void *__restrict__ source,
+             void *__restrict__ dest,
+             long count)
 {
    _do_lut (lut, source_bpp, dest_bpp, source, dest, count);
 }
@@ -268,7 +275,7 @@ static void measure_timings(void)
      int dest_bpp = pairs[p][1];
      long start,end;
      start = babl_ticks ();
-     _do_lut (lut, source_bpp, dest_bpp, src, dst, num_pixels);
+     babl_test_lut (lut, source_bpp, dest_bpp, src, dst, num_pixels);
 
      end = babl_ticks ();
      timings[source_bpp * 16 + dest_bpp] = (end-start)/1000.0;
@@ -289,11 +296,11 @@ process_conversion_path (BablList   *path,
                          int         dest_bpp,
                          long        n);
 
-static int babl_fish_lut_process_maybe (const Babl *babl,
-                                        const char *source,
-                                        const char *destination,
-                                        long        n,
-                                        void       *data)
+static inline int babl_fish_lut_process_maybe (const Babl *babl,
+                                               const char *source,
+                                               char *destination,
+                                               long        n,
+                                               void       *data)
 {
      int source_bpp = babl->fish_path.source_bpp;
      int dest_bpp = babl->fish_path.dest_bpp;
@@ -331,10 +338,10 @@ static int babl_fish_lut_process_maybe (const Babl *babl,
        }
        else if (source_bpp == 3 && dest_bpp == 3)
        {
-         lut = malloc (256 * 256 * 256 * 4);
          uint8_t *temp_lut = malloc (256 * 256 * 256 * 3);
          uint8_t *temp_lut2 = malloc (256 * 256 * 256 * 3);
          int o = 0;
+         lut = malloc (256 * 256 * 256 * 4);
          for (int r = 0; r < 256; r++)
          for (int g = 0; g < 256; g++)
          for (int b = 0; b < 256; b++, o++)
@@ -356,9 +363,9 @@ static int babl_fish_lut_process_maybe (const Babl *babl,
        }
        else if (source_bpp == 3 && dest_bpp == 4)
        {
-         lut = malloc (256 * 256 * 256 * 4);
          uint8_t *temp_lut = malloc (256 * 256 * 256 * 3);
          int o = 0;
+         lut = malloc (256 * 256 * 256 * 4);
          for (int r = 0; r < 256; r++)
          for (int g = 0; g < 256; g++)
          for (int b = 0; b < 256; b++, o++)
@@ -377,8 +384,8 @@ static int babl_fish_lut_process_maybe (const Babl *babl,
        }
        else if (source_bpp == 2 && dest_bpp == 2)
        {
-         lut = malloc (256 * 256 * 4);
          uint16_t *temp_lut = malloc (256 * 256 * 2);
+         lut = malloc (256 * 256 * 4);
          for (int o = 0; o < 256*256; o++)
          {
            temp_lut[o]=o;
@@ -391,8 +398,8 @@ static int babl_fish_lut_process_maybe (const Babl *babl,
        }
        else if (source_bpp == 2 && dest_bpp == 4)
        {
-         lut = malloc (256 * 256 * 4);
          uint16_t *temp_lut = malloc (256 * 256 * 2);
+         lut = malloc (256 * 256 * 4);
          for (int o = 0; o < 256*256; o++)
          {
            temp_lut[o]=o;
@@ -421,8 +428,8 @@ static int babl_fish_lut_process_maybe (const Babl *babl,
        }
        else if (source_bpp == 1 && dest_bpp == 4)
        {
-         lut = malloc (256 * 4);
          uint8_t *temp_lut = malloc (256);
+         lut = malloc (256 * 4);
          for (int o = 0; o < 256; o++)
          {
            temp_lut[o]=o;
@@ -454,7 +461,7 @@ static int babl_fish_lut_process_maybe (const Babl *babl,
      }
      if (lut)
      {
-        do_lut (lut, source_bpp, dest_bpp, source, destination, n);
+        _do_lut (lut, source_bpp, dest_bpp, source, destination, n);
         BABL(babl)->fish_path.last_lut_use = babl_ticks ();
      }
      return 0;

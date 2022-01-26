@@ -715,7 +715,7 @@ int babl_space_is_gray (const Babl *space);
 
 typedef void (*BablFishProcess) (const Babl *babl, const char *src, char *dst, long n, void *data);
 /**
- * babl_fish_get_dispatch: (skip)
+ * babl_fish_get_process: (skip)
  *
  * get the dispatch function of a fish, this allows faster use of a fish
  * in a loop than the more indirect method of babl_process, this also avoids

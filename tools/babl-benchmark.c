@@ -203,10 +203,10 @@ test (int set_no)
   int set_iter = 0;
   int first_run = 1;
   float max_throughput = 0;
+  double max = 0.0;
 
   if (set_no > n_sets-1) set_no = n_sets-1;
 
-  double max = 0.0;
   while (set_iter < n_sets)
   {
   double sum = 0;
@@ -271,12 +271,15 @@ test (int set_no)
 
   fprintf (stdout, "                                                       \r");
 
+  {
   float throughput  = sum / n;
-  if (throughput > max_throughput) max_throughput = throughput;
+  if (throughput > max_throughput)
+     max_throughput = throughput;
   fprintf (stdout, "%s %03.3f mp/s\tWorkflow: %s to %s\n\n",
                       unicode_hbar(BAR_WIDTH, throughput / max_throughput), throughput,
                       babl_get_name (formats[0]),
                       babl_get_name (formats[n_formats-1]));
+  }
 
       if (mbps[n] > max && first_run)
         max = mbps[n];
