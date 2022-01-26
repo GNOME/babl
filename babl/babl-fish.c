@@ -359,4 +359,10 @@ babl_fish (const void *source,
   }
 }
 
+
+BablFishProcess babl_fish_get_process (const Babl *babl)
+{
+  return babl->fish.dispatch;
+}
+
 BABL_CLASS_MINIMAL_IMPLEMENT (fish);

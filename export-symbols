@@ -78,6 +78,7 @@ babl_conversion_class_for_each
 babl_set_extender
 babl_extension_quiet_log
 babl_fish_path
+babl_fish_get_process
 babl_extender
 babl_class_name
 babl_sanity
