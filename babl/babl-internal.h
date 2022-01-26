@@ -430,8 +430,6 @@ void babl_space_to_xyz   (const Babl *space, const double *rgb, double *xyz);
  */
 void babl_space_from_xyz (const Babl *space, const double *xyz, double *rgb);
 
-extern int _babl_instrument;
-
 static inline void
 babl_conversion_process (const Babl *babl,
                          const char *source,
@@ -439,8 +437,6 @@ babl_conversion_process (const Babl *babl,
                          long        n)
 {
   BablConversion *conversion = (BablConversion *) babl;
-  if (_babl_instrument)
-    conversion->pixels += n;
   conversion->dispatch (babl, source, destination, n, conversion->data);
 }
 
