@@ -37,6 +37,18 @@ typedef struct GcContext {
    long time;
 } GcContext;
 
+static float lut_unused_minutes_limit = 5.0;
+
+static int lut_info_level = 0;
+
+#define _LUT_LOG(level, ...) do{\
+     if (level <= lut_info_level)\
+       fprintf (stdout, __VA_ARGS__);fflush(NULL);\
+     }while(0)
+#define LUT_LOG(...) _LUT_LOG(1, __VA_ARGS__)
+#define LUT_INFO(...) _LUT_LOG(2, __VA_ARGS__)
+#define LUT_DETAIL(...) _LUT_LOG(3, __VA_ARGS__)
+
 static int gc_fishes (Babl *babl, void *userdata)
 {
   GcContext *context = userdata;
@@ -45,16 +57,24 @@ static int gc_fishes (Babl *babl, void *userdata)
     if (babl->fish_path.u8_lut)
     {
       if (context->time - babl->fish_path.last_lut_use >
-          1000 * 1000 * 60 * 5)
+          1000 * 1000 * 60 * lut_unused_minutes_limit)
       {
         void *lut =babl->fish_path.u8_lut;
         BABL(babl)->fish_path.u8_lut = NULL;
         free (lut);
-#if 0
-        fprintf (stderr, "freeing LUT %s to %s unused for >5 minutes\n",
-                        babl_get_name (babl->conversion.source),
-                        babl_get_name (babl->conversion.destination));
-#endif
+        BABL(babl)->fish.pixels = 0;
+        LUT_LOG("freeing LUT %s to %s unused for >%.1f minutes\n",
+                babl_get_name (babl->conversion.source),
+                babl_get_name (babl->conversion.destination),
+                lut_unused_minutes_limit);
+      }
+      else
+      {
+        LUT_DETAIL("active LUT %s to %s ,%8li pixels last used %.1f minutes ago\n",
+                babl_get_name (babl->conversion.source),
+                babl_get_name (babl->conversion.destination),
+                babl->fish.pixels,
+         (context->time - babl->fish_path.last_lut_use)/1000.0/1000.0/60.0);
       }
     }
   }
@@ -189,7 +209,19 @@ static void measure_timings(void)
    uint32_t *lut = malloc (256 * 256 * 256 * 16);
    uint32_t *src = malloc (num_pixels * 16);
    uint32_t *dst = malloc (num_pixels * 16);
-   fprintf (stderr, "measuring lut timings          \n");
+
+   if (getenv ("BABL_LUT_INFO"))
+   {
+      lut_info_level = atoi (getenv ("BABL_LUT_INFO"));
+   }
+   if (getenv ("BABL_LUT_UNUSED_LIMIT"))
+   {
+      lut_unused_minutes_limit = atof (getenv ("BABL_LUT_UNUSED_LIMIT"));
+   }
+
+   LUT_LOG("BABL_LUT_UNUSED_LIMIT=%.1f\n", lut_unused_minutes_limit);
+
+   LUT_LOG("measuring lut timings          \n");
    for (int p = 0; p < sizeof (pairs)/sizeof(pairs[0]);p++)
    {
      int source_bpp = pairs[p][0];
@@ -199,10 +231,9 @@ static void measure_timings(void)
      _do_lut (lut, source_bpp, dest_bpp, src, dst, num_pixels);
 
      end = babl_ticks ();
-
      timings[source_bpp * 16 + dest_bpp] = (end-start)/1000;
-     fprintf (stderr, "%i %i: %i\n", source_bpp, dest_bpp,
-         timings[source_bpp * 16 + dest_bpp]
+       LUT_LOG ("   %ibpp to %ibpp: %i\n", source_bpp, dest_bpp,
+          timings[source_bpp * 16 + dest_bpp]
                      );
    }
    free (lut);
@@ -232,11 +263,9 @@ static int babl_fish_lut_process_maybe (const Babl *babl,
 
      if (BABL_UNLIKELY(!lut && babl->fish.pixels >= 128 * 256))
      {
-#if 0
-       fprintf (stderr, "building LUT for %s to %s\n",
-                        babl_get_name (babl->conversion.source),
-                        babl_get_name (babl->conversion.destination));
-#endif
+       LUT_LOG("building LUT for %s to %s\n",
+               babl_get_name (babl->conversion.source),
+               babl_get_name (babl->conversion.destination));
        if (source_bpp ==4 && dest_bpp == 4)
        {
          lut = malloc (256 * 256 * 256 * 4);
@@ -1012,18 +1041,21 @@ babl_fish_path2 (const Babl *source,
          || (source->format.model->flags & BABL_MODEL_FLAG_ASSOCIATED)==0)))
      {
        static int measured_timings = 0;
+       float scaling = 10.0;
        if (!measured_timings) measure_timings ();
        measured_timings = 1;
-       fprintf (stderr, "%sLUT for %s to %s   %i %f\n",
+       LUT_LOG ("%sLUT for %s to %s   %.0f%s%.0f\n",
 
-       (lut_timing_for (source_bpp, dest_bpp) * 12 <
-                           babl->fish_path.cost)?"":"no ",
+       ((lut_timing_for (source_bpp, dest_bpp) * scaling) <
+                           babl->fish_path.cost)?"possible ":"no ",
 
                         babl_get_name (babl->conversion.source),
                         babl_get_name (babl->conversion.destination),
-                        lut_timing_for (source_bpp, dest_bpp) * 12,
+                        (lut_timing_for (source_bpp, dest_bpp) * scaling),
+       ((lut_timing_for (source_bpp, dest_bpp) * scaling) <
+                           babl->fish_path.cost)?" < ":" > ",
                         babl->fish_path.cost);
-       if (lut_timing_for (source_bpp, dest_bpp) * 12 <
+       if ((lut_timing_for (source_bpp, dest_bpp) * scaling) <
                            babl->fish_path.cost)
        {
          babl->fish_path.is_u8_color_conv = 1;

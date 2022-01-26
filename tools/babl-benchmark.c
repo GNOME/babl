@@ -25,7 +25,7 @@
 #define random  rand
 #endif
 
-int ITERATIONS = 5;
+int ITERATIONS = 4;
 #define  N_PIXELS (1024*1024)  // a too small batch makes the test set live
                                // in l2 cache skewing results
 
@@ -80,6 +80,7 @@ test (int set_no)
        babl_format_with_space("RGBA float", babl_space(space)), \
        babl_format_with_space("RaGaBaA float", babl_space(space)), \
        babl_format_with_space("R'G'B'A float", babl_space(space)), \
+       babl_format_with_space("R'G'B'A float", babl_space(out_space)),  \
        babl_format_with_space("R'G'B'A u8", babl_space(out_space)) 
 
   const Babl **formats=NULL;
