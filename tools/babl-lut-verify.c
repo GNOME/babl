@@ -135,6 +135,10 @@ int main (int argc, char **argv)
           },
           {
            babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto")),
+           babl_format_with_space ("Y'A half", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto")),
            babl_format_with_space ("Y'A u8", babl_space("Rec2020"))
           },
           {
@@ -150,13 +154,41 @@ int main (int argc, char **argv)
            babl_format_with_space ("Y' u8", babl_space("Rec2020"))
           },
 
-
           {
-           babl_format_with_space ("YA half", babl_space("ProPhoto")), 
+           babl_format_with_space ("YaA half", babl_space("ProPhoto")), 
            babl_format_with_space ("R'G'B'A u8", babl_space("Rec2020"))
           },
           {
-           babl_format_with_space ("YA half", babl_space("ProPhoto")), 
+           babl_format_with_space ("YaA half", babl_space("ProPhoto")), 
+           babl_format_with_space ("R'G'B'A half", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("YaA half", babl_space("ProPhoto")), 
+           babl_format_with_space ("R'G'B'A u16", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("YaA half", babl_space("ProPhoto")), 
+           babl_format_with_space ("R'G'B'A float", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("YaA half", babl_space("ProPhoto")), 
+           babl_format_with_space ("Y'A float", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("YaA half", babl_space("ProPhoto")), 
+           babl_format_with_space ("Y'A u16", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("YaA half", babl_space("ProPhoto")), 
+           babl_format_with_space ("Y'A u8", babl_space("Rec2020"))
+          },
+
+          {
+           babl_format_with_space ("YaA half", babl_space("ProPhoto")), 
+           babl_format_with_space ("R'G'B'A u8", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("YaA half", babl_space("ProPhoto")), 
            babl_format_with_space ("R'G'B'A half", babl_space("Rec2020"))
           },
           {
