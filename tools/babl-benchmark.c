@@ -35,7 +35,7 @@ int unit_pixels = 1; // use megapixels per second instead of bytes
 
 int global_relative_scale = 1;
 
-int exclude_identity = 0;
+int exclude_identity = 1;
 #define  N_BYTES  N_PIXELS * (4 * 8)
 
 #define BAR_WIDTH 40
@@ -70,6 +70,42 @@ unicode_hbar (int    width,
 int show_details = 0;
 int progress = 1;
 
+#include <stdio.h>
+#include <stdint.h>
+
+#if 0
+ // more accurate, the 2100 constant is roughly
+ // what is needed on my system to convert to 1.5ghz
+ // constant clock performance
+
+inline uint64_t bench_ticks (void) {
+    uint32_t lo, hi;
+    __asm__ __volatile__ (
+      "xorl %%eax, %%eax\n"
+      "cpuid\n"
+      "rdtsc\n"
+      : "=a" (lo), "=d" (hi)
+      :
+      : "%ebx", "%ecx");
+    return ((uint64_t)hi << 32 | lo) / 2100;
+}
+#else
+inline uint64_t bench_ticks (void) { return babl_ticks();}
+#endif
+
+#if 0
+main()
+{
+    unsigned long long x;
+    unsigned long long y;
+    x = rdtsc();
+    printf("%lld\n",x);
+    y = rdtsc();
+    printf("%lld\n",y);
+    printf("it took this long to call printf: %lld\n",y-x);
+}
+#endif
+
 static int
 test (int set_no)
 {
@@ -86,7 +122,13 @@ test (int set_no)
        babl_format_with_space("RGBA float", babl_space(space)), \
        babl_format_with_space("RaGaBaA float", babl_space(space)), \
        babl_format_with_space("R'G'B'A float", babl_space(space)), \
-       babl_format_with_space("R'G'B'A u16", babl_space(out_space)), \
+       babl_format_with_space("RGBA u16", babl_space(out_space)), \
+       babl_format_with_space("R'G'B'A u8", babl_space(out_space)) 
+
+#define cmyk_set(space, out_space) \
+       babl_format_with_space("cmykA float", babl_space(space)), \
+       babl_format_with_space("camayakaA float", babl_space(space)), \
+       babl_format_with_space("RGBA u16", babl_space(out_space)), \
        babl_format_with_space("R'G'B'A u8", babl_space(out_space)) 
 
   const Babl **formats=NULL;
@@ -193,6 +235,14 @@ test (int set_no)
         { babl_format_with_space("YA u16", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
         { babl_format_with_space("YA half", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
         { babl_format_with_space("YA float", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        
+        
+        { babl_format_with_space("CMYKA float", babl_space("sRGB")), cmyk_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("CMYKA u16", babl_space("sRGB")), cmyk_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("CMYKA u8", babl_space("sRGB")), cmyk_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("cmykA float", babl_space("sRGB")), cmyk_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("cmykA u16", babl_space("sRGB")), cmyk_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("cmykA u8", babl_space("sRGB")), cmyk_set("sRGB", "sRGB"), NULL },
 
      };
 
@@ -250,12 +300,12 @@ test (int set_no)
 
       /* a round of warmup */
       babl_process (fish, src_data, dst_data, N_PIXELS/4);
-      start = babl_ticks ();
+      start = bench_ticks ();
       while (iters--)
       {
         babl_process (fish, src_data, dst_data, N_PIXELS);
       }
-      end = babl_ticks ();
+      end = bench_ticks ();
       fishes[n] = fish;
       mbps [n] = (N_PIXELS * ITERATIONS / 1000.0 / 1000.0) / ((end-start)/(1000.0*1000.0));
       if (!unit_pixels)
@@ -312,13 +362,13 @@ test (int set_no)
         else
 
 #endif
-        fprintf (stdout, "%d   ", fishes[n]->fish_path.conversion_list->count);
+        fprintf (stdout, "  %d ", fishes[n]->fish_path.conversion_list->count);
       }
 
-      fprintf (stdout, "%s to %s\t%.9f",
+      fprintf (stdout, "%.9f %s to %s ",
+                      fishes[n]->fish.error,
                       babl_get_name (formats[i]),
-                      babl_get_name (formats[j]),
-                      fishes[n]->fish.error);
+                      babl_get_name (formats[j]));
 
       if (fishes[n]->class_type == BABL_FISH_PATH && show_details)
       {
