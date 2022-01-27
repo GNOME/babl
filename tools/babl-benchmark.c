@@ -33,6 +33,8 @@ int ITERATIONS = 4;
 
 int unit_pixels = 1; // use megapixels per second instead of bytes
 
+int global_relative_scale = 1;
+
 int exclude_identity = 0;
 #define  N_BYTES  N_PIXELS * (4 * 8)
 
@@ -84,6 +86,7 @@ test (int set_no)
        babl_format_with_space("RGBA float", babl_space(space)), \
        babl_format_with_space("RaGaBaA float", babl_space(space)), \
        babl_format_with_space("R'G'B'A float", babl_space(space)), \
+       babl_format_with_space("R'G'B'A u16", babl_space(out_space)), \
        babl_format_with_space("R'G'B'A u8", babl_space(out_space)) 
 
   const Babl **formats=NULL;
@@ -263,7 +266,6 @@ test (int set_no)
 #if 1
       if (mbps[n] > max && first_run)
         max = mbps[n];
-      max = 1000;
 #endif
       n++;
    }
@@ -284,6 +286,7 @@ test (int set_no)
       if (mbps[n] > max && first_run)
         max = mbps[n];
 
+  if (global_relative_scale) max = max_throughput;
 
  n = 0;
  for (i = 0; formats[i]; i++)
@@ -299,11 +302,17 @@ test (int set_no)
 
       if (fishes[n]->class_type == BABL_FISH_REFERENCE)
       {
-        fprintf (stdout, "-  ");
+        fprintf (stdout, "REF ");
       }
       else if (fishes[n]->class_type == BABL_FISH_PATH)
       {
-        fprintf (stdout, "%d  ", fishes[n]->fish_path.conversion_list->count);
+#if BABL_MICRO_VERSION>=89
+        if (fishes[n]->fish_path.u8_lut)
+          fprintf (stdout, "LUT ");
+        else
+
+#endif
+        fprintf (stdout, "%d   ", fishes[n]->fish_path.conversion_list->count);
       }
 
       fprintf (stdout, "%s to %s\t%.9f",
