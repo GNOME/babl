@@ -157,11 +157,8 @@ conv_rgbAF_linear_rgbaF_linear_shuffle (const Babl  *conversion,
   while (remainder--)
     {
       float alpha = src[3];
-      float recip;
-      if (alpha <= 0.0f)
-        recip = 0.0f;
-      else
-        recip = 1.0f/alpha;
+      float used_alpha = babl_epsilon_for_zero_float (alpha);
+      float recip = 1.0f/used_alpha;
       dst[0] = src[0] * recip;
       dst[1] = src[1] * recip;
       dst[2] = src[2] * recip;
