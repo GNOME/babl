@@ -33,6 +33,7 @@ int ITERATIONS = 4;
 
 int unit_pixels = 1; // use megapixels per second instead of bytes
 
+int exclude_identity = 0;
 #define  N_BYTES  N_PIXELS * (4 * 8)
 
 #define BAR_WIDTH 40
@@ -65,6 +66,7 @@ unicode_hbar (int    width,
 }
 
 int show_details = 0;
+int progress = 1;
 
 static int
 test (int set_no)
@@ -86,111 +88,109 @@ test (int set_no)
 
   const Babl **formats=NULL;
   const Babl *format_sets[][20]={
-        { babl_format_with_space("R'G'B'A u8", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("R'G'B'A u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("R'G'B'A half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("R'G'B'A float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("R'G'B' u8", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("R'G'B' u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("R'G'B' half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("R'G'B' float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("RGBA u8", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("RGBA u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("RGBA half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("RGBA float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("RGB u8", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("RGB u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("RGB half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("RGB float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("Y'A u8", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("Y'A u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("Y'A half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("Y'A float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("Y' u8", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("Y' u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("Y' half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("Y' float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("YA u8", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("YA u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("YA half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
-        { babl_format_with_space("YA float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("R'G'B'A u8", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("R'G'B'A u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("R'G'B'A half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("R'G'B'A float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("RGBA u8", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("RGBA u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("RGBA half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("RGBA float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("Y u8", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("Y u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("Y half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
         { babl_format_with_space("Y float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("Y' u8", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("Y' u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("Y' half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("Y' float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("Y'A u8", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("Y'A u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("Y'A half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("Y'A float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("YA u8", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("YA u16", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("YA half", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
+        { babl_format_with_space("YA float", babl_space("sRGB")), default_set("sRGB", "sRGB"), NULL },
 
 
-        { babl_format_with_space("R'G'B'A u8", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("R'G'B'A u16", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("R'G'B'A half", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("R'G'B'A float", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("R'G'B' u8", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("R'G'B' u16", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("R'G'B' half", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("R'G'B' float", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
 
-        { babl_format_with_space("RGBA u8", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("RGBA u16", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("RGBA half", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("RGBA float", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
 
-        { babl_format_with_space("RGB u8", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("RGB u16", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("RGB half", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("RGB float", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
 
-        { babl_format_with_space("Y'A u8", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("Y'A u16", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("Y'A half", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("Y'A float", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+        { babl_format_with_space("R'G'B' u8", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("R'G'B' u16", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("R'G'B' half", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("R'G'B' float", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("RGB u8", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("RGB u16", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("RGB half", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("RGB float", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("R'G'B'A u8", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("R'G'B'A u16", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("R'G'B'A half", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("R'G'B'A float", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("RGBA u8", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("RGBA u16", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("RGBA half", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("RGBA float", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("Y u8", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("Y u16", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("Y half", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("Y float", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("Y' u8", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("Y' u16", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("Y' half", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("Y' float", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("Y'A u8", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("Y'A u16", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("Y'A half", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("Y'A float", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("YA u8", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("YA u16", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("YA half", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
+        { babl_format_with_space("YA float", babl_space("ProPhoto")), default_set("ProPhoto", "Rec2020"), NULL },
 
-        { babl_format_with_space("YA u8", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("YA u16", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("YA half", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("YA float", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
+        { babl_format_with_space("R'G'B' u8", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("R'G'B' u16", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("R'G'B' half", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("R'G'B' float", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("RGB u8", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("RGB u16", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("RGB half", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("RGB float", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("R'G'B'A u8", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("R'G'B'A u16", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("R'G'B'A half", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("R'G'B'A float", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("RGBA u8", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("RGBA u16", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("RGBA half", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("RGBA float", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("Y u8", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("Y u16", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("Y half", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("Y float", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("Y' u8", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("Y' u16", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("Y' half", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("Y' float", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("Y'A u8", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("Y'A u16", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("Y'A half", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("Y'A float", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("YA u8", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("YA u16", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("YA half", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
+        { babl_format_with_space("YA float", babl_space("sRGB")), default_set("sRGB", "Rec2020"), NULL },
 
-        { babl_format_with_space("Y' u8", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("Y' u16", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("Y' half", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("Y' float", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-
-        { babl_format_with_space("Y u8", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("Y u16", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("Y half", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-        { babl_format_with_space("Y float", babl_space("sRGB")), default_set("sRGB", "ProPhoto"), NULL },
-
-        { babl_format_with_space("R'G'B'A u8", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("R'G'B'A u16", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("R'G'B'A half", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("R'G'B'A float", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("R'G'B' u8", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("R'G'B' u16", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("R'G'B' half", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("R'G'B' float", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("RGBA u8", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("RGBA u16", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("RGBA half", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("RGBA float", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("RGB u8", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("RGB u16", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("RGB half", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("RGB float", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("Y'A u8", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("Y'A u16", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("Y'A half", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("Y'A float", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("YA u8", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("YA u16", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("YA half", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("YA float", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("Y' u8", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("Y' u16", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("Y' half", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("Y' float", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("Y u8", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("Y u16", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("Y half", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
-        { babl_format_with_space("Y float", babl_space("Apple")), default_set("Apple", "ProPhoto"), NULL },
      };
 
   int n_formats = 0;
@@ -231,20 +231,19 @@ test (int set_no)
 
  //fprintf (stdout,"%i iterations of %i pixels, mp/s is for sum of source and destinations bytes\n", ITERATIONS, N_PIXELS);
  
+
  n = 0;
  for (i = 0; formats[i]; i++)
    for (j = 0; formats[j]; j++)
    //if (i != j && i != (n_formats - 1) && (i==0 || j!=n_formats-1))
-   if (i != j && i != (n_formats - 1) && (i==0 || j!=n_formats-1) && (j==0 || i==0))
+   if (i != j && i != (n_formats - 1) && (i==0 || j!=n_formats-1) && (j==0 || i==0) && (!exclude_identity || formats[i] != formats[j]))
    {
       const Babl *fish = babl_fish (formats[i], formats[j]);
       long end, start;
       int iters = ITERATIONS;
-#if  1
-      fprintf (stdout, "%s to %s               \r", babl_get_name (formats[i]),
+      if (progress)
+      fprintf (stderr, "%s to %s               \r", babl_get_name (formats[i]),
                                                    babl_get_name (formats[j]));
-#endif
-      fflush (0);
 
       /* a round of warmup */
       babl_process (fish, src_data, dst_data, N_PIXELS/4);
@@ -264,12 +263,13 @@ test (int set_no)
 #if 1
       if (mbps[n] > max && first_run)
         max = mbps[n];
-      max = 500;
+      max = 1000;
 #endif
       n++;
    }
 
-  fprintf (stdout, "                                                       \r");
+  if (progress)
+  fprintf (stderr, "                                                       \r");
 
   {
   float throughput  = sum / n;
@@ -289,7 +289,7 @@ test (int set_no)
  for (i = 0; formats[i]; i++)
    for (j = 0; formats[j]; j++)
    //if (i != j && i != (n_formats - 1) && (i==0 || j!=n_formats-1))
-   if (i != j && i != (n_formats - 1) && (i==0 || j!=n_formats-1) && (j==0 || i==0))
+   if (i != j && i != (n_formats - 1) && (i==0 || j!=n_formats-1) && (j==0 || i==0) && (!exclude_identity || formats[i] != formats[j]))
    {
       fprintf (stdout, "%s %03.3f m%s/s\t",
                       unicode_hbar(BAR_WIDTH, mbps[n] / max),
@@ -341,6 +341,7 @@ main (int    argc,
       char **argv)
 {
   //if (argv[1]) ITERATIONS = atoi (argv[1]);
+  setenv ("BABL_INHIBIT_CACHE", "1", 1);
   babl_init ();
   if (argv[1] && argv[2]) show_details = 1;
   if (argv[1])

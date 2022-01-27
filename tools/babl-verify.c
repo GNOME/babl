@@ -67,7 +67,7 @@ main (int    argc,
   int final = 0;
   const Babl *fish;
   const Babl *SPACE2 = NULL;
-
+  setenv ("BABL_INHIBIT_CACHE", "1", 1);
 
   if (argc < 3)
   {
