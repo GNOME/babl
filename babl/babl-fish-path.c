@@ -139,6 +139,24 @@ static inline void _do_lut (uint32_t *lut,
              dst++;
           }
         }
+        else if (source_bpp == 4 && dest_bpp == 8)
+        {
+          uint32_t *src = (uint32_t*)source;
+          uint16_t *dst = (uint16_t*)destination;
+          uint16_t *lut16 = (uint16_t*)lut;
+          while (n--)
+          {
+             uint32_t col = *src++;
+             uint32_t lut_offset = col & 0xffffff;
+             uint16_t alpha = (col>>24) << 8;
+
+             dst[0] = lut16[lut_offset*2+0];
+             dst[1] = lut16[lut_offset*2+1];
+             dst[2] = lut16[lut_offset*2+2];
+             dst[3] = alpha;
+             dst+=4;
+          }
+        }
         else if (source_bpp == 2 && dest_bpp == 16)
         {
           uint16_t *src = (uint16_t*)source;
@@ -249,7 +267,7 @@ static inline float lut_timing_for (int source_bpp, int dest_bpp)
 static void measure_timings(void)
 {
    int num_pixels = babl_get_num_path_test_pixels () * 1000;
-   int pairs[][2]={{4,4},{3,4},{3,3},{2,4},{2,2},{1,4},{2,16},{4,16}};
+   int pairs[][2]={{4,4},{4,8},{3,4},{3,3},{2,4},{2,2},{1,4},{2,16},{4,16}};
    uint32_t *lut = malloc (256 * 256 * 256 * 16);
    uint32_t *src = malloc (num_pixels * 16);
    uint32_t *dst = malloc (num_pixels * 16);
@@ -333,6 +351,18 @@ static inline int babl_fish_lut_process_maybe (const Babl *babl,
          process_conversion_path (babl->fish_path.conversion_list,
                                   temp_lut, 4,
                                   lut, 16,
+                                  256*256*256);
+         free (temp_lut);
+       }
+       else if (source_bpp == 4 && dest_bpp == 8)
+       {
+         uint32_t *temp_lut = malloc (256 * 256 * 256 * 4);
+         lut = malloc (256 * 256 * 256 * 8);
+         for (int o = 0; o < 256 * 256 * 256; o++)
+           temp_lut[o] = o;
+         process_conversion_path (babl->fish_path.conversion_list,
+                                  temp_lut, 4,
+                                  lut, 8,
                                   256*256*256);
          free (temp_lut);
        }
@@ -913,6 +943,7 @@ _babl_fish_prepare_bpp (Babl *babl)
         (source_bpp == 2 && dest_bpp == 16)
       ||(source_bpp == 4 && dest_bpp == 16)
       ||(source_bpp == 4 && dest_bpp == 4)
+      ||(source_bpp == 4 && dest_bpp == 8)
       ||(source_bpp == 3 && dest_bpp == 4)
       ||(source_bpp == 2 && dest_bpp == 4)
       ||(source_bpp == 2 && dest_bpp == 2)
