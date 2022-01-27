@@ -347,7 +347,10 @@ babl_init_db (void)
               else if (!strncmp (token2, "cost=", 5))
               {
                 if (babl->class_type == BABL_FISH_PATH)
+                {
                   babl->fish_path.cost = babl_parse_double (token2 + 5);
+                  _babl_fish_prepare_bpp (babl);
+                }
               }
               else if (!strncmp (token2, "pixels=", 7))
               {
@@ -355,7 +358,6 @@ babl_init_db (void)
               }
               token2 = strtok_r (NULL, seps2, &tokp2);
             }
-            _babl_fish_prepare_bpp (babl);
           }
           else if (to_format && babl && babl->class_type == BABL_FISH_PATH)
           {
