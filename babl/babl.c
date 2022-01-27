@@ -158,7 +158,8 @@ babl_init (void)
       babl_extension_load_dir_list (dir_list);
       babl_free (dir_list);
 
-      babl_init_db ();
+      if (!getenv ("BABL_INHIBIT_CACHE"))
+        babl_init_db ();
     }
 }
 
