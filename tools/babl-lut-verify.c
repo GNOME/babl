@@ -10,6 +10,13 @@
 #define random rand
 #endif
 
+#ifdef _WIN32
+/* On Windows setenv() does not exist, using _putenv_s() instead. The overwrite
+ * arg is ignored (i.e. same as always 1).
+ */
+#define setenv(name,value,overwrite) _putenv_s(name, value)
+#endif
+
 static double
 test_generic (const Babl *source, const Babl *dest)
 {

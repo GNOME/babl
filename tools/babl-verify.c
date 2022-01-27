@@ -8,6 +8,13 @@
 #define SPACE1 babl_space("sRGB")
 //#define SPACE2 babl_space("Apple")
 
+#ifdef _WIN32
+/* On Windows setenv() does not exist, using _putenv_s() instead. The overwrite
+ * arg is ignored (i.e. same as always 1).
+ */
+#define setenv(name,value,overwrite) _putenv_s(name, value)
+#endif
+
 int
 file_get_contents (const char  *path,
                          char       **contents,
