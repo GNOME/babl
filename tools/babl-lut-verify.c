@@ -11,494 +11,236 @@
 #endif
 
 static double
-test_u8_premul (void)
+test_generic (const Babl *source, const Babl *dest)
 {
-  uint8_t *src = malloc (PIXELS*4);
-  uint8_t *dst = malloc (PIXELS*4);
-  uint8_t *dst2 = malloc (PIXELS*4);
+  uint8_t *src = malloc (PIXELS*16);
+  uint8_t *dst = malloc (PIXELS*16);
+  uint8_t *dst2 = malloc (PIXELS*16);
+  uint8_t *dstb = malloc (PIXELS*16);
+  uint8_t *dst2b = malloc (PIXELS*16);
   double error = 0.0;
 
-  for (int i = 0; i < PIXELS; i++)
-    for (int c = 0; c < 4; c++)
-      src[i*4+c] = random();
+  for (int i = 0; i < PIXELS * 16; i++)
+      src[i] = random();
 
-  babl_process (
-      babl_fish (
-          babl_format_with_space ("R'aG'aB'aA u8", babl_space("Apple")),
-          babl_format_with_space ("R'aG'aB'aA u8", babl_space("ProPhoto"))),
-      src, dst, PIXELS);
-  babl_process (
-      babl_fish (
-          babl_format_with_space ("R'aG'aB'aA u8", babl_space("Apple")),
-          babl_format_with_space ("R'aG'aB'aA u8", babl_space("ProPhoto"))),
-      src, dst2, PIXELS);
-  babl_process (
-      babl_fish (
-          babl_format_with_space ("R'aG'aB'aA u8", babl_space("Apple")),
-          babl_format_with_space ("R'aG'aB'aA u8", babl_space("ProPhoto"))),
-      src, dst2, PIXELS);
-  babl_process (
-      babl_fish (
-          babl_format_with_space ("R'aG'aB'aA u8", babl_space("Apple")),
-          babl_format_with_space ("R'aG'aB'aA u8", babl_space("ProPhoto"))),
-      src, dst2, PIXELS);
+  babl_process ( babl_fish (source, dest), src, dst, PIXELS);
+  babl_process ( babl_fish (source, dest), src, dst2, PIXELS);
+  babl_process ( babl_fish (source, dest), src, dst2, PIXELS);
+  babl_process ( babl_fish (source, dest), src, dst2, PIXELS);
+  babl_process ( babl_fish (dest, babl_format_with_space ("R'G'B'A u8", dest)), dst2, dst2b, PIXELS);
+  babl_process ( babl_fish (dest, babl_format_with_space ("R'G'B'A u8", dest)), dst, dstb, PIXELS);
 
   for (int i = 0; i < PIXELS; i++)
   {
-    error += sqrt ((dst[i*4+0] - dst2[i*4+0])*
-                   (dst[i*4+0] - dst2[i*4+0])+
-                   (dst[i*4+1] - dst2[i*4+1])*
-                   (dst[i*4+1] - dst2[i*4+1])+
-                   (dst[i*4+2] - dst2[i*4+2])*
-                   (dst[i*4+2] - dst2[i*4+2]));
+    error += sqrt ((dst[i*4+0] - dst2b[i*4+0])*
+                   (dstb[i*4+0] - dst2b[i*4+0])+
+                   (dstb[i*4+1] - dst2b[i*4+1])*
+                   (dstb[i*4+1] - dst2b[i*4+1])+
+                   (dstb[i*4+2] - dst2b[i*4+2])*
+                   (dstb[i*4+2] - dst2b[i*4+2]));
   }
 
   free (src);
   free (dst);
   free (dst2);
+  free (dstb);
+  free (dst2b);
 
   return error;
 }
-
-
-static double
-test_rgb (void)
-{
-  uint8_t *src = malloc (PIXELS*4);
-  uint8_t *dst = malloc (PIXELS*4);
-  uint8_t *dst2 = malloc (PIXELS*4);
-  double error = 0.0;
-
-  for (int i = 0; i < PIXELS; i++)
-    for (int c = 0; c < 4; c++)
-      src[i*4+c] = random();
-
-  babl_process (
-      babl_fish (
-          babl_format_with_space ("R'G'B' u8", babl_space("Apple")),
-          babl_format_with_space ("R'G'B' u8", babl_space("ProPhoto"))),
-      src, dst, PIXELS);
-  babl_process (
-      babl_fish (
-          babl_format_with_space ("R'G'B' u8", babl_space("Apple")),
-          babl_format_with_space ("R'G'B' u8", babl_space("ProPhoto"))),
-      src, dst2, PIXELS);
-  babl_process (
-      babl_fish (
-          babl_format_with_space ("R'G'B' u8", babl_space("Apple")),
-          babl_format_with_space ("R'G'B' u8", babl_space("ProPhoto"))),
-      src, dst2, PIXELS);
-  babl_process (
-      babl_fish (
-          babl_format_with_space ("R'G'B' u8", babl_space("Apple")),
-          babl_format_with_space ("R'G'B' u8", babl_space("ProPhoto"))),
-      src, dst2, PIXELS);
-
-  for (int i = 0; i < PIXELS; i++)
-  {
-    error += sqrt ((dst[i*3+0] - dst2[i*3+0])*
-                   (dst[i*3+0] - dst2[i*3+0])+
-                   (dst[i*3+1] - dst2[i*3+1])*
-                   (dst[i*3+1] - dst2[i*3+1])+
-                   (dst[i*3+2] - dst2[i*3+2])*
-                   (dst[i*3+2] - dst2[i*3+2]));
-  }
-
-  free (src);
-  free (dst);
-  free (dst2);
-
-  return error;
-}
-
-
-static double
-test_u8 (void)
-{
-  uint8_t *src = malloc (PIXELS*4);
-  uint8_t *dst = malloc (PIXELS*4);
-  uint8_t *dst2 = malloc (PIXELS*4);
-  double error = 0.0;
-
-  for (int i = 0; i < PIXELS; i++)
-    for (int c = 0; c < 4; c++)
-      src[i*4+c] = random();
-
-  babl_process (
-      babl_fish (
-          babl_format_with_space ("R'G'B'A u8", babl_space("Apple")),
-          babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto"))),
-      src, dst, PIXELS);
-  babl_process (
-      babl_fish (
-          babl_format_with_space ("R'G'B'A u8", babl_space("Apple")),
-          babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto"))),
-      src, dst2, PIXELS);
-  babl_process (
-      babl_fish (
-          babl_format_with_space ("R'G'B'A u8", babl_space("Apple")),
-          babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto"))),
-      src, dst2, PIXELS);
-  babl_process (
-      babl_fish (
-          babl_format_with_space ("R'G'B'A u8", babl_space("Apple")),
-          babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto"))),
-      src, dst2, PIXELS);
-
-  for (int i = 0; i < PIXELS; i++)
-  {
-    error += sqrt ((dst[i*4+0] - dst2[i*4+0])*
-                   (dst[i*4+0] - dst2[i*4+0])+
-                   (dst[i*4+1] - dst2[i*4+1])*
-                   (dst[i*4+1] - dst2[i*4+1])+
-                   (dst[i*4+2] - dst2[i*4+2])*
-                   (dst[i*4+2] - dst2[i*4+2]));
-  }
-
-  free (src);
-  free (dst);
-  free (dst2);
-
-  return error;
-}
-
-static double
-test_ya_half (void)
-{
-  uint8_t *src = malloc (PIXELS*4*2);
-  uint8_t *dst = malloc (PIXELS*4*2);
-  uint8_t *dst2 = malloc (PIXELS*4*2);
-  double error = 0.0;
-
-  for (int i = 0; i < PIXELS; i++)
-  {
-    for (int c = 0; c < 8; c++)
-      src[i*8+c] = random();
-  }
-
-  babl_process (
-      babl_fish (
-          babl_format_with_space ("YA half", babl_space("Apple")),
-          babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto"))),
-      src, dst, PIXELS);
-  for (int i =0 ; i < 10; i++)
-  babl_process (
-      babl_fish (
-          babl_format_with_space ("YA half", babl_space("Apple")),
-          babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto"))),
-      src, dst2, PIXELS);
-
-  for (int i = 0; i < PIXELS; i++)
-  {
-    error += sqrt ((dst[i*4+0] - dst2[i*4+0])*
-                   (dst[i*4+0] - dst2[i*4+0])+
-                   (dst[i*4+1] - dst2[i*4+1])*
-                   (dst[i*4+1] - dst2[i*4+1])+
-                   (dst[i*4+2] - dst2[i*4+2])*
-                   (dst[i*4+2] - dst2[i*4+2]));
-  }
-
-  free (src);
-  free (dst);
-  free (dst2);
-
-  return error;
-}
-
-static double
-test_Ya_half (void)
-{
-  uint8_t *src = malloc (PIXELS*4*2);
-  uint8_t *dst = malloc (PIXELS*4*2);
-  uint8_t *dst2 = malloc (PIXELS*4*2);
-  double error = 0.0;
-
-  for (int i = 0; i < PIXELS; i++)
-  {
-    for (int c = 0; c < 8; c++)
-      src[i*8+c] = random();
-  }
-
-  babl_process (
-      babl_fish (
-          babl_format_with_space ("Y'A half", babl_space("Apple")),
-          babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto"))),
-      src, dst, PIXELS);
-  for (int i =0 ; i < 10; i++)
-  babl_process (
-      babl_fish (
-          babl_format_with_space ("Y'A half", babl_space("Apple")),
-          babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto"))),
-      src, dst2, PIXELS);
-
-  for (int i = 0; i < PIXELS; i++)
-  {
-    error += sqrt ((dst[i*4+0] - dst2[i*4+0])*
-                   (dst[i*4+0] - dst2[i*4+0])+
-                   (dst[i*4+1] - dst2[i*4+1])*
-                   (dst[i*4+1] - dst2[i*4+1])+
-                   (dst[i*4+2] - dst2[i*4+2])*
-                   (dst[i*4+2] - dst2[i*4+2]));
-  }
-
-  free (src);
-  free (dst);
-  free (dst2);
-
-  return error;
-}
-
-static double
-test_ya_u16 (void)
-{
-  uint8_t *src = malloc (PIXELS*4*2);
-  uint8_t *dst = malloc (PIXELS*4*2);
-  uint8_t *dst2 = malloc (PIXELS*4*2);
-  double error = 0.0;
-
-  for (int i = 0; i < PIXELS; i++)
-  {
-    for (int c = 0; c < 8; c++)
-      src[i*8+c] = random();
-  }
-
-  babl_process (
-      babl_fish (
-          babl_format_with_space ("YA u16", babl_space("Apple")),
-          babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto"))),
-      src, dst, PIXELS);
-  for (int i =0 ; i < 10; i++)
-  babl_process (
-      babl_fish (
-          babl_format_with_space ("YA u16", babl_space("Apple")),
-          babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto"))),
-      src, dst2, PIXELS);
-
-  for (int i = 0; i < PIXELS; i++)
-  {
-    error += sqrt ((dst[i*4+0] - dst2[i*4+0])*
-                   (dst[i*4+0] - dst2[i*4+0])+
-                   (dst[i*4+1] - dst2[i*4+1])*
-                   (dst[i*4+1] - dst2[i*4+1])+
-                   (dst[i*4+2] - dst2[i*4+2])*
-                   (dst[i*4+2] - dst2[i*4+2]));
-  }
-
-  free (src);
-  free (dst);
-  free (dst2);
-
-  return error;
-}
-
-
-
-static double
-test_u16 (void)
-{
-  uint8_t *src = malloc (PIXELS*4*2);
-  uint8_t *dst = malloc (PIXELS*4*2);
-  uint8_t *dst2 = malloc (PIXELS*4*2);
-  double error = 0.0;
-
-  for (int i = 0; i < PIXELS; i++)
-  {
-    for (int c = 0; c < 6; c++)
-      src[i*8+c] = random();
-    src[i*8+6] = 255;
-    src[i*8+7] = 255;
-  }
-
-  babl_process (
-      babl_fish (
-          babl_format_with_space ("R'G'B'A u16", babl_space("Apple")),
-          babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto"))),
-      src, dst, PIXELS);
-  for (int i =0 ; i < 10; i++)
-  babl_process (
-      babl_fish (
-          babl_format_with_space ("R'G'B'A u16", babl_space("Apple")),
-          babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto"))),
-      src, dst2, PIXELS);
-
-  for (int i = 0; i < PIXELS; i++)
-  {
-    error += sqrt ((dst[i*4+0] - dst2[i*4+0])*
-                   (dst[i*4+0] - dst2[i*4+0])+
-                   (dst[i*4+1] - dst2[i*4+1])*
-                   (dst[i*4+1] - dst2[i*4+1])+
-                   (dst[i*4+2] - dst2[i*4+2])*
-                   (dst[i*4+2] - dst2[i*4+2]));
-  }
-
-  free (src);
-  free (dst);
-  free (dst2);
-
-  return error;
-}
-
-
-static double
-test_u16_linear (void)
-{
-  uint8_t *src = malloc (PIXELS*4*2);
-  uint8_t *dst = malloc (PIXELS*4*2);
-  uint8_t *dst2 = malloc (PIXELS*4*2);
-  double error = 0.0;
-
-  for (int i = 0; i < PIXELS; i++)
-  {
-    for (int c = 0; c < 6; c++)
-      src[i*8+c] = random();
-    src[i*8+6] = 255;
-    src[i*8+7] = 255;
-  }
-
-  babl_process (
-      babl_fish (
-          babl_format_with_space ("RGBA u16", babl_space("Apple")),
-          babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto"))),
-      src, dst, PIXELS);
-  for (int i =0 ; i < 10; i++)
-  babl_process (
-      babl_fish (
-          babl_format_with_space ("RGBA u16", babl_space("Apple")),
-          babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto"))),
-      src, dst2, PIXELS);
-
-  for (int i = 0; i < PIXELS; i++)
-  {
-    error += sqrt ((dst[i*4+0] - dst2[i*4+0])*
-                   (dst[i*4+0] - dst2[i*4+0])+
-                   (dst[i*4+1] - dst2[i*4+1])*
-                   (dst[i*4+1] - dst2[i*4+1])+
-                   (dst[i*4+2] - dst2[i*4+2])*
-                   (dst[i*4+2] - dst2[i*4+2]));
-  }
-
-  free (src);
-  free (dst);
-  free (dst2);
-
-  return error;
-}
-
-
-static double
-test_u16_half (void)
-{
-  uint8_t *src = malloc (PIXELS*4*2);
-  uint8_t *dst = malloc (PIXELS*4*2);
-  uint8_t *dst2 = malloc (PIXELS*4*2);
-  double error = 0.0;
-
-  for (int i = 0; i < PIXELS; i++)
-  {
-    for (int c = 0; c < 8; c++)
-      src[i*8+c] = random();
-  }
-
-  babl_process (
-      babl_fish (
-          babl_format_with_space ("RGBA half", babl_space("Apple")),
-          babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto"))),
-      src, dst, PIXELS);
-  for (int i =0 ; i < 10; i++)
-  babl_process (
-      babl_fish (
-          babl_format_with_space ("RGBA half", babl_space("Apple")),
-          babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto"))),
-      src, dst2, PIXELS);
-
-  for (int i = 0; i < PIXELS; i++)
-  {
-    error += sqrt ((dst[i*4+0] - dst2[i*4+0])*
-                   (dst[i*4+0] - dst2[i*4+0])+
-                   (dst[i*4+1] - dst2[i*4+1])*
-                   (dst[i*4+1] - dst2[i*4+1])+
-                   (dst[i*4+2] - dst2[i*4+2])*
-                   (dst[i*4+2] - dst2[i*4+2]));
-  }
-
-  free (src);
-  free (dst);
-  free (dst2);
-
-  return error;
-}
-
-
 
 int main (int argc, char **argv)
 {
   double error = 0;
+  setenv ("BABL_INHIBIT_CACHE", "1", 1);
   babl_init ();
+  {
+          
+  const Babl *format_sets[][2]={
+          {
+           babl_format_with_space ("R'G'B' u8", babl_space("ProPhoto")),
+           babl_format_with_space ("R'G'B' u8", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("R'G'B' u8", babl_space("ProPhoto")),
+           babl_format_with_space ("R'G'B'A u8", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("R'G'B' u8", babl_space("ProPhoto")),
+           babl_format_with_space ("R'G'B'A half", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("R'G'B' u8", babl_space("ProPhoto")),
+           babl_format_with_space ("R'G'B'A u16", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("R'G'B' u8", babl_space("ProPhoto")),
+           babl_format_with_space ("R'G'B'A float", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("R'G'B' u8", babl_space("ProPhoto")),
+           babl_format_with_space ("Y'A float", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("R'G'B' u8", babl_space("ProPhoto")),
+           babl_format_with_space ("Y'A u16", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("R'G'B' u8", babl_space("ProPhoto")),
+           babl_format_with_space ("Y'A u8", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("R'G'B' u8", babl_space("ProPhoto")),
+           babl_format_with_space ("Y' float", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("R'G'B' u8", babl_space("ProPhoto")),
+           babl_format_with_space ("Y' u16", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("R'G'B' u8", babl_space("ProPhoto")),
+           babl_format_with_space ("Y' u8", babl_space("Rec2020"))
+          },
 
-  fprintf (stdout, "u8 ");
-  error = test_u8 ();
+          {
+           babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto")),
+           babl_format_with_space ("R'G'B'A u8", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto")),
+           babl_format_with_space ("R'G'B'A half", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto")),
+           babl_format_with_space ("R'G'B'A u16", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto")),
+           babl_format_with_space ("R'G'B'A float", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto")),
+           babl_format_with_space ("Y'A float", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto")),
+           babl_format_with_space ("Y'A u16", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto")),
+           babl_format_with_space ("Y'A u8", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto")),
+           babl_format_with_space ("Y' float", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto")),
+           babl_format_with_space ("Y' u16", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("R'G'B'A u8", babl_space("ProPhoto")),
+           babl_format_with_space ("Y' u8", babl_space("Rec2020"))
+          },
+
+
+          {
+           babl_format_with_space ("YA half", babl_space("ProPhoto")), 
+           babl_format_with_space ("R'G'B'A u8", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("YA half", babl_space("ProPhoto")), 
+           babl_format_with_space ("R'G'B'A half", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("YA half", babl_space("ProPhoto")), 
+           babl_format_with_space ("R'G'B'A u16", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("YA half", babl_space("ProPhoto")), 
+           babl_format_with_space ("R'G'B'A float", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("YA half", babl_space("ProPhoto")), 
+           babl_format_with_space ("Y'A float", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("YA half", babl_space("ProPhoto")), 
+           babl_format_with_space ("Y'A u16", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("YA half", babl_space("ProPhoto")), 
+           babl_format_with_space ("Y'A u8", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("YA half", babl_space("ProPhoto")), 
+           babl_format_with_space ("Y' float", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("YA half", babl_space("ProPhoto")), 
+           babl_format_with_space ("Y' u16", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("YA half", babl_space("ProPhoto")), 
+           babl_format_with_space ("Y' u8", babl_space("Rec2020"))
+          },
+
+
+          {
+           babl_format_with_space ("Y half", babl_space("ProPhoto")), 
+           babl_format_with_space ("R'G'B'A u8", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("Y half", babl_space("ProPhoto")), 
+           babl_format_with_space ("R'G'B'A half", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("Y half", babl_space("ProPhoto")), 
+           babl_format_with_space ("R'G'B'A u16", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("Y half", babl_space("ProPhoto")), 
+           babl_format_with_space ("R'G'B'A float", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("Y half", babl_space("ProPhoto")), 
+           babl_format_with_space ("Y'A float", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("Y half", babl_space("ProPhoto")), 
+           babl_format_with_space ("Y'A u16", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("Y half", babl_space("ProPhoto")), 
+           babl_format_with_space ("Y'A u8", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("Y half", babl_space("ProPhoto")), 
+           babl_format_with_space ("Y' float", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("Y half", babl_space("ProPhoto")), 
+           babl_format_with_space ("Y' u16", babl_space("Rec2020"))
+          },
+          {
+           babl_format_with_space ("Y half", babl_space("ProPhoto")), 
+           babl_format_with_space ("Y' u8", babl_space("Rec2020"))
+          }
+
+  };
+
+
+  for (int i = 0; i < sizeof (format_sets)/sizeof(format_sets[0]); i++)
+  {
+  fprintf (stdout, "%s to %s: ", babl_get_name (format_sets[i][0]),
+                                 babl_get_name (format_sets[i][1])),
+  error = test_generic (format_sets[i][0], format_sets[i][1]);
   if (error != 0.0)
     fprintf (stdout, "%.20f\n", error/(PIXELS*4));
   else
     fprintf (stdout, "OK\n");
-
-  fprintf (stdout, "R'G'B u8 ");
-  error = test_rgb ();
-  if (error != 0.0)
-    fprintf (stdout, "%.20f\n", error/(PIXELS*4));
-  else
-    fprintf (stdout, "OK\n");
-
-
-  fprintf (stdout, "u8 premul ");
-  error = test_u8_premul ();
-  if (error != 0.0)
-    fprintf (stdout, "%.20f\n", error/(PIXELS*4));
-  else
-    fprintf (stdout, "OK\n");
-
-  fprintf (stdout, "u16 ");
-  error = test_u16 ();
-  if (error != 0.0)
-    fprintf (stdout, "%.20f\n", error/(PIXELS*4));
-  else
-    fprintf (stdout, "OK\n");
-
-  fprintf (stdout, "u16 linear ");
-  error = test_u16_linear ();
-  if (error != 0.0)
-    fprintf (stdout, "%.20f\n", error/(PIXELS*4));
-  else
-    fprintf (stdout, "OK\n");
-
-
-  fprintf (stdout, "u16 half ");
-  error = test_u16_half ();
-  if (error != 0.0)
-    fprintf (stdout, "%.20f\n", error/(PIXELS*4));
-  else
-    fprintf (stdout, "OK\n");
-
-  fprintf (stdout, "YA half ");
-  error = test_ya_half ();
-  if (error != 0.0)
-    fprintf (stdout, "%.20f\n", error/(PIXELS*4));
-  else
-    fprintf (stdout, "OK\n");
-
-  fprintf (stdout, "Y'A half ");
-  error = test_Ya_half ();
-  if (error != 0.0)
-    fprintf (stdout, "%.20f\n", error/(PIXELS*4));
-  else
-    fprintf (stdout, "OK\n");
-
-  fprintf (stdout, "YA u16 ");
-  error = test_ya_u16 ();
-  if (error != 0.0)
-    fprintf (stdout, "%.20f\n", error/(PIXELS*4));
-  else
-    fprintf (stdout, "OK\n");
+  }
+  }
 
   babl_exit ();
   return 0;
