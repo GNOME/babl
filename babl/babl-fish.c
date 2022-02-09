@@ -253,6 +253,7 @@ babl_fish (const void *source,
          * we will search through the fish database for reference fish
          * to handle the memcpy */
         babl_hash_table_find (id_htable, hashval, find_memcpy_fish, (void *) &ffish);
+        babl_mutex_lock (babl_fish_mutex);
       }
     else
       {
