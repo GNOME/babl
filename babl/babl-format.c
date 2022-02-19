@@ -346,7 +346,7 @@ babl_format_new (const void *first_arg,
   int            components = 0;
   BablModel     *model      = NULL;
   const Babl    *space      = babl_space ("sRGB");
-  const char    *doc        = NULL;
+  char          *doc        = NULL;
   BablComponent *component [BABL_MAX_COMPONENTS];
   BablSampling  *sampling  [BABL_MAX_COMPONENTS];
   const BablType*type      [BABL_MAX_COMPONENTS];
