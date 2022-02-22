@@ -97,7 +97,7 @@ inline uint64_t bench_ticks (void) {
     return ((uint64_t)hi << 32 | lo) / 2100;
 }
 #else
-inline uint64_t bench_ticks (void) { return babl_ticks();}
+static inline uint64_t bench_ticks (void) { return babl_ticks();}
 #endif
 
 #if 0
