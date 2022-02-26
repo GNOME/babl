@@ -168,7 +168,7 @@ conv_rgbAF_linear_rgbAF_nonlinear (const Babl    *conversion,
          }
        else
          {
-           float alpha_recip = 1.0 / alpha;
+           float alpha_recip = 1.0f / alpha;
            *fdst++ = babl_trc_from_linear (trc[0], *fsrc++ * alpha_recip) * alpha;
            *fdst++ = babl_trc_from_linear (trc[1], *fsrc++ * alpha_recip) * alpha;
            *fdst++ = babl_trc_from_linear (trc[2], *fsrc++ * alpha_recip) * alpha;
@@ -204,7 +204,7 @@ conv_yAF_linear_yAF_nonlinear (const Babl    *conversion,
          }
        else
          {
-           float alpha_recip = 1.0 / alpha;
+           float alpha_recip = 1.0f / alpha;
            *fdst++ = babl_trc_from_linear (trc[0], *fsrc++ * alpha_recip) * alpha;
            *fdst++ = *fsrc++;
          }

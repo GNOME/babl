@@ -48,7 +48,7 @@ conv_rgbaF_linear_y8_linear (const Babl    *conversion,
       value += *s++ * RGB_LUMINANCE_BLUE_FLOAT;
       s++;
 
-      v = rint (value * 255.0);
+      v = rint (value * 255.0f);
       *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
     }
 }

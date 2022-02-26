@@ -146,15 +146,15 @@ babl_lookup_new (BablLookupFunction function,
       end = u.f;
     }
 
-       if (precision <= 0.000005) shift =  0; /* checked for later */
-  else if (precision <= 0.000010) shift =  8;
-  else if (precision <= 0.000020) shift =  9;
-  else if (precision <= 0.000040) shift = 10;
-  else if (precision <= 0.000081) shift = 11;
-  else if (precision <= 0.000161) shift = 12;
-  else if (precision <= 0.000200) shift = 13;
-  else if (precision <= 0.000324) shift = 14;
-  else if (precision <= 0.000649) shift = 15;
+       if (precision <= 0.000005f) shift =  0; /* checked for later */
+  else if (precision <= 0.000010f) shift =  8;
+  else if (precision <= 0.000020f) shift =  9;
+  else if (precision <= 0.000040f) shift = 10;
+  else if (precision <= 0.000081f) shift = 11;
+  else if (precision <= 0.000161f) shift = 12;
+  else if (precision <= 0.000200f) shift = 13;
+  else if (precision <= 0.000324f) shift = 14;
+  else if (precision <= 0.000649f) shift = 15;
   else shift = 16; /* a bit better than 8bit sRGB quality */
 
 
@@ -162,16 +162,16 @@ babl_lookup_new (BablLookupFunction function,
    * causes lookups very close to zero to be passed directly to the
    * function instead.
    */
-  if (start == 0.0)
+  if (start == 0.0f)
     start = precision;
-  if (end == 0.0)
+  if (end == 0.0f)
     end = -precision;
 
   /* Compute start and */
 
-  if (start < 0.0 || end < 0.0)
+  if (start < 0.0f || end < 0.0f)
     {
-      if (end < 0.0)
+      if (end < 0.0f)
         {
           u.f = start;
           positive_max = (u.i << LSHIFT) >> shift;
@@ -301,7 +301,7 @@ conv_rgbaF_linear_rgbAF_gamma (const Babl    *conversion,
        float green = *fsrc++;
        float blue  = *fsrc++;
        float alpha = *fsrc++;
-       if (alpha == 1.0)
+       if (alpha == 1.0f)
        {
          *fdst++ = linear_to_gamma_2_2_lut (red);
          *fdst++ = linear_to_gamma_2_2_lut (green);
@@ -352,7 +352,7 @@ conv_rgbaF_linear_rgba8_gamma (const Babl    *conversion,
        *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
        val = linear_to_gamma_2_2_lut (blue) * 0xff + 0.5f;
        *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-       val = alpha * 0xff + 0.5;
+       val = alpha * 0xff + 0.5f;
        *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
        }
      }
@@ -374,7 +374,7 @@ conv_rgbaF_linear_rgbA8_gamma (const Babl    *conversion,
        float green = *fsrc++;
        float blue  = *fsrc++;
        float alpha = *fsrc++;
-       if (alpha >= 1.0)
+       if (alpha >= 1.0f)
        {
          int val = linear_to_gamma_2_2_lut (red) * 0xff + 0.5f;
          *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
@@ -411,7 +411,7 @@ conv_yaF_linear_rgbA8_gamma (const Babl *conversion,unsigned char *src,
      {
        float gray = *fsrc++;
        float alpha = *fsrc++;
-       if (alpha >= 1.0)
+       if (alpha >= 1.0f)
        {
          int val = linear_to_gamma_2_2_lut (gray) * 0xff + 0.5f;
          *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
@@ -419,7 +419,7 @@ conv_yaF_linear_rgbA8_gamma (const Babl *conversion,unsigned char *src,
          *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
          *cdst++ = 0xff;
        }
-       else if (alpha <= 0.0)
+       else if (alpha <= 0.0f)
        {
          *((uint32_t*)(cdst))=0;
 	     cdst+=4;
@@ -453,7 +453,7 @@ conv_rgbaF_linear_rgbA8_gamma_cairo (const Babl *conversion,unsigned char *src,
       float green = *fsrc++;
       float blue  = *fsrc++;
       float alpha = *fsrc++;
-      if (alpha >= 1.0)
+      if (alpha >= 1.0f)
       {
         int val = linear_to_gamma_2_2_lut (blue) * 0xff + 0.5f;
         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
@@ -494,7 +494,7 @@ conv_rgbAF_linear_rgbAF_gamma (const Babl    *conversion,
       float blue  = *fsrc++;
       float alpha = *fsrc++;
 
-      if (alpha == 1.0)
+      if (alpha == 1.0f)
         {
           *fdst++ = linear_to_gamma_2_2_lut (red);
           *fdst++ = linear_to_gamma_2_2_lut (green);
@@ -503,7 +503,7 @@ conv_rgbAF_linear_rgbAF_gamma (const Babl    *conversion,
         }
       else
         {
-          float alpha_recip = 1.0 / alpha;
+          float alpha_recip = 1.0f / alpha;
           *fdst++ = linear_to_gamma_2_2_lut (red   * alpha_recip) * alpha;
           *fdst++ = linear_to_gamma_2_2_lut (green * alpha_recip) * alpha;
           *fdst++ = linear_to_gamma_2_2_lut (blue  * alpha_recip) * alpha;
@@ -677,10 +677,10 @@ init (void)
     float a;
 
     /* tweaking the precision - does impact speed.. */
-    fast_pow = babl_lookup_new (core_lookup, NULL, 0.0, 1.0,   0.000199);
-    fast_rpow = babl_lookup_new (core_rlookup, NULL, 0.0, 1.0, 0.000250);
+    fast_pow = babl_lookup_new (core_lookup, NULL, 0.0f, 1.0f,   0.000199f);
+    fast_rpow = babl_lookup_new (core_rlookup, NULL, 0.0f, 1.0f, 0.000250f);
 
-    for (f = 0.0; f < 1.0; f+= 0.0000001)
+    for (f = 0.0; f < 1.0f; f+= 0.0000001f)
       {
         a = linear_to_gamma_2_2_lut (f);
         a = gamma_2_2_to_linear_lut (f);

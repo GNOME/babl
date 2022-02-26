@@ -59,17 +59,17 @@ conv_F_8 (const Babl    *conversion,
   while (n--)
     {
       float f = ((*(float *) src));
-      if (f < 0.0)
+      if (f < 0.0f)
         {
           *(unsigned char *) dst = 0;
         }
-      else if (f > 1.0)
+      else if (f > 1.0f)
         {
           *(unsigned char *) dst = 255;
         }
       else
         {
-          *(unsigned char *) dst = lrint (f * 255.0);
+          *(unsigned char *) dst = lrint (f * 255.0f);
         }
       dst += 1;
       src += 4;
@@ -87,17 +87,17 @@ conv_F_16 (const Babl    *conversion,
   while (n--)
     {
       float f = ((*(float *) src));
-      if (f < 0.0)
+      if (f < 0.0f)
         {
           *(unsigned short *) dst = 0;
         }
-      else if (f > 1.0)
+      else if (f > 1.0f)
         {
           *(unsigned short *) dst = 65535;
         }
       else
         {
-          *(unsigned short *) dst = lrint (f * 65535.0);
+          *(unsigned short *) dst = lrint (f * 65535.0f);
         }
       dst += 2;
       src += 4;
@@ -116,7 +116,7 @@ conv_8_F (const Babl    *conversion,
 
   while (n--)
     {
-      (*(float *) dst) = (*(unsigned char *) src / 255.0);
+      (*(float *) dst) = (*(unsigned char *) src / 255.0f);
       dst             += 4;
       src             += 1;
     }
@@ -649,11 +649,11 @@ conv_rgbaF_rgbA8 (const Babl    *conversion,
 
       for (c = 0; c < 3; c++)
         {
-          *(unsigned char *) dst = lrint (((*(float *) src) * alpha) * 255.0);
+          *(unsigned char *) dst = lrint (((*(float *) src) * alpha) * 255.0f);
           dst                   += 1;
           src                   += 4;
         }
-      *(unsigned char *) dst = lrint (alpha * 255.0);
+      *(unsigned char *) dst = lrint (alpha * 255.0f);
       dst++;
       src += 4;
     }
@@ -673,7 +673,7 @@ conv_rgbaF_rgb8 (const Babl    *conversion,
 
       for (c = 0; c < 3; c++)
         {
-          *(unsigned char *) dst = lrint ((*(float *) src) * 255.0);
+          *(unsigned char *) dst = lrint ((*(float *) src) * 255.0f);
           dst                   += 1;
           src                   += 4;
         }
@@ -695,7 +695,7 @@ conv_rgbaF_rgb16 (const Babl    *conversion,
 
       for (c = 0; c < 3; c++)
         {
-          *(unsigned short *) dst = lrint ((*(float *) src) * 65535.0);
+          *(unsigned short *) dst = lrint ((*(float *) src) * 65535.0f);
           dst                    += 2;
           src                    += 4;
         }

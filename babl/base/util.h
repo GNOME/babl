@@ -59,7 +59,7 @@ static inline float
 babl_epsilon_for_zero_float (float value)
 {
    return value * (value >  BABL_ALPHA_FLOOR_F || value < -BABL_ALPHA_FLOOR_F) +
-          BABL_ALPHA_FLOOR * (value <=  BABL_ALPHA_FLOOR_F &&
+          BABL_ALPHA_FLOOR_F * (value <=  BABL_ALPHA_FLOOR_F &&
                               value >= -BABL_ALPHA_FLOOR_F);
 }
 

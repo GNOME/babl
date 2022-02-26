@@ -82,7 +82,7 @@ table_init (void)
       float    f;
       uint32_t s;
     } u;
-    u.f = 0.0;
+    u.f = 0.0f;
 
     //u.s[0] = 0;
 
@@ -91,15 +91,15 @@ table_init (void)
         int c;
         int cg;
 
-        if (u.f <= 0.0)
+        if (u.f <= 0.0f)
           {
             c  = 0;
             cg = 0;
           }
         else
           {
-            c  = (u.f * 255.1619) + 0.5;
-            cg = (linear_to_gamma_2_2 (u.f) * 255.1619) + 0.5;
+            c  = (u.f * 255.1619f) + 0.5f;
+            cg = (linear_to_gamma_2_2 (u.f) * 255.1619f) + 0.5f;
             if (cg > 255) cg = 255;
             if (c > 255) c = 255;
           }

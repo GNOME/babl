@@ -98,7 +98,7 @@ static inline float babl_frexpf(float x, int *e)
 
         if (!ee) {
                 if (x) {
-                        x = babl_frexpf(x*18446744073709551616.0, e);
+                        x = babl_frexpf(x*18446744073709551616.0f, e);
                         *e -= 64;
                 } else *e = 0;
                 return x;
@@ -130,11 +130,12 @@ static inline float babl_frexpf(float x, int *e)
 static inline float
 init_newtonf (float x, float exponent, float c0, float c1, float c2)
 {
+#define fM_LN2 0.69314718055994530942f
     int iexp = 0;
     float y = babl_frexpf(x, &iexp);
     y = 2*y+(iexp-2);
-    c1 *= M_LN2*exponent;
-    c2 *= M_LN2*M_LN2*exponent*exponent;
+    c1 *= fM_LN2*exponent;
+    c2 *= fM_LN2*fM_LN2*exponent*exponent;
     return y = c0 + c1*y + c2*y*y;
 }
 

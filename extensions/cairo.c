@@ -143,10 +143,10 @@ conv_cairo32_rgba8_le (const Babl    *conversion,
       }
       else
       {
-        float falpha = alpha / 255.0;
-        *dst++ = red / falpha + 0.5;
-        *dst++ = green / falpha + 0.5;
-        *dst++ = blue / falpha + 0.5;
+        float falpha = alpha / 255.0f;
+        *dst++ = red / falpha + 0.5f;
+        *dst++ = green / falpha + 0.5f;
+        *dst++ = blue / falpha + 0.5f;
         *dst++ = alpha;
       }
     }
@@ -243,9 +243,9 @@ extensions/x86-64-v3-cairo.so 0: cairo-ARGB32 to cairo-RGB24  error:0.002999 cos
       int alpha = src[3];
       if (alpha)
       {
-        float falpha = (alpha/255.0);
+        float falpha = (alpha/255.0f);
         for (int c = 0; c < 3; c++)
-          *dst++ = (*src++)/falpha + .5;
+          *dst++ = (*src++)/falpha + .5f;
       }
       else
       {
@@ -447,17 +447,17 @@ conv_rgbafloat_cairo32_le (const Babl    *conversion,
       float green  = *fsrc++;
       float blue   = *fsrc++;
       float alpha  = *fsrc++;
-      if (alpha >= 1.0)
+      if (alpha >= 1.0f)
       {
-        int val = babl_trc_from_linear (trc[2], blue) * 0xff + .0;
+        int val = babl_trc_from_linear (trc[2], blue) * 0xff;
         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-        val = babl_trc_from_linear (trc[1], green) * 0xff + .0;
+        val = babl_trc_from_linear (trc[1], green) * 0xff;
         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-        val = babl_trc_from_linear (trc[0], red) * 0xff + .0;
+        val = babl_trc_from_linear (trc[0], red) * 0xff;
         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
         *cdst++ = 0xff;
       }
-      else if (alpha <= 0.0)
+      else if (alpha <= 0.0f)
       {
         (*(uint32_t*)cdst)=0;
         cdst+=4;
@@ -465,13 +465,12 @@ conv_rgbafloat_cairo32_le (const Babl    *conversion,
       else
       {
         float balpha = alpha * 0xff;
-        int val = babl_trc_from_linear (trc[2], blue) * balpha + 0.0;
+        int val = babl_trc_from_linear (trc[2], blue) * balpha;
         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-        val = babl_trc_from_linear (trc[1], green) * balpha + 0.0;
+        val = babl_trc_from_linear (trc[1], green) * balpha;
         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-        val = babl_trc_from_linear (trc[0], red) * balpha + 0.0;
+        val = babl_trc_from_linear (trc[0], red) * balpha;
         *cdst++ = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
-        balpha+=0.0;
         if (balpha > 255)balpha=255;
         *cdst++ = balpha;
       }
@@ -495,7 +494,7 @@ conv_yafloat_cairo32_le (const Babl    *conversion,
     {
       float gray   = *fsrc++;
       float alpha  = *fsrc++;
-      if (alpha >= 1.0)
+      if (alpha >= 1.0f)
       {
         int val = babl_trc_from_linear (trc[0], gray) * 0xff;
         val = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
@@ -504,7 +503,7 @@ conv_yafloat_cairo32_le (const Babl    *conversion,
         *cdst++ = val;
         *cdst++ = 0xff;
       }
-      else if (alpha <= 0.0)
+      else if (alpha <= 0.0f)
       {
         (*(uint32_t*)cdst)=0;
         cdst+=4;
@@ -537,7 +536,7 @@ conv_yafloat_nl_cairo32_le (const Babl    *conversion,
     {
       float gray   = *fsrc++;
       float alpha  = *fsrc++;
-      if (alpha >= 1.0)
+      if (alpha >= 1.0f)
       {
         int val = gray * 0xff;
         val = val >= 0xff ? 0xff : val <= 0 ? 0 : val;
@@ -546,7 +545,7 @@ conv_yafloat_nl_cairo32_le (const Babl    *conversion,
         *cdst++ = val;
         *cdst++ = 0xff;
       }
-      else if (alpha <= 0.0)
+      else if (alpha <= 0.0f)
       {
         (*(uint32_t*)cdst)=0;
         cdst+=4;

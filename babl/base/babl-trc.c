@@ -52,13 +52,13 @@ babl_trc_lut_from_linear (const Babl *trc_,
   if (entry >= trc->lut_size -1)
   {
     entry = trc->lut_size - 1;
-    diff = 0.0;
+    diff = 0.0f;
   }
   else if (entry < 0) entry = 0;
 
-  if (diff > 0.0)
+  if (diff > 0.0f)
   {
-    ret = trc->inv_lut[entry] * (1.0 - diff) + trc->inv_lut[entry+1] * diff;
+    ret = trc->inv_lut[entry] * (1.0f - diff) + trc->inv_lut[entry+1] * diff;
   }
   else
   {
@@ -81,9 +81,9 @@ babl_trc_lut_to_linear (const Babl *trc_,
   if (entry >= trc->lut_size) entry = trc->lut_size - 1;
   else if (entry < 0) entry = 0;
 
-  if (diff > 0.0 && entry < trc->lut_size - 1)
+  if (diff > 0.0f && entry < trc->lut_size - 1)
   {
-    ret = trc->lut[entry] * (1.0 - diff) + trc->lut[entry+1] * diff;
+    ret = trc->lut[entry] * (1.0f - diff) + trc->lut[entry+1] * diff;
   }
   else
   {
@@ -189,13 +189,13 @@ _babl_trc_formula_srgb_from_linear (const Babl *trc_,
   {
     float v = _babl_trc_gamma_from_linear ((Babl *) trc, x - f);
     v = (v-b)/a;
-    if (v < 0.0 || v >= 0.0)
+    if (v < 0.0f || v >= 0.0f)
       return v;
-    return 0.0;
+    return 0.0f;
   }
-  if (c > 0.0)
+  if (c > 0.0f)
     return (x - e) / c;
-  return 0.0;
+  return 0.0f;
 }
 
 static inline float 
@@ -231,10 +231,10 @@ _babl_trc_formula_cie_from_linear (const Babl *trc_,
   {
     float v = _babl_trc_gamma_from_linear ((Babl *) trc, x - c);
     v = (v-b)/a;
-    if (v < 0.0 || v >= 0.0)
+    if (v < 0.0f || v >= 0.0f)
       return v;
   }
-  return 0.0;
+  return 0.0f;
 }
 
 static inline float 
@@ -479,7 +479,7 @@ BABL_SIMD_SUFFIX (babl_trc_new) (const char *name,
       for (k = 0; k < 16; k++)
       {
         double guess = (min + max) / 2;
-        float reversed_index = babl_trc_lut_to_linear (BABL(&trc_db[i]), guess) * (n_lut-1.0);
+        float reversed_index = babl_trc_lut_to_linear (BABL(&trc_db[i]), guess) * (n_lut-1.0f);
 
         if (reversed_index < j)
         {
