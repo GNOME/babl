@@ -55,7 +55,7 @@ lib_name    = meson.project_name() + '-' + api_version
 stability_version_number = (major_version != 0 ? minor_version : micro_version)
 stable = (stability_version_number % 2 == 0)
 
-conf.set10('BABL_UNSTABLE', not stable, Description:
+conf.set10('BABL_UNSTABLE', not stable, description:
   'Define to 1 if this is an unstable version of BABL.')
 
 conf.set       ('BABL_MAJOR_VERSION',    '@0@'.format(major_version))
