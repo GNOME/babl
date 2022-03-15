@@ -127,12 +127,13 @@ babl_dir_list (void)
 }
 
 
-static void simd_init (void);
+static const char **simd_init (void);
 void
 babl_init (void)
 {
+  const char **exclusion_pattern;
   babl_cpu_accel_set_use (1);
-  simd_init ();
+  exclusion_pattern = simd_init ();
 
   if (ref_count++ == 0)
     {
@@ -155,7 +156,7 @@ babl_init (void)
       babl_sanity ();
 
       dir_list = babl_dir_list ();
-      babl_extension_load_dir_list (dir_list);
+      babl_extension_load_dir_list (dir_list, exclusion_pattern);
       babl_free (dir_list);
 
       if (!getenv ("BABL_INHIBIT_CACHE"))
@@ -263,12 +264,14 @@ babl_trc_new_arm_neon (const char *name,
 
 #endif
 
-static void simd_init (void)
+static const char **simd_init (void)
 {
+  static const char *exclude[] = {"neon-", "x86-64-v3", "x86-64-v2", NULL};
 #ifdef ARCH_X86_64
   BablCpuAccelFlags accel = babl_cpu_accel_get_support ();
   if ((accel & BABL_CPU_ACCEL_X86_64_V3) == BABL_CPU_ACCEL_X86_64_V3)
   {
+    static const char *exclude[] = {NULL};
     babl_base_init = babl_base_init_x86_64_v2; /// !!
                                                // this is correct,
                                                // it performs better
@@ -276,24 +279,40 @@ static void simd_init (void)
     babl_trc_new = babl_trc_new_x86_64_v2;
     babl_trc_lookup_by_name = babl_trc_lookup_by_name_x86_64_v2;
     _babl_space_add_universal_rgb = _babl_space_add_universal_rgb_x86_64_v3;
+    return exclude;
   }
   else if ((accel & BABL_CPU_ACCEL_X86_64_V2) == BABL_CPU_ACCEL_X86_64_V2)
   {
+    static const char *exclude[] = {"x86-64-v3-", NULL};
     babl_base_init = babl_base_init_x86_64_v2;
     babl_trc_new = babl_trc_new_x86_64_v2;
     babl_trc_lookup_by_name = babl_trc_lookup_by_name_x86_64_v2;
     _babl_space_add_universal_rgb = _babl_space_add_universal_rgb_x86_64_v2;
+    return exclude;
+  }
+  else
+  {
+    static const char *exclude[] = {"x86-64-v3-", "x86-64-v2-", NULL};
+    return exclude;
   }
 #endif
 #ifdef ARCH_ARM
   BablCpuAccelFlags accel = babl_cpu_accel_get_support ();
   if ((accel & BABL_CPU_ACCEL_ARM_NEON) == BABL_CPU_ACCEL_ARM_NEON)
   {
+    static const char *exclude[] = {NULL};
     babl_base_init = babl_base_init_arm_neon;
     babl_trc_new = babl_trc_new_arm_neon;
     babl_trc_lookup_by_name = babl_trc_lookup_by_name_arm_neon;
     _babl_space_add_universal_rgb = _babl_space_add_universal_rgb_arm_neon;
+    return exclude;
+  }
+  else
+  {
+    static const char *exclude[] = {"neon-", NULL};
+    return exclude;
   }
 #endif
+  return exclude;
 }
 

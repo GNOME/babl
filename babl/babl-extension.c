@@ -247,7 +247,8 @@ babl_extension_load (const char *path)
 }
 
 static void
-babl_extension_load_dir (const char *base_path)
+babl_extension_load_dir (const char *base_path,
+                         const char **exclusion_patterns)
 {
   DIR *dir;
 
@@ -269,7 +270,12 @@ babl_extension_load_dir (const char *base_path)
               if ((extension = strrchr (dentry->d_name, '.')) != NULL &&
                   !strcmp (extension, SHREXT))
                 {
-                  babl_extension_load (path);
+                  int excluded = 0;
+                  for (int i = 0; exclusion_patterns[i]; i++)
+                    if (strstr (path, exclusion_patterns[i]))
+                      excluded = 1;
+                  if (!excluded)
+                    babl_extension_load (path);
                 }
 
               babl_free (path);
@@ -316,7 +322,8 @@ expand_path (char *path)
 /*  parse the provided colon seperated list of paths to search
  */
 void
-babl_extension_load_dir_list (const char *dir_list)
+babl_extension_load_dir_list (const char *dir_list,
+                              const char **exclusion_patterns)
 {
   int         eos = 0;
   const char *src;
@@ -339,7 +346,7 @@ babl_extension_load_dir_list (const char *dir_list)
           {
             char *expanded_path = expand_path (path);
             if (expanded_path) {
-                babl_extension_load_dir (expanded_path);
+                babl_extension_load_dir (expanded_path, exclusion_patterns);
                 babl_free (expanded_path);
             }
           }
