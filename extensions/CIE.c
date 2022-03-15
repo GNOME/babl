@@ -33,9 +33,13 @@
 
 #define DEGREES_PER_RADIAN (180 / 3.14159265358979323846)
 #define RADIANS_PER_DEGREE (1 / DEGREES_PER_RADIAN)
+#define DEGREES_PER_RADIANf (180 / 3.14159265358979323846f)
+#define RADIANS_PER_DEGREEf (1 / DEGREES_PER_RADIANf)
 
-#define LAB_EPSILON       (216.0f / 24389.0f)
-#define LAB_KAPPA         (24389.0f / 27.0f)
+#define LAB_EPSILON       (216.0 / 24389.0)
+#define LAB_EPSILONf      (216.0f / 24389.0f)
+#define LAB_KAPPA         (24389.0 / 27.0)
+#define LAB_KAPPAf        (24389.0f / 27.0f)
 
 /* The constants below hard-code the D50-adapted sRGB ICC profile
  * reference white, aka the ICC profile D50 illuminant.
@@ -52,12 +56,18 @@
  * hard-coded D50 ICC profile illuminant values:
  */
 
-#define D50_WHITE_REF_X   0.964202880f
-#define D50_WHITE_REF_Y   1.000000000f
-#define D50_WHITE_REF_Z   0.824905400f
+#define D50_WHITE_REF_X   0.964202880
+#define D50_WHITE_REF_Y   1.000000000
+#define D50_WHITE_REF_Z   0.824905400
 
-#define NEAR_ZERO         0.0000000001f
+#define D50_WHITE_REF_Xf  0.964202880f
+#define D50_WHITE_REF_Yf  1.000000000f
+#define D50_WHITE_REF_Zf  0.824905400f
+
+#define NEAR_ZERO         0.0000000001 
+#define NEAR_ZEROf        0.0000000001f
 #define near_zero(a)   ((a) < NEAR_ZERO && (a) > -NEAR_ZERO)
+#define near_zerof(a)  ((a) < NEAR_ZEROf && (a) > -NEAR_ZEROf)
 
 #define D50_WHITE_REF_x   0.345702921222f
 #define D50_WHITE_REF_y   0.358537532290f
@@ -593,15 +603,15 @@ rgbaf_to_xyYaf (const Babl *conversion,
                 long   samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
-  float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_X;
-  float m_0_1 = space->space.RGBtoXYZf[1] / D50_WHITE_REF_X;
-  float m_0_2 = space->space.RGBtoXYZf[2] / D50_WHITE_REF_X;
-  float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Y;
-  float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Y;
-  float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Y;
-  float m_2_0 = space->space.RGBtoXYZf[6] / D50_WHITE_REF_Z;
-  float m_2_1 = space->space.RGBtoXYZf[7] / D50_WHITE_REF_Z;
-  float m_2_2 = space->space.RGBtoXYZf[8] / D50_WHITE_REF_Z;
+  float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_Xf;
+  float m_0_1 = space->space.RGBtoXYZf[1] / D50_WHITE_REF_Xf;
+  float m_0_2 = space->space.RGBtoXYZf[2] / D50_WHITE_REF_Xf;
+  float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Yf;
+  float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Yf;
+  float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Yf;
+  float m_2_0 = space->space.RGBtoXYZf[6] / D50_WHITE_REF_Zf;
+  float m_2_1 = space->space.RGBtoXYZf[7] / D50_WHITE_REF_Zf;
+  float m_2_2 = space->space.RGBtoXYZf[8] / D50_WHITE_REF_Zf;
   long n = samples;
 
   while (n--)
@@ -612,7 +622,7 @@ rgbaf_to_xyYaf (const Babl *conversion,
       b = src[2];
       a = src[3];
 
-      if (near_zero(r) && near_zero(g) && near_zero(b))
+      if (near_zerof(r) && near_zerof(g) && near_zerof(b))
         {
           Y = 0.0f;
           x = D50_WHITE_REF_x;
@@ -644,15 +654,15 @@ rgbf_to_xyYf (const Babl *conversion,float *src,
               long   samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
-  float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_X;
-  float m_0_1 = space->space.RGBtoXYZf[1] / D50_WHITE_REF_X;
-  float m_0_2 = space->space.RGBtoXYZf[2] / D50_WHITE_REF_X;
-  float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Y;
-  float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Y;
-  float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Y;
-  float m_2_0 = space->space.RGBtoXYZf[6] / D50_WHITE_REF_Z;
-  float m_2_1 = space->space.RGBtoXYZf[7] / D50_WHITE_REF_Z;
-  float m_2_2 = space->space.RGBtoXYZf[8] / D50_WHITE_REF_Z;
+  float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_Xf;
+  float m_0_1 = space->space.RGBtoXYZf[1] / D50_WHITE_REF_Xf;
+  float m_0_2 = space->space.RGBtoXYZf[2] / D50_WHITE_REF_Xf;
+  float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Yf;
+  float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Yf;
+  float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Yf;
+  float m_2_0 = space->space.RGBtoXYZf[6] / D50_WHITE_REF_Zf;
+  float m_2_1 = space->space.RGBtoXYZf[7] / D50_WHITE_REF_Zf;
+  float m_2_2 = space->space.RGBtoXYZf[8] / D50_WHITE_REF_Zf;
   long n = samples;
 
   while (n--)
@@ -662,7 +672,7 @@ rgbf_to_xyYf (const Babl *conversion,float *src,
       g = src[1];
       b = src[2];
 
-      if (near_zero(r) && near_zero(g) && near_zero(b))
+      if (near_zerof(r) && near_zerof(g) && near_zerof(b))
         {
           Y = 0.0f;
           x = D50_WHITE_REF_x;
@@ -695,15 +705,15 @@ rgbaf_to_xyYf (const Babl *conversion,
                long        samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
-  float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_X;
-  float m_0_1 = space->space.RGBtoXYZf[1] / D50_WHITE_REF_X;
-  float m_0_2 = space->space.RGBtoXYZf[2] / D50_WHITE_REF_X;
-  float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Y;
-  float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Y;
-  float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Y;
-  float m_2_0 = space->space.RGBtoXYZf[6] / D50_WHITE_REF_Z;
-  float m_2_1 = space->space.RGBtoXYZf[7] / D50_WHITE_REF_Z;
-  float m_2_2 = space->space.RGBtoXYZf[8] / D50_WHITE_REF_Z;
+  float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_Xf;
+  float m_0_1 = space->space.RGBtoXYZf[1] / D50_WHITE_REF_Xf;
+  float m_0_2 = space->space.RGBtoXYZf[2] / D50_WHITE_REF_Xf;
+  float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Yf;
+  float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Yf;
+  float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Yf;
+  float m_2_0 = space->space.RGBtoXYZf[6] / D50_WHITE_REF_Zf;
+  float m_2_1 = space->space.RGBtoXYZf[7] / D50_WHITE_REF_Zf;
+  float m_2_2 = space->space.RGBtoXYZf[8] / D50_WHITE_REF_Zf;
   long n = samples;
 
   while (n--)
@@ -713,7 +723,7 @@ rgbaf_to_xyYf (const Babl *conversion,
       g = src[1];
       b = src[2];
 
-      if (near_zero(r) && near_zero(g) && near_zero(b))
+      if (near_zerof(r) && near_zerof(g) && near_zerof(b))
         {
           Y = 0.0f;
           x = D50_WHITE_REF_x;
@@ -748,15 +758,15 @@ rgbaf_to_Yuvaf (const Babl *conversion,
                 long   samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
-  float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_X;
-  float m_0_1 = space->space.RGBtoXYZf[1] / D50_WHITE_REF_X;
-  float m_0_2 = space->space.RGBtoXYZf[2] / D50_WHITE_REF_X;
-  float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Y;
-  float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Y;
-  float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Y;
-  float m_2_0 = space->space.RGBtoXYZf[6] / D50_WHITE_REF_Z;
-  float m_2_1 = space->space.RGBtoXYZf[7] / D50_WHITE_REF_Z;
-  float m_2_2 = space->space.RGBtoXYZf[8] / D50_WHITE_REF_Z;
+  float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_Xf;
+  float m_0_1 = space->space.RGBtoXYZf[1] / D50_WHITE_REF_Xf;
+  float m_0_2 = space->space.RGBtoXYZf[2] / D50_WHITE_REF_Xf;
+  float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Yf;
+  float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Yf;
+  float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Yf;
+  float m_2_0 = space->space.RGBtoXYZf[6] / D50_WHITE_REF_Zf;
+  float m_2_1 = space->space.RGBtoXYZf[7] / D50_WHITE_REF_Zf;
+  float m_2_2 = space->space.RGBtoXYZf[8] / D50_WHITE_REF_Zf;
   long n = samples;
 
   while (n--)
@@ -767,11 +777,11 @@ rgbaf_to_Yuvaf (const Babl *conversion,
       b = src[2];
       a = src[3];
 
-      if (near_zero(r) && near_zero(g) && near_zero(b))
+      if (near_zerof(r) && near_zerof(g) && near_zerof(b))
         {
           Y = 0.0f;
-		  u = 4.0/19.0;
-		  v = 9.0/19.0;
+          u = 4.0f/19.0f;
+          v = 9.0f/19.0f;
         }
       else
         {
@@ -779,9 +789,9 @@ rgbaf_to_Yuvaf (const Babl *conversion,
           Y = m_1_0 * r + m_1_1 * g + m_1_2 * b;
           Z = m_2_0 * r + m_2_1 * g + m_2_2 * b;
 
-	      sum = (X + 15.0 * Y + 3.0 * Z);
-	      u = (4.0 * X) / sum;
-	      v = (9.0 * Y) / sum;
+          sum = (X + 15.0f * Y + 3.0f * Z);
+	  u = (4.0f * X) / sum;
+	  v = (9.0f * Y) / sum;
         }
 
       dst[0] = Y;
@@ -800,15 +810,15 @@ rgbf_to_Yuvf (const Babl *conversion,float *src,
               long   samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
-  float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_X;
-  float m_0_1 = space->space.RGBtoXYZf[1] / D50_WHITE_REF_X;
-  float m_0_2 = space->space.RGBtoXYZf[2] / D50_WHITE_REF_X;
-  float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Y;
-  float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Y;
-  float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Y;
-  float m_2_0 = space->space.RGBtoXYZf[6] / D50_WHITE_REF_Z;
-  float m_2_1 = space->space.RGBtoXYZf[7] / D50_WHITE_REF_Z;
-  float m_2_2 = space->space.RGBtoXYZf[8] / D50_WHITE_REF_Z;
+  float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_Xf;
+  float m_0_1 = space->space.RGBtoXYZf[1] / D50_WHITE_REF_Xf;
+  float m_0_2 = space->space.RGBtoXYZf[2] / D50_WHITE_REF_Xf;
+  float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Yf;
+  float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Yf;
+  float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Yf;
+  float m_2_0 = space->space.RGBtoXYZf[6] / D50_WHITE_REF_Zf;
+  float m_2_1 = space->space.RGBtoXYZf[7] / D50_WHITE_REF_Zf;
+  float m_2_2 = space->space.RGBtoXYZf[8] / D50_WHITE_REF_Zf;
   long n = samples;
 
   while (n--)
@@ -818,7 +828,7 @@ rgbf_to_Yuvf (const Babl *conversion,float *src,
       g = src[1];
       b = src[2];
 
-      if (near_zero(r) && near_zero(g) && near_zero(b))
+      if (near_zerof(r) && near_zerof(g) && near_zerof(b))
         {
           Y = 0.0f;
 		  u = 4.0/19.0;
@@ -830,9 +840,9 @@ rgbf_to_Yuvf (const Babl *conversion,float *src,
           Y = m_1_0 * r + m_1_1 * g + m_1_2 * b;
           Z = m_2_0 * r + m_2_1 * g + m_2_2 * b;
 
-	      sum = (X + 15.0 * Y + 3.0 * Z);
-	      u = (4.0 * X) / sum;
-	      v = (9.0 * Y) / sum;
+	      sum = (X + 15.0f * Y + 3.0f * Z);
+	      u = (4.0f * X) / sum;
+	      v = (9.0f * Y) / sum;
         }
 
       dst[0] = Y;
@@ -852,15 +862,15 @@ rgbaf_to_Yuvf (const Babl *conversion,
                long        samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
-  float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_X;
-  float m_0_1 = space->space.RGBtoXYZf[1] / D50_WHITE_REF_X;
-  float m_0_2 = space->space.RGBtoXYZf[2] / D50_WHITE_REF_X;
-  float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Y;
-  float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Y;
-  float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Y;
-  float m_2_0 = space->space.RGBtoXYZf[6] / D50_WHITE_REF_Z;
-  float m_2_1 = space->space.RGBtoXYZf[7] / D50_WHITE_REF_Z;
-  float m_2_2 = space->space.RGBtoXYZf[8] / D50_WHITE_REF_Z;
+  float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_Xf;
+  float m_0_1 = space->space.RGBtoXYZf[1] / D50_WHITE_REF_Xf;
+  float m_0_2 = space->space.RGBtoXYZf[2] / D50_WHITE_REF_Xf;
+  float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Yf;
+  float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Yf;
+  float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Yf;
+  float m_2_0 = space->space.RGBtoXYZf[6] / D50_WHITE_REF_Zf;
+  float m_2_1 = space->space.RGBtoXYZf[7] / D50_WHITE_REF_Zf;
+  float m_2_2 = space->space.RGBtoXYZf[8] / D50_WHITE_REF_Zf;
   long n = samples;
 
   while (n--)
@@ -870,11 +880,11 @@ rgbaf_to_Yuvf (const Babl *conversion,
       g = src[1];
       b = src[2];
 
-      if (near_zero(r) && near_zero(g) && near_zero(b))
+      if (near_zerof(r) && near_zerof(g) && near_zerof(b))
         {
           Y = 0.0f;
-		  u = 4.0/19.0;
-		  v = 9.0/19.0;
+          u = 4.0f/19.0f;
+          v = 9.0f/19.0f;
         }
       else
         {
@@ -882,9 +892,9 @@ rgbaf_to_Yuvf (const Babl *conversion,
           Y = m_1_0 * r + m_1_1 * g + m_1_2 * b;
           Z = m_2_0 * r + m_2_1 * g + m_2_2 * b;
 
-	      sum = (X + 15.0 * Y + 3.0 * Z);
-	      u = (4.0 * X) / sum;
-	      v = (9.0 * Y) / sum;
+	      sum = (X + 15.0f * Y + 3.0f * Z);
+	      u = (4.0f * X) / sum;
+	      v = (9.0f * Y) / sum;
         }
 
       dst[0] = Y;
@@ -1051,15 +1061,15 @@ xyYf_to_rgbf (const Babl *conversion,float *src,
                 long   samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
-  float m_0_0 = space->space.XYZtoRGBf[0] * D50_WHITE_REF_X;
-  float m_0_1 = space->space.XYZtoRGBf[1] * D50_WHITE_REF_Y;
-  float m_0_2 = space->space.XYZtoRGBf[2] * D50_WHITE_REF_Z;
-  float m_1_0 = space->space.XYZtoRGBf[3] * D50_WHITE_REF_X;
-  float m_1_1 = space->space.XYZtoRGBf[4] * D50_WHITE_REF_Y;
-  float m_1_2 = space->space.XYZtoRGBf[5] * D50_WHITE_REF_Z;
-  float m_2_0 = space->space.XYZtoRGBf[6] * D50_WHITE_REF_X;
-  float m_2_1 = space->space.XYZtoRGBf[7] * D50_WHITE_REF_Y;
-  float m_2_2 = space->space.XYZtoRGBf[8] * D50_WHITE_REF_Z;
+  float m_0_0 = space->space.XYZtoRGBf[0] * D50_WHITE_REF_Xf;
+  float m_0_1 = space->space.XYZtoRGBf[1] * D50_WHITE_REF_Yf;
+  float m_0_2 = space->space.XYZtoRGBf[2] * D50_WHITE_REF_Zf;
+  float m_1_0 = space->space.XYZtoRGBf[3] * D50_WHITE_REF_Xf;
+  float m_1_1 = space->space.XYZtoRGBf[4] * D50_WHITE_REF_Yf;
+  float m_1_2 = space->space.XYZtoRGBf[5] * D50_WHITE_REF_Zf;
+  float m_2_0 = space->space.XYZtoRGBf[6] * D50_WHITE_REF_Xf;
+  float m_2_1 = space->space.XYZtoRGBf[7] * D50_WHITE_REF_Yf;
+  float m_2_2 = space->space.XYZtoRGBf[8] * D50_WHITE_REF_Zf;
   long n = samples;
 
   while (n--)
@@ -1069,7 +1079,7 @@ xyYf_to_rgbf (const Babl *conversion,float *src,
       float y = src[1];
       float Y = src[2];
 
-      if (near_zero (y))
+      if (near_zerof (y))
         {
           X = 0.0f;
           Y = 0.0f;
@@ -1104,15 +1114,15 @@ xyYf_to_rgbaf (const Babl *conversion,
                long        samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
-  float m_0_0 = space->space.XYZtoRGBf[0] * D50_WHITE_REF_X;
-  float m_0_1 = space->space.XYZtoRGBf[1] * D50_WHITE_REF_Y;
-  float m_0_2 = space->space.XYZtoRGBf[2] * D50_WHITE_REF_Z;
-  float m_1_0 = space->space.XYZtoRGBf[3] * D50_WHITE_REF_X;
-  float m_1_1 = space->space.XYZtoRGBf[4] * D50_WHITE_REF_Y;
-  float m_1_2 = space->space.XYZtoRGBf[5] * D50_WHITE_REF_Z;
-  float m_2_0 = space->space.XYZtoRGBf[6] * D50_WHITE_REF_X;
-  float m_2_1 = space->space.XYZtoRGBf[7] * D50_WHITE_REF_Y;
-  float m_2_2 = space->space.XYZtoRGBf[8] * D50_WHITE_REF_Z;
+  float m_0_0 = space->space.XYZtoRGBf[0] * D50_WHITE_REF_Xf;
+  float m_0_1 = space->space.XYZtoRGBf[1] * D50_WHITE_REF_Yf;
+  float m_0_2 = space->space.XYZtoRGBf[2] * D50_WHITE_REF_Zf;
+  float m_1_0 = space->space.XYZtoRGBf[3] * D50_WHITE_REF_Xf;
+  float m_1_1 = space->space.XYZtoRGBf[4] * D50_WHITE_REF_Yf;
+  float m_1_2 = space->space.XYZtoRGBf[5] * D50_WHITE_REF_Zf;
+  float m_2_0 = space->space.XYZtoRGBf[6] * D50_WHITE_REF_Xf;
+  float m_2_1 = space->space.XYZtoRGBf[7] * D50_WHITE_REF_Yf;
+  float m_2_2 = space->space.XYZtoRGBf[8] * D50_WHITE_REF_Zf;
   long n = samples;
 
   while (n--)
@@ -1123,7 +1133,7 @@ xyYf_to_rgbaf (const Babl *conversion,
       float Y = src[2];
 
 
-      if (near_zero (Y))
+      if (near_zerof (Y))
         {
           X = 0.0f;
           Y = 0.0f;
@@ -1157,15 +1167,15 @@ xyYaf_to_rgbaf (const Babl *conversion,
                 long        samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
-  float m_0_0 = space->space.XYZtoRGBf[0] * D50_WHITE_REF_X;
-  float m_0_1 = space->space.XYZtoRGBf[1] * D50_WHITE_REF_Y;
-  float m_0_2 = space->space.XYZtoRGBf[2] * D50_WHITE_REF_Z;
-  float m_1_0 = space->space.XYZtoRGBf[3] * D50_WHITE_REF_X;
-  float m_1_1 = space->space.XYZtoRGBf[4] * D50_WHITE_REF_Y;
-  float m_1_2 = space->space.XYZtoRGBf[5] * D50_WHITE_REF_Z;
-  float m_2_0 = space->space.XYZtoRGBf[6] * D50_WHITE_REF_X;
-  float m_2_1 = space->space.XYZtoRGBf[7] * D50_WHITE_REF_Y;
-  float m_2_2 = space->space.XYZtoRGBf[8] * D50_WHITE_REF_Z;
+  float m_0_0 = space->space.XYZtoRGBf[0] * D50_WHITE_REF_Xf;
+  float m_0_1 = space->space.XYZtoRGBf[1] * D50_WHITE_REF_Yf;
+  float m_0_2 = space->space.XYZtoRGBf[2] * D50_WHITE_REF_Zf;
+  float m_1_0 = space->space.XYZtoRGBf[3] * D50_WHITE_REF_Xf;
+  float m_1_1 = space->space.XYZtoRGBf[4] * D50_WHITE_REF_Yf;
+  float m_1_2 = space->space.XYZtoRGBf[5] * D50_WHITE_REF_Zf;
+  float m_2_0 = space->space.XYZtoRGBf[6] * D50_WHITE_REF_Xf;
+  float m_2_1 = space->space.XYZtoRGBf[7] * D50_WHITE_REF_Yf;
+  float m_2_2 = space->space.XYZtoRGBf[8] * D50_WHITE_REF_Zf;
   long n = samples;
 
   while (n--)
@@ -1176,7 +1186,7 @@ xyYaf_to_rgbaf (const Babl *conversion,
       float Y = src[2];
       float a = src[3];
 
-      if (near_zero (Y))
+      if (near_zerof (Y))
         {
           X = 0.0f;
           Y = 0.0f;
@@ -1213,15 +1223,15 @@ Yuvf_to_rgbf (const Babl *conversion,float *src,
               long   samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
-  float m_0_0 = space->space.XYZtoRGBf[0] * D50_WHITE_REF_X;
-  float m_0_1 = space->space.XYZtoRGBf[1] * D50_WHITE_REF_Y;
-  float m_0_2 = space->space.XYZtoRGBf[2] * D50_WHITE_REF_Z;
-  float m_1_0 = space->space.XYZtoRGBf[3] * D50_WHITE_REF_X;
-  float m_1_1 = space->space.XYZtoRGBf[4] * D50_WHITE_REF_Y;
-  float m_1_2 = space->space.XYZtoRGBf[5] * D50_WHITE_REF_Z;
-  float m_2_0 = space->space.XYZtoRGBf[6] * D50_WHITE_REF_X;
-  float m_2_1 = space->space.XYZtoRGBf[7] * D50_WHITE_REF_Y;
-  float m_2_2 = space->space.XYZtoRGBf[8] * D50_WHITE_REF_Z;
+  float m_0_0 = space->space.XYZtoRGBf[0] * D50_WHITE_REF_Xf;
+  float m_0_1 = space->space.XYZtoRGBf[1] * D50_WHITE_REF_Yf;
+  float m_0_2 = space->space.XYZtoRGBf[2] * D50_WHITE_REF_Zf;
+  float m_1_0 = space->space.XYZtoRGBf[3] * D50_WHITE_REF_Xf;
+  float m_1_1 = space->space.XYZtoRGBf[4] * D50_WHITE_REF_Yf;
+  float m_1_2 = space->space.XYZtoRGBf[5] * D50_WHITE_REF_Zf;
+  float m_2_0 = space->space.XYZtoRGBf[6] * D50_WHITE_REF_Xf;
+  float m_2_1 = space->space.XYZtoRGBf[7] * D50_WHITE_REF_Yf;
+  float m_2_2 = space->space.XYZtoRGBf[8] * D50_WHITE_REF_Zf;
   long n = samples;
 
   while (n--)
@@ -1231,7 +1241,7 @@ Yuvf_to_rgbf (const Babl *conversion,float *src,
       float u = src[1];
       float v = src[2];
 
-      if (near_zero (v))
+      if (near_zerof (v))
         {
           X = 0.0f;
           Y = 0.0f;
@@ -1239,9 +1249,9 @@ Yuvf_to_rgbf (const Babl *conversion,float *src,
         }
       else
         {
-          X = ((9.0 * u * Y)/(4.0 * v));
+          X = ((9.0f * u * Y)/(4.0f * v));
           //Y = Y;
-          Z = -(((20.0 * v + 3.0 * u - 12.0) * Y)/(4.0 * v));
+          Z = -(((20.0f * v + 3.0f * u - 12.0f) * Y)/(4.0f * v));
         }
 
       r = m_0_0 * X + m_0_1 * Y + m_0_2 * Z;
@@ -1266,15 +1276,15 @@ Yuvf_to_rgbaf (const Babl *conversion,
                long        samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
-  float m_0_0 = space->space.XYZtoRGBf[0] * D50_WHITE_REF_X;
-  float m_0_1 = space->space.XYZtoRGBf[1] * D50_WHITE_REF_Y;
-  float m_0_2 = space->space.XYZtoRGBf[2] * D50_WHITE_REF_Z;
-  float m_1_0 = space->space.XYZtoRGBf[3] * D50_WHITE_REF_X;
-  float m_1_1 = space->space.XYZtoRGBf[4] * D50_WHITE_REF_Y;
-  float m_1_2 = space->space.XYZtoRGBf[5] * D50_WHITE_REF_Z;
-  float m_2_0 = space->space.XYZtoRGBf[6] * D50_WHITE_REF_X;
-  float m_2_1 = space->space.XYZtoRGBf[7] * D50_WHITE_REF_Y;
-  float m_2_2 = space->space.XYZtoRGBf[8] * D50_WHITE_REF_Z;
+  float m_0_0 = space->space.XYZtoRGBf[0] * D50_WHITE_REF_Xf;
+  float m_0_1 = space->space.XYZtoRGBf[1] * D50_WHITE_REF_Yf;
+  float m_0_2 = space->space.XYZtoRGBf[2] * D50_WHITE_REF_Zf;
+  float m_1_0 = space->space.XYZtoRGBf[3] * D50_WHITE_REF_Xf;
+  float m_1_1 = space->space.XYZtoRGBf[4] * D50_WHITE_REF_Yf;
+  float m_1_2 = space->space.XYZtoRGBf[5] * D50_WHITE_REF_Zf;
+  float m_2_0 = space->space.XYZtoRGBf[6] * D50_WHITE_REF_Xf;
+  float m_2_1 = space->space.XYZtoRGBf[7] * D50_WHITE_REF_Yf;
+  float m_2_2 = space->space.XYZtoRGBf[8] * D50_WHITE_REF_Zf;
   long n = samples;
 
   while (n--)
@@ -1284,7 +1294,7 @@ Yuvf_to_rgbaf (const Babl *conversion,
       float u = src[1];
       float v = src[2];
 
-      if (near_zero (v))
+      if (near_zerof (v))
         {
           X = 0.0f;
           Y = 0.0f;
@@ -1292,9 +1302,9 @@ Yuvf_to_rgbaf (const Babl *conversion,
         }
       else
         {
-          X = ((9.0 * u * Y)/(4.0 * v));
+          X = ((9.0f * u * Y)/(4.0f * v));
           //Y = Y;
-          Z = -(((20.0 * v + 3.0 * u - 12.0) * Y)/(4.0 * v));
+          Z = -(((20.0f * v + 3.0f * u - 12.0f) * Y)/(4.0f * v));
         }
 
       r = m_0_0 * X + m_0_1 * Y + m_0_2 * Z;
@@ -1318,15 +1328,15 @@ Yuvaf_to_rgbaf (const Babl *conversion,
                 long        samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
-  float m_0_0 = space->space.XYZtoRGBf[0] * D50_WHITE_REF_X;
-  float m_0_1 = space->space.XYZtoRGBf[1] * D50_WHITE_REF_Y;
-  float m_0_2 = space->space.XYZtoRGBf[2] * D50_WHITE_REF_Z;
-  float m_1_0 = space->space.XYZtoRGBf[3] * D50_WHITE_REF_X;
-  float m_1_1 = space->space.XYZtoRGBf[4] * D50_WHITE_REF_Y;
-  float m_1_2 = space->space.XYZtoRGBf[5] * D50_WHITE_REF_Z;
-  float m_2_0 = space->space.XYZtoRGBf[6] * D50_WHITE_REF_X;
-  float m_2_1 = space->space.XYZtoRGBf[7] * D50_WHITE_REF_Y;
-  float m_2_2 = space->space.XYZtoRGBf[8] * D50_WHITE_REF_Z;
+  float m_0_0 = space->space.XYZtoRGBf[0] * D50_WHITE_REF_Xf;
+  float m_0_1 = space->space.XYZtoRGBf[1] * D50_WHITE_REF_Yf;
+  float m_0_2 = space->space.XYZtoRGBf[2] * D50_WHITE_REF_Zf;
+  float m_1_0 = space->space.XYZtoRGBf[3] * D50_WHITE_REF_Xf;
+  float m_1_1 = space->space.XYZtoRGBf[4] * D50_WHITE_REF_Yf;
+  float m_1_2 = space->space.XYZtoRGBf[5] * D50_WHITE_REF_Zf;
+  float m_2_0 = space->space.XYZtoRGBf[6] * D50_WHITE_REF_Xf;
+  float m_2_1 = space->space.XYZtoRGBf[7] * D50_WHITE_REF_Yf;
+  float m_2_2 = space->space.XYZtoRGBf[8] * D50_WHITE_REF_Zf;
   long n = samples;
 
   while (n--)
@@ -1337,7 +1347,7 @@ Yuvaf_to_rgbaf (const Babl *conversion,
       float v = src[2];
       float a = src[3];
 
-      if (near_zero (v))
+      if (near_zerof (v))
         {
           X = 0.0f;
           Y = 0.0f;
@@ -1345,9 +1355,9 @@ Yuvaf_to_rgbaf (const Babl *conversion,
         }
       else
         {
-          X = ((9.0 * u * Y)/(4.0 * v));
+          X = ((9.0f * u * Y)/(4.0f * v));
           //Y = Y;
-          Z = -(((20.0 * v + 3.0 * u - 12.0) * Y)/(4.0 * v));
+          Z = -(((20.0f * v + 3.0f * u - 12.0f) * Y)/(4.0f * v));
         }
 
       r = m_0_0 * X + m_0_1 * Y + m_0_2 * Z;
@@ -1689,7 +1699,7 @@ Yf_to_Lf (const Babl *conversion,
   while (n--)
     {
       float yr = src[0];
-      float L  = yr > LAB_EPSILON ? 116.0f * _cbrtf (yr) - 16 : LAB_KAPPA * yr;
+      float L  = yr > LAB_EPSILONf ? 116.0f * _cbrtf (yr) - 16 : LAB_KAPPAf * yr;
 
       dst[0] = L;
 
@@ -1709,7 +1719,7 @@ Yaf_to_Lf (const Babl *conversion,
   while (n--)
     {
       float yr = src[0];
-      float L  = yr > LAB_EPSILON ? 116.0f * _cbrtf (yr) - 16 : LAB_KAPPA * yr;
+      float L  = yr > LAB_EPSILONf ? 116.0f * _cbrtf (yr) - 16 : LAB_KAPPAf * yr;
 
       dst[0] = L;
 
@@ -1730,7 +1740,7 @@ Yaf_to_Laf (const Babl *conversion,
     {
       float yr = src[0];
       float a  = src[1];
-      float L  = yr > LAB_EPSILON ? 116.0f * _cbrtf (yr) - 16 : LAB_KAPPA * yr;
+      float L  = yr > LAB_EPSILONf ? 116.0f * _cbrtf (yr) - 16 : LAB_KAPPAf * yr;
 
       dst[0] = L;
       dst[1] = a;
@@ -1747,15 +1757,15 @@ rgbf_to_Labf (const Babl *conversion,
               long        samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
-  float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_X;
-  float m_0_1 = space->space.RGBtoXYZf[1] / D50_WHITE_REF_X;
-  float m_0_2 = space->space.RGBtoXYZf[2] / D50_WHITE_REF_X;
-  float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Y;
-  float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Y;
-  float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Y;
-  float m_2_0 = space->space.RGBtoXYZf[6] / D50_WHITE_REF_Z;
-  float m_2_1 = space->space.RGBtoXYZf[7] / D50_WHITE_REF_Z;
-  float m_2_2 = space->space.RGBtoXYZf[8] / D50_WHITE_REF_Z;
+  float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_Xf;
+  float m_0_1 = space->space.RGBtoXYZf[1] / D50_WHITE_REF_Xf;
+  float m_0_2 = space->space.RGBtoXYZf[2] / D50_WHITE_REF_Xf;
+  float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Yf;
+  float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Yf;
+  float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Yf;
+  float m_2_0 = space->space.RGBtoXYZf[6] / D50_WHITE_REF_Zf;
+  float m_2_1 = space->space.RGBtoXYZf[7] / D50_WHITE_REF_Zf;
+  float m_2_2 = space->space.RGBtoXYZf[8] / D50_WHITE_REF_Zf;
   long n = samples;
 
   while (n--)
@@ -1768,9 +1778,9 @@ rgbf_to_Labf (const Babl *conversion,
       float yr = m_1_0 * r + m_1_1 * g + m_1_2 * b;
       float zr = m_2_0 * r + m_2_1 * g + m_2_2 * b;
 
-      float fx = xr > LAB_EPSILON ? _cbrtf (xr) : (LAB_KAPPA * xr + 16.0f) / 116.0f;
-      float fy = yr > LAB_EPSILON ? _cbrtf (yr) : (LAB_KAPPA * yr + 16.0f) / 116.0f;
-      float fz = zr > LAB_EPSILON ? _cbrtf (zr) : (LAB_KAPPA * zr + 16.0f) / 116.0f;
+      float fx = xr > LAB_EPSILONf ? _cbrtf (xr) : (LAB_KAPPAf * xr + 16.0f) / 116.0f;
+      float fy = yr > LAB_EPSILONf ? _cbrtf (yr) : (LAB_KAPPAf * yr + 16.0f) / 116.0f;
+      float fz = zr > LAB_EPSILONf ? _cbrtf (zr) : (LAB_KAPPAf * zr + 16.0f) / 116.0f;
 
       float L = 116.0f * fy - 16.0f;
       float A = 500.0f * (fx - fy);
@@ -1792,9 +1802,9 @@ rgbaf_to_Lf (const Babl *conversion,
              long        samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
-  float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Y;
-  float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Y;
-  float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Y;
+  float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Yf;
+  float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Yf;
+  float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Yf;
   long n = samples;
 
   while (n--)
@@ -1804,7 +1814,7 @@ rgbaf_to_Lf (const Babl *conversion,
       float b = src[2];
 
       float yr = m_1_0 * r + m_1_1 * g + m_1_2 * b;
-      float L = yr > LAB_EPSILON ? 116.0f * _cbrtf (yr) - 16 : LAB_KAPPA * yr;
+      float L = yr > LAB_EPSILONf ? 116.0f * _cbrtf (yr) - 16 : LAB_KAPPAf * yr;
 
       dst[0] = L;
 
@@ -1820,15 +1830,15 @@ rgbaf_to_Labf (const Babl *conversion,
                long        samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
-  float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_X;
-  float m_0_1 = space->space.RGBtoXYZf[1] / D50_WHITE_REF_X;
-  float m_0_2 = space->space.RGBtoXYZf[2] / D50_WHITE_REF_X;
-  float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Y;
-  float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Y;
-  float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Y;
-  float m_2_0 = space->space.RGBtoXYZf[6] / D50_WHITE_REF_Z;
-  float m_2_1 = space->space.RGBtoXYZf[7] / D50_WHITE_REF_Z;
-  float m_2_2 = space->space.RGBtoXYZf[8] / D50_WHITE_REF_Z;
+  float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_Xf;
+  float m_0_1 = space->space.RGBtoXYZf[1] / D50_WHITE_REF_Xf;
+  float m_0_2 = space->space.RGBtoXYZf[2] / D50_WHITE_REF_Xf;
+  float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Yf;
+  float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Yf;
+  float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Yf;
+  float m_2_0 = space->space.RGBtoXYZf[6] / D50_WHITE_REF_Zf;
+  float m_2_1 = space->space.RGBtoXYZf[7] / D50_WHITE_REF_Zf;
+  float m_2_2 = space->space.RGBtoXYZf[8] / D50_WHITE_REF_Zf;
   long n = samples;
 
   while (n--)
@@ -1841,9 +1851,9 @@ rgbaf_to_Labf (const Babl *conversion,
       float yr = m_1_0 * r + m_1_1 * g + m_1_2 * b;
       float zr = m_2_0 * r + m_2_1 * g + m_2_2 * b;
 
-      float fx = xr > LAB_EPSILON ? _cbrtf (xr) : (LAB_KAPPA * xr + 16.0f) / 116.0f;
-      float fy = yr > LAB_EPSILON ? _cbrtf (yr) : (LAB_KAPPA * yr + 16.0f) / 116.0f;
-      float fz = zr > LAB_EPSILON ? _cbrtf (zr) : (LAB_KAPPA * zr + 16.0f) / 116.0f;
+      float fx = xr > LAB_EPSILONf ? _cbrtf (xr) : (LAB_KAPPAf * xr + 16.0f) / 116.0f;
+      float fy = yr > LAB_EPSILONf ? _cbrtf (yr) : (LAB_KAPPAf * yr + 16.0f) / 116.0f;
+      float fz = zr > LAB_EPSILONf ? _cbrtf (zr) : (LAB_KAPPAf * zr + 16.0f) / 116.0f;
 
       float L = 116.0f * fy - 16.0f;
       float A = 500.0f * (fx - fy);
@@ -1865,15 +1875,15 @@ rgbaf_to_Labaf (const Babl *conversion,
                 long        samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
-  float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_X;
-  float m_0_1 = space->space.RGBtoXYZf[1] / D50_WHITE_REF_X;
-  float m_0_2 = space->space.RGBtoXYZf[2] / D50_WHITE_REF_X;
-  float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Y;
-  float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Y;
-  float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Y;
-  float m_2_0 = space->space.RGBtoXYZf[6] / D50_WHITE_REF_Z;
-  float m_2_1 = space->space.RGBtoXYZf[7] / D50_WHITE_REF_Z;
-  float m_2_2 = space->space.RGBtoXYZf[8] / D50_WHITE_REF_Z;
+  float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_Xf;
+  float m_0_1 = space->space.RGBtoXYZf[1] / D50_WHITE_REF_Xf;
+  float m_0_2 = space->space.RGBtoXYZf[2] / D50_WHITE_REF_Xf;
+  float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Yf;
+  float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Yf;
+  float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Yf;
+  float m_2_0 = space->space.RGBtoXYZf[6] / D50_WHITE_REF_Zf;
+  float m_2_1 = space->space.RGBtoXYZf[7] / D50_WHITE_REF_Zf;
+  float m_2_2 = space->space.RGBtoXYZf[8] / D50_WHITE_REF_Zf;
   long n = samples;
 
   while (n--)
@@ -1887,9 +1897,9 @@ rgbaf_to_Labaf (const Babl *conversion,
       float yr = m_1_0 * r + m_1_1 * g + m_1_2 * b;
       float zr = m_2_0 * r + m_2_1 * g + m_2_2 * b;
 
-      float fx = xr > LAB_EPSILON ? _cbrtf (xr) : (LAB_KAPPA * xr + 16.0f) / 116.0f;
-      float fy = yr > LAB_EPSILON ? _cbrtf (yr) : (LAB_KAPPA * yr + 16.0f) / 116.0f;
-      float fz = zr > LAB_EPSILON ? _cbrtf (zr) : (LAB_KAPPA * zr + 16.0f) / 116.0f;
+      float fx = xr > LAB_EPSILONf ? _cbrtf (xr) : (LAB_KAPPAf * xr + 16.0f) / 116.0f;
+      float fy = yr > LAB_EPSILONf ? _cbrtf (yr) : (LAB_KAPPAf * yr + 16.0f) / 116.0f;
+      float fz = zr > LAB_EPSILONf ? _cbrtf (zr) : (LAB_KAPPAf * zr + 16.0f) / 116.0f;
 
       float L = 116.0f * fy - 16.0f;
       float A = 500.0f * (fx - fy);
@@ -1946,15 +1956,15 @@ Labf_to_rgbf (const Babl *conversion,
               long        samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
-  float m_0_0 = space->space.XYZtoRGBf[0] * D50_WHITE_REF_X;
-  float m_0_1 = space->space.XYZtoRGBf[1] * D50_WHITE_REF_Y;
-  float m_0_2 = space->space.XYZtoRGBf[2] * D50_WHITE_REF_Z;
-  float m_1_0 = space->space.XYZtoRGBf[3] * D50_WHITE_REF_X;
-  float m_1_1 = space->space.XYZtoRGBf[4] * D50_WHITE_REF_Y;
-  float m_1_2 = space->space.XYZtoRGBf[5] * D50_WHITE_REF_Z;
-  float m_2_0 = space->space.XYZtoRGBf[6] * D50_WHITE_REF_X;
-  float m_2_1 = space->space.XYZtoRGBf[7] * D50_WHITE_REF_Y;
-  float m_2_2 = space->space.XYZtoRGBf[8] * D50_WHITE_REF_Z;
+  float m_0_0 = space->space.XYZtoRGBf[0] * D50_WHITE_REF_Xf;
+  float m_0_1 = space->space.XYZtoRGBf[1] * D50_WHITE_REF_Yf;
+  float m_0_2 = space->space.XYZtoRGBf[2] * D50_WHITE_REF_Zf;
+  float m_1_0 = space->space.XYZtoRGBf[3] * D50_WHITE_REF_Xf;
+  float m_1_1 = space->space.XYZtoRGBf[4] * D50_WHITE_REF_Yf;
+  float m_1_2 = space->space.XYZtoRGBf[5] * D50_WHITE_REF_Zf;
+  float m_2_0 = space->space.XYZtoRGBf[6] * D50_WHITE_REF_Xf;
+  float m_2_1 = space->space.XYZtoRGBf[7] * D50_WHITE_REF_Yf;
+  float m_2_2 = space->space.XYZtoRGBf[8] * D50_WHITE_REF_Zf;
   long n = samples;
 
   while (n--)
@@ -1967,9 +1977,9 @@ Labf_to_rgbf (const Babl *conversion,
       float fx = fy + A / 500.0f;
       float fz = fy - B / 200.0f;
 
-      float yr = L > LAB_KAPPA * LAB_EPSILON ? cubef (fy) : L / LAB_KAPPA;
-      float xr = cubef (fx) > LAB_EPSILON ? cubef (fx) : (fx * 116.0f - 16.0f) / LAB_KAPPA;
-      float zr = cubef (fz) > LAB_EPSILON ? cubef (fz) : (fz * 116.0f - 16.0f) / LAB_KAPPA;
+      float yr = L > LAB_KAPPAf * LAB_EPSILONf ? cubef (fy) : L / LAB_KAPPAf;
+      float xr = cubef (fx) > LAB_EPSILONf ? cubef (fx) : (fx * 116.0f - 16.0f) / LAB_KAPPAf;
+      float zr = cubef (fz) > LAB_EPSILONf ? cubef (fz) : (fz * 116.0f - 16.0f) / LAB_KAPPAf;
 
       float r = m_0_0 * xr + m_0_1 * yr + m_0_2 * zr;
       float g = m_1_0 * xr + m_1_1 * yr + m_1_2 * zr;
@@ -1991,15 +2001,15 @@ Labf_to_rgbaf (const Babl *conversion,float *src,
                long   samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
-  float m_0_0 = space->space.XYZtoRGBf[0] * D50_WHITE_REF_X;
-  float m_0_1 = space->space.XYZtoRGBf[1] * D50_WHITE_REF_Y;
-  float m_0_2 = space->space.XYZtoRGBf[2] * D50_WHITE_REF_Z;
-  float m_1_0 = space->space.XYZtoRGBf[3] * D50_WHITE_REF_X;
-  float m_1_1 = space->space.XYZtoRGBf[4] * D50_WHITE_REF_Y;
-  float m_1_2 = space->space.XYZtoRGBf[5] * D50_WHITE_REF_Z;
-  float m_2_0 = space->space.XYZtoRGBf[6] * D50_WHITE_REF_X;
-  float m_2_1 = space->space.XYZtoRGBf[7] * D50_WHITE_REF_Y;
-  float m_2_2 = space->space.XYZtoRGBf[8] * D50_WHITE_REF_Z;
+  float m_0_0 = space->space.XYZtoRGBf[0] * D50_WHITE_REF_Xf;
+  float m_0_1 = space->space.XYZtoRGBf[1] * D50_WHITE_REF_Yf;
+  float m_0_2 = space->space.XYZtoRGBf[2] * D50_WHITE_REF_Zf;
+  float m_1_0 = space->space.XYZtoRGBf[3] * D50_WHITE_REF_Xf;
+  float m_1_1 = space->space.XYZtoRGBf[4] * D50_WHITE_REF_Yf;
+  float m_1_2 = space->space.XYZtoRGBf[5] * D50_WHITE_REF_Zf;
+  float m_2_0 = space->space.XYZtoRGBf[6] * D50_WHITE_REF_Xf;
+  float m_2_1 = space->space.XYZtoRGBf[7] * D50_WHITE_REF_Yf;
+  float m_2_2 = space->space.XYZtoRGBf[8] * D50_WHITE_REF_Zf;
   long n = samples;
 
   while (n--)
@@ -2012,9 +2022,9 @@ Labf_to_rgbaf (const Babl *conversion,float *src,
       float fx = fy + A / 500.0f;
       float fz = fy - B / 200.0f;
 
-      float yr = L > LAB_KAPPA * LAB_EPSILON ? cubef (fy) : L / LAB_KAPPA;
-      float xr = cubef (fx) > LAB_EPSILON ? cubef (fx) : (fx * 116.0f - 16.0f) / LAB_KAPPA;
-      float zr = cubef (fz) > LAB_EPSILON ? cubef (fz) : (fz * 116.0f - 16.0f) / LAB_KAPPA;
+      float yr = L > LAB_KAPPAf * LAB_EPSILONf ? cubef (fy) : L / LAB_KAPPAf;
+      float xr = cubef (fx) > LAB_EPSILONf ? cubef (fx) : (fx * 116.0f - 16.0f) / LAB_KAPPAf;
+      float zr = cubef (fz) > LAB_EPSILONf ? cubef (fz) : (fz * 116.0f - 16.0f) / LAB_KAPPAf;
 
       float r = m_0_0 * xr + m_0_1 * yr + m_0_2 * zr;
       float g = m_1_0 * xr + m_1_1 * yr + m_1_2 * zr;
@@ -2037,15 +2047,15 @@ Labaf_to_rgbaf (const Babl *conversion,
                 long        samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
-  float m_0_0 = space->space.XYZtoRGBf[0] * D50_WHITE_REF_X;
-  float m_0_1 = space->space.XYZtoRGBf[1] * D50_WHITE_REF_Y;
-  float m_0_2 = space->space.XYZtoRGBf[2] * D50_WHITE_REF_Z;
-  float m_1_0 = space->space.XYZtoRGBf[3] * D50_WHITE_REF_X;
-  float m_1_1 = space->space.XYZtoRGBf[4] * D50_WHITE_REF_Y;
-  float m_1_2 = space->space.XYZtoRGBf[5] * D50_WHITE_REF_Z;
-  float m_2_0 = space->space.XYZtoRGBf[6] * D50_WHITE_REF_X;
-  float m_2_1 = space->space.XYZtoRGBf[7] * D50_WHITE_REF_Y;
-  float m_2_2 = space->space.XYZtoRGBf[8] * D50_WHITE_REF_Z;
+  float m_0_0 = space->space.XYZtoRGBf[0] * D50_WHITE_REF_Xf;
+  float m_0_1 = space->space.XYZtoRGBf[1] * D50_WHITE_REF_Yf;
+  float m_0_2 = space->space.XYZtoRGBf[2] * D50_WHITE_REF_Zf;
+  float m_1_0 = space->space.XYZtoRGBf[3] * D50_WHITE_REF_Xf;
+  float m_1_1 = space->space.XYZtoRGBf[4] * D50_WHITE_REF_Yf;
+  float m_1_2 = space->space.XYZtoRGBf[5] * D50_WHITE_REF_Zf;
+  float m_2_0 = space->space.XYZtoRGBf[6] * D50_WHITE_REF_Xf;
+  float m_2_1 = space->space.XYZtoRGBf[7] * D50_WHITE_REF_Yf;
+  float m_2_2 = space->space.XYZtoRGBf[8] * D50_WHITE_REF_Zf;
   long n = samples;
 
   while (n--)
@@ -2059,9 +2069,9 @@ Labaf_to_rgbaf (const Babl *conversion,
       float fx = fy + A / 500.0f;
       float fz = fy - B / 200.0f;
 
-      float yr = L > LAB_KAPPA * LAB_EPSILON ? cubef (fy) : L / LAB_KAPPA;
-      float xr = cubef (fx) > LAB_EPSILON ? cubef (fx) : (fx * 116.0f - 16.0f) / LAB_KAPPA;
-      float zr = cubef (fz) > LAB_EPSILON ? cubef (fz) : (fz * 116.0f - 16.0f) / LAB_KAPPA;
+      float yr = L > LAB_KAPPAf * LAB_EPSILONf ? cubef (fy) : L / LAB_KAPPAf;
+      float xr = cubef (fx) > LAB_EPSILONf ? cubef (fx) : (fx * 116.0f - 16.0f) / LAB_KAPPAf;
+      float zr = cubef (fz) > LAB_EPSILONf ? cubef (fz) : (fz * 116.0f - 16.0f) / LAB_KAPPAf;
 
       float r = m_0_0 * xr + m_0_1 * yr + m_0_2 * zr;
       float g = m_1_0 * xr + m_1_1 * yr + m_1_2 * zr;
@@ -2092,7 +2102,7 @@ Labf_to_Lchabf (const Babl *conversion,
       float B = src[2];
 
       float C = sqrtf (A * A + B * B);
-      float H = atan2f (B, A) * DEGREES_PER_RADIAN;
+      float H = atan2f (B, A) * DEGREES_PER_RADIANf;
 
       // Keep H within the range 0-360
       if (H < 0.0f)
@@ -2121,8 +2131,8 @@ Lchabf_to_Labf (const Babl *conversion,
       float C = src[1];
       float H = src[2];
 
-      float A = C * cosf (H * RADIANS_PER_DEGREE);
-      float B = C * sinf (H * RADIANS_PER_DEGREE);
+      float A = C * cosf (H * RADIANS_PER_DEGREEf);
+      float B = C * sinf (H * RADIANS_PER_DEGREEf);
 
       dst[0] = L;
       dst[1] = A;
@@ -2149,7 +2159,7 @@ Labaf_to_Lchabaf (const Babl *conversion,
       float a = src[3];
 
       float C = sqrtf (A * A + B * B);
-      float H = atan2f (B, A) * DEGREES_PER_RADIAN;
+      float H = atan2f (B, A) * DEGREES_PER_RADIANf;
 
       // Keep H within the range 0-360
       if (H < 0.0f)
@@ -2180,8 +2190,8 @@ Lchabaf_to_Labaf (const Babl *conversion,
       float H = src[2];
       float a = src[3];
 
-      float A = C * cosf (H * RADIANS_PER_DEGREE);
-      float B = C * sinf (H * RADIANS_PER_DEGREE);
+      float A = C * cosf (H * RADIANS_PER_DEGREEf);
+      float B = C * sinf (H * RADIANS_PER_DEGREEf);
 
       dst[0] = L;
       dst[1] = A;
@@ -2311,7 +2321,7 @@ Yf_to_Lf_sse2 (const Babl  *conversion,
   while (remainder--)
     {
       float yr = src[0];
-      float L  = yr > LAB_EPSILON ? 116.0f * _cbrtf (yr) - 16 : LAB_KAPPA * yr;
+      float L  = yr > LAB_EPSILONf ? 116.0f * _cbrtf (yr) - 16 : LAB_KAPPAf * yr;
 
       dst[0] = L;
 
@@ -2355,7 +2365,7 @@ Yaf_to_Lf_sse2 (const Babl  *conversion,
   while (remainder--)
     {
       float yr = src[0];
-      float L  = yr > LAB_EPSILON ? 116.0f * _cbrtf (yr) - 16 : LAB_KAPPA * yr;
+      float L  = yr > LAB_EPSILONf ? 116.0f * _cbrtf (yr) - 16 : LAB_KAPPAf * yr;
 
       dst[0] = L;
 
@@ -2371,9 +2381,9 @@ rgbaf_to_Lf_sse2 (const Babl  *conversion,
                   long         samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
-  const float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Y;
-  const float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Y;
-  const float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Y;
+  const float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Yf;
+  const float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Yf;
+  const float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Yf;
   long i = 0;
   long remainder;
 
@@ -2421,7 +2431,7 @@ rgbaf_to_Lf_sse2 (const Babl  *conversion,
       float b = src[2];
 
       float yr = m_1_0 * r + m_1_1 * g + m_1_2 * b;
-      float L = yr > LAB_EPSILON ? 116.0f * _cbrtf (yr) - 16 : LAB_KAPPA * yr;
+      float L = yr > LAB_EPSILONf ? 116.0f * _cbrtf (yr) - 16 : LAB_KAPPAf * yr;
 
       dst[0] = L;
 
@@ -2437,15 +2447,15 @@ rgbaf_to_Labaf_sse2 (const Babl  *conversion,
                      long         samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
-  const float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_X;
-  const float m_0_1 = space->space.RGBtoXYZf[1] / D50_WHITE_REF_X;
-  const float m_0_2 = space->space.RGBtoXYZf[2] / D50_WHITE_REF_X;
-  const float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Y;
-  const float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Y;
-  const float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Y;
-  const float m_2_0 = space->space.RGBtoXYZf[6] / D50_WHITE_REF_Z;
-  const float m_2_1 = space->space.RGBtoXYZf[7] / D50_WHITE_REF_Z;
-  const float m_2_2 = space->space.RGBtoXYZf[8] / D50_WHITE_REF_Z;
+  const float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_Xf;
+  const float m_0_1 = space->space.RGBtoXYZf[1] / D50_WHITE_REF_Xf;
+  const float m_0_2 = space->space.RGBtoXYZf[2] / D50_WHITE_REF_Xf;
+  const float m_1_0 = space->space.RGBtoXYZf[3] / D50_WHITE_REF_Yf;
+  const float m_1_1 = space->space.RGBtoXYZf[4] / D50_WHITE_REF_Yf;
+  const float m_1_2 = space->space.RGBtoXYZf[5] / D50_WHITE_REF_Yf;
+  const float m_2_0 = space->space.RGBtoXYZf[6] / D50_WHITE_REF_Zf;
+  const float m_2_1 = space->space.RGBtoXYZf[7] / D50_WHITE_REF_Zf;
+  const float m_2_2 = space->space.RGBtoXYZf[8] / D50_WHITE_REF_Zf;
   long i = 0;
   long remainder;
 
@@ -2525,9 +2535,9 @@ rgbaf_to_Labaf_sse2 (const Babl  *conversion,
       float yr = m_1_0 * r + m_1_1 * g + m_1_2 * b;
       float zr = m_2_0 * r + m_2_1 * g + m_2_2 * b;
 
-      float fx = xr > LAB_EPSILON ? _cbrtf (xr) : (LAB_KAPPA * xr + 16.0f) / 116.0f;
-      float fy = yr > LAB_EPSILON ? _cbrtf (yr) : (LAB_KAPPA * yr + 16.0f) / 116.0f;
-      float fz = zr > LAB_EPSILON ? _cbrtf (zr) : (LAB_KAPPA * zr + 16.0f) / 116.0f;
+      float fx = xr > LAB_EPSILONf ? _cbrtf (xr) : (LAB_KAPPAf * xr + 16.0f) / 116.0f;
+      float fy = yr > LAB_EPSILONf ? _cbrtf (yr) : (LAB_KAPPAf * yr + 16.0f) / 116.0f;
+      float fz = zr > LAB_EPSILONf ? _cbrtf (zr) : (LAB_KAPPAf * zr + 16.0f) / 116.0f;
 
       float L = 116.0f * fy - 16.0f;
       float A = 500.0f * (fx - fy);
