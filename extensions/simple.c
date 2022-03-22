@@ -190,7 +190,7 @@ float_to_u32_x1 (const Babl    *conversion,
   long n = samples;
   while (n--)
     {
-      double r = src[0];
+      float r = src[0];
             
       dst[0] = (r >= 1.0f) ? 0xFFFFFFFF : ((r <= 0.0f) ? 0x0 : 0xFFFFFFFF * r + 0.5f);
       
