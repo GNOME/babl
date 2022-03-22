@@ -4,6 +4,9 @@ the news section both in the README and the webpage.
                                                                           -->
 
 2022-02-21 babl-0.1.90                                              </dt><dd>
+Fixes for avoiding load of wrong SIMD extensions.
+                                                                    </dd><dt>
+2022-02-21 babl-0.1.90                                              </dt><dd>
 Automatic LUT creation for conversions from &lt;24bpp of colorant componants,
 SIMD builds for x86_64 micro-architecture levels and ARM neon, pre-defined
 CIE Lab u8 and CIE Lab u16 formats. Fix bug of an unlocked non-locked mutex,
