@@ -115,4 +115,22 @@ if host_cpu_family == 'x86_64'
    )
   endforeach
 
+elif host_cpu_family == 'arm'
+  
+
+  foreach ext : autosimd_extensions
+    shared_library(
+      'arm-neon-' + ext[0],
+      ext[0] + '.c',
+      c_args: [ext[1]] + arm_neon_flags,
+      include_directories: babl_ext_inc,
+      link_with: babl,
+      link_args: babl_ext_link_args,
+      dependencies: babl_ext_dep,
+      name_prefix: '',
+      install: true,
+      install_dir: babl_libdir / lib_name,
+   )
+  endforeach
+
 endif

@@ -309,7 +309,7 @@ static const char **simd_init (void)
   }
   else
   {
-    static const char *exclude[] = {"neon-", NULL};
+    static const char *exclude[] = {"arm-neon-", NULL};
     return exclude;
   }
 #endif
