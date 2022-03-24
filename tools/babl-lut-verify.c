@@ -269,15 +269,15 @@ int main (int argc, char **argv)
   };
 
 
-  for (int i = 0; i < sizeof (format_sets)/sizeof(format_sets[0]); i++)
+  for (size_t i = 0; i < sizeof (format_sets) / sizeof(format_sets[0]); i++)
   {
-  fprintf (stdout, "%s to %s: ", babl_get_name (format_sets[i][0]),
-                                 babl_get_name (format_sets[i][1])),
-  error = test_generic (format_sets[i][0], format_sets[i][1]);
-  if (error != 0.0)
-    fprintf (stdout, "%.20f\n", error/(PIXELS*4));
-  else
-    fprintf (stdout, "OK\n");
+    fprintf (stdout, "%s to %s: ", babl_get_name (format_sets[i][0]),
+                                  babl_get_name (format_sets[i][1])),
+    error = test_generic (format_sets[i][0], format_sets[i][1]);
+    if (error != 0.0)
+      fprintf (stdout, "%.20f\n", error/(PIXELS*4));
+    else
+      fprintf (stdout, "OK\n");
   }
   }
 
