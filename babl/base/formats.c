@@ -35,7 +35,7 @@ BABL_SIMD_SUFFIX (babl_formats_init) (void)
     babl_type_from_id (BABL_U16),
     babl_type_from_id (BABL_U32)
   };
-  for (int i = 0; i < sizeof (types)/sizeof(types[0]);i++)
+  for (size_t i = 0; i < sizeof (types) / sizeof(types[0]); i++)
   {
     const Babl *type = types[i];
 
