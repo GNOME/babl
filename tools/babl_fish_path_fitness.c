@@ -79,8 +79,8 @@ static void
 init_test_pixels (void)
 {
   static int done = 0;
-  int i = 0;
-  int pix_no = 0;
+  size_t i = 0;
+  size_t pix_no = 0;
   srandom (111);
 
   if (done)
