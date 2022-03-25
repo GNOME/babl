@@ -1365,7 +1365,7 @@ babl_process_rows (const Babl *fish,
 #include <stdint.h>
 
 #define BABL_ALIGN 16
-static void inline *align_16 (unsigned char *ret)
+static inline void *align_16 (unsigned char *ret)
 {
   int offset = BABL_ALIGN - ((uintptr_t) ret) % BABL_ALIGN;
   ret = ret + offset;
