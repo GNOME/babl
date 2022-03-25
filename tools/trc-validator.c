@@ -185,8 +185,7 @@ to_linear_ref (float x)
 }
 
 int 
-main (int    argc, 
-      char **argv)
+main (void)
 {
   int i;
   float max_diff = 0.0;

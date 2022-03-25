@@ -56,7 +56,7 @@ test_generic (const Babl *source, const Babl *dest)
   return error;
 }
 
-int main (int argc, char **argv)
+int main (void)
 {
   double error = 0;
   setenv ("BABL_INHIBIT_CACHE", "1", 1);

@@ -69,8 +69,7 @@ test (void)
 }
 
 int
-main (int    argc,
-      char **argv)
+main (void)
 {
   babl_init ();
   if (test ())

@@ -52,8 +52,7 @@ thread_proc (void *data)
 }
 
 int
-main (int    argc,
-      char **argv)
+main (void)
 {
   const Babl    *pal;
   const Babl    *pal_format;

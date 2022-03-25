@@ -49,8 +49,7 @@ babl_fish_path_stress_test_thread_func (void *not_used)
 }
 
 int
-main (int    argc,
-      char **argv)
+main (void)
 {
   pthread_t threads[N_THREADS];
   int       i;

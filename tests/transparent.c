@@ -45,8 +45,7 @@ clear_fish_db (void)
 }
 
 int
-main (int    argc,
-      char **argv)
+main (void)
 {
   int OK = 1;
   int i;

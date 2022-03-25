@@ -20,8 +20,7 @@
 #include "babl-internal.h"
 
 int
-main (int    argc,
-      char **argv)
+main (void)
 {
   babl_init ();
   if (!babl_sanity ())

@@ -55,8 +55,7 @@
   };
 
 int
-main (int    argc,
-      char **argv)
+main (void)
 {
   putenv ("BABL_DEBUG_CONVERSIONS" "=" "1");
   putenv ("BABL_DEBUG_MISSING" "=" "1");
