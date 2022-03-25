@@ -287,7 +287,7 @@ static void measure_timings(void)
    LUT_LOG("BABL_LUT_UNUSED_LIMIT=%.1f\n", lut_unused_minutes_limit);
 
    LUT_LOG("measuring lut timings          \n");
-   for (int p = 0; p < sizeof (pairs)/sizeof(pairs[0]);p++)
+   for (size_t p = 0; p < sizeof (pairs)/sizeof(pairs[0]);p++)
    {
      int source_bpp = pairs[p][0];
      int dest_bpp = pairs[p][1];
