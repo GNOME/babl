@@ -318,8 +318,8 @@ babl_strcat (char       *dest,
              const char *src)
 {
   char *ret;
-  int   src_len;
-  int   dst_len;
+  size_t src_len;
+  size_t dst_len;
 
   if (NULL == src)
     return dest;
