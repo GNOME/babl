@@ -555,6 +555,7 @@ switch (trc->type)
       break;
     }
   case BABL_TRC_FORMULA_SRGB:
+  // fall through
   case BABL_TRC_FORMULA_CIE:
     {
       int lut_size = 512;
@@ -1504,8 +1505,11 @@ ConvertUTF16toUTF8 (const UTF16   **sourceStart,
 	}
 	switch (bytesToWrite) { /* note: everything falls through. */
 	    case 4: *--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
+	    // fall through
 	    case 3: *--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
+	    // fall through
 	    case 2: *--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
+	    // fall through
 	    case 1: *--target =  (UTF8)(ch | firstByteMark[bytesToWrite]);
 	}
 	target += bytesToWrite;

@@ -340,8 +340,8 @@ babl_extension_load_dir_list (const char *dir_list,
         {
           case '\0':
             eos = 1;
-            /* don't break here, the path needs to be processed */
-
+            // the path needs to be processed.
+            // fall through
           case BABL_PATH_SEPARATOR:
           {
             char *expanded_path = expand_path (path);
