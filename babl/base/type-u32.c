@@ -69,7 +69,7 @@ convert_u32_double_scaled (BablConversion *c,
 {
   while (n--)
     {
-      int    u32val = *(uint32_t *) src;
+      uint32_t    u32val = *(uint32_t *) src;
       double dval;
 
       if (u32val < min)
@@ -154,7 +154,7 @@ convert_u32_float_scaled (BablConversion *c,
 {
   while (n--)
     {
-      int    u32val = *(uint32_t *) src;
+      uint32_t u32val = *(uint32_t *) src;
       float dval;
 
       if (u32val < min)
