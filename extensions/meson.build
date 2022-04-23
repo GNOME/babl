@@ -6,6 +6,7 @@ no_cflags = []
 babl_ext_dep = [
   math,
   thread,
+  lcms,
 ]
 
 # Include directories

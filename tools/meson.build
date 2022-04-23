@@ -18,7 +18,7 @@ foreach tool_name : tool_names
     tool_name + '.c',
     include_directories: [rootInclude, bablInclude],
     link_with: babl,
-    dependencies: [math, thread],
+    dependencies: [math, thread, lcms],
     install: false,
   )
 

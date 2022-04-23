@@ -451,6 +451,7 @@ if git_bin.found() and run_command(
     git_bin,
     'rev-parse',
     '--is-inside-work-tree',
+    check: true,
 ).returncode() == 0
   git_version_h = vcs_tag(
     input : 'git-version.h.in',
@@ -531,13 +532,14 @@ babl_dep = declare_dependency(
   link_with : babl,
   sources: [
     babl_version_h,
-    is_variable('babl_gir') ? babl_gir : []
+    build_gir ? babl_gir : []
   ],
   variables: {
     'babl_path'   : babl_extensions_build_dir,
     'babl_libdir' : babl_library_build_dir,
   },
 )
+meson.override_dependency('babl', babl_dep)
 
 ################################################################################
 # Build summary

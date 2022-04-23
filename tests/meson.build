@@ -42,7 +42,7 @@ foreach test_name : test_names
     test_name + '.c',
     include_directories: [rootInclude, bablInclude],
     link_with: babl,
-    dependencies: thread,
+    dependencies: [thread, lcms],
     export_dynamic: true,
     install: false,
   )
