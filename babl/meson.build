@@ -156,6 +156,7 @@ if build_gir
     namespace: 'Babl',
     nsversion: api_version,
     header: 'babl.h',
+    export_packages: 'babl-0.1',
     install: true,
   )
 
