@@ -306,7 +306,8 @@ universal_nonlinear_rgb_u8_converter_sse2 (const Babl    *conversion,
   uint8_t *rgb_in_u8 = (void*)src_char;
   uint8_t *rgb_out_u8 = (void*)dst_char;
 
-  float rgba_out[4*samples];
+  // The alignment is necessary for SIMD intrinsics in babl_matrix_mul_vectorff_buf4_sse2()
+  float __attribute__ ((aligned (16))) rgba_out[4*samples];
 
   for (i = 0; i < samples; i++)
   {
