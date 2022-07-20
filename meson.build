@@ -494,6 +494,7 @@ subdir('tools')
 if build_docs
   subdir('docs')
 endif
+subdir('bin')
 
 # Create README file from web page
 if w3m_bin.found() and build_docs
