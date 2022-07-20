@@ -25,7 +25,8 @@
 #include <babl/babl.h>
 
 
-static const Babl * babl_cli_get_space (const char *path);
+static const Babl * babl_cli_get_space   (const char *path);
+static void         babl_cli_print_usage (FILE *      stream);
 
 
 int
@@ -45,12 +46,19 @@ main (int    argc,
   int         set_to           = 0;
   int         set_from_profile = 0;
   int         set_to_profile   = 0;
+  int         options_ended    = 0;
   int         n_components;
   int         data_index;
   int         c;
   int         i;
 
   babl_init ();
+
+  if (argc == 1)
+    {
+      babl_cli_print_usage (stderr);
+      return 2;
+    }
 
   /* Looping through arguments to get source and destination formats. */
   for (i = 1; i < argc; i++)
@@ -90,6 +98,17 @@ main (int    argc,
 
           if (! to_space)
             return 6;
+        }
+      else if (strcmp (argv[i], "--") == 0)
+        {
+          break;
+        }
+      else if (strcmp (argv[i], "--help") == 0 ||
+               strcmp (argv[i], "-h") == 0)
+        {
+          babl_cli_print_usage (stdout);
+
+          return 0;
         }
       else if (strcmp (argv[i], "--from") == 0 ||
                strcmp (argv[i], "-f") == 0)
@@ -147,25 +166,43 @@ main (int    argc,
           set_to_profile = 0;
           /* Pass. */
         }
-      else if (strcmp (argv[i], "--from") == 0 ||
-               strcmp (argv[i], "-f") == 0)
+      else if (! options_ended && strncmp (argv[i], "-", 1) == 0)
         {
-          set_from = 1;
-        }
-      else if (strcmp (argv[i], "--to") == 0 ||
-               strcmp (argv[i], "-t") == 0)
-        {
-          set_to = 1;
-        }
-      else if (strcmp (argv[i], "--input-profile") == 0 ||
-               strcmp (argv[i], "-i") == 0)
-        {
-          set_from_profile = 1;
-        }
-      else if (strcmp (argv[i], "--output-profile") == 0 ||
-               strcmp (argv[i], "-o") == 0)
-        {
-          set_to_profile = 1;
+          if (strcmp (argv[i], "--") == 0)
+            {
+              options_ended = 1;
+            }
+          else if (strcmp (argv[i], "--help") == 0 ||
+              strcmp (argv[i], "-h") == 0)
+             {
+               /* Pass. */
+             }
+          else if (strcmp (argv[i], "--from") == 0 ||
+                   strcmp (argv[i], "-f") == 0)
+            {
+              set_from = 1;
+            }
+          else if (strcmp (argv[i], "--to") == 0 ||
+                   strcmp (argv[i], "-t") == 0)
+            {
+              set_to = 1;
+            }
+          else if (strcmp (argv[i], "--input-profile") == 0 ||
+                   strcmp (argv[i], "-i") == 0)
+            {
+              set_from_profile = 1;
+            }
+          else if (strcmp (argv[i], "--output-profile") == 0 ||
+                   strcmp (argv[i], "-o") == 0)
+            {
+              set_to_profile = 1;
+            }
+          else
+            {
+              fprintf (stderr, "babl: unknown option: %s\n", argv[i]);
+              babl_cli_print_usage (stderr);
+              return 2;
+            }
         }
       else
         {
@@ -174,7 +211,8 @@ main (int    argc,
 
           if (c >= n_components)
             {
-              fprintf (stderr, "babl: unexpected argument: %s\n", argv[i]);
+              fprintf (stderr, "babl: unexpected component: %s\n", argv[i]);
+              babl_cli_print_usage (stderr);
               return 2;
             }
 
@@ -249,6 +287,7 @@ main (int    argc,
     {
       fprintf (stderr, "babl: %d components expected, %d components were passed\n",
                n_components, c);
+      babl_cli_print_usage (stderr);
       return 2;
     }
 
@@ -354,4 +393,25 @@ babl_cli_get_space (const char *path)
     }
 
   return space;
+}
+
+static void
+babl_cli_print_usage (FILE *stream)
+{
+  fprintf (stream,
+           "usage: babl [options] [c1 ..]\n"
+           "\n"
+           "  Options:\n"
+           "     -h, --help            this help information\n"
+           "\n"
+           "     -f, --from            input Babl format\n"
+           "\n"
+           "     -t, --to              output Babl format\n"
+           "\n"
+           "     -i, --input-profile   input profile\n"
+           "\n"
+           "     -o, --output-profile  output profile\n"
+           "\n"
+           "All parameters following -- are considered components values.\n"
+           "The tool expects exactly the number of components expected by your input format.\n");
 }
