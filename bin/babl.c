@@ -16,6 +16,7 @@
  * <https://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,19 +24,27 @@
 
 #include <babl/babl.h>
 
+
+static const Babl * babl_cli_get_space (const char *path);
+
+
 int
 main (int    argc,
       char **argv)
 {
   const Babl *from_format;
+  const Babl *from_space       = NULL;
   const Babl *to_format;
+  const Babl *to_space         = NULL;
   const Babl *fish;
-  const char *from     = "R'G'B' float";
-  const char *to       = "R'G'B' float";
+  const char *from             = "R'G'B' float";
+  const char *to               = "R'G'B' float";
   char       *source;
   char       *dest;
-  int         set_from = 0;
-  int         set_to   = 0;
+  int         set_from         = 0;
+  int         set_to           = 0;
+  int         set_from_profile = 0;
+  int         set_to_profile   = 0;
   int         n_components;
   int         data_index;
   int         c;
@@ -66,6 +75,22 @@ main (int    argc,
               return 1;
             }
         }
+      else if (set_from_profile)
+        {
+          set_from_profile = 0;
+          from_space = babl_cli_get_space (argv[i]);
+
+          if (! from_space)
+            return 6;
+        }
+      else if (set_to_profile)
+        {
+          set_to_profile = 0;
+          to_space = babl_cli_get_space (argv[i]);
+
+          if (! to_space)
+            return 6;
+        }
       else if (strcmp (argv[i], "--from") == 0 ||
                strcmp (argv[i], "-f") == 0)
         {
@@ -76,14 +101,24 @@ main (int    argc,
         {
           set_to = 1;
         }
+      else if (strcmp (argv[i], "--input-profile") == 0 ||
+               strcmp (argv[i], "-i") == 0)
+        {
+          set_from_profile = 1;
+        }
+      else if (strcmp (argv[i], "--output-profile") == 0 ||
+               strcmp (argv[i], "-o") == 0)
+        {
+          set_to_profile = 1;
+        }
     }
 
-  from_format  = babl_format (from);
+  from_format  = babl_format_with_space (from, from_space);
   n_components = babl_format_get_n_components (from_format);
   source       = malloc (babl_format_get_bytes_per_pixel (from_format));
   data_index   = 0;
 
-  to_format    = babl_format (to);
+  to_format    = babl_format_with_space (to, to_space);
   dest         = malloc (babl_format_get_bytes_per_pixel (from_format));
 
   /* Re-looping through arguments, to be more flexible with argument orders.
@@ -102,6 +137,16 @@ main (int    argc,
           set_to = 0;
           /* Pass. */
         }
+      else if (set_from_profile)
+        {
+          set_from_profile = 0;
+          /* Pass. */
+        }
+      else if (set_to_profile)
+        {
+          set_to_profile = 0;
+          /* Pass. */
+        }
       else if (strcmp (argv[i], "--from") == 0 ||
                strcmp (argv[i], "-f") == 0)
         {
@@ -111,6 +156,16 @@ main (int    argc,
                strcmp (argv[i], "-t") == 0)
         {
           set_to = 1;
+        }
+      else if (strcmp (argv[i], "--input-profile") == 0 ||
+               strcmp (argv[i], "-i") == 0)
+        {
+          set_from_profile = 1;
+        }
+      else if (strcmp (argv[i], "--output-profile") == 0 ||
+               strcmp (argv[i], "-o") == 0)
+        {
+          set_to_profile = 1;
         }
       else
         {
@@ -258,4 +313,45 @@ main (int    argc,
   free (dest);
 
   return 0;
+}
+
+static const Babl *
+babl_cli_get_space (const char *path)
+{
+  const Babl *space;
+  FILE       *f;
+  char       *icc_data;
+  long        icc_length;
+  const char *error = NULL;
+
+  f = fopen (path, "r");
+
+  if (f == NULL)
+    {
+      fprintf (stderr, "babl: failed to open '%s': %s\n",
+               path, strerror (errno));
+      return NULL;
+    }
+
+  fseek (f, 0, SEEK_END);
+  icc_length = ftell (f);
+  fseek (f, 0, SEEK_SET);
+
+  icc_data = malloc (icc_length);
+  fread (icc_data, icc_length, 1, f);
+
+  fclose (f);
+
+  space = babl_space_from_icc (icc_data, icc_length,
+                               BABL_ICC_INTENT_RELATIVE_COLORIMETRIC,
+                               &error);
+
+  if (space == NULL)
+    {
+      fprintf (stderr, "babl: failed to load space from '%s': %s\n",
+               path, error);
+      return NULL;
+    }
+
+  return space;
 }
