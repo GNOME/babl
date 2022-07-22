@@ -46,6 +46,7 @@ main (int    argc,
   int         set_to           = 0;
   int         set_from_profile = 0;
   int         set_to_profile   = 0;
+  int         brief_output     = 0;
   int         options_ended    = 0;
   int         n_components;
   int         data_index;
@@ -130,6 +131,11 @@ main (int    argc,
         {
           set_to_profile = 1;
         }
+      else if (strcmp (argv[i], "--brief") == 0 ||
+               strcmp (argv[i], "-b") == 0)
+        {
+          brief_output = 1;
+        }
     }
 
   from_format  = babl_format_with_space (from, from_space);
@@ -196,6 +202,11 @@ main (int    argc,
                    strcmp (argv[i], "-o") == 0)
             {
               set_to_profile = 1;
+            }
+          else if (strcmp (argv[i], "--brief") == 0 ||
+                   strcmp (argv[i], "-b") == 0)
+            {
+              /* Pass. */
             }
           else
             {
@@ -299,7 +310,9 @@ main (int    argc,
   n_components = babl_format_get_n_components (to_format);
   data_index   = 0;
 
-  printf ("Conversion as \"%s\":\n", babl_get_name (to_format));
+  if (! brief_output)
+    printf ("Conversion as \"%s\":\n", babl_get_name (to_format));
+
   for (c = 0; c < n_components; c++)
     {
       const Babl *arg_type = NULL;
@@ -312,7 +325,10 @@ main (int    argc,
 
           data_index += 4;
 
-          printf ("- %f\n", value);
+          if (brief_output)
+            printf ("%s%f", c > 0 ? " ":"", value);
+          else
+            printf ("- %f\n", value);
         }
       else if (strcmp (babl_get_name (arg_type), "u8") == 0)
         {
@@ -320,7 +336,10 @@ main (int    argc,
 
           data_index += 1;
 
-          printf ("- %d\n", value);
+          if (brief_output)
+            printf ("%s%d", c > 0 ? " ":"", value);
+          else
+            printf ("- %d\n", value);
         }
       else if (strcmp (babl_get_name (arg_type), "u16") == 0)
         {
@@ -328,7 +347,10 @@ main (int    argc,
 
           data_index += 2;
 
-          printf ("- %d\n", value);
+          if (brief_output)
+            printf ("%s%d", c > 0 ? " ":"", value);
+          else
+            printf ("- %d\n", value);
         }
       else if (strcmp (babl_get_name (arg_type), "u32") == 0)
         {
@@ -336,7 +358,10 @@ main (int    argc,
 
           data_index += 4;
 
-          printf ("- %d\n", value);
+          if (brief_output)
+            printf ("%s%d", c > 0 ? " ":"", value);
+          else
+            printf ("- %d\n", value);
         }
       else
         {
@@ -399,7 +424,8 @@ static void
 babl_cli_print_usage (FILE *stream)
 {
   fprintf (stream,
-           "usage: babl [options] [c1 ..]\n"
+           "Usage: babl [options] [c1 ..]\n"
+           "Convert color data from a specific Babl format and space to another.\n"
            "\n"
            "  Options:\n"
            "     -h, --help            this help information\n"
@@ -412,6 +438,12 @@ babl_cli_print_usage (FILE *stream)
            "\n"
            "     -o, --output-profile  output profile\n"
            "\n"
-           "All parameters following -- are considered components values.\n"
-           "The tool expects exactly the number of components expected by your input format.\n");
+           "     -b, --brief           brief output\n"
+           "                           it can be re-entered as input for chain conversions\n"
+           "\n"
+           "All parameters following -- are considered components values. "
+           "This is useful to input negative components.\n\n"
+           "The tool expects exactly the number of components expected by your input format.\n\n"
+           "The default input and output formats are \"R'G'B' float\" and default space is "
+           "sRGB for RGB formats, or the naive CMYK space for CMYK formats.\n");
 }
