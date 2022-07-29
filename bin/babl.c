@@ -311,7 +311,9 @@ main (int    argc,
   data_index   = 0;
 
   if (! brief_output)
-    printf ("Conversion as \"%s\":\n", babl_get_name (to_format));
+    printf ("Converting from \"%s\" to \"%s\":\n",
+                    babl_get_name (from_format),
+                    babl_get_name (to_format));
 
   for (c = 0; c < n_components; c++)
     {
