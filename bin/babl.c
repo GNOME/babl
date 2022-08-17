@@ -25,33 +25,38 @@
 #include <babl/babl.h>
 
 
-static const Babl * babl_cli_get_space   (const char *path);
-static void         babl_cli_print_usage (FILE *      stream);
+static const Babl * babl_cli_get_space   (const char    *path,
+                                          BablIccIntent  intent);
+static void         babl_cli_print_usage (FILE          *stream);
 
 
 int
 main (int    argc,
       char **argv)
 {
-  const Babl *from_format;
-  const Babl *from_space       = NULL;
-  const Babl *to_format;
-  const Babl *to_space         = NULL;
-  const Babl *fish;
-  const char *from             = "R'G'B' float";
-  const char *to               = "R'G'B' float";
-  char       *source;
-  char       *dest;
-  int         set_from         = 0;
-  int         set_to           = 0;
-  int         set_from_profile = 0;
-  int         set_to_profile   = 0;
-  int         brief_output     = 0;
-  int         options_ended    = 0;
-  int         n_components;
-  int         data_index;
-  int         c;
-  int         i;
+  const Babl    *from_format;
+  const Babl    *from_space       = NULL;
+  const Babl    *to_format;
+  const Babl    *to_space         = NULL;
+  const Babl    *fish;
+  const char    *from             = "R'G'B' float";
+  const char    *to               = "R'G'B' float";
+  const char    *from_profile     = NULL;
+  const char    *to_profile       = NULL;
+  BablIccIntent  intent           = BABL_ICC_INTENT_RELATIVE_COLORIMETRIC;
+  char          *source;
+  char          *dest;
+  int            set_from         = 0;
+  int            set_to           = 0;
+  int            set_from_profile = 0;
+  int            set_to_profile   = 0;
+  int            set_intent       = 0;
+  int            brief_output     = 0;
+  int            options_ended    = 0;
+  int            n_components;
+  int            data_index;
+  int            c;
+  int            i;
 
   babl_init ();
 
@@ -87,18 +92,39 @@ main (int    argc,
       else if (set_from_profile)
         {
           set_from_profile = 0;
-          from_space = babl_cli_get_space (argv[i]);
-
-          if (! from_space)
-            return 6;
+          from_profile = argv[i];
         }
       else if (set_to_profile)
         {
           set_to_profile = 0;
-          to_space = babl_cli_get_space (argv[i]);
+          to_profile = argv[i];
+        }
+      else if (set_intent)
+        {
+          set_intent = 0;
 
-          if (! to_space)
-            return 6;
+          if (strcmp (argv[i], "perceptual") == 0)
+            {
+              intent = BABL_ICC_INTENT_PERCEPTUAL;
+            }
+          else if (strcmp (argv[i], "relative") == 0)
+            {
+              intent = BABL_ICC_INTENT_RELATIVE_COLORIMETRIC;
+            }
+          else if (strcmp (argv[i], "saturation") == 0)
+            {
+              intent = BABL_ICC_INTENT_SATURATION;
+            }
+          else if (strcmp (argv[i], "absolute") == 0)
+            {
+              intent = BABL_ICC_INTENT_ABSOLUTE_COLORIMETRIC;
+            }
+          else
+            {
+              fprintf (stderr, "babl: unknown intent: %s\n", argv[i]);
+              fprintf (stderr, "valid intents: perceptual, relative, saturation, absolute.\n");
+              return 2;
+            }
         }
       else if (strcmp (argv[i], "--") == 0)
         {
@@ -131,11 +157,32 @@ main (int    argc,
         {
           set_to_profile = 1;
         }
+      else if (strcmp (argv[i], "--intent") == 0 ||
+               strcmp (argv[i], "-r") == 0)
+        {
+          set_intent = 1;
+        }
       else if (strcmp (argv[i], "--brief") == 0 ||
                strcmp (argv[i], "-b") == 0)
         {
           brief_output = 1;
         }
+    }
+
+  if (from_profile != NULL)
+    {
+      from_space = babl_cli_get_space (from_profile, intent);
+
+      if (! from_space)
+        return 6;
+    }
+
+  if (to_profile != NULL)
+    {
+      to_space = babl_cli_get_space (to_profile, intent);
+
+      if (! to_space)
+        return 6;
     }
 
   from_format  = babl_format_with_space (from, from_space);
@@ -172,6 +219,11 @@ main (int    argc,
           set_to_profile = 0;
           /* Pass. */
         }
+      else if (set_intent)
+        {
+          set_intent = 0;
+          /* Pass. */
+        }
       else if (! options_ended && strncmp (argv[i], "-", 1) == 0)
         {
           if (strcmp (argv[i], "--") == 0)
@@ -179,7 +231,7 @@ main (int    argc,
               options_ended = 1;
             }
           else if (strcmp (argv[i], "--help") == 0 ||
-              strcmp (argv[i], "-h") == 0)
+                   strcmp (argv[i], "-h") == 0)
              {
                /* Pass. */
              }
@@ -202,6 +254,11 @@ main (int    argc,
                    strcmp (argv[i], "-o") == 0)
             {
               set_to_profile = 1;
+            }
+          else if (strcmp (argv[i], "--intent") == 0 ||
+                   strcmp (argv[i], "-r") == 0)
+            {
+              set_intent = 1;
             }
           else if (strcmp (argv[i], "--brief") == 0 ||
                    strcmp (argv[i], "-b") == 0)
@@ -382,7 +439,8 @@ main (int    argc,
 }
 
 static const Babl *
-babl_cli_get_space (const char *path)
+babl_cli_get_space (const char    *path,
+                    BablIccIntent  intent)
 {
   const Babl *space;
   FILE       *f;
@@ -408,9 +466,7 @@ babl_cli_get_space (const char *path)
 
   fclose (f);
 
-  space = babl_space_from_icc (icc_data, icc_length,
-                               BABL_ICC_INTENT_RELATIVE_COLORIMETRIC,
-                               &error);
+  space = babl_space_from_icc (icc_data, icc_length, intent, &error);
 
   if (space == NULL)
     {
@@ -439,6 +495,9 @@ babl_cli_print_usage (FILE *stream)
            "     -i, --input-profile   input profile\n"
            "\n"
            "     -o, --output-profile  output profile\n"
+           "\n"
+           "     -r, --intent          rendering intent\n"
+           "                           it only works with an output profile\n"
            "\n"
            "     -b, --brief           brief output\n"
            "                           it can be re-entered as input for chain conversions\n"
