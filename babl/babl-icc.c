@@ -1079,10 +1079,10 @@ babl_space_from_icc (const char   *icc_data,
       }
       break;
     case BABL_ICC_INTENT_ABSOLUTE_COLORIMETRIC:
-      *error = "absolute colormetric not implemented";
+      *error = "absolute colorimetric not implemented";
       break;
     case BABL_ICC_INTENT_SATURATION:
-      *error = "absolute stauration not supported";
+      *error = "saturation not supported";
       break;
   }
 
