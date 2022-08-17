@@ -39,8 +39,8 @@ main (int    argc,
   const Babl    *to_format;
   const Babl    *to_space         = NULL;
   const Babl    *fish;
-  const char    *from             = "R'G'B' float";
-  const char    *to               = "R'G'B' float";
+  const char    *from             = NULL;
+  const char    *to               = NULL;
   const char    *from_profile     = NULL;
   const char    *to_profile       = NULL;
   BablIccIntent  intent           = BABL_ICC_INTENT_RELATIVE_COLORIMETRIC;
@@ -183,6 +183,25 @@ main (int    argc,
 
       if (! to_space)
         return 6;
+    }
+
+  if (from == NULL)
+    {
+      if (babl_space_is_cmyk (from_space))
+        from = "CMYK float";
+      else if (babl_space_is_gray (from_space))
+        from = "Y' float";
+      else
+        from = "R'G'B' float";
+    }
+  if (to == NULL)
+    {
+      if (babl_space_is_cmyk (to_space))
+        to = "CMYK float";
+      else if (babl_space_is_gray (to_space))
+        to = "Y' float";
+      else
+        to = "R'G'B' float";
     }
 
   from_format  = babl_format_with_space (from, from_space);
