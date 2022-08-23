@@ -451,7 +451,6 @@ if git_bin.found() and run_command(
     git_bin,
     'rev-parse',
     '--is-inside-work-tree',
-    check: true,
 ).returncode() == 0
   git_version_h = vcs_tag(
     input : 'git-version.h.in',
