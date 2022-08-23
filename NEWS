@@ -3,6 +3,9 @@ The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
                                                                           -->
 
+2022-08-23 babl-0.1.96                                              </dt><dd>
+Minor changes from 0.1.94, fixing build.
+                                                                    </dd><dt>
 2022-08-21 babl-0.1.94                                              </dt><dd>
 Fix of crash on non-aligned data for SIMD, add commandline tool, improve vala
 compatibility of introspection info.
