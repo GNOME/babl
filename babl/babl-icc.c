@@ -361,17 +361,22 @@ icc_tag (ICC        *state,
      sign_t sign = icc_read (sign, TAG_COUNT_OFF + 4 + 12 * t);
      if (!strcmp (sign.str, tag))
      {
-        if (offset)
-          *offset = icc_read (u32, TAG_COUNT_OFF + 4 + 12* t + 4);
-        if (el_length)
-          *el_length = icc_read (u32, TAG_COUNT_OFF + 4 + 12* t + 4*2);
+        int off = icc_read (u32, TAG_COUNT_OFF + 4 + 12* t + 4);
+        int len = icc_read (u32, TAG_COUNT_OFF + 4 + 12* t + 4*2);
 
-        if (*offset + *el_length > state->length || *offset < 0)
+        if (off + len > state->length || off < 0)
         {
-           *offset = 0;
-           *el_length = 0;
+          if (offset)
+            *offset = 0;
+          if (el_length)
+            *el_length = 0;
            return 0; // broken input
         }
+
+        if (offset)
+          *offset = off;
+        if (el_length)
+          *el_length = len;
 
         return 1;
      }
