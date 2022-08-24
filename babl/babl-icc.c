@@ -365,6 +365,14 @@ icc_tag (ICC        *state,
           *offset = icc_read (u32, TAG_COUNT_OFF + 4 + 12* t + 4);
         if (el_length)
           *el_length = icc_read (u32, TAG_COUNT_OFF + 4 + 12* t + 4*2);
+
+        if (*offset + *el_length > state->length || *offset < 0)
+        {
+           *offset = 0;
+           *el_length = 0;
+           return 0; // broken input
+        }
+
         return 1;
      }
   }
