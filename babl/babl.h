@@ -724,6 +724,18 @@ typedef void (*BablFishProcess) (const Babl *babl, const char *src, char *dst, l
 BablFishProcess babl_fish_get_process (const Babl *babl);
 
 
+/**
+ * babl_gc: (skip)
+ *
+ * Do a babl fish garbage collection cycle, should only be called
+ * from the main thread with no concurrent babl processing in other
+ * threads in paralell.
+ *
+ * Since: babl-0.1.98
+ */
+void babl_gc (void);
+
+
 /* values below this are stored associated with this value, it should also be
  * used as a generic alpha zero epsilon in GEGL to keep the threshold effects
  * on one known value.

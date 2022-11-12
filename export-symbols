@@ -72,6 +72,7 @@ babl_db_exist_by_id
 babl_db_each
 babl_formats_count
 babl_format_class_for_each
+babl_gc
 babl_model_class_for_each
 babl_type_class_for_each
 babl_conversion_class_for_each
