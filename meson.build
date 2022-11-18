@@ -515,7 +515,7 @@ endif
 # pkg-config file
 pkgconfig.generate(
   babl,
-  filebase: 'babl',
+  filebase: 'babl-' + api_version,
   name: 'babl',
   description: 'Pixel encoding and color space conversion engine.',
   version: meson.project_version(),
