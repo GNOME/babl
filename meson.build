@@ -539,7 +539,7 @@ babl_dep = declare_dependency(
     'babl_libdir' : babl_library_build_dir,
   },
 )
-meson.override_dependency('babl', babl_dep)
+meson.override_dependency('babl-' + api_version, babl_dep)
 
 ################################################################################
 # Build summary
