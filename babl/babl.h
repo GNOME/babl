@@ -636,6 +636,11 @@ void babl_space_get (const Babl *space,
  * @blue_luminance: (out) (optional): Location for the blue luminance factor.
  *
  * Retrieve the relevant RGB luminance constants for a babl space.
+ *
+ * Note: these luminance coefficients should only ever be used on linear data.
+ * If your input @space is non-linear, you should convert your pixel values to
+ * the linearized variant of @space before making any computation with these
+ * coefficients. See #83.
  */
 void
 babl_space_get_rgb_luminance (const Babl *space,
