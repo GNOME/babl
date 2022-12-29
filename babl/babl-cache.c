@@ -43,15 +43,15 @@ mk_ancestry_iter (const char *path)
       *strrchr (copy, '/') = '\0';
       if (copy[0])
         {
-          struct stat stat_buf;
-          if ( ! (stat (copy, &stat_buf)==0 && S_ISDIR(stat_buf.st_mode)))
+          BablStat stat_buf;
+          if ( ! (_babl_stat (copy, &stat_buf)==0 && S_ISDIR(stat_buf.st_mode)))
             {
               if (mk_ancestry_iter (copy) != 0)
                 return -1;
 #ifndef _WIN32
-              return mkdir (copy, S_IRWXU);
+              return _babl_mkdir (copy, S_IRWXU);
 #else
-              return mkdir (copy);
+              return _babl_mkdir (copy);
 #endif
             }
         }
@@ -76,7 +76,7 @@ mk_ancestry (const char *path)
 static const char *
 fish_cache_path (void)
 {
-  struct stat stat_buf;
+  BablStat stat_buf;
   static char path[4096];
 
   strncpy (path, FALLBACK_CACHE_PATH, 4096);
@@ -96,7 +96,7 @@ fish_cache_path (void)
 }
 #endif
 
-  if (stat (path, &stat_buf)==0 && S_ISREG(stat_buf.st_mode))
+  if (_babl_stat (path, &stat_buf)==0 && S_ISREG(stat_buf.st_mode))
     return path;
 
   if (mk_ancestry (path) != 0)
@@ -188,7 +188,7 @@ babl_store_db (void)
   if (!tmpp)
     return;
   snprintf (tmpp, 8000, "%s~", fish_cache_path ());
-  dbfile  = fopen (tmpp, "w");
+  dbfile  = _babl_fopen (tmpp, "w");
   if (!dbfile)
   {
     free (tmpp);
@@ -212,9 +212,9 @@ babl_store_db (void)
   fclose (dbfile);
 
 #ifdef _WIN32
-  remove (fish_cache_path ());
+  _babl_remove (fish_cache_path ());
 #endif
-  rename (tmpp, fish_cache_path());
+  _babl_rename (tmpp, fish_cache_path());
   free (tmpp);
 }
 
