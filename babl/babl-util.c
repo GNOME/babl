@@ -288,7 +288,7 @@ _babl_file_get_contents (const char  *path,
   long  size;
   char *buffer;
 
-  file = fopen (path,"rb");
+  file = _babl_fopen (path, "rb");
 
   if (!file)
     return -1;
