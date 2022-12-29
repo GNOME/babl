@@ -96,33 +96,45 @@ mk_ancestry (const char *path)
 static char *
 fish_cache_path (void)
 {
+  char *path = NULL;
+  char buf[4096];
   BablStat stat_buf;
-  static char path[4096];
 
-  strncpy (path, FALLBACK_CACHE_PATH, 4096);
-  path[sizeof (path) - 1] = '\0';
 #ifndef _WIN32
+
+  strncpy (buf, FALLBACK_CACHE_PATH, 4096);
+  buf[sizeof (buf) - 1] = '\0';
+
   if (getenv ("XDG_CACHE_HOME"))
-    snprintf (path, sizeof (path), "%s/babl/babl-fishes", getenv("XDG_CACHE_HOME"));
+    snprintf (buf, sizeof (buf), "%s/babl/babl-fishes", getenv("XDG_CACHE_HOME"));
   else if (getenv ("HOME"))
-    snprintf (path, sizeof (path), "%s/.cache/babl/babl-fishes", getenv("HOME"));
+    snprintf (buf, sizeof (buf), "%s/.cache/babl/babl-fishes", getenv("HOME"));
+
+  path = babl_strdup (buf);
+
 #else
-{
+
   char win32path[4096];
+
   if (SHGetFolderPathA (NULL, CSIDL_LOCAL_APPDATA, NULL, SHGFP_TYPE_CURRENT, win32path) == S_OK)
-    snprintf (path, sizeof (path), "%s\\%s\\babl-fishes.txt", win32path, BABL_LIBRARY);
+    snprintf (buf, sizeof (buf), "%s\\%s\\babl-fishes.txt", win32path, BABL_LIBRARY);
   else if (getenv ("TEMP"))
-    snprintf (path, sizeof (path), "%s\\babl-fishes.txt", getenv("TEMP"));
-}
+    snprintf (buf, sizeof (buf), "%s\\babl-fishes.txt", getenv("TEMP"));
+
+  path = babl_strdup (buf);
+
 #endif
 
-  if (_babl_stat (path, &stat_buf)==0 && S_ISREG(stat_buf.st_mode))
-    return babl_strdup (path);
+  if (!path)
+    return babl_strdup (FALLBACK_CACHE_PATH);
+
+  if (_babl_stat (path, &stat_buf) == 0 && S_ISREG(stat_buf.st_mode))
+    return path;
 
   if (mk_ancestry (path) != 0)
     return babl_strdup (FALLBACK_CACHE_PATH);
 
-  return babl_strdup (path);
+  return path;
 }
 
 static char *
