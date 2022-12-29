@@ -38,6 +38,12 @@ babl_rel_avg_error (const double *imgA,
                     const double *imgB,
                     long          samples);
 
+size_t
+add_check_overflow (size_t numbers_count, ...);
+
+size_t
+mul_check_overflow (size_t numbers_count, ...);
+
 FILE *
 _babl_fopen (const char *path,
              const char *mode);
