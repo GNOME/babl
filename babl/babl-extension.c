@@ -260,43 +260,51 @@ babl_extension_load (const char *path)
     }
 }
 
+struct dir_foreach_ctx
+{
+  const char **exclusion_patterns;
+};
+
+static void
+dir_foreach (const char *base_path,
+             const char *entry,
+             void       *user_data)
+{
+  struct dir_foreach_ctx *ctx = (struct dir_foreach_ctx*) user_data;
+
+  if (entry[0] != '.')
+    {
+      char       *path = NULL;
+      char       *extension;
+
+      path = babl_strcat (path, base_path);
+      path = babl_strcat (path, BABL_DIR_SEPARATOR);
+      path = babl_strcat (path, entry);
+
+      if ((extension = strrchr (entry, '.')) != NULL &&
+          !strcmp (extension, SHREXT))
+        {
+          int excluded = 0;
+          for (int i = 0; ctx->exclusion_patterns[i]; i++)
+            if (strstr (path, ctx->exclusion_patterns[i]))
+              excluded = 1;
+          if (!excluded)
+            babl_extension_load (path);
+        }
+
+      babl_free (path);
+    }
+}
+
 static void
 babl_extension_load_dir (const char *base_path,
                          const char **exclusion_patterns)
 {
-  DIR *dir;
+  struct dir_foreach_ctx ctx;
 
-  if ((dir = opendir (base_path)))
-    {
-      struct  dirent *dentry;
+  ctx.exclusion_patterns = exclusion_patterns;
 
-      while ((dentry = readdir (dir)) != NULL)
-        {
-          if (dentry->d_name[0] != '.')
-            {
-              char       *path = NULL;
-              char       *extension;
-
-              path = babl_strcat (path, base_path);
-              path = babl_strcat (path, BABL_DIR_SEPARATOR);
-              path = babl_strcat (path, dentry->d_name);
-
-              if ((extension = strrchr (dentry->d_name, '.')) != NULL &&
-                  !strcmp (extension, SHREXT))
-                {
-                  int excluded = 0;
-                  for (int i = 0; exclusion_patterns[i]; i++)
-                    if (strstr (path, exclusion_patterns[i]))
-                      excluded = 1;
-                  if (!excluded)
-                    babl_extension_load (path);
-                }
-
-              babl_free (path);
-            }
-        }
-      closedir (dir);
-    }
+  _babl_dir_foreach (base_path, dir_foreach, &ctx);
 }
 
 static char *
