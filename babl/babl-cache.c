@@ -114,14 +114,35 @@ fish_cache_path (void)
 
 #else
 
-  char win32path[4096];
+  wchar_t *appdata_utf16 = NULL;
 
-  if (SHGetFolderPathA (NULL, CSIDL_LOCAL_APPDATA, NULL, SHGFP_TYPE_CURRENT, win32path) == S_OK)
-    snprintf (buf, sizeof (buf), "%s\\%s\\babl-fishes.txt", win32path, BABL_LIBRARY);
+  if (SHGetKnownFolderPath (&FOLDERID_LocalAppData, KF_FLAG_DEFAULT, NULL, &appdata_utf16) == S_OK)
+    {
+      char *appdata = babl_convert_utf16_to_utf8 (appdata_utf16);
+
+      if (appdata && appdata[0])
+        {
+          const char *fmt = "%s\\%s\\babl-fishes.txt";
+          size_t sz = add_check_overflow (3, strlen (fmt), strlen (appdata), strlen (BABL_LIBRARY));
+
+          if (sz > 0 && (path = babl_malloc (sz)) != NULL)
+            _snprintf_s (path, sz, sz, fmt, appdata, BABL_LIBRARY);
+        }
+
+      if (appdata)
+        babl_free (appdata);
+    }
   else if (getenv ("TEMP"))
-    snprintf (buf, sizeof (buf), "%s\\babl-fishes.txt", getenv("TEMP"));
+    {
+      snprintf (buf, sizeof (buf), "%s\\babl-fishes.txt", getenv("TEMP"));
+      path = babl_strdup (buf);
+    }
 
-  path = babl_strdup (buf);
+  if (appdata_utf16)
+    {
+      CoTaskMemFree (appdata_utf16);
+      appdata_utf16 = NULL;
+    }
 
 #endif
 
