@@ -26,4 +26,12 @@ double
 babl_rel_avg_error (const double *imgA,
                     const double *imgB,
                     long          samples);
+
+#ifdef _WIN32
+
+void *
+get_libbabl_module (void);
+
+#endif /* _WIN32 */
+
 #endif
