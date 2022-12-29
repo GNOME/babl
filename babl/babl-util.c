@@ -17,14 +17,19 @@
  */
 
 #include "config.h"
+#include <stdio.h>
 #include <math.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include "babl-internal.h"
 
 #ifdef __WIN32__
 #include <windows.h>
+#include <wchar.h>
 #else
 #include <sys/time.h>
 #include <time.h>
+#include <dirent.h>
 #endif
 
 #ifdef __WIN32__
@@ -100,6 +105,178 @@ babl_rel_avg_error (const double *imgA,
 
   return error;
 }
+
+FILE *
+_babl_fopen (const char *path,
+             const char *mode)
+{
+#ifndef _WIN32
+  return fopen (path, mode);
+#else
+  wchar_t *path_utf16 = babl_convert_utf8_to_utf16 (path);
+  wchar_t *mode_utf16 = babl_convert_utf8_to_utf16 (mode);
+  FILE *result = NULL;
+
+  result = _wfopen (path_utf16, mode_utf16);
+
+  if (path_utf16)
+    babl_free (path_utf16);
+
+  if (mode_utf16)
+    babl_free (mode_utf16);
+
+  return result;
+#endif
+}
+
+int
+_babl_remove (const char *path)
+{
+#ifndef _WIN32
+  return remove (path);
+#else
+  wchar_t *path_utf16 = babl_convert_utf8_to_utf16 (path);
+  int result = 0;
+
+  result = _wremove (path_utf16);
+
+  if (path_utf16)
+    babl_free (path_utf16);
+
+  return result;
+#endif
+}
+
+int
+_babl_rename (const char *oldname,
+              const char *newname)
+{
+#ifndef _WIN32
+  return rename (oldname, newname);
+#else
+  wchar_t *oldname_utf16 = babl_convert_utf8_to_utf16 (oldname);
+  wchar_t *newname_utf16 = babl_convert_utf8_to_utf16 (newname);
+  int result = 0;
+
+  result = _wrename (oldname_utf16, newname_utf16);
+
+  if (oldname_utf16)
+    babl_free (oldname_utf16);
+
+  if (newname_utf16)
+    babl_free (newname_utf16);
+
+  return result;
+#endif
+}
+
+int
+_babl_stat (const char *path,
+            BablStat   *buffer)
+{
+#ifndef _WIN32
+  return stat (path, buffer);
+#else
+  wchar_t *path_utf16 = babl_convert_utf8_to_utf16 (path);
+  int result = 0;
+
+  result = _wstat64 (path_utf16, buffer);
+
+  if (path_utf16)
+    babl_free (path_utf16);
+
+  return result;
+#endif
+}
+
+void
+_babl_dir_foreach (const char             *path,
+                   _babl_dir_foreach_cb_t  callback,
+                   void                   *user_data)
+{
+#ifndef _WIN32
+  DIR *dir = opendir (path);
+
+  if (!path)
+    return;
+
+  if (dir != NULL)
+    {
+      struct dirent *dentry;
+
+      while ((dentry = readdir (dir)))
+        callback (path, dentry->d_name, user_data);
+
+      closedir (dir);
+    }
+#else
+  char *search = NULL;
+  wchar_t *search_utf16 = NULL;
+  struct _wfinddata64_t info;
+  intptr_t search_id = 0;
+
+  if (!path)
+    return;
+
+  search = babl_strcat (search, path);
+  search = babl_strcat (search, "\\*");
+  search_utf16 = babl_convert_utf8_to_utf16 (search);
+  if (!search_utf16)
+    goto cleanup;
+
+  memset (&info, 0, sizeof (info));
+  if ((search_id = _wfindfirst64 (search_utf16, &info)) != (intptr_t)-1)
+    {
+      do
+        {
+          char *entry = babl_convert_utf16_to_utf8 (info.name);
+
+          if (entry)
+            {
+              callback (path, entry, user_data);
+              babl_free (entry);
+            }
+        }
+      while (_wfindnext64 (search_id, &info) == 0);
+
+      _findclose (search_id);
+    }
+
+cleanup:
+  if (search_utf16)
+    babl_free (search_utf16);
+
+  if (search)
+    babl_free (search);
+#endif
+}
+
+#ifndef _WIN32
+
+int
+_babl_mkdir (const char *path,
+             mode_t      mode)
+{
+  return mkdir (path, mode);
+}
+
+#else
+
+int
+_babl_mkdir (const char *path)
+{
+  wchar_t *path_utf16 = babl_convert_utf8_to_utf16 (path);
+  int result = 0;
+
+  result = _wmkdir (path_utf16);
+
+  if (path_utf16)
+    babl_free (path_utf16);
+
+  return result;
+}
+
+#endif
 
 int
 _babl_file_get_contents (const char  *path,

@@ -20,6 +20,15 @@
 #define _BABL_UTIL_H
 
 #include <stddef.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#ifndef _WIN32
+typedef struct stat BablStat;
+#else
+typedef struct _stat64 BablStat;
+#endif
 
 long
 babl_ticks     (void);
@@ -28,6 +37,40 @@ double
 babl_rel_avg_error (const double *imgA,
                     const double *imgB,
                     long          samples);
+
+FILE *
+_babl_fopen (const char *path,
+             const char *mode);
+
+int
+_babl_remove (const char *path);
+
+int
+_babl_rename (const char *oldname,
+              const char *newname);
+
+int
+_babl_stat (const char *path,
+            BablStat   *buffer);
+
+#ifndef _WIN32
+int
+_babl_mkdir (const char *path,
+             mode_t      mode);
+#else
+int
+_babl_mkdir (const char *path);
+#endif
+
+typedef void
+(*_babl_dir_foreach_cb_t) (const char *base_path,
+                           const char *entry,
+                           void       *data);
+
+void
+_babl_dir_foreach (const char             *path,
+                   _babl_dir_foreach_cb_t  callback,
+                   void                   *user_data);
 
 #ifdef _WIN32
 
