@@ -33,7 +33,6 @@
 #include "babl-base.h"
 
 #include <string.h>
-#include <stdarg.h>
 
 
 static Babl *babl_extension_current_extender = NULL;
@@ -176,7 +175,22 @@ dlsym (HLIB        handle,
 #include <windows.h>
 #define HLIB    HINSTANCE
 
-#define dlopen(a, b)    LoadLibrary (a)
+static HLIB
+LoadLibraryWrap (const char *filename)
+{
+  wchar_t *filename_utf16 = babl_convert_utf8_to_utf16 (filename);
+  HLIB module = NULL;
+
+  if (!filename_utf16)
+    return NULL;
+
+  module = LoadLibraryW (filename_utf16);
+
+  babl_free (filename_utf16);
+  return module;
+}
+
+#define dlopen(a, b)    LoadLibraryWrap (a)
 #define dlsym(l, s)     GetProcAddress (l, s)
 #define dlclose(l)      FreeLibrary (l)
 #define dlerror()       GetLastError ()
