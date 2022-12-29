@@ -73,7 +73,7 @@ mk_ancestry (const char *path)
   return mk_ancestry_iter (copy);
 }
 
-static const char *
+static char *
 fish_cache_path (void)
 {
   BablStat stat_buf;
@@ -97,12 +97,12 @@ fish_cache_path (void)
 #endif
 
   if (_babl_stat (path, &stat_buf)==0 && S_ISREG(stat_buf.st_mode))
-    return path;
+    return babl_strdup (path);
 
   if (mk_ancestry (path) != 0)
-    return FALLBACK_CACHE_PATH;
+    return babl_strdup (FALLBACK_CACHE_PATH);
 
-  return path;
+  return babl_strdup (path);
 }
 
 static char *
@@ -177,23 +177,23 @@ cache_header (void)
   return buf;
 }
 
-void 
+void
 babl_store_db (void)
 {
   BablDb *db = babl_fish_db ();
-  int i;
+  char *cache_path = fish_cache_path ();
   char *tmpp = calloc(8000,1);
-  FILE *dbfile;
+  FILE *dbfile = NULL;
+  int i;
 
-  if (!tmpp)
-    return;
-  snprintf (tmpp, 8000, "%s~", fish_cache_path ());
+  if (!cache_path || !tmpp)
+    goto cleanup;
+
+  snprintf (tmpp, 8000, "%s~", cache_path);
   dbfile  = _babl_fopen (tmpp, "w");
   if (!dbfile)
-  {
-    free (tmpp);
-    return;
-  }
+    goto cleanup;
+
   fprintf (dbfile, "%s\n", cache_header ());
 
   /* sort the list of fishes by usage, making next run more efficient -
@@ -209,13 +209,24 @@ babl_store_db (void)
     if (babl_fish_serialize (fish, tmp, 4096))
       fprintf (dbfile, "%s----\n", tmp);
   }
+
   fclose (dbfile);
+  dbfile = NULL;
 
 #ifdef _WIN32
-  _babl_remove (fish_cache_path ());
+  _babl_remove (cache_path);
 #endif
-  _babl_rename (tmpp, fish_cache_path());
-  free (tmpp);
+  _babl_rename (tmpp, cache_path);
+
+cleanup:
+  if (dbfile)
+    fclose (dbfile);
+
+  if (cache_path)
+    babl_free (cache_path);
+
+  if (tmpp)
+    free (tmpp);
 }
 
 int
@@ -230,7 +241,7 @@ _babl_fish_create_name (char       *buf,
 void 
 babl_init_db (void)
 {
-  const char *path = fish_cache_path ();
+  char *path = fish_cache_path ();
   long  length = -1;
   char  seps[] = "\n\r";
   Babl *babl   = NULL;
@@ -242,11 +253,11 @@ babl_init_db (void)
   time_t tim = time (NULL);
 
   if (getenv ("BABL_DEBUG_CONVERSIONS"))
-    return;
+    goto cleanup;
 
   _babl_file_get_contents (path, &contents, &length, NULL);
   if (!contents)
-    return;
+    goto cleanup;
 
   token = strtok_r (contents, seps, &tokp);
   while( token != NULL )
@@ -274,10 +285,7 @@ babl_init_db (void)
           /* if babl has changed in git .. drop whole cache */
           {
             if (strcmp ( token, cache_header ()))
-            {
-              free (contents);
-              return;
-            }
+              goto cleanup;
           }
           break;
         case '\t':
@@ -294,8 +302,7 @@ babl_init_db (void)
             {
               fprintf (stderr, "%s:%i: loading of cache failed\n",
                               __FUNCTION__, __LINE__);
-              free (contents);
-              return;
+              goto cleanup;
             }
 
             if (strstr (token, "[reference]"))
@@ -384,6 +391,11 @@ babl_init_db (void)
       }
       token = strtok_r (NULL, seps, &tokp);
     }
+
+cleanup:
   if (contents)
     free (contents);
+
+  if (path)
+    babl_free (path);
 }
