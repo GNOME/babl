@@ -35,42 +35,62 @@
 static int
 mk_ancestry_iter (const char *path)
 {
-  char copy[4096];
-  strncpy (copy, path, 4096);
-  copy[sizeof (copy) - 1] = '\0';
-  if (strrchr (copy, '/'))
+  char *copy = babl_strdup (path);
+  char *rchr = NULL;
+  int result = 0;
+
+  if (!copy)
+    return -1;
+
+  rchr = strrchr (copy, '/');
+  if (rchr)
     {
-      *strrchr (copy, '/') = '\0';
+      *rchr = '\0';
+
       if (copy[0])
         {
           BablStat stat_buf;
           if ( ! (_babl_stat (copy, &stat_buf)==0 && S_ISDIR(stat_buf.st_mode)))
             {
               if (mk_ancestry_iter (copy) != 0)
-                return -1;
+                {
+                  result = -1;
+                }
+              else
+                {
 #ifndef _WIN32
-              return _babl_mkdir (copy, S_IRWXU);
+                  result = _babl_mkdir (copy, S_IRWXU);
 #else
-              return _babl_mkdir (copy);
+                  result = _babl_mkdir (copy);
 #endif
+                }
             }
         }
     }
-  return 0;
+
+  babl_free (copy);
+  return result;
 }
 
 static int
 mk_ancestry (const char *path)
 {
-  char copy[4096];
-  strncpy (copy, path, 4096);
-  copy[sizeof (copy) - 1] = '\0';
+  char *copy = babl_strdup (path);
+  int result = 0;
+
+  if (!copy)
+    return -1;
+
 #ifdef _WIN32
   for (char *c = copy; *c; c++)
     if (*c == '\\')
       *c = '/';
 #endif
-  return mk_ancestry_iter (copy);
+
+  result = mk_ancestry_iter (copy);
+
+  babl_free (copy);
+  return result;
 }
 
 static char *
