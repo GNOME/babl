@@ -148,3 +148,14 @@ _babl_file_get_contents (const char  *path,
   return 0;
 }
 
+#ifdef _WIN32
+
+extern IMAGE_DOS_HEADER __ImageBase;
+
+void *
+get_libbabl_module (void)
+{
+  return &__ImageBase;
+}
+
+#endif /* _WIN32 */
