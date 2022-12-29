@@ -150,6 +150,74 @@ _babl_file_get_contents (const char  *path,
 
 #ifdef _WIN32
 
+wchar_t *
+babl_convert_utf8_to_utf16 (const char *str)
+{
+  int wchar_count = 0;
+  wchar_t *wstr = NULL;
+
+  if (!str)
+    return NULL;
+
+  wchar_count = MultiByteToWideChar (CP_UTF8,
+                                     MB_ERR_INVALID_CHARS,
+                                     str, -1,
+                                     NULL, 0);
+  if (wchar_count <= 0)
+    return NULL;
+
+  wstr = babl_malloc (wchar_count * sizeof (wchar_t));
+  if (!wstr)
+    return NULL;
+
+  wchar_count = MultiByteToWideChar (CP_UTF8,
+                                     MB_ERR_INVALID_CHARS,
+                                     str, -1,
+                                     wstr, wchar_count);
+  if (wchar_count <= 0)
+    {
+      babl_free (wstr);
+      return NULL;
+    }
+
+  return wstr;
+}
+
+char *
+babl_convert_utf16_to_utf8 (const wchar_t *wstr)
+{
+  int char_count = 0;
+  char *str = NULL;
+
+  if (!wstr)
+    return NULL;
+
+  char_count = WideCharToMultiByte (CP_UTF8,
+                                    WC_ERR_INVALID_CHARS,
+                                    wstr, -1,
+                                    NULL, 0,
+                                    NULL, NULL);
+  if (char_count <= 0)
+    return NULL;
+
+  str = babl_malloc (char_count);
+  if (!str)
+    return NULL;
+
+  char_count = WideCharToMultiByte (CP_UTF8,
+                                    WC_ERR_INVALID_CHARS,
+                                    wstr, -1,
+                                    str, char_count,
+                                    NULL, NULL);
+  if (char_count <= 0)
+    {
+      babl_free (str);
+      return NULL;
+    }
+
+  return str;
+}
+
 extern IMAGE_DOS_HEADER __ImageBase;
 
 void *
