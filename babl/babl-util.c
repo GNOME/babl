@@ -17,6 +17,9 @@
  */
 
 #include "config.h"
+#include <stdarg.h>
+#include <limits.h>
+#include <assert.h>
 #include <stdio.h>
 #include <math.h>
 #include <sys/types.h>
@@ -104,6 +107,58 @@ babl_rel_avg_error (const double *imgA,
     error = M_PI;
 
   return error;
+}
+
+size_t
+add_check_overflow (size_t numbers_count, ...)
+{
+  size_t result = 0;
+  va_list args;
+
+  assert (numbers_count > 0);
+
+  va_start (args, numbers_count);
+  while (numbers_count--)
+    {
+      size_t addendum = va_arg (args, size_t);
+
+      if ((SIZE_MAX - result) < addendum)
+        {
+          result = 0;
+          break;
+        }
+
+      result += addendum;
+    }
+  va_end (args);
+
+  return result;
+}
+
+size_t
+mul_check_overflow (size_t numbers_count, ...)
+{
+  size_t result = 1;
+  va_list args;
+
+  assert (numbers_count > 0);
+
+  va_start (args, numbers_count);
+  while (numbers_count--)
+    {
+      size_t factor = va_arg (args, size_t);
+
+      if ((SIZE_MAX / result) < factor)
+        {
+          result = 0;
+          break;
+        }
+
+      result *= factor;
+    }
+  va_end (args);
+
+  return result;
 }
 
 FILE *
