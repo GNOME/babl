@@ -19,6 +19,8 @@
 #ifndef _BABL_UTIL_H
 #define _BABL_UTIL_H
 
+#include <stddef.h>
+
 long
 babl_ticks     (void);
 
@@ -28,6 +30,12 @@ babl_rel_avg_error (const double *imgA,
                     long          samples);
 
 #ifdef _WIN32
+
+wchar_t *
+babl_convert_utf8_to_utf16 (const char *str);
+
+char *
+babl_convert_utf16_to_utf8 (const wchar_t *wstr);
 
 void *
 get_libbabl_module (void);

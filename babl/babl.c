@@ -44,21 +44,16 @@ babl_dir_list (void)
     {
 #ifdef _WIN32
       /* Figure it out from the location of this DLL */
-      char *filename;
-      int filename_size;
-      char *sep1, *sep2;
-
       wchar_t w_filename[MAX_PATH];
+      char *filename = NULL;
+      char *sep1, *sep2;
       DWORD nSize = sizeof (w_filename) / sizeof ((w_filename)[0]);
 
       if (GetModuleFileNameW (get_libbabl_module (), w_filename, nSize) == 0)
         babl_fatal ("GetModuleFilenameW failed");
 
-      filename_size = WideCharToMultiByte (CP_UTF8, 0, w_filename, -1, NULL, 0,
-                                           NULL, NULL);
-      filename = babl_malloc (sizeof (char) * filename_size);
-      if (!WideCharToMultiByte (CP_UTF8, 0, w_filename, -1,
-                                filename, filename_size, NULL, NULL))
+      filename = babl_convert_utf16_to_utf8 (w_filename);
+      if (!filename)
         babl_fatal ("Converting module filename to UTF-8 failed");
 
       /* If the DLL file name is of the format
