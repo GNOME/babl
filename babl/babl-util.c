@@ -244,6 +244,26 @@ _babl_stat (const char *path,
 #endif
 }
 
+int
+_babl_mkdir (const char *path,
+             int         mode)
+{
+#ifndef _WIN32
+  return mkdir (path, (mode_t) mode);
+#else
+  wchar_t *path_utf16 = babl_convert_utf8_to_utf16 (path);
+  int result = 0;
+  (void) mode;
+
+  result = _wmkdir (path_utf16);
+
+  if (path_utf16)
+    babl_free (path_utf16);
+
+  return result;
+#endif
+}
+
 void
 _babl_dir_foreach (const char             *path,
                    _babl_dir_foreach_cb_t  callback,
@@ -305,33 +325,6 @@ cleanup:
     babl_free (search);
 #endif
 }
-
-#ifndef _WIN32
-
-int
-_babl_mkdir (const char *path,
-             mode_t      mode)
-{
-  return mkdir (path, mode);
-}
-
-#else
-
-int
-_babl_mkdir (const char *path)
-{
-  wchar_t *path_utf16 = babl_convert_utf8_to_utf16 (path);
-  int result = 0;
-
-  result = _wmkdir (path_utf16);
-
-  if (path_utf16)
-    babl_free (path_utf16);
-
-  return result;
-}
-
-#endif
 
 int
 _babl_file_get_contents (const char  *path,
