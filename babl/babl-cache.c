@@ -51,20 +51,7 @@ mk_ancestry_iter (const char *path)
         {
           BablStat stat_buf;
           if ( ! (_babl_stat (copy, &stat_buf)==0 && S_ISDIR(stat_buf.st_mode)))
-            {
-              if (mk_ancestry_iter (copy) != 0)
-                {
-                  result = -1;
-                }
-              else
-                {
-#ifndef _WIN32
-                  result = _babl_mkdir (copy, S_IRWXU);
-#else
-                  result = _babl_mkdir (copy);
-#endif
-                }
-            }
+            result = mk_ancestry_iter (copy) == 0 ? _babl_mkdir (copy, S_IRWXU) : -1;
         }
     }
 

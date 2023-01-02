@@ -59,14 +59,9 @@ int
 _babl_stat (const char *path,
             BablStat   *buffer);
 
-#ifndef _WIN32
 int
 _babl_mkdir (const char *path,
-             mode_t      mode);
-#else
-int
-_babl_mkdir (const char *path);
-#endif
+             int         mode);
 
 typedef void
 (*_babl_dir_foreach_cb_t) (const char *base_path,
