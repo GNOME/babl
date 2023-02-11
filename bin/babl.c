@@ -210,7 +210,7 @@ main (int    argc,
   data_index   = 0;
 
   to_format    = babl_format_with_space (to, to_space);
-  dest         = malloc (babl_format_get_bytes_per_pixel (from_format));
+  dest         = malloc (babl_format_get_bytes_per_pixel (to_format));
 
   /* Re-looping through arguments, to be more flexible with argument orders.
    * In this second loop, we get the source components' values.
