@@ -127,7 +127,7 @@ babl_gc (void)
 
 static float timings[256] = {0,};
 
-static inline void _do_lut (uint32_t *lut,
+static inline int _do_lut (uint32_t *lut,
                            int   source_bpp,
                            int   dest_bpp,
                            const void *__restrict__ source,
@@ -252,6 +252,11 @@ static inline void _do_lut (uint32_t *lut,
              src+=3;
           }
         }
+        else
+        {
+          return 0;
+        }
+        return 1;
 }
 
 
@@ -503,8 +508,11 @@ static inline int babl_fish_lut_process_maybe (const Babl *babl,
      }
      if (lut)
      {
-        _do_lut (lut, source_bpp, dest_bpp, source, destination, n);
-        BABL(babl)->fish_path.last_lut_use = babl_ticks ();
+       if (_do_lut (lut, source_bpp, dest_bpp, source, destination, n))
+       {
+         BABL(babl)->fish_path.last_lut_use = babl_ticks ();
+         return 1;
+       }
      }
      return 0;
 }
