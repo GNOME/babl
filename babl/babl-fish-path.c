@@ -975,10 +975,12 @@ _babl_fish_prepare_bpp (Babl *babl)
      // as long as the highest 8bit of the 32bit of a 4 byte input is ignored
      // (alpha) - and it is not an associated color model. A 24 bit LUT provides
      // exact data. Thus this is valid for instance for "YA half"
+     // Additionally we also avoid associated destination models too.
 
      if ((babl->conversion.source->format.type[0]->bits < 32 &&
-          (source_bpp < 4 
-         || (babl->conversion.source->format.model->flags & BABL_MODEL_FLAG_ASSOCIATED)==0)))
+          (source_bpp < 4 ||
+           (babl->conversion.source->format.model->flags & BABL_MODEL_FLAG_ASSOCIATED)==0) &&
+         (babl->conversion.destination->format.model->flags & BABL_MODEL_FLAG_ASSOCIATED)==0))
      {
        static int measured_timings = 0;
        float scaling = 10.0;
