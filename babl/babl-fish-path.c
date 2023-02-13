@@ -200,8 +200,10 @@ static inline int _do_lut (uint32_t *lut,
           uint32_t *dst = (uint32_t*)destination;
           while (n--)
           {
-             *dst = lut[*src++];
-             dst++;
+            uint16_t col = *src++;
+            *dst = lut[col & 0xff];
+            *dst |= (((uint32_t) (col & 0xff00)) << 16);
+            dst++;
           }
         }
         else if (source_bpp == 2 && dest_bpp == 2)
