@@ -958,8 +958,12 @@ _babl_fish_prepare_bpp (Babl *babl)
      }
 
   {
-  int source_bpp = babl->fish_path.source_bpp;
-  int dest_bpp = babl->fish_path.dest_bpp;
+  int         source_bpp  = babl->fish_path.source_bpp;
+  int         dest_bpp    = babl->fish_path.dest_bpp;
+  const Babl *source_type = babl_format_get_type (babl_source,
+                                                  babl_format_get_n_components (babl_source) - 1);
+  const Babl *dest_type   = babl_format_get_type (babl_dest,
+                                                  babl_format_get_n_components (babl_dest) - 1);
   if (//source->format.space != destination->format.space &&
      (
         (source_bpp == 2 && dest_bpp == 16)
@@ -977,12 +981,16 @@ _babl_fish_prepare_bpp (Babl *babl)
      // as long as the highest 8bit of the 32bit of a 4 byte input is ignored
      // (alpha) - and it is not an associated color model. A 24 bit LUT provides
      // exact data. Thus this is valid for instance for "YA half"
-     // Additionally we also avoid associated destination models too.
 
-     if ((babl->conversion.source->format.type[0]->bits < 32 &&
+     if ((babl->conversion.source->format.type[0]->bits < 32                                  &&
           (source_bpp < 4 ||
-           (babl->conversion.source->format.model->flags & BABL_MODEL_FLAG_ASSOCIATED)==0) &&
-         (babl->conversion.destination->format.model->flags & BABL_MODEL_FLAG_ASSOCIATED)==0))
+           (babl->conversion.source->format.model->flags & BABL_MODEL_FLAG_ASSOCIATED)==0)    &&
+         (babl->conversion.destination->format.model->flags & BABL_MODEL_FLAG_ASSOCIATED)==0) &&
+         /* Checking the exact type to be u8, so that we don't generate LUT for
+          * "YA u16" (4 bpp) or similar formats.
+          */
+         source_type == babl_type ("u8")                                                      &&
+         dest_type   == babl_type ("u8"))
      {
        static int measured_timings = 0;
        float scaling = 10.0;
