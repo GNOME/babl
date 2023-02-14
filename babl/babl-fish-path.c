@@ -250,6 +250,7 @@ static inline int _do_lut (uint32_t *lut,
           {
              uint32_t col = src[0]*256*256+src[1]*256+src[2];
              *dst = lut[col];
+             *dst |= 0xff000000;
              dst++;
              src+=3;
           }
