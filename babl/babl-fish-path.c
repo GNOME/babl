@@ -142,7 +142,7 @@ static inline int _do_lut (uint32_t *lut,
           {
              uint32_t col = *src++;
              uint32_t lut_offset = col & 0xffffff;
-             float alpha = (col>>24)/255.0;
+             float alpha = (col>>24)/255.0f;
 
              *dst++ = lut[lut_offset*4+0];
              *dst++ = lut[lut_offset*4+1];
@@ -160,7 +160,7 @@ static inline int _do_lut (uint32_t *lut,
           {
              uint32_t col = *src++;
              uint32_t lut_offset = col & 0xffffff;
-             uint16_t alpha = (col>>24) << 8;
+             uint16_t alpha = (col>>24) << 8; 
 
              dst[0] = lut16[lut_offset*2+0];
              dst[1] = lut16[lut_offset*2+1];
@@ -189,8 +189,7 @@ static inline int _do_lut (uint32_t *lut,
           while (n--)
           {
              uint32_t col = *src++;
-             *dst = col & 0xff000000;
-             *dst |= lut[col & 0xffffff];
+             *dst = (col & 0xff000000) | lut[col & 0xffffff];
              dst++;
           }
         }
@@ -201,8 +200,7 @@ static inline int _do_lut (uint32_t *lut,
           while (n--)
           {
             uint16_t col = *src++;
-            *dst = lut[col & 0xff];
-            *dst |= (((uint32_t) (col & 0xff00)) << 16);
+            *dst = lut[col & 0xff] | (((uint32_t) (col & 0xff00)) << 16);
             dst++;
           }
         }
@@ -249,8 +247,7 @@ static inline int _do_lut (uint32_t *lut,
           while (n--)
           {
              uint32_t col = src[0]*256*256+src[1]*256+src[2];
-             *dst = lut[col];
-             *dst |= 0xff000000;
+             *dst = lut[col] | 0xff000000;
              dst++;
              src+=3;
           }
@@ -965,33 +962,50 @@ _babl_fish_prepare_bpp (Babl *babl)
                                                   babl_format_get_n_components (babl_source) - 1);
   const Babl *dest_type   = babl_format_get_type (babl_dest,
                                                   babl_format_get_n_components (babl_dest) - 1);
-  if (//source->format.space != destination->format.space &&
-     (
-        (source_bpp == 2 && dest_bpp == 16)
-      ||(source_bpp == 4 && dest_bpp == 16)
-      ||(source_bpp == 4 && dest_bpp == 4)
-      ||(source_bpp == 4 && dest_bpp == 8)
-      ||(source_bpp == 3 && dest_bpp == 4)
-      ||(source_bpp == 2 && dest_bpp == 4)
-      ||(source_bpp == 2 && dest_bpp == 2)
-      ||(source_bpp == 1 && dest_bpp == 4)
-      ||(source_bpp == 3 && dest_bpp == 3)
+  if (
+      (babl->conversion.source->format.type[0]->bits < 32)       
+
+      && ((babl->conversion.destination->format.model->flags &
+          BABL_MODEL_FLAG_ASSOCIATED)==0)
+
+      && (  (   source_bpp == 2
+             && dest_bpp   == 16)
+
+          ||(   source_bpp == 4
+             && dest_bpp   == 16
+             && dest_type  == babl_type_from_id (BABL_FLOAT))
+
+          ||(   source_bpp == 4
+             && dest_bpp   == 4
+             && dest_type  ==source_type)
+
+          ||(   source_bpp == 4
+             && dest_bpp   == 8
+             && dest_type  == babl_type_from_id (BABL_U16))
+
+          ||(   source_bpp == 3
+             && dest_bpp   == 4)
+
+          ||(   source_bpp == 2
+             && dest_bpp   == 4)
+
+          ||(   source_bpp == 2
+             && dest_bpp   == 2)
+
+          ||(   source_bpp == 1
+             && dest_bpp   == 4)
+
+          ||(   source_bpp == 3
+             && dest_bpp   == 3)
       )
      )
   {
      // as long as the highest 8bit of the 32bit of a 4 byte input is ignored
      // (alpha) - and it is not an associated color model. A 24 bit LUT provides
-     // exact data. Thus this is valid for instance for "YA half"
-
-     if ((babl->conversion.source->format.type[0]->bits < 32                                  &&
-          (source_bpp < 4 ||
-           (babl->conversion.source->format.model->flags & BABL_MODEL_FLAG_ASSOCIATED)==0)    &&
-         (babl->conversion.destination->format.model->flags & BABL_MODEL_FLAG_ASSOCIATED)==0) &&
-         /* Checking the exact type to be u8, so that we don't generate LUT for
-          * "YA u16" (4 bpp) or similar formats.
-          */
-         source_type == babl_type ("u8")                                                      &&
-         dest_type   == babl_type ("u8"))
+     // exact data. 
+     // Note that we can only copy alpha from source to complete when
+     // types are matching expectations - the source_bpp/dest_bpp pairs have
+     // currently have built-in expectation for what type alpha is filled in
      {
        static int measured_timings = 0;
        float scaling = 10.0;
