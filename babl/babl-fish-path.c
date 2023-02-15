@@ -962,26 +962,30 @@ _babl_fish_prepare_bpp (Babl *babl)
                                                   babl_format_get_n_components (babl_source) - 1);
   const Babl *dest_type   = babl_format_get_type (babl_dest,
                                                   babl_format_get_n_components (babl_dest) - 1);
+
+  int dest_not_associated = ((babl->conversion.destination->format.model->flags &
+          BABL_MODEL_FLAG_ASSOCIATED)==0);
+
   if (
       (babl->conversion.source->format.type[0]->bits < 32)       
-
-      && ((babl->conversion.destination->format.model->flags &
-          BABL_MODEL_FLAG_ASSOCIATED)==0)
 
       && (  (   source_bpp == 2
              && dest_bpp   == 16)
 
           ||(   source_bpp == 4
              && dest_bpp   == 16
-             && dest_type  == babl_type_from_id (BABL_FLOAT))
+             && dest_type  == babl_type_from_id (BABL_FLOAT)
+             && dest_not_associated)
 
           ||(   source_bpp == 4
              && dest_bpp   == 4
-             && dest_type  ==source_type)
+             && dest_type  == source_type
+             && dest_not_associated)
 
           ||(   source_bpp == 4
              && dest_bpp   == 8
-             && dest_type  == babl_type_from_id (BABL_U16))
+             && dest_type  == babl_type_from_id (BABL_U16)
+             && dest_not_associated)
 
           ||(   source_bpp == 3
              && dest_bpp   == 4)
