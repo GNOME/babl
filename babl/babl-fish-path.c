@@ -969,9 +969,10 @@ _babl_fish_prepare_bpp (Babl *babl)
       && (  (   source_bpp == 2
              && dest_bpp   == 16)
 
-          ||(   source_bpp == 4
-             && dest_bpp   == 16
-             && dest_type  == babl_type_from_id (BABL_FLOAT)
+          ||(   source_bpp  == 4
+             && dest_bpp    == 16
+             && source_type == babl_type_from_id (BABL_U8)
+             && dest_type   == babl_type_from_id (BABL_FLOAT)
              && dest_not_associated)
 
           ||(   source_bpp == 4
@@ -979,9 +980,10 @@ _babl_fish_prepare_bpp (Babl *babl)
              && dest_type  == source_type
              && dest_not_associated)
 
-          ||(   source_bpp == 4
-             && dest_bpp   == 8
-             && dest_type  == babl_type_from_id (BABL_U16)
+          ||(   source_bpp  == 4
+             && dest_bpp    == 8
+             && source_type == babl_type_from_id (BABL_U8)
+             && dest_type   == babl_type_from_id (BABL_U16)
              && dest_not_associated)
 
           ||(   source_bpp == 3
