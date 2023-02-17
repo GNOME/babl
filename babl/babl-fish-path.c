@@ -199,8 +199,7 @@ static inline int _do_lut (uint32_t *lut,
           uint32_t *dst = (uint32_t*)destination;
           while (n--)
           {
-            uint16_t col = *src++;
-            *dst = lut[col & 0xff] | (((uint32_t) (col & 0xff00)) << 16);
+            *dst = lut[*src++];
             dst++;
           }
         }
@@ -455,8 +454,6 @@ static inline int babl_fish_lut_process_maybe (const Babl *babl,
                                   temp_lut, 2,
                                   lut, 4,
                                   256*256);
-         for (int o = 0; o < 256 * 256; o++)
-           lut[o] = lut[o] & 0x00ffffff;
          free (temp_lut);
        }
        else if (source_bpp == 2 && dest_bpp == 16)
