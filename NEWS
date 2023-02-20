@@ -3,8 +3,8 @@ The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
                                                                           -->
 
-2023-02-15 babl-0.1.100                                             </dt><dd>
-Be more restrictive about source/target formats permitted for LUTing.
+2023-02-20 babl-0.1.100                                             </dt><dd>
+Big improvements to LUT code, double processing hid bugs and kept speed at bay.
 Support for non-ASCII characters in file paths on windows. Improved wrap build
 support. 
                                                                     </dd><dt>
