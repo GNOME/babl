@@ -32,6 +32,8 @@
 #define MIN(a, b) (((a) > (b)) ? (b) : (a))
 #endif
 
+static int enable_lut = 0;
+
 typedef struct GcContext {
    long time;
 } GcContext;
@@ -605,6 +607,12 @@ _babl_legal_error (void)
   else
     debug_conversions = 0;
 
+  env = getenv ("BABL_LUT");
+  if (env && env[0] != '\0')
+    enable_lut = 1;
+  else
+    enable_lut = 0;
+
   return error;
 }
 
@@ -952,6 +960,7 @@ _babl_fish_prepare_bpp (Babl *babl)
          babl_log ("-eeek{%i}\n", babl_dest->instance.class_type - BABL_MAGIC);
      }
 
+  if (enable_lut)
   {
   int         source_bpp  = babl->fish_path.source_bpp;
   int         dest_bpp    = babl->fish_path.dest_bpp;

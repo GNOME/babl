@@ -113,6 +113,7 @@ babl_init (void)
       babl_type_db ();
       babl_trc_class_init ();
       babl_space_class_init ();
+      _babl_legal_error ();
       babl_component_db ();
       babl_model_db ();
       babl_format_db ();
