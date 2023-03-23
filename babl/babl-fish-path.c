@@ -644,9 +644,9 @@ _babl_legal_error (void)
 
   env = getenv ("BABL_LUT");
   if (env && env[0] != '\0')
-    enable_lut = 1;
+    enable_lut = atoi(getenv("BABL_LUT"));
   else
-    enable_lut = 0;
+    enable_lut = 1;
 
   return error;
 }
