@@ -352,7 +352,7 @@ static inline int babl_fish_lut_process_maybe (const Babl *babl,
        {
          lut = malloc (256 * 256 * 256 * 4);
          for (int o = 0; o < 256 * 256 * 256; o++)
-           lut[o] = o;
+           lut[o] = o | 0xff000000;
          process_conversion_path (babl->fish_path.conversion_list,
                                   lut, 4,
                                   lut, 4,
@@ -365,7 +365,7 @@ static inline int babl_fish_lut_process_maybe (const Babl *babl,
          uint32_t *temp_lut = malloc (256 * 256 * 256 * 4);
          lut = malloc (256 * 256 * 256 * 16);
          for (int o = 0; o < 256 * 256 * 256; o++)
-           temp_lut[o] = o;
+           temp_lut[o] = o | 0xff000000;
          process_conversion_path (babl->fish_path.conversion_list,
                                   temp_lut, 4,
                                   lut, 16,
@@ -377,7 +377,7 @@ static inline int babl_fish_lut_process_maybe (const Babl *babl,
          uint32_t *temp_lut = malloc (256 * 256 * 256 * 4);
          lut = malloc (256 * 256 * 256 * 8);
          for (int o = 0; o < 256 * 256 * 256; o++)
-           temp_lut[o] = o;
+           temp_lut[o] = o | 0xff000000;
          process_conversion_path (babl->fish_path.conversion_list,
                                   temp_lut, 4,
                                   lut, 8,
@@ -971,7 +971,6 @@ _babl_fish_prepare_bpp (Babl *babl)
 
   int dest_not_associated = ((babl->conversion.destination->format.model->flags &
           BABL_MODEL_FLAG_ASSOCIATED)==0);
-
   if (
       (babl->conversion.source->format.type[0]->bits < 32)       
 
