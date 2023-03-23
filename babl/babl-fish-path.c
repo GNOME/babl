@@ -969,6 +969,8 @@ _babl_fish_prepare_bpp (Babl *babl)
   const Babl *dest_type   = babl_format_get_type (babl_dest,
                                                   babl_format_get_n_components (babl_dest) - 1);
 
+  int src_not_associated = ((babl->conversion.source->format.model->flags &
+          BABL_MODEL_FLAG_ASSOCIATED)==0);
   int dest_not_associated = ((babl->conversion.destination->format.model->flags &
           BABL_MODEL_FLAG_ASSOCIATED)==0);
   if (
@@ -981,17 +983,20 @@ _babl_fish_prepare_bpp (Babl *babl)
              && dest_bpp    == 16
              && source_type == babl_type_from_id (BABL_U8)
              && dest_type   == babl_type_from_id (BABL_FLOAT)
+             && src_not_associated
              && dest_not_associated)
 
           ||(   source_bpp == 4
              && dest_bpp   == 4
              && dest_type  == source_type
+             && src_not_associated
              && dest_not_associated)
 
           ||(   source_bpp  == 4
              && dest_bpp    == 8
              && source_type == babl_type_from_id (BABL_U8)
              && dest_type   == babl_type_from_id (BABL_U16)
+             && src_not_associated
              && dest_not_associated)
 
           ||(   source_bpp == 3
