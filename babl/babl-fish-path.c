@@ -129,6 +129,8 @@ babl_gc (void)
 
 static float timings[256] = {0,};
 
+#define BPP_4ASSOCIATED   14
+
 static inline int _do_lut (uint32_t *lut,
                            int   source_bpp,
                            int   dest_bpp,
@@ -136,7 +138,34 @@ static inline int _do_lut (uint32_t *lut,
                            void *__restrict__ destination,
                            long n)
 {
-        if (source_bpp == 4 && dest_bpp == 16)
+        if (source_bpp == BPP_4ASSOCIATED  && dest_bpp == 4)
+        {
+          uint32_t *src = (uint32_t*)source;
+          uint32_t *dst = (uint32_t*)destination;
+          while (n--)
+          {
+             uint32_t col = *src++;
+             uint8_t *rgba=(uint8_t*)&col;
+             uint8_t oalpha = rgba[3];
+             if (oalpha==0)
+             {
+               *dst++ = 0;
+             }
+             else
+             {
+               uint32_t col_opaque = col;
+               uint8_t *rgbaB=(uint8_t*)&col_opaque;
+               uint32_t ralpha = 0;
+               ralpha = (256*255)/oalpha;
+               rgbaB[0] = (rgba[0]*ralpha)>>8;
+               rgbaB[1] = (rgba[1]*ralpha)>>8;
+               rgbaB[2] = (rgba[2]*ralpha)>>8;
+               rgbaB[3] = 0;
+               *dst++ = lut[col_opaque] | (oalpha<<24);
+             }
+          }
+        }
+        else if (source_bpp == 4 && dest_bpp == 16)
         {
           uint32_t *src = (uint32_t*)source;
           uint32_t *dst = (uint32_t*)destination;
@@ -260,7 +289,6 @@ static inline int _do_lut (uint32_t *lut,
         return 1;
 }
 
-
 void babl_test_lut (uint32_t *lut,
              int   source_bpp,
              int   dest_bpp,
@@ -285,7 +313,7 @@ static inline float lut_timing_for (int source_bpp, int dest_bpp)
 static void measure_timings(void)
 {
    int num_pixels = babl_get_num_path_test_pixels () * 1000;
-   int pairs[][2]={{4,4},{4,8},{3,4},{3,3},{2,4},{2,2},{1,4},{2,16},{4,16}};
+   int pairs[][2]={{4,4},{BPP_4ASSOCIATED,4},{4,8},{3,4},{3,3},{2,4},{2,2},{1,4},{2,16},{4,16}};
    uint32_t *lut = malloc (256 * 256 * 256 * 16);
    uint32_t *src = malloc (num_pixels * 16);
    uint32_t *dst = malloc (num_pixels * 16);
@@ -341,7 +369,7 @@ static inline int babl_fish_lut_process_maybe (const Babl *babl,
      int source_bpp = babl->fish_path.source_bpp;
      int dest_bpp = babl->fish_path.dest_bpp;
      uint32_t *lut = (uint32_t*)babl->fish_path.u8_lut;
-
+ 
 
      if (BABL_UNLIKELY(!lut && babl->fish.pixels >= 128 * 256))
      {
@@ -359,6 +387,7 @@ static inline int babl_fish_lut_process_maybe (const Babl *babl,
                                   256*256*256);
          for (int o = 0; o < 256 * 256 * 256; o++)
            lut[o] = lut[o] & 0x00ffffff;
+
        }
        else if (source_bpp == 4 && dest_bpp == 16)
        {
@@ -505,8 +534,14 @@ static inline int babl_fish_lut_process_maybe (const Babl *babl,
          lut = babl->fish_path.u8_lut;
        }
      }
+
      if (lut)
      {
+       if (source_bpp == 4 && 
+           ((babl->conversion.source->format.model->flags &
+           BABL_MODEL_FLAG_ASSOCIATED)!=0))
+         source_bpp = BPP_4ASSOCIATED;
+
        if (_do_lut (lut, source_bpp, dest_bpp, source, destination, n))
        {
          BABL(babl)->fish_path.last_lut_use = babl_ticks ();
@@ -989,7 +1024,6 @@ _babl_fish_prepare_bpp (Babl *babl)
           ||(   source_bpp == 4
              && dest_bpp   == 4
              && dest_type  == source_type
-             && src_not_associated
              && dest_not_associated)
 
           ||(   source_bpp  == 4
