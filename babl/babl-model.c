@@ -421,11 +421,9 @@ babl_model_is_symmetric (const Babl *cbabl)
 
 BABL_CLASS_IMPLEMENT (model)
 
-/* XXX: probably better to do like with babl_format, add a -suffix and
- *      insert in normal database than to have this static cache list
- */
-static const Babl *babl_remodels[512]={NULL,};
-int          babl_n_remodels = 0;
+static Babl **babl_remodels = NULL;
+static int    babl_remodel_size = 0;
+static int    babl_n_remodels = 0;
 
 const Babl *
 babl_remodel_with_space (const Babl *model, 
@@ -454,24 +452,37 @@ babl_remodel_with_space (const Babl *model,
 
   assert (BABL_IS_BABL (model));
 
+  babl_mutex_lock (babl_remodel_mutex);
   /* get back to the sRGB model if we are in a COW clone of it  */
   if (model->model.model)
     model = (void*)model->model.model;
 
   assert (BABL_IS_BABL (model));
+  if (babl_remodel_size < babl_n_remodels + 2)
+  {
+    int new_size = (babl_n_remodels + 2) * 2;
+    if (new_size < 256) new_size = 256;
+    babl_remodels = babl_realloc (babl_remodels, new_size * sizeof (Babl*));
+    babl_remodel_size = new_size;
+  }
 
   for (i = 0; i < babl_n_remodels; i++)
   {
     if (babl_remodels[i]->model.model == model &&
         babl_remodels[i]->model.space == space)
-          return babl_remodels[i];
+        {
+          ret = (Babl*)babl_remodels[i];
+          babl_mutex_unlock (babl_remodel_mutex);
+          return ret;
+       }
   }
 
   ret = babl_calloc (sizeof (BablModel), 1);
   memcpy (ret, model, sizeof (BablModel));
   ret->model.space = space;
   ret->model.model = (void*)model; /* use the data as a backpointer to original model */
-  return babl_remodels[babl_n_remodels++] = ret;
+  babl_remodels[babl_n_remodels++] = ret;
+  babl_mutex_unlock (babl_remodel_mutex);
   return (Babl*)ret;
 }
 
