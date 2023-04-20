@@ -140,8 +140,9 @@ format_new_from_format_with_space (const Babl *format,
 {
   Babl *ret;
   char new_name[256];
-  snprintf (new_name, sizeof (new_name), "%s-%s", babl_get_name ((void*)format),
+  snprintf (new_name, sizeof (new_name)-1, "%s-%s", babl_get_name ((void*)format),
                                                   babl_get_name ((void*)space));
+  new_name[255]=0;
   ret = babl_db_find (babl_format_db(), new_name);
   if (ret)
     return ret;

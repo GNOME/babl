@@ -354,11 +354,13 @@ babl_space_from_rgbxyz_matrix (const char *name,
   if (name)
     snprintf (space_db[i].name, sizeof (space_db[i].name), "%s", name);
   else
-          /* XXX: this can get longer than 256bytes ! */
-    snprintf (space_db[i].name, sizeof (space_db[i].name),
+  {
+    snprintf (space_db[i].name, sizeof (space_db[i].name)-1,
              "space-%.4f,%.4f_%.4f,%.4f_%.4f,%.4f_%.4f,%.4f_%s,%s,%s",
              wx,wy,rx,ry,bx,by,gx,gy,babl_get_name (space.trc[0]),
              babl_get_name(space.trc[1]), babl_get_name(space.trc[2]));
+    space_db[i].name[sizeof (space_db[i].name)-1]=0;
+  }
 
   babl_space_get_icc ((Babl*)&space_db[i], NULL);
   return (Babl*)&space_db[i];
