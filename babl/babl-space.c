@@ -93,6 +93,36 @@ XYZ_to_LAB (double X,
   *to_b = 200.0 * (f_y - f_z);
 }
 
+// cached equalized matrices generated for spaces used internally by babl
+//
+static double equalized_matrices[][9]=
+{
+ {0.673492431640625000, 0.165679931640625000, 0.125030517578125000,
+  0.279052734375000000, 0.675354003906250000, 0.045593261718750000,
+ -0.001907348632812500, 0.029968261718750000, 0.796844482421875000},
+
+ {0.609756469726562500, 0.205276489257812500, 0.149169921875000000,
+  0.311126708984375000, 0.625671386718750000, 0.063201904296875000,
+  0.019485473632812500, 0.060867309570312500, 0.744552612304687500},
+
+ {0.797714233398437500, 0.135208129882812500, 0.031280517578125000,
+  0.288070678710937500, 0.711868286132812500, 0.000061035156250000,
+  0.000015258789062500, 0.000015258789062500, 0.824874877929687500},
+
+ {0.475555419921875000, 0.339706420898437500, 0.148941040039062500,
+  0.255172729492187500, 0.672592163085937500, 0.072235107421875000,
+  0.018463134765625000, 0.113342285156250000, 0.693099975585937500},
+
+ {0.689895629882812500, 0.149765014648437500, 0.124542236328125000,
+  0.284530639648437500, 0.671691894531250000, 0.043777465820312500,
+ -0.006011962890625000, 0.009994506835937500, 0.820922851562500000},
+
+ {0.990905761718750000, 0.012222290039062500,-0.038925170898437500,
+  0.361907958984375000, 0.722503662109375000,-0.084411621093750000,
+ -0.002685546875000000, 0.008239746093750000, 0.819351196289062500},
+};
+
+
 /* round all values to s15f16 precision and brute-force
  * jitter +/- 1 all entries for best uniform gray axis - this
  * also optimizes the accuracy of the matrix for floating point
@@ -116,6 +146,26 @@ babl_matrix_equalize (double *in_mat)
   double lab[12] = {};
   double best_error = 1000000.0;
   int i;
+
+  for (int i = 0; i < sizeof (equalized_matrices)/
+                      sizeof (equalized_matrices[0]); i++)
+  {
+    double diff_sum = 0.0f;
+    for (int j = 0; j < 9; j++){ 
+    double diff = equalized_matrices[i][j] - in_mat[j];
+    diff *= diff;
+    diff_sum += diff; }
+
+    // the threshold is based on being ~double the biggest
+    // difference seen in the default space set.
+
+    if (diff_sum < 0.000000005) { 
+      for (int j = 0; j < 9; j++){ 
+        in_mat[j] = equalized_matrices[i][j];
+      }
+      return;
+    }
+  }
 
   for (i = 0; i < 9; i++)
     best_j[i] = 0;
@@ -162,11 +212,23 @@ babl_matrix_equalize (double *in_mat)
       memcpy (&best_j[0], &j[0], sizeof (best_j));
     }
   }
+
   for (i = 0; i < 9; i++)
   {
     int32_t val = in_mat[i] * 65536.0 + 0.5f;
     in_mat[i] = val / 65536.0 + best_j[i] / 65536.0;
   }
+
+#if 0 // uncomment to generate code for pasting in cache
+  fprintf (stderr, "{");
+  for (i = 0; i < 9; i++)
+  {
+    if (i)
+      fprintf (stderr, ", ");
+    fprintf (stderr, "%.18f", in_mat[i]);
+  }
+  fprintf (stderr, "},\n");
+#endif
 }
 
 static void
