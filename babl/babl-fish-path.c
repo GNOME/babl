@@ -648,6 +648,14 @@ _babl_legal_error (void)
   else
     enable_lut = 1;
 
+  { 
+    const uint32_t u32 = 1;
+    if ( *((char*)&u32) == 0)
+    {  /* disable use of LUTs if we are running on big endian */
+       enable_lut = 0;
+    }
+  }
+
   return error;
 }
 
