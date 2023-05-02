@@ -513,8 +513,6 @@ static inline int babl_fish_lut_process_maybe (const Babl *babl,
                                   temp_lut, 1,
                                   lut, 4,
                                   256);
-         for (int o = 0; o < 256; o++)
-           lut[o] = lut[o] & 0x00ffffff;
          free (temp_lut);
        }
 
