@@ -3,7 +3,11 @@ The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
                                                                           -->
 
-2023-03-21 babl-0.1.104                                             </dt><dd>
+2023-05-05 babl-0.1.106                                             </dt><dd>
+Disable LUTs on big-endian, fix to 1bpp->4bpp LUTs, faster startup by caching
+balanced RGB to XYZ matrices.
+                                                                    </dd><dt>
+2023-04-21 babl-0.1.104                                             </dt><dd>
 LUT code-paths re-enabled, some array overflow proofing.
                                                                     </dd><dt>
 2023-02-25 babl-0.1.102                                             </dt><dd>
