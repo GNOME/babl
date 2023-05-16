@@ -154,7 +154,7 @@ build_platform_win32 = (build_os.startswith('mingw') or
 # and have exe wrapper. If we don't need a wrapper (e.g. 32 bit build in
 # 64-bit environment) then set proprty has_exe_wrapper=true in cross 
 # file
-can_run_host_binaries = meson.has_exe_wrapper()
+can_run_host_binaries = meson.can_run_host_binaries()
 
 
 ################################################################################
@@ -456,7 +456,7 @@ if git_bin.found() and run_command(
     input : 'git-version.h.in',
     output: 'git-version.h',
     replace_string: '@BABL_GIT_VERSION@',
-    command: [ git_bin.path(), 'describe', '--always' ],
+    command: [ git_bin.full_path(), 'describe', '--always' ],
   )
 
   if not meson.is_subproject()
