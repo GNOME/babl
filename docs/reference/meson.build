@@ -13,7 +13,7 @@ babl_doc_toml = configure_file(
 
 babl_docs = custom_target('babl-docs',
   input: babl_gir[0],
-  output: 'libbabl-@0@'.format(api_version),
+  output: lib_name,
   command: [
     gi_docgen,
     'generate',
@@ -31,5 +31,5 @@ babl_docs = custom_target('babl-docs',
   ],
   build_by_default: true,
   install: true,
-  install_dir: get_option('datadir') / 'doc' / lib_name,
+  install_dir: get_option('datadir') / 'doc',
 )

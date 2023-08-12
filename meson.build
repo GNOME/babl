@@ -436,7 +436,7 @@ if get_option('gi-docgen').auto()
 else
  build_gi_docgen = get_option('gi-docgen').enabled()
 
- if build_gi_docgen and (not build_docs or not build_dir)
+ if build_gi_docgen and (not build_docs or not build_gir)
    warning('-Dwith-docs=true and -Denable-gir=true are required to build gi-docgen documentation')
    build_gi_docgen = false
  endif
