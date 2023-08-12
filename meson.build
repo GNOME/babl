@@ -430,6 +430,19 @@ else
   build_vapi = false
 endif
 
+gi_docgen = find_program('gi-docgen', required: get_option('gi-docgen'))
+if get_option('gi-docgen').auto()
+ build_gi_docgen = build_docs and build_gir and gi_docgen.found() and not meson.is_cross_build()
+else
+ build_gi_docgen = get_option('gi-docgen').enabled()
+
+ if build_gi_docgen and (not build_docs or not build_dir)
+   warning('-Dwith-docs=true and -Denable-gir=true are required to build gi-docgen documentation')
+   build_gi_docgen = false
+ endif
+endif
+
+
 ################################################################################
 # Configuration files
 
@@ -562,9 +575,10 @@ summary(
 )
 summary(
   {
-    'BABL docs'      : build_docs,
-    'Introspection'  : build_gir,
-    'VALA support'   : build_vapi,
+    'BABL docs (babl website)' : build_docs,
+    'gi-docgen'                : build_gi_docgen,
+    'Introspection'            : build_gir,
+    'VALA support'             : build_vapi,
   }, section: 'Optional features'
 )
 summary(

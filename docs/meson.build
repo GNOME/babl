@@ -95,3 +95,9 @@ foreach _file, _parms : html_files
     index_html = _tgt
   endif
 endforeach
+
+# gi-docgen API reference
+
+if build_gi_docgen
+  subdir('reference')
+endif

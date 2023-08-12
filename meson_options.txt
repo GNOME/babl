@@ -14,6 +14,11 @@ option('enable-vapi',
   value: 'true', 
   description: 'Vala .vapi generation - depends on introspection'
 )
+option('gi-docgen',
+  type: 'feature',
+  value: 'auto',
+  description: 'Build developer documentation (uses gi-docgen)'
+)
 
 # Compiler extensions
 option('enable-mmx',
