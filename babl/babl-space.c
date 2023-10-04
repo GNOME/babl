@@ -826,6 +826,12 @@ babl_space_get (const Babl *babl,
 }
 
 int
+babl_space_is_rgb (const Babl *space)
+{
+  return space ? space->space.icc_type == BablICCTypeRGB : 0;
+}
+
+int
 babl_space_is_cmyk (const Babl *space)
 {
   return space?space->space.icc_type == BablICCTypeCMYK:0;

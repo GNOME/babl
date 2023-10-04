@@ -715,7 +715,28 @@ babl_space_from_rgbxyz_matrix (const char *name,
  */
 const char * babl_format_get_encoding (const Babl *babl);
 
+/**
+ * babl_space_is_rgb:
+ * @space:
+ *
+ * Returns: 1 if @space is RGB, 0 otherwise.
+ */
+int babl_space_is_rgb  (const Babl *space);
+
+/**
+ * babl_space_is_cmyk:
+ * @space:
+ *
+ * Returns: 1 if @space is CMYK, 0 otherwise.
+ */
 int babl_space_is_cmyk (const Babl *space);
+
+/**
+ * babl_space_is_gray:
+ * @space:
+ *
+ * Returns: 1 if @space is grayscale, 0 otherwise.
+ */
 int babl_space_is_gray (const Babl *space);
 
 typedef void (*BablFishProcess) (const Babl *babl, const char *src, char *dst, long n, void *data);

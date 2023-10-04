@@ -57,6 +57,7 @@ babl_space_to_icc
 babl_space_with_trc
 babl_space_is_cmyk
 babl_space_is_gray
+babl_space_is_rgb
 babl_space_get_gamma
 babl_icc_make_space
 babl_icc_get_key
