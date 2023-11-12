@@ -16,11 +16,15 @@
  * <https://www.gnu.org/licenses/>.
  */
 
+#include "config.h"
+
 #include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "babl-internal.h"
 
 #include <babl/babl.h>
 
@@ -320,6 +324,21 @@ main (int    argc,
               *fsrc = value;
               data_index += 4;
             }
+          else if (strcmp (babl_get_name (arg_type), "half") == 0)
+            {
+              float  value = strtof (argv[i], &endptr);
+              void  *fsrc  = (void *) (source + data_index);
+
+              if (value == 0.0f && endptr == argv[i])
+                {
+                  fprintf (stderr, "babl: expected type of component %d is '%s', invalid value: %s\n",
+                           c, babl_get_name (arg_type), argv[i]);
+                  return 3;
+                }
+
+              _babl_float_to_half (fsrc, &value, 1);
+              data_index += 2;
+            }
           else if (strncmp (babl_get_name (arg_type), "u", 1) == 0)
             {
               long int value = strtol (argv[i], &endptr, 10);
@@ -408,6 +427,19 @@ main (int    argc,
           else
             printf ("- %f\n", value);
         }
+      else if (strcmp (babl_get_name (arg_type), "half") == 0)
+        {
+          void  *value = (void *) (dest + data_index);
+          float  fvalue;
+
+          _babl_half_to_float (&fvalue, value, 1);
+          data_index += 2;
+
+          if (brief_output)
+            printf ("%s%f", c > 0 ? " ":"", fvalue);
+          else
+            printf ("- %f\n", fvalue);
+        }
       else if (strcmp (babl_get_name (arg_type), "u8") == 0)
         {
           uint8_t value = *((uint8_t *) (dest + data_index));
@@ -443,8 +475,8 @@ main (int    argc,
         }
       else
         {
-          fprintf (stderr, "babl: unsupported type '%s' of returned component %d: %s\n",
-                   babl_get_name (arg_type), c, argv[i]);
+          fprintf (stderr, "babl: unsupported type '%s' of returned component %d.\n",
+                   babl_get_name (arg_type), c);
           return 5;
         }
     }
