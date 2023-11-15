@@ -309,7 +309,22 @@ main (int    argc,
 
           arg_type = babl_format_get_type (from_format, c);
 
-          if (strcmp (babl_get_name (arg_type), "float") == 0)
+          if (strcmp (babl_get_name (arg_type), "double") == 0)
+            {
+              double  value = strtod (argv[i], &endptr);
+              double *dsrc = (double *) (source + data_index);
+
+              if (value == 0.0 && endptr == argv[i])
+                {
+                  fprintf (stderr, "babl: expected type of component %d is '%s', invalid value: %s\n",
+                           c, babl_get_name (arg_type), argv[i]);
+                  return 3;
+                }
+
+              *dsrc = value;
+              data_index += 8;
+            }
+          else if (strcmp (babl_get_name (arg_type), "float") == 0)
             {
               float  value = strtof (argv[i], &endptr);
               float *fsrc = (float *) (source + data_index);
@@ -416,7 +431,18 @@ main (int    argc,
 
       arg_type = babl_format_get_type (to_format, c);
 
-      if (strcmp (babl_get_name (arg_type), "float") == 0)
+      if (strcmp (babl_get_name (arg_type), "double") == 0)
+        {
+          double value = *((double *) (dest + data_index));
+
+          data_index += 8;
+
+          if (brief_output)
+            printf ("%s%f", c > 0 ? " ":"", value);
+          else
+            printf ("- %f\n", value);
+        }
+      else if (strcmp (babl_get_name (arg_type), "float") == 0)
         {
           float value = *((float *) (dest + data_index));
 
