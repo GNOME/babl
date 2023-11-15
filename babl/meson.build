@@ -90,6 +90,7 @@ babl_sources = files(
   'babl-sanity.c',
   'babl-space.c',
   'babl-type.c',
+  'babl-shared-util.c',
   'babl-util.c',
   'babl-version.c',
   'babl.c',

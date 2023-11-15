@@ -48,6 +48,7 @@
 #include "babl-hash-table.h"
 #include "babl-db.h"
 #include "babl-ids.h"
+#include "babl-shared-util.h"
 #include "babl-util.h"
 #include "babl-memory.h"
 #include "babl-mutex.h"

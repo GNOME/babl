@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "babl-internal.h"
+#include "babl-shared-util.h"
 
 #include <babl/babl.h>
 

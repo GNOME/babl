@@ -73,15 +73,6 @@ _babl_dir_foreach (const char             *path,
                    _babl_dir_foreach_cb_t  callback,
                    void                   *user_data);
 
-void
-_babl_float_to_half (void        *halfp,
-                     const float *floatp,
-                     int          numel);
-void
-_babl_half_to_float (float      *floatp,
-                     const void *halfp,
-                     int         numel);
-
 #ifdef _WIN32
 
 wchar_t *
