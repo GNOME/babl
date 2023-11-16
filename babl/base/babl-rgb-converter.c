@@ -358,7 +358,20 @@ universal_linear_rgb_nonlinear_converter_sse2 (const Babl    *conversion,
   float *rgba_in = (void*)src_char;
   float *rgba_out = (void*)dst_char;
 
-  babl_matrix_mul_vectorff_buf4_sse2 (matrixf, rgba_in, rgba_out, samples);
+  if (((uintptr_t) rgba_in & 0xF) == 0)
+    {
+      babl_matrix_mul_vectorff_buf4_sse2 (matrixf, rgba_in, rgba_out, samples);
+    }
+  else
+    {
+      /* babl_matrix_mul_vectorff_buf4_sse2() requires source pointer address
+       * to be 16-bytes aligned.
+       */
+      float __attribute__ ((aligned (16))) aligned_rgba_in[4 * 4 * samples];
+
+      memcpy (aligned_rgba_in, rgba_in, 4 * 4 * samples);
+      babl_matrix_mul_vectorff_buf4_sse2 (matrixf, aligned_rgba_in, rgba_out, samples);
+    }
 
   TRC_OUT(rgba_out, rgba_out);
 }
