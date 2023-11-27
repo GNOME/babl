@@ -12,13 +12,13 @@
   <description xml:lang="en">babl is a pixel encoding and color space conversions engine.</description>
   <description xml:lang="de">babl ist eine dynamische Bibliothek zur direkten Umwandlung von Pixelformaten.</description>
 
-  <homepage rdf:resource="http://www.gegl.org/babl" />
+  <homepage rdf:resource="https://www.gegl.org/babl" />
 
-  <mailing-list
-    rdf:resource="https://mail.gnome.org/mailman/listinfo/gegl-developer-list"
+  <developer-forum
+    rdf:resource="https://discourse.gnome.org/tag/gegl"
   />
 
-  <download-page rdf:resource="http://gegl.org/babl/#Download" />
+  <download-page rdf:resource="https://gegl.org/babl/#Download" />
 
   <bug-database
     rdf:resource="https://gitlab.gnome.org/GNOME/babl/issues/" />
