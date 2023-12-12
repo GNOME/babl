@@ -86,7 +86,7 @@ components (void)
   babl_component_new ("hue", NULL);
   babl_component_new ("HCY chroma", "chroma", NULL);
   babl_component_new ("HCY luma", "luma", NULL);
-  babl_component_new ("alpha", NULL);
+  babl_component_new ("alpha", "alpha", NULL);
 }
 
 static void

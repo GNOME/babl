@@ -49,7 +49,7 @@ init (void)
 static void
 components (void)
 {
-  babl_component_new ("alpha", NULL);
+  babl_component_new ("alpha", "alpha", NULL);
 }
 
 
