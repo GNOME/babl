@@ -89,7 +89,7 @@ components (void)
   babl_component_new ("hue", NULL);
   babl_component_new ("saturation", NULL);
   babl_component_new ("value", NULL);
-  babl_component_new ("alpha", NULL);
+  babl_component_new ("alpha", "alpha", NULL);
 }
 
 static void
