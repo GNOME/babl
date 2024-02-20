@@ -118,7 +118,7 @@ if meson.is_subproject()
   subdir('babl')
 endif
 
-babl_deps = [math, thread, dl, lcms]
+babl_deps = [math, thread, dl, lcms, log]
 babl_includes = [rootInclude, bablBaseInclude]
 
 if host_cpu_family == 'x86_64'

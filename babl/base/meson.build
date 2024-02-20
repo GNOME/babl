@@ -21,7 +21,7 @@ babl_base_sources = [
 babl_base = static_library('babl_base',
   babl_base_sources,
   include_directories: [rootInclude, bablInclude],
-  dependencies: [math, lcms],
+  dependencies: [math, lcms, log],
    c_args: common_c_flags + [sse2_cflags]
 ) 
 
@@ -30,14 +30,14 @@ if host_cpu_family == 'x86_64'
   babl_base_x86_64_v2 = static_library('babl_base-x86-64-v2',
     babl_base_sources,
     include_directories: [rootInclude, bablInclude],
-    dependencies: [math, lcms],
+    dependencies: [math, lcms, log],
     c_args: common_c_flags + x86_64_v2_flags
   )
 
   babl_base_x86_64_v3 = static_library('babl_base-x86-64-v3',
     babl_base_sources,
     include_directories: [rootInclude, bablInclude],
-    dependencies: [math, lcms],
+    dependencies: [math, lcms, log],
     c_args: common_c_flags + x86_64_v3_flags
   )
 
@@ -49,7 +49,7 @@ if host_cpu_family == 'arm'
   babl_base_arm_neon = static_library('babl_base-arm-neon',
     babl_base_sources,
     include_directories: [rootInclude, bablInclude],
-    dependencies: [math, lcms],
+    dependencies: [math, lcms, log],
     c_args: common_c_flags + arm_neon_flags
   )
 
