@@ -110,11 +110,6 @@ platform_win32 = (host_os.startswith('mingw') or
                   host_os.startswith('windows'))
 
 platform_osx = host_os.startswith('darwin')
-if platform_osx
-  if cc.get_id() != 'clang'
-    error('You should use Clang/Clang++ on OSX.')
-  endif
-endif
 
 platform_android = host_os.contains('android')
 
