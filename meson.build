@@ -156,6 +156,7 @@ can_run_host_binaries = meson.can_run_host_binaries()
 # Compiler arguments
 
 common_c_flags = []
+common_l_flags = []
 
 if buildtype == 'debugoptimized' or buildtype == 'release'
   common_c_flags += cc.get_supported_arguments(['-Ofast'])
@@ -174,6 +175,13 @@ extra_warnings_list = [
   '-Wpointer-arith',
 ]
 common_c_flags += cc.get_supported_arguments(extra_warnings_list)
+
+# Generate .pdb (CodeView) debug symbols (makes possible to debug with DIA SDK)
+pdb_support = cc.has_argument('-gcodeview') and cc.has_link_argument('-Wl,--pdb=')
+if platform_win32 and pdb_support
+  common_c_flags += '-gcodeview'
+  common_l_flags += '-Wl,--pdb='
+endif
 
 add_project_arguments(common_c_flags, language: 'c')
 
@@ -197,6 +205,8 @@ elif host_cpu_family == 'arm'
 elif host_cpu_family == 'aarch64'
   common_c_flags += cc.get_supported_arguments(['-mfpu=neon-fp-armv8'])
 endif
+
+add_project_link_arguments(common_l_flags, language: 'c')
 
 ################################################################################
 # Check for compiler CPU extensions
@@ -491,6 +501,15 @@ news_file = files('NEWS')
 todo_file = files('TODO')
 export_symbols_file = files('export-symbols')
 gen_babl_map_file = files('gen_babl_map.py')
+
+################################################################################
+# Install debug data (.pdb) on Windows
+# Ideally meson should take care of it automatically.
+# See: https://github.com/mesonbuild/meson/issues/12977
+if platform_win32 and pdb_support
+  install_win_debug_script = find_program('./meson_install_win_debug.sh')
+  meson.add_install_script(install_win_debug_script)
+endif
 
 ################################################################################
 # Subdirs
