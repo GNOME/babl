@@ -23,6 +23,7 @@
 /* AVX 2 */
 #include <immintrin.h>
 
+#include <math.h>
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -39,12 +40,12 @@
     {                                                     \
       float x = *src;                                     \
                                                           \
-      if (x < 0.0f)                                       \
-        *dst = 0;                                         \
-      else if (x <= 1.0f)                                 \
-        *dst = linear_to_gamma[(int) (SCALE * x + 0.5f)]; \
-      else /* x > 1.0f || isnan (x) */                    \
+      if (isnan (x) || x > 1.0f)                          \
         *dst = 255;                                       \
+      else if (x < 0.0f)                                  \
+        *dst = 0;                                         \
+      else                                                \
+        *dst = linear_to_gamma[(int) (SCALE * x + 0.5f)]; \
                                                           \
       src++;                                              \
       dst++;                                              \
@@ -56,12 +57,12 @@
     {                                                     \
       float x = *src;                                     \
                                                           \
-      if (x < 0.0f)                                       \
-        *dst = 0;                                         \
-      else if (x <= 1.0f)                                 \
-        *dst = 255.0f * x + 0.5f;                         \
-      else /* x > 1.0f || isnan (x) */                    \
+      if (isnan (x) || x > 1.0f)                          \
         *dst = 255;                                       \
+      else if (x < 0.0f)                                  \
+        *dst = 0;                                         \
+      else                                                \
+        *dst = 255.0f * x + 0.5f;                         \
                                                           \
       src++;                                              \
       dst++;                                              \
