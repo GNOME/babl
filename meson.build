@@ -177,11 +177,11 @@ extra_warnings_list = [
 common_c_flags += cc.get_supported_arguments(extra_warnings_list)
 
 # Generate .pdb (CodeView) debug symbols (makes possible to debug with DIA SDK)
-pdb_support = cc.has_argument('-gcodeview') and cc.has_link_argument('-Wl,--pdb=')
-if platform_win32 and pdb_support
-  common_c_flags += '-gcodeview'
-  common_l_flags += '-Wl,--pdb='
-endif
+#pdb_support = cc.has_argument('-gcodeview') and cc.has_link_argument('-Wl,--pdb=')
+#if platform_win32 and pdb_support
+#  common_c_flags += '-gcodeview'
+#  common_l_flags += '-Wl,--pdb='
+#endif
 
 add_project_arguments(common_c_flags, language: 'c')
 
@@ -506,10 +506,10 @@ gen_babl_map_file = files('gen_babl_map.py')
 # Install debug data (.pdb) on Windows
 # Ideally meson should take care of it automatically.
 # See: https://github.com/mesonbuild/meson/issues/12977
-if platform_win32 and pdb_support
-  install_win_debug_script = find_program('./meson_install_win_debug.sh')
-  meson.add_install_script(install_win_debug_script)
-endif
+#if platform_win32 and pdb_support
+#  install_win_debug_script = find_program('./meson_install_win_debug.sh')
+#  meson.add_install_script(install_win_debug_script)
+#endif
 
 ################################################################################
 # Subdirs
