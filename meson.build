@@ -183,6 +183,15 @@ common_c_flags += cc.get_supported_arguments(extra_warnings_list)
 #  common_l_flags += '-Wl,--pdb='
 #endif
 
+if platform_win32 and cc.get_id() == 'clang'
+  # Optimize DWARF symbols to Dr. Mingw
+  # https://github.com/jrfonseca/drmingw/issues/42
+  common_c_flags += '-gdwarf-aranges'
+  # Workaround to get colored output
+  # https://github.com/msys2/MINGW-packages/issues/2988
+  common_c_flags += '-fansi-escape-codes'
+endif
+
 add_project_arguments(common_c_flags, language: 'c')
 
 # Linker arguments
