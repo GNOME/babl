@@ -40,7 +40,7 @@ endif
 
 TOC = files('toc')
 html_files = {
-  'index': [index_static_html, [
+  'index': ['index-static.html.in', [
     ['AUTHORS', authors_file],
     ['TODO',    todo_file],
     ['NEWS',    news_file],
