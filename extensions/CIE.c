@@ -2441,10 +2441,10 @@ rgbaf_to_Lf_sse2 (const Babl  *conversion,
 }
 
 static void
-rgbaf_to_Labaf_sse2 (const Babl  *conversion, 
-                     const float *src, 
-                     float       *dst, 
-                     long         samples)
+rgbaf_to_Labaf_sse2_aligned_4mult (const Babl  *conversion,
+                                   const float *src,
+                                   float       *dst,
+                                   long         samples)
 {
   const Babl *space = babl_conversion_get_source_space (conversion);
   const float m_0_0 = space->space.RGBtoXYZf[0] / D50_WHITE_REF_Xf;
@@ -2456,100 +2456,100 @@ rgbaf_to_Labaf_sse2 (const Babl  *conversion,
   const float m_2_0 = space->space.RGBtoXYZf[6] / D50_WHITE_REF_Zf;
   const float m_2_1 = space->space.RGBtoXYZf[7] / D50_WHITE_REF_Zf;
   const float m_2_2 = space->space.RGBtoXYZf[8] / D50_WHITE_REF_Zf;
-  long i = 0;
-  long remainder;
+  long        i = 0;
 
+  const __m128 m_0_0_v = _mm_set1_ps (m_0_0);
+  const __m128 m_0_1_v = _mm_set1_ps (m_0_1);
+  const __m128 m_0_2_v = _mm_set1_ps (m_0_2);
+  const __m128 m_1_0_v = _mm_set1_ps (m_1_0);
+  const __m128 m_1_1_v = _mm_set1_ps (m_1_1);
+  const __m128 m_1_2_v = _mm_set1_ps (m_1_2);
+  const __m128 m_2_0_v = _mm_set1_ps (m_2_0);
+  const __m128 m_2_1_v = _mm_set1_ps (m_2_1);
+  const __m128 m_2_2_v = _mm_set1_ps (m_2_2);
+
+  assert (((uintptr_t) src % 16) + ((uintptr_t) dst % 16) == 0);
+  assert (samples % 4 == 0);
+
+  for ( ; i < samples; i += 4)
+    {
+      __m128 Laba0;
+      __m128 Laba1;
+      __m128 Laba2;
+      __m128 Laba3;
+
+      __m128 rgba0 = _mm_load_ps (src);
+      __m128 rgba1 = _mm_load_ps (src + 4);
+      __m128 rgba2 = _mm_load_ps (src + 8);
+      __m128 rgba3 = _mm_load_ps (src + 12);
+
+      __m128 r = rgba0;
+      __m128 g = rgba1;
+      __m128 b = rgba2;
+      __m128 a = rgba3;
+      _MM_TRANSPOSE4_PS (r, g, b, a);
+
+        {
+          __m128 xr = _mm_add_ps (_mm_add_ps (_mm_mul_ps (m_0_0_v, r), _mm_mul_ps (m_0_1_v, g)),
+                                  _mm_mul_ps (m_0_2_v, b));
+          __m128 yr = _mm_add_ps (_mm_add_ps (_mm_mul_ps (m_1_0_v, r), _mm_mul_ps (m_1_1_v, g)),
+                                  _mm_mul_ps (m_1_2_v, b));
+          __m128 zr = _mm_add_ps (_mm_add_ps (_mm_mul_ps (m_2_0_v, r), _mm_mul_ps (m_2_1_v, g)),
+                                  _mm_mul_ps (m_2_2_v, b));
+
+          __m128 fx = lab_r_to_f_sse2 (xr);
+          __m128 fy = lab_r_to_f_sse2 (yr);
+          __m128 fz = lab_r_to_f_sse2 (zr);
+
+          __m128 L = _mm_sub_ps (_mm_mul_ps (_mm_set1_ps (116.0f), fy), _mm_set1_ps (16.0f));
+          __m128 A = _mm_mul_ps (_mm_set1_ps (500.0f), _mm_sub_ps (fx, fy));
+          __m128 B = _mm_mul_ps (_mm_set1_ps (200.0f), _mm_sub_ps (fy, fz));
+
+          Laba0 = L;
+          Laba1 = A;
+          Laba2 = B;
+          Laba3 = a;
+          _MM_TRANSPOSE4_PS (Laba0, Laba1, Laba2, Laba3);
+        }
+
+      _mm_store_ps (dst, Laba0);
+      _mm_store_ps (dst + 4, Laba1);
+      _mm_store_ps (dst + 8, Laba2);
+      _mm_store_ps (dst + 12, Laba3);
+
+      src += 16;
+      dst += 16;
+    }
+}
+
+static void
+rgbaf_to_Labaf_sse2 (const Babl  *conversion,
+                     const float *src,
+                     float       *dst,
+                     long         samples)
+{
   if (((uintptr_t) src % 16) + ((uintptr_t) dst % 16) == 0)
     {
-      const long    n = (samples / 4) * 4;
-      const __m128 m_0_0_v = _mm_set1_ps (m_0_0);
-      const __m128 m_0_1_v = _mm_set1_ps (m_0_1);
-      const __m128 m_0_2_v = _mm_set1_ps (m_0_2);
-      const __m128 m_1_0_v = _mm_set1_ps (m_1_0);
-      const __m128 m_1_1_v = _mm_set1_ps (m_1_1);
-      const __m128 m_1_2_v = _mm_set1_ps (m_1_2);
-      const __m128 m_2_0_v = _mm_set1_ps (m_2_0);
-      const __m128 m_2_1_v = _mm_set1_ps (m_2_1);
-      const __m128 m_2_2_v = _mm_set1_ps (m_2_2);
+      long first_samples = samples / 4 * 4;
+      long remainder;
 
-      for ( ; i < n; i += 4)
+      rgbaf_to_Labaf_sse2_aligned_4mult (conversion, src, dst, first_samples);
+      remainder = samples - first_samples;
+
+      if (remainder)
         {
-          __m128 Laba0;
-          __m128 Laba1;
-          __m128 Laba2;
-          __m128 Laba3;
+          float __attribute__ ((aligned (16))) aligned_src[16];
+          float __attribute__ ((aligned (16))) aligned_dest[16];
 
-          __m128 rgba0 = _mm_load_ps (src);
-          __m128 rgba1 = _mm_load_ps (src + 4);
-          __m128 rgba2 = _mm_load_ps (src + 8);
-          __m128 rgba3 = _mm_load_ps (src + 12);
-
-          __m128 r = rgba0;
-          __m128 g = rgba1;
-          __m128 b = rgba2;
-          __m128 a = rgba3;
-          _MM_TRANSPOSE4_PS (r, g, b, a);
-
-          {
-            __m128 xr = _mm_add_ps (_mm_add_ps (_mm_mul_ps (m_0_0_v, r), _mm_mul_ps (m_0_1_v, g)),
-                                    _mm_mul_ps (m_0_2_v, b));
-            __m128 yr = _mm_add_ps (_mm_add_ps (_mm_mul_ps (m_1_0_v, r), _mm_mul_ps (m_1_1_v, g)),
-                                    _mm_mul_ps (m_1_2_v, b));
-            __m128 zr = _mm_add_ps (_mm_add_ps (_mm_mul_ps (m_2_0_v, r), _mm_mul_ps (m_2_1_v, g)),
-                                    _mm_mul_ps (m_2_2_v, b));
-
-            __m128 fx = lab_r_to_f_sse2 (xr);
-            __m128 fy = lab_r_to_f_sse2 (yr);
-            __m128 fz = lab_r_to_f_sse2 (zr);
-
-            __m128 L = _mm_sub_ps (_mm_mul_ps (_mm_set1_ps (116.0f), fy), _mm_set1_ps (16.0f));
-            __m128 A = _mm_mul_ps (_mm_set1_ps (500.0f), _mm_sub_ps (fx, fy));
-            __m128 B = _mm_mul_ps (_mm_set1_ps (200.0f), _mm_sub_ps (fy, fz));
-
-            Laba0 = L;
-            Laba1 = A;
-            Laba2 = B;
-            Laba3 = a;
-            _MM_TRANSPOSE4_PS (Laba0, Laba1, Laba2, Laba3);
-          }
-
-          _mm_store_ps (dst, Laba0);
-          _mm_store_ps (dst + 4, Laba1);
-          _mm_store_ps (dst + 8, Laba2);
-          _mm_store_ps (dst + 12, Laba3);
-
-          src += 16;
-          dst += 16;
+          memcpy (aligned_src, src + first_samples * 4, remainder * 16);
+          memset (aligned_src + remainder * 4, 0, 4 * 16 - (remainder * 16));
+          rgbaf_to_Labaf_sse2_aligned_4mult (conversion, (const float *) aligned_src, aligned_dest, 4);
+          memcpy (dst + first_samples * 4, aligned_dest, remainder * 16);
         }
     }
-
-  remainder = samples - i;
-  while (remainder--)
+  else
     {
-      float r = src[0];
-      float g = src[1];
-      float b = src[2];
-      float a = src[3];
-
-      float xr = m_0_0 * r + m_0_1 * g + m_0_2 * b;
-      float yr = m_1_0 * r + m_1_1 * g + m_1_2 * b;
-      float zr = m_2_0 * r + m_2_1 * g + m_2_2 * b;
-
-      float fx = xr > LAB_EPSILONf ? _cbrtf (xr) : (LAB_KAPPAf * xr + 16.0f) / 116.0f;
-      float fy = yr > LAB_EPSILONf ? _cbrtf (yr) : (LAB_KAPPAf * yr + 16.0f) / 116.0f;
-      float fz = zr > LAB_EPSILONf ? _cbrtf (zr) : (LAB_KAPPAf * zr + 16.0f) / 116.0f;
-
-      float L = 116.0f * fy - 16.0f;
-      float A = 500.0f * (fx - fy);
-      float B = 200.0f * (fy - fz);
-
-      dst[0] = L;
-      dst[1] = A;
-      dst[2] = B;
-      dst[3] = a;
-
-      src += 4;
-      dst += 4;
+      rgbaf_to_Labaf (conversion, (float *) src, dst, samples);
     }
 }
 
