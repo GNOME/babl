@@ -2528,7 +2528,8 @@ rgbaf_to_Labaf_sse2 (const Babl  *conversion,
                      float       *dst,
                      long         samples)
 {
-  if (((uintptr_t) src % 16) + ((uintptr_t) dst % 16) == 0)
+  if (((uintptr_t) src % 16) + ((uintptr_t) dst % 16) == 0 ||
+      samples < 4)
     {
       long first_samples = samples / 4 * 4;
       long remainder;
@@ -2549,7 +2550,30 @@ rgbaf_to_Labaf_sse2 (const Babl  *conversion,
     }
   else
     {
-      rgbaf_to_Labaf (conversion, (float *) src, dst, samples);
+      float __attribute__ ((aligned (16))) _aligned_src[4 * samples];
+      float __attribute__ ((aligned (16))) _aligned_dst[4 * samples];
+      float                               *aligned_src;
+      float                               *aligned_dst;
+
+      if (((uintptr_t) src % 16) != 0)
+        {
+          aligned_src = _aligned_src;
+          memcpy (aligned_src, src, samples * 16);
+        }
+      else
+        {
+          aligned_src = (float *) src;
+        }
+
+      if (((uintptr_t) dst % 16) != 0)
+        aligned_dst = _aligned_dst;
+      else
+        aligned_dst = dst;
+
+      rgbaf_to_Labaf_sse2 (conversion, aligned_src, aligned_dst, samples);
+
+      if (((uintptr_t) dst % 16) != 0)
+        memcpy (dst, aligned_dst, samples * 16);
     }
 }
 
