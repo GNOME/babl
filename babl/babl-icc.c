@@ -474,10 +474,9 @@ babl_trc_from_icc (ICC         *state,
         }
 
         ret = babl_trc_lut_find (lut, count);
-        if (ret)
-          return ret;
+        if (ret == NULL)
+          ret = babl_trc_lut (NULL, count, lut);
 
-        ret = babl_trc_lut (NULL, count, lut);
         babl_free (lut);
         return ret;
       }
