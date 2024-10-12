@@ -151,14 +151,22 @@ main (int    argc,
         {
           set_to = 1;
         }
-      else if (strcmp (argv[i], "--input-profile") == 0 ||
+      else if (strcmp (argv[i], "--input-space") == 0   ||
+               /* Deprecated option name, but keep compatibility. */
+               strcmp (argv[i], "--input-profile") == 0 ||
                strcmp (argv[i], "-i") == 0)
         {
+          if (strcmp (argv[i], "--input-profile") == 0)
+            fprintf (stderr, "babl: warning: --input-profile option renamed --input-space\n");
           set_from_profile = 1;
         }
-      else if (strcmp (argv[i], "--output-profile") == 0 ||
+      else if (strcmp (argv[i], "--output-space") == 0   ||
+               /* Deprecated option name, but keep compatibility. */
+               strcmp (argv[i], "--output-profile") == 0 ||
                strcmp (argv[i], "-o") == 0)
         {
+          if (strcmp (argv[i], "--output-profile") == 0)
+            fprintf (stderr, "babl: warning: --output-profile option renamed --output-space\n");
           set_to_profile = 1;
         }
       else if (strcmp (argv[i], "--intent") == 0 ||
@@ -175,18 +183,56 @@ main (int    argc,
 
   if (from_profile != NULL)
     {
-      from_space = babl_cli_get_space (from_profile, intent);
+      if (strlen (from_profile) > 2 && *from_profile == '*')
+        {
+          if (from_profile[1] != '*')
+            from_space = babl_space (from_profile + 1);
+          else
+            from_space = babl_cli_get_space (from_profile + 1, intent);
+        }
+      else
+        {
+          from_space = babl_cli_get_space (from_profile, intent);
+        }
 
       if (! from_space)
-        return 6;
+        {
+          if (strlen (from_profile) > 2 && *from_profile == '*' && from_profile[1] != '*')
+            {
+              fprintf (stderr, "babl: unknown named space '%s'\n",
+                       from_profile + 1);
+              fprintf (stderr, "      Known spaces: sRGB, scRGB (sRGB with linear TRCs), Rec2020, "
+                       "Adobish, Apple, ProPhoto, ACEScg and ACES2065-1.\n");
+            }
+          return 6;
+        }
     }
 
   if (to_profile != NULL)
     {
-      to_space = babl_cli_get_space (to_profile, intent);
+      if (strlen (to_profile) > 2 && *to_profile == '*')
+        {
+          if (to_profile[1] != '*')
+            to_space = babl_space (to_profile + 1);
+          else
+            to_space = babl_cli_get_space (to_profile + 1, intent);
+        }
+      else
+        {
+          to_space = babl_cli_get_space (to_profile, intent);
+        }
 
       if (! to_space)
-        return 6;
+        {
+          if (strlen (to_profile) > 2 && *to_profile == '*' && to_profile[1] != '*')
+            {
+              fprintf (stderr, "babl: unknown named space '%s'\n",
+                       to_profile + 1);
+              fprintf (stderr, "      Known spaces: sRGB, scRGB (sRGB with linear TRCs), Rec2020, "
+                       "Adobish, Apple, ProPhoto, ACEScg and ACES2065-1.\n");
+            }
+          return 6;
+        }
     }
 
   if (from == NULL)
@@ -269,11 +315,13 @@ main (int    argc,
               set_to = 1;
             }
           else if (strcmp (argv[i], "--input-profile") == 0 ||
+                   strcmp (argv[i], "--input-space") == 0   ||
                    strcmp (argv[i], "-i") == 0)
             {
               set_from_profile = 1;
             }
           else if (strcmp (argv[i], "--output-profile") == 0 ||
+                   strcmp (argv[i], "--output-space") == 0   ||
                    strcmp (argv[i], "-o") == 0)
             {
               set_to_profile = 1;
@@ -569,9 +617,13 @@ babl_cli_print_usage (FILE *stream)
            "\n"
            "     -t, --to              output Babl format\n"
            "\n"
-           "     -i, --input-profile   input profile\n"
+           "     -i, --input-space     input profile or named space\n"
+           "                           named spaced are asterik-prefixed, i.e. '*Rec2020'\n"
+           "                           as special-case, double the first asterik if your profile path starts with '*'\n"
            "\n"
-           "     -o, --output-profile  output profile\n"
+           "     -o, --output-space    output profile or named space\n"
+           "                           named spaced are asterik-prefixed, i.e. '*Rec2020'\n"
+           "                           as special-case, double the first asterik if your profile path starts with '*'\n"
            "\n"
            "     -r, --intent          rendering intent\n"
            "                           it only works with an output profile\n"
@@ -581,7 +633,12 @@ babl_cli_print_usage (FILE *stream)
            "\n"
            "All parameters following -- are considered components values. "
            "This is useful to input negative components.\n\n"
-           "The tool expects exactly the number of components expected by your input format.\n\n"
-           "The default input and output formats are \"R'G'B' float\" and default space is "
-           "sRGB for RGB formats, or the naive CMYK space for CMYK formats.\n");
+           "The tool expects exactly the number of components of your input format.\n\n"
+           "The default input and output formats are \"R'G'B' float\" (respectively \"CMYK float\" "
+           "or \"Y' float\" if you specified a CMYK or grayscale profile).\n\n"
+           "The default space is sRGB for RGB formats or a naive CMYK space for CMYK formats.\n"
+           "Other spaces can be specified through an ICC profile or a named space prefixed by "
+           "an asterik.\n"
+           "Known spaces: sRGB, scRGB (sRGB with linear TRCs), Rec2020, Adobish, Apple, ProPhoto, "
+           "ACEScg and ACES2065-1.\n");
 }
