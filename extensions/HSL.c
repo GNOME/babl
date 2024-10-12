@@ -55,12 +55,55 @@ rgb_to_hsl_step  (double *src,
 static void  
 hsl_to_rgb_step  (double *src,
                   double *dst);
-                               
-static inline double 
+
+static inline double
 hue2cpn  (double  p,
           double  q,
           double  hue);
-          
+
+/* Defined through macros below */
+
+static inline void
+rgb_nonlinear_to_hsl_step_double (double      *src,
+                                  double      *dst);
+static inline void
+hsl_to_rgb_nonlinear_step_double (double      *src,
+                                  double      *dst);
+
+static inline void
+rgb_nonlinear_to_hsl_step_float  (float      *src,
+                                  float      *dst);
+static inline void
+hsl_to_rgb_nonlinear_step_float  (float      *src,
+                                  float      *dst);
+
+/* Non-Linear RGB conversion: double variants */
+
+static void
+rgba_nonlinear_to_hsla           (const Babl *conversion,
+                                  char       *src,
+                                  char       *dst,
+                                  long        samples);
+static void
+hsla_to_rgba_nonlinear           (const Babl *conversion,
+                                  char       *src,
+                                  char       *dst,
+                                  long        samples);
+
+/* Non-Linear RGB conversion: float variants */
+
+static void
+rgba_nonlinear_to_hsla_float     (const Babl *conversion,
+                                  char       *src,
+                                  char       *dst,
+                                  long        samples);
+static void
+hsla_to_rgba_nonlinear_float     (const Babl *conversion,
+                                  char       *src,
+                                  char       *dst,
+                                  long        samples);
+
+
 int init (void);
 
 int
@@ -104,6 +147,16 @@ init (void)
                        "linear", hsl_to_rgba,
                        NULL);
 
+  babl_conversion_new (babl_model ("R'G'B'A"),
+                       babl_model ("HSLA"),
+                       "linear", rgba_nonlinear_to_hsla,
+                       NULL);
+
+  babl_conversion_new (babl_model ("HSLA"),
+                       babl_model ("R'G'B'A"),
+                       "linear", hsla_to_rgba_nonlinear,
+                       NULL);
+
   babl_format_new ("name", "HSLA float",
                    babl_model ("HSLA"),
                    babl_type ("float"),
@@ -119,58 +172,83 @@ init (void)
                    babl_component ("saturation"),
                    babl_component ("lightness"),
                    NULL);
+
+  babl_conversion_new (babl_format ("R'G'B'A float"),
+                       babl_format ("HSLA float"),
+                       "linear", rgba_nonlinear_to_hsla_float,
+                       NULL);
+  babl_conversion_new (babl_format ("HSLA float"),
+                       babl_format ("R'G'B'A float"),
+                       "linear", hsla_to_rgba_nonlinear_float,
+                       NULL);
+
   return 0;
 }
 
+#define DEFINE_RGB_NL_TO_HSL_STEP(ctype) \
+static inline void \
+rgb_nonlinear_to_hsl_step_##ctype (ctype* src, \
+                                   ctype* dst) \
+{ \
+  ctype min, max; \
+  ctype hue, saturation, lightness; \
+  int cpn_max; \
+ \
+  ctype red   = src[0]; \
+  ctype green = src[1]; \
+  ctype blue  = src[2]; \
+ \
+  max = MAX (red, MAX (green, blue)); \
+  min = MIN (red, MIN (green, blue)); \
+ \
+  if (max - red < EPSILON) \
+    cpn_max = 0; \
+  else if (max - green < EPSILON) \
+    cpn_max = 1; \
+  else \
+    cpn_max = 2; \
+ \
+  lightness = (max + min) / 2.0; \
+ \
+  if (max - min < EPSILON) \
+    { \
+      hue = saturation = 0; \
+    } \
+  else \
+    { \
+      ctype diff = max - min; \
+      ctype sum  = max + min; \
+      saturation = lightness > 0.5 ? diff / (2.0 - sum) : diff / sum; \
+      switch (cpn_max) \
+        { \
+        case 0: hue = (green - blue)  / diff + (green < blue ? 6.0 : 0.0); break; \
+        case 1: hue = (blue  - red)   / diff + 2.0; break; \
+        case 2: hue = (red   - green) / diff + 4.0; break; \
+        default: hue = 0.0; \
+                 break; \
+        } \
+      hue /= 6.0; \
+    } \
+ \
+  dst[0] = hue; \
+  dst[1] = saturation; \
+  dst[2] = lightness; \
+}
+
+DEFINE_RGB_NL_TO_HSL_STEP(double)
+DEFINE_RGB_NL_TO_HSL_STEP(float)
 
 static inline void
 rgb_to_hsl_step (double* src,
                  double* dst)
 {
+  double nonlinear_rgb[3];
 
-  double min, max;
-  double hue, saturation, lightness;
-  int cpn_max;
+  nonlinear_rgb[0] = linear_to_gamma_2_2 (src[0]);
+  nonlinear_rgb[1] = linear_to_gamma_2_2 (src[1]);
+  nonlinear_rgb[2] = linear_to_gamma_2_2 (src[2]);
 
-  double red   = linear_to_gamma_2_2 (src[0]);
-  double green = linear_to_gamma_2_2 (src[1]);
-  double blue  = linear_to_gamma_2_2 (src[2]);
-
-  max = MAX (red, MAX (green, blue));
-  min = MIN (red, MIN (green, blue));
-
-  if (max - red < EPSILON)
-    cpn_max = 0;
-  else if (max - green < EPSILON)
-    cpn_max = 1;
-  else
-    cpn_max = 2;
-
-  lightness = (max + min) / 2.0;
-
-  if (max - min < EPSILON)
-    {
-      hue = saturation = 0;
-    }
-  else
-    {
-      double diff = max - min;
-      double sum  = max + min;
-      saturation = lightness > 0.5 ? diff / (2.0 - sum) : diff / sum;
-      switch (cpn_max)
-        {
-        case 0: hue = (green - blue)  / diff + (green < blue ? 6.0 : 0.0); break;
-        case 1: hue = (blue  - red)   / diff + 2.0; break;
-        case 2: hue = (red   - green) / diff + 4.0; break;
-        default: hue = 0.0;
-          break;
-        }
-      hue /= 6.0;
-    }
-
-  dst[0] = hue;
-  dst[1] = saturation;
-  dst[2] = lightness;
+  rgb_nonlinear_to_hsl_step_double (nonlinear_rgb, dst);
 }
 
 
@@ -228,39 +306,48 @@ hue2cpn (double p,
 }
 
 
+#define DEFINE_HSL_TO_RBG_NONLINEAR_STEP(ctype) \
+static inline void \
+hsl_to_rgb_nonlinear_step_##ctype (ctype *src, \
+                                   ctype *dst) \
+{ \
+  ctype hue        = src[0]; \
+  ctype saturation = src[1]; \
+  ctype lightness  = src[2]; \
+ \
+  if (saturation < 1e-7) \
+    { \
+      dst[0] = dst[1] = dst[2] = lightness; \
+    } \
+  else \
+    { \
+      ctype q = lightness < 0.5 ? \
+        lightness * (1 + saturation) : \
+        lightness + saturation - lightness * saturation; \
+ \
+      ctype p = 2 * lightness - q; \
+ \
+      hue  = fmod (hue, 1.0); \
+      hue += hue < 0.0; \
+ \
+      dst[0] = hue2cpn (p, q, hue + 1.0/3.0); \
+      dst[1] = hue2cpn (p, q, hue); \
+      dst[2] = hue2cpn (p, q, hue - 1.0/3.0); \
+    } \
+}
+
+DEFINE_HSL_TO_RBG_NONLINEAR_STEP(double)
+DEFINE_HSL_TO_RBG_NONLINEAR_STEP(float)
+
 static void
 hsl_to_rgb_step (double *src,
                  double *dst)
 {
-  double hue        = src[0];
-  double saturation = src[1];
-  double lightness  = src[2];
+  hsl_to_rgb_nonlinear_step_double (src, dst);
 
-  double red = 0, green = 0, blue = 0;
-
-  if (saturation < 1e-7)
-    {
-      red = green = blue = lightness;
-    }
-  else
-    {
-      double q = lightness < 0.5 ?
-        lightness * (1 + saturation) :
-        lightness + saturation - lightness * saturation;
-
-      double p = 2 * lightness - q;
-
-      hue  = fmod (hue, 1.0);
-      hue += hue < 0.0;
-
-      red   = hue2cpn (p, q, hue + 1.0/3.0);
-      green = hue2cpn (p, q, hue);
-      blue  = hue2cpn (p, q, hue - 1.0/3.0);
-    }
-
-  dst[0] = gamma_2_2_to_linear (red);
-  dst[1] = gamma_2_2_to_linear (green);
-  dst[2] = gamma_2_2_to_linear (blue);
+  dst[0] = gamma_2_2_to_linear (dst[0]);
+  dst[1] = gamma_2_2_to_linear (dst[1]);
+  dst[2] = gamma_2_2_to_linear (dst[2]);
 }
 
 
@@ -302,5 +389,91 @@ hsl_to_rgba (const Babl *conversion,
 
       src += 3 * sizeof (double);
       dst += 4 * sizeof (double);
+    }
+}
+
+static void
+rgba_nonlinear_to_hsla (const Babl *conversion,
+                        char       *src,
+                        char       *dst,
+                        long        samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      double alpha = ((double *) src)[3];
+
+      rgb_nonlinear_to_hsl_step_double ((double *) src, (double *) dst);
+
+      ((double *) dst)[3] = alpha;
+
+      src += 4 * sizeof (double);
+      dst += 4 * sizeof (double);
+    }
+}
+
+static void
+hsla_to_rgba_nonlinear (const Babl *conversion,
+                        char       *src,
+                        char       *dst,
+                        long        samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      double alpha = ((double *) src)[3];
+
+      hsl_to_rgb_nonlinear_step_double ((double *) src, (double *) dst);
+
+      ((double *) dst)[3] = alpha;
+
+      src += 4 * sizeof (double);
+      dst += 4 * sizeof (double);
+    }
+}
+
+/** Float variants **/
+
+static void
+rgba_nonlinear_to_hsla_float (const Babl *conversion,
+                              char       *src,
+                              char       *dst,
+                              long        samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      float alpha = ((float *) src)[3];
+
+      rgb_nonlinear_to_hsl_step_float ((float *) src, (float *) dst);
+
+      ((float *) dst)[3] = alpha;
+
+      src += 4 * sizeof (float);
+      dst += 4 * sizeof (float);
+    }
+}
+
+static void
+hsla_to_rgba_nonlinear_float (const Babl *conversion,
+                              char       *src,
+                              char       *dst,
+                              long        samples)
+{
+  long n = samples;
+
+  while (n--)
+    {
+      float alpha = ((float *) src)[3];
+
+      hsl_to_rgb_nonlinear_step_float ((float *) src, (float *) dst);
+
+      ((float *) dst)[3] = alpha;
+
+      src += 4 * sizeof (float);
+      dst += 4 * sizeof (float);
     }
 }
