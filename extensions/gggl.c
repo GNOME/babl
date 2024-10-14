@@ -61,7 +61,7 @@ conv_F_8 (const Babl    *conversion,
   while (n--)
     {
       float f    = ((*(float *) src));
-      int   uval = lrint (f * 255.0f);
+      int   uval = f * 255.0f + 0.5f;
 
       if (uval < 0) uval = 0;
       if (uval > 255) uval = 255;
@@ -93,7 +93,7 @@ conv_F_16 (const Babl    *conversion,
         }
       else
         {
-          *(unsigned short *) dst = lrint (f * 65535.0f);
+          *(unsigned short *) dst = f * 65535.0f + 0.5f;
         }
       dst += 2;
       src += 4;
@@ -146,7 +146,7 @@ conv_rgbaF_rgb8 (const Babl    *conversion,
 
       for (c = 0; c < 3; c++)
         {
-          int val = rint ((*(float *) src) * 255.0f);
+          int val = (*(float *) src) * 255.0f + 0.5f;
           if (val < 0)
             *(unsigned char *) dst = 0;
           else if (val > 255)
@@ -679,11 +679,11 @@ conv_rgbaF_rgbA8 (const Babl    *conversion,
 
       for (c = 0; c < 3; c++)
         {
-          *(unsigned char *) dst = lrint (((*(float *) src) * alpha) * 255.0f);
+          *(unsigned char *) dst = ((*(float *) src) * alpha) * 255.0f + 0.5f;
           dst                   += 1;
           src                   += 4;
         }
-      *(unsigned char *) dst = lrint (alpha * 255.0f);
+      *(unsigned char *) dst = alpha * 255.0f + 0.5f;
       dst++;
       src += 4;
     }
@@ -708,7 +708,7 @@ conv_rgbaF_rgb16 (const Babl    *conversion,
           else if ((*(float *) src) <=0)
             *(unsigned short *) dst = 0;
           else
-            *(unsigned short *) dst = lrint ((*(float *) src) * 65535.0f);
+            *(unsigned short *) dst = (*(float *) src) * 65535.0f + 0.5f;
           dst                    += 2;
           src                    += 4;
         }

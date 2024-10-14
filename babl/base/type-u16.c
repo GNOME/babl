@@ -48,7 +48,7 @@ convert_double_u16_scaled (BablConversion *conversion,
       else if (dval > max_val)
         u16val = max;
       else
-        u16val = rint ((dval - min_val) / (max_val - min_val) * (max - min) + min);
+        u16val = (dval - min_val) / (max_val - min_val) * (max - min) + min + 0.5;
 
       *(uint16_t *) dst = u16val;
       dst              += dst_pitch;
@@ -132,7 +132,7 @@ convert_float_u16_scaled (BablConversion *conversion,
       else if (dval > max_val)
         u16val = max;
       else
-        u16val = rint ((dval - min_val) / (max_val - min_val) * (max - min) + min);
+        u16val = (dval - min_val) / (max_val - min_val) * (max - min) + min + 0.5f;
 
       *(uint16_t *) dst = u16val;
       dst              += dst_pitch;

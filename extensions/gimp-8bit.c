@@ -366,13 +366,13 @@ conv_rgbaF_linear_rgb8_linear (const Babl    *conversion,
 
   while (n--)
     {
-      v = rint (*fsrc++ * 255.0f);
+      v = *fsrc++ * 255.0f + 0.5f;
       *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
 
-      v = rint (*fsrc++ * 255.0f);
+      v = *fsrc++ * 255.0f + 0.5f;
       *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
 
-      v = rint (*fsrc++ * 255.0f);
+      v = *fsrc++ * 255.0f + 0.5f;
       *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
 
       fsrc++;
@@ -391,16 +391,16 @@ conv_rgbaF_linear_rgba8_linear (const Babl    *conversion,
 
   while (n--)
     {
-      v = rint (*fsrc++ * 255.0f);
+      v = *fsrc++ * 255.0f + 0.5f;
       *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
 
-      v = rint (*fsrc++ * 255.0f);
+      v = *fsrc++ * 255.0f + 0.5f;
       *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
 
-      v = rint (*fsrc++ * 255.0f);
+      v = *fsrc++ * 255.0f + 0.5f;
       *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
 
-      v = rint (*fsrc++ * 255.0f);
+      v = *fsrc++ * 255.0f + 0.5f;
       *dst++ = (v < 0) ? 0 : ((v > 255) ? 255 : v);
     }
 }

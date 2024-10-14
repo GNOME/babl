@@ -335,7 +335,6 @@ endforeach
 # general
 check_functions = [
   ['HAVE_GETTIMEOFDAY', 'gettimeofday', '<sys/time.h>'],
-  ['HAVE_RINT',         'rint'        , '<math.h>'],
   ['HAVE_SRANDOM',      'srandom'     , '<stdlib.h>'],
 ]
 foreach func: check_functions

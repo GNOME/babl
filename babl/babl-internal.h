@@ -55,11 +55,6 @@
 #include "babl-cpuaccel.h"
 #include "babl-polynomial.h"
 
-/* fallback to floor function when rint is not around */
-#ifndef HAVE_RINT
-# define rint(f)  (floor (((double) (f)) + 0.5))
-#endif
-
 #ifdef __ANDROID_API__
 #include <android/log.h>
 #endif

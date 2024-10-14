@@ -178,7 +178,7 @@ conv_yafloat_linear_yau8_gamma (const Babl    *conversion,
       long int alpha;
       *dst++ = conv_float_u8_two_table_map (*src++);
 
-      alpha  = rint (*src++ * 255.0);
+      alpha  = *src++ * 255.0 + 0.5f;
       *dst++ = (alpha < 0) ? 0 : ((alpha > 255) ? 255 : alpha);
     }
 }

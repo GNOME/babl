@@ -26,10 +26,6 @@
 #error "config.h must be included prior to util.h"
 #endif
 
-#ifndef HAVE_RINT
-# define rint(f)  (floor (((double) (f)) + 0.5))
-#endif
-
 
 #define BABL_PLANAR_SANITY  \
   {                         \

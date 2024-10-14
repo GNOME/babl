@@ -47,7 +47,7 @@ convert_double_u32_scaled (BablConversion *c,
       else if (dval > max_val)
         u32val = max;
       else
-        u32val = rint ((dval - min_val) / (max_val - min_val) * (max - min) + min);
+        u32val = (dval - min_val) / (max_val - min_val) * (max - min) + min + 0.5;
 
       *(uint32_t *) dst = u32val;
       dst              += dst_pitch;
@@ -132,7 +132,7 @@ convert_float_u32_scaled (BablConversion *c,
       else if (dval > max_val)
         u32val = max;
       else
-        u32val = rint ((dval - min_val) / (max_val - min_val) * (max - min) + min);
+        u32val = (dval - min_val) / (max_val - min_val) * (max - min) + min + 0.5f;
 
       *(uint32_t *) dst = u32val;
       dst              += dst_pitch;
