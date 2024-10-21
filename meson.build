@@ -155,7 +155,7 @@ can_run_host_binaries = meson.can_run_host_binaries()
 ################################################################################
 # Compiler arguments
 
-common_c_flags = ['-O2']
+common_c_flags = []
 common_l_flags = []
 
 common_c_flags += cc.get_supported_arguments(
