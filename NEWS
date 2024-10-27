@@ -3,7 +3,7 @@ The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
                                                                           -->
 
-2024-09-xx babl-0.1.110                                             </dt><dd>
+2024-09-27 babl-0.1.110                                             </dt><dd>
 Build improvements.
 Fixes to alpha componet in HCY, HSL, HSV and YCbCr models.
 Use same CIE Lab conversion for start/end as rest with SIMD.
