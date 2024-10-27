@@ -168,10 +168,10 @@ float_pre_to_u32_pre (const Babl    *conversion,
       float b = src[2];
       float a = src[3];
       
-      dst[0] = (r >= 1.0f) ? 0xFFFFFFFF : ((r <= 0.0f) ? 0x0 : 0xFFFFFFFF * r + 0.5f);
-      dst[1] = (g >= 1.0f) ? 0xFFFFFFFF : ((g <= 0.0f) ? 0x0 : 0xFFFFFFFF * g + 0.5f);
-      dst[2] = (b >= 1.0f) ? 0xFFFFFFFF : ((b <= 0.0f) ? 0x0 : 0xFFFFFFFF * b + 0.5f);
-      dst[3] = (a >= 1.0f) ? 0xFFFFFFFF : ((a <= 0.0f) ? 0x0 : 0xFFFFFFFF * a + 0.5f);
+      dst[0] = (r >= 1.0f) ? 0xFFFFFFFF : ((r <= 0.0f) ? 0x0 : (float)0xFFFFFFFF * r + 0.5f);
+      dst[1] = (g >= 1.0f) ? 0xFFFFFFFF : ((g <= 0.0f) ? 0x0 : (float)0xFFFFFFFF * g + 0.5f);
+      dst[2] = (b >= 1.0f) ? 0xFFFFFFFF : ((b <= 0.0f) ? 0x0 : (float)0xFFFFFFFF * b + 0.5f);
+      dst[3] = (a >= 1.0f) ? 0xFFFFFFFF : ((a <= 0.0f) ? 0x0 : (float)0xFFFFFFFF * a + 0.5f);
       
       dst += 4;
       src += 4;
@@ -192,7 +192,7 @@ float_to_u32_x1 (const Babl    *conversion,
     {
       float r = src[0];
             
-      dst[0] = (r >= 1.0f) ? 0xFFFFFFFF : ((r <= 0.0f) ? 0x0 : 0xFFFFFFFF * r + 0.5f);
+      dst[0] = (r >= 1.0f) ? 0xFFFFFFFF : ((r <= 0.0f) ? 0x0 : ((float)0xFFFFFFFF) * r + 0.5f);
       
       dst += 1;
       src += 1;
