@@ -26,7 +26,7 @@
 #include <sys/stat.h>
 #include "babl-internal.h"
 
-#ifdef __WIN32__
+#ifdef _WIN32
 #include <windows.h>
 #include <wchar.h>
 #else
@@ -35,7 +35,7 @@
 #include <dirent.h>
 #endif
 
-#ifdef __WIN32__
+#ifdef _WIN32
 static LARGE_INTEGER start_time;
 static LARGE_INTEGER timer_freq;
 
