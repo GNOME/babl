@@ -21,6 +21,11 @@
 #include <stdarg.h>
 #include <math.h>
 
+#if defined(_MSC_VER)
+#include <BaseTsd.h>
+typedef SSIZE_T ssize_t;
+#endif
+
 #define NEEDS_BABL_DB
 #include "babl-internal.h"
 #include "babl-db.h"

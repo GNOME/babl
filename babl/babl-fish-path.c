@@ -18,6 +18,7 @@
 
 #include "config.h"
 #include <math.h>
+#include <stdlib.h>
 #include "babl-internal.h"
 #include "babl-ref-pixels.h"
 
