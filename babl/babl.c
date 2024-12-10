@@ -67,7 +67,11 @@ babl_dir_list (void)
       sep2 = strrchr (filename, BABL_DIR_SEPARATOR[0]);
       if (sep2 != NULL)
         {
+#if !defined(_MSC_VER)
           if (strcasecmp (sep2 + 1, "bin") == 0)
+#else
+          if (_stricmp (sep2 + 1, "bin") == 0)
+#endif
             {
               char* filename_tmp;
               *(++sep2) = '\0';
