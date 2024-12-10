@@ -508,7 +508,7 @@ xml_insert_file = files('tools' / 'xml-insert.py')
 authors_file = files('AUTHORS')
 news_file = files('NEWS')
 todo_file = files('TODO')
-export_symbols_file = files('export-symbols')
+export_symbols_file = files('export-symbols.def')
 gen_babl_map_file = files('gen_babl_map.py')
 
 ################################################################################

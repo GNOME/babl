@@ -27,7 +27,7 @@ if cc.links('',
     name: '-Wl,--version-script', 
     args: ['-shared', '-Wl,--version-script=' 
       + meson.current_source_dir() / 'test-gnu.map']
-  )
+  ) and cc.get_id() != 'clang-cl' and cc.get_id() != 'msvc'
   babl_link_args = [
     '-Wl,--version-script=' + version_script[0].full_path()
   ]
@@ -45,6 +45,10 @@ elif cc.get_id() == 'clang'
     # Clang on msys/mingw
     babl_link_args = []
   endif
+elif cc.get_id() == 'clang-cl' or cc.get_id() == 'msvc'
+  babl_link_args = [
+    '/VERSION:' + api_version
+  ]
 else
   error(
     'Linker doesn\'t support --version-script or -exported_symbols_list'
@@ -135,6 +139,7 @@ babl = library(
   babl_sources,
   include_directories: babl_includes,
   c_args: babl_c_args,
+  vs_module_defs: meson.project_source_root() / 'export-symbols.def',
   link_whole: babl_base,
   link_args: babl_link_args,
   link_with: simd_extra,
