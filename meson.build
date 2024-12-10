@@ -492,8 +492,13 @@ if git_bin.found() and run_command(
     meson.add_dist_script(
       [ 'ninja', 'git-version.h', ],
     )
+    if cc.get_id() != 'clang-cl' and cc.get_id() != 'msvc'
+      shell = 'sh'
+    else
+      shell = 'powershell'
+    endif
     meson.add_dist_script(
-      [ 'sh', '-c', ' '.join(
+      [ shell, '-c', ' '.join(
       [ 'cp', git_version_h.full_path(), '${MESON_DIST_ROOT}' ]
       )]
     )
