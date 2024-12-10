@@ -173,6 +173,11 @@ extra_warnings_list = [
 ]
 common_c_flags += cc.get_supported_arguments(extra_warnings_list)
 
+#Needed otherwise MSVC get angry with the headers provided by UCRT
+if cc.get_id() == 'clang-cl' or cc.get_id() == 'msvc'
+  common_c_flags += ['/D_USE_MATH_DEFINES']
+endif
+
 # Generate .pdb (CodeView) debug symbols (makes possible to debug with DIA SDK)
 #pdb_support = cc.has_argument('-gcodeview') and cc.has_link_argument('-Wl,--pdb=')
 #if platform_win32 and pdb_support
