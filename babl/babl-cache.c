@@ -299,7 +299,11 @@ babl_init_db (void)
   if (!contents)
     goto cleanup;
 
+#ifndef _WIN32
   token = strtok_r (contents, seps, &tokp);
+#else
+  token = strtok_s (contents, seps, &tokp);
+#endif
   while( token != NULL )
     {
       switch (token[0])
@@ -384,7 +388,11 @@ babl_init_db (void)
               _babl_fish_rig_dispatch (babl);
             }
 
+#ifndef _WIN32
             token2 = strtok_r (&token[1], seps2, &tokp2);
+#else
+            token2 = strtok_s (&token[1], seps2, &tokp2);
+#endif
             while( token2 != NULL )
             {
               if (!strncmp (token2, "error=", 6))
@@ -403,7 +411,11 @@ babl_init_db (void)
               {
                 babl->fish.pixels = strtol (token2 + 7, NULL, 10);
               }
+#ifndef _WIN32
               token2 = strtok_r (NULL, seps2, &tokp2);
+#else
+              token2 = strtok_s (NULL, seps2, &tokp2);
+#endif
             }
           }
           else if (to_format && babl && babl->class_type == BABL_FISH_PATH)
@@ -429,7 +441,11 @@ babl_init_db (void)
           }
           break;
       }
+#ifndef _WIN32
       token = strtok_r (NULL, seps, &tokp);
+#else
+      token = strtok_s (NULL, seps, &tokp);
+#endif
     }
 
 cleanup:
