@@ -669,7 +669,7 @@ int babl_model_is (const Babl *babl, const char *model_name);
  * like EXR GEGL chooses to load this lienar data as RGB and use the sRGB
  * TRC.
  *
- * Returns: pointer to ICC profile data.
+ * Returns: (transfer none) (array length=length) (element-type guint8): pointer to ICC profile data.
  */
 const char *babl_space_get_icc (const Babl *babl, int *length);
 
