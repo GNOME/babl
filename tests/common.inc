@@ -17,7 +17,7 @@
       for (size_t c = 0; c < sizeof(expected_pix[i])/sizeof(expected_pix[i][0]); c++) \
       if (result[c] != expected_pix[i][c])       \
         {       \
-          printf (" %s failed #%li[%li]  got %i expected %i\n", test_name, i, c, result[c], expected_pix[i][c]);       \
+          printf (" %s failed #%zu[%zu]  got %i expected %i\n", test_name, i, c, result[c], expected_pix[i][c]);       \
           OK = 0;          \
           babl_introspect((Babl *)fish); \
         }       \
@@ -39,7 +39,7 @@
       for (size_t c = 0; c < sizeof(expected_pix[i])/sizeof(expected_pix[i][0]); c++) \
       if (fabs(result[c] - expected_pix[i][c]) > max_error)       \
         {       \
-          printf (" %s failed #%li[%li]  got %lf expected %lf\n", test_name, i, c, result[c], expected_pix[i][c]);       \
+          printf (" %s failed #%zu[%zu]  got %lf expected %lf\n", test_name, i, c, result[c], expected_pix[i][c]);       \
           OK = 0;          \
           babl_introspect((Babl *)fish); \
         }       \
