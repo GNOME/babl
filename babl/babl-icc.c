@@ -604,6 +604,7 @@ babl_space_to_icc_rgb (const Babl  *babl,
   int length=65535;
   ICC *state = icc_state_new (icc, length, 10);
 
+  memset (icc, 0, sizeof (icc));
   icc[length]=0;
 
   symmetry_test (state);
@@ -734,6 +735,7 @@ babl_space_to_icc_gray (const Babl  *babl,
   int length=65535;
   ICC *state = icc_state_new (icc, length, 10);
 
+  memset (icc, 0, sizeof (icc));
   icc[length]=0;
 
   symmetry_test (state);
