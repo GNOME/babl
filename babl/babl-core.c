@@ -230,13 +230,12 @@ const Babl *
 babl_trc_gamma (double gamma)
 {
   char name[32];
-  int i;
   if (fabs (gamma - 1.0) < 0.01)
      return babl_trc_new ("linear", BABL_TRC_LINEAR, 1.0, 0, NULL);
 
-  snprintf (name, sizeof (name), "%.6f", gamma);
-  for (i = 0; name[i]; i++)
-    if (name[i] == ',') name[i] = '.';
+  snprintf (name, sizeof (name)-1, "%i.%06i",
+            (int)(gamma), (int)((gamma-(int)gamma) * 1000000));
+
   while (name[strlen(name)-1]=='0')
     name[strlen(name)-1]='\0';
   return babl_trc_new (name, BABL_TRC_FORMULA_GAMMA, gamma, 0, NULL);
