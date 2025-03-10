@@ -3,6 +3,10 @@ The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
                                                                           -->
 
+2025-03-10 babl-0.1.112                                             </dt><dd>
+Fix crash for locales using neither '.' nor ',' as decimal seperator.
+Fix crash for locales using neither '.' nor ',' as decimal seperator.
+                                                                    </dd><dt>
 2024-09-27 babl-0.1.110                                             </dt><dd>
 Build improvements.
 Fixes to alpha componet in HCY, HSL, HSV and YCbCr models.
