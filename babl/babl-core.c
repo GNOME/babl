@@ -186,7 +186,6 @@ babl_trc_formula_srgb (double g,
                        double f)
 {
   char name[128];
-  int i;
   float params[7]={g, a, b, c, d, e, f};
 
   if (fabs (g - 2.400) < 0.01 &&
@@ -199,9 +198,15 @@ babl_trc_formula_srgb (double g,
       )
     return babl_trc ("sRGB");
 
-  snprintf (name, sizeof (name), "%.6f %.6f %.4f %.4f %.4f %.4f %.4f", g, a, b, c, d, e, f);
-  for (i = 0; name[i]; i++)
-    if (name[i] == ',') name[i] = '.';
+  snprintf (name, sizeof (name)-1, "%i.%06i  %i.%06i %i.%04i %i.%04i %i.%04i %i.%04i %i.%04i",
+            (int)(g), (int)((g-(int)g) * 1000000),
+            (int)(a), (int)((a-(int)a) * 1000000),
+            (int)(b), (int)((b-(int)b) * 10000),
+            (int)(c), (int)((c-(int)c) * 10000),
+            (int)(d), (int)((d-(int)d) * 10000),
+            (int)(e), (int)((e-(int)e) * 10000),
+            (int)(f), (int)((f-(int)f) * 10000));
+
   while (name[strlen(name)-1]=='0')
     name[strlen(name)-1]='\0';
   return babl_trc_new (name, BABL_TRC_FORMULA_SRGB, g, 0, params);
@@ -214,12 +219,14 @@ babl_trc_formula_cie (double g,
                       double c)
 {
   char name[128];
-  int i;
   float params[4]={g, a, b, c};
 
-  snprintf (name, sizeof (name), "%.6f %.6f %.4f %.4f", g, a, b, c);
-  for (i = 0; name[i]; i++)
-    if (name[i] == ',') name[i] = '.';
+  snprintf (name, sizeof (name)-1, "%i.%06i  %i.%06i %i.%04i %i.%04i",
+            (int)(g), (int)((g-(int)g) * 1000000),
+            (int)(a), (int)((a-(int)a) * 1000000),
+            (int)(b), (int)((b-(int)b) * 10000),
+            (int)(c), (int)((c-(int)c) * 10000));
+
   while (name[strlen(name)-1]=='0')
     name[strlen(name)-1]='\0';
   return babl_trc_new (name, BABL_TRC_FORMULA_CIE, g, 0, params);
