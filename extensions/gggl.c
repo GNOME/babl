@@ -27,6 +27,7 @@
 #include <math.h>
 #include <string.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "babl.h"
 #include "extensions/util.h"
@@ -923,9 +924,12 @@ conv_rgb8_rgba8 (const Babl    *conversion,
                  long           samples)
 {
   long n = samples-1;
+  unsigned tmp;
   while (n--)
     {
-      *(unsigned int *) dst = (*(unsigned int *) src) | (255UL << 24);
+      memcpy(src, &tmp, sizeof(unsigned int));
+      tmp = tmp | (255UL << 24);
+      memcpy(&tmp, dst, sizeof(unsigned int));
       src   += 3;
       dst   += 4;
     }

@@ -41,6 +41,7 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "config.h"
 #include "babl.h"
@@ -510,7 +511,7 @@ conv_rgba8_rgb8 (const Babl    *conversion,
 
   while (n--)
     {
-      *(unsigned int *) dst = (*(unsigned int *) src);
+      memcpy(src, dst, sizeof(unsigned int));
       src   += 4;
       dst   += 3;
     }
