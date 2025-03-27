@@ -378,146 +378,194 @@ static inline int babl_fish_lut_process_maybe (const Babl *babl,
        if (source_bpp ==4 && dest_bpp == 4)
        {
          lut = malloc (256 * 256 * 256 * 4);
-         for (int o = 0; o < 256 * 256 * 256; o++)
-           lut[o] = o | 0xff000000;
-         process_conversion_path (babl->fish_path.conversion_list,
-                                  lut, 4,
-                                  lut, 4,
-                                  256*256*256);
-         for (int o = 0; o < 256 * 256 * 256; o++)
-           lut[o] = lut[o] & 0x00ffffff;
-
+         if (lut)
+         {
+           for (int o = 0; o < 256 * 256 * 256; o++)
+             lut[o] = o | 0xff000000;
+           process_conversion_path (babl->fish_path.conversion_list,
+                                    lut, 4,
+                                    lut, 4,
+                                    256*256*256);
+           for (int o = 0; o < 256 * 256 * 256; o++)
+             lut[o] = lut[o] & 0x00ffffff;
+         }
        }
        else if (source_bpp == 4 && dest_bpp == 16)
        {
          uint32_t *temp_lut = malloc (256 * 256 * 256 * 4);
-         lut = malloc (256 * 256 * 256 * 16);
-         for (int o = 0; o < 256 * 256 * 256; o++)
-           temp_lut[o] = o | 0xff000000;
-         process_conversion_path (babl->fish_path.conversion_list,
-                                  temp_lut, 4,
-                                  lut, 16,
-                                  256*256*256);
-         free (temp_lut);
+         if (temp_lut)
+         {
+           for (int o = 0; o < 256 * 256 * 256; o++)
+             temp_lut[o] = o | 0xff000000;
+           lut = malloc (256 * 256 * 256 * 16);
+           if (lut)
+           {
+             process_conversion_path (babl->fish_path.conversion_list,
+                                      temp_lut, 4,
+                                      lut, 16,
+                                      256*256*256);
+           }
+           free (temp_lut);
+         }
        }
        else if (source_bpp == 4 && dest_bpp == 8)
        {
          uint32_t *temp_lut = malloc (256 * 256 * 256 * 4);
-         lut = malloc (256 * 256 * 256 * 8);
-         for (int o = 0; o < 256 * 256 * 256; o++)
-           temp_lut[o] = o | 0xff000000;
-         process_conversion_path (babl->fish_path.conversion_list,
-                                  temp_lut, 4,
-                                  lut, 8,
-                                  256*256*256);
-         free (temp_lut);
+         if (temp_lut)
+         {
+           for (int o = 0; o < 256 * 256 * 256; o++)
+             temp_lut[o] = o | 0xff000000;
+           lut = malloc (256 * 256 * 256 * 8);
+           if (lut)
+           {
+             process_conversion_path (babl->fish_path.conversion_list,
+                                      temp_lut, 4,
+                                      lut, 8,
+                                      256*256*256);
+             free (temp_lut);
+           }
+         }
        }
        else if (source_bpp == 3 && dest_bpp == 3)
        {
          uint8_t *temp_lut = malloc (256 * 256 * 256 * 3);
-         uint8_t *temp_lut2 = malloc (256 * 256 * 256 * 3);
-         int o = 0;
-         lut = malloc (256 * 256 * 256 * 4);
-         for (int r = 0; r < 256; r++)
-         for (int g = 0; g < 256; g++)
-         for (int b = 0; b < 256; b++, o++)
+         if (temp_lut)
          {
-           temp_lut[o*3+0]=r;
-           temp_lut[o*3+1]=g;
-           temp_lut[o*3+2]=b;
+           uint8_t *temp_lut2 = malloc (256 * 256 * 256 * 3);
+           if (temp_lut2)
+           {
+             int o = 0;
+             for (int r = 0; r < 256; r++)
+             for (int g = 0; g < 256; g++)
+             for (int b = 0; b < 256; b++, o++)
+             {
+               temp_lut[o*3+0]=r;
+               temp_lut[o*3+1]=g;
+               temp_lut[o*3+2]=b;
+             }
+             lut = malloc (256 * 256 * 256 * 4);
+             process_conversion_path (babl->fish_path.conversion_list,
+                                      temp_lut, 3,
+                                      temp_lut2, 3,
+                                      256*256*256);
+             babl_process (babl_fish (babl_format ("R'G'B' u8"), babl_format ("R'G'B'A u8")),
+                           temp_lut2, lut, 256*256*256);
+             if (lut)
+             {
+               for (int o = 0; o < 256 * 256 * 256; o++)
+                 lut[o] = lut[o] & 0x00ffffff;
+             }
+             free (temp_lut2);
+           }
          }
-         process_conversion_path (babl->fish_path.conversion_list,
-                                  temp_lut, 3,
-                                  temp_lut2, 3,
-                                  256*256*256);
-         babl_process (babl_fish (babl_format ("R'G'B' u8"), babl_format ("R'G'B'A u8")),
-                       temp_lut2, lut, 256*256*256);
-         for (int o = 0; o < 256 * 256 * 256; o++)
-           lut[o] = lut[o] & 0x00ffffff;
          free (temp_lut);
-         free (temp_lut2);
        }
        else if (source_bpp == 3 && dest_bpp == 4)
        {
          uint8_t *temp_lut = malloc (256 * 256 * 256 * 3);
-         int o = 0;
-         lut = malloc (256 * 256 * 256 * 4);
-         for (int r = 0; r < 256; r++)
-         for (int g = 0; g < 256; g++)
-         for (int b = 0; b < 256; b++, o++)
+         if (temp_lut)
          {
-           temp_lut[o*3+0]=r;
-           temp_lut[o*3+1]=g;
-           temp_lut[o*3+2]=b;
+           int o = 0;
+           lut = malloc (256 * 256 * 256 * 4);
+           for (int r = 0; r < 256; r++)
+           for (int g = 0; g < 256; g++)
+           for (int b = 0; b < 256; b++, o++)
+           {
+             temp_lut[o*3+0]=r;
+             temp_lut[o*3+1]=g;
+             temp_lut[o*3+2]=b;
+           }
+           process_conversion_path (babl->fish_path.conversion_list,
+                                    temp_lut, 3,
+                                    lut, 4,
+                                    256*256*256);
+           free (temp_lut);
          }
-         process_conversion_path (babl->fish_path.conversion_list,
-                                  temp_lut, 3,
-                                  lut, 4,
-                                  256*256*256);
-         free (temp_lut);
        }
        else if (source_bpp == 2 && dest_bpp == 2)
        {
          uint16_t *temp_lut = malloc (256 * 256 * 2);
-         lut = malloc (256 * 256 * 4);
-         for (int o = 0; o < 256*256; o++)
+         if (temp_lut)
          {
-           temp_lut[o]=o;
+           for (int o = 0; o < 256*256; o++)
+             temp_lut[o]=o;
+           lut = malloc (256 * 256 * 4);
+           if (lut)
+             process_conversion_path (babl->fish_path.conversion_list,
+                                      temp_lut, 2,
+                                      lut, 2,
+                                      256*256);
+           free (temp_lut);
          }
-         process_conversion_path (babl->fish_path.conversion_list,
-                                  temp_lut, 2,
-                                  lut, 2,
-                                  256*256);
-         free (temp_lut);
        }
        else if (source_bpp == 2 && dest_bpp == 4)
        {
          uint16_t *temp_lut = malloc (256 * 256 * 2);
-         lut = malloc (256 * 256 * 4);
-         for (int o = 0; o < 256*256; o++)
+         if (temp_lut)
          {
-           temp_lut[o]=o;
+           for (int o = 0; o < 256*256; o++)
+           {
+             temp_lut[o]=o;
+           }
+           lut = malloc (256 * 256 * 4);
+           if (lut)
+             process_conversion_path (babl->fish_path.conversion_list,
+                                      temp_lut, 2,
+                                      lut, 4,
+                                      256*256);
+           free (temp_lut);
          }
-         process_conversion_path (babl->fish_path.conversion_list,
-                                  temp_lut, 2,
-                                  lut, 4,
-                                  256*256);
-         free (temp_lut);
        }
        else if (source_bpp == 2 && dest_bpp == 16)
        {
          uint16_t *temp_lut = malloc (256 * 256 * 2);
-         lut = malloc (256 * 256 * 16);
-         for (int o = 0; o < 256*256; o++)
+         if (temp_lut)
          {
-           temp_lut[o]=o;
+           for (int o = 0; o < 256*256; o++)
+           {
+             temp_lut[o]=o;
+           }
+           lut = malloc (256 * 256 * 16);
+           if (lut)
+             process_conversion_path (babl->fish_path.conversion_list,
+                                      temp_lut, 2,
+                                      lut, 16,
+                                      256*256);
+           free (temp_lut);
          }
-         process_conversion_path (babl->fish_path.conversion_list,
-                                  temp_lut, 2,
-                                  lut, 16,
-                                  256*256);
-         free (temp_lut);
        }
        else if (source_bpp == 1 && dest_bpp == 4)
        {
          uint8_t *temp_lut = malloc (256);
-         lut = malloc (256 * 4);
-         for (int o = 0; o < 256; o++)
+         if (temp_lut)
          {
-           temp_lut[o]=o;
+           for (int o = 0; o < 256; o++)
+           {
+             temp_lut[o]=o;
+           }
+           lut = malloc (256 * 4);
+           if (lut)
+             process_conversion_path (babl->fish_path.conversion_list,
+                                      temp_lut, 1,
+                                      lut, 4,
+                                      256);
+           free (temp_lut);
          }
-         process_conversion_path (babl->fish_path.conversion_list,
-                                  temp_lut, 1,
-                                  lut, 4,
-                                  256);
-         free (temp_lut);
        }
 
-       if (babl->fish_path.u8_lut == NULL)
+       if (lut)
        {
-         (BABL(babl)->fish_path.u8_lut) = lut;
-         // XXX need memory barrier?
-         if ((BABL(babl)->fish_path.u8_lut) != lut)
+         if (babl->fish_path.u8_lut == NULL)
+         {
+           (BABL(babl)->fish_path.u8_lut) = lut;
+           // XXX need memory barrier?
+           if ((BABL(babl)->fish_path.u8_lut) != lut)
+           {
+             free (lut);
+             lut = babl->fish_path.u8_lut;
+           }
+         }
+         else
          {
            free (lut);
            lut = babl->fish_path.u8_lut;
@@ -525,8 +573,8 @@ static inline int babl_fish_lut_process_maybe (const Babl *babl,
        }
        else
        {
-         free (lut);
-         lut = babl->fish_path.u8_lut;
+         fprintf (stderr, "babl: memory exhausted\n");
+         BABL(babl)->fish.pixels = 1;
        }
      }
 
