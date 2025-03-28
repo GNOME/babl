@@ -96,7 +96,7 @@ float_to_u16_x1 (const Babl    *conversion,
   while (n--)
     {
       float r = src[0];
-      dst[0] = (r >= 1.0f) ? 0xFFFF : ((r <= 0.0f) ? 0x0 : 0xFFFF * r + 0.5f);
+      dst[0] = (r >= 1.0f) ? 0xFFFF : ((r <= 0.0f) ? 0x0 : (0xFFFF * r + 0.5f));
       dst += 1;
       src += 1;
     }
@@ -539,11 +539,13 @@ init (void)
                       "linear", 
                        float_to_u16_x4,
                        NULL);
+  #if 0
   babl_conversion_new (babl_format ("RGBA float"),
                        babl_format ("RGBA u16"),
                       "linear", 
                        float_to_u16_x4,
                        NULL);
+  #endif
 
   babl_conversion_new (babl_format ("R'G'B' float"),
                        babl_format ("R'G'B' u16"),

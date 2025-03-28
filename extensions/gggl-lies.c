@@ -961,11 +961,11 @@ init (void)
   o (rgbAD, rgbAF);
   o (rgbaF, rgba8);
   o (rgba8, rgbaF);
-  o (rgbaF, rgba16);
+//  o (rgbaF, rgba16);
   o (rgba16, rgbaF);
   o (rgbAF, rgbA8);
   o (rgbA8, rgbAF);
-  o (rgbAF, rgbA16);
+//  o (rgbAF, rgbA16);
   o (rgbA16, rgbAF);
   o (rgbF, rgb8);
   o (rgb8, rgbF);
