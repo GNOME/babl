@@ -411,6 +411,7 @@ BABL_SIMD_SUFFIX (babl_trc_new) (const char *name,
               int         n_lut,
               float      *lut);
 
+
 const Babl *
 BABL_SIMD_SUFFIX (babl_trc_new) (const char *name,
               BablTRCType type,
@@ -419,12 +420,15 @@ BABL_SIMD_SUFFIX (babl_trc_new) (const char *name,
               float      *lut)
 {
   int i=0;
-  static BablTRC trc;
+  BablTRC trc;
+  memset (&trc, 0, sizeof(trc));
   trc.instance.class_type = BABL_TRC;
   trc.instance.id         = 0;
   trc.type = type;
   trc.gamma  = gamma > 0.0    ? gamma       : 0.0;
   trc.rgamma = gamma > 0.0001 ? 1.0 / gamma : 0.0;
+  if(name)
+    strncpy (trc.name, name, strlen (name));
 
   if (n_lut )
   {

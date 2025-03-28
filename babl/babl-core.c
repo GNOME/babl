@@ -198,7 +198,7 @@ babl_trc_formula_srgb (double g,
       )
     return babl_trc ("sRGB");
 
-  snprintf (name, sizeof (name)-1, "%i.%06i  %i.%06i %i.%04i %i.%04i %i.%04i %i.%04i %i.%04i",
+  snprintf (name, sizeof (name)-1, "%i.%06i %i.%06i %i.%04i %i.%04i %i.%04i %i.%04i %i.%04i",
             (int)(g), (int)((g-(int)g) * 1000000),
             (int)(a), (int)((a-(int)a) * 1000000),
             (int)(b), (int)((b-(int)b) * 10000),
