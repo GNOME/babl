@@ -39,6 +39,7 @@ typedef struct
   BablInstance     instance;
   BablTRCType      type;
   int              lut_size;
+  char             name[128];
   double           gamma;
   float            rgamma;
   float          (*fun_to_linear)(const Babl *trc, float val);
@@ -66,7 +67,6 @@ typedef struct
   float            poly_gamma_from_linear_x1;
   float           *lut;
   float           *inv_lut;
-  char             name[128];
   int valid_u8_lut;
   float u8_lut[256];
 } BablTRC;
