@@ -185,7 +185,7 @@ _babl_trc_formula_srgb_from_linear (const Babl *trc_,
   float e = trc->lut[5];
   float f = trc->lut[6];
 
-  if (x - f > c * d)  // XXX: verify that this math is the correct inverse
+  if (x - f > c * d)
   {
     float v = _babl_trc_gamma_from_linear ((Babl *) trc, x - f);
     v = (v-b)/a;
@@ -211,7 +211,7 @@ _babl_trc_formula_srgb_to_linear (const Babl *trc_,
   float e = trc->lut[5];
   float f = trc->lut[6];
 
-  if (x >= d)  // OPT can be reduced to be branchless
+  if (x >= d)
   {
     return _babl_trc_gamma_to_linear ((Babl *) trc, a * x + b) + e;
   }

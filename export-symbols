@@ -66,6 +66,7 @@ babl_type
 babl_type_new
 babl_trc
 babl_trc_gamma
+babl_trc_new
 babl_db_exist_by_name
 babl_db_find
 babl_db_init
