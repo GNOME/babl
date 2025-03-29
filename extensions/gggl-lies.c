@@ -249,15 +249,6 @@ conv_gaF_ga8 (const Babl    *conversion,
 #define conv_gAF_gA8        conv_gaF_ga8
 
 static void
-conv_rgbaF_rgba16 (const Babl    *conversion,
-                   unsigned char *__restrict__ src, 
-                   unsigned char *__restrict__ dst, 
-                   long           samples)
-{
-  conv_F_16 (conversion, src, dst, samples * 4);
-}
-
-static void
 conv_rgbaF_rgbaD (const Babl    *conversion,
                   unsigned char *__restrict__ src, 
                   unsigned char *__restrict__ dst, 
