@@ -1385,8 +1385,6 @@ babl_fish_reference_process (const Babl *babl,
   static const void *type_float = NULL;
   static int allow_float_reference = -1;
 
-  if (!type_float) type_float = babl_type_from_id (BABL_FLOAT);
-
   /* same format in source/destination */
   if (BABL (babl->fish.source) == BABL (babl->fish.destination))
   {
@@ -1421,6 +1419,9 @@ babl_fish_reference_process (const Babl *babl,
     babl_fish_reference_process_double (babl, source, destination, n, data);
     return;
   }
+
+  if (!type_float)
+    type_float = babl_type_from_id (BABL_FLOAT);
 
   if (allow_float_reference == -1)
     allow_float_reference = getenv ("BABL_REFERENCE_NOFLOAT") ? 0 : 1;
