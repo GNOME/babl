@@ -174,6 +174,8 @@ babl_space_from_gray_trc (const char *name,
                           const Babl *trc_gray,
                           BablSpaceFlags flags);
 
+BablIccIntent babl_space_get_intent (const Babl *space);
+
 void
 babl_chromatic_adaptation_matrix (const double *whitepoint,
                                   const double *target_whitepoint,

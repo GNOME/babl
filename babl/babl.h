@@ -147,6 +147,17 @@ const Babl *babl_space_from_icc (const char       *icc_data,
 double
 babl_space_get_gamma (const Babl *space);
 
+
+/* babl_space_get_intent:>
+ * @space: a babl space
+ *
+ * Returns the ICC rendering intent and possibly BPC flag a space
+ * exists with.
+ */
+BablIccIntent
+babl_space_get_intent (const Babl *space);
+
+
 // XXX : deprecated
 const Babl *babl_icc_make_space (const char       *icc_data,
                                  int               icc_length,

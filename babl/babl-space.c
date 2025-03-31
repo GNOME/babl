@@ -882,3 +882,9 @@ babl_space_get_gamma (const Babl *space)
     return 0.0;
   return space->space.trc[0]->trc.gamma;
 }
+
+BablIccIntent
+babl_space_get_intent (const Babl *space)
+{
+  return space->space.intent;
+}
