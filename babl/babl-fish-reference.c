@@ -1047,7 +1047,7 @@ babl_fish_reference_process_double (const Babl *babl,
      if (cmyk_cmyk_no >= cmyk_cmyk_count)
      {
        cmsHPROFILE src_profile = cmsOpenProfileFromMem(source_space->space.icc_profile, source_space->space.icc_length);
-       cmsHPROFILE dst_profile = cmsOpenProfileFromMem(destination_space->space.icc_profile, source_space->space.icc_length);
+       cmsHPROFILE dst_profile = cmsOpenProfileFromMem(destination_space->space.icc_profile, destination_space->space.icc_length);
 
        cmyk_cmyk_source[cmyk_cmyk_no] = source_space;
        cmyk_cmyk_destination[cmyk_cmyk_no] = destination_space;
