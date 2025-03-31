@@ -100,6 +100,7 @@ babl_model_with_space (const char *name, const Babl *space);
  */
 const Babl * babl_space (const char *name);
 
+
 typedef enum {
   BABL_ICC_INTENT_PERCEPTUAL               = 0,
   BABL_ICC_INTENT_RELATIVE_COLORIMETRIC    = 1,
@@ -112,6 +113,16 @@ typedef enum {
 } BablIccIntent;
 
 #define BABL_ICC_INTENT_DEFAULT   (BABL_ICC_INTENT_RELATIVE_COLORIMETRIC | BABL_ICC_INTENT_BLACK_POINT_COMPENSATION)
+
+/**
+ * babl_space_with_intent:
+ * space: a babl space
+ * intent: a new desired intent
+ *
+ * returns a variation of space with the given intent or the input space if intent
+ * already matches.
+ */
+const Babl *babl_space_with_intent (const Babl *space, BablIccIntent intent);
 
 /**
  * babl_space_from_icc:

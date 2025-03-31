@@ -888,3 +888,41 @@ babl_space_get_intent (const Babl *space)
 {
   return space->space.intent;
 }
+
+const Babl *babl_space_with_intent (const Babl *space, BablIccIntent intent)
+{
+  if (!space)
+    return NULL;
+  if (space->space.intent == intent)
+    return space;
+
+  if (babl_space_is_rgb (space))
+  {
+    double xw, yw, xr, yr, xg, yg, xb, yb;
+    const Babl *red_trc = NULL;
+    const Babl *green_trc = NULL;
+    const Babl *blue_trc = NULL;
+
+    babl_space_get (space,
+                    &xw, &yw,
+                    &xr, &yr,
+                    &xg, &yg,
+                    &xb, &yb,
+                    &red_trc, &green_trc, &blue_trc);
+    return babl_space_from_chromaticities (NULL,
+                    xw, yw, xr, yr, xg, yg, xb, yb, red_trc, green_trc, blue_trc,
+                    BABL_SPACE_FLAG_EQUALIZE);
+  }
+
+  {
+    int length = 0;
+    const char *icc = babl_space_get_icc (space, &length);
+    const Babl *ret = NULL;
+    if (icc)
+      ret = babl_space_from_icc (icc, length, intent, NULL);
+    if (ret)
+      return ret;
+  }
+  return space;
+}
+
