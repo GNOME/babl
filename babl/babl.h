@@ -101,13 +101,16 @@ babl_model_with_space (const char *name, const Babl *space);
 const Babl * babl_space (const char *name);
 
 typedef enum {
-  BABL_ICC_INTENT_PERCEPTUAL             = 0,
-  BABL_ICC_INTENT_RELATIVE_COLORIMETRIC  = 1,
-  BABL_ICC_INTENT_SATURATION             = 2,
-  BABL_ICC_INTENT_ABSOLUTE_COLORIMETRIC  = 3,
-  BABL_ICC_INTENT_PERFORMANCE            = 32
-  // black-point compensation toggle will be added if/when support exist in babl
+  BABL_ICC_INTENT_PERCEPTUAL               = 0,
+  BABL_ICC_INTENT_RELATIVE_COLORIMETRIC    = 1,
+  BABL_ICC_INTENT_SATURATION               = 2,
+  BABL_ICC_INTENT_ABSOLUTE_COLORIMETRIC    = 3,
+
+  // the following are flags:
+  BABL_ICC_INTENT_PERFORMANCE              = 32
 } BablIccIntent;
+
+#define BABL_ICC_INTENT_DEFAULT   (BABL_ICC_INTENT_RELATIVE_COLORIMETRIC)
 
 /**
  * babl_space_from_icc:
