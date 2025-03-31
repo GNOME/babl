@@ -972,6 +972,10 @@ babl_space_from_icc (const char   *icc_data,
 
   sign_t profile_class, color_space, pcs;
 
+  // disable BPC for absolute colorimetric intent
+  if ((intent & 3) == BABL_ICC_INTENT_ABSOLUTE_COLORIMETRIC)
+    intent |= (~BABL_ICC_INTENT_BLACK_POINT_COMPENSATION);
+
   babl_mutex_lock (babl_space_mutex);
 
   if (!error) error = &int_err;
@@ -988,19 +992,31 @@ babl_space_from_icc (const char   *icc_data,
 
     if (!strcmp (color_space.str, "CMYK"))
     {
+       int lcms_intent = INTENT_ABSOLUTE_COLORIMETRIC;
+       int lcms_flags = 0;
+       switch (intent & 3)
+       {
+         case BABL_ICC_INTENT_PERCEPTUAL:            lcms_intent = INTENT_PERCEPTUAL;break;
+         case BABL_ICC_INTENT_SATURATION:            lcms_intent = INTENT_SATURATION;break;
+         case BABL_ICC_INTENT_RELATIVE_COLORIMETRIC: lcms_intent = INTENT_RELATIVE_COLORIMETRIC;break;
+       }
+       if ((intent & BABL_ICC_INTENT_BLACK_POINT_COMPENSATION) != 0)
+         lcms_flags = cmsFLAGS_BLACKPOINTCOMPENSATION;
+
        ret = _babl_space_for_lcms (icc_data, icc_length);
        if (!ret)
        {
          babl_mutex_unlock (babl_space_mutex);
          return NULL;
        }
-       if (ret->space.icc_type == BablICCTypeCMYK)
+       if (ret->space.icc_type == BablICCTypeCMYK && ret->space.intent == intent)
        {
          babl_mutex_unlock (babl_space_mutex);
          return ret;
        }
        ret->space.icc_length = icc_length;
        ret->space.icc_profile = malloc (icc_length);
+       ret->space.intent = intent;
        if (!ret->space.icc_profile)
        {
          babl_mutex_unlock (babl_space_mutex);
@@ -1025,17 +1041,32 @@ babl_space_from_icc (const char   *icc_data,
 #define TYPE_RGBA_DBL      (FLOAT_SH(1)|COLORSPACE_SH(PT_RGB)|EXTRA_SH(1)|CHANNELS_SH(3)|BYTES_SH(0))
 #endif
 
-       ret->space.cmyk.lcms_to_rgba = cmsCreateTransform(ret->space.cmyk.lcms_profile, TYPE_CMYKA_DBL,
+       ret->space.cmyk.lcms_to_rgba_with_default_intent = cmsCreateTransform(ret->space.cmyk.lcms_profile, TYPE_CMYKA_DBL,
                                                     sRGBProfile, TYPE_RGBA_DBL,
                                                     INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_BLACKPOINTCOMPENSATION);
-// INTENT_PERCEPTUAL,0);//intent & 7, 0);
-       ret->space.cmyk.lcms_from_rgba = cmsCreateTransform(sRGBProfile, TYPE_RGBA_DBL,
+       ret->space.cmyk.lcms_from_rgba_with_default_intent = cmsCreateTransform(sRGBProfile, TYPE_RGBA_DBL,
                                                       ret->space.cmyk.lcms_profile, TYPE_CMYKA_DBL,
-                                                    INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_BLACKPOINTCOMPENSATION);
-                                                    //  INTENT_PERCEPTUAL,0);//intent & 7, 0);
+                                                      INTENT_RELATIVE_COLORIMETRIC, cmsFLAGS_BLACKPOINTCOMPENSATION);
+       
+       if ((intent & 15) == BABL_ICC_INTENT_DEFAULT)
+       {
+         ret->space.cmyk.lcms_to_rgba_with_intent = ret->space.cmyk.lcms_to_rgba_with_default_intent;
+         ret->space.cmyk.lcms_from_rgba_with_intent = ret->space.cmyk.lcms_from_rgba_with_default_intent;
+       }
+       else
+       {
+         ret->space.cmyk.lcms_to_rgba_with_intent = cmsCreateTransform(ret->space.cmyk.lcms_profile, TYPE_CMYKA_DBL,
+                                                    sRGBProfile, TYPE_RGBA_DBL,
+                                                    lcms_intent, lcms_flags);
+         ret->space.cmyk.lcms_from_rgba_with_intent = cmsCreateTransform(sRGBProfile, TYPE_RGBA_DBL,
+                                                      ret->space.cmyk.lcms_profile, TYPE_CMYKA_DBL,
+                                                      lcms_intent, lcms_flags);
+       }
+
        cmsCloseProfile (ret->space.cmyk.lcms_profile); // XXX keep it open in case of CMYK to CMYK transforms needed?
 #endif
        ret->space.icc_type = BablICCTypeCMYK;
+       ret->space.intent = intent;
        babl_mutex_unlock (babl_space_mutex);
        return ret;
     }
@@ -1156,6 +1187,7 @@ babl_space_from_icc (const char   *icc_data,
     ret  = (void*)babl_space_from_gray_trc (NULL, trc_gray, 1);
     ret->space.icc_length = icc_length;
     ret->space.icc_profile = malloc (icc_length);
+    ret->space.intent = intent;
     memcpy (ret->space.icc_profile, icc_data, icc_length);
     babl_free (state);
     babl_mutex_unlock (babl_space_mutex);
@@ -1229,6 +1261,7 @@ babl_space_from_icc (const char   *icc_data,
        babl_free (state);
        ret->space.icc_length  = icc_length;
        ret->space.icc_profile = malloc (icc_length);
+       ret->space.intent = intent;
        memcpy (ret->space.icc_profile, icc_data, icc_length);
        babl_mutex_unlock (babl_space_mutex);
        return ret;
@@ -1282,6 +1315,7 @@ babl_space_from_icc (const char   *icc_data,
 
        ret->space.icc_length = icc_length;
        ret->space.icc_profile = malloc (icc_length);
+       ret->space.intent = intent;
        memcpy (ret->space.icc_profile, icc_data, icc_length);
 
        babl_mutex_unlock (babl_space_mutex);

@@ -36,8 +36,10 @@ typedef struct
   //int           is_cmyk;
 #ifdef HAVE_LCMS
   cmsHPROFILE   lcms_profile;
-  cmsHTRANSFORM lcms_to_rgba;
-  cmsHTRANSFORM lcms_from_rgba;
+  cmsHTRANSFORM lcms_to_rgba_with_intent;
+  cmsHTRANSFORM lcms_from_rgba_with_intent;
+  cmsHTRANSFORM lcms_to_rgba_with_default_intent;
+  cmsHTRANSFORM lcms_from_rgba_with_default_intent;
 #endif
   int  filler;
 } BablCMYK;
@@ -136,6 +138,7 @@ typedef struct
   char *icc_profile;
   int   icc_length;
   BablCMYK cmyk;
+  BablIccIntent intent;
 } BablSpace;
 
 

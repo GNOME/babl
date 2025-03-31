@@ -342,6 +342,7 @@ babl_space_from_rgbxyz_matrix (const char *name,
 {
   int i=0;
   BablSpace space = {0,};
+  space.intent = BABL_ICC_INTENT_DEFAULT;
   space.instance.class_type = BABL_SPACE;
   space.instance.id         = 0;
   /* transplant matrixes */
@@ -441,6 +442,7 @@ babl_space_from_chromaticities (const char *name,
 {
   int i=0;
   BablSpace space = {0,};
+  space.intent = BABL_ICC_INTENT_DEFAULT;
   space.instance.class_type = BABL_SPACE;
   space.instance.id         = 0;
 
@@ -501,6 +503,7 @@ babl_space_from_gray_trc (const char *name,
 {
   int i=0;
   BablSpace space = {0,};
+  space.intent = BABL_ICC_INTENT_DEFAULT;
   space.instance.class_type = BABL_SPACE;
   space.instance.id         = 0;
 
