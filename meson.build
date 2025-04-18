@@ -397,7 +397,6 @@ vapigen   = dependency('vapigen', version:'>=0.20.0', required: false)
 git_bin = find_program('git', required: false, native: true)
 
 # docs
-env_bin = find_program('env', required: false, native: true)
 rsvg_convert_bin = find_program('rsvg-convert', required: false,
   native: true)
 w3m_bin = find_program('w3m', required: false, native: true)
@@ -407,12 +406,8 @@ w3m_bin = find_program('w3m', required: false, native: true)
 # Build flags
 
 # Docs - don't build by default in cross-build environments
-#        can't build if no env binary
 build_docs = true
-if get_option('with-docs') != 'false' and not env_bin.found()
-  build_docs = false
-  warning('env is required to build documentation')
-elif get_option('with-docs') == 'auto'
+if get_option('with-docs') == 'auto'
   if meson.is_cross_build()
     build_docs = false
     message(

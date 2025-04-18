@@ -17,20 +17,16 @@ babl_css = configure_file(
   copy: true
 )
 
-index_html_tmp_env = [
-  'BABL_PATH=' + babl_extensions_build_dir,
-]
-
 # Don't build babl ref if cannot run compiled objects in this env
-if env_bin.found() and can_run_host_binaries
+if can_run_host_binaries
+  babl_run_env=environment()
+  babl_run_env.set('BABL_PATH', babl_extensions_build_dir)
+  
   index_html_tmp = custom_target('index.html.tmp',
+    env: babl_run_env,
     input : babl_html_dump,
     output:'index.html.tmp',
-    command: [
-      env_bin,
-      index_html_tmp_env,
-      babl_html_dump
-    ],
+    command: [babl_html_dump],
     capture: true,
   )
 else
