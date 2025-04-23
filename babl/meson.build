@@ -152,7 +152,7 @@ if build_gir
     sources: babl_headers,
     extra_args: [
       '--identifier-filter-cmd=@0@ @1@'.format(python.full_path(), 
-      '"' + meson.current_source_dir() / 'identfilter.py' + '"'),
+      '"' + meson.current_source_dir() / 'identfilter.sh' + '"'),
       '-DBABL_IS_BEING_COMPILED',
       '--quiet',
     ],
