@@ -483,7 +483,7 @@ if git_bin.found() and run_command(
       [ 'ninja', 'git-version.h', ],
     )
     meson.add_dist_script(
-      python, '-c',
+      'basename', '-c',
       'from pathlib import Path; from shutil import copy2; import sys, os; target_dir = Path(os.environ.get("MESON_DIST_ROOT")); target_dir.mkdir(parents=True, exist_ok=True); copy2(sys.argv[1], target_dir)', git_version_h.full_path()
     )
   endif
