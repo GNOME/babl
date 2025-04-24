@@ -148,7 +148,7 @@ if build_gir
   # identity filter, so GIR doesn't choke on the Babl type
   # (since it has the same name as the Babl namespace)
   babl_gir = gnome.generate_gir(
-    babl,
+    'ln',
     sources: babl_headers,
     extra_args: [
       '--identifier-filter-cmd=@0@ @1@'.format(python.full_path(), 
