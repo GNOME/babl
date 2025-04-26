@@ -461,11 +461,11 @@ BABL_SIMD_SUFFIX (babl_trc_new) (const char *name,
   trc_db[i]=trc;
   trc_db[i].instance.name = trc_db[i].name;
   if (name)
-    snprintf (trc_db[i].name, sizeof (trc_db[i].name), "%s", name);
+    snprintf (trc_db[i].name, sizeof (trc_db[i].name) - 1, "%s", name);
   else if (n_lut)
-    snprintf (trc_db[i].name, sizeof (trc_db[i].name), "lut-trc");
+    snprintf (trc_db[i].name, sizeof (trc_db[i].name) - 1, "lut-trc");
   else
-    snprintf (trc_db[i].name, sizeof (trc_db[i].name), "trc-%i-%f", type, gamma);
+    snprintf (trc_db[i].name, sizeof (trc_db[i].name) - 1, "trc-%i-%f", type, gamma);
 
   if (n_lut)
   {
