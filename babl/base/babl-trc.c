@@ -428,7 +428,7 @@ BABL_SIMD_SUFFIX (babl_trc_new) (const char *name,
   trc.gamma  = gamma > 0.0    ? gamma       : 0.0;
   trc.rgamma = gamma > 0.0001 ? 1.0 / gamma : 0.0;
   if(name)
-    strncpy (trc.name, name, strlen (name));
+    strncpy (trc.name, name, sizeof (trc.name) - 1);
 
   if (n_lut )
   {
