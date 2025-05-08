@@ -3,8 +3,10 @@ The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
                                                                           -->
 
+2025-05-08 babl-0.1.114                                             </dt><dd>
+Fix to broken TRC cache for formula based TRCs in ICC profiles. BABL_ICC_INTENT_DEFAULT added. Some broken conversions removed.
+                                                                    </dd><dt>
 2025-03-10 babl-0.1.112                                             </dt><dd>
-Fix crash for locales using neither '.' nor ',' as decimal seperator.
 Fix crash for locales using neither '.' nor ',' as decimal seperator.
                                                                     </dd><dt>
 2024-09-27 babl-0.1.110                                             </dt><dd>
