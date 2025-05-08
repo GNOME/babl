@@ -1,6 +1,6 @@
 project('babl', 'c',
   license: 'LGPL3+',
-  version: '0.1.113',
+  version: '0.1.114',
   meson_version: '>=0.57.0',
   default_options: [
     'buildtype=debugoptimized'
