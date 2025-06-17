@@ -28,7 +28,7 @@ prefix    = get_option('prefix')
 buildtype = get_option('buildtype')
 
 babl_prefix = get_option('prefix')
-babl_libdir = join_paths(babl_prefix, get_option('libdir'))
+babl_libdir = babl_prefix / get_option('libdir')
 
 project_build_root = meson.current_build_dir()
 project_source_root = meson.current_source_dir()
