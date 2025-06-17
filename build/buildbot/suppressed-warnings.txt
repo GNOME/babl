@@ -1,9 +1,0 @@
-# This is a 'suppressionFile' for the 'Test' buildbot build step
-
-# These doesn't seem like important warnings, we typically get them
-# during make distcheck when the test install is performed
-:    ^libtool: install: warning: relinking `.*'$
-:    ^libtool: install: warning: remember to run `libtool --finish .*_inst.*'$
-
-# Comes from AM_PROG_LIBTOOL, not much we can do
-:    ^configure.ac:105: warning: AC_LANG_CONFTEST: no AC_LANG_SOURCE call detected in body$
