@@ -29,9 +29,10 @@
 #include <babl/babl.h>
 
 
-static const Babl * babl_cli_get_space   (const char    *path,
-                                          BablIccIntent  intent);
-static void         babl_cli_print_usage (FILE          *stream);
+static const Babl * babl_cli_get_space     (const char    *path,
+                                            BablIccIntent  intent);
+static void         babl_cli_print_version (FILE          *stream);
+static void         babl_cli_print_usage   (FILE          *stream);
 
 
 int
@@ -138,6 +139,13 @@ main (int    argc,
                strcmp (argv[i], "-h") == 0)
         {
           babl_cli_print_usage (stdout);
+
+          return 0;
+        }
+      else if (strcmp (argv[i], "--version") == 0 ||
+               strcmp (argv[i], "-v") == 0)
+        {
+          babl_cli_print_version (stdout);
 
           return 0;
         }
@@ -301,6 +309,11 @@ main (int    argc,
             }
           else if (strcmp (argv[i], "--help") == 0 ||
                    strcmp (argv[i], "-h") == 0)
+             {
+               /* Pass. */
+             }
+          else if (strcmp (argv[i], "--version") == 0 ||
+                   strcmp (argv[i], "-v") == 0)
              {
                /* Pass. */
              }
@@ -604,6 +617,14 @@ babl_cli_get_space (const char    *path,
 }
 
 static void
+babl_cli_print_version (FILE *stream)
+{
+  fprintf (stream,
+           BABL_VERSION
+           "\n");
+}
+
+static void
 babl_cli_print_usage (FILE *stream)
 {
   fprintf (stream,
@@ -612,6 +633,8 @@ babl_cli_print_usage (FILE *stream)
            "\n"
            "  Options:\n"
            "     -h, --help            this help information\n"
+           "\n"
+           "     -v, --version         Babl version\n"
            "\n"
            "     -f, --from            input Babl format\n"
            "\n"
