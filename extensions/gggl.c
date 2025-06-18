@@ -923,20 +923,13 @@ conv_rgb8_rgba8 (const Babl    *conversion,
                  unsigned char *__restrict__ dst, 
                  long           samples)
 {
-  long n = samples-1;
-  unsigned tmp;
-  while (n--)
+  while (--samples >= 0)
     {
-      memcpy(&tmp, src, sizeof(unsigned int));
-      tmp = tmp | (255UL << 24);
-      memcpy(dst, &tmp, sizeof(unsigned int));
-      src   += 3;
-      dst   += 4;
+      *dst++ = *src++;
+      *dst++ = *src++;
+      *dst++ = *src++;
+      *dst++ = 255;
     }
-  dst[0] = src[0];
-  dst[1] = src[1];
-  dst[2] = src[2];
-  dst[3] = 255;
 }
 
 #define conv_rgb8_rgbA8    conv_rgb8_rgba8
