@@ -2,6 +2,7 @@
 
 . .gitlab/search-common-ancestor.sh
 
+((testcount++))
 
 # CHECK SCRIPTS RUNNED BY MESON (ALL OSes)
 printf "\e[0Ksection_start:`date +%s`:nonunix_test[collapsed=false]\r\e[0KChecking for non-Unix compatibility\n"
