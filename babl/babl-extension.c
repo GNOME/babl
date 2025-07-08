@@ -129,7 +129,9 @@ babl_extension_deinit (void)
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 
 #ifdef HAVE_DLFCN_H
 #ifndef WIN32
