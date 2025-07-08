@@ -57,8 +57,8 @@
 int
 main (void)
 {
-  putenv ("BABL_DEBUG_CONVERSIONS" "=" "1");
-  putenv ("BABL_DEBUG_MISSING" "=" "1");
+  _putenv ("BABL_DEBUG_CONVERSIONS" "=" "1");
+  _putenv ("BABL_DEBUG_MISSING" "=" "1");
   babl_init ();
   
   for (size_t i = 0; i < sizeof (fishes)/sizeof(fishes[0]);i ++)

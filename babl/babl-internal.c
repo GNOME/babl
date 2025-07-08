@@ -70,7 +70,7 @@ babl_backtrack (void)
   char buf[512];
 
   snprintf (buf, sizeof (buf), "echo bt>/tmp/babl.gdb;"
-           "gdb -q --batch -x /tmp/babl.gdb --pid=%i | grep 'in ''babl_die' -A40", getpid ());
+           "gdb -q --batch -x /tmp/babl.gdb --pid=%i | grep 'in ''babl_die' -A40", _getpid ());
   return system (buf);
 }
 
