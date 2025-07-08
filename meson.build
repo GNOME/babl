@@ -194,9 +194,11 @@ if platform_win32 and cc.get_id() == 'clang'
   common_c_flags += '-fansi-escape-codes'
 endif
 
-#Needed otherwise MSVC get angry with the headers provided by UCRT
 if cc.get_id() == 'clang-cl' or cc.get_id() == 'msvc'
+  #Needed otherwise MSVC get angry with the headers provided by UCRT
   common_c_flags += ['/D_USE_MATH_DEFINES']
+  #Supress recommendations about Microsoft-specific safe functions
+  common_c_flags += ['/D_CRT_SECURE_NO_WARNINGS']
 endif
 
 add_project_arguments(common_c_flags, language: 'c')
