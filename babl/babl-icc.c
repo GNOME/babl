@@ -21,6 +21,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef _WIN32
+#define strdup _strdup
+#endif
+
 typedef struct ICC {
   char *data;
   int   length;
@@ -911,7 +915,7 @@ icc_decode_mluc (ICC        *state,
       ConvertUTF16toUTF8 ((void*)&tmp_ret2, tmp_ret + slength, &ret2, ret + slength, lenientConversion);
       babl_free(tmp_ret);
       { // trim down to actually used utf8
-        unsigned char *tmp = (void*)_strdup ((void*)ret);
+        unsigned char *tmp = (void*)strdup ((void*)ret);
         babl_free (ret);
         ret = tmp;
       }
@@ -939,11 +943,11 @@ decode_string (ICC        *state,
   }
   else if (!strcmp (state->data + offset, "text"))
   {
-    return _strdup (state->data + offset + 8);
+    return strdup (state->data + offset + 8);
   }
   else if (!strcmp (state->data + offset, "desc"))
   {
-    return _strdup (state->data + offset + 12);
+    return strdup (state->data + offset + 12);
   }
   return NULL;
 }
@@ -1368,25 +1372,25 @@ babl_icc_get_key (const char *icc_data,
              !strcmp (key, "profile-class"))
   {
     sign_t tag = icc_read (sign, 12);
-    return _strdup (tag.str);
+    return strdup (tag.str);
   } else if (!strcmp (key, "color-space"))
   {
     sign_t tag = icc_read (sign, 16);
-    return _strdup (tag.str);
+    return strdup (tag.str);
   } else if (!strcmp (key, "pcs"))
   {
     sign_t tag = icc_read (sign, 20);
-    return _strdup (tag.str);
+    return strdup (tag.str);
   } else if (!strcmp (key, "intent"))
   {
     char tag[5];
     int val = icc_read (u32, 64);
     snprintf (tag, sizeof (tag), "%i", val);
-    return _strdup (tag);
+    return strdup (tag);
   } else if (!strcmp (key, "tags"))
   {
     char tag[4096]="NYI";
-    return _strdup (tag);
+    return strdup (tag);
   }
   babl_free (state);
   return ret;

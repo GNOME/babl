@@ -62,6 +62,7 @@ int babl_hmpf_on_name_lookups = 0;
 #include <unistd.h>
 #else
 #include <process.h>
+#define getpid _getpid
 #endif
 
 int
@@ -70,7 +71,7 @@ babl_backtrack (void)
   char buf[512];
 
   snprintf (buf, sizeof (buf), "echo bt>/tmp/babl.gdb;"
-           "gdb -q --batch -x /tmp/babl.gdb --pid=%i | grep 'in ''babl_die' -A40", _getpid ());
+           "gdb -q --batch -x /tmp/babl.gdb --pid=%i | grep 'in ''babl_die' -A40", getpid ());
   return system (buf);
 }
 

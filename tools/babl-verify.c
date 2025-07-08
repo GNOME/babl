@@ -13,6 +13,7 @@
  * arg is ignored (i.e. same as always 1).
  */
 #define setenv(name,value,overwrite) _putenv_s(name, value)
+#define putenv _putenv
 #endif
 
 int
@@ -86,8 +87,8 @@ main (int    argc,
 
   if (!final)
   {
-    _putenv ("BABL_DEBUG_CONVERSIONS" "=" "1");
-    _putenv ("BABL_TOLERANCE"         "=" "0.2");
+    putenv ("BABL_DEBUG_CONVERSIONS" "=" "1");
+    putenv ("BABL_TOLERANCE"         "=" "0.2");
   }
 
   babl_init ();
