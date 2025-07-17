@@ -25,13 +25,13 @@ test_names = [
   'transparent',
   'alpha_symmetric_transform',
   'types',
-  'trcs',
   'xyz_to_lab'
 ]
 if platform_unix
   test_names += [
     'concurrency-stress-test',
     'palette-concurrency-stress-test',
+    'trcs',
   ]
 endif
 
