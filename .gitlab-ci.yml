@@ -1,3 +1,8 @@
+workflow:
+  auto_cancel:
+    on_new_commit: interruptible
+
+
 include:
   - remote: 'https://gitlab.gnome.org/Infrastructure/freedesktop-ci-templates/-/raw/master/templates/fedora.yml'
 
@@ -20,12 +25,14 @@ stages:
     FDO_UPSTREAM_REPO: gnome/babl
 
 fedora image:
+  interruptible: true
   stage: "build docker"
   extends:
     - .fedora image
     - .fdo.container-build@fedora
 
 meson-health:
+  interruptible: true
   extends:
     - .fedora image
     - .fdo.distribution-image@fedora
