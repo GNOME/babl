@@ -11,6 +11,7 @@ stages:
   - build
 
 .fedora image:
+  interruptible: true
   variables:
     ###
     # IMPORTANT
@@ -25,14 +26,12 @@ stages:
     FDO_UPSTREAM_REPO: gnome/babl
 
 fedora image:
-  interruptible: true
   stage: "build docker"
   extends:
     - .fedora image
     - .fdo.container-build@fedora
 
 meson-health:
-  interruptible: true
   extends:
     - .fedora image
     - .fdo.distribution-image@fedora
