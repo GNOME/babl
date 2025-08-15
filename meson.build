@@ -178,17 +178,31 @@ extra_warnings_list = [
 ]
 common_c_flags += cc.get_supported_arguments(extra_warnings_list)
 
-# Generate native .pdb (CodeView) debug symbols (for DIA or DbgHelp debuggers and LLDB)
-pdb_support = cc.has_argument('-gcodeview') and cc.has_link_argument('-Wl,--pdb=')
-if platform_win32 and pdb_support
-  common_c_flags += '-gcodeview'
-  common_l_flags += '-Wl,--pdb='
+
+# DEBUG SYMBOLS
+debugging_format = 'disabled'
+if get_option('buildtype') == 'debug' or get_option('buildtype') == 'debugoptimized'
+  if not platform_win32
+    # DWARF symbols for GCC and LLDB on Unix
+    debugging_format = 'native'
+  elif platform_win32 and get_option('win-debugging') == 'native' and cc.has_argument('-gcodeview') and cc.has_link_argument('-Wl,--pdb=') and cc.get_id() == 'clang'
+    # CodeView symbols for DIA or DbgHelp debuggers and LLDB on Windows
+    debugging_format = 'native'
+    common_c_flags += '-gcodeview'
+    common_l_flags += '-Wl,--pdb='
+  else
+    # DWARF symbols for GCC and LLDB on Windows (fallback)
+    debugging_format = 'DWARF'
+    if cc.get_id() == 'clang'
+      # Optimize DWARF symbols to Dr. Mingw
+      # https://github.com/jrfonseca/drmingw/issues/42
+      common_c_flags += '-gdwarf-aranges'
+    endif
+  endif
 endif
 
+
 if platform_win32 and cc.get_id() == 'clang'
-  # Optimize DWARF symbols to Dr. Mingw
-  # https://github.com/jrfonseca/drmingw/issues/42
-  common_c_flags += '-gdwarf-aranges'
   # Workaround to get colored output
   # https://github.com/msys2/MINGW-packages/issues/2988
   common_c_flags += '-fansi-escape-codes'
@@ -517,7 +531,7 @@ gen_babl_map_file = files('gen_babl_map.py')
 # Install debug data (.pdb) on Windows
 # Ideally meson should take care of it automatically.
 # See: https://github.com/mesonbuild/meson/issues/12977
-if platform_win32 and pdb_support
+if debugging_format == 'native'
   install_win_debug_script = find_program('./meson_install_win_debug.py')
   meson.add_install_script(install_win_debug_script)
 endif
@@ -604,6 +618,7 @@ summary(
     'gi-docgen'                : build_gi_docgen,
     'Introspection'            : build_gir,
     'VALA support'             : build_vapi,
+    'Debug symbols format'     : debugging_format,
   }, section: 'Optional features'
 )
 summary(

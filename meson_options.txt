@@ -19,6 +19,12 @@ option('gi-docgen',
   value: 'auto',
   description: 'Build developer documentation (uses gi-docgen)'
 )
+option('win-debugging',
+  type: 'combo',
+  choices: ['native', 'dwarf'],
+  value: 'native',
+  description: 'Build with native/CodeView debug symbols or with DWARF'
+)
 
 # Compiler extensions
 option('enable-mmx',
