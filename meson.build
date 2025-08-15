@@ -180,7 +180,7 @@ common_c_flags += cc.get_supported_arguments(extra_warnings_list)
 
 
 # DEBUG SYMBOLS
-debugging_format = 'disabled'
+debugging_format = 'Disabled'
 if get_option('buildtype') == 'debug' or get_option('buildtype') == 'debugoptimized'
   if not platform_win32
     # DWARF symbols for GCC and LLDB on Unix
