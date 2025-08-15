@@ -184,10 +184,10 @@ debugging_format = 'disabled'
 if get_option('buildtype') == 'debug' or get_option('buildtype') == 'debugoptimized'
   if not platform_win32
     # DWARF symbols for GCC and LLDB on Unix
-    debugging_format = 'native'
+    debugging_format = 'Native'
   elif platform_win32 and get_option('win-debugging') == 'native' and cc.has_argument('-gcodeview') and cc.has_link_argument('-Wl,--pdb=') and cc.get_id() == 'clang'
     # CodeView symbols for DIA or DbgHelp debuggers and LLDB on Windows
-    debugging_format = 'native'
+    debugging_format = 'Native'
     common_c_flags += '-gcodeview'
     common_l_flags += '-Wl,--pdb='
   else
