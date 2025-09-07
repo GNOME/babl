@@ -18,10 +18,10 @@ include:
     # If you are hacking on them or need a them to rebuild, its enough
     # to change any part of the string of the image you want.
     ###
-    FDO_DISTRIBUTION_TAG: '2025-03-25.1'
+    FDO_DISTRIBUTION_TAG: '2025-03-26.1'
     FDO_DISTRIBUTION_VERSION: '41'
     FDO_DISTRIBUTION_PACKAGES: >
-      git diffutils shellcheck devscripts
+      meson git diffutils shellcheck devscripts
     FDO_UPSTREAM_REPO: $CI_PROJECT_PATH
 
 
