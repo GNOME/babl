@@ -927,9 +927,9 @@ conv_rgb8_rgba8 (const Babl    *conversion,
   unsigned tmp;
   while (n--)
     {
-      memcpy(src, &tmp, sizeof(unsigned int));
+      memcpy(&tmp, src, sizeof(unsigned int));
       tmp = tmp | (255UL << 24);
-      memcpy(&tmp, dst, sizeof(unsigned int));
+      memcpy(dst, &tmp, sizeof(unsigned int));
       src   += 3;
       dst   += 4;
     }
