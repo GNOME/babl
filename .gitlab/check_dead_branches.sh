@@ -7,10 +7,10 @@ git branch -r | grep -v 'origin/HEAD' | grep -v "origin/$CI_DEFAULT_BRANCH" | wh
   
   # NOT CHECKING
   ## Skip old stable branches
-  if echo "$branch_name" | grep -q "^gimp-[0-9]-" || [ "$branch_name" = "gnome-2-2" ] || [ "$branch_name" = "gnome-2-4" ]; then
-    printf "\033[33m(SKIP)\033[0m: $branch_name is a snapshot of $CI_DEFAULT_BRANCH but no problem\n"
-    continue
-  fi
+  #if echo "$branch_name" | grep -q "PATTERN" || [ "$branch_name" = "NAME" ]; then
+  #  printf "\033[33m(SKIP)\033[0m: $branch_name is a snapshot of $CI_DEFAULT_BRANCH but no problem\n"
+  #  continue
+  #fi
   ## Skip recently created branches
   if [ "$(git rev-parse "$remote_branch")" = "$(git rev-parse "$CI_COMMIT_SHA")" ]; then
     printf "\033[33m(SKIP)\033[0m: $branch_name is identical to $CI_DEFAULT_BRANCH but no problem\n"
