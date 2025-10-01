@@ -27,7 +27,7 @@ if cc.links('',
     name: '-Wl,--version-script', 
     args: ['-shared', '-Wl,--version-script=' 
       + meson.current_source_dir() / 'test-gnu.map']
-  ) and cc.get_id() != 'clang-cl' and cc.get_id() != 'msvc'
+  ) and cc.get_argument_syntax() != 'msvc'
   babl_link_args = [
     '-Wl,--version-script=' + version_script[0].full_path()
   ]
@@ -45,7 +45,7 @@ elif cc.get_id() == 'clang'
     # Clang on msys/mingw
     babl_link_args = []
   endif
-elif cc.get_id() == 'clang-cl' or cc.get_id() == 'msvc'
+elif cc.get_argument_syntax() == 'msvc'
   babl_link_args = [
     '/VERSION:' + api_version
   ]

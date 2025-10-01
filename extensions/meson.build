@@ -20,7 +20,7 @@ babl_ext_link_args = [
 ]
 if platform_win32
   babl_ext_link_args += no_undefined
-  if cc.get_id() == 'clang-cl' or cc.get_id() == 'msvc'
+  if cc.get_argument_syntax() == 'msvc'
     babl_ext_link_args += '/EXPORT:init'
   endif
 endif
