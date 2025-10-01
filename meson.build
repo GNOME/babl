@@ -185,7 +185,7 @@ if get_option('buildtype') == 'debug' or get_option('buildtype') == 'debugoptimi
   if not platform_win32
     # DWARF symbols for GCC and LLDB on Unix
     debugging_format = 'Native'
-  if cc.get_argument_syntax() == 'msvc'
+  elif cc.get_argument_syntax() == 'msvc'
     # CodeView symbols for DIA or DbgHelp debuggers and LLDB on Windows
     debugging_format = 'Native'
   elif platform_win32 and get_option('win-debugging') == 'native' and cc.has_argument('-gcodeview') and cc.has_link_argument('-Wl,--pdb=') and cc.get_id() == 'clang'
