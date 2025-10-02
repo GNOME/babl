@@ -319,6 +319,10 @@ expand_path (char *path)
 
   src = path;
 
+#if defined(_WIN32) || defined(_WIN64)
+  return babl_strdup (path);
+#endif
+
   while (*src)
     {
       char *home;
