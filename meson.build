@@ -495,16 +495,24 @@ configure_file(
 # updated. If git is not available, don't do anything if git-version.h
 # already exists because then we are probably working with a tarball
 # in which case the git-version.h we ship is correct.
-if git_bin.found() and run_command(
+is_git_repository = run_command(
     git_bin,
     'rev-parse',
     '--is-inside-work-tree',
     check: false,
 ).returncode() == 0
+
+has_version_h = run_command(python, '-c',
+  'import sys,os; sys.exit(0 if os.path.exists("git-version.h") else 1)',
+  check: false
+).returncode() == 0
+
+if is_git_repository or not has_version_h
   git_version_h = vcs_tag(
     input : 'git-version.h.in',
     output: 'git-version.h',
     replace_string: '@BABL_GIT_VERSION@',
+    fallback: 'unknown (unsupported)',
     command: [ git_bin.full_path(), 'describe', '--always' ],
   )
 
@@ -516,6 +524,22 @@ if git_bin.found() and run_command(
       python, '-c',
       'from pathlib import Path; from shutil import copy2; import sys, os; target_dir = Path(os.environ.get("MESON_DIST_ROOT")); target_dir.mkdir(parents=True, exist_ok=True); copy2(sys.argv[1], target_dir)', git_version_h.full_path()
     )
+  endif
+
+  if not is_git_repository or not git_bin.found()
+  # We create git-version.h but know it will be useless because we are
+  # not in a git repository. Output a warning.
+    git_warning = '''
+
+          UNSUPPORTED BUILD!
+
+          This is not a distribution tarball (git-version.h missing) and
+          we could not establish the corresponding commit (either this is
+          not a git repository or git command is missing). Therefore
+          we have no reference for debugging.
+          Please either use release tarballs or build from the repository.
+    '''
+    warning(git_warning)
   endif
 else
   git_version_h = files('git-version.h')
