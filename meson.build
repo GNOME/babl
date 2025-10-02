@@ -236,7 +236,7 @@ if host_cpu_family == 'x86_64'
   x86_64_v3_flags += '-DX86_64_V3'
 
 elif host_cpu_family == 'arm'
-  arm_neon_flags = cc.get_supported_arguments(['-mfpu=neon-vfpv4'])
+  arm_neon_flags = cc.get_supported_arguments(['-mfpu=neon-vfpv3', '-mfpu=neon-vfpv4'])
   arm_neon_flags += '-DARM_NEON'
 elif host_cpu_family == 'aarch64'
   common_c_flags += cc.get_supported_arguments(['-mfpu=neon-fp-armv8', '-ftree-vectorize'])
