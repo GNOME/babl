@@ -28,6 +28,7 @@ if can_run_host_binaries
     output:'index.html.tmp',
     command: [babl_html_dump],
     capture: true,
+    depends: babl_extensions,
   )
 else
   warning('Cannot create babl reference in this environment')

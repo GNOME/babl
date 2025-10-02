@@ -73,8 +73,9 @@ extensions = [
   ['ycbcr', sse2_cflags],
 ]
 
+babl_extensions = []
 foreach ext : extensions
-  shared_module(
+  babl_extensions += shared_module(
     ext[0],
     ext[0] + '.c',
     c_args: [ext[1], '-DBABL_SIMDFREE' ],
