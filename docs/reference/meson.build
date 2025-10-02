@@ -32,4 +32,5 @@ babl_docs = custom_target('babl-docs',
   build_by_default: true,
   install: true,
   install_dir: get_option('datadir') / 'doc',
+  install_tag: 'docs'
 )
