@@ -146,6 +146,7 @@ babl = library(
   dependencies: babl_deps,
   link_depends: version_script[0],
   version: so_version,
+  darwin_versions: darwin_versions,
   install: true,
 )
 

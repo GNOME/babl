@@ -47,10 +47,11 @@ binary_age = 100 * minor_version + micro_version
 
 lt_current = binary_age - interface_age
 
-api_version = '@0@.@1@'.format(major_version, minor_version)
-lib_version = '@0@:@1@:@2@'.format(lt_current, interface_age, lt_current)
-so_version  = '@0@.@1@.@2@'.format(0, lt_current, interface_age)
-lib_name    = meson.project_name() + '-' + api_version
+api_version     = '@0@.@1@'.format(major_version, minor_version)
+lib_version     = '@0@:@1@:@2@'.format(lt_current, interface_age, lt_current)
+so_version      = '@0@.@1@.@2@'.format(0, lt_current, interface_age)
+darwin_versions = [lt_current + 1, '@0@.@1@'.format(lt_current + 1, interface_age)]
+lib_name        = meson.project_name() + '-' + api_version
 
 stability_version_number = (major_version != 0 ? minor_version : micro_version)
 stable = (stability_version_number % 2 == 0)
