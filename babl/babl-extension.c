@@ -126,7 +126,9 @@ babl_extension_deinit (void)
 
 #ifdef BABL_DYNAMIC_EXTENSIONS
 
+#ifndef _WIN32
 #include <dirent.h>
+#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #ifndef _WIN32
