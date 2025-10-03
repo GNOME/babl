@@ -215,8 +215,6 @@ endif
 if cc.get_argument_syntax() == 'msvc'
   #Needed otherwise MSVC get angry with the headers provided by UCRT
   common_c_flags += ['/D_USE_MATH_DEFINES']
-  #Supress recommendations about Microsoft-specific safe functions
-  common_c_flags += ['/D_CRT_SECURE_NO_WARNINGS']
 endif
 
 add_project_arguments(common_c_flags, language: 'c')
