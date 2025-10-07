@@ -404,14 +404,10 @@ g_ir = dependency('gobject-introspection-1.0', version: '>=1.32.0',
   required: false)
 
 # lcms
-if get_option('with-lcms')
-  lcms = dependency('lcms2', version: '>=2.8', required: true)
-  if lcms.found()
-    conf.set('HAVE_LCMS', 1, description:
-      'Define to 1 if liblcms2 is available')
-  endif
-else
-  lcms = declare_dependency()
+lcms = dependency('lcms2', version: '>=2.8', required: get_option('with-lcms'))
+if lcms.found()
+  conf.set('HAVE_LCMS', 1, description:
+    'Define to 1 if liblcms2 is available')
 endif
 
 # vapigen
@@ -659,6 +655,6 @@ summary(
 )
 summary(
   {
-    'lcms' : get_option('with-lcms'),
+    'lcms' : lcms.found(),
   }, section: 'Optional dependencies'
 )
