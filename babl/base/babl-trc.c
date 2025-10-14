@@ -189,7 +189,7 @@ _babl_trc_formula_srgb_from_linear (const Babl *trc_,
   {
     float v = _babl_trc_gamma_from_linear ((Babl *) trc, x - f);
     v = (v-b)/a;
-    if (v < 0.0f || v >= 0.0f)
+    if (!isnan(v))
       return v;
     return 0.0f;
   }
@@ -231,7 +231,7 @@ _babl_trc_formula_cie_from_linear (const Babl *trc_,
   {
     float v = _babl_trc_gamma_from_linear ((Babl *) trc, x - c);
     v = (v-b)/a;
-    if (v < 0.0f || v >= 0.0f)
+    if (!isnan(v))
       return v;
   }
   return 0.0f;
