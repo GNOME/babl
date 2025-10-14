@@ -584,6 +584,7 @@ babl_cli_get_space (const char    *path,
   FILE       *f;
   char       *icc_data;
   long        icc_length;
+  size_t      icc_read;
   const char *error = NULL;
 
   f = fopen (path, "r");
@@ -600,11 +601,21 @@ babl_cli_get_space (const char    *path,
   fseek (f, 0, SEEK_SET);
 
   icc_data = malloc (icc_length);
-  fread (icc_data, icc_length, 1, f);
+  icc_read = fread(icc_data, icc_length, 1, f);
+  if (icc_read != 1)
+    {
+      fprintf(stderr, "babl: failed to read '%s': %s\n",
+              path, strerror(errno));
+      fclose(f);
+      free(icc_data);
+      return NULL;
+    }
 
   fclose (f);
 
   space = babl_space_from_icc (icc_data, icc_length, intent, &error);
+
+  free(icc_data);
 
   if (space == NULL)
     {
