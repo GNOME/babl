@@ -52,6 +52,9 @@ BABL_POLYNOMIAL_DEGREE (22, 21)
 #include "config.h"
 #include <string.h>
 #include <math.h>
+#ifdef _WIN32
+#include <malloc.h>
+#endif
 #include "babl-internal.h"
 
 

@@ -18,6 +18,9 @@
 
 #include "config.h"
 #include <math.h>
+#ifdef _WIN32
+#include <malloc.h>
+#endif
 #include "babl-internal.h"
 #include "babl-ref-pixels.h"
 
