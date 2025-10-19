@@ -115,6 +115,7 @@ fish_cache_path (void)
 #else
 
   wchar_t *appdata_utf16 = NULL;
+  char    *env           = NULL;
 
   if (SHGetKnownFolderPath (&FOLDERID_LocalAppData, KF_FLAG_DEFAULT, NULL, &appdata_utf16) == S_OK)
     {
@@ -132,10 +133,11 @@ fish_cache_path (void)
       if (appdata)
         babl_free (appdata);
     }
-  else if (getenv ("TEMP"))
+  else if (_dupenv_s (&env, NULL, "TEMP") == 0 && env != NULL)
     {
-      snprintf (buf, sizeof (buf), "%s\\babl-fishes.txt", getenv("TEMP"));
+      snprintf (buf, sizeof (buf), "%s\\babl-fishes.txt", env);
       path = babl_strdup (buf);
+      free (env);
     }
 
   if (appdata_utf16)
@@ -303,9 +305,16 @@ babl_init_db (void)
   char *tokp;
   const Babl  *from_format = NULL;
   const Babl  *to_format   = NULL;
-  time_t tim = time (NULL);
+  time_t       tim         = time (NULL);
+  char        *env         = NULL;
 
-  if (getenv ("BABL_DEBUG_CONVERSIONS"))
+#ifndef _WIN32
+  env = getenv ("BABL_DEBUG_CONVERSIONS");
+#else
+  _dupenv_s (&env, NULL, "BABL_DEBUG_CONVERSIONS");
+#endif
+
+  if (env)
     goto cleanup;
 
   _babl_file_get_contents (path, &contents, &length, NULL);

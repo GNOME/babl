@@ -316,17 +316,29 @@ static void measure_timings(void)
    uint32_t *lut = malloc (256 * 256 * 256 * 16);
    uint32_t *src = malloc (num_pixels * 16);
    uint32_t *dst = malloc (num_pixels * 16);
+   char     *env = NULL;
 
    memset (lut, 11, 256 * 256 * 256 *16);
    memset (src, 12, num_pixels * 16);
 
-   if (getenv ("BABL_LUT_INFO"))
+#ifndef _WIN32
+   env = getenv ("BABL_LUT_INFO");
+#else
+   _dupenv_s (&env, NULL, "BABL_LUT_INFO");
+#endif
+   if (env)
    {
-      lut_info_level = atoi (getenv ("BABL_LUT_INFO"));
+      lut_info_level = atoi (env);
    }
-   if (getenv ("BABL_LUT_UNUSED_LIMIT"))
+
+#ifndef _WIN32
+   env = getenv ("BABL_LUT_UNUSED_LIMIT");
+#else
+   _dupenv_s (&env, NULL, "BABL_LUT_UNUSED_LIMIT");
+#endif
+   if (env)
    {
-      lut_unused_minutes_limit = atof (getenv ("BABL_LUT_UNUSED_LIMIT"));
+      lut_unused_minutes_limit = atof (env);
    }
 
    LUT_LOG("BABL_LUT_UNUSED_LIMIT=%.1f\n", lut_unused_minutes_limit);
@@ -349,6 +361,9 @@ static void measure_timings(void)
    free (lut);
    free (src);
    free (dst);
+#ifdef _WIN32
+   free(env);
+#endif
 }
 
 static inline void
@@ -620,28 +635,43 @@ double
 _babl_legal_error (void)
 {
   static double error = 0.0;
-  const char   *env;
+  char         *env   = NULL;
 
   if (error != 0.0)
     return error;
 
+#ifndef _WIN32
   env = getenv ("BABL_TOLERANCE");
+#else
+  _dupenv_s (&env, NULL, "BABL_TOLERANCE");
+#endif
   if (env && env[0] != '\0')
     error = babl_parse_double (env);
   else
     error = BABL_TOLERANCE;
 
+#ifndef _WIN32
   env = getenv ("BABL_DEBUG_CONVERSIONS");
+#else
+  _dupenv_s (&env, NULL, "BABL_DEBUG_CONVERSIONS");
+#endif
   if (env && env[0] != '\0')
     debug_conversions = 1;
   else
     debug_conversions = 0;
 
+#ifndef _WIN32
   env = getenv ("BABL_LUT");
+#else
+  _dupenv_s (&env, NULL, "BABL_LUT");
+#endif
   if (env && env[0] != '\0')
-    enable_lut = atoi(getenv("BABL_LUT"));
+    enable_lut = atoi(env);
   else
     enable_lut = 1;
+#ifdef _WIN32
+  free (env);
+#endif
 
   { 
     const uint32_t u32 = 1;
@@ -658,12 +688,16 @@ static int
 max_path_length (void)
 {
   static int  max_length = 0;
-  const char *env;
+  char       *env        = NULL;
 
   if (max_length != 0)
     return max_length;
 
+#ifndef _WIN32
   env = getenv ("BABL_PATH_LENGTH");
+#else
+  _dupenv_s (&env, NULL, "BABL_PATH_LENGTH");
+#endif
   if (env)
     max_length = atoi (env);
   else
@@ -674,6 +708,9 @@ max_path_length (void)
                        depth if none are found within two steps in the
                        initial search.
                      */
+#ifdef _WIN32
+  free (env);
+#endif
   if (max_length > BABL_HARD_MAX_PATH_LENGTH)
     max_length = BABL_HARD_MAX_PATH_LENGTH;
   else if (max_length <= 0)
@@ -1124,13 +1161,21 @@ babl_fish_path2 (const Babl *source,
   char name[BABL_MAX_NAME_LEN];
   int is_fast = 0;
   static int debug_missing = -1;
+  char      *val           = NULL;
   if (debug_missing < 0)
   {
-     const char *val = getenv ("BABL_DEBUG_MISSING");
+#ifndef _WIN32
+     val = getenv ("BABL_DEBUG_MISSING");
+#else
+     _dupenv_s (&val, NULL, "BABL_DEBUG_MISSING");
+#endif
      if (val && strcmp (val, "0"))
        debug_missing = 1;
      else
        debug_missing = 0;
+#ifdef _WIN32
+     free (val);
+#endif
   }
 
   _babl_fish_create_name (name, source, destination, 1);

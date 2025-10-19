@@ -37,9 +37,13 @@ static int ref_count = 0;
 static char *
 babl_dir_list (void)
 {
-  char *ret;
+  char *ret = NULL;
 
+#ifndef _WIN32
   ret = getenv ("BABL_PATH");
+#else
+  _dupenv_s (&ret, NULL, "BABL_PATH");
+#endif
   if (!ret)
     {
 #ifdef _WIN32
@@ -101,6 +105,8 @@ void
 babl_init (void)
 {
   const char **exclusion_pattern;
+  char* env = NULL;
+
   babl_cpu_accel_set_use (1);
   exclusion_pattern = simd_init ();
 
@@ -129,8 +135,16 @@ babl_init (void)
       babl_extension_load_dir_list (dir_list, exclusion_pattern);
       babl_free (dir_list);
 
-      if (!getenv ("BABL_INHIBIT_CACHE"))
+#ifndef _WIN32
+      env = getenv ("BABL_INHIBIT_CACHE");
+#else
+      _dupenv_s (&env, NULL, "BABL_INHIBIT_CACHE");
+#endif
+      if (!env)
         babl_init_db ();
+#ifdef _WIN32
+      free (env);
+#endif
     }
 }
 

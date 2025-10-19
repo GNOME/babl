@@ -1384,6 +1384,9 @@ babl_fish_reference_process (const Babl *babl,
 {
   static const void *type_float = NULL;
   static int allow_float_reference = -1;
+#ifdef _WIN32
+  char *env = NULL;
+#endif
 
   /* same format in source/destination */
   if (BABL (babl->fish.source) == BABL (babl->fish.destination))
@@ -1424,7 +1427,15 @@ babl_fish_reference_process (const Babl *babl,
     type_float = babl_type_from_id (BABL_FLOAT);
 
   if (allow_float_reference == -1)
-    allow_float_reference = getenv ("BABL_REFERENCE_NOFLOAT") ? 0 : 1;
+    {
+#ifndef _WIN32
+      allow_float_reference = getenv ("BABL_REFERENCE_NOFLOAT") ? 0 : 1;
+#else
+      _dupenv_s(&env, NULL, "BABL_REFERENCE_NOFLOAT");
+      allow_float_reference = env ? 0 : 1;
+      free(env);
+#endif
+    }
 
   /* both source and destination are either single precision float or <32bit component,
      we then do a similar to the double reference - using the first registered
