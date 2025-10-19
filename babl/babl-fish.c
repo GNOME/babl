@@ -322,7 +322,7 @@ babl_fish (const void *source,
                     fish->class_type                = BABL_FISH;
                     fish->instance.id               = babl_fish_get_id (source_format, destination_format);
                     fish->instance.name             = ((char *) fish) + sizeof (BablFish);
-#ifndef _WIN32
+#ifndef _WIN64
                     strcpy (fish->instance.name, name);
 #else
                     strcpy_s (fish->instance.name, strlen(name) + 1, name);

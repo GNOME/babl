@@ -77,7 +77,7 @@ model_new (const char     *name,
   babl->model.data       = NULL;
   babl->model.model      = NULL;
   babl->model.flags      = flags;
-#ifndef _WIN32
+#ifndef _WIN64
   strcpy (babl->instance.name, name);
 #else
   strcpy_s (babl->instance.name, strlen(name) + 1, name);

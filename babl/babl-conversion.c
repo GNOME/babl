@@ -151,7 +151,7 @@ _conversion_new (const char    *name,
 
   babl                = babl_malloc (sizeof (BablConversion) + strlen (name) + 1);
   babl->instance.name = (char *) babl + sizeof (BablConversion);
-#ifndef _WIN32
+#ifndef _WIN64
   strcpy (babl->instance.name, name);
 #else
   strcpy_s (babl->instance.name, strlen(name) + 1, name);

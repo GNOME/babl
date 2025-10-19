@@ -64,7 +64,7 @@ extension_new (const char *path,
   babl                = babl_malloc (sizeof (BablExtension) + strlen (path) + 1);
   babl_set_destructor (babl, babl_extension_destroy);
   babl->instance.name = (char *) babl + sizeof (BablExtension);
-#ifndef _WIN32
+#ifndef _WIN64
   strcpy (babl->instance.name, path);
 #else
   strcpy_s (babl->instance.name, strlen(path) + 1, path);

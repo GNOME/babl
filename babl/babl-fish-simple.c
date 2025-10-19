@@ -47,7 +47,7 @@ babl_fish_simple (BablConversion *conversion)
   babl->class_type    = BABL_FISH_SIMPLE;
   babl->instance.id   = babl_fish_get_id (conversion->source, conversion->destination);
   babl->instance.name = ((char *) babl) + sizeof (BablFishSimple);
-#ifndef _WIN32
+#ifndef _WIN64
   strcpy (babl->instance.name, name);
 #else
   strcpy_s (babl->instance.name, strlen(name) + 1, name);

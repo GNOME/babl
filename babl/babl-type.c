@@ -52,7 +52,7 @@ type_new (const char *name,
   babl->class_type     = BABL_TYPE;
   babl->instance.id    = id;
   babl->instance.doc   = doc;
-#ifndef _WIN32
+#ifndef _WIN64
   strcpy (babl->instance.name, name);
 #else
   strcpy_s (babl->instance.name, strlen(name) + 1, name);

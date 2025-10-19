@@ -94,7 +94,7 @@ babl_dir_list (void)
     {
       char* ret_tmp = babl_malloc (sizeof (char) * (strlen (ret) + 1));
   
-#ifndef _WIN32
+#ifndef _WIN64
       strcpy (ret_tmp, ret);
 #else
       strcpy_s(ret_tmp, strlen(ret) + 1, ret);
@@ -140,7 +140,7 @@ babl_init (void)
       babl_extension_load_dir_list (dir_list, exclusion_pattern);
       babl_free (dir_list);
 
-#ifndef _WIN32
+#ifndef _WIN64
       env = getenv ("BABL_INHIBIT_CACHE");
 #else
       _dupenv_s (&env, NULL, "BABL_INHIBIT_CACHE");

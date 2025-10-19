@@ -156,7 +156,7 @@ file_get_contents (const char  *path,
   long  size;
   char *buffer;
 
-#ifndef _WIN32
+#ifndef _WIN64
   file = fopen (path, "rb");
 #else
   if (fopen_s (&file, path, "rb") != 0)
@@ -195,7 +195,7 @@ file_set_contents (const char *path,
                    long        length)
 {
   FILE *fp;
-#ifndef _WIN32
+#ifndef _WIN64
   fp = fopen (path, "wb");
 #else
   if (fopen_s (&fp, path, "wb") != 0)
