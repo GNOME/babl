@@ -29,6 +29,7 @@
 #ifdef _WIN32
 #include <windows.h>
 #include <wchar.h>
+#include <io.h>
 #else
 #include <sys/time.h>
 #include <time.h>
