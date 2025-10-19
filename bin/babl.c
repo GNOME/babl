@@ -590,7 +590,12 @@ babl_cli_get_space (const char    *path,
   char        errbuf[256];
 #endif
 
+#ifndef _WIN32
   f = fopen (path, "r");
+#else
+  if (fopen_s (&f, path, "r") != 0)
+    f = NULL;
+#endif
 
   if (f == NULL)
     {

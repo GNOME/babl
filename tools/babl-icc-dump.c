@@ -658,7 +658,12 @@ file_get_contents (const char  *path,
   long  size;
   char *buffer;
 
-  file = fopen (path,"rb");
+#ifndef _WIN32
+  file = fopen (path, "rb");
+#else
+  if (fopen_s (&file, path, "rb") != 0)
+    file = NULL;
+#endif
 
   if (!file)
     return -1;

@@ -156,7 +156,12 @@ file_get_contents (const char  *path,
   long  size;
   char *buffer;
 
-  file = fopen (path,"rb");
+#ifndef _WIN32
+  file = fopen (path, "rb");
+#else
+  if (fopen_s (&file, path, "rb") != 0)
+    file = NULL;
+#endif
 
   if (!file)
     return -1;
@@ -189,7 +194,13 @@ file_set_contents (const char *path,
                    const char *data, 
                    long        length)
 {
-  FILE *fp = fopen (path, "wb");
+  FILE *fp;
+#ifndef _WIN32
+  fp = fopen (path, "wb");
+#else
+  if (fopen_s (&fp, path, "wb") != 0)
+    fp = NULL;
+#endif
   if (length == -1)
     length = strlen (data);
   fwrite(data, length, 1, fp);
