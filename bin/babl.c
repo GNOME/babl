@@ -586,13 +586,22 @@ babl_cli_get_space (const char    *path,
   long        icc_length;
   size_t      icc_read;
   const char *error = NULL;
+#ifdef _WIN32
+  char        errbuf[256];
+#endif
 
   f = fopen (path, "r");
 
   if (f == NULL)
     {
+#ifndef _WIN32
+      fprintf(stderr, "babl: failed to open '%s': %s\n",
+          path, strerror(errno));
+#else
+      strerror_s(errbuf, sizeof(errbuf), errno);
       fprintf (stderr, "babl: failed to open '%s': %s\n",
-               path, strerror (errno));
+               path, errbuf);
+#endif
       return NULL;
     }
 
@@ -604,8 +613,14 @@ babl_cli_get_space (const char    *path,
   icc_read = fread(icc_data, icc_length, 1, f);
   if (icc_read != 1)
     {
+#ifndef _WIN32
       fprintf(stderr, "babl: failed to read '%s': %s\n",
               path, strerror(errno));
+#else
+      strerror_s(errbuf, sizeof(errbuf), errno);
+      fprintf(stderr, "babl: failed to read '%s': %s\n",
+              path, errbuf);
+#endif
       fclose(f);
       free(icc_data);
       return NULL;
