@@ -77,7 +77,7 @@ babl_dir_list (void)
               *(++sep2) = '\0';
               filename_tmp = babl_malloc (sizeof (char) * (strlen (filename) +
                                 strlen (BABL_DIR_SEPARATOR BABL_LIBRARY) + 4));
-              strcpy (filename_tmp, filename);
+              strcpy_s (filename_tmp, strlen(filename) + 1, filename);     
               babl_free (filename);
               strcat (filename_tmp, "lib" BABL_DIR_SEPARATOR BABL_LIBRARY);
               filename = filename_tmp;
@@ -93,7 +93,12 @@ babl_dir_list (void)
   else
     {
       char* ret_tmp = babl_malloc (sizeof (char) * (strlen (ret) + 1));
+  
+#ifndef _WIN32
       strcpy (ret_tmp, ret);
+#else
+      strcpy_s(ret_tmp, strlen(ret) + 1, ret);
+#endif
       ret = ret_tmp;
     }
   return ret;

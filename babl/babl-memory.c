@@ -296,7 +296,12 @@ babl_strdup (const char *s)
   ret = babl_malloc (strlen (s) + 1);
   if (!ret)
     babl_log ("args=(%s): failed", s);
+
+#ifndef _WIN32
   strcpy (ret, s);
+#else
+  strcpy_s (ret, strlen(s) + 1, s);
+#endif
 
 #if BABL_DEBUG_MEM
   babl_mutex_lock (babl_debug_mutex); 
@@ -328,7 +333,11 @@ babl_strcat (char       *dest,
   if (!dest)
     {
       ret = babl_malloc (src_len + 1);
+#ifndef _WIN32
       strcpy (ret, src);
+#else
+      strcpy_s (ret, strlen(src) + 1, src);
+#endif
       return ret;
     }
   babl_assert (IS_BAI (dest));
@@ -344,7 +353,11 @@ babl_strcat (char       *dest,
       ret = babl_realloc (dest, new_size);
     }
 
+#ifndef _WIN32
   strcpy (&ret[dst_len], src);
+#else
+  strcpy_s (&ret[dst_len], strlen(src) + 1, src);
+#endif
   return ret;
 }
 

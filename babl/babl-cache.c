@@ -381,7 +381,11 @@ babl_init_db (void)
               babl->instance.id      = babl_fish_get_id (from_format,
                                                          to_format);
               babl->instance.name    = ((char *) babl) + sizeof (BablFish);
+#ifndef _WIN32
               strcpy (babl->instance.name, name);
+#else
+              strcpy_s (babl->instance.name, strlen(name) + 1, name);
+#endif
               babl->fish.source      = from_format;
               babl->fish.destination = to_format;
               babl->fish.data        = (void*) 1; /* signals babl_fish() to
@@ -399,7 +403,11 @@ babl_init_db (void)
               babl->class_type     = BABL_FISH_PATH;
               babl->instance.id    = babl_fish_get_id (from_format, to_format);
               babl->instance.name  = ((char *) babl) + sizeof (BablFishPath);
+#ifndef _WIN32
               strcpy (babl->instance.name, name);
+#else
+              strcpy_s (babl->instance.name, strlen(name) + 1, name);
+#endif
               babl->fish.source               = from_format;
               babl->fish.destination          = to_format;
               babl->fish_path.conversion_list = babl_list_init_with_size (10);

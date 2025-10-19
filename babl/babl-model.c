@@ -77,7 +77,11 @@ model_new (const char     *name,
   babl->model.data       = NULL;
   babl->model.model      = NULL;
   babl->model.flags      = flags;
+#ifndef _WIN32
   strcpy (babl->instance.name, name);
+#else
+  strcpy_s (babl->instance.name, strlen(name) + 1, name);
+#endif
   memcpy (babl->model.component, component, sizeof (BablComponent *) * components);
 
   babl->model.from_list  = NULL;

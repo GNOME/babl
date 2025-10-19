@@ -1248,7 +1248,11 @@ babl_fish_path2 (const Babl *source,
   babl->class_type                = BABL_FISH_PATH;
   babl->instance.id               = babl_fish_get_id (source, destination);
   babl->instance.name             = ((char *) babl) + sizeof (BablFishPath);
+#ifndef _WIN32
   strcpy (babl->instance.name, name);
+#else
+  strcpy_s (babl->instance.name, strlen(name) + 1, name);
+#endif
   babl->fish.source               = source;
   babl->fish.destination          = destination;
   babl->fish.pixels               = 0;

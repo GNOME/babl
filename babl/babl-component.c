@@ -36,7 +36,11 @@ component_new (const char *name,
 
   babl                = babl_malloc (sizeof (BablComponent) + strlen (name) + 1);
   babl->instance.name = (char *) babl + sizeof (BablComponent);
+#ifndef _WIN32
   strcpy (babl->instance.name, name);
+#else
+  strcpy_s (babl->instance.name, strlen(name) + 1, name);
+#endif
 
   babl->class_type       = BABL_COMPONENT;
   babl->instance.id      = id;
