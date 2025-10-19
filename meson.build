@@ -163,11 +163,6 @@ common_c_flags += cc.get_supported_arguments(
 )
 
 
-supress_warnings_list = [
-  '-Wno-implicit-function-declaration',
-]
-common_c_flags += cc.get_supported_arguments(supress_warnings_list)
-
 extra_warnings_list = [
   '-Wdeclaration-after-statement',
   '-Winit-self',
