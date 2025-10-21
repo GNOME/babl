@@ -39,7 +39,7 @@ babl_dir_list (void)
 {
   char *ret = NULL;
 
-#ifndef _WIN32
+#ifndef _WIN64
   ret = getenv ("BABL_PATH");
 #else
   _dupenv_s (&ret, NULL, "BABL_PATH");
@@ -147,7 +147,7 @@ babl_init (void)
 #endif
       if (!env)
         babl_init_db ();
-#ifdef _WIN32
+#ifdef _WIN64
       free (env);
 #endif
     }
