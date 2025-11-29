@@ -26,7 +26,6 @@ EXPORTS
   babl_free
   babl_get_model_flags
   babl_get_name
-  babl_get_name
   babl_get_user_data
   babl_get_version
   babl_init

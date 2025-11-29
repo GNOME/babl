@@ -540,7 +540,7 @@ xml_insert_file = files('tools' / 'xml-insert.py')
 authors_file = files('AUTHORS')
 news_file = files('NEWS')
 todo_file = files('TODO')
-export_symbols_file = files('export-symbols.def')
+export_symbols_file = files('babl/babl.def')
 gen_babl_map_file = files('gen_babl_map.py')
 
 ################################################################################
@@ -563,6 +563,29 @@ if build_docs
   subdir('docs')
 endif
 subdir('bin')
+
+if not platform_win32 and not platform_osx
+  # Verify .def files for Windows.
+  # Ironically we only check this on non-Windows platform, since the
+  # script expects .so libraries, and I'm not sure that the `nm` tool is
+  # available on Windows.
+  # On the other hand, it is how it always has been, since we used to
+  # only run this on dist step (which we historically run on a GNU/Linux
+  # machine). And it worked fine until now.
+  custom_target('check-def-files',
+    input: [
+      babl_def
+    ],
+    depends: [
+      babl
+    ],
+    output: [ 'check-def-files', ],
+    command: [
+      python, meson.project_source_root() / 'tools' / 'defcheck.py', '@INPUT@',
+    ],
+    build_by_default: true,
+  )
+endif
 
 # Create README file from web page
 if w3m_bin.found() and build_docs

@@ -133,13 +133,20 @@ else
   simd_extra = []
 endif
 
+#Needed otherwise defcheck.py fails
+babl_def = configure_file(
+  input: 'babl.def',
+  output: 'babl.def',
+  copy: true
+)
+
 # build library
 babl = library(
   lib_name,
   babl_sources,
   include_directories: babl_includes,
   c_args: babl_c_args,
-  vs_module_defs: meson.project_source_root() / 'export-symbols.def',
+  vs_module_defs: babl_def,
   link_whole: babl_base,
   link_args: babl_link_args,
   link_with: simd_extra,
