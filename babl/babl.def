@@ -58,11 +58,11 @@ EXPORTS
   babl_space_is_cmyk
   babl_space_is_gray
   babl_space_is_rgb
-  babl_space_get_gamma
   babl_icc_make_space
   babl_icc_get_key
   babl_ticks
   babl_type
+  babl_haha
   babl_type_new
   babl_trc
   babl_trc_gamma
