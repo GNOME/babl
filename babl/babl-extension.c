@@ -331,11 +331,15 @@ expand_path (char *path)
 
   while (*src)
     {
-      char *home;
+      char *home = NULL;
       switch (*src)
         {
           case '~':
+#ifndef _WIN64
             home = getenv ("HOME");
+#else
+            _dupenv_s (&home, NULL, "HOME");
+#endif
             if (NULL != home)
               dst = babl_strcat (dst, home);
             break;
