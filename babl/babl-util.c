@@ -173,7 +173,12 @@ _babl_fopen (const char *path,
   wchar_t *mode_utf16 = babl_convert_utf8_to_utf16 (mode);
   FILE *result = NULL;
 
+#ifndef _WIN64
   result = _wfopen (path_utf16, mode_utf16);
+#else
+  if (_wfopen_s (&result, path_utf16, mode_utf16) != 0)
+    result = NULL;
+#endif
 
   if (path_utf16)
     babl_free (path_utf16);
