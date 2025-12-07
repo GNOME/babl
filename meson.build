@@ -465,6 +465,20 @@ else
  endif
 endif
 
+# Build relocatable babl
+relocatable = false
+if get_option('relocatable').auto()
+  if platform_win32
+    relocatable = true
+  endif
+else
+  relocatable = get_option('relocatable').enabled()
+  if relocatable and platform_osx
+    warning('-Drelocatable=enabled not implemented yet for macOS.')
+    relocatable = false
+  endif
+endif
+conf.set('ENABLE_RELOCATABLE', relocatable)
 
 ################################################################################
 # Configuration files
@@ -658,6 +672,7 @@ summary(
     'Introspection'            : build_gir,
     'VALA support'             : build_vapi,
     'Debug symbols format'     : debugging_format,
+    'relocatable'              : relocatable,
   }, section: 'Optional features'
 )
 summary(

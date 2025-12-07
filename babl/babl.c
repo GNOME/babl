@@ -16,6 +16,9 @@
  * <https://www.gnu.org/licenses/>.
  */
 
+#include <errno.h>
+#include <unistd.h>
+
 #include "config.h"
 #include "babl-internal.h"
 #include "babl-base.h"
@@ -25,6 +28,11 @@ static int ref_count = 0;
 #ifndef _WIN32
 #define BABL_PATH              LIBDIR BABL_DIR_SEPARATOR BABL_LIBRARY
 #endif
+
+
+static char * _babl_find_relocatable_exe (void);
+static char * _babl_guess_libdir         (void);
+
 
 /*
  * Returns a list of directories if the environment variable $BABL_PATH
@@ -44,9 +52,10 @@ babl_dir_list (void)
 #else
   _dupenv_s (&ret, NULL, "BABL_PATH");
 #endif
+
   if (!ret)
     {
-#ifdef _WIN32
+#if defined(_WIN32)
       /* Figure it out from the location of this DLL */
       wchar_t w_filename[MAX_PATH];
       char *filename = NULL;
@@ -77,7 +86,7 @@ babl_dir_list (void)
               *(++sep2) = '\0';
               filename_tmp = babl_malloc (sizeof (char) * (strlen (filename) +
                                 strlen (BABL_DIR_SEPARATOR BABL_LIBRARY) + 4));
-              strcpy_s (filename_tmp, strlen(filename) + 1, filename);     
+              strcpy_s (filename_tmp, strlen(filename) + 1, filename);
               babl_free (filename);
               strcat (filename_tmp, "lib" BABL_DIR_SEPARATOR BABL_LIBRARY);
               filename = filename_tmp;
@@ -86,21 +95,65 @@ babl_dir_list (void)
 
       ret = filename;
 #else
-      ret = babl_malloc (sizeof (char) * (strlen (BABL_PATH) + 1));
-      strcpy (ret, BABL_PATH);
+      char *exe;
+
+      exe = _babl_find_relocatable_exe ();
+      if (exe)
+        {
+          char *sep1, *sep2;
+
+          sep1 = strrchr (exe, BABL_DIR_SEPARATOR[0]);
+          *sep1 = '\0';
+
+          sep2 = strrchr (exe, BABL_DIR_SEPARATOR[0]);
+          if (sep2 != NULL)
+            {
+              if (strcmp (sep2 + 1, "bin") == 0)
+                {
+                  char* tmp;
+                  char* libdir = _babl_guess_libdir ();
+
+                  *(++sep2) = '\0';
+                  tmp = babl_malloc (sizeof (char) * (strlen (exe)                +
+                                                      strlen (libdir)             +
+                                                      strlen (BABL_DIR_SEPARATOR) +
+                                                      strlen (BABL_LIBRARY) + 1));
+                  strcpy (tmp, exe);
+                  babl_free (exe);
+                  strcat (tmp, libdir);
+                  babl_free (libdir);
+                  strcat (tmp, BABL_DIR_SEPARATOR BABL_LIBRARY);
+                  exe = tmp;
+                }
+              else
+                {
+                  *sep1 = BABL_DIR_SEPARATOR[0];
+                  babl_fatal ("Relocatable builds require the executable to be installed in bin/ unlike: %s",
+                              exe);
+                }
+            }
+
+          ret = exe;
+        }
+      else
+        {
+          ret = babl_malloc (sizeof (char) * (strlen (BABL_PATH) + 1));
+          strcpy (ret, BABL_PATH);
+        }
 #endif
     }
   else
     {
       char* ret_tmp = babl_malloc (sizeof (char) * (strlen (ret) + 1));
-  
+
 #ifndef _WIN64
       strcpy (ret_tmp, ret);
 #else
-      strcpy_s(ret_tmp, strlen(ret) + 1, ret);
+      strcpy_s (ret_tmp, strlen (ret) + 1, ret);
 #endif
       ret = ret_tmp;
     }
+
   return ret;
 }
 
@@ -305,3 +358,146 @@ static const char **simd_init (void)
   return exclude;
 }
 
+
+/* Private functions */
+
+static char *
+_babl_find_relocatable_exe (void)
+{
+#if ! defined(ENABLE_RELOCATABLE) || defined(_WIN32) || defined(__APPLE__)
+  return NULL;
+#else
+  char   *path;
+  char   *sym_path;
+  FILE   *file;
+  char   *maps_line      = NULL;
+  size_t  maps_line_size = 0;
+
+  sym_path = babl_strdup ("/proc/self/exe");
+
+  while (1)
+    {
+      size_t      bufsiz;
+      ssize_t     nbytes;
+      struct stat stat_buf;
+
+#ifdef PATH_MAX
+#define BABL_PATH_MAX PATH_MAX
+#else
+#define BABL_PATH_MAX 4096
+#endif
+
+      bufsiz = BABL_PATH_MAX;
+      path   = babl_malloc (bufsiz);
+      nbytes = readlink (sym_path, path, bufsiz);
+      /* Some systems actually allow paths of bigger size than PATH_MAX. Thus
+       * this macro is kind of bogus so we need to verify if we didn't get a
+       * truncated value.
+       * Other systems like Hurd will not even define it (see MR gimp!424).
+       */
+      while (nbytes == bufsiz && nbytes != -1)
+        {
+          /* The path was truncated. */
+          babl_free (path);
+          bufsiz += BABL_PATH_MAX;
+          path    = babl_malloc (bufsiz);
+
+          nbytes = readlink (sym_path, path, bufsiz);
+        }
+      babl_free (sym_path);
+
+#undef BABL_PATH_MAX
+
+      if (nbytes == -1)
+        {
+          babl_free (path);
+          path = NULL;
+          break;
+        }
+
+      /* Check whether the symlink's target is also a symlink.
+       * We want to get the final target.
+       */
+      if (stat (path, &stat_buf) == -1)
+        {
+          babl_free (path);
+          path = NULL;
+          break;
+        }
+
+      if (! S_ISLNK (stat_buf.st_mode))
+        return path;
+
+      /* path is a symlink. Continue loop and resolve this. */
+      sym_path = path;
+    }
+
+  /* readlink() or stat() failed; this can happen when the program is
+   * running in Valgrind 2.2.
+   * Read from /proc/self/maps as fallback.
+   */
+
+  file = _babl_fopen ("/proc/self/maps", "rb");
+
+  if (! file)
+    babl_fatal ("Failed to read /proc/self/maps: %s", strerror (errno));
+
+  /* The first entry with r-xp permission should be the executable name. */
+  while ((getline (&maps_line, &maps_line_size, file) != -1))
+    {
+      /* Extract the filename; it is always an absolute path. */
+      path = strchr (maps_line, '/');
+
+      /* Sanity check. */
+      if (path && strstr (maps_line, " r-xp "))
+        {
+          /* We found the executable name. */
+          path = babl_strdup (path);
+          break;
+        }
+
+      path = NULL;
+    }
+  free (maps_line);
+
+  fclose (file);
+
+  if (path == NULL)
+    babl_fatal ("Failed to find the executable's path for relocatability.");
+
+  return path;
+#endif
+}
+
+/* Returns the relative libdir, which may be lib/ or lib64/ or again
+ * some subdirectory with multiarch.
+ */
+static char *
+_babl_guess_libdir (void)
+{
+  char   *libdir;
+  char   *rel_libdir;
+  char   *sep;
+  size_t  len;
+
+  libdir = babl_strdup (LIBDIR);
+  len = strlen (libdir);
+
+  sep = strrchr (libdir, BABL_DIR_SEPARATOR[0]);
+  while (sep != NULL && strstr (sep + 1, "lib") != sep + 1)
+    {
+      *sep = '\0';
+      sep = strrchr (libdir, BABL_DIR_SEPARATOR[0]);
+    }
+
+  if (sep == NULL)
+    babl_fatal ("Relocatable builds require LIBDIR to start with 'lib' unlike: %s", LIBDIR);
+
+  while (strlen (libdir) < len)
+    libdir[strlen (libdir)] = BABL_DIR_SEPARATOR[0];
+
+  rel_libdir = babl_strdup (sep + 1);
+  babl_free (libdir);
+
+  return rel_libdir;
+}

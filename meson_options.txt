@@ -25,6 +25,8 @@ option('win-debugging',
   value: 'native',
   description: 'Build with native/CodeView debug symbols or with DWARF'
 )
+option('relocatable', type: 'feature', value: 'auto',
+       description: 'build with resources considered bundled under the same prefix (auto: platform defaults)')
 
 # Compiler extensions
 option('enable-mmx',
