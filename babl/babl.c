@@ -17,7 +17,9 @@
  */
 
 #include <errno.h>
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 
 #include "config.h"
 #include "babl-internal.h"
