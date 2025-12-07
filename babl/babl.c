@@ -102,15 +102,47 @@ babl_dir_list (void)
       exe = _babl_find_relocatable_exe ();
       if (exe)
         {
-          char *sep1, *sep2;
+          char   *sep1, *sep2;
+          size_t  len;
 
-          sep1 = strrchr (exe, BABL_DIR_SEPARATOR[0]);
+          len   = strlen (exe);
+          sep1  = strrchr (exe, BABL_DIR_SEPARATOR[0]);
           *sep1 = '\0';
 
           sep2 = strrchr (exe, BABL_DIR_SEPARATOR[0]);
           if (sep2 != NULL)
             {
-              if (strcmp (sep2 + 1, "bin") == 0)
+              while (strcmp (sep2 + 1, "bin") != 0 &&
+                     strstr (sep2 + 1, "lib") != sep2 + 1)
+                {
+                  *sep2 = '\0';
+                  sep2  = strrchr (exe, BABL_DIR_SEPARATOR[0]);
+
+                  if (sep2 == NULL)
+                    break;
+                }
+
+              if (sep2 == NULL)
+                {
+                  while (strlen (exe) < len)
+                    exe[strlen (exe)] = BABL_DIR_SEPARATOR[0];
+
+                  /* This may happen when babl is loaded by uninstalled
+                   * binaries, such as build-time tools, in which case, this is
+                   * not an error, and we fallback to the build-time BABL_PATH.
+                   * We assume that relocatable builds are not relocated during
+                   * the build of a full bundle.
+                   * This is why we output a message on stderr, but this is not
+                   * a fatal error.
+                   */
+                  fprintf (stderr,
+                           "Relocatable builds require the executable to be installed in bin/ or lib*/ unlike: %s\n"
+                           "If this is a build-time tool, you may ignore this message.\n",
+                           exe);
+                  babl_free (exe);
+                  exe = NULL;
+                }
+              else
                 {
                   char *tmp;
                   char *libdir = _babl_guess_libdir ();
@@ -126,24 +158,6 @@ babl_dir_list (void)
                   babl_free (libdir);
                   strcat (tmp, BABL_DIR_SEPARATOR BABL_LIBRARY);
                   exe = tmp;
-                }
-              else
-                {
-                  *sep1 = BABL_DIR_SEPARATOR[0];
-                  /* This may happen when babl is loaded by uninstalled
-                   * binaries, such as build-time tools, in which case, this is
-                   * not an error, and we fallback to the build-time BABL_PATH.
-                   * We assume that relocatable builds are not relocated during
-                   * the build of a full bundle.
-                   * This is why we output a message on stderr, but this is not
-                   * a fatal error.
-                   */
-                  fprintf (stderr,
-                           "Relocatable builds require the executable to be installed in bin/ unlike: %s\n"
-                           "If this is a build-time tool, you may ignore this message.\n",
-                           exe);
-                  babl_free (exe);
-                  exe = NULL;
                 }
             }
           else
