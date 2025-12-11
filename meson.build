@@ -497,11 +497,9 @@ configure_file(
 # updated. If git is not available, don't do anything if git-version.h
 # already exists because then we are probably working with a tarball
 # in which case the git-version.h we ship is correct.
-is_git_repository = run_command(
-    git_bin,
-    'rev-parse',
-    '--is-inside-work-tree',
-    check: false,
+is_git_repository = run_command(python, '-c',
+  'import sys,os; sys.exit(0 if os.path.exists(".git") else 1)',
+  check: false
 ).returncode() == 0
 
 has_version_h = run_command(python, '-c',
