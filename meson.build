@@ -223,9 +223,11 @@ endif
 if host_cpu_family == 'x86_64'
   x86_64_v2_flags = cc.get_supported_arguments(['-march=x86-64','-msse2', '-msse2','-msse4.1','-msse4.2','-mpopcnt','-mssse3'])
   x86_64_v3_flags = x86_64_v2_flags + cc.get_supported_arguments(['-mavx','-mavx2','-mf16c','-mfma','-mmovbe', '-mbmi', '-mbmi2'])
+  x86_64_v4_flags = x86_64_v3_flags + cc.get_supported_arguments(['-mavx512f', '-mavx512cd', '-mavx512bw', '-mavx512vl', '-mavx512dq'])
 
   x86_64_v2_flags += '-DX86_64_V2'
   x86_64_v3_flags += '-DX86_64_V3'
+  x86_64_v4_flags += '-DX86_64_V4'
 
 elif host_cpu_family == 'arm'
   arm_neon_flags = cc.get_supported_arguments(['-mfpu=neon-vfpv3', '-mfpu=neon-vfpv4'])

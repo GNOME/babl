@@ -41,6 +41,13 @@ if host_cpu_family == 'x86_64'
     c_args: common_c_flags + x86_64_v3_flags
   )
 
+  babl_base_x86_64_v4 = static_library('babl_base-x86-64-v4',
+    babl_base_sources,
+    include_directories: [rootInclude, bablInclude],
+    dependencies: [math, lcms, log],
+    c_args: common_c_flags + x86_64_v4_flags
+  )
+
 endif
 
 

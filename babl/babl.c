@@ -302,13 +302,17 @@ const Babl *
 #ifdef ARCH_X86_64
 void babl_base_init_x86_64_v2 (void);
 void babl_base_init_x86_64_v3 (void);
+void babl_base_init_x86_64_v4 (void);
 void _babl_space_add_universal_rgb_x86_64_v2 (const Babl *space);
 void _babl_space_add_universal_rgb_x86_64_v3 (const Babl *space);
+void _babl_space_add_universal_rgb_x86_64_v4 (const Babl *space);
 
 const Babl *
 babl_trc_lookup_by_name_x86_64_v2 (const char *name);
 const Babl *
 babl_trc_lookup_by_name_x86_64_v3 (const char *name);
+const Babl *
+babl_trc_lookup_by_name_x86_64_v4 (const char *name);
 
 const Babl *
 babl_trc_new_x86_64_v2 (const char *name,
@@ -318,6 +322,12 @@ babl_trc_new_x86_64_v2 (const char *name,
                         float      *lut);
 const Babl *
 babl_trc_new_x86_64_v3 (const char *name,
+                        BablTRCType type,
+                        double      gamma,
+                        int         n_lut,
+                        float      *lut);
+const Babl *
+babl_trc_new_x86_64_v4 (const char *name,
                         BablTRCType type,
                         double      gamma,
                         int         n_lut,
@@ -342,10 +352,20 @@ babl_trc_new_arm_neon (const char *name,
 
 static const char **simd_init (void)
 {
-  static const char *exclude[] = {"neon-", "x86-64-v3", "x86-64-v2", NULL};
+  static const char *exclude[] = {"neon-", "x86-64-v4", "x86-64-v3", "x86-64-v2", NULL};
 #ifdef ARCH_X86_64
   BablCpuAccelFlags accel = babl_cpu_accel_get_support ();
-  if ((accel & BABL_CPU_ACCEL_X86_64_V3) == BABL_CPU_ACCEL_X86_64_V3)
+  if ((accel & BABL_CPU_ACCEL_X86_64_V4) == BABL_CPU_ACCEL_X86_64_V4)
+  {
+    static const char *exclude[] = {NULL};
+    // TODO : make use of actual builds for this arch
+    babl_base_init = babl_base_init_x86_64_v2;
+    babl_trc_new = babl_trc_new_x86_64_v2;
+    babl_trc_lookup_by_name = babl_trc_lookup_by_name_x86_64_v2;
+    _babl_space_add_universal_rgb = _babl_space_add_universal_rgb_x86_64_v3;
+    return exclude;
+  }
+  else if ((accel & BABL_CPU_ACCEL_X86_64_V3) == BABL_CPU_ACCEL_X86_64_V3)
   {
     static const char *exclude[] = {NULL};
     babl_base_init = babl_base_init_x86_64_v2; /// !!
@@ -368,7 +388,7 @@ static const char **simd_init (void)
   }
   else
   {
-    static const char *exclude[] = {"x86-64-v3-", "x86-64-v2-", NULL};
+    static const char *exclude[] = {"x86-64-v4-", "x86-64-v3-", "x86-64-v2-", NULL};
     return exclude;
   }
 #endif

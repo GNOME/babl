@@ -121,6 +121,21 @@ if host_cpu_family == 'x86_64'
    )
   endforeach
 
+  foreach ext : autosimd_extensions
+    shared_module(
+      'x86-64-v4-' + ext[0],
+      ext[0] + '.c',
+      c_args: [ext[1]] + x86_64_v4_flags,
+      include_directories: babl_ext_inc,
+      link_with: babl,
+      link_args: babl_ext_link_args,
+      dependencies: babl_ext_dep,
+      name_prefix: '',
+      install: true,
+      install_dir: babl_libdir / lib_name,
+   )
+  endforeach
+
 elif host_cpu_family == 'arm'
   
 

@@ -126,7 +126,7 @@ babl_deps = [math, thread, dl, lcms, log]
 babl_includes = [rootInclude, bablBaseInclude]
 
 if host_cpu_family == 'x86_64'
-  simd_extra = [babl_base_x86_64_v2, babl_base_x86_64_v3]
+  simd_extra = [babl_base_x86_64_v2, babl_base_x86_64_v3, babl_base_x86_64_v4]
 elif host_cpu_family == 'arm'
   simd_extra = [babl_base_arm_neon]
 else
