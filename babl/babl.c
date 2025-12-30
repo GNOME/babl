@@ -20,6 +20,10 @@
 #ifndef _WIN32
 #include <unistd.h>
 #endif
+#ifdef __APPLE__
+#include <dlfcn.h>
+#include <libgen.h>
+#endif
 
 #include "config.h"
 #include "babl-internal.h"
@@ -57,7 +61,32 @@ babl_dir_list (void)
 
   if (!ret)
     {
-#if defined(_WIN32)
+#if defined(__APPLE__)
+      Dl_info info;
+      /* The checked symbol must be exported in the libbabl*.dylib */
+      if (dladdr((const void *)babl_dir_list, &info) && info.dli_fname)
+        {
+          char  dylib_path[PATH_MAX];
+          char *dylib_dir;
+          char *babl_dir;
+  
+          /* Get the parent directory containing the .dylib (e.g. <foobar>\Frameworks\,
+             does not matter the parent dir, this is packaging-agnostic) */
+          strlcpy(dylib_path, info.dli_fname, sizeof(dylib_path));
+          dylib_dir = dirname(dylib_path);
+          
+          /* Construct the babl dir on the parent dir (e.g. <foobar>\Frameworks\{BABL_LIBRARY}) */
+          babl_dir = babl_malloc(strlen(dylib_dir) + strlen(BABL_DIR_SEPARATOR) +
+                                 strlen(BABL_LIBRARY) + 1);
+          sprintf(babl_dir, "%s%s%s", dylib_dir, BABL_DIR_SEPARATOR, BABL_LIBRARY);
+          
+          ret = babl_dir;
+        }
+      else
+        {
+          babl_fatal ("Getting module path for relocatibility failed");
+        }
+#elif defined(_WIN32)
       /* Figure it out from the location of this DLL */
       wchar_t w_filename[MAX_PATH];
       char *filename = NULL;

@@ -470,15 +470,11 @@ endif
 # Build relocatable babl
 relocatable = false
 if get_option('relocatable').auto()
-  if platform_win32
+  if platform_win32 or platform_osx
     relocatable = true
   endif
 else
   relocatable = get_option('relocatable').enabled()
-  if relocatable and platform_osx
-    warning('-Drelocatable=enabled not implemented yet for macOS.')
-    relocatable = false
-  endif
 endif
 conf.set('ENABLE_RELOCATABLE', relocatable)
 
