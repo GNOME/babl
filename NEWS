@@ -3,6 +3,9 @@ The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
                                                                           -->
 
+2026-01-15 babl-0.1.120                                             </dt><dd>
+x86_64-v4 microarchitecture support.
+                                                                    </dd><dt>
 2025-12-08 babl-0.1.118                                             </dt><dd>
 build and portability fixes, babl is now relocatedable.
                                                                     </dd><dt>
