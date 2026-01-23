@@ -438,15 +438,11 @@ elif get_option('with-docs') == 'false'
   build_docs = false
 endif
 
-# Introspection - don't build  by default on cross-build environments
-if get_option('enable-gir') == 'auto'
-  build_gir = meson.is_cross_build() ? false : true
-else
-  build_gir = get_option('enable-gir') == 'true' ? true : false
+# Introspection
+if get_option('enable-gir') == 'true' and not g_ir.found()
+  error('enable-gir set to true but gobject-introspection-1.0 not found')
 endif
-if not g_ir.found()
-  build_gir = false
-endif
+build_gir = g_ir.found() and get_option('enable-gir') != 'false'
 
 # Vapi - only build if building introspection
 if build_gir and get_option('enable-vapi') and vapigen.found()
