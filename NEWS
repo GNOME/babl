@@ -3,6 +3,10 @@ The NEWS file in the babl source tree is the source location for
 the news section both in the README and the webpage.
                                                                           -->
 
+
+2026-01-28 babl-0.1.122                                             </dt><dd>
+fix for startup crash due to mis-loading of x86_64-v4 on -v2 with some ports.
+                                                                    </dd><dt>
 2026-01-15 babl-0.1.120                                             </dt><dd>
 x86_64-v4 microarchitecture support.
                                                                     </dd><dt>
