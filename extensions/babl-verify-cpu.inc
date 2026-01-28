@@ -18,6 +18,12 @@
 #endif
 #endif
 
+/* Note: there is code-duplication in excluding babl extensions (.so/.dll/.dylib)
+to be loaded between this, and the list of exclusion substrings passed to the
+extension loading code. Compilers might use code making this early bail still
+fail with illegal instructions.
+ */
+
 #define BABL_VERIFY_CPU()  do{}while(0)
 
 

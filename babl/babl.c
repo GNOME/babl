@@ -386,7 +386,7 @@ static const char **simd_init (void)
   BablCpuAccelFlags accel = babl_cpu_accel_get_support ();
   if ((accel & BABL_CPU_ACCEL_X86_64_V4) == BABL_CPU_ACCEL_X86_64_V4)
   {
-    static const char *exclude[] = {NULL};
+    static const char *exclude[] = {"x86-64-v3-", "x86-64-v2", NULL};
     // TODO : make use of actual builds for this arch
     babl_base_init = babl_base_init_x86_64_v2;
     babl_trc_new = babl_trc_new_x86_64_v2;
@@ -396,7 +396,7 @@ static const char **simd_init (void)
   }
   else if ((accel & BABL_CPU_ACCEL_X86_64_V3) == BABL_CPU_ACCEL_X86_64_V3)
   {
-    static const char *exclude[] = {NULL};
+    static const char *exclude[] = {"x86-64-v4-", "x86-64-v2-", NULL};
     babl_base_init = babl_base_init_x86_64_v2; /// !!
                                                // this is correct,
                                                // it performs better
@@ -408,7 +408,7 @@ static const char **simd_init (void)
   }
   else if ((accel & BABL_CPU_ACCEL_X86_64_V2) == BABL_CPU_ACCEL_X86_64_V2)
   {
-    static const char *exclude[] = {"x86-64-v3-", NULL};
+    static const char *exclude[] = {"x86-64-v3-", "x86-64-v4-", NULL};
     babl_base_init = babl_base_init_x86_64_v2;
     babl_trc_new = babl_trc_new_x86_64_v2;
     babl_trc_lookup_by_name = babl_trc_lookup_by_name_x86_64_v2;
