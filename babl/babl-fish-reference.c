@@ -732,8 +732,7 @@ process_same_model (const Babl  *babl,
   }
 }
 
-typedef enum _Kind Kind;
-enum _Kind { KIND_RGB, KIND_CMYK};
+typedef enum _Kind { KIND_RGB, KIND_CMYK} Kind;
 
 static int format_has_cmyk_model (const Babl *format)
 {
