@@ -456,6 +456,7 @@ _babl_find_relocatable_exe (void)
   char   *maps_line      = NULL;
   size_t  maps_line_size = 0;
 
+  printf ("_babl_find_relocatable_exe:\n");
   sym_path = babl_strdup ("/proc/self/exe");
 
   while (1)
@@ -509,7 +510,10 @@ _babl_find_relocatable_exe (void)
         }
 
       if (! S_ISLNK (stat_buf.st_mode))
-        return path;
+        {
+          printf ("/proc/self/exe: %s\n", path);
+          return path;
+        }
 
       /* path is a symlink. Continue loop and resolve this. */
       sym_path = path;
@@ -548,6 +552,7 @@ _babl_find_relocatable_exe (void)
   if (path == NULL)
     babl_fatal ("Failed to find the executable's path for relocatability.");
 
+  printf ("/proc/self/maps: %s\n", path ? path : "N/A");
   return path;
 #endif
 }
