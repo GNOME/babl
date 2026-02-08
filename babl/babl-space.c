@@ -605,6 +605,13 @@ babl_space_class_init (void)
                // XXX: is using sRGB TRC right?
                babl_trc("sRGB"), NULL, NULL, 1);
 
+  babl_space_from_chromaticities ("DisplayP3",
+		                  0.3127, 0.3290,
+				  0.680, 0.320,
+				  0.265, 0.690,
+				  0.150, 0.060,
+				  babl_trc("sRGB"), NULL, NULL, 1);
+
   babl_space_from_chromaticities (
       "Adobish",  /* a space that can be used as a place-holder for a sRGB like
 space with displaced green coordinates from a big graphics software vendor that
