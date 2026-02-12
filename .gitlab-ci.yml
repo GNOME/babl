@@ -23,6 +23,8 @@ include:
     FDO_DISTRIBUTION_PACKAGES: >
       meson lcms2-devel git diffutils shellcheck devscripts
     FDO_UPSTREAM_REPO: $CI_PROJECT_PATH
+    # Disable timestamps on CI logs
+    FF_TIMESTAMPS: false
 
 
 stages:
