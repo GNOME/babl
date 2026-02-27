@@ -133,7 +133,7 @@ fish_cache_path (void)
       if (appdata)
         babl_free (appdata);
     }
-#ifdef _WIN64
+#ifdef _UCRT
   else if (_dupenv_s(&env, NULL, "TEMP") == 0 && env != NULL)
 #else
   else if (getenv("TEMP"))
@@ -312,7 +312,7 @@ babl_init_db (void)
   time_t       tim         = time (NULL);
   char        *env         = NULL;
 
-#ifndef _WIN64
+#ifndef _UCRT
   env = getenv ("BABL_DEBUG_CONVERSIONS");
 #else
   _dupenv_s (&env, NULL, "BABL_DEBUG_CONVERSIONS");
@@ -385,7 +385,7 @@ babl_init_db (void)
               babl->instance.id      = babl_fish_get_id (from_format,
                                                          to_format);
               babl->instance.name    = ((char *) babl) + sizeof (BablFish);
-#ifndef _WIN64
+#ifndef _UCRT
               strcpy (babl->instance.name, name);
 #else
               strcpy_s (babl->instance.name, strlen(name) + 1, name);
@@ -407,7 +407,7 @@ babl_init_db (void)
               babl->class_type     = BABL_FISH_PATH;
               babl->instance.id    = babl_fish_get_id (from_format, to_format);
               babl->instance.name  = ((char *) babl) + sizeof (BablFishPath);
-#ifndef _WIN64
+#ifndef _UCRT
               strcpy (babl->instance.name, name);
 #else
               strcpy_s (babl->instance.name, strlen(name) + 1, name);

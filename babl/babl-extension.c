@@ -64,7 +64,7 @@ extension_new (const char *path,
   babl                = babl_malloc (sizeof (BablExtension) + strlen (path) + 1);
   babl_set_destructor (babl, babl_extension_destroy);
   babl->instance.name = (char *) babl + sizeof (BablExtension);
-#ifndef _WIN64
+#ifndef _UCRT
   strcpy (babl->instance.name, path);
 #else
   strcpy_s (babl->instance.name, strlen(path) + 1, path);
@@ -325,7 +325,7 @@ expand_path (char *path)
 
   src = path;
 
-#if defined(_WIN32) || defined(_WIN64)
+#ifdef _WIN32
   return babl_strdup (path);
 #endif
 
@@ -335,7 +335,7 @@ expand_path (char *path)
       switch (*src)
         {
           case '~':
-#ifndef _WIN64
+#ifndef _UCRT
             home = getenv ("HOME");
 #else
             _dupenv_s (&home, NULL, "HOME");

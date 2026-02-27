@@ -53,7 +53,7 @@ babl_dir_list (void)
 {
   char *ret = NULL;
 
-#ifndef _WIN64
+#ifndef _UCRT
   ret = getenv ("BABL_PATH");
 #else
   _dupenv_s (&ret, NULL, "BABL_PATH");
@@ -209,7 +209,7 @@ babl_dir_list (void)
     {
       char* ret_tmp = babl_malloc (sizeof (char) * (strlen (ret) + 1));
 
-#ifndef _WIN64
+#ifndef _UCRT
       strcpy (ret_tmp, ret);
 #else
       strcpy_s (ret_tmp, strlen (ret) + 1, ret);
@@ -256,14 +256,14 @@ babl_init (void)
       babl_extension_load_dir_list (dir_list, exclusion_pattern);
       babl_free (dir_list);
 
-#ifndef _WIN64
+#ifndef _UCRT
       env = getenv ("BABL_INHIBIT_CACHE");
 #else
       _dupenv_s (&env, NULL, "BABL_INHIBIT_CACHE");
 #endif
       if (!env)
         babl_init_db ();
-#ifdef _WIN64
+#ifdef _UCRT
       free (env);
 #endif
     }

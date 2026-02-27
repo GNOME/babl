@@ -31,7 +31,7 @@ file_get_contents (const char  *path,
   long  size;
   char *buffer;
 
-#ifndef _WIN64
+#ifndef _UCRT
   file = fopen (path, "rb");
 #else
   if (fopen_s (&file, path, "rb") != 0)

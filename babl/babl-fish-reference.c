@@ -138,7 +138,7 @@ babl_fish_reference (const Babl *source,
   babl->class_type    = BABL_FISH_REFERENCE;
   babl->instance.id   = babl_fish_get_id (source, destination);
   babl->instance.name = ((char *) babl) + sizeof (BablFishReference);
-#ifndef _WIN64
+#ifndef _UCRT
   strcpy (babl->instance.name, name);
 #else
   strcpy_s (babl->instance.name, strlen(name) + 1, name);
@@ -1387,7 +1387,7 @@ babl_fish_reference_process (const Babl *babl,
 {
   static const void *type_float = NULL;
   static int allow_float_reference = -1;
-#ifdef _WIN32
+#ifdef _UCRT
   char *env = NULL;
 #endif
 
@@ -1431,7 +1431,7 @@ babl_fish_reference_process (const Babl *babl,
 
   if (allow_float_reference == -1)
     {
-#ifndef _WIN64
+#ifndef _UCRT
       allow_float_reference = getenv ("BABL_REFERENCE_NOFLOAT") ? 0 : 1;
 #else
       _dupenv_s(&env, NULL, "BABL_REFERENCE_NOFLOAT");

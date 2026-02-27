@@ -324,7 +324,7 @@ static void measure_timings(void)
    memset (lut, 11, 256 * 256 * 256 *16);
    memset (src, 12, num_pixels * 16);
 
-#ifndef _WIN64
+#ifndef _UCRT
    env = getenv ("BABL_LUT_INFO");
 #else
    _dupenv_s (&env, NULL, "BABL_LUT_INFO");
@@ -334,7 +334,7 @@ static void measure_timings(void)
       lut_info_level = atoi (env);
    }
 
-#ifndef _WIN64
+#ifndef _UCRT
    env = getenv ("BABL_LUT_UNUSED_LIMIT");
 #else
    _dupenv_s (&env, NULL, "BABL_LUT_UNUSED_LIMIT");
@@ -364,7 +364,7 @@ static void measure_timings(void)
    free (lut);
    free (src);
    free (dst);
-#ifdef _WIN64
+#ifdef _UCRT
    free(env);
 #endif
 }
@@ -643,7 +643,7 @@ _babl_legal_error (void)
   if (error != 0.0)
     return error;
 
-#ifndef _WIN64
+#ifndef _UCRT
   env = getenv ("BABL_TOLERANCE");
 #else
   _dupenv_s (&env, NULL, "BABL_TOLERANCE");
@@ -653,7 +653,7 @@ _babl_legal_error (void)
   else
     error = BABL_TOLERANCE;
 
-#ifndef _WIN64
+#ifndef _UCRT
   env = getenv ("BABL_DEBUG_CONVERSIONS");
 #else
   _dupenv_s (&env, NULL, "BABL_DEBUG_CONVERSIONS");
@@ -663,7 +663,7 @@ _babl_legal_error (void)
   else
     debug_conversions = 0;
 
-#ifndef _WIN64
+#ifndef _UCRT
   env = getenv ("BABL_LUT");
 #else
   _dupenv_s (&env, NULL, "BABL_LUT");
@@ -672,7 +672,7 @@ _babl_legal_error (void)
     enable_lut = atoi(env);
   else
     enable_lut = 1;
-#ifdef _WIN64
+#ifdef _UCRT
   free (env);
 #endif
 
@@ -696,7 +696,7 @@ max_path_length (void)
   if (max_length != 0)
     return max_length;
 
-#ifndef _WIN64
+#ifndef _UCRT
   env = getenv ("BABL_PATH_LENGTH");
 #else
   _dupenv_s (&env, NULL, "BABL_PATH_LENGTH");
@@ -711,7 +711,7 @@ max_path_length (void)
                        depth if none are found within two steps in the
                        initial search.
                      */
-#ifdef _WIN64
+#ifdef _UCRT
   free (env);
 #endif
   if (max_length > BABL_HARD_MAX_PATH_LENGTH)
@@ -1167,7 +1167,7 @@ babl_fish_path2 (const Babl *source,
   char      *val           = NULL;
   if (debug_missing < 0)
   {
-#ifndef _WIN64
+#ifndef _UCRT
      val = getenv ("BABL_DEBUG_MISSING");
 #else
      _dupenv_s (&val, NULL, "BABL_DEBUG_MISSING");
@@ -1176,7 +1176,7 @@ babl_fish_path2 (const Babl *source,
        debug_missing = 1;
      else
        debug_missing = 0;
-#ifdef _WIN64
+#ifdef _UCRT
      free (val);
 #endif
   }
@@ -1251,7 +1251,7 @@ babl_fish_path2 (const Babl *source,
   babl->class_type                = BABL_FISH_PATH;
   babl->instance.id               = babl_fish_get_id (source, destination);
   babl->instance.name             = ((char *) babl) + sizeof (BablFishPath);
-#ifndef _WIN64
+#ifndef _UCRT
   strcpy (babl->instance.name, name);
 #else
   strcpy_s (babl->instance.name, strlen(name) + 1, name);

@@ -80,7 +80,7 @@ normalize (const char *str)
 {
   char *s = normalized_buf;
 
-#ifndef _WIN64
+#ifndef _UCRT
   strcpy (normalized_buf, str);
 #else
   strcpy_s (normalized_buf, strlen(str) + 1, str);
