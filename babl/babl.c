@@ -35,10 +35,10 @@ static int ref_count = 0;
 #define BABL_PATH              LIBDIR BABL_DIR_SEPARATOR BABL_LIBRARY
 #endif
 
-
+#if !defined(_WIN32) && !defined(__APPLE__)
 static char * _babl_find_relocatable_exe (void);
 static char * _babl_guess_libdir         (void);
-
+#endif
 
 /*
  * Returns a list of directories if the environment variable $BABL_PATH
@@ -443,7 +443,7 @@ static const char **simd_init (void)
 
 
 /* Private functions */
-
+#if !defined(_WIN32) && !defined(__APPLE__)
 static char *
 _babl_find_relocatable_exe (void)
 {
@@ -584,3 +584,4 @@ _babl_guess_libdir (void)
 
   return rel_libdir;
 }
+#endif
