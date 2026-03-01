@@ -54,13 +54,13 @@ for df in def_files:
    basename, extension = name.split (".")
 
    libname = path.join(directory, "lib" + basename + "-*" + libextension)
-   print ("platform: " + sys.platform + " - extracting symbols from " + libname)
+   sys.stderr.write("platform: " + sys.platform + " - extracting symbols from " + libname + "\n")
 
    filename = df
    try:
       defsymbols = open (filename).read ().split ()[1:]
    except IOError as message:
-      print(message)
+      sys.stderr.write(message)
       sys.exit (-1)
 
    doublesymbols = []
@@ -78,7 +78,7 @@ for df in def_files:
 
    status, nm = subprocess.getstatusoutput (command + libname)
    if status != 0:
-      print("trouble reading {} - has it been compiled?".format(libname))
+      sys.stderr.write("trouble reading {} - has it been compiled?\n".format(libname))
       have_errors = -1
       continue
 
@@ -108,34 +108,34 @@ for df in def_files:
    missing_nms  = [s for s in defsymbols if s not in nmsymbols  and s not in exclude_symbols]
 
    if missing_defs or missing_nms or doublesymbols or not sortok:
-      print()
-      print("Problem found in", filename)
+      sys.stderr.write("\n")
+      sys.stderr.write("Problem found in " + filename + "\n")
 
       if missing_defs:
-         print("  the following symbols are in the library,")
-         print("  but are not listed in the .def-file:")
+         sys.stderr.write("  the following symbols are in the library,\n")
+         sys.stderr.write("  but are not listed in the .def-file:\n")
          for s in missing_defs:
-            print("     +", s)
-         print()
+            sys.stderr.write("     + " + s + "\n")
+         sys.stderr.write("\n")
 
       if missing_nms:
-         print("  the following symbols are listed in the .def-file,")
-         print("  but are not exported by the library.")
+         sys.stderr.write("  the following symbols are listed in the .def-file,\n")
+         sys.stderr.write("  but are not exported by the library.\n")
          for s in missing_nms:
-            print("     -", s)
-         print()
+            sys.stderr.write("     - " + s + "\n")
+         sys.stderr.write("\n")
 
       if doublesymbols:
-         print("  the following symbols are listed multiple times in the .def-file,")
+         sys.stderr.write("  the following symbols are listed multiple times in the .def-file,\n")
          for s in doublesymbols:
-            print("     : %s (line %d)" % s)
-         print()
+            sys.stderr.write("     : %s (line %d)\n" % s)
+         sys.stderr.write("\n")
 
       if not sortok:
-         print("  the .def-file is not properly sorted in the following cases")
+         sys.stderr.write("  the .def-file is not properly sorted in the following cases\n")
          for s in sorterrors:
             if s != "":
-               print("     * ", s)
+               sys.stderr.write("     * " + s + "\n")
 
       have_errors = -1
 
