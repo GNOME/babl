@@ -90,3 +90,4 @@ EXPORTS
   babl_type_class_for_each
   babl_type_is_symmetric
   babl_type_new
+  V0_1_0
