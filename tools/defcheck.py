@@ -34,6 +34,7 @@ from os import path
 
 def_files = sys.argv[1:]
 
+#V0_1_0 is an "absolute symbol" so exclusive to ELF (see gen_babl_map.py)
 exclude_symbols = [
     "V0_1_0"
 ]
