@@ -574,7 +574,7 @@ if build_docs
 endif
 subdir('bin')
 
-if not platform_osx
+if not platform_osx and host_cpu_family != 'x86'
   # Verify .def files for Windows linking.
   # We check this on non-Windows platform  on CI, and on Windows itself.
   custom_target('check-def-files',
