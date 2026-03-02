@@ -574,14 +574,9 @@ if build_docs
 endif
 subdir('bin')
 
-if not platform_win32 and not platform_osx
-  # Verify .def files for Windows.
-  # Ironically we only check this on non-Windows platform, since the
-  # script expects .so libraries, and I'm not sure that the `nm` tool is
-  # available on Windows.
-  # On the other hand, it is how it always has been, since we used to
-  # only run this on dist step (which we historically run on a GNU/Linux
-  # machine). And it worked fine until now.
+if not platform_osx
+  # Verify .def files for Windows linking.
+  # We check this on non-Windows platform  on CI, and on Windows itself.
   custom_target('check-def-files',
     input: [
       babl_def
