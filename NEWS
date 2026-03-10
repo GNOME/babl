@@ -4,6 +4,10 @@ the news section both in the README and the webpage.
                                                                           -->
 
 
+2026-03-10 babl-0.1.124                                             </dt><dd>
+DisplayP3 pre-defined colorspace, build and sanity improvements for CI and
+windows.
+                                                                    </dd><dt>
 2026-01-28 babl-0.1.122                                             </dt><dd>
 fix for startup crash due to mis-loading of x86_64-v4 on -v2 with some ports.
                                                                     </dd><dt>
