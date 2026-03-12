@@ -114,12 +114,14 @@ babl_dir_list (void)
           if (_stricmp (sep2 + 1, "bin") == 0)
             {
               char* filename_tmp;
+              size_t tmp_size;
+
               *(++sep2) = '\0';
-              filename_tmp = babl_malloc (sizeof (char) * (strlen (filename) +
-                                strlen (BABL_DIR_SEPARATOR BABL_LIBRARY) + 4));
-              strcpy_s (filename_tmp, strlen(filename) + 1, filename);
+              tmp_size = strlen (filename) + strlen (BABL_DIR_SEPARATOR BABL_LIBRARY) + 4;
+              filename_tmp = babl_malloc (sizeof (char) * tmp_size);
+              strcpy_s (filename_tmp, tmp_size, filename);
               babl_free (filename);
-              strcat (filename_tmp, "lib" BABL_DIR_SEPARATOR BABL_LIBRARY);
+              strcat_s (filename_tmp, tmp_size, "lib" BABL_DIR_SEPARATOR BABL_LIBRARY);
               filename = filename_tmp;
             }
         }

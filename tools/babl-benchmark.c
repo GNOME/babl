@@ -61,14 +61,26 @@ unicode_hbar (int    width,
   {
     double start = i * 1.0 / width;
     if (start < fraction)
+#ifndef _WIN32
       strcat (ret, block[8]);
+#else
+      strcat_s (ret, sizeof(ret), block[8]);
+#endif
     else
     {
       double miss = (start - fraction) * width;
       if (miss < 1.0)
+#ifndef _WIN32
         strcat (ret, block[(int)((1.0-miss) * 8.999)]);
+#else
+        strcat_s (ret, sizeof(ret), block[(int)((1.0-miss) * 8.999)]);
+#endif
       else
+#ifndef _WIN32
         strcat (ret, block[0]);
+#else    
+        strcat_s (ret, sizeof(ret), block[0]);
+#endif
     }
   }
   return ret;
