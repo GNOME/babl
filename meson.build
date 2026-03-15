@@ -575,6 +575,8 @@ endif
 subdir('bin')
 
 if not platform_osx and host_cpu_family != 'x86'
+  nm = find_program('nm', required: true)
+
   # Verify .def files for Windows linking.
   # We check this on non-Windows platform  on CI, and on Windows itself.
   custom_target('check-def-files',
@@ -584,6 +586,7 @@ if not platform_osx and host_cpu_family != 'x86'
     depends: [
       babl
     ],
+    env: { 'NM': nm.full_path() },
     output: [ 'check-def-files', ],
     command: [
       python, meson.project_source_root() / 'tools' / 'defcheck.py', '@INPUT@',
