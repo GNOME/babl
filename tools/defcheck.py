@@ -28,7 +28,7 @@ Needs the tool "nm", "objdump" or "dumpbin" to work
 
 """
 
-import os, sys, subprocess, shutil
+import os, sys, subprocess, shutil, glob
 
 from os import getenv, path
 
@@ -59,6 +59,10 @@ for df in def_files:
    basename, extension = name.split (".")
 
    libname = path.join(os.getcwd(), directory, libprefix + basename + "-*" + libextension)
+   matches = glob.glob(libname)
+   if matches:
+     libname = matches[0]
+
    #FIXME: This leaks to ninja stdout, which should not happen
    #print ("platform: " + sys.platform + " - extracting symbols from " + libname)
 
@@ -102,11 +106,16 @@ for df in def_files:
       found = False
       nmsymbols = ""
       for s in objnm:
-         if s == " Ordinal      RVA  Name":
+         if "Ordinal   Hint Name" in s or " Ordinal      RVA  Name" in s:
             found = True
          elif found:
-            nmsymbols += s
+            s = s.strip()
+            if not s:
+               break
+            nmsymbols += " 0 0 " + s.split()[-1]
          # else: skip this line
+      
+      print("nmsymbols ARE: " + nmsymbols)
 
    else: # Windows MSVC
 
