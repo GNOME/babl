@@ -62,7 +62,6 @@ for df in def_files:
    matches = glob.glob(libname)
    if matches:
      libname = matches[0]
-
    #FIXME: This leaks to ninja stdout, which should not happen
    #print ("platform: " + sys.platform + " - extracting symbols from " + libname)
 
