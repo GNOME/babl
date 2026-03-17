@@ -469,12 +469,12 @@ endif
 
 # Build relocatable babl
 relocatable = false
-if get_option('relocatable').auto()
+if get_option('relocatable-bundle') == 'platform-default'
   if platform_win32 or platform_osx
     relocatable = true
   endif
 else
-  relocatable = get_option('relocatable').enabled()
+  relocatable = (get_option('relocatable-bundle') == 'yes')
 endif
 conf.set('ENABLE_RELOCATABLE', relocatable)
 
