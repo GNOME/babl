@@ -68,6 +68,7 @@ main (int    argc,
   if (argc == 1)
     {
       babl_cli_print_usage (stderr);
+      babl_exit ();
       return 2;
     }
 
