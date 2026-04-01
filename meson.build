@@ -200,7 +200,7 @@ if buildtype == 'debug' or buildtype == 'debugoptimized'
 endif
 
 
-if platform_win32 and cc.get_id() == 'clang'
+if platform_win32 and cc.get_id() == 'clang' and cc.has_argument('-fansi-escape-codes')
   # Workaround to get colored output
   # https://github.com/msys2/MINGW-packages/issues/2988
   common_c_flags += '-fansi-escape-codes'
