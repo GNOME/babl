@@ -21,7 +21,25 @@ conf = configuration_data()
 
 pkgconfig = import('pkgconfig')
 gnome     = import('gnome')
-python    = import('python').find_installation()
+
+pythonmod = import('python')
+python3_minver = '>=3.10'
+#Non-versioned python (e.g. on Windows)
+py_candidates = ['python']
+#Major versioned python (e.g. on Linux)
+py_candidates += ['python3']
+#Minor versioned python (e.g. on MacPorts)
+foreach i : range(python3_minver.substring(2).split('.')[-1].to_int(), 40)
+  py_candidates += ['python3.' + i.to_string()]
+endforeach
+python = disabler()
+foreach py : py_candidates
+  python_tmp = pythonmod.find_installation(py, required: false)
+  if python_tmp.found() and python_tmp.language_version().version_compare(python3_minver)
+    python = python_tmp
+    break
+  endif
+endforeach
 
 cc        = meson.get_compiler('c')
 prefix    = get_option('prefix')
