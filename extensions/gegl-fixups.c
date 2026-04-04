@@ -49,6 +49,12 @@
 #include "base/util.h"
 #include "extensions/util.h"
 
+#if defined(_MSC_VER) && !defined(__clang__)
+#define BABL_ATTRIBUTE_UNUSED
+#else
+#define BABL_ATTRIBUTE_UNUSED __attribute__((unused))
+#endif
+
 
 /* lookup tables used in conversion */
 
@@ -184,7 +190,7 @@ conv_F_8g (const Babl    *conversion,
 }
 
 
-static inline void __attribute__((unused))
+static inline void BABL_ATTRIBUTE_UNUSED
 conv_8_F (const Babl    *conversion,
           unsigned char *src, 
           unsigned char *dst, 
@@ -233,7 +239,7 @@ conv_rgbaF_rgb8 (const Babl    *conversion,
 }
 
 
-static void __attribute__((unused))
+static void BABL_ATTRIBUTE_UNUSED
 conv_rgbaF_rgba8 (const Babl    *conversion,
                   unsigned char *src, 
                   unsigned char *dst, 
@@ -267,7 +273,7 @@ conv_rgbaF_rgba8 (const Babl    *conversion,
 
 #define conv_rgbaF_rgbP8    conv_rgbaF_rgba8
 
-static void __attribute__((unused))
+static void BABL_ATTRIBUTE_UNUSED
 conv_rgbF_rgb8 (const Babl    *conversion,
                 unsigned char *src, 
                 unsigned char *dst, 
@@ -276,7 +282,7 @@ conv_rgbF_rgb8 (const Babl    *conversion,
   conv_F_8g (conversion, src, dst, samples * 3);
 }
 
-static void __attribute__((unused))
+static void BABL_ATTRIBUTE_UNUSED
 conv_gaF_ga8 (const Babl    *conversion,
               unsigned char *src, 
               unsigned char *dst, 

@@ -127,8 +127,13 @@ babl_gc (void)
   }
 }
 
-#define BABL_LIKELY(x)      __builtin_expect(!!(x), 1)
-#define BABL_UNLIKELY(x)    __builtin_expect(!!(x), 0)
+#ifdef _MSC_VER
+  #define BABL_LIKELY(x)      (x)
+  #define BABL_UNLIKELY(x)    (x)
+#else
+  #define BABL_LIKELY(x)      __builtin_expect(!!(x), 1)
+  #define BABL_UNLIKELY(x)    __builtin_expect(!!(x), 0)
+#endif
 
 static float timings[256] = {0,};
 

@@ -21,7 +21,7 @@
 #include <stdarg.h>
 #include <math.h>
 
-#ifdef _WIN64
+#ifdef _WIN32
 #include <basetsd.h>
 typedef SSIZE_T ssize_t;
 #endif
@@ -276,9 +276,9 @@ babl_format_n (const Babl *btype,
   int            id         = 0;
   int            planar     = 0;
   BablModel     *model      = (BablModel *)babl_model ("Y");
-  BablComponent *component [components];
-  BablSampling  *sampling  [components];
-  const BablType *type      [components];
+  BablComponent **component = babl_malloc (sizeof (BablComponent *) * components);
+  BablSampling  **sampling  = babl_malloc (sizeof (BablSampling *) * components);
+  const BablType **type     = babl_malloc (sizeof (const BablType *) * components);
   char          *name       = NULL;
 
   for (i = 0; i<components; i++)
@@ -296,6 +296,9 @@ babl_format_n (const Babl *btype,
        * returning the preexistent one instead.
        */
       babl_free (name);
+      babl_free (component);
+      babl_free (sampling);
+      babl_free ((void *) type);
       return babl;
     }
 
@@ -305,6 +308,9 @@ babl_format_n (const Babl *btype,
                      babl_space("sRGB"),
                      component, sampling, type, NULL);
 
+  babl_free (component);
+  babl_free (sampling);
+  babl_free ((void *) type);
   babl_format_set_is_format_n (babl);
 
   babl_db_insert (db, babl);

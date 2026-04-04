@@ -290,7 +290,8 @@ dir_foreach (const char *base_path,
       path = babl_strcat (path, entry);
 
       if ((extension = strrchr (entry, '.')) != NULL &&
-          !strcmp (extension, SHREXT))
+          !strcmp (extension, SHREXT) &&
+          strncmp (entry, BABL_LIBRARY, strlen (BABL_LIBRARY)))
         {
           int excluded = 0;
           for (int i = 0; ctx->exclusion_patterns[i]; i++)

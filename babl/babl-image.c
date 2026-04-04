@@ -107,10 +107,11 @@ babl_image_from_linear (char       *buffer,
       case BABL_FORMAT:
         components = format->format.components;
 
-#if 1
+#if defined(__GNUC__) || defined(__clang__)
         babl = __atomic_exchange_n (&format->format.image_template, NULL,
                                     __ATOMIC_ACQ_REL);
 #else
+        /* MSVC lacks the GCC atomic builtin used here; keep the fallback path. */
         /* todo: add a configure check for the above gcc extension and use
                  a mutex if we do not have it?
          */

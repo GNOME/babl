@@ -201,7 +201,7 @@ universal_nonlinear_rgb_u8_converter (const Babl    *conversion,
   uint8_t *rgb_in_u8 = (void*)src_char;
   uint8_t *rgb_out_u8 = (void*)dst_char;
 
-  float rgba_out[4*samples];
+  float *rgba_out = babl_malloc (sizeof (float) * 4 * samples);
 
   for (i = 0; i < samples; i++)
   {
@@ -220,6 +220,8 @@ universal_nonlinear_rgb_u8_converter (const Babl    *conversion,
       for (unsigned int c = 0; c < 3; c ++)
         rgb_out_u8[i*3+c] = rgba_out[i*4+c] * 255.0f;
   }
+
+  babl_free (rgba_out);
 
 }
 
