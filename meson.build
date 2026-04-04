@@ -211,6 +211,12 @@ if cc.get_argument_syntax() == 'msvc'
   common_c_flags += ['/D_USE_MATH_DEFINES']
 endif
 
+if cc.get_id() == 'msvc'
+  common_c_flags += ['/std:c11']
+  common_c_flags += ['/experimental:c11atomics']
+  common_c_flags += ['/D__restrict__=__restrict']
+endif
+
 add_project_arguments(common_c_flags, language: 'c')
 
 # Linker arguments
