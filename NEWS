@@ -4,6 +4,9 @@ the news section both in the README and the webpage.
                                                                           -->
 
 
+2026-04-09 babl-0.1.126                                             </dt><dd>
+It is now possible to build with MSVC.
+                                                                    </dd><dt>
 2026-03-10 babl-0.1.124                                             </dt><dd>
 DisplayP3 pre-defined colorspace, build and sanity improvements for CI and
 windows.
