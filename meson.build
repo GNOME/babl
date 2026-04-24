@@ -242,6 +242,10 @@ elif host_cpu_family == 'aarch64'
   common_c_flags += cc.get_supported_arguments(['-mfpu=neon-fp-armv8', '-ftree-vectorize'])
 endif
 
+if host_machine.system() == 'emscripten'
+  common_l_flags += ['-s', 'TOTAL_MEMORY=142MB']
+endif
+
 add_project_link_arguments(common_l_flags, language: 'c')
 
 ################################################################################
@@ -580,7 +584,7 @@ if build_docs
 endif
 subdir('bin')
 
-if not platform_osx and host_cpu_family != 'x86'
+if not platform_osx and host_machine.system() != 'emscripten'
   nm = find_program('nm', required: false)
 
   # Verify .def files for Windows linking.
