@@ -457,6 +457,10 @@ endif
 if not g_ir.found()
   build_gir = false
 endif
+if build_gir and get_option('default_library') == 'static'
+  warning('Introspection is not supported with static libraries. See: https://gitlab.gnome.org/GNOME/gobject-introspection/-/issues/187')
+  build_gir = false
+endif
 
 # Vapi - only build if building introspection
 if build_gir and get_option('enable-vapi') and vapigen.found()
