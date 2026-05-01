@@ -31,13 +31,13 @@ if cc.links('',
   babl_link_args = [
     '-Wl,--version-script=' + version_script[0].full_path()
   ]
-elif cc.get_id() == 'clang'
+elif cc.get_id() == 'clang' or platform_osx
   if cc.links('', 
       name: '-Wl,-exported_symbols_list', 
       args: ['-Wl,-exported_symbols_list', 
         meson.current_source_dir() / 'test-clang.map']
     )
-    # Clang on Darwin
+    # Clang/GCC on Darwin
     babl_link_args = [
       '-Wl,-exported_symbols_list', version_script[1].full_path()
     ]
