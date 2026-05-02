@@ -41,16 +41,20 @@ array_version = version.split('.')
 major_version = array_version[0].to_int()
 minor_version = array_version[1].to_int()
 micro_version = array_version[2].to_int()
+
+# API & pkg-config version
+api_version = '@0@.@1@'.format(major_version, minor_version)
+lib_name    = meson.project_name() + '-' + api_version
+
+# Libtool versioning
 interface_age = 1
 
-binary_age = 100 * minor_version + micro_version
+binary_age  = 100 * minor_version + micro_version
+lt_current  = binary_age - interface_age
+lt_revision = interface_age
+so_version  = '@0@.@1@.@2@'.format(0, lt_current, lt_revision)
 
-lt_current = binary_age - interface_age
-
-api_version = '@0@.@1@'.format(major_version, minor_version)
 lib_version = '@0@:@1@:@2@'.format(lt_current, interface_age, lt_current)
-so_version  = '@0@.@1@.@2@'.format(0, lt_current, interface_age)
-lib_name    = meson.project_name() + '-' + api_version
 
 stability_version_number = (major_version != 0 ? minor_version : micro_version)
 stable = (stability_version_number % 2 == 0)
