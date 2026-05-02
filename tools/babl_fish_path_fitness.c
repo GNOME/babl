@@ -177,15 +177,15 @@ static int destination_each (Babl *babl,
 
           if (colval < 0.2)
           {
-            sprintf (style, "color:rgb(%i, 0, 0);", (int)(colval * 5 * 255));
+            snprintf (style, sizeof(style), "color:rgb(%i, 0, 0);", (int)(colval * 5 * 255));
           }
           else if (colval < 0.4)
           {
-            sprintf (style, "color:rgb(255, %i, 0);", (int)((colval-0.2) * 5 * 255));
+            snprintf (style, sizeof(style), "color:rgb(255, %i, 0);", (int)((colval-0.2) * 5 * 255));
           }
           else
           {
-            sprintf (style, "color:rgb(255, 255, %i);", (int)((colval-0.4) * 1.666 * 255));
+            snprintf (style, sizeof(style), "color:rgb(255, 255, %i);", (int)((colval-0.4) * 1.666 * 255));
           }
 
         }
@@ -193,7 +193,7 @@ static int destination_each (Babl *babl,
           int steps = 0;
           if (temp)
             steps = babl_list_size (temp->fish_path.conversion_list);
-          sprintf (title, "%s to %s %i steps %.3f mpix/s ", babl_get_name (source), babl_get_name (destination), steps, pixels_per_second/1000.0);
+          snprintf (title, sizeof(title), "%s to %s %i steps %.3f mpix/s ", babl_get_name (source), babl_get_name (destination), steps, pixels_per_second/1000.0);
         }
      }
 #endif

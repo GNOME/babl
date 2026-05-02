@@ -497,7 +497,7 @@ babl_format_new (const void *first_arg,
         {
           char *new_name = babl_malloc (strlen (name) +
                                         strlen (babl_get_name ((Babl*)space)) + 1);
-          sprintf (new_name, "%s-%s", name, babl_get_name ((Babl*)space));
+          snprintf (new_name, strlen (name) + strlen (babl_get_name ((Babl*)space)) + 1, "%s-%s", name, babl_get_name ((Babl*)space));
           babl_free (name);
           name = new_name;
         }

@@ -1220,7 +1220,7 @@ babl_fish_reference_process_float (const Babl *babl,
 
     {
     char src_name[256];
-    sprintf (src_name, "%s float", babl_get_name((void*)babl->fish.source->format.model));
+    snprintf (src_name, sizeof(src_name), "%s float", babl_get_name((void*)babl->fish.source->format.model));
     conv_to_rgba =
         babl_conversion_find (
         babl_format_with_space (src_name,
@@ -1229,7 +1229,7 @@ babl_fish_reference_process_float (const Babl *babl,
                    BABL (BABL ((babl->fish.source))->format.space)));
     }
     {
-      sprintf (dst_name, "%s float", babl_get_name((void*)babl->fish.destination->format.model));
+      snprintf (dst_name, sizeof(dst_name), "%s float", babl_get_name((void*)babl->fish.destination->format.model));
       destination_float_format =
         babl_format_with_space (dst_name,
                    BABL (BABL ((babl->fish.destination))->format.space));

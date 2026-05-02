@@ -78,7 +78,8 @@ babl_dir_list (void)
           /* Construct the babl dir on the parent dir (e.g. <foobar>\Frameworks\{BABL_LIBRARY}) */
           babl_dir = babl_malloc(strlen(dylib_dir) + strlen(BABL_DIR_SEPARATOR) +
                                  strlen(BABL_LIBRARY) + 1);
-          sprintf(babl_dir, "%s%s%s", dylib_dir, BABL_DIR_SEPARATOR, BABL_LIBRARY);
+          snprintf(babl_dir, strlen(dylib_dir) + strlen(BABL_DIR_SEPARATOR) + strlen(BABL_LIBRARY) + 1,
+                   "%s%s%s", dylib_dir, BABL_DIR_SEPARATOR, BABL_LIBRARY);
           
           ret = babl_dir;
         }
