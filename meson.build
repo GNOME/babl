@@ -3,7 +3,6 @@ project('babl', 'c',
   version: '0.1.127',
   meson_version: '>=0.60.0',
   default_options: [
-    'c_std=c11',
     'buildtype=debugoptimized'
   ],
   # https://gitlab.gnome.org/GNOME/babl/issues/
