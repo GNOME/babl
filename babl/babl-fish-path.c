@@ -18,7 +18,9 @@
 
 #include "config.h"
 #include <math.h>
-#ifdef _WIN32
+#ifndef _WIN32
+#include <alloca.h>
+#else
 #include <malloc.h>
 #endif
 #include "babl-internal.h"

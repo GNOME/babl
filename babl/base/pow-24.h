@@ -16,6 +16,11 @@
  * <https://www.gnu.org/licenses/>.
  */
 
+#include <math.h>
+#ifndef M_LN2
+#define M_LN2 0.69314718055994530942
+#endif
+
 #ifndef _BASE_POW_24_H
 #define _BASE_POW_24_H
 

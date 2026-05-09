@@ -21,7 +21,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef _WIN32
+#ifndef _WIN32
+#include <string.h>
+#else
 #define strdup _strdup
 #endif
 

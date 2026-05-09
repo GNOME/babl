@@ -215,13 +215,7 @@ if platform_win32 and cc.get_id() == 'clang'
   common_c_flags += '-fansi-escape-codes'
 endif
 
-if cc.get_argument_syntax() == 'msvc'
-  #Needed otherwise MSVC get angry with the headers provided by UCRT
-  common_c_flags += ['/D_USE_MATH_DEFINES']
-endif
-
 if cc.get_id() == 'msvc'
-  common_c_flags += ['/std:c11']
   common_c_flags += ['/experimental:c11atomics']
   common_c_flags += ['/D__restrict__=__restrict']
 endif
@@ -401,6 +395,9 @@ endif
 # Dependencies
 
 math = cc.find_library('m',   required: false)
+if cc.get_argument_syntax() == 'msvc'
+  common_c_flags += ['/_USE_MATH_DEFINES']
+endif
 thread = dependency('threads',  required: false)
 if platform_android
   log  = cc.find_library('log', required: false)
