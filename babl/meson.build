@@ -176,6 +176,17 @@ if build_gir
     install: true,
   )
 
+  if platform_osx
+    custom_target('libbabl-macos-final-typelib.stamp',
+                  output: [ 'libbabl-macos-final-typelib.stamp' ],
+                  depends: [ babl_gir ],
+                  command: [
+                    make_typelib, babl_gir,
+                    meson.current_build_dir(), prefix, g_ir_compiler, 'nonreloc'
+                  ],
+                  build_by_default: true)
+  endif
+
   if build_vapi
     babl_vapi = gnome.generate_vapi(lib_name,
       sources: babl_gir[0],

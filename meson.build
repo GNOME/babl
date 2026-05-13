@@ -470,6 +470,12 @@ if build_gir and get_option('default_library') == 'static'
   warning('Introspection is not supported with static libraries. See: https://gitlab.gnome.org/GNOME/gobject-introspection/-/issues/187')
   build_gir = false
 endif
+if build_gir
+  g_ir_compiler = find_program('g-ir-compiler')
+  if platform_osx
+    make_typelib = find_program('tools'/'make-mac-typelib.py')
+  endif
+endif
 
 # Vapi - only build if building introspection
 if build_gir and get_option('enable-vapi') and vapigen.found()
