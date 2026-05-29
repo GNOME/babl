@@ -212,7 +212,6 @@ if build_gir
                     make_typelib, babl_gir,
                     meson.current_build_dir(), prefix, g_ir_compiler, 'nonreloc'
                   ],
-                  env: gir_env,
                   build_by_default: true)
   endif
 
