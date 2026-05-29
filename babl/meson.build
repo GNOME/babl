@@ -160,21 +160,48 @@ babl = library(
 if build_gir
   # identity filter, so GIR doesn't choke on the Babl type
   # (since it has the same name as the Babl namespace)
-  babl_gir = gnome.generate_gir(
-    babl,
-    sources: babl_headers,
-    extra_args: [
-      '--identifier-filter-cmd=@0@ @1@'.format(python.full_path(), 
-      '"' + meson.current_source_dir() / 'identfilter.py' + '"'),
-      '-DBABL_IS_BEING_COMPILED',
-      '--quiet',
-    ],
-    namespace: 'Babl',
-    nsversion: api_version,
-    header: 'babl.h',
-    export_packages: 'babl-0.1',
-    install: true,
-  )
+  
+  # Silence 'duplicate -rpath' and other noisy warnings from Xcode 15+
+  gir_env = environment()
+  if platform_osx
+    gir_env.append('CFLAGS', '-Wno-unused-command-line-argument', separator: ' ')
+    gir_env.append('LDFLAGS', '-Wl,-w', separator: ' ')
+  endif
+
+  if meson.version().version_compare('>=1.2')
+    babl_gir = gnome.generate_gir(
+      babl,
+      sources: babl_headers,
+      extra_args: [
+        '--identifier-filter-cmd=@0@ @1@'.format(python.full_path(), 
+        '"' + meson.current_source_dir() / 'identfilter.py' + '"'),
+        '-DBABL_IS_BEING_COMPILED',
+        '--quiet',
+      ],
+      namespace: 'Babl',
+      nsversion: api_version,
+      header: 'babl.h',
+      export_packages: 'babl-0.1',
+      install: true,
+      env: gir_env,
+    )
+  else
+    babl_gir = gnome.generate_gir(
+      babl,
+      sources: babl_headers,
+      extra_args: [
+        '--identifier-filter-cmd=@0@ @1@'.format(python.full_path(), 
+        '"' + meson.current_source_dir() / 'identfilter.py' + '"'),
+        '-DBABL_IS_BEING_COMPILED',
+        '--quiet',
+      ],
+      namespace: 'Babl',
+      nsversion: api_version,
+      header: 'babl.h',
+      export_packages: 'babl-0.1',
+      install: true,
+    )
+  endif
 
   if platform_osx
     custom_target('libbabl-macos-final-typelib.stamp',
@@ -184,6 +211,7 @@ if build_gir
                     make_typelib, babl_gir,
                     meson.current_build_dir(), prefix, g_ir_compiler, 'nonreloc'
                   ],
+                  env: gir_env,
                   build_by_default: true)
   endif
 
