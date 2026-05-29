@@ -162,6 +162,7 @@ if build_gir
   # (since it has the same name as the Babl namespace)
   
   # Silence 'duplicate -rpath' and other noisy warnings from Xcode 15+
+  # See: https://github.com/mesonbuild/meson/commit/17d1cc60ed8246b8e7f0786421bf1cdf5cb19254
   gir_env = environment()
   if platform_osx
     gir_env.append('CFLAGS', '-Wno-unused-command-line-argument', separator: ' ')
