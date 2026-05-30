@@ -486,12 +486,12 @@ endif
 
 gi_docgen = find_program('gi-docgen', required: get_option('gi-docgen'))
 if get_option('gi-docgen').auto()
- build_gi_docgen = build_docs and build_gir and gi_docgen.found() and not meson.is_cross_build()
+ build_gi_docgen = build_gir and gi_docgen.found() and not meson.is_cross_build()
 else
  build_gi_docgen = get_option('gi-docgen').enabled()
 
- if build_gi_docgen and (not build_docs or not build_gir)
-   warning('-Dwith-docs=true and -Denable-gir=true are required to build gi-docgen documentation')
+ if build_gi_docgen and not build_gir
+   warning('-Denable-gir=true is required to build gi-docgen documentation')
    build_gi_docgen = false
  endif
 endif
@@ -598,7 +598,7 @@ subdir('babl')
 subdir('extensions')
 subdir('tests')
 subdir('tools')
-if build_docs
+if build_docs or build_gi_docgen
   subdir('docs')
 endif
 subdir('bin')
