@@ -2,6 +2,7 @@
 option('with-docs',
   type: 'combo',
   choices: ['auto', 'true', 'false'],
+  value: 'false',
   description: 'build documentation'
 )
 option('enable-gir',
