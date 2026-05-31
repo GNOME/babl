@@ -56,7 +56,6 @@ fedora-x86_64:
   script:
     - meson setup --buildtype debug
                   --fatal-meson-warnings
-                  -Dwith-docs=true
                   --default-library=both
                   _build
     - ninja -C _build
