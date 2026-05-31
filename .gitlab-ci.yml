@@ -54,11 +54,11 @@ fedora-x86_64:
   extends: .fedora
   stage: build
   script:
-    - meson --buildtype debug
-            --fatal-meson-warnings
-            -Dwith-docs=true
-            --default-library=both
-            _build
+    - meson setup --buildtype debug
+                  --fatal-meson-warnings
+                  -Dwith-docs=true
+                  --default-library=both
+                  _build
     - ninja -C _build
   artifacts:
     name: "babl-${CI_JOB_NAME}-${CI_COMMIT_REF_NAME}"
