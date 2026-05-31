@@ -3,7 +3,6 @@ tool_names = [
   'babl_fish_path_fitness',
   'babl-lut-verify',
   'babl-benchmark',
-  'babl-html-dump',
   'babl-icc-dump',
   'babl-icc-rewrite',
   'babl-verify',
@@ -12,6 +11,10 @@ tool_names = [
   'introspect',
   'trc-validator',
 ]
+
+if build_docs
+  tool_names += ['babl-html-dump']
+endif
 
 foreach tool_name : tool_names
   tool = executable(tool_name,
