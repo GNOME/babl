@@ -176,16 +176,19 @@ char *babl_icc_get_key (const char *icc_data,
 
 /**
  * babl_format:
+ * @encoding: format used to encode the colors.
  *
  * Returns the babl object representing the color format given by
  * @name such as for example "RGB u8", "CMYK float" or "CIE Lab u16",
  * creates a format using the sRGB space, to also specify the color space
- * and TRCs for a format, see babl_format_with_space.
+ * and TRCs for a format, see [func@Babl.format_with_space].
  */
 const Babl * babl_format            (const char *encoding);
 
 /**
  * babl_format_with_space:
+ * @encoding: format used to encode the colors.
+ * @space: (nullable): the working space.
  *
  * Returns the babl object representing the color format given by
  * @name such as for example "RGB u8", "R'G'B'A float", "Y float" with
@@ -193,6 +196,8 @@ const Babl * babl_format            (const char *encoding);
  * has -space suffixed to it, unless the space requested is sRGB then
  * the unsuffixed version is used. If a format is passed in as space
  * the space of the format is used.
+ *
+ * Passing %NULL as @space is equivalent to passing the `sRGB` space.
  */
 const Babl * babl_format_with_space (const char *encoding, const Babl *space);
 
