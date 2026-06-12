@@ -580,14 +580,14 @@ authors_file = files('AUTHORS')
 news_file = files('NEWS')
 todo_file = files('TODO')
 export_symbols_file = files('babl/babl.def')
-gen_babl_map_file = files('gen_babl_map.py')
+gen_babl_map_file = files('tools' / 'gen_babl_map.py')
 
 ################################################################################
 # Install debug data (.pdb) on Windows
 # Ideally meson should take care of it automatically.
 # See: https://github.com/mesonbuild/meson/issues/12977
 if platform_win32 and debugging_format == 'Native' and cc.get_argument_syntax() != 'msvc'
-  install_win_debug_script = find_program('./meson_install_win_debug.py')
+  install_win_debug_script = find_program('tools/meson_install_win_debug.py')
   meson.add_install_script(install_win_debug_script)
 endif
 
