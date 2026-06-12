@@ -32,9 +32,9 @@ if cc.links('',
     '-Wl,--version-script=' + version_script[0].full_path()
   ]
 elif cc.get_id() == 'clang' or platform_osx
-  if cc.links('', 
+  if cc.links('void babl_dummy(void) {}', 
       name: '-Wl,-exported_symbols_list', 
-      args: ['-Wl,-exported_symbols_list', 
+      args: ['-shared', '-Wl,-exported_symbols_list', 
         meson.current_source_dir() / 'test-clang.map']
     )
     # Clang/GCC on Darwin
