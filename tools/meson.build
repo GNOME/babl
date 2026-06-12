@@ -10,6 +10,7 @@ tool_names = [
   'formats',
   'introspect',
   'trc-validator',
+  'babl-gen-test-pixels', #generates babl/babl-ref-pixels.inc
 ]
 
 if build_docs
