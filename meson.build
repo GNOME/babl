@@ -226,6 +226,14 @@ if cc.get_id() == 'msvc'
   common_c_flags += ['/D__restrict__=__restrict']
 endif
 
+if platform_osx
+  osx_cflags = '-Werror=unguarded-availability-new'
+  if cc.has_argument(osx_cflags)
+    #needed to allow targeting older macOS while building on newer macOS (like on MS Windows)
+    add_project_arguments(osx_cflags, language: 'c')
+  endif
+endif
+
 add_project_arguments(common_c_flags, language: 'c')
 
 # Linker arguments
