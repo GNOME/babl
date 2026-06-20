@@ -1,6 +1,12 @@
 {
-    "files.associations": {
-        "*.jnlp": "xml",
-        "babl-internal.h": "c"
-    }
+  "C_Cpp.clang_format_fallbackStyle": "GNU",
+  "editor.rulers": [
+    80
+  ],
+  "editor.tabSize": 2,
+  "editor.renderControlCharacters": true,
+  "editor.renderWhitespace": "trailing",
+  "files.trimTrailingWhitespace": true,
+  "files.eol": "\n",
+  "git.addAICoAuthor": "chatAndAgent"
 }
