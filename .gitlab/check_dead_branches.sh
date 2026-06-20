@@ -4,13 +4,13 @@ printf "\e[0Ksection_start:`date +%s`:branch_check[collapsed=false]\r\e[0KChecki
 git branch -r | grep -v 'origin/HEAD' | grep -v "origin/$CI_DEFAULT_BRANCH" | while IFS= read remote_branch; do
   remote_branch=$(printf "%s\n" "$remote_branch" | sed 's/^ *//;s/ *$//')
   branch_name=$(printf "%s\n" "$remote_branch" | sed 's|origin/||')
-  
+
   # NOT CHECKING
   ## Skip old stable branches
-  #if echo "$branch_name" | grep -q "PATTERN" || [ "$branch_name" = "NAME" ]; then
-  #  printf "\033[33m(SKIP)\033[0m: $branch_name is a snapshot of $CI_DEFAULT_BRANCH but no problem\n"
-  #  continue
-  #fi
+  if echo "$branch_name" | grep -q "NO_PATTERN" || [ "$branch_name" = "NO_NAME" ]; then
+    printf "\033[33m(SKIP)\033[0m: $branch_name is a snapshot of $CI_DEFAULT_BRANCH but no problem\n"
+    continue
+  fi
   ## Skip recently created branches
   if [ "$(git rev-parse "$remote_branch")" = "$(git rev-parse "$CI_COMMIT_SHA")" ]; then
     printf "\033[33m(SKIP)\033[0m: $branch_name is identical to $CI_DEFAULT_BRANCH but no problem\n"
