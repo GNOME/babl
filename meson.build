@@ -3,7 +3,7 @@ project('babl', 'c',
   version: '0.1.127',
   meson_version: '>=0.60.0',
   default_options: [
-    #'c_std=none', # c11 breaks Linux/GNU, gnu11 breaks Windows/MSVC, so set to none 
+    #'c_std=none', # c11 breaks Linux/GNU, gnu11 breaks Windows/MSVC, so set to none
     'buildtype=debugoptimized'
   ],
   # https://gitlab.gnome.org/GNOME/babl/issues/
@@ -156,7 +156,7 @@ build_platform_win32 = (build_os.startswith('mingw') or
 
 # Only try to run compiled programs if native compile or cross-compile
 # and have exe wrapper. If we don't need a wrapper (e.g. 32 bit build in
-# 64-bit environment) then set proprty has_exe_wrapper=true in cross 
+# 64-bit environment) then set proprty has_exe_wrapper=true in cross
 # file
 can_run_host_binaries = meson.can_run_host_binaries()
 
@@ -201,9 +201,9 @@ if buildtype == 'debug' or buildtype == 'debugoptimized'
     # DWARF symbols for GCC and LLDB on Windows (fallback)
     debugging_format = 'DWARF'
     if cc.get_id() == 'clang'
-      # Optimize DWARF symbols to Dr. Mingw
+      # Optimize DWARF symbols to Dr. Mingw (not needed anymore)
       # https://github.com/jrfonseca/drmingw/issues/42
-      common_c_flags += '-gdwarf-aranges'
+      #common_c_flags += '-gdwarf-aranges'
     endif
   endif
 endif
