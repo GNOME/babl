@@ -139,7 +139,7 @@ const Babl *babl_space_from_icc (const char       *icc_data,
                                  const char      **error);
 /* babl_space_get_gamma:
  * @space: a babl space
- * 
+ *
  * Returns the gamma of the TRCs of the space, iff they are all equal
  * and a simple gamma number, otherwise 0.0 is returned.
  */
@@ -618,10 +618,10 @@ const Babl *babl_space_with_trc (const Babl *space, const Babl *trc);
  * @yg: (out) (optional): The Y-coordinate of the green primary
  * @xb: (out) (optional): The X-coordinate of the blue primary
  * @yb: (out) (optional): The Y-coordinate of the blue primary
- * @red_trc: (out) (optional): The red component of the TRC.
- * @green_trc: (out) (optional): The green component of the TRC (can be %NULL
+ * @red_trc: (out) (transfer none) (optional): The red component of the TRC.
+ * @green_trc: (out) (transfer none) (optional): The green component of the TRC (can be %NULL
  *             if it's the same as @red_trc).
- * @blue_trc: (out) (optional): The blue component of the TRC (can be %NULL if
+ * @blue_trc: (out) (transfer none) (optional): The blue component of the TRC (can be %NULL if
  *            it's the same as @red_trc).
  *
  * query the chromaticities of white point and primaries as well as trcs
