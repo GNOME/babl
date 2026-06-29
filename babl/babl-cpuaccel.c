@@ -421,7 +421,7 @@ arch_accel_cyrix (void)
   return caps;
 }
 
-#ifdef USE_SSE
+#if defined(USE_SSE) || defined(USE_AVX2)
 static jmp_buf sigill_return;
 
 static void
@@ -429,7 +429,9 @@ sigill_handler (gint n)
 {
   longjmp (sigill_return, 1);
 }
+#endif
 
+#ifdef USE_SSE
 static gboolean
 arch_accel_sse_os_support (void)
 {
@@ -447,6 +449,25 @@ arch_accel_sse_os_support (void)
   return TRUE;
 }
 #endif /* USE_SSE */
+
+#ifdef USE_AVX2
+static gboolean
+arch_accel_avx2_os_support (void)
+{
+  if (setjmp (sigill_return))
+    {
+      return FALSE;
+    }
+  else
+    {
+      signal (SIGILL, sigill_handler);
+      __asm__ __volatile__ ("vxorps %xmm0, %xmm0, %xmm0");
+      signal (SIGILL, SIG_DFL);
+    }
+
+  return TRUE;
+}
+#endif /* USE_AVX2 */
 
 static guint32
 arch_accel (void)
@@ -489,6 +510,18 @@ arch_accel (void)
               BABL_CPU_ACCEL_X86_SSE3  |
               BABL_CPU_ACCEL_X86_SSSE3 |
               BABL_CPU_ACCEL_X86_SSE4_1);
+#endif
+#ifdef USE_AVX2
+  if ((caps & BABL_CPU_ACCEL_X86_AVX) && !arch_accel_avx2_os_support ())
+    caps &= ~(BABL_CPU_ACCEL_X86_AVX   |
+              BABL_CPU_ACCEL_X86_AVX2  |
+              BABL_CPU_ACCEL_X86_FMA   |
+              BABL_CPU_ACCEL_X86_F16C  |
+              BABL_CPU_ACCEL_X86_AVX512F  |
+              BABL_CPU_ACCEL_X86_AVX512DQ |
+              BABL_CPU_ACCEL_X86_AVX512CD |
+              BABL_CPU_ACCEL_X86_AVX512BW |
+              BABL_CPU_ACCEL_X86_AVX512VL);
 #endif
 
   return caps;
