@@ -526,7 +526,7 @@ void  babl_palette_reset       (const Babl        *babl);
 
 
 /**
- * babl_set_user_data: (skip)
+ * babl_set_user_data: (skip) (attributes skip-reason=unknown_since_1b254185)
  *
  * associate a data pointer with a format/model, this data can be accessed and
  * used from the conversion functions, encoding color profiles, palettes or
@@ -536,7 +536,7 @@ void  babl_palette_reset       (const Babl        *babl);
 void   babl_set_user_data     (const Babl *babl, void *data);
 
 /**
- * babl_get_user_data: (skip)
+ * babl_get_user_data: (skip) (attributes skip-reason=unknown_since_1b254185)
  *
  * Get data set with babl_set_user_data
  */
@@ -749,7 +749,7 @@ int babl_space_is_gray (const Babl *space);
 
 typedef void (*BablFishProcess) (const Babl *babl, const char *src, char *dst, long n, void *data);
 /**
- * babl_fish_get_process: (skip)
+ * babl_fish_get_process: (skip) (attributes skip-reason=unknown_since_e71b7e90)
  *
  * get the dispatch function of a fish, this allows faster use of a fish
  * in a loop than the more indirect method of babl_process, this also avoids
@@ -759,7 +759,7 @@ BablFishProcess babl_fish_get_process (const Babl *babl);
 
 
 /**
- * babl_gc: (skip)
+ * babl_gc: (skip) (attributes skip-reason=unknown_since_5728b438)
  *
  * Do a babl fish garbage collection cycle, should only be called
  * from the main thread with no concurrent babl processing in other
