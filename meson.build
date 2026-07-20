@@ -618,7 +618,8 @@ if host_machine.system() != 'emscripten'
   # We check this on non-Windows/non-macOS platform (Debian) on CI, and on Windows and macOS itself.
   custom_target('check-def-files',
     input: [
-      babl_def
+      babl_def,
+      build_gir ? babl_gir : [],
     ],
     depends: [
       babl
