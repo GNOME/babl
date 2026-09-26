@@ -46,14 +46,14 @@
 #include "babl-class.h"
 #include "babl-list.h"
 #include "babl-hash-table.h"
-#include "babl-db.h"
+#include "babl-db-private.h"
 #include "babl-ids.h"
 #include "babl-shared-util.h"
-#include "babl-util.h"
-#include "babl-memory.h"
+#include "babl-util-private.h"
+#include "babl-memory-private.h"
 #include "babl-mutex.h"
 #include "babl-cpuaccel.h"
-#include "babl-polynomial.h"
+#include "babl-polynomial-private.h"
 
 #ifdef __ANDROID_API__
 #include <android/log.h>

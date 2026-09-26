@@ -22,7 +22,7 @@
 #include <math.h>
 #include <string.h>
 #include "base/util.h"
-#include "babl-polynomial.h"
+#include "babl-polynomial-private.h"
 
 BABL_CLASS_DECLARE (trc);
 

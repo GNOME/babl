@@ -25,7 +25,7 @@
 
 #include "babl-list.h"
 #include "babl-hash-table.h"
-#include "babl-memory.h"
+#include "babl-memory-private.h"
 #include "babl-mutex.h"
 
 typedef struct _BablDb BablDb;

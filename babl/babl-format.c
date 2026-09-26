@@ -28,11 +28,11 @@ typedef SSIZE_T ssize_t;
 
 #define NEEDS_BABL_DB
 #include "babl-internal.h"
-#include "babl-db.h"
+#include "babl-db-private.h"
 #include "babl-ref-pixels.h"
 
 
-static int 
+static int
 babl_format_destruct (void *babl)
 {
   BablFormat *format = babl;
@@ -150,7 +150,7 @@ format_new (const char      *name,
 }
 
 Babl *
-format_new_from_format_with_space (const Babl *format, 
+format_new_from_format_with_space (const Babl *format,
                                    const Babl *space)
 {
   Babl *ret;
@@ -710,7 +710,7 @@ babl_get_user_data (const Babl *babl)
 }
 
 void
-babl_set_user_data (const Babl *cbabl, 
+babl_set_user_data (const Babl *cbabl,
                     void       *data)
 {
   Babl *babl = (Babl*) cbabl;
@@ -793,7 +793,7 @@ babl_format_with_space (const char *encoding, const Babl *space)
 
   if (babl_format_is_palette (example_format))
   {
-    /* XXX we should allocate a new palette name, and 
+    /* XXX we should allocate a new palette name, and
            duplicate the path data, converted for new space
      */
     return example_format;

@@ -22,7 +22,7 @@
 #include <math.h>
 #define NEEDS_BABL_DB
 #include "babl-internal.h"
-#include "babl-db.h"
+#include "babl-db-private.h"
 #include "babl-ref-pixels.h"
 
 static const Babl *construct_double_format (const Babl *model);
@@ -430,7 +430,7 @@ static int    babl_remodel_size = 0;
 static int    babl_n_remodels = 0;
 
 const Babl *
-babl_remodel_with_space (const Babl *model, 
+babl_remodel_with_space (const Babl *model,
                          const Babl *space)
 {
   Babl *ret;
@@ -491,13 +491,13 @@ babl_remodel_with_space (const Babl *model,
 }
 
 const Babl *
-babl_model_with_space (const char *name, 
+babl_model_with_space (const char *name,
                        const Babl *space)
 {
   return babl_remodel_with_space (babl_model (name), space);
 }
 
-BablModelFlag 
+BablModelFlag
 babl_get_model_flags (const Babl *babl)
 {
   if (!babl) return 0;

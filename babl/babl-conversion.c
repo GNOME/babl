@@ -23,7 +23,7 @@
 #include <math.h>
 #define NEEDS_BABL_DB
 #include "babl-internal.h"
-#include "babl-db.h"
+#include "babl-db-private.h"
 #include "babl-ref-pixels.h"
 
 static void
@@ -254,8 +254,8 @@ static char buf[512] = "";
 static int collisions = 0;
 
 static char *
-create_name (Babl *source, 
-             Babl *destination, 
+create_name (Babl *source,
+             Babl *destination,
              int   type)
 {
   if (babl_extender ())
@@ -283,8 +283,8 @@ create_name (Babl *source,
 }
 
 const char *
-babl_conversion_create_name (Babl *source, 
-                             Babl *destination, 
+babl_conversion_create_name (Babl *source,
+                             Babl *destination,
                              int   type,
                              int   allow_collision)
 {

@@ -29,7 +29,7 @@
 
 #define NEEDS_BABL_DB
 #include "babl-internal.h"
-#include "babl-db.h"
+#include "babl-db-private.h"
 #include "babl-base.h"
 
 #include <string.h>
@@ -121,7 +121,7 @@ babl_extension_base (void)
   return babl;
 }
 
-void 
+void
 babl_extension_deinit (void)
 {
   babl_free (babl_quiet);
@@ -164,8 +164,8 @@ babl_extension_deinit (void)
 #define dlerror()              strerror (errno)
 
 static void *
-dlsym (HLIB        handle, 
-       const char *name) 
+dlsym (HLIB        handle,
+       const char *name)
 {
   void *address = 0;
   shl_findsym(&handle, name, TYPE_UNDEFINED, &address);

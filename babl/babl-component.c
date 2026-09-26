@@ -19,7 +19,7 @@
 #include "config.h"
 #define NEEDS_BABL_DB
 #include "babl-internal.h"
-#include "babl-db.h"
+#include "babl-db-private.h"
 #include <string.h>
 
 #include <stdarg.h>
@@ -53,9 +53,9 @@ component_new (const char *name,
 
 
 static int
-is_component_duplicate (Babl *babl, 
-                        int   luma, 
-                        int   chroma, 
+is_component_duplicate (Babl *babl,
+                        int   luma,
+                        int   chroma,
                         int   alpha)
 {
   if (babl->component.luma   != luma   ||

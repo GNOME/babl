@@ -23,7 +23,7 @@
 
 #define NEEDS_BABL_DB
 #include "babl-internal.h"
-#include "babl-db.h"
+#include "babl-db-private.h"
 #include "babl-ref-pixels.h"
 
 static int
@@ -32,7 +32,7 @@ babl_type_destroy (void *data)
   Babl *babl = data;
   if (babl->type.from_list)
     babl_free (babl->type.from_list);
-  return 0; 
+  return 0;
 }
 
 static Babl *

@@ -25,7 +25,7 @@
 #include "config.h"
 #include "babl-internal.h"
 #include "babl.h"
-#include "babl-memory.h"
+#include "babl-memory-private.h"
 
 #ifdef HAVE_STDATOMIC_H
 #include <stdatomic.h>
