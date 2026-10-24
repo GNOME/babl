@@ -233,6 +233,52 @@ babl_fatal (const char *format, ...)
 }while(0)
 /***** LOGGER (end)**/
 
+#ifdef BABL_ENABLE_PROFILING
+
+#define BABL_INSTRUMENT_SCOPE_START(name)
+
+#define BABL_INSTRUMENT_SCOPE_END()
+
+#if defined(BABL_ISO_VARIADIC_MACROS)
+
+#define BABL_INSTRUMENT_SCOPE_MSG(...)
+
+#elif defined(BABL_GNUC_VARIADIC_MACROS)
+
+#define BABL_INSTRUMENT_SCOPE_MSG(msg...)
+
+#else
+
+static inline void
+BABL_INSTRUMENT_SCOPE_MSG (const char *format,
+                           ...)
+{
+  return;
+}
+
+#endif /* VARIADIC_MACROS */
+
+#else /* BABL_ENABLE_PROFILING */
+
+#define BABL_INSTRUMENT_SCOPE_START(name)
+#define BABL_INSTRUMENT_SCOPE_END()
+
+#if defined(BABL_ISO_VARIADIC_MACROS)
+
+#define BABL_INSTRUMENT_SCOPE_MSG(...)
+
+#elif defined(BABL_GNUC_VARIADIC_MACROS)
+
+#define BABL_INSTRUMENT_SCOPE_MSG(msg...)
+
+#else
+
+BABL_INSTRUMENT_SCOPE_MSG (const char *format,...);
+
+#endif /* VARIADIC_MACROS */
+
+#endif /* BABL_ENABLE_PROFILING */
+
 #define BABL_CLASS_TYPE_IS_VALID(klass_type)                            \
     (  ((klass_type)>=BABL_INSTANCE ) && ((klass_type)<=BABL_SKY) ?1:0 )
 
