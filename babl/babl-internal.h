@@ -32,6 +32,7 @@
 
 
 #include <errno.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -58,6 +59,9 @@
 
 #ifdef __ANDROID_API__
 #include <android/log.h>
+#endif
+#ifdef TRACY_ENABLE
+#include <tracy/tracy/TracyC.h>
 #endif
 
 Babl *   babl_conversion_find           (const void     *source,
@@ -233,19 +237,89 @@ babl_fatal (const char *format, ...)
 }while(0)
 /***** LOGGER (end)**/
 
-#ifdef BABL_ENABLE_PROFILING
+#ifdef TRACY_ENABLE
 
-#define BABL_INSTRUMENT_SCOPE_START(name)
+#ifdef TRACY_MANUAL_LIFETIME
 
-#define BABL_INSTRUMENT_SCOPE_END()
+#define _TRACY_GUARD(STMT) \
+  if (TracyCIsStarted)     \
+    {                      \
+      STMT                 \
+    }
+
+#define _TRACY_ZONE_START(name) \
+  TracyCZoneNS (__tracy_zone_ctx, (name), 4, TracyCIsStarted)
+
+#else
+
+#define _TRACY_GUARD(STMT) STMT
+
+#define _TRACY_ZONE_START(name) \
+  TracyCZoneNS (__tracy_zone_ctx, (name), 4, TRUE)
+
+#endif
+
+#define _TRACY_ZONE_END() \
+  _TRACY_GUARD (TracyCZoneEnd (__tracy_zone_ctx))
 
 #if defined(BABL_ISO_VARIADIC_MACROS)
 
-#define BABL_INSTRUMENT_SCOPE_MSG(...)
+#define _TRACY_ZONE_TEXT(...)                                                \
+  {                                                                          \
+    _TRACY_GUARD (                                                           \
+        char _tracy_msg[128] = { 0 };                                        \
+        snprintf (_tracy_msg, 128, __VA_ARGS__);                             \
+        TracyCZoneText (__tracy_zone_ctx, _tracy_msg, strlen (_tracy_msg));) \
+  }
 
 #elif defined(BABL_GNUC_VARIADIC_MACROS)
 
-#define BABL_INSTRUMENT_SCOPE_MSG(msg...)
+#define _TRACY_ZONE_TEXT(msg...)                                             \
+  {                                                                          \
+    _TRACY_GUARD (                                                           \
+        char _tracy_msg[128] = { 0 };                                        \
+        snprintf (_tracy_msg, 128, msg);                                     \
+        TracyCZoneText (__tracy_zone_ctx, _tracy_msg, strlen (_tracy_msg));) \
+  }
+
+#endif
+
+#else
+
+#define _TRACY_ZONE_START(name)
+#define _TRACY_ZONE_END()
+
+#if defined(BABL_ISO_VARIADIC_MACROS)
+
+#define _TRACY_ZONE_TEXT(...)
+
+#elif defined(BABL_GNUC_VARIADIC_MACROS)
+
+#define _TRACY_ZONE_TEXT(msg...)
+
+#endif
+
+#endif /* TRACY_ENABLE */
+
+#ifdef BABL_ENABLE_PROFILING
+
+#define BABL_INSTRUMENT_SCOPE_START(name) \
+  {                                       \
+    _TRACY_ZONE_START (name)
+
+#define BABL_INSTRUMENT_SCOPE_END() \
+  _TRACY_ZONE_END ();               \
+  }
+
+#if defined(BABL_ISO_VARIADIC_MACROS)
+
+#define BABL_INSTRUMENT_SCOPE_MSG(...) \
+  _TRACY_ZONE_TEXT (__VA_ARGS__)
+
+#elif defined(BABL_GNUC_VARIADIC_MACROS)
+
+#define BABL_INSTRUMENT_SCOPE_MSG(msg...) \
+  _TRACY_ZONE_TEXT (msg)
 
 #else
 

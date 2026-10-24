@@ -436,6 +436,28 @@ endif
 # vapigen
 vapigen   = dependency('vapigen', version:'>=0.20.0', required: false)
 
+if get_option('tracy_enable')
+  tracy = dependency('tracy',
+    version: '>=0.14.0',
+    required: true,
+    fallback : ['tracy', 'tracy_dep'],
+    default_options: [
+      'default_library=shared',
+      'manual_lifetime=true',
+      'on_demand=true',
+      'only_localhost=true',
+    ],
+  )
+  if tracy.found() and get_option ('buildtype') != 'debugoptimized'
+    warning ('When using Tracy, profiling builds should set --buildtype=debugoptimized')
+  endif
+else
+  tracy = disabler()
+endif
+
+if get_option('tracy_enable') and tracy.found()
+  conf.set('BABL_ENABLE_PROFILING', true)
+endif
 
 ################################################################################
 # Build utilities
@@ -720,6 +742,7 @@ summary(
 )
 summary(
   {
-    'lcms' : lcms.found(),
+    'lcms'  : lcms.found(),
+    'Tracy' : tracy.found(),
   }, section: 'Optional dependencies'
 )

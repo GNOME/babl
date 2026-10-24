@@ -125,6 +125,10 @@ endif
 babl_deps = [math, thread, dl, lcms, log]
 babl_includes = [rootInclude, bablBaseInclude]
 
+if tracy.found()
+  babl_deps += tracy
+endif
+
 if host_cpu_family == 'x86_64'
   simd_extra = [babl_base_x86_64_v2, babl_base_x86_64_v3, babl_base_x86_64_v4]
 elif host_cpu_family == 'arm'

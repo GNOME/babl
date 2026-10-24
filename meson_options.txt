@@ -33,6 +33,14 @@ option('relocatable-bundle',
   choices: [ 'yes', 'no', 'platform-default' ]
 )
 
+# This would, ideally, be 'feature' but the fallback project relies on the
+# option to be a 'boolean'.
+option('tracy_enable',
+  type: 'boolean',
+  value: false,
+  description: 'Tracing using Tracy',
+)
+
 # Compiler extensions
 option('enable-mmx',
   type: 'boolean', 

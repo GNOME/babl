@@ -17,12 +17,18 @@ if build_docs
   tool_names += ['babl-html-dump']
 endif
 
+tool_deps = [math, thread, lcms, log, tracy]
+
+if tracy.found()
+  tool_deps += tracy
+endif
+
 foreach tool_name : tool_names
   tool = executable(tool_name,
     tool_name + '.c',
     include_directories: [rootInclude, bablInclude],
     link_with: babl,
-    dependencies: [math, thread, lcms, log],
+    dependencies: tool_deps,
     install: false,
   )
 
