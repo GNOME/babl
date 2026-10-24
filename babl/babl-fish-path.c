@@ -839,6 +839,9 @@ get_conversion_path (PathContext *pc,
       BablList *list;
       int i;
 
+      BABL_INSTRUMENT_SCOPE_START("get conversion path");
+      BABL_INSTRUMENT_SCOPE_MSG ("encoding: %s", babl_format_get_encoding (current_format));
+
       list = current_format->format.from_list;
       if (list)
         {
@@ -862,6 +865,8 @@ get_conversion_path (PathContext *pc,
           /* Remove the current format from current path */
           current_format->format.visited = 0;
         }
+
+      BABL_INSTRUMENT_SCOPE_END ();
    }
 }
 
@@ -1503,6 +1508,12 @@ babl_process_rows (const Babl *fish,
   if (n <= 0)
     return 0;
 
+  BABL_INSTRUMENT_SCOPE_START ("process fish rows");
+  BABL_INSTRUMENT_SCOPE_MSG ("src stride: %d", source_stride);
+  BABL_INSTRUMENT_SCOPE_MSG ("dst stride: %d", dest_stride);
+  BABL_INSTRUMENT_SCOPE_MSG ("rows: %d", rows);
+  BABL_INSTRUMENT_SCOPE_MSG ("size: %ld", n);
+
   for (row = 0; row < rows; row++)
     {
       babl->fish.dispatch (babl, (void*)src, (void*)dst, n, *babl->fish.data);
@@ -1510,6 +1521,9 @@ babl_process_rows (const Babl *fish,
       src += source_stride;
       dst += dest_stride;
     }
+
+  BABL_INSTRUMENT_SCOPE_END ();
+
   return n * rows;
 }
 
