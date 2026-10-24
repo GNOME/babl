@@ -177,7 +177,7 @@ real_babl_log (const char *file,
 #endif
 #endif
 
-#if defined(__cplusplus) && defined(BABL_ISO_CXX_VARIADIC_MACROS)
+#if (defined(__cplusplus) && defined(BABL_ISO_CXX_VARIADIC_MACROS)) || __STDC_VERSION__ >= 199901L
 #  define BABL_ISO_VARIADIC_MACROS 1
 #endif
 
