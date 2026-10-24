@@ -436,6 +436,12 @@ endif
 # vapigen
 vapigen   = dependency('vapigen', version:'>=0.20.0', required: false)
 
+sysprof_capture = dependency('sysprof-capture-4',
+  version: '>=3.38.0',
+  required: get_option('sysprof'),
+)
+conf.set('HAVE_SYSPROF', sysprof_capture.found())
+
 if get_option('tracy_enable')
   tracy = dependency('tracy',
     version: '>=0.14.0',
@@ -455,7 +461,7 @@ else
   tracy = disabler()
 endif
 
-if get_option('tracy_enable') and tracy.found()
+if sysprof_capture.found() or (get_option('tracy_enable') and tracy.found())
   conf.set('BABL_ENABLE_PROFILING', true)
 endif
 
@@ -742,7 +748,8 @@ summary(
 )
 summary(
   {
-    'lcms'  : lcms.found(),
-    'Tracy' : tracy.found(),
+    'lcms'   : lcms.found(),
+    'Sysprof': sysprof_capture.found(),
+    'Tracy'  : tracy.found(),
   }, section: 'Optional dependencies'
 )

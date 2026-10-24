@@ -60,6 +60,9 @@
 #ifdef __ANDROID_API__
 #include <android/log.h>
 #endif
+#ifdef HAVE_SYSPROF
+#include <sysprof-capture.h>
+#endif
 #ifdef TRACY_ENABLE
 #include <tracy/tracy/TracyC.h>
 #endif
@@ -237,6 +240,67 @@ babl_fatal (const char *format, ...)
 }while(0)
 /***** LOGGER (end)**/
 
+#ifdef HAVE_SYSPROF
+
+#define _SYSPROF_CAPTURE_MARK_START(name)                           \
+  const gchar *__sysprof_mark_name  = name;                         \
+  gint64       __sysprof_start_time = SYSPROF_CAPTURE_CURRENT_TIME; \
+  GString     *__sysprof_msg        = g_string_sized_new (128)
+
+#define _SYSPROF_CAPTURE_MARK_END()                                    \
+  G_STMT_START                                                         \
+  {                                                                    \
+    gint64 __sysprof_end_time = SYSPROF_CAPTURE_CURRENT_TIME;          \
+    sysprof_collector_mark (__sysprof_start_time,                      \
+                            __sysprof_end_time - __sysprof_start_time, \
+                            "babl",                                    \
+                            __sysprof_mark_name,                       \
+                            __sysprof_msg->str);                       \
+    g_string_free (__sysprof_msg, TRUE);                               \
+  }                                                                    \
+  G_STMT_END
+
+#if defined(BABL_ISO_VARIADIC_MACROS)
+
+#define _SYSPROF_CAPTURE_MSG(...)                        \
+  G_STMT_START                                           \
+  {                                                      \
+    if (__sysprof_msg->len != 0)                         \
+      g_string_append (__sysprof_msg, ", ");             \
+    g_string_append_printf (__sysprof_msg, __VA_ARGS__); \
+  }                                                      \
+  G_STMT_END
+
+#elif defined(BABL_GNUC_VARIADIC_MACROS)
+
+#define _SYSPROF_CAPTURE_MSG(msg...)               \
+  G_STMT_START                                     \
+  {                                                \
+    if (__sysprof_msg->len != 0)                   \
+      g_string_append (__sysprof_msg, ", ");       \
+    g_string_append_printf (__sysprof_msg, ##msg); \
+  }                                                \
+  G_STMT_END
+
+#endif /* VARIADIC_MACROS */
+
+#else /* HAVE_SYSPROF */
+
+#define _SYSPROF_CAPTURE_MARK_START(name)
+#define _SYSPROF_CAPTURE_MARK_END()
+
+#if defined(BABL_ISO_VARIADIC_MACROS)
+
+#define _SYSPROF_CAPTURE_MSG(...)
+
+#elif defined(BABL_GNUC_VARIADIC_MACROS)
+
+#define _SYSPROF_CAPTURE_MSG(msg...)
+
+#endif /* VARIADIC_MACROS */
+
+#endif /* HAVE_SYSPROF */
+
 #ifdef TRACY_ENABLE
 
 #ifdef TRACY_MANUAL_LIFETIME
@@ -304,21 +368,23 @@ babl_fatal (const char *format, ...)
 #ifdef BABL_ENABLE_PROFILING
 
 #define BABL_INSTRUMENT_SCOPE_START(name) \
-  {                                       \
-    _TRACY_ZONE_START (name)
+  _SYSPROF_CAPTURE_MARK_START (name);     \
+  _TRACY_ZONE_START (name)
 
 #define BABL_INSTRUMENT_SCOPE_END() \
-  _TRACY_ZONE_END ();               \
-  }
+  _SYSPROF_CAPTURE_MARK_END ();     \
+  _TRACY_ZONE_END ()
 
 #if defined(BABL_ISO_VARIADIC_MACROS)
 
 #define BABL_INSTRUMENT_SCOPE_MSG(...) \
+  _SYSPROF_CAPTURE_MSG (__VA_ARGS__);  \
   _TRACY_ZONE_TEXT (__VA_ARGS__)
 
 #elif defined(BABL_GNUC_VARIADIC_MACROS)
 
 #define BABL_INSTRUMENT_SCOPE_MSG(msg...) \
+  _SYSPROF_CAPTURE_MSG (msg);             \
   _TRACY_ZONE_TEXT (msg)
 
 #else

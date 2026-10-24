@@ -19,6 +19,10 @@ endif
 
 tool_deps = [math, thread, lcms, log, tracy]
 
+if sysprof_capture.found()
+  tool_deps += sysprof_capture
+endif
+
 if tracy.found()
   tool_deps += tracy
 endif

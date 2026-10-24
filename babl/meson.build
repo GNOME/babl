@@ -125,6 +125,10 @@ endif
 babl_deps = [math, thread, dl, lcms, log]
 babl_includes = [rootInclude, bablBaseInclude]
 
+if sysprof_capture.found()
+  babl_deps += sysprof_capture
+endif
+
 if tracy.found()
   babl_deps += tracy
 endif

@@ -33,6 +33,11 @@ option('relocatable-bundle',
   choices: [ 'yes', 'no', 'platform-default' ]
 )
 
+option('sysprof',
+  type: 'feature',
+  value: 'disabled',
+  description: 'Tracing using sysprof',
+)
 # This would, ideally, be 'feature' but the fallback project relies on the
 # option to be a 'boolean'.
 option('tracy_enable',
